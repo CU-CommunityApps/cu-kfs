@@ -39,7 +39,7 @@ import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TransactionDetailFieldNames
  * 
  * <p>The subclasses generally contain helper constants for conveniently accessing commonly-used fields.</p>
  */
-abstract class TaxTableRow {
+public abstract class TaxTableRow {
 
     // The row's unique ID.
     final String rowId;
@@ -619,66 +619,66 @@ abstract class TaxTableRow {
     /**
      * Default TaxTableRow implementation for transaction details.
      */
-    static final class TransactionDetailRow extends TaxTableRow {
+    public static final class TransactionDetailRow extends TaxTableRow {
         // Fields from TX_TRANSACTION_DETAIL_T (TransactionDetail)
-        final TaxTableField transactionDetailId;
-        final TaxTableField reportYear;
-        final TaxTableField documentNumber;
-        final TaxTableField documentType;
-        final TaxTableField financialDocumentLineNumber;
-        final TaxTableField finObjectCode;
-        final TaxTableField netPaymentAmount;
-        final TaxTableField documentTitle;
-        final TaxTableField vendorTaxNumber;
-        final TaxTableField incomeCode;
-        final TaxTableField incomeCodeSubType;
-        final TaxTableField dvCheckStubText;
-        final TaxTableField payeeId;
-        final TaxTableField vendorName;
-        final TaxTableField parentVendorName;
-        final TaxTableField vendorTypeCode;
-        final TaxTableField vendorOwnershipCode;
-        final TaxTableField vendorOwnershipCategoryCode;
-        final TaxTableField vendorForeignIndicator;
-        final TaxTableField vendorEmailAddress;
-        final TaxTableField vendorChapter4StatusCode;
-        final TaxTableField vendorGIIN;
-        final TaxTableField vendorLine1Address;
-        final TaxTableField vendorLine2Address;
-        final TaxTableField vendorCityName;
-        final TaxTableField vendorStateCode;
-        final TaxTableField vendorZipCode;
-        final TaxTableField vendorForeignLine1Address;
-        final TaxTableField vendorForeignLine2Address;
-        final TaxTableField vendorForeignCityName;
-        final TaxTableField vendorForeignZipCode;
-        final TaxTableField vendorForeignProvinceName;
-        final TaxTableField vendorForeignCountryCode;
-        final TaxTableField nraPaymentIndicator;
-        final TaxTableField paymentDate;
-        final TaxTableField paymentPayeeName;
-        final TaxTableField incomeClassCode;
-        final TaxTableField incomeTaxTreatyExemptIndicator;
-        final TaxTableField foreignSourceIncomeIndicator;
-        final TaxTableField federalIncomeTaxPercent;
-        final TaxTableField paymentDescription;
-        final TaxTableField paymentLine1Address;
-        final TaxTableField paymentCountryName;
-        final TaxTableField chartCode;
-        final TaxTableField accountNumber;
-        final TaxTableField initiatorNetId;
-        final TaxTableField form1099Type;
-        final TaxTableField form1099Box;
-        final TaxTableField form1099OverriddenType;
-        final TaxTableField form1099OverriddenBox;
-        final TaxTableField form1042SBox;
-        final TaxTableField form1042SOverriddenBox;
-        final TaxTableField paymentReasonCode;
-        
-        final TaxTableField disbursementNbr;
-        final TaxTableField paymentStatusCode;
-        final TaxTableField disbursementTypeCode;
-        final TaxTableField ledgerDocumentTypeCode;
+        public final TaxTableField transactionDetailId;
+        public final TaxTableField reportYear;
+        public final TaxTableField documentNumber;
+        public final TaxTableField documentType;
+        public final TaxTableField financialDocumentLineNumber;
+        public final TaxTableField finObjectCode;
+        public final TaxTableField netPaymentAmount;
+        public final TaxTableField documentTitle;
+        public final TaxTableField vendorTaxNumber;
+        public final TaxTableField incomeCode;
+        public final TaxTableField incomeCodeSubType;
+        public final TaxTableField dvCheckStubText;
+        public final TaxTableField payeeId;
+        public final TaxTableField vendorName;
+        public final TaxTableField parentVendorName;
+        public final TaxTableField vendorTypeCode;
+        public final TaxTableField vendorOwnershipCode;
+        public final TaxTableField vendorOwnershipCategoryCode;
+        public final TaxTableField vendorForeignIndicator;
+        public final TaxTableField vendorEmailAddress;
+        public final TaxTableField vendorChapter4StatusCode;
+        public final TaxTableField vendorGIIN;
+        public final TaxTableField vendorLine1Address;
+        public final TaxTableField vendorLine2Address;
+        public final TaxTableField vendorCityName;
+        public final TaxTableField vendorStateCode;
+        public final TaxTableField vendorZipCode;
+        public final TaxTableField vendorForeignLine1Address;
+        public final TaxTableField vendorForeignLine2Address;
+        public final TaxTableField vendorForeignCityName;
+        public final TaxTableField vendorForeignZipCode;
+        public final TaxTableField vendorForeignProvinceName;
+        public final TaxTableField vendorForeignCountryCode;
+        public final TaxTableField nraPaymentIndicator;
+        public final TaxTableField paymentDate;
+        public final TaxTableField paymentPayeeName;
+        public final TaxTableField incomeClassCode;
+        public final TaxTableField incomeTaxTreatyExemptIndicator;
+        public final TaxTableField foreignSourceIncomeIndicator;
+        public final TaxTableField federalIncomeTaxPercent;
+        public final TaxTableField paymentDescription;
+        public final TaxTableField paymentLine1Address;
+        public final TaxTableField paymentCountryName;
+        public final TaxTableField chartCode;
+        public final TaxTableField accountNumber;
+        public final TaxTableField initiatorNetId;
+        public final TaxTableField form1099Type;
+        public final TaxTableField form1099Box;
+        public final TaxTableField form1099OverriddenType;
+        public final TaxTableField form1099OverriddenBox;
+        public final TaxTableField form1042SBox;
+        public final TaxTableField form1042SOverriddenBox;
+        public final TaxTableField paymentReasonCode;
+
+        public final TaxTableField disbursementNbr;
+        public final TaxTableField paymentStatusCode;
+        public final TaxTableField disbursementTypeCode;
+        public final TaxTableField ledgerDocumentTypeCode;
 
         TransactionDetailRow(String rowId, Map<String,TaxTableField> fields, List<String> tables, Map<String,TaxTableField> aliasedFields,
                 Integer insertOffset) {

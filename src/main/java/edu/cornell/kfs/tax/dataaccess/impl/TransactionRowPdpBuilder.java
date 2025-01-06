@@ -345,7 +345,7 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
                         StringUtils.isNotBlank(initiatorPrincipalName) ? initiatorPrincipalName : CUTaxConstants.NETID_IF_NOT_FOUND);
                 
                 // Update the current row.
-                LOG.info("TransactionRowPdpBuilder:: updateTransactionRowsFromWorkflowDocuments: Inserting updated second pass data for "
+                LOG.debug("TransactionRowPdpBuilder:: updateTransactionRowsFromWorkflowDocuments: Inserting updated second pass data for "
                         + "rawTransactionDetailId = {}, documentId = {}", rawTransactionDetailId, documentId);
                 insertUpdatedTransactionDetail(rs, secondPassTransactionInsertStatement, summary, updatedAttributeValues);
             }

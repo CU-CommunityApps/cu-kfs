@@ -452,7 +452,8 @@ final class TaxSqlUtils {
         TaxTableField extraField;
         if (CUTaxConstants.TAX_TYPE_1099.equals(taxType)) {
             extraField = detailRow.form1099Box;
-        } else if (CUTaxConstants.TAX_TYPE_1042S.equals(taxType)) {
+        } else if (CUTaxConstants.TAX_TYPE_1042S.equals(taxType)
+                || CUTaxConstants.TAX_TYPE_1042S_CREATE_TRANSACTION_ROWS_ONLY.equals(taxType)) {
             extraField = detailRow.form1042SBox;
         } else {
             throw new IllegalArgumentException("Unrecognized tax type");
@@ -479,7 +480,8 @@ final class TaxSqlUtils {
         TaxTableField extraField;
         if (CUTaxConstants.TAX_TYPE_1099.equals(taxType)) {
             extraField = rawDetailRow.form1099Box;
-        } else if (CUTaxConstants.TAX_TYPE_1042S.equals(taxType)) {
+        } else if (CUTaxConstants.TAX_TYPE_1042S.equals(taxType)
+                || CUTaxConstants.TAX_TYPE_1042S_CREATE_TRANSACTION_ROWS_ONLY.equals(taxType)) {
             extraField = rawDetailRow.form1042SBox;
         } else {
             throw new IllegalArgumentException("Unrecognized tax type");
