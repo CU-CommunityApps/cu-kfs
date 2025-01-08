@@ -612,13 +612,10 @@
       <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
       <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
       <einvoiceVendorIndicator>N</einvoiceVendorIndicator>
-      <defaultB2BPaymentMethodCode>P</defaultB2BPaymentMethodCode>
       <versionNumber>3</versionNumber>
       <objectId>0C9A8292-8F15-AB5E-24B9-BE79FD97891F</objectId>
       <newCollectionRecord>false</newCollectionRecord>
-
-      <insuranceRequiredIndicator>false</insuranceRequiredIndicator><vendorCreditCardMerchants/><insuranceRequirementsCompleteIndicator/><cornellAdditionalInsuredIndicator/></extension>
-
+      <insuranceRequiredIndicator>false</insuranceRequiredIndicator><vendorCreditCardMerchants/><insuranceRequirementsCompleteIndicator/><cornellAdditionalInsuredIndicator/></extension><defaultPaymentMethodCode>P</defaultPaymentMethodCode>
   </org.kuali.kfs.vnd.businessobject.VendorDetail><maintenanceAction>Edit</maintenanceAction>
   </oldMaintainableObject><newMaintainableObject><org.kuali.kfs.vnd.businessobject.VendorDetail>
     <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
@@ -774,12 +771,11 @@
       <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
       <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
       <einvoiceVendorIndicator>N</einvoiceVendorIndicator>
-      <defaultB2BPaymentMethodCode>P</defaultB2BPaymentMethodCode>
       <versionNumber>3</versionNumber>
       <objectId>0C9A8292-8F15-AB5E-24B9-BE79FD97891F</objectId>
       <newCollectionRecord>false</newCollectionRecord>
 
-      <insuranceRequiredIndicator>false</insuranceRequiredIndicator><vendorCreditCardMerchants/><insuranceRequirementsCompleteIndicator/><cornellAdditionalInsuredIndicator/></extension>
+      <insuranceRequiredIndicator>false</insuranceRequiredIndicator><vendorCreditCardMerchants/><insuranceRequirementsCompleteIndicator/><cornellAdditionalInsuredIndicator/></extension><defaultPaymentMethodCode>P</defaultPaymentMethodCode>
 
 
   </org.kuali.kfs.vnd.businessobject.VendorDetail><maintenanceAction>Edit</maintenanceAction>
