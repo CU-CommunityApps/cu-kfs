@@ -3,37 +3,50 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.spring
 xsi:schemaLocation="http://www.springframework.org/schema/beans 
 http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-<bean id="AssetExtension" parent="BusinessObjectEntry">
-  <property name="businessObjectClass" value="edu.cornell.kfs.module.cam.businessobject.AssetExtension"/>
-  <property name="objectLabel" value="AssetExtension"/>
+    <bean id="AssetExtension" parent="BusinessObjectEntry"
+          p:businessObjectClass="edu.cornell.kfs.module.cam.businessobject.AssetExtension"
+          p:objectLabel="AssetExtension">
+        <property name="attributes">
+            <list>
+                <ref bean="AssetExtension-serviceRateIndicator"/>
+                <ref bean="AssetExtension-lastScannedBy"/>
+                <ref bean="AssetExtension-lastScannedDate"/>
+                <ref bean="AssetExtension-capitalAssetNumber"/>
+            </list>
+        </property>
+    </bean>
 
-  <property name="attributes">
-    <list>
-      <ref bean="AssetExtension-serviceRateIndicator"/>
-      <ref bean="AssetExtension-lastScannedBy"/>
-      <ref bean="AssetExtension-lastScannedDate"/>
-      <ref bean="AssetExtension-capitalAssetNumber"/>
-    </list>
-  </property>
-</bean>
+    <bean id="AssetExtension-lastScannedDate" parent="AssetExtension-lastScannedDate-parentBean"/>
+    <bean id="AssetExtension-lastScannedDate-parentBean"
+          abstract="true"
+          parent="GenericAttributes-genericDate"
+          p:name="lastScannedDate"
+          p:label="Last Scanned Date"
+          p:shortLabel="Scan Date"
+          p:control-ref="DateControl">
+    </bean>
 
-<bean id="AssetExtension-lastScannedDate" parent="AssetExtension-lastScannedDate-parentBean"/>
-<bean id="AssetExtension-lastScannedDate-parentBean" abstract="true" parent="GenericAttributes-genericDate"
-      p:name="lastScannedDate" p:label="Last Scanned Date" p:shortLabel="Scan Date" p:control-ref="DateControl" />
+    <bean id="AssetExtension-lastScannedBy" parent="AssetExtension-lastScannedBy-parentBean"/>
+    <bean id="AssetExtension-lastScannedBy-parentBean"
+          abstract="true"
+          parent="AttributeDefinition"
+          p:name="lastScannedBy"
+          p:label="Last Scanned By"
+          p:shortLabel="Scanned By"
+          p:control-ref="StandardShortNameTextControl"/>
 
-<bean id="AssetExtension-lastScannedBy" parent="AssetExtension-lastScannedBy-parentBean"/>
-<bean id="AssetExtension-lastScannedBy-parentBean" abstract="true" parent="AttributeDefinition"
-      p:name="lastScannedBy" p:label="Last Scanned By" p:shortLabel="Scanned By"
-      p:control-ref="StandardShortNameTextControl" />
+    <bean id="AssetExtension-serviceRateIndicator" parent="AssetExtension-serviceRateIndicator-parentBean"/>
+    <bean id="AssetExtension-serviceRateIndicator-parentBean" parent="GenericAttributes-genericBoolean"
+          p:name="serviceRateIndicator"
+          p:label="Service Rate Indicator"
+          p:shortLabel="Service Rate Indicator"
+          p:type="BOOLEAN"
+          p:defaultValue="">
+        <property name="control">
+            <bean parent="RadioControlDefinition" p:valuesFinder-ref="indicatorYNBothValuesFinder"/>
+        </property>
+    </bean>
 
-<bean id="AssetExtension-serviceRateIndicator" parent="AssetExtension-serviceRateIndicator-parentBean" />
-
-<bean id="AssetExtension-serviceRateIndicator-parentBean" parent="GenericAttributes-genericBoolean">
-  <property name="name" value="serviceRateIndicator" />
-  <property name="label" value="Service Rate Indicator" />
-  <property name="shortLabel" value="Service Rate Indicator" />
-</bean>
-
-<bean id="AssetExtension-capitalAssetNumber" parent="Asset-capitalAssetNumber"/>
+    <bean id="AssetExtension-capitalAssetNumber" parent="Asset-capitalAssetNumber"/>
 
 </beans>

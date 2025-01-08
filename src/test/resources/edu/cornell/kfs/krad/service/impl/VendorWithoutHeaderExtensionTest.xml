@@ -341,13 +341,12 @@
     <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
     <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
     <einvoiceVendorIndicator>false</einvoiceVendorIndicator>
-    <defaultB2BPaymentMethodCode>P</defaultB2BPaymentMethodCode>
     <insuranceRequiredIndicator>false</insuranceRequiredIndicator>
     <vendorCreditCardMerchants/>
     <versionNumber>1</versionNumber>
     <objectId>9326a9de-84ee-4c7b-b26a-afff63b72000</objectId>
     <newCollectionRecord>false</newCollectionRecord>
-  </extension>
+  </extension><defaultPaymentMethodCode>P</defaultPaymentMethodCode>
 </org.kuali.kfs.vnd.businessobject.VendorDetail><maintenanceAction>New</maintenanceAction>
 </newMaintainableObject></maintainableDocumentContents>
 </expectedResult>

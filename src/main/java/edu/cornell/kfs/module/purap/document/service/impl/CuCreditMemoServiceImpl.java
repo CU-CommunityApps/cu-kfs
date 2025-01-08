@@ -1,6 +1,5 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
-
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -21,8 +20,6 @@ import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
-import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
-import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
     private static final Logger LOG = LogManager.getLogger();
@@ -164,48 +161,19 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
 
      }
      
-     /**
-      * @see org.kuali.kfs.module.purap.document.service.CreditMemoCreateService#populateDocumentAfterInit(org.kuali.kfs.module.purap.document.CreditMemoDocument)
-      */
-     @Override
-     public void populateDocumentAfterInit(final VendorCreditMemoDocument cmDocument) {
+    /* 
+     * Cornell Customization: KFSPTS-1891
+     */
+    @Override
+    public void populateDocumentAfterInit(final VendorCreditMemoDocument cmDocument) {
+        super.populateDocumentAfterInit(cmDocument);
 
-         // make a call to search for expired/closed accounts
-         final HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList = accountsPayableService.getExpiredOrClosedAccountList(cmDocument);
-
-         if (cmDocument.isSourceDocumentPaymentRequest()) {
-             populateDocumentFromPreq(cmDocument, expiredOrClosedAccountList);
-         }
-         else if (cmDocument.isSourceDocumentPurchaseOrder()) {
-             populateDocumentFromPO(cmDocument, expiredOrClosedAccountList);
-         }
-         else {
-             populateDocumentFromVendor(cmDocument);
-         }
-
-         // KFSPTS-1891
-         
-         final VendorDetail vendorDetail = vendorService.getVendorDetail(cmDocument.getVendorHeaderGeneratedIdentifier(), cmDocument.getVendorDetailAssignedIdentifier());
-         if ( ObjectUtils.isNotNull(vendorDetail)
-                 && ObjectUtils.isNotNull(vendorDetail.getExtension()) ) {
-             if ( vendorDetail.getExtension() instanceof VendorDetailExtension
-                     && StringUtils.isNotBlank( ((VendorDetailExtension)vendorDetail.getExtension()).getDefaultB2BPaymentMethodCode() ) ) {
-             	((CuVendorCreditMemoDocument)cmDocument).setPaymentMethodCode(
-                         ((VendorDetailExtension)vendorDetail.getExtension()).getDefaultB2BPaymentMethodCode() );
-             }
-         }
-
-         populateDocumentDescription(cmDocument);
-
-         // write a note for expired/closed accounts if any exist and add a message stating there were expired/closed accounts at the
-         // top of the document
-         accountsPayableService.generateExpiredOrClosedAccountNote(cmDocument, expiredOrClosedAccountList);
-
-         // set indicator so a message is displayed for accounts that were replaced due to expired/closed status
-         if (ObjectUtils.isNotNull(expiredOrClosedAccountList) && !expiredOrClosedAccountList.isEmpty()) {
-             cmDocument.setContinuationAccountIndicator(true);
-         }
-
+        final VendorDetail vendorDetail = vendorService.getVendorDetail(
+                cmDocument.getVendorHeaderGeneratedIdentifier(), cmDocument.getVendorDetailAssignedIdentifier());
+        if (ObjectUtils.isNotNull(vendorDetail)
+                && StringUtils.isNotBlank(vendorDetail.getDefaultPaymentMethodCode())) {
+            cmDocument.setPaymentMethodCode(vendorDetail.getDefaultPaymentMethodCode());
+        }
     }
      
  	public CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {

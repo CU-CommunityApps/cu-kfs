@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:p="http://www.springframework.org/schema/p"
+        xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="PaymentSourceWireTransferExtendedAttribute" parent="PaymentSourceWireTransferExtendedAttribute-parentBean"/>
+    <bean id="PaymentSourceWireTransferExtendedAttribute-parentBean" abstract="true" parent="BusinessObjectEntry"
+            p:businessObjectClass="edu.cornell.kfs.sys.businessobject.PaymentSourceWireTransferExtendedAttribute"
+            p:objectLabel="Payment Source Wire Transfer Extended Attribute">
+        <property name="attributes">
+            <list>
+                <ref bean="PaymentSourceWireTransferExtendedAttribute-payeeAccountTypeCode"/>
+                <ref bean="PaymentSourceWireTransferExtendedAttribute-bankStreetAddress"/>
+                <ref bean="PaymentSourceWireTransferExtendedAttribute-bankProvince"/>
+                <ref bean="PaymentSourceWireTransferExtendedAttribute-bankSwiftCode"/>
+                <ref bean="PaymentSourceWireTransferExtendedAttribute-bankIBAN"/>
+                <ref bean="PaymentSourceWireTransferExtendedAttribute-sortOrTransitCode"/>
+                <ref bean="PaymentSourceWireTransferExtendedAttribute-correspondentBankName"/>
+                <ref bean="PaymentSourceWireTransferExtendedAttribute-correspondentBankAddress"/>
+                <ref bean="PaymentSourceWireTransferExtendedAttribute-correspondentBankRoutingNumber"/>
+                <ref bean="PaymentSourceWireTransferExtendedAttribute-correspondentBankAccountNumber"/>
+                <ref bean="PaymentSourceWireTransferExtendedAttribute-correspondentBankSwiftCode"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="PaymentSourceWireTransferExtendedAttribute-payeeAccountTypeCode"
+          parent="PaymentSourceWireTransferExtendedAttribute-payeeAccountTypeCode-parentBean"/>
+    <bean id="PaymentSourceWireTransferExtendedAttribute-payeeAccountTypeCode-parentBean"
+          abstract="true"
+          parent="AttributeDefinition"
+          p:name="payeeAccountTypeCode"
+          p:forceUppercase="false"
+          p:label="Bank Acct Type"
+          p:shortLabel="Acct Type"
+          p:maxLength="1"
+          p:required="false">
+        <property name="control">
+            <bean parent="RadioControlDefinition" p:valuesFinder-ref="bankAccountTypeValuesFinder" 
+                  p:includeKeyInLabel="false"/>
+        </property>
+    </bean>
+
+    <bean id="PaymentSourceWireTransferExtendedAttribute-bankStreetAddress" 
+          parent="PaymentSourceWireTransferExtendedAttribute-bankStreetAddress-parentBean"/>
+    <bean id="PaymentSourceWireTransferExtendedAttribute-bankStreetAddress-parentBean"
+          abstract="true" parent="AttributeDefinition"
+          p:name="bankStreetAddress"
+          p:forceUppercase="false"
+          p:label="Bank Street Address"
+          p:shortLabel="Bnk Str Addr"
+          p:maxLength="37"
+          p:required="false">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="37"/>
+        </property>
+    </bean>
+
+    <bean id="PaymentSourceWireTransferExtendedAttribute-bankProvince"
+          parent="PaymentSourceWireTransferExtendedAttribute-bankProvince-parentBean"/>
+    <bean id="PaymentSourceWireTransferExtendedAttribute-bankProvince-parentBean"
+          abstract="true" parent="AttributeDefinition"
+          p:name="bankProvince"
+          p:forceUppercase="false"
+          p:label="Bank Province (if non-US)"
+          p:shortLabel="Bnk Province"
+          p:maxLength="37"
+          p:required="false">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="37"/>
+        </property>
+    </bean>
+
+    <bean id="PaymentSourceWireTransferExtendedAttribute-bankSwiftCode"
+          parent="PaymentSourceWireTransferExtendedAttribute-bankSwiftCode-parentBean"/>
+    <bean id="PaymentSourceWireTransferExtendedAttribute-bankSwiftCode-parentBean"
+          abstract="true" parent="AttributeDefinition"
+          p:name="bankSwiftCode"
+          p:forceUppercase="false"
+          p:label="Bank SWIFT Code (BIC)"
+          p:shortLabel="Bnk SWIFT Cd"
+          p:maxLength="20"
+          p:required="false">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="20"/>
+        </property>
+    </bean>
+
+    <bean id="PaymentSourceWireTransferExtendedAttribute-bankIBAN" 
+          parent="PaymentSourceWireTransferExtendedAttribute-bankIBAN-parentBean"/>
+    <bean id="PaymentSourceWireTransferExtendedAttribute-bankIBAN-parentBean" 
+          abstract="true"
+          parent="AttributeDefinition"
+          p:name="bankIBAN"
+          p:forceUppercase="false"
+          p:label="Bank IBAN # or CLABE (Mexico)"
+          p:shortLabel="Bnk IBAN"
+          p:maxLength="34"
+          p:required="false">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="34"/>
+        </property>
+        <property name="attributeSecurity">
+            <bean parent="AttributeSecurity">
+                <property name="mask" value="true" /> 
+                <property name="maskFormatter">
+                    <bean parent="MaskFormatterLiteral" p:literal="Not Displayed" /> 
+                </property>
+            </bean>
+        </property>  
+    </bean>
+  
+    <bean id="PaymentSourceWireTransferExtendedAttribute-sortOrTransitCode"
+          parent="PaymentSourceWireTransferExtendedAttribute-sortOrTransitCode-parentBean"/>
+    <bean id="PaymentSourceWireTransferExtendedAttribute-sortOrTransitCode-parentBean" 
+          abstract="true" parent="AttributeDefinition"
+          p:name="sortOrTransitCode"
+          p:forceUppercase="false"
+          p:label="Bank Sort or Transit Code"
+          p:shortLabel="Bnk Sort Cd"
+          p:maxLength="8"
+          p:required="false">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="8"/>
+        </property>
+    </bean>
+
+    <bean id="PaymentSourceWireTransferExtendedAttribute-correspondentBankName"
+           parent="PaymentSourceWireTransferExtendedAttribute-correspondentBankName-parentBean"/>
+    <bean id="PaymentSourceWireTransferExtendedAttribute-correspondentBankName-parentBean" 
+          abstract="true" parent="AttributeDefinition"
+          p:name="correspondentBankName"
+          p:forceUppercase="false"
+          p:label="Correspondent Bank Name"
+          p:shortLabel="Corresp Bnk Nm"
+          p:maxLength="55"
+          p:required="false">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="40"/>
+        </property>
+    </bean>
+    
+    <bean id="PaymentSourceWireTransferExtendedAttribute-correspondentBankAddress" 
+          parent="PaymentSourceWireTransferExtendedAttribute-correspondentBankAddress-parentBean"/>
+    <bean id="PaymentSourceWireTransferExtendedAttribute-correspondentBankAddress-parentBean"
+          abstract="true" parent="AttributeDefinition"
+          p:name="correspondentBankAddress"
+          p:forceUppercase="false"
+          p:label="Correspondent Bank Address"
+          p:shortLabel="Corresp Bnk Addr"
+          p:maxLength="500"
+          p:required="false">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="40"/>
+        </property>
+    </bean>
+
+    <bean id="PaymentSourceWireTransferExtendedAttribute-correspondentBankRoutingNumber" 
+          parent="PaymentSourceWireTransferExtendedAttribute-correspondentBankRoutingNumber-parentBean"/>
+    <bean id="PaymentSourceWireTransferExtendedAttribute-correspondentBankRoutingNumber-parentBean"
+          abstract="true" parent="AttributeDefinition"
+          p:name="correspondentBankRoutingNumber"
+          p:forceUppercase="false"
+          p:label="Correspondent Bank Routing Number"
+          p:shortLabel="Corresp Bnk Rt #"
+          p:maxLength="9"
+          p:required="false">
+        <property name="validationPattern" >
+            <bean parent="NumericValidationPattern" />
+        </property>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="9"/>
+        </property>
+    </bean>
+
+    <bean id="PaymentSourceWireTransferExtendedAttribute-correspondentBankAccountNumber"
+          parent="PaymentSourceWireTransferExtendedAttribute-correspondentBankAccountNumber-parentBean"/>
+    <bean id="PaymentSourceWireTransferExtendedAttribute-correspondentBankAccountNumber-parentBean"
+          abstract="true" parent="AttributeDefinition"
+          p:name="correspondentBankAccountNumber"
+          p:forceUppercase="false"
+          p:label="Correspondent Bank Account Number"
+          p:shortLabel="Corresp Bnk Acct #"
+          p:maxLength="40">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="40"/>
+        </property>
+        <property name="attributeSecurity">
+            <bean parent="AttributeSecurity">
+                <property name="mask" value="true"/> 
+                <property name="maskFormatter">
+                    <bean parent="MaskFormatterLiteral" p:literal="Not Displayed"/> 
+                </property>
+            </bean>
+        </property>  
+    </bean>
+
+    <bean id="PaymentSourceWireTransferExtendedAttribute-correspondentBankSwiftCode"
+          parent="PaymentSourceWireTransferExtendedAttribute-correspondentBankSwiftCode-parentBean"/>
+    <bean id="PaymentSourceWireTransferExtendedAttribute-correspondentBankSwiftCode-parentBean"
+          abstract="true" parent="AttributeDefinition"
+          p:name="correspondentBankSwiftCode"
+          p:forceUppercase="false"
+          p:label="Correspondent Bank SWIFT Code"
+          p:shortLabel="Corresp Bnk SWIFT Cd"
+          p:maxLength="18"
+          p:required="false">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="18"/>
+        </property>
+    </bean>
+</beans>
