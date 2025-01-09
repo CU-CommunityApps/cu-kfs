@@ -337,7 +337,7 @@ public class Iso20022FormatExtractor {
          * Base code does not perform extraction in a similar manner for both ACH and
          * checks so we could not use a single method to output this information.
          */
-        LOG.info("determineUniquePaymentProcesses() : File contains data for these uniquePaymentProcessIds={}", uniquePaymentProcessIds);
+        LOG.info("determineUniquePaymentProcesses() : File contains data for these uniquePaymentProcessIds={} utest testing", uniquePaymentProcessIds);
 
         LOG.debug(
                 "determineUniquePaymentProcesses() - Exit : uniquePaymentProcessIds={}; uniquePaymentProcessList={}",
