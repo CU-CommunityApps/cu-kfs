@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -307,6 +309,54 @@ public class TaxParameterServiceImplTest {
                         parameter.getComponentCode(), parameter.getName());
         assertNotNull(actualValue, "The Map should not have been null");
         assertEquals(expectedValue, actualValue, "Wrong Map-based result");
+    }
+
+    @ParameterizedTest
+    @MethodSource("multiValueParametersWithDuplicateSubParameterKeys")
+    void testMultiValueParametersWithDuplicateSubParameterKeys(final Parameter parameter,
+            final Map<String, Set<String>> expectedValue) throws Exception {
+        parameterService.createParameter(parameter);
+        final Map<String, Set<String>> actualValue = taxParameterService
+                .getValuesMapFromParameterContainingDuplicateSubParameterKeys(
+                        parameter.getComponentCode(), parameter.getName());
+        assertNotNull(actualValue, "The Map should not have been null");
+        assertEquals(expectedValue, actualValue, "Wrong Map-based result");
+    }
+
+    @ParameterizedTest
+    @MethodSource("multiValueRegexParametersWithDuplicateSubParameterKeys")
+    void testMultiValueRegexParametersWithDuplicateSubParameterKeys(final Parameter parameter,
+            final Map<String, List<String>> expectedValue) throws Exception {
+        parameterService.createParameter(parameter);
+        final Map<String, List<Pattern>> actualValue = taxParameterService
+                .getRegexMapFromParameterContainingDuplicateSubParameterKeys(
+                        parameter.getComponentCode(), parameter.getName());
+        assertNotNull(actualValue, "The Map should not have been null");
+        assertRegexesAreCaseInsensitive(actualValue);
+
+        final Map<String, List<String>> simplifiedValue = convertToRegexStringMap(actualValue);
+        assertEquals(expectedValue, simplifiedValue, "Wrong Map-based result");
+    }
+
+    private void assertRegexesAreCaseInsensitive(final Map<String, List<Pattern>> regexMap) {
+        for (final List<Pattern> regexLists : regexMap.values()) {
+            for (final Pattern regex : regexLists) {
+                assertTrue((regex.flags() & Pattern.CASE_INSENSITIVE) != 0,
+                        "Regex was not configured as case-insensitive: " + regex.toString());
+            }
+        }
+    }
+
+    private Map<String, List<String>> convertToRegexStringMap(final Map<String, List<Pattern>> regexMap) {
+        return regexMap.entrySet().stream()
+                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, this::convertToRegexStringList));
+    }
+
+    private List<String> convertToRegexStringList(final Map.Entry<String, List<Pattern>> regexEntry) {
+        final List<Pattern> regexList = regexEntry.getValue();
+        return regexList.stream()
+                .map(Pattern::toString)
+                .collect(Collectors.toUnmodifiableList());
     }
 
 }
