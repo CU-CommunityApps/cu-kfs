@@ -35,12 +35,14 @@
         <property name="jobNames">
             <list>
                 <value>taxProcessingJob</value>
+                <value>sprintaxProcessingJob</value>
             </list>
         </property>
         <property name="batchFileDirectories">
               <list>
                 <value>${reports.directory}/tax</value>
                 <value>${staging.directory}/tax</value>
+                <value>${staging.directory}/tax/sprintax</value>
               </list>
         </property>
     </bean>
@@ -106,6 +108,35 @@
         <property name="parameterService" ref="parameterService" />
     </bean>
 
+    <bean id="taxParameterService" parent="taxParameterService-parentBean"/>
+    <bean id="taxParameterService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.tax.service.impl.TaxParameterServiceImpl"
+          p:parameterService-ref="parameterService"/>
+
+    <bean id="taxOutputDefinitionV2FileType" parent="taxOutputDefinitionV2FileType-parentBean"/>
+    <bean id="taxOutputDefinitionV2FileType-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.tax.batch.TaxOutputDefinitionV2FileType"
+          p:directoryPath="${staging.directory}/tax"
+          p:fileExtension="xml"
+          p:fileNamePrefix="NOT_USED_"
+          p:schemaLocation="classpath:edu/cornell/kfs/tax/batch/taxOutputDefinitionV2.xsd"
+          p:outputClass="edu.cornell.kfs.tax.batch.xml.TaxOutputDefinition"
+          p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="noOpTaxFileGenerationService"
+          class="edu.cornell.kfs.tax.batch.service.impl.TaxFileGenerationServiceNoOpImpl"/>
+
+    <bean id="taxProcessingV2Service" parent="taxProcessingV2Service-parentBean"/>
+    <bean id="taxProcessingV2Service-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.tax.service.impl.TaxProcessingV2ServiceImpl"
+          p:legacyTaxProcessingDao-ref="taxProcessingDao"
+          p:taxFileGenerationService-ref="noOpTaxFileGenerationService"
+          p:taxParameterService-ref="taxParameterService"
+          p:dateTimeService-ref="dateTimeService"/>
+
     <!-- Batch Jobs -->
 
     <bean id="taxProcessingStep" class="edu.cornell.kfs.tax.batch.TaxProcessingStep" parent="step">
@@ -116,6 +147,19 @@
         <property name="steps">
             <list>
                 <ref bean="taxProcessingStep" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="sprintaxProcessingStep"
+          class="edu.cornell.kfs.tax.batch.SprintaxProcessingStep"
+          parent="step"
+          p:taxProcessingV2Service-ref="taxProcessingV2Service"/>
+
+    <bean id="sprintaxProcessingJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="sprintaxProcessingStep"/>
             </list>
         </property>
     </bean>

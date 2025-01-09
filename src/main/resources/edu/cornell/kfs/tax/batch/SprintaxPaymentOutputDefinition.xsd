@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taxOutputDefinition fieldSeparator=",">
+    <section name="Sprintax_Payment_Row_1042S"
+             hasHeaderRow="true"
+             useExactFieldLengths="false">
+        <field name="E-mail" length="90" type="STATIC" value=""/>
+        <field name="Student number" length="90" type="DERIVED" key="payeeId"/>
+        <field name="UNIQUE FORM IDENTIFIER" length="90" type="DERIVED" key="uniqueFormId"/>
+        <field name="Is the current version amendment" length="90" type="STATIC" value=""/>
+        <field name="The current number of amendment" length="90" type="STATIC" value=""/>
+        <field name="Income Code" length="90" type="DERIVED" key="incomeCode"/>
+        <field name="Gross Income" length="90" type="DERIVED" key="grossAmount"/>
+        <field name="Chapter 3 Indicator" length="90" type="STATIC" value="3"/>
+        <field name="Chapter 3 Exemption Code" length="90" type="DERIVED" key="chapter3ExemptionCode"/>
+        <field name="Chapter 3 Tax Rate" length="90" type="DERIVED" key="chapter3TaxRate"/>
+        <field name="Chapter 4 Exemption Code" length="90" type="DERIVED" key="chapter4ExemptionCode"/>
+        <field name="Chapter 4 Tax Rate" length="90" type="STATIC" value="00"/>
+        <field name="Withholding Allowance" length="90" type="STATIC" value="0"/>
+        <field name="Net Income" length="90" type="STATIC" value=""/>
+        <field name="Federal Tax Withheld" length="90" type="DERIVED" key="fedTaxWithheldAmount"/>
+        <field name="Check if tax not deposited with IRS pursuant to escrow prodecure"
+                length="90" type="STATIC" value=""/>
+        <field name="Check if withholding occurred in subsequent year with respect to a partnership interest"
+                length="90" type="STATIC" value=""/>
+        <field name="Tax withheld by other agents" length="90" type="STATIC" value=""/>
+        <field name="Overwithheld Tax Repaid to Recepient" length="90" type="STATIC" value=""/>
+        <field name="Total withholding credit" length="90" type="STATIC" value=""/>
+        <field name="Tax paid by withholding agent (amounts not withheld)" length="90" type="STATIC" value=""/>
+        <field name="Withholding agent's GIIN" length="90" type="STATIC" value=""/>
+        <field name="Recipient Chapter 3 status code" length="90" type="DERIVED" key="chapter3StatusCode"/>
+        <field name="Recipient Chapter 4 status code" length="90" type="DERIVED" key="chapter4StatusCode"/>
+        <field name="Recipient's GIIN" length="90" type="DERIVED" key="vendorGIIN"/>
+        <field name="LOB code" length="90" type="STATIC" value=""/>
+        <field name="Recipient's account number" length="90" type="STATIC" value=""/>
+        <field name="Primary Withholding Agent's Name (if applicapable)" length="90" type="STATIC" value=""/>
+        <field name="Primary Withholding Agent's EIN" length="90" type="STATIC" value=""/>
+        <field name="Pro-rata Reporting" length="90" type="STATIC" value=""/>
+        <field name="Intermediary flow-through's EIN" length="90" type="STATIC" value=""/>
+        <field name="Intermediary?s or FTE?s Chapter 3 Status Code" length="90" type="STATIC" value=""/>
+        <field name="Intermediary?s or FTE?s Chapter 4 Status Code" length="90" type="STATIC" value=""/>
+        <field name="Intermediary/Flow-Through's Name" length="90" type="STATIC" value=""/>
+        <field name="Intermediary or FTE GIIN" length="90" type="STATIC" value=""/>
+        <field name="NQI/FLW-THR/PTP Country Code" length="90" type="STATIC" value=""/>
+        <field name="NQI?s Foreign Tax I.D. Number" length="90" type="STATIC" value=""/>
+        <field name="NQI/FLW-THR/PTP Address Line" length="90" type="STATIC" value=""/>
+        <field name="NQI/FLW-THR/PTP City" length="90" type="STATIC" value=""/>
+        <field name="Payer's Name" length="90" type="STATIC" value=""/>
+        <field name="Payer's TIN" length="90" type="DERIVED" key="payerEIN"/>
+        <field name="Payer's GIIN" length="90" type="STATIC" value=""/>
+        <field name="Payer's Chapter 3 Status Code" length="90" type="STATIC" value=""/>
+        <field name="Payer's Chapter 4 Status Code" length="90" type="STATIC" value=""/>
+        <field name="State income tax withheld" length="90" type="DERIVED" key="stateIncomeTaxWithheldAmount"/>
+        <field name="Payer's State Tax Number" length="90" type="STATIC" value=""/>
+        <field name="Name of State" length="90" type="STATIC" value=""/>
+    </section>
+</taxOutputDefinition>
