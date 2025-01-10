@@ -3,9 +3,9 @@ package edu.cornell.kfs.tax.batch;
 import edu.cornell.kfs.sys.batch.CuXmlBatchInputFileTypeBase;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.CUTaxConstants.CUTaxKeyConstants;
-import edu.cornell.kfs.tax.batch.xml.TaxOutputDefinition;
+import edu.cornell.kfs.tax.batch.xml.TaxOutputDefinitionV2;
 
-public class TaxOutputDefinitionV2FileType extends CuXmlBatchInputFileTypeBase<TaxOutputDefinition> {
+public class TaxOutputDefinitionV2FileType extends CuXmlBatchInputFileTypeBase<TaxOutputDefinitionV2> {
 
     @Override
     public String getFileTypeIdentifier() {

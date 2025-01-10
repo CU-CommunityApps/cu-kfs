@@ -122,7 +122,7 @@
           p:fileExtension="xml"
           p:fileNamePrefix="NOT_USED_"
           p:schemaLocation="classpath:edu/cornell/kfs/tax/batch/taxOutputDefinitionV2.xsd"
-          p:outputClass="edu.cornell.kfs.tax.batch.xml.TaxOutputDefinition"
+          p:outputClass="edu.cornell.kfs.tax.batch.xml.TaxOutputDefinitionV2"
           p:dateTimeService-ref="dateTimeService"/>
 
     <bean id="noOpTaxFileGenerationService"

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="classpath:edu/cornell/kfs/tax/cu-spring-tax.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-base-test-beans.xml"/>
+
+    <bean id="propertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer-parentBean">
+        <property name="properties">
+            <props merge="true">
+                <prop key="reports.directory">test/tax_output_def/reports</prop>
+                <prop key="staging.directory">test/tax_output_def/staging</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="dateTimeService" class="edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl"/>
+
+    <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
+        <property name="beanWhitelist">
+            <set merge="true">
+                <idref bean="taxOutputDefinitionV2FileType"/>
+                <idref bean="taxOutputDefinitionV2FileType-parentBean"/>
+                <idref bean="dateTimeService"/>
+            </set>
+        </property>
+    </bean>
+
+</beans>

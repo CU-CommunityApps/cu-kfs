@@ -1,5 +1,9 @@
 package edu.cornell.kfs.tax.batch.xml;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxOutputFieldType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -10,7 +14,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "taxFieldType")
 @XmlRootElement(name = "field")
-public class TaxOutputField {
+public class TaxOutputFieldV2 {
 
     @XmlAttribute(name = "name", required = true)
     private String name;
@@ -65,6 +69,21 @@ public class TaxOutputField {
 
     public void setValue(final String value) {
         this.value = value;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return EqualsBuilder.reflectionEquals(obj, this);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 
 }
