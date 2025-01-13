@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taxOutputDefinition fieldSeparator=",">
+    <section name="Biographic_Section" hasHeaderRow="true" useExactFieldLengths="false">
+        <field name="recipient_id" length="25" type="DERIVED" key="recipientId"/>
+        <field name="full_name" length="90" type="DERIVED" key="recipientName"/>
+        <field name="primary_address" length="120" type="DERIVED" key="recipientAddress"/>
+        <field name="extra_address" length="120" type="STATIC" value=""/>
+    </section>
+    <section name="Payment_Section" hasHeaderRow="true" useExactFieldLengths="false">
+        <field name="recipient_id" length="25" type="DERIVED" key="recipientId"/>
+        <field name="payment_source" length="10" type="STATIC" value="Cornell"/>
+        <field name="tax_amount" length="15" type="DERIVED" key="taxAmount"/>
+    </section>
+</taxOutputDefinition>

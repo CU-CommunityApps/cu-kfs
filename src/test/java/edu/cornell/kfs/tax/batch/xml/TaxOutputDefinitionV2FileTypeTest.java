@@ -1,12 +1,14 @@
 package edu.cornell.kfs.tax.batch.xml;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.function.FailableSupplier;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +19,9 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.exception.ParseException;
 
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.util.CreateTestDirectories;
@@ -125,7 +129,7 @@ public class TaxOutputDefinitionV2FileTypeTest {
                                 type = TaxOutputFieldType.DERIVED, key = "recipientId"
                         ),
                         @TaxOutputField(
-                                name = "payment_source", length = 5,
+                                name = "payment_source", length = 10,
                                 type = TaxOutputFieldType.STATIC, value = "Cornell"
                         ),
                         @TaxOutputField(
@@ -143,8 +147,10 @@ public class TaxOutputDefinitionV2FileTypeTest {
 
     static Stream<Arguments> validOutputDefinitions() {
         return Stream.of(
-                Pair.of("good-file-single-section-single-field.xml",
-                        LocalTestCase.SINGLE_SECTION_SINGLE_FIELD)
+                Pair.of("good-file-single-section-single-field.xml", LocalTestCase.SINGLE_SECTION_SINGLE_FIELD),
+                Pair.of("good-file-single-section-multiple-fields.xml", LocalTestCase.SINGLE_SECTION_MULTIPLE_FIELDS),
+                Pair.of("good-file-multiple-sections-multiple-fields.xml",
+                        LocalTestCase.MULTIPLE_SECTIONS_MULTIPLE_FIELDS)
         )
                 .map(pair -> Arguments.of(pair.getLeft(), pair.getRight().toNamedAnnotationFixturePayload()));
     }
@@ -161,7 +167,7 @@ public class TaxOutputDefinitionV2FileTypeTest {
         assertEquals(expectedResult, actualResult, "Wrong DTO structure");
     }
 
-    private byte[] readFileContents(final String fileName) throws IOException {
+    private static byte[] readFileContents(final String fileName) throws IOException {
         try (final InputStream fileStream = CuCoreUtilities.getResourceAsStream(BASE_TEST_XML_PATH + fileName)) {
             return IOUtils.toByteArray(fileStream);
         }
@@ -170,6 +176,51 @@ public class TaxOutputDefinitionV2FileTypeTest {
     private TaxOutputDefinitionV2 parseFileContents(final byte[] fileContents) {
         return GlobalResourceLoaderUtils.doWithResourceRetrievalDelegatedToKradResourceLoaderUtil(
                 () -> taxOutputDefinitionV2FileType.parse(fileContents));
+    }
+
+
+
+    static Stream<Arguments> emptyXmlTestCases() {
+        final Stream<Named<FailableSupplier<byte[], Exception>>> testCases = Stream.of(
+                Named.of("null array", () -> null),
+                Named.of("empty array", () -> new byte[0]),
+                Named.of("empty file", () -> readFileContents("bad-file-empty.xml"))
+        );
+        return testCases.map(Arguments::of);
+    }
+
+    @ParameterizedTest
+    @MethodSource("emptyXmlTestCases")
+    void testInvalidEmptyOutputDefinitionXmlContent(final FailableSupplier<byte[], Exception> testValueSupplier)
+            throws Exception {
+        final byte[] xmlContents = testValueSupplier.get();
+        assertThrows(IllegalArgumentException.class, () -> parseFileContents(xmlContents),
+                "The parsing of the empty Tax Output Definition XML should have aborted during setup");
+    }
+
+
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "bad-file-malformed-xml.xml",
+            "bad-file-misnamed-attribute.xml",
+            "bad-file-misnamed-root.xml",
+            "bad-file-no-fields.xml",
+            "bad-file-no-sections.xml",
+            "bad-file-invalid-boolean.xml",
+            "bad-file-invalid-int.xml",
+            "bad-file-missing-field-type.xml",
+            "bad-file-missing-field-key-and-value.xml",
+            "bad-file-field-with-key-and-value.xml",
+            "bad-file-derived-field-with-static-value.xml",
+            "bad-file-derived-field-with-blank-key.xml",
+            "bad-file-static-field-with-derived-key.xml",
+            "bad-file-static-field-with-missing-value-attribute.xml"
+    })
+    void testInvalidOutputDefinitionFiles(final String fileName) throws Exception {
+        final byte[] fileContents = readFileContents(fileName);
+        assertThrows(ParseException.class, () -> parseFileContents(fileContents),
+                "The parsing of the Tax Output Definition file should have failed");
     }
 
 }

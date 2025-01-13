@@ -1,10 +1,12 @@
 package edu.cornell.kfs.tax.batch.xml;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxOutputFieldType;
+import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -84,6 +86,32 @@ public class TaxOutputFieldV2 {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    void afterUnmarshal(final Unmarshaller unmarshaller, final Object parent) {
+        if (key != null) {
+            if (value != null) {
+                throw new IllegalStateException("'key' and 'value' attributes on 'field' tags are mutually exclusive");
+            } else if (StringUtils.isBlank(key)) {
+                throw new IllegalStateException(
+                        "'field' tags that specify the 'key' attribute must not set a blank key");
+            } else if (type != TaxOutputFieldType.DERIVED) {
+                throw new IllegalStateException(
+                        "'field' tags that specify the 'key' attribute must set 'type' to DERIVED");
+            }
+        } else if (StringUtils.isNotBlank(value)) {
+            if (type != TaxOutputFieldType.STATIC) {
+                throw new IllegalStateException(
+                        "'field' tags that specify the 'value' attribute must set 'type' to STATIC");
+            }
+        } else if (type == TaxOutputFieldType.STATIC) {
+            if (value == null) {
+                throw new IllegalStateException("'field' tags with 'type' of STATIC that are meant to have empty data "
+                        + "must specify an empty 'value' attribute");
+            }
+        } else {
+            throw new IllegalStateException("'field' tags must specify either the 'key' or 'value' attribute");
+        }
     }
 
 }
