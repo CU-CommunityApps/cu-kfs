@@ -192,7 +192,12 @@ public class GlTransactionStep extends AbstractStep {
         fieldValues.put("sourceCode", CRConstants.PDP_SRC);
         fieldValues.put("active", true);
 
-        records = businessObjectService.findMatching(CheckReconciliation.class, fieldValues);
+        try {
+            records = businessObjectService.findMatching(CheckReconciliation.class, fieldValues);
+        } catch (RuntimeException e) {
+            logClassLoaderDebugInfo();
+            throw e;
+        }
             
         for(CheckReconciliation cr : records) {
             bankCodes = new ArrayList<String>();
@@ -289,6 +294,14 @@ public class GlTransactionStep extends AbstractStep {
         LOG.info("Completed GlTransactionStep @ " + (new Date()).toString());
 
         return true;
+    }
+    
+    private void logClassLoaderDebugInfo() {
+        Class repoClass = org.apache.ojb.broker.metadata.ClassDescriptor.class;
+        LOG.info("Repository Class Loader: " + repoClass.getClassLoader());
+
+        Class bankClass = org.kuali.kfs.sys.businessobject.Bank.class;
+        LOG.info("Bank Class Loader: " + bankClass.getClassLoader());
     }
 
     /**
