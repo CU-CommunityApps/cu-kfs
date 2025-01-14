@@ -290,6 +290,9 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         
         Class orgClass = org.kuali.kfs.coa.businessobject.Organization.class;
         LOG.info("Organization Class Loader: " + orgClass.getClassLoader());
+        
+        Class targetAcctLineClass = org.kuali.kfs.sys.businessobject.TargetAccountingLine.class;
+        LOG.info("Target Accounting Line Class Loader: " + targetAcctLineClass.getClassLoader());
     }
 
     @SuppressWarnings("unchecked")
