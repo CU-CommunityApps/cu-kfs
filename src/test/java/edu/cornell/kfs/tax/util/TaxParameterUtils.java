@@ -1,9 +1,9 @@
 package edu.cornell.kfs.tax.util;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -48,7 +48,7 @@ public final class TaxParameterUtils {
 
 
     public static ParameterService createUpdatableMockParameterServiceForTaxProcessing() {
-        final Map<Pair<String, String>, Parameter> parameters = new HashMap<>();
+        final Map<Pair<String, String>, Parameter> parameters = new ConcurrentHashMap<>();
         return new CuMockBuilder<>(ParameterService.class)
                 .withAnswer(
                         service -> service.createParameter(Mockito.any()),

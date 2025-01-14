@@ -78,6 +78,8 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
         endDateTime.set(Calendar.MINUTE, FIFTY_NINE);
         endDateTime.set(Calendar.SECOND, FIFTY_NINE);
         
+        LOG.info("copyValuesFromPreviousBuilder, Starting search for Foreign Draft and Wire Transfer DVs");
+        
         // Find all DV documents that were finalized between the start and end dates.
         CuRouteHeaderService routeHeaderService = (CuRouteHeaderService) SpringContext.getBean(
                 RouteHeaderService.class, KEWServiceLocator.DOC_ROUTE_HEADER_SRV);
@@ -90,6 +92,7 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
             // If no matching DV documents were found, then just add a dummy value to prevent query generation problems.
             finalizedDvDocuments.add(CUTaxConstants.DOC_ID_ZERO);
         }
+        LOG.info("copyValuesFromPreviousBuilder, Finished search for Foreign Draft and Wire Transfer DVs");
     }
 
 
@@ -474,13 +477,13 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
                     }
                     
                     // Insert updated first pass raw data into second pass transaction row table.
-                    LOG.info("TransactionRowDvBuilder:: updateTransactionRowsFromWorkflowDocuments: Inserting updated second pass data for "
+                    LOG.debug("TransactionRowDvBuilder:: updateTransactionRowsFromWorkflowDocuments: Inserting updated second pass data for "
                             + "rawTransactionDetailId = {}, documentId = {}", rawTransactionDetailId, documentId);
                     insertUpdatedTransactionDetail(rs, secondPassTransactionInsertStatement, summary, updatedAttributeValues);
                 } else {
                     // If a Foreign Draft or Wire Transfer that wasn't finalized or was in the wrong reporting period,
                     // then log the raw transaction data row was not inserted into the second pass table.
-                    LOG.info("TransactionRowDvBuilder:: updateTransactionRowsFromWorkflowDocuments: NO data inserted for "
+                    LOG.debug("TransactionRowDvBuilder:: updateTransactionRowsFromWorkflowDocuments: NO data inserted for "
                             + "rawTransactionDetailId = {}, documentId = {}", rawTransactionDetailId, documentId);
                 }
             }

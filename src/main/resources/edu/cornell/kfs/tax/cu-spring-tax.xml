@@ -125,7 +125,7 @@
           p:outputClass="edu.cornell.kfs.tax.batch.xml.TaxOutputDefinitionV2"
           p:dateTimeService-ref="dateTimeService"/>
 
-    <bean id="noOpTaxFileGenerationService"
+    <bean id="taxFileGenerationService"
           class="edu.cornell.kfs.tax.batch.service.impl.TaxFileGenerationServiceNoOpImpl"/>
 
     <bean id="taxProcessingV2Service" parent="taxProcessingV2Service-parentBean"/>
@@ -133,7 +133,7 @@
           abstract="true"
           class="edu.cornell.kfs.tax.service.impl.TaxProcessingV2ServiceImpl"
           p:legacyTaxProcessingDao-ref="taxProcessingDao"
-          p:taxFileGenerationService-ref="noOpTaxFileGenerationService"
+          p:taxFileGenerationService-ref="taxFileGenerationService"
           p:taxParameterService-ref="taxParameterService"
           p:dateTimeService-ref="dateTimeService"/>
 

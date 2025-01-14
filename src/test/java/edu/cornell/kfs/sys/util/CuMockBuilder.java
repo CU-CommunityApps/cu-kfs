@@ -5,6 +5,12 @@ import org.apache.commons.lang3.function.FailableFunction;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
+/**
+ * Convenience class for using the "builder" strategy to create a mocked object (or spied object).
+ * The first argument to each "withXXX()" method should be a lambda expression that takes
+ * the mocked/spied object and performs the method invocation that you want to mock/stub.
+ * (The lambda can still specify argument-matching calls such as Mockito.any(), Mockito.eq(), etc.)
+ */
 public final class CuMockBuilder<E> {
 
     private final E mockedObject;

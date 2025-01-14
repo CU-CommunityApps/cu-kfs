@@ -37,7 +37,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
  * named "unit.test.classname" (by means of a separate placeholder configurer bean that this class will
  * automatically set up). This makes it easier for unit test classes to prepare static methods that function
  * as bean factory methods. To help clarify which methods on the unit test class are intended to be used
- * as bean factory methods, they can be annotated with the CU-specific "SpringXmlBeanFactoryMethod" annotation.
+ * as bean factory methods, they can be annotated with the CU-specific "SpringXmlTestBeanFactoryMethod" annotation.
  * 
  * This implementation currently does not inject Spring beans or Spring contexts into the test class.
  * To retrieve a specific Spring bean during a test run, invoke this class's "getBean()" helper method.

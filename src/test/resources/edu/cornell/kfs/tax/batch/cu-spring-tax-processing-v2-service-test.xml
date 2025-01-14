@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="classpath:edu/cornell/kfs/tax/cu-spring-tax.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-base-test-beans.xml"/>
+
+    <bean id="parameterService" class="${unit.test.classname}" factory-method="buildMockParameterService"/>
+
+    <bean id="testTaxConfigHolder" class="${unit.test.classname}" factory-method="buildTaxConfigHolder"/>
+
+    <bean id="taxFileGenerationService" class="${unit.test.classname}"
+          factory-method="buildMockTaxFileGenerationService"
+          c:configHolder-ref="testTaxConfigHolder"/>
+
+    <bean id="taxProcessingDao" class="${unit.test.classname}" factory-method="buildMockTaxProcessingDao"/>
+
+    <bean id="dateTimeService" class="${unit.test.classname}" factory-method="buildSpiedTestDateTimeService"/>
+
+    <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
+        <property name="beanWhitelist">
+            <set merge="true">
+                <idref bean="taxProcessingV2Service"/>
+                <idref bean="taxProcessingV2Service-parentBean"/>
+                <idref bean="taxProcessingDao"/>
+                <idref bean="taxFileGenerationService"/>
+                <idref bean="taxParameterService"/>
+                <idref bean="taxParameterService-parentBean"/>
+                <idref bean="parameterService"/>
+                <idref bean="dateTimeService"/>
+                <idref bean="testTaxConfigHolder"/>
+            </set>
+        </property>
+    </bean>
+
+</beans>

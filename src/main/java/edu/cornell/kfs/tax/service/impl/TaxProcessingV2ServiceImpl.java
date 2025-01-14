@@ -66,6 +66,8 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
             taxConfig = buildTaxBatchConfigForSingleRangeSetting(processingStartDate, taxType, taxRangeSetting);
         } else if (taxRangeSettings.size() == 2) {
             taxConfig = buildTaxBatchConfigForExplicitStartAndEndDates(processingStartDate, taxType, taxRangeSettings);
+        } else if (taxRangeSettings.size() == 0) {
+            throw new IllegalStateException("The dates-to-process parameter cannot be blank");
         } else {
             throw new IllegalStateException("The dates-to-process parameter should only have either 1 value or 2 "
                     + "semicolon-delimited values");
@@ -92,11 +94,20 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
         } else if (StringUtils.equals(taxRangeSetting, CUTaxConstants.PREVIOUS_YEAR_TO_DATE)) {
             return dateTimeService.getLocalDateNow().getYear() - 1;
         } else {
-            try {
-                return Integer.parseInt(taxRangeSetting);
-            } catch (final NumberFormatException e) {
-                throw new IllegalStateException("The dates-to-process parameter contained a malformed tax year");
+            return parseExplicitReportYear(taxRangeSetting);
+        }
+    }
+
+    private int parseExplicitReportYear(final String reportYear) {
+        try {
+            final int parsedYear = Integer.parseInt(reportYear);
+            if (parsedYear <= LocalDate.EPOCH.getYear() || parsedYear > 9999) {
+                throw new IllegalStateException("The dates-to-process parameter should have contained a 4-digit "
+                        + "tax year later than 1970");
             }
+            return parsedYear;
+        } catch (final NumberFormatException e) {
+            throw new IllegalStateException("The dates-to-process parameter contained a malformed tax year");
         }
     }
 
