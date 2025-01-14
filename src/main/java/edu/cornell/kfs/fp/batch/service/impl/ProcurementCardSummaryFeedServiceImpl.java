@@ -193,9 +193,22 @@ public class ProcurementCardSummaryFeedServiceImpl implements ProcurementCardSum
 					entry.setVersionNumber(retrievedEntry
 							.getVersionNumber());
 				}
+			try {
 				businessObjectService.save(entry);
+			} catch (RuntimeException e) {
+			    logClassLoaderDebugInfo();
+			    throw e;
 			}
 		}
+	}
+	
+    private void logClassLoaderDebugInfo() {
+        Class repoClass = org.apache.ojb.broker.metadata.ClassDescriptor.class;
+        LOG.info("Repository Class Loader: " + repoClass.getClassLoader());
+
+        Class pcardSummaryEntryClass = edu.cornell.kfs.fp.businessobject.ProcurementCardSummaryEntry.class;
+        LOG.info("ProcurementCardSummaryEntry Class Loader: " + pcardSummaryEntryClass.getClassLoader());
+    }
 	
 	
 	/**

@@ -269,6 +269,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
                 LOG.error("createAndRouteAccountingDocumentFromXml: Could not route accounting document - " + errorMessage);
                 reportDetail.setErrorMessage(errorMessage);
             } else {
+                logClassLoaderDebugInfo();
                 LOG.error("createAndRouteAccountingDocumentFromXml: Error processing accounting XML document", e);
                 reportDetail.setErrorMessage("Non validation error: " + e.getMessage());
                 reportItem.setNonBusinessRuleFailure(true);
@@ -278,6 +279,20 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             GlobalVariables.getMessageMap().clearErrorMessages();
             GlobalVariables.getMessageMap().clearWarningMessages();
         }
+    }
+    
+    private void logClassLoaderDebugInfo() {
+        Class repoClass = org.apache.ojb.broker.metadata.ClassDescriptor.class;
+        LOG.info("Repository Class Loader: " + repoClass.getClassLoader());
+        
+        Class accountClass = org.kuali.kfs.coa.businessobject.Account.class;
+        LOG.info("Account Class Loader: " + accountClass.getClassLoader());
+        
+        Class orgClass = org.kuali.kfs.coa.businessobject.Organization.class;
+        LOG.info("Organization Class Loader: " + orgClass.getClassLoader());
+        
+        Class targetAcctLineClass = org.kuali.kfs.sys.businessobject.TargetAccountingLine.class;
+        LOG.info("Target Accounting Line Class Loader: " + targetAcctLineClass.getClassLoader());
     }
 
     @SuppressWarnings("unchecked")
