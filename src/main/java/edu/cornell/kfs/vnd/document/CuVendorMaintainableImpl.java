@@ -46,6 +46,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private static final String PROC_METHODS_FIELD_NAME = "extension.procurementMethods";
     private static final String PROC_METHODS_MULTISELECT_FIELD_NAME = "extension.procurementMethodsArray";
     private static final String MULTISELECT_FIELD_PATH_PREFIX = "dataObject.";
+    private static final String VENDOR_IS_EMPLOYEE_SPLIT_NOTE = "VendorIsEmployee";
     
     protected transient PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     
@@ -68,7 +69,22 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         if (nodeName.equals(VENDOR_REQUIRES_APPROVAL_SPLIT_NODE)) {
             return true;
         }
+        
+        if (nodeName.equals(VENDOR_IS_EMPLOYEE_SPLIT_NOTE)) {
+            final VendorDetail vendorDetail = (VendorDetail) super.getBusinessObject();
+            final String vendorTaxNumber = vendorDetail.getVendorHeader().getVendorTaxNumber();
+            
+            return isVendorTaxNumberInWorkdaySSN(vendorTaxNumber);
+        }
+        
         return super.answerSplitNodeQuestion(nodeName);
+    }
+    
+    private boolean isVendorTaxNumberInWorkdaySSN(final String vendorTaxNumber) {
+        /*
+         * @todo implement me
+         */
+        return true;
     }
 
     private void populateGeneratedHerderId(final VendorHeader vendorHeader) {
