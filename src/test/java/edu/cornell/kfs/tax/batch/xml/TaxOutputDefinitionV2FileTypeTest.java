@@ -31,9 +31,9 @@ import edu.cornell.kfs.sys.util.TestSpringContextExtension;
 import edu.cornell.kfs.tax.CuTaxTestConstants.TaxSpringBeans;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxOutputFieldType;
 import edu.cornell.kfs.tax.batch.TaxOutputDefinitionV2FileType;
-import edu.cornell.kfs.tax.fixture.TaxOutputDefinition;
-import edu.cornell.kfs.tax.fixture.TaxOutputField;
-import edu.cornell.kfs.tax.fixture.TaxOutputSection;
+import edu.cornell.kfs.tax.fixture.TaxOutputDefinitionFixture;
+import edu.cornell.kfs.tax.fixture.TaxOutputFieldFixture;
+import edu.cornell.kfs.tax.fixture.TaxOutputSectionFixture;
 
 @Execution(ExecutionMode.SAME_THREAD)
 @CreateTestDirectories(
@@ -72,9 +72,9 @@ public class TaxOutputDefinitionV2FileTypeTest {
 
     enum LocalTestCase {
 
-        @TaxOutputDefinition(fieldSeparator = KFSConstants.COMMA, sections = {
-                @TaxOutputSection(name = "Example_Section", fields = {
-                        @TaxOutputField(
+        @TaxOutputDefinitionFixture(fieldSeparator = KFSConstants.COMMA, sections = {
+                @TaxOutputSectionFixture(name = "Example_Section", fields = {
+                        @TaxOutputFieldFixture(
                                 name = "recipient_id", length = 25,
                                 type = TaxOutputFieldType.DERIVED, key = "recipientId"
                         )
@@ -82,21 +82,22 @@ public class TaxOutputDefinitionV2FileTypeTest {
         })
         SINGLE_SECTION_SINGLE_FIELD,
 
-        @TaxOutputDefinition(fieldSeparator = "\t", sections = {
-                @TaxOutputSection(name = "Tax_Section", hasHeaderRow = true, useExactFieldLengths = true, fields = {
-                        @TaxOutputField(
+        @TaxOutputDefinitionFixture(fieldSeparator = "\t", sections = {
+                @TaxOutputSectionFixture(name = "Tax_Section", hasHeaderRow = true,
+                            useExactFieldLengths = true, fields = {
+                        @TaxOutputFieldFixture(
                                 name = "recipient_id", length = 25,
                                 type = TaxOutputFieldType.DERIVED, key = "recipientId"
                         ),
-                        @TaxOutputField(
+                        @TaxOutputFieldFixture(
                                 name = "full_name", length = 90,
                                 type = TaxOutputFieldType.DERIVED, key = "recipientName"
                         ),
-                        @TaxOutputField(
+                        @TaxOutputFieldFixture(
                                 name = "tax_amount", length = 15,
                                 type = TaxOutputFieldType.DERIVED, key = "taxAmount"
                         ),
-                        @TaxOutputField(
+                        @TaxOutputFieldFixture(
                                 name = "other_amount", length = 15,
                                 type = TaxOutputFieldType.STATIC, value = "0.00"
                         )
@@ -104,35 +105,35 @@ public class TaxOutputDefinitionV2FileTypeTest {
         })
         SINGLE_SECTION_MULTIPLE_FIELDS,
 
-        @TaxOutputDefinition(fieldSeparator = KFSConstants.COMMA, sections = {
-                @TaxOutputSection(name = "Biographic_Section", hasHeaderRow = true, fields = {
-                        @TaxOutputField(
+        @TaxOutputDefinitionFixture(fieldSeparator = KFSConstants.COMMA, sections = {
+                @TaxOutputSectionFixture(name = "Biographic_Section", hasHeaderRow = true, fields = {
+                        @TaxOutputFieldFixture(
                                 name = "recipient_id", length = 25,
                                 type = TaxOutputFieldType.DERIVED, key = "recipientId"
                         ),
-                        @TaxOutputField(
+                        @TaxOutputFieldFixture(
                                 name = "full_name", length = 90,
                                 type = TaxOutputFieldType.DERIVED, key = "recipientName"
                         ),
-                        @TaxOutputField(
+                        @TaxOutputFieldFixture(
                                 name = "primary_address", length = 120,
                                 type = TaxOutputFieldType.DERIVED, key = "recipientAddress"
                         ),
-                        @TaxOutputField(
+                        @TaxOutputFieldFixture(
                                 name = "extra_address", length = 120,
                                 type = TaxOutputFieldType.STATIC, value = ""
                         )
                 }),
-                @TaxOutputSection(name = "Payment_Section", hasHeaderRow = true, fields = {
-                        @TaxOutputField(
+                @TaxOutputSectionFixture(name = "Payment_Section", hasHeaderRow = true, fields = {
+                        @TaxOutputFieldFixture(
                                 name = "recipient_id", length = 25,
                                 type = TaxOutputFieldType.DERIVED, key = "recipientId"
                         ),
-                        @TaxOutputField(
+                        @TaxOutputFieldFixture(
                                 name = "payment_source", length = 10,
                                 type = TaxOutputFieldType.STATIC, value = "Cornell"
                         ),
-                        @TaxOutputField(
+                        @TaxOutputFieldFixture(
                                 name = "tax_amount", length = 15,
                                 type = TaxOutputFieldType.DERIVED, key = "taxAmount"
                         )
@@ -140,8 +141,8 @@ public class TaxOutputDefinitionV2FileTypeTest {
         })
         MULTIPLE_SECTIONS_MULTIPLE_FIELDS;
 
-        public Named<TaxOutputDefinition> toNamedAnnotationFixturePayload() {
-            return FixtureUtils.createNamedAnnotationFixturePayload(this, TaxOutputDefinition.class);
+        public Named<TaxOutputDefinitionFixture> toNamedAnnotationFixturePayload() {
+            return FixtureUtils.createNamedAnnotationFixturePayload(this, TaxOutputDefinitionFixture.class);
         }
     }
 
@@ -159,9 +160,9 @@ public class TaxOutputDefinitionV2FileTypeTest {
 
     @ParameterizedTest
     @MethodSource("validOutputDefinitions")
-    void testLoadValidOutputDefinitionFiles(final String fileName, final TaxOutputDefinition expectedFixture)
+    void testLoadValidOutputDefinitionFiles(final String fileName, final TaxOutputDefinitionFixture expectedFixture)
             throws Exception {
-        final TaxOutputDefinitionV2 expectedResult = TaxOutputDefinition.Utils.toDTO(expectedFixture);
+        final TaxOutputDefinitionV2 expectedResult = TaxOutputDefinitionFixture.Utils.toDTO(expectedFixture);
         final byte[] fileContents = readFileContents(fileName);
         final TaxOutputDefinitionV2 actualResult = parseFileContents(fileContents);
         assertEquals(expectedResult, actualResult, "Wrong DTO structure");

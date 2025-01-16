@@ -119,7 +119,7 @@ public class TaxProcessingV2ServiceImplTest {
         final TestDateTimeServiceImpl dateTimeService = new TestDateTimeServiceImpl();
         dateTimeService.afterPropertiesSet();
         return new CuMockBuilder<>(dateTimeService)
-                .withReturn(service -> service.getLocalDateNow(), TEST_DATE_2025_01_10)
+                .withReturn(TestDateTimeServiceImpl::getLocalDateNow, TEST_DATE_2025_01_10)
                 .build();
     }
 

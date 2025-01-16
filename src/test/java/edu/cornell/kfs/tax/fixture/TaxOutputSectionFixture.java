@@ -10,7 +10,7 @@ import edu.cornell.kfs.tax.batch.xml.TaxOutputSectionV2;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface TaxOutputSection {
+public @interface TaxOutputSectionFixture {
 
     String name();
 
@@ -18,18 +18,18 @@ public @interface TaxOutputSection {
 
     boolean useExactFieldLengths() default false;
 
-    TaxOutputField[] fields();
+    TaxOutputFieldFixture[] fields();
 
 
 
     public static final class Utils {
-        public static TaxOutputSectionV2 toDTO(final TaxOutputSection fixture) {
+        public static TaxOutputSectionV2 toDTO(final TaxOutputSectionFixture fixture) {
             final TaxOutputSectionV2 taxSection = new TaxOutputSectionV2();
             taxSection.setName(fixture.name());
             taxSection.setHasHeaderRow(fixture.hasHeaderRow());
             taxSection.setUseExactFieldLengths(fixture.useExactFieldLengths());
             taxSection.setFields(
-                    FixtureUtils.convertFixtures(TaxOutputField.Utils::toDTO, fixture.fields()));
+                    FixtureUtils.convertFixtures(TaxOutputFieldFixture.Utils::toDTO, fixture.fields()));
             return taxSection;
         }
     }

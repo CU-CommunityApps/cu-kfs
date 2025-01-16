@@ -32,12 +32,16 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
     public void performTaxProcessingFor1042S(final java.util.Date processingStartDate) {
         try {
             LOG.info("performTaxProcessingFor1042S, Starting 1042-S tax processing...");
+
             final TaxBatchConfig config = buildTaxBatchConfigFor1042S(processingStartDate);
+
             LOG.info("performTaxProcessingFor1042S, Finding transactions to process...");
             createTransactionDetailRowsFor1042SUsingLegacyProcess(config);
+
             LOG.info("performTaxProcessingFor1042S, Generating 1042-S files...");
             LOG.warn("performTaxProcessingFor1042S, 1042-S tax file generation has not been fully implemented yet");
             taxFileGenerationService.generateFiles(config);
+
             LOG.info("performTaxProcessingFor1042S, Finished 1042-S tax processing");
         } catch (final Exception e) {
             LOG.error("performTaxProcessingFor1042S, Could not complete 1042-S processing", e);
@@ -61,12 +65,13 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
         final Collection<String> taxRangeSettings = taxParameterService.getParameterValuesAsString(
                 taxParameterComponent, taxType + TaxCommonParameterNames.DATES_TO_PROCESS_PARAMETER_SUFFIX);
         final TaxBatchConfig taxConfig;
+
         if (taxRangeSettings.size() == 1) {
             final String taxRangeSetting = taxRangeSettings.iterator().next();
             taxConfig = buildTaxBatchConfigForSingleRangeSetting(processingStartDate, taxType, taxRangeSetting);
         } else if (taxRangeSettings.size() == 2) {
             taxConfig = buildTaxBatchConfigForExplicitStartAndEndDates(processingStartDate, taxType, taxRangeSettings);
-        } else if (taxRangeSettings.size() == 0) {
+        } else if (taxRangeSettings.isEmpty()) {
             throw new IllegalStateException("The dates-to-process parameter cannot be blank");
         } else {
             throw new IllegalStateException("The dates-to-process parameter should only have either 1 value or 2 "

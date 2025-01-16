@@ -13,7 +13,7 @@ import edu.cornell.kfs.tax.batch.xml.TaxOutputFieldV2;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface TaxOutputField {
+public @interface TaxOutputFieldFixture {
 
     String name();
 
@@ -28,7 +28,7 @@ public @interface TaxOutputField {
 
 
     public static final class Utils {
-        public static TaxOutputFieldV2 toDTO(final TaxOutputField fixture) {
+        public static TaxOutputFieldV2 toDTO(final TaxOutputFieldFixture fixture) {
             final TaxOutputFieldV2 taxField = new TaxOutputFieldV2();
             taxField.setName(fixture.name());
             taxField.setLength(fixture.length());

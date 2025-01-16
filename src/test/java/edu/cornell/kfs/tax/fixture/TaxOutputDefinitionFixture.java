@@ -10,20 +10,20 @@ import edu.cornell.kfs.tax.batch.xml.TaxOutputDefinitionV2;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface TaxOutputDefinition {
+public @interface TaxOutputDefinitionFixture {
 
     String fieldSeparator();
 
-    TaxOutputSection[] sections();
+    TaxOutputSectionFixture[] sections();
 
 
 
     public static final class Utils {
-        public static TaxOutputDefinitionV2 toDTO(final TaxOutputDefinition fixture) {
+        public static TaxOutputDefinitionV2 toDTO(final TaxOutputDefinitionFixture fixture) {
             final TaxOutputDefinitionV2 outputDefinition = new TaxOutputDefinitionV2();
             outputDefinition.setFieldSeparator(fixture.fieldSeparator());
             outputDefinition.setSections(
-                    FixtureUtils.convertFixtures(TaxOutputSection.Utils::toDTO, fixture.sections()));
+                    FixtureUtils.convertFixtures(TaxOutputSectionFixture.Utils::toDTO, fixture.sections()));
             return outputDefinition;
         }
     }
