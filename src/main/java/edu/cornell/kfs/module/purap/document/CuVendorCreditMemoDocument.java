@@ -1,6 +1,5 @@
 package edu.cornell.kfs.module.purap.document;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
@@ -17,14 +16,14 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.PaymentSource;
 
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
-import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
 
-public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
-	private static final Logger LOG = LogManager.getLogger();
-	
+public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument implements PaymentSource {
+    private static final Logger LOG = LogManager.getLogger();
+    
     public static String DOCUMENT_TYPE_NON_CHECK = "CMNC";
 
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
@@ -38,10 +37,10 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
     
     @Override
     public void prepareForSave(final KualiDocumentEvent event) {
-    	super.prepareForSave(event);
-    	
+        super.prepareForSave(event);
+        
         try {
-          	wireTransfer.setDocumentNumber(getDocumentNumber());
+            wireTransfer.setDocumentNumber(getDocumentNumber());
         } catch (Exception e) {
             LOG.info("wireTransfer is null" );
             wireTransfer = new PaymentSourceWireTransfer();  
@@ -69,7 +68,7 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
     }
     
     @Override
-	public void customizeExplicitGeneralLedgerPendingEntry( final GeneralLedgerPendingEntrySourceDetail postable, final GeneralLedgerPendingEntry explicitEntry) {
+    public void customizeExplicitGeneralLedgerPendingEntry( final GeneralLedgerPendingEntrySourceDetail postable, final GeneralLedgerPendingEntry explicitEntry) {
         super.customizeExplicitGeneralLedgerPendingEntry(postable, explicitEntry);
         
         // KFSPTS-1891
@@ -134,6 +133,16 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
             cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
         }
         return cuCheckStubService;
+    }
+
+    @Override
+    public boolean hasAttachment() {
+        return false;
+    }
+
+    @Override
+    public String getCampusCode() {
+        return getProcessingCampusCode();
     }
 
 }
