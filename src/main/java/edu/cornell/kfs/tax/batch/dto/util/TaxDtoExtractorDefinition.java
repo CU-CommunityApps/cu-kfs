@@ -17,6 +17,7 @@ public final class TaxDtoExtractorDefinition<T> {
         Validate.notNull(dtoClass, "dtoClass cannot be null");
         Validate.notNull(sourceBusinessObjects, "sourceBusinessObjects cannot be null");
         Validate.notNull(fieldExtractors, "fieldExtractors cannot be null");
+
         this.dtoClass = dtoClass;
         this.sourceBusinessObjects = List.of(sourceBusinessObjects);
         this.fieldExtractors = List.copyOf(fieldExtractors);

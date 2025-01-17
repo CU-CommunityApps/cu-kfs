@@ -11,6 +11,6 @@ import org.kuali.kfs.krad.bo.BusinessObject;
 @Target(ElementType.TYPE)
 public @interface UpdatableTaxDto {
 
-    Class<? extends BusinessObject> relatedBusinessObject();
+    Class<? extends BusinessObject> targetBusinessObject();
 
 }
