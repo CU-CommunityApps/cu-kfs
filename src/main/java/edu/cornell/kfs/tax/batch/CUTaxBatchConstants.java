@@ -67,6 +67,11 @@ public final class CUTaxBatchConstants {
         PHONE_NUMBER;
     }
 
+    public enum TaxOutputFieldType {
+        STATIC,
+        DERIVED;
+    }
+
     /**
      * Helper subclass containing aliases for vendor fields used by the tax processing.
      */
