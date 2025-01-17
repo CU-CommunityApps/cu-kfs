@@ -17,12 +17,14 @@ public final class CUTaxConstants {
     public static final String PREVIOUS_YEAR_TO_DATE = "PYTD";
 
     public static final String TAX_OUTPUT_DEFINITION_FILE_TYPE_IDENTIFIER = "taxOutputDefinitionFileType";
+    public static final String TAX_OUTPUT_DEFINITION_V2_FILE_TYPE_IDENTIFIER = "taxOutputDefinitionV2FileType";
     public static final String TAX_DATA_DEFINITION_FILE_TYPE_IDENTIFIER = "taxDataDefinitionFileType";
     public static final String TRANSACTION_OVERRIDE_FILE_TYPE_IDENTIFIER = "transactionOverrideCSVInputFileType";
 
     public static final String RECORD_SOURCE_KFS = "KFS";
     public static final String TAX_TYPE_1099 = "1099";
     public static final String TAX_TYPE_1042S = "1042S";
+    public static final String TAX_TYPE_1042S_CREATE_TRANSACTION_ROWS_ONLY = "1042S_CREATE_TRANSACTION_ROWS_ONLY";
     public static final String TAX_SOURCE_DV = "DV";
     public static final String TAX_SOURCE_PDP = "PDP";
     public static final String TAX_SOURCE_PRNC = "PRNC";
@@ -92,6 +94,7 @@ public final class CUTaxConstants {
         public static final String TAX_OUTPUT_EIN = "tax.output.ein";
         public static final String TAX_OUTPUT_SCRUBBED = "tax.output.scrubbed";
         public static final String MESSAGE_BATCH_UPLOAD_TITLE_TAX_OUTPUT_DEFINITION = "message.batchUpload.title.taxOutputDefinition";
+        public static final String MESSAGE_BATCH_UPLOAD_TITLE_TAX_OUTPUT_DEFINITION_V2 = "message.batchUpload.title.taxOutputDefinitionV2";
         public static final String MESSAGE_BATCH_UPLOAD_TITLE_TAX_DATA_DEFINITION = "message.batchUpload.title.taxDataDefinition";
         public static final String MESSAGE_BATCH_UPLOAD_TITLE_TRANSACTION_OVERRIDE = "message.batchUpload.title.transactionOverride";
         public static final String ERROR_BATCH_UPLOAD_INVALID_TRANSACTION_OVERRIDES = "error.batchUpload.invalidTransactionOverrides";

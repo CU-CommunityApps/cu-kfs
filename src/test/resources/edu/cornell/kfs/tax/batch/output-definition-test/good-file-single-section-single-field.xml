@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taxOutputDefinition fieldSeparator=",">
+    <section name="Example_Section">
+        <field name="recipient_id" length="25" type="DERIVED" key="recipientId"/>
+    </section>
+</taxOutputDefinition>

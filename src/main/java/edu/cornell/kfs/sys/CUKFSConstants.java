@@ -166,12 +166,18 @@ public class CUKFSConstants {
     public static final String DOUBLE_QUOTE = "\"";
     public static final String CAPITAL_X = "X";
     public static final String PLUS_SIGN = "+";
+    public static final String CARET = "^";
+    public static final String DOLLAR_SIGN = "$";
+    public static final String UNDERSCORE = "_";
     public static final String ELLIPSIS = "...";
     public static final String PADDED_HYPHEN = " - ";
     public static final String COMMA_AND_SPACE = ", ";
     public static final String COMMA_WITH_QUOTES = "\",\"";
     public static final String NULL = "NULL";
-    
+
+    public static final String REGEX_WILDCARD = ".";
+    public static final String REGEX_ZERO_OR_MORE_SYMBOL = "*";
+
     public static final String DOCUMENT_ID = "documentId";
     
     public static final String XML_FILE_EXTENSION = ".xml";
