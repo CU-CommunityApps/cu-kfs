@@ -36,9 +36,6 @@ import org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTaxService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherValidationService;
-import org.kuali.kfs.integration.ar.AccountsReceivableCustomer;
-import org.kuali.kfs.integration.ar.AccountsReceivableCustomerAddress;
-import org.kuali.kfs.integration.ar.AccountsReceivableModuleService;
 import org.kuali.kfs.kew.api.document.DocumentStatus;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.identity.Person;
@@ -53,6 +50,8 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.util.UrlFactory;
+import org.kuali.kfs.module.ar.businessobject.Customer;
+import org.kuali.kfs.module.ar.businessobject.CustomerAddress;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -698,17 +697,21 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
 
         // check for multiple custom addresses
         if (isPayeeLookupable && dvForm.isCustomer()) {
-            final AccountsReceivableCustomer customer = SpringContext.getBean(AccountsReceivableModuleService.class).findCustomer(payeeIdNumber);
+            final Customer customer = SpringContext.getBean(BusinessObjectService.class)
+                    .findBySinglePrimaryKey(Customer.class, payeeIdNumber);
 
-            AccountsReceivableCustomerAddress defaultCustomerAddress = null;
+            CustomerAddress defaultCustomerAddress = null;
             if (customer != null) {
                 defaultCustomerAddress = customer.getPrimaryAddress();
 
                 final Map<String, String> addressSearch = new HashMap<>();
                 addressSearch.put(KFSPropertyConstants.CUSTOMER_NUMBER, payeeIdNumber);
 
-                final List<AccountsReceivableCustomerAddress> customerAddresses = (List<AccountsReceivableCustomerAddress>)
-                    SpringContext.getBean(AccountsReceivableModuleService.class).searchForCustomerAddresses(addressSearch);
+                final List<CustomerAddress> customerAddresses =
+                        (List<CustomerAddress>) getBusinessObjectService().findMatching(CustomerAddress.class,
+                                addressSearch
+                        );
+                
                 if (customerAddresses != null && !customerAddresses.isEmpty()) {
                     if (customerAddresses.size() > 1) {
                         dvForm.setHasMultipleAddresses(true);
@@ -862,7 +865,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         final Map<String, String> props = new HashMap<>();
 
         props.put(KRADConstants.SUPPRESS_ACTIONS, Boolean.toString(true));
-        props.put(KRADConstants.BUSINESS_OBJECT_CLASS_ATTRIBUTE, AccountsReceivableCustomerAddress.class.getName());
+        props.put(KRADConstants.BUSINESS_OBJECT_CLASS_ATTRIBUTE, CustomerAddress.class.getName());
         props.put(KRADConstants.LOOKUP_ANCHOR, KRADConstants.ANCHOR_TOP_OF_FORM);
         props.put(KRADConstants.LOOKED_UP_COLLECTION_NAME, KFSPropertyConstants.VENDOR_ADDRESSES);
 
@@ -898,12 +901,15 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     protected void setupPayeeAsCustomer(
             final DisbursementVoucherForm dvForm, final String payeeIdNumber,
             final String payeeAddressIdentifier) {
-        final AccountsReceivableCustomer customer = SpringContext.getBean(AccountsReceivableModuleService.class).findCustomer(payeeIdNumber);
+        final Customer customer = SpringContext.getBean(BusinessObjectService.class)
+                .findBySinglePrimaryKey(Customer.class, payeeIdNumber);
 
-        AccountsReceivableCustomerAddress customerAddress = null;
+        CustomerAddress customerAddress = null;
         if (StringUtils.isNotBlank(payeeAddressIdentifier)) {
-            customerAddress = SpringContext.getBean(AccountsReceivableModuleService.class).findCustomerAddress(payeeIdNumber,
-                    payeeAddressIdentifier);
+            customerAddress = getBusinessObjectService().findByPrimaryKey(
+                    CustomerAddress.class,
+                    Map.of(payeeIdNumber, payeeAddressIdentifier)
+            );
         }
 
         dvForm.setTempPayeeIdNumber(payeeIdNumber);

@@ -21,7 +21,7 @@
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
 
-        <kfs.version>2023-04-19</kfs.version>
+        <kfs.version>2023-06-28</kfs.version>
 
         <aws-java-sdk.version>2.25.2</aws-java-sdk.version>
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>

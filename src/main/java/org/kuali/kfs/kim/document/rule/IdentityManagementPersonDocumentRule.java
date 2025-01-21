@@ -18,14 +18,6 @@
  */
 package org.kuali.kfs.kim.document.rule;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.criteria.PredicateFactory;
@@ -66,6 +58,14 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import edu.cornell.kfs.kim.CuKimConstants.AffiliationStatuses;
 import edu.cornell.kfs.kim.CuKimConstants.KfsAffiliations;
 import edu.cornell.kfs.kim.CuKimKeyConstants;
@@ -74,6 +74,8 @@ import edu.cornell.kfs.kim.api.identity.CuPersonService;
 import edu.cornell.kfs.kim.bo.ui.PersonDocumentAffiliation;
 import edu.cornell.kfs.kim.rule.event.ui.AddAffiliationEvent;
 import edu.cornell.kfs.kim.rule.ui.AddAffiliationRule;
+
+
 
 /*
  * CU Customization:
@@ -107,7 +109,7 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
     /*
      * CU Customization: Add CuPersonService reference.
      */
-    private CuPersonService cuPersonService;
+    private static CuPersonService cuPersonService;
 
     @Override
     protected boolean processCustomSaveDocumentBusinessRules(final Document document) {
@@ -284,7 +286,7 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
      * CU Customization: Also verify that the CU-specific affiliation fields have been populated.
      *                   Also converted this method from a static one to an instance one.
      */
-    private boolean validateAffiliationAndName(final IdentityManagementPersonDocument personDoc) {
+    private static boolean validateAffiliationAndName(final IdentityManagementPersonDocument personDoc) {
         boolean valid = true;
         if (StringUtils.isBlank(personDoc.getAffiliationTypeCode())) {
             GlobalVariables.getMessageMap().putError("affiliationTypeCode", KFSKeyConstants.ERROR_REQUIRED,
@@ -314,7 +316,7 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
      * CU Customization: Added several helper methods for validating CU-specific affiliation data.
      */
 
-    private boolean validateAffiliations(final IdentityManagementPersonDocument personDoc) {
+    private static boolean validateAffiliations(final IdentityManagementPersonDocument personDoc) {
         final boolean primaryAffiliationTypeIsPresent = StringUtils.isNotBlank(personDoc.getAffiliationTypeCode());
 
         final List<PersonDocumentAffiliation> affiliations = personDoc.getPersonDocumentExtension().getAffiliations();
@@ -331,7 +333,7 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
         return valid;
     }
 
-    private boolean validateSetupForEmptyAffiliationsList(final IdentityManagementPersonDocument personDoc,
+    private static boolean validateSetupForEmptyAffiliationsList(final IdentityManagementPersonDocument personDoc,
             final List<PersonDocumentAffiliation> affiliations) {
         final EntityAffiliationType noneAffil = getCuPersonService().getAffiliationType(KfsAffiliations.NONE);
         if (!StringUtils.equals(personDoc.getAffiliationTypeCode(), KfsAffiliations.NONE)) {
@@ -343,7 +345,7 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
         }
     }
 
-    private boolean validateAffiliationCounts(final List<PersonDocumentAffiliation> affiliations) {
+    private static boolean validateAffiliationCounts(final List<PersonDocumentAffiliation> affiliations) {
         boolean valid = true;
 
         final Set<String> uniqueAffiliations = new HashSet<>();
@@ -366,13 +368,13 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
         return valid;
     }
 
-    private int getPrimaryAffiliationCount(final List<PersonDocumentAffiliation> affiliations) {
+    private static int getPrimaryAffiliationCount(final List<PersonDocumentAffiliation> affiliations) {
         return (int) affiliations.stream()
                 .filter(PersonDocumentAffiliation::isPrimary)
                 .count();
     }
 
-    private boolean validatePrimaryAffiliationPresence(final IdentityManagementPersonDocument personDoc,
+    private static boolean validatePrimaryAffiliationPresence(final IdentityManagementPersonDocument personDoc,
             final List<PersonDocumentAffiliation> affiliations) {
         final PersonDocumentAffiliation primaryAffiliation = affiliations.stream()
                 .filter(affiliation ->
@@ -392,7 +394,7 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
         }
     }
 
-    private boolean validateAffiliationStatuses(final List<PersonDocumentAffiliation> affiliations) {
+    private static boolean validateAffiliationStatuses(final List<PersonDocumentAffiliation> affiliations) {
         boolean valid = true;
         int i = -1;
         for (final PersonDocumentAffiliation affiliation : affiliations) {
@@ -419,7 +421,7 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
         return valid;
     }
 
-    private String buildListEntryPropertyPath(String listPath, int index, String entryPropertyName) {
+    private static String buildListEntryPropertyPath(String listPath, int index, String entryPropertyName) {
         return StringUtils.join(listPath, KFSConstants.SQUARE_BRACKET_LEFT, index, KFSConstants.SQUARE_BRACKET_RIGHT,
                 KFSConstants.DELIMITER, entryPropertyName);
     }
@@ -669,7 +671,7 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
         return rulePassed;
     }
 
-    private static boolean validAssignGroup(
+    private boolean validAssignGroup(
             final IdentityManagementPersonDocument document,
             final PersonDocumentGroup newGroup
     ) {
@@ -905,7 +907,7 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
     /*
      * CU Customization: Add CuPersonService getter.
      */
-    protected CuPersonService getCuPersonService() {
+    protected static CuPersonService getCuPersonService() {
         if (cuPersonService == null) {
             cuPersonService = (CuPersonService) KimApiServiceLocator.getPersonService();
         }

@@ -1,15 +1,21 @@
 package edu.cornell.kfs.module.cg.document.validation.impl;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.integration.ar.AccountsReceivableModuleBillingService;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
+import org.kuali.kfs.module.ar.ArConstants;
+import org.kuali.kfs.module.ar.businessobject.Bill;
+import org.kuali.kfs.module.ar.businessobject.Milestone;
+import org.kuali.kfs.module.ar.businessobject.MilestoneSchedule;
+import org.kuali.kfs.module.ar.businessobject.PredeterminedBillingSchedule;
 import org.kuali.kfs.module.cg.CGConstants;
 import org.kuali.kfs.module.cg.CGKeyConstants;
 import org.kuali.kfs.module.cg.CGPropertyConstants;
@@ -285,19 +291,17 @@ public class AwardExtensionRule extends AwardRule {
         if (!StringUtils.equals(newBillingFrequencyCode, oldBillingFrequencyCode)) {
             final String proposalNumber = newAwardCopy.getProposalNumber();
             for(ContractsAndGrantsBillingAwardAccount awardAccount: newAwardCopy.getActiveAwardAccounts()) {
-                if (StringUtils.equals(oldBillingFrequencyCode, CGConstants.MILESTONE_BILLING_SCHEDULE_CODE) &&
-                    SpringContext.getBean(AccountsReceivableModuleBillingService.class)
-                        .hasActiveUnbilledMilestones(proposalNumber, awardAccount.getChartOfAccountsCode(),
+                if (StringUtils.equals(oldBillingFrequencyCode, ArConstants.BillingFrequencyValues.MILESTONE.getCode()) &&
+                    hasActiveUnbilledMilestones(proposalNumber, awardAccount.getChartOfAccountsCode(),
                             awardAccount.getAccountNumber())) {
                     success = false;
                     putFieldError(CGPropertyConstants.AwardFields.BILLING_FREQUENCY_CODE,
                         CGKeyConstants.AwardConstants.ERROR_CG_ACTIVE_MILESTONES_EXIST,
                         getBillingFrequencyDescription(newAwardCopy));
                     break;
-                } else if (StringUtils.equals(oldBillingFrequencyCode, CGConstants.PREDETERMINED_BILLING_SCHEDULE_CODE) &&
-                    SpringContext.getBean(AccountsReceivableModuleBillingService.class)
-                    		.hasActiveUnbilledBills(proposalNumber, awardAccount.getChartOfAccountsCode(),
-                    			awardAccount.getAccountNumber())) {
+                } else if (StringUtils.equals(oldBillingFrequencyCode, ArConstants.BillingFrequencyValues.PREDETERMINED_BILLING.getCode()) &&
+                    hasActiveUnbilledBills(proposalNumber, awardAccount.getChartOfAccountsCode(),
+                            awardAccount.getAccountNumber())) {
                     success = false;
                     putFieldError(CGPropertyConstants.AwardFields.BILLING_FREQUENCY_CODE,
                         CGKeyConstants.AwardConstants.ERROR_CG_ACTIVE_BILLS_EXIST,
@@ -315,6 +319,52 @@ public class AwardExtensionRule extends AwardRule {
             return StringUtils.EMPTY;
         }
         return award.getBillingFrequency().getFrequencyDescription();
+    }
+    
+    private boolean hasActiveUnbilledMilestones(
+            final String proposalNumber,
+            final String chartOfAccountsCode,
+            final String accountNumber
+    ) {
+        final Map<String, Object> primaryKeys = new HashMap<>();
+        primaryKeys.put(KFSPropertyConstants.PROPOSAL_NUMBER, proposalNumber);
+        primaryKeys.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartOfAccountsCode);
+        primaryKeys.put(KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber);
+
+        final MilestoneSchedule schedule = getBoService().findByPrimaryKey(MilestoneSchedule.class, primaryKeys);
+        if (ObjectUtils.isNotNull(schedule)) {
+            for (final Milestone milestone : schedule.getMilestones()) {
+                if (milestone.isActive() && !milestone.isBilled()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+    
+    private boolean hasActiveUnbilledBills(
+            final String proposalNumber,
+            final String chartOfAccountsCode,
+            final String accountNumber
+    ) {
+        final Map<String, Object> primaryKeys = new HashMap<>();
+        primaryKeys.put(KFSPropertyConstants.PROPOSAL_NUMBER, proposalNumber);
+        primaryKeys.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartOfAccountsCode);
+        primaryKeys.put(KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber);
+
+        final PredeterminedBillingSchedule schedule =
+                getBoService().findByPrimaryKey(PredeterminedBillingSchedule.class, primaryKeys);
+
+        if (ObjectUtils.isNotNull(schedule)) {
+            for (final Bill bill : schedule.getBills()) {
+                if (bill.isActive() && !bill.isBilled()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

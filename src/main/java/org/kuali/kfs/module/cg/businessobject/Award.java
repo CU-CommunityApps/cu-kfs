@@ -23,12 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.integration.ar.AccountsReceivableBillingFrequency;
-import org.kuali.kfs.integration.ar.AccountsReceivableCustomer;
-import org.kuali.kfs.integration.ar.AccountsReceivableCustomerAddress;
-import org.kuali.kfs.integration.ar.AccountsReceivableMilestoneSchedule;
-import org.kuali.kfs.integration.ar.AccountsReceivableModuleBillingService;
-import org.kuali.kfs.integration.ar.AccountsReceivablePredeterminedBillingSchedule;
 import org.kuali.kfs.integration.cg.CGIntegrationConstants;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
@@ -37,11 +31,15 @@ import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.kfs.krad.service.KualiModuleService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.ar.businessobject.BillingFrequency;
+import org.kuali.kfs.module.ar.businessobject.CustomerAddress;
+import org.kuali.kfs.module.ar.businessobject.MilestoneSchedule;
+import org.kuali.kfs.module.ar.businessobject.PredeterminedBillingSchedule;
+import org.kuali.kfs.module.ar.document.service.ContractsGrantsInvoiceDocumentService;
 import org.kuali.kfs.module.ar.ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType;
-import org.kuali.kfs.module.cg.CGPropertyConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 
@@ -140,10 +138,10 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
 
     private boolean autoApproveIndicator;
 
-    private AccountsReceivableCustomerAddress customerAddress;
-    private AccountsReceivableMilestoneSchedule milestoneSchedule;
-    private AccountsReceivablePredeterminedBillingSchedule predeterminedBillingSchedule;
-    private AccountsReceivableBillingFrequency billingFrequency;
+    private CustomerAddress customerAddress;
+    private MilestoneSchedule milestoneSchedule;
+    private PredeterminedBillingSchedule predeterminedBillingSchedule;
+    private BillingFrequency billingFrequency;
 
     private Date fundingExpirationDate;
     private String dunningCampaign;
@@ -351,7 +349,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      */
     @Override
     public Date getLastBilledDate() {
-        return SpringContext.getBean(AccountsReceivableModuleBillingService.class).getLastBilledDate(this);
+        return SpringContext.getBean(ContractsGrantsInvoiceDocumentService.class).getLastBilledDate(this);
     }
 
     @Override
@@ -993,17 +991,15 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     }
 
     @Override
-    public AccountsReceivableBillingFrequency getBillingFrequency() {
+    public BillingFrequency getBillingFrequency() {
         if (billingFrequency == null || !StringUtils.equals(billingFrequency.getFrequency(), billingFrequencyCode)) {
-            billingFrequency = SpringContext.getBean(KualiModuleService.class)
-                .getResponsibleModuleService(AccountsReceivableBillingFrequency.class)
-                .retrieveExternalizableBusinessObjectIfNecessary(this, billingFrequency,
-                    CGPropertyConstants.BILLING_FREQUENCY);
+            billingFrequency = SpringContext.getBean(BusinessObjectService.class)
+                .findBySinglePrimaryKey(BillingFrequency.class, billingFrequencyCode);
         }
         return billingFrequency;
     }
 
-    public void setBillingFrequency(final AccountsReceivableBillingFrequency billingFrequency) {
+    public void setBillingFrequency(final BillingFrequency billingFrequency) {
         this.billingFrequency = billingFrequency;
     }
 
@@ -1062,35 +1058,27 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         this.invoicingOptionCode = invoicingOptionCode;
     }
 
-    public AccountsReceivableCustomerAddress getCustomerAddress() {
-        if (customerAddress == null || !StringUtils.equals(customerAddress.getCustomerNumber(), customerNumber)
-            || customerAddressIdentifier != null
-            && customerAddressIdentifier.intValue() != customerAddress.getCustomerAddressIdentifier().intValue()) {
-            customerAddress = SpringContext.getBean(KualiModuleService.class)
-                    .getResponsibleModuleService(AccountsReceivableCustomer.class)
-                    .retrieveExternalizableBusinessObjectIfNecessary(this, customerAddress, "customerAddress");
-        }
+    public CustomerAddress getCustomerAddress() {
         return customerAddress;
     }
 
-    public void setCustomerAddress(final AccountsReceivableCustomerAddress customerAddress) {
+    public void setCustomerAddress(final CustomerAddress customerAddress) {
         this.customerAddress = customerAddress;
     }
 
-    public AccountsReceivableMilestoneSchedule getMilestoneSchedule() {
+    public MilestoneSchedule getMilestoneSchedule() {
         return milestoneSchedule;
     }
 
-    public void setMilestoneSchedule(final AccountsReceivableMilestoneSchedule milestoneSchedule) {
+    public void setMilestoneSchedule(final MilestoneSchedule milestoneSchedule) {
         this.milestoneSchedule = milestoneSchedule;
     }
 
-    public AccountsReceivablePredeterminedBillingSchedule getPredeterminedBillingSchedule() {
+    public PredeterminedBillingSchedule getPredeterminedBillingSchedule() {
         return predeterminedBillingSchedule;
     }
 
-    public void setPredeterminedBillingSchedule(
-            final AccountsReceivablePredeterminedBillingSchedule predeterminedBillingSchedule) {
+    public void setPredeterminedBillingSchedule(final PredeterminedBillingSchedule predeterminedBillingSchedule) {
         this.predeterminedBillingSchedule = predeterminedBillingSchedule;
     }
 

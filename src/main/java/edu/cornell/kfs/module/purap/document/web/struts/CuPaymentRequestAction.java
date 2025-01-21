@@ -84,8 +84,6 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
 	@Override
 	protected void createDocument(final KualiDocumentFormBase kualiDocumentFormBase) {
 		super.createDocument(kualiDocumentFormBase);
-        // set wire charge message in form
-        ((CuPaymentRequestForm) kualiDocumentFormBase).setWireChargeMessage(retrieveWireChargeMessage());
 	}
 	
     protected String retrieveWireChargeMessage() {
