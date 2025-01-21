@@ -46,7 +46,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private static final String PROC_METHODS_FIELD_NAME = "extension.procurementMethods";
     private static final String PROC_METHODS_MULTISELECT_FIELD_NAME = "extension.procurementMethodsArray";
     private static final String MULTISELECT_FIELD_PATH_PREFIX = "dataObject.";
-    private static final String VENDOR_IS_EMPLOYEE_SPLIT_NOTE = "VendorIsEmployee";
+    private static final String REQUIRES_VENDOR_MANAGER = "RequiresVendorManager";
     
     protected transient PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     
@@ -70,17 +70,26 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
             return true;
         }
         
-        if (nodeName.equals(VENDOR_IS_EMPLOYEE_SPLIT_NOTE)) {
+        if (nodeName.equals(REQUIRES_VENDOR_MANAGER)) {
+            LOG.info("answerSplitNodeQuestion, entering requires vendor manager node");
             final VendorDetail vendorDetail = (VendorDetail) super.getBusinessObject();
-            final String vendorTaxNumber = vendorDetail.getVendorHeader().getVendorTaxNumber();
+            String vendorTaxNumber;
+            if (vendorDetail.getVendorHeader().getVendorForeignIndicator()) {
+                LOG.info("answerSplitNodeQuestion, foreign vendor");
+                vendorTaxNumber = vendorDetail.getVendorHeader().getVendorForeignTaxId();
+            } else {
+                LOG.info("answerSplitNodeQuestion, domestic vendor");
+                vendorTaxNumber = vendorDetail.getVendorHeader().getVendorTaxNumber();
+            }
             
-            return isVendorTaxNumberInWorkdaySSN(vendorTaxNumber);
+            return isVendorTaxNumberInWorkday(vendorTaxNumber);
         }
         
         return super.answerSplitNodeQuestion(nodeName);
     }
     
-    private boolean isVendorTaxNumberInWorkdaySSN(final String vendorTaxNumber) {
+    private boolean isVendorTaxNumberInWorkday(final String vendorTaxNumber) {
+        LOG.info("isVendorTaxNumberInWorkday, entering");
         /*
          * @todo implement me
          */
