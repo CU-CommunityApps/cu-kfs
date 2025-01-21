@@ -60,13 +60,5 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
         }
         return cuCheckStubService;
     }
-
-    //Copied from subclass due to being private
-    private ConfigurationService getConfigurationService() {
-        if (configurationService == null) {
-            configurationService = SpringContext.getBean(ConfigurationService.class);
-        }
-        return configurationService;
-    }
     
 }

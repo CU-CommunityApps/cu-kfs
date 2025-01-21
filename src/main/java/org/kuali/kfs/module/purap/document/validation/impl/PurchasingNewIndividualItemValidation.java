@@ -19,7 +19,7 @@
 package org.kuali.kfs.module.purap.document.validation.impl;
 
 import org.kuali.kfs.datadictionary.legacy.BusinessObjectDictionaryService;
-import org.kuali.kfs.integration.cam.CapitalAssetManagementModuleService;
+import org.kuali.kfs.module.cam.service.CapitalAssetManagementService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.module.purap.document.PurchasingDocument;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
@@ -28,7 +28,7 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
 
     private BusinessObjectDictionaryService businessObjectDictionaryService;
     private BusinessObjectService businessObjectService;
-    private CapitalAssetManagementModuleService capitalAssetManagementModuleService;
+    private CapitalAssetManagementService capitalAssetManagementService;
     private PurchasingUnitOfMeasureValidation unitOfMeasureValidation;
     private PurchasingItemUnitPriceValidation itemUnitPriceValidation;
     private PurchasingItemDescriptionValidation itemDescriptionValidation;
@@ -44,7 +44,7 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         final String recurringPaymentTypeCode = ((PurchasingDocument) event.getDocument()).getRecurringPaymentTypeCode();
         //Capital asset validations are only done on line items (not additional charge items).
         if (!getItemForValidation().getItemType().isAdditionalChargeIndicator()) {
-            valid &= capitalAssetManagementModuleService.validateItemCapitalAssetWithErrors(recurringPaymentTypeCode,
+            valid &= capitalAssetManagementService.validateItemCapitalAssetWithErrors(recurringPaymentTypeCode,
                     getItemForValidation(), false);
         }
         unitOfMeasureValidation.setItemForValidation(getItemForValidation());
@@ -96,13 +96,12 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
     }
 
     // known user: CSU
-    protected CapitalAssetManagementModuleService getCapitalAssetManagementModuleService() {
-        return capitalAssetManagementModuleService;
+    protected CapitalAssetManagementService getCapitalAssetManagementService() {
+        return capitalAssetManagementService;
     }
 
-    public void setCapitalAssetManagementModuleService(
-            final CapitalAssetManagementModuleService capitalAssetManagementModuleService) {
-        this.capitalAssetManagementModuleService = capitalAssetManagementModuleService;
+    public void setCapitalAssetManagementService(final CapitalAssetManagementService capitalAssetManagementService) {
+        this.capitalAssetManagementService = capitalAssetManagementService;
     }
 
     // known user: CSU
