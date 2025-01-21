@@ -148,10 +148,6 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
         return canAdjust;
     }
 
-    /**
-     * CU Customization: Backport FINP-8894 from 2023-06-07 KualiCo patch release, KFSPTS-28661
-     * This comment should be removed when we reach financials patch release 2023-06-07.
-     */
     protected boolean appHasNoPreviousOrPendingAdjustments() {
         final String adjusterDocumentNumber = getPaymentApplicationDocument().getAdjusterDocumentNumber();
         if (adjusterDocumentNumber == null) {

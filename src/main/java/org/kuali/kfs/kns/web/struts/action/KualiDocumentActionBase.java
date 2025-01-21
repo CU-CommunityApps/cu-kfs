@@ -115,6 +115,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -1611,38 +1612,39 @@ public class KualiDocumentActionBase extends KualiAction {
         final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
 
         /* callback to any pre rules check class */
-        final Class<? extends PromptBeforeValidation> promptBeforeValidationClass =
-                getDataDictionaryService().getPromptBeforeValidationClass(kualiDocumentFormBase.getDocTypeName());
-        LOG.debug("PromptBeforeValidationClass: {}", promptBeforeValidationClass);
-        if (promptBeforeValidationClass != null) {
-            final PromptBeforeValidation promptBeforeValidation = promptBeforeValidationClass.newInstance();
-            final PromptBeforeValidationEvent event = new PromptBeforeValidationEvent("Pre Maint route Check",
-                    "", kualiDocumentFormBase.getDocument());
-            final boolean continueRoute = promptBeforeValidation.processPrompts(form, request, event);
-            if (!continueRoute) {
-                if (event.isPerformQuestion()) {
-                    return super.performQuestionWithoutInput(mapping, kualiDocumentFormBase, request, response,
-                            event.getQuestionId(), event.getQuestionText(), event.getQuestionType(), methodToCall,
-                            event.getQuestionContext());
-                } else {
-                    // This error section is here to avoid a silent and very confusing failure. If the PreRule
-                    // instance returns a null for the processPreRuleChecks above, but does not set an
-                    // ActionForwardName on the event, processing will just silently fail here, and the user
-                    // will be presented with a blank frame.
-                    //
-                    // If the processPreRuleCheck() returns a false, an ActionForwardName needs to be set before hand
-                    // by the PreRule class.
-                    final ActionForward actionForward = mapping.findForward(event.getActionForwardName());
-                    if (actionForward == null) {
-                        throw new RuntimeException("No ActionForwardName defined on this Event, no further actions " +
-                                "will be processed.");
-                    }
-                    return actionForward;
-                }
-            }
+        final Optional<PromptBeforeValidation> promptBeforeValidationOptional =
+                getDataDictionaryService().getPromptBeforeValidationInstance(kualiDocumentFormBase.getDocTypeName());
+        if (promptBeforeValidationOptional.isEmpty()) {
+            return null;
         }
 
-        return null;
+        final PromptBeforeValidation promptBeforeValidation = promptBeforeValidationOptional.get();
+        final PromptBeforeValidationEvent event = new PromptBeforeValidationEvent("Pre Maint route Check",
+                "", kualiDocumentFormBase.getDocument());
+        final boolean continueRoute = promptBeforeValidation.processPrompts(form, request, event);
+        if (continueRoute) {
+            return null;
+        }
+
+        if (event.isPerformQuestion()) {
+            return super.performQuestionWithoutInput(mapping, kualiDocumentFormBase, request, response,
+                    event.getQuestionId(), event.getQuestionText(), event.getQuestionType(), methodToCall,
+                    event.getQuestionContext());
+        }
+
+        // This error section is here to avoid a silent and very confusing failure. If the PreRule
+        // instance returns a null for the processPreRuleChecks above, but does not set an
+        // ActionForwardName on the event, processing will just silently fail here, and the user
+        // will be presented with a blank frame.
+        //
+        // If the processPreRuleCheck() returns a false, an ActionForwardName needs to be set before hand
+        // by the PreRule class.
+        final ActionForward actionForward = mapping.findForward(event.getActionForwardName());
+        if (actionForward == null) {
+            throw new RuntimeException("No ActionForwardName defined on this Event, no further actions " +
+                    "will be processed.");
+        }
+        return actionForward;
     }
 
     /**
