@@ -13,7 +13,7 @@ import org.kuali.kfs.module.cam.CamsParameterConstants;
 import org.kuali.kfs.module.cam.CamsPropertyConstants;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.module.cam.businessobject.AssetType;
-import org.kuali.kfs.module.cam.service.impl.CapitalAssetManagementModuleServiceImpl;
+import org.kuali.kfs.module.cam.service.impl.CapitalAssetManagementServiceImpl;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.Building;
@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManagementModuleServiceImpl {
+public class CuCapitalAssetManagementServiceImpl extends CapitalAssetManagementServiceImpl {
 
     protected boolean checkNewCapitalAssetFieldsExist(
             final CapitalAssetInformation capitalAssetInformation,
