@@ -65,25 +65,6 @@ public class CuAccountServiceImpl extends AccountServiceImpl implements CuAccoun
 		return notes;
 	}
 
-    /**
-     * CU Customization: Overridden to backport the FINP-9525 document requeue fix.
-     *                   This override should be removed when we upgrade to the 2023-05-17 financials patch.
-     */
-    @Override
-    public void updateRoleAssignmentsForAccountChange(
-            final String docIdToIgnore,
-            final Set<String> accountNumbers,
-            final Set<String> documentTypes
-    ) {
-        if (accountNumbers.isEmpty() && documentTypes.isEmpty()) {
-            LOG.info("updateRoleAssignmentsForAccountChange(String,Set,Set) - no account numbers or document types "
-                     + "affected, skipping action request updating");
-            return;
-        }
-
-        super.updateRoleAssignmentsForAccountChange(docIdToIgnore, accountNumbers, documentTypes);
-    }
-
 	public NoteService getNoteService() {
 		return noteService;
 	}

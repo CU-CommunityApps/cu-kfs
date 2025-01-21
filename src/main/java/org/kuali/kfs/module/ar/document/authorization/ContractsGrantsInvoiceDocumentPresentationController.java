@@ -32,7 +32,6 @@ import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemTransactionalDocument;
 import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
-import org.kuali.kfs.sys.service.UniversityDateService;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -47,9 +46,7 @@ public class ContractsGrantsInvoiceDocumentPresentationController extends
 
     private static final String FUNDS_MANAGER_ROUTE_NODE = "FundsManager";
 
-    protected UniversityDateService universityDateService;
-
-    private FinancialSystemWorkflowHelperService financialSystemWorkflowHelperService;
+    private transient FinancialSystemWorkflowHelperService financialSystemWorkflowHelperService;
 
     /**
      * @see org.kuali.kfs.module.ar.document.authorization.ContractsGrantsInvoiceDocumentPresentationController#canErrorCorrect(org.kuali.kfs.sys.document.FinancialSystemTransactionalDocument)
@@ -186,18 +183,6 @@ public class ContractsGrantsInvoiceDocumentPresentationController extends
         final Set<String> documentActions = super.getDocumentActions(document);
         documentActions.remove(KRADConstants.KUALI_ACTION_CAN_COPY);
         return documentActions;
-    }
-
-    @Override
-    public UniversityDateService getUniversityDateService() {
-        if (universityDateService == null) {
-            universityDateService = SpringContext.getBean(UniversityDateService.class);
-        }
-        return universityDateService;
-    }
-
-    public void setUniversityDateService(final UniversityDateService universityDateService) {
-        this.universityDateService = universityDateService;
     }
 
     public FinancialSystemWorkflowHelperService getFinancialSystemWorkflowHelperService() {

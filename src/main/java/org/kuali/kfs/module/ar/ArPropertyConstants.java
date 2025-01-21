@@ -22,8 +22,8 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
 /**
- * CU Customization: Backported the FINP-7147 changes into this file.
- * This overlay can be removed when we upgrade to the 2023-06-28 financials patch.
+ * CU Customization: Backported the FINP-10040 changes into this file.
+ * This overlay can be removed when we upgrade to the 2023-09-20 financials patch.
  * 
  * Business Object Property Constants for KFS-AR.
  */
