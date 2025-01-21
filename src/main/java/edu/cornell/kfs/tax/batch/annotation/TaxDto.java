@@ -5,12 +5,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.kuali.kfs.krad.bo.BusinessObject;
-
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface UpdatableTaxDto {
+public @interface TaxDto {
 
-    Class<? extends BusinessObject> targetBusinessObject();
+    TaxBusinessObjectMapping[] mappedBusinessObjects();
 
 }

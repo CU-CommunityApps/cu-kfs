@@ -5,10 +5,11 @@ import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.sql.JDBCType;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -19,29 +20,27 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.function.FailableBiFunction;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.ojb.broker.accesslayer.conversions.FieldConversion;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
 import org.apache.ojb.broker.metadata.FieldDescriptor;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.service.impl.PersistenceServiceStructureImplBase;
+import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.sys.util.CuFailableTriConsumer;
-import edu.cornell.kfs.tax.batch.annotation.ExtractableTaxDto;
-import edu.cornell.kfs.tax.batch.annotation.ExtractionSource;
+import edu.cornell.kfs.tax.batch.annotation.TaxBusinessObjectMapping;
+import edu.cornell.kfs.tax.batch.annotation.TaxDto;
 import edu.cornell.kfs.tax.batch.annotation.TaxDtoField;
-import edu.cornell.kfs.tax.batch.annotation.UpdatableTaxDto;
-import edu.cornell.kfs.tax.batch.dto.util.TaxDtoExtractorDefinition;
-import edu.cornell.kfs.tax.batch.dto.util.TaxDtoFieldExtractor;
-import edu.cornell.kfs.tax.batch.dto.util.TaxDtoFieldUpdater;
-import edu.cornell.kfs.tax.batch.dto.util.TaxDtoUpdaterDefinition;
+import edu.cornell.kfs.tax.batch.metadata.TaxDtoFieldConverter;
+import edu.cornell.kfs.tax.batch.metadata.TaxDtoFieldDefinition;
+import edu.cornell.kfs.tax.batch.metadata.TaxDtoMappingDefinition;
 import edu.cornell.kfs.tax.batch.service.TaxTableMetadataLookupService;
 
 public class TaxTableMetadataLookupServiceOjbImpl extends PersistenceServiceStructureImplBase
@@ -52,6 +51,7 @@ public class TaxTableMetadataLookupServiceOjbImpl extends PersistenceServiceStru
     private static final String SET_METHOD_PREFIX = "set";
     private static final String ACCEPT_METHOD = "accept";
     private static final String APPLY_METHOD = "apply";
+    private static final String GET_METHOD = "get";
 
     private final MethodHandles.Lookup lookup;
 
@@ -60,114 +60,144 @@ public class TaxTableMetadataLookupServiceOjbImpl extends PersistenceServiceStru
         this.lookup = MethodHandles.lookup();
     }
 
-
-
     @Override
-    public <T> TaxDtoExtractorDefinition<T> getDtoMetadataForSqlExtraction(final Class<T> dtoClass) {
+    public <T> TaxDtoMappingDefinition<T> getDatabaseMappingMetadataForDto(final Class<T> dtoClass) {
         Validate.notNull(dtoClass, "dtoClass cannot be null");
-        final ExtractableTaxDto extractionInfo = getAndValidateExtractionAnnotation(dtoClass);
-        final List<TaxDtoFieldExtractor<T, ?>> fieldExtractors = generateFieldExtractors(dtoClass, extractionInfo);
-        return new TaxDtoExtractorDefinition<>(dtoClass, extractionInfo.sourceBusinessObjects(), fieldExtractors);
+        Validate.isTrue(Modifier.isPublic(dtoClass.getModifiers()), "dtoClass must be declared as public", dtoClass);
+        final TaxDto dtoInfo = getAndValidateTaxDtoAnnotation(dtoClass);
+        final List<Pair<Class<? extends BusinessObject>, String>> businessObjectMappings =
+                generateBusinessObjectMappings(dtoInfo);
+        final List<TaxDtoFieldDefinition<T, ?>> fieldDefinitions = generateFieldDefinitions(dtoClass, dtoInfo);
+        final Supplier<T> dtoConstructor = generateLambdaForDefaultDtoConstructor(dtoClass);
+        return new TaxDtoMappingDefinition<>(dtoClass, dtoConstructor, businessObjectMappings, fieldDefinitions);
     }
 
-    private ExtractableTaxDto getAndValidateExtractionAnnotation(final Class<?> dtoClass) {
-        final ExtractableTaxDto extractionInfo = dtoClass.getAnnotation(ExtractableTaxDto.class);
-        Validate.notNull(extractionInfo, "dtoClass does not have the ExtractableTaxDto annotation");
+    private TaxDto getAndValidateTaxDtoAnnotation(final Class<?> dtoClass) {
+        final TaxDto dtoInfo = dtoClass.getAnnotation(TaxDto.class);
+        Validate.notNull(dtoInfo, "dtoClass %s does not have the TaxDto annotation", dtoClass);
 
-        final ExtractionSource[] sourceObjects = extractionInfo.sourceBusinessObjects();
-        Validate.isTrue(sourceObjects != null && sourceObjects.length > 0,
-                "Annotation from dtoClass does not specify any source business objects to extract from");
+        final TaxBusinessObjectMapping[] mappedObjects = dtoInfo.mappedBusinessObjects();
+        Validate.notEmpty(mappedObjects, "Annotation from dtoClass %s does not specify any business objects to map to",
+                dtoClass);
 
         final Set<Class<? extends BusinessObject>> boClasses = new HashSet<>();
         final Set<String> tableAliases = new HashSet<>();
         boolean foundBlankAlias = false;
-        for (final ExtractionSource sourceObject : sourceObjects) {
-            Validate.isTrue(boClasses.add(sourceObject.businessObjectClass()),
-                    "Annotation from dtoClass contained duplicate source business objects");
-            if (StringUtils.isNotBlank(sourceObject.tableAliasForQuery())) {
+        for (final TaxBusinessObjectMapping mappedObject : mappedObjects) {
+            Validate.isTrue(boClasses.add(mappedObject.businessObjectClass()),
+                    "Annotation from dtoClass %s contained duplicate mapped business objects", dtoClass);
+            if (StringUtils.isNotBlank(mappedObject.tableAliasForQuery())) {
                 Validate.isTrue(
-                        tableAliases.add(StringUtils.upperCase(sourceObject.tableAliasForQuery(), Locale.US)),
-                        "Annotation from dtoClass contained duplicate query table aliases (case-insensitive)");
+                        tableAliases.add(StringUtils.upperCase(mappedObject.tableAliasForQuery(), Locale.US)),
+                        "Annotation from dtoClass %s contained duplicate query table aliases (case-insensitive)",
+                        dtoClass);
             } else {
                 foundBlankAlias = true;
             }
         }
 
-        Validate.isTrue(sourceObjects.length == 1 || !foundBlankAlias,
-                "Annotation from dtoClass cannot specify a blank table alias when extracting from multiple BOs");
+        Validate.isTrue(mappedObjects.length == 1 || !foundBlankAlias,
+                "Annotation from dtoClass %s cannot specify a blank table alias when mapping to multiple BOs",
+                dtoClass);
 
-        return extractionInfo;
+        return dtoInfo;
     }
 
-    private <T> List<TaxDtoFieldExtractor<T, ?>> generateFieldExtractors(final Class<T> dtoClass,
-            final ExtractableTaxDto extractionInfo) {
-        final Map<Class<? extends BusinessObject>, ClassDescriptor> sourceBOMappings = getOJBMappings(extractionInfo);
-        final Optional<Class<? extends BusinessObject>> singleSourceBO = sourceBOMappings.size() == 1
-                ? Optional.of(sourceBOMappings.keySet().iterator().next()) : Optional.empty();
-        final List<Field> dtoFields = getAnnotatedDtoFieldsForDataExtraction(dtoClass);
-        final Stream.Builder<TaxDtoFieldExtractor<T, ?>> fieldExtractors = Stream.builder();
-        Validate.validState(dtoFields.size() > 0, "dtoClass does not have any properly annotated fields");
-
-        for (final Field dtoField : dtoFields) {
-            final TaxDtoField fieldInfo = dtoField.getAnnotation(TaxDtoField.class);
-            Validate.validState(fieldInfo != null, "DTO field should have been annotated but wasn't");
-
-            final ClassDescriptor boDescriptor = getClassDescriptorForFieldSource(
-                    fieldInfo, sourceBOMappings, singleSourceBO);
-            final FieldDescriptor fieldDescriptor = getFieldDescriptor(dtoField, fieldInfo, boDescriptor);
-            final TaxDtoFieldExtractor<T, ?> fieldExtractor = generateFieldExtractor(
-                    dtoClass, dtoField, fieldDescriptor);
-            fieldExtractors.add(fieldExtractor);
-        }
-
-        return fieldExtractors.build()
+    private List<Pair<Class<? extends BusinessObject>, String>> generateBusinessObjectMappings(final TaxDto dtoInfo) {
+        return Arrays.stream(dtoInfo.mappedBusinessObjects())
+                .map(this::generateBusinessObjectMapping)
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    private Map<Class<? extends BusinessObject>, ClassDescriptor> getOJBMappings(
-            final ExtractableTaxDto extractionInfo) {
-        return Arrays.stream(extractionInfo.sourceBusinessObjects())
-                .map(ExtractionSource::businessObjectClass)
-                .collect(Collectors.toUnmodifiableMap(boClass -> boClass, super::getClassDescriptor));
+    private Pair<Class<? extends BusinessObject>, String> generateBusinessObjectMapping(
+            final TaxBusinessObjectMapping boMapping) {
+        return Pair.of(boMapping.businessObjectClass(), boMapping.tableAliasForQuery());
     }
 
-    private List<Field> getAnnotatedDtoFieldsForDataExtraction(final Class<?> dtoClass) {
-        return getAnnotatedDtoFields(dtoClass, this::isDtoFieldMappedForExtraction);
+    private <T> List<TaxDtoFieldDefinition<T, ?>> generateFieldDefinitions(final Class<T> dtoClass,
+            final TaxDto dtoInfo) {
+        final int objectMappingCount = dtoInfo.mappedBusinessObjects().length;
+        Validate.validState(objectMappingCount > 0, "Annotation on dtoClass %s should have had 1 or more BO mappings",
+                dtoClass);
+
+        final Function<Class<? extends BusinessObject>, Pair<TaxBusinessObjectMapping, ClassDescriptor>> objectMapper =
+                getObjectMapper(dtoInfo);
+        final List<Field> dtoFields = getAnnotatedDtoFields(dtoClass);
+        Validate.validState(dtoFields.size() > 0,
+                "dtoClass %s does not have any properly annotated fields", dtoClass);
+
+        final Stream.Builder<TaxDtoFieldDefinition<T, ?>> fieldDefinitions = Stream.builder();
+
+        for (final Field dtoField : dtoFields) {
+            final TaxDtoFieldDefinition<T, ?> fieldDefinition = generateFieldDefinition(
+                    dtoClass, dtoField, objectMapper);
+            Validate.validState(!fieldDefinition.isUpdatable() || objectMappingCount == 1,
+                    "Unsupported configuration: Cannot mark field %s as updatable because the annotation for dtoClass "
+                            + "%s specifies more than one mapped business object", dtoField.getName(), dtoClass);
+            fieldDefinitions.add(fieldDefinition);
+        }
+
+        return fieldDefinitions.build()
+                .collect(Collectors.toUnmodifiableList());
     }
 
-    private List<Field> getAnnotatedDtoFieldsForDataUpdates(final Class<?> dtoClass) {
-        return getAnnotatedDtoFields(dtoClass, this::isDtoFieldMappedForUpdates);
+    private Function<Class<? extends BusinessObject>, Pair<TaxBusinessObjectMapping, ClassDescriptor>> getObjectMapper(
+            final TaxDto dtoInfo) {
+        final Map<Class<? extends BusinessObject>, Pair<TaxBusinessObjectMapping, ClassDescriptor>> mappings =
+                getObjectMappings(dtoInfo);
+        if (mappings.size() != 1) {
+            return mappings::get;
+        } else {
+            final Pair<TaxBusinessObjectMapping, ClassDescriptor> singleMapping = mappings.values().iterator().next();
+            final Class<? extends BusinessObject> singleKey = singleMapping.getLeft().businessObjectClass();
+            return key -> singleKey.equals(key) || BusinessObject.class.equals(key) ? singleMapping : null;
+        }
     }
 
-    private List<Field> getAnnotatedDtoFields(final Class<?> dtoClass, final Predicate<Field> fieldFilter) {
+    private Map<Class<? extends BusinessObject>, Pair<TaxBusinessObjectMapping, ClassDescriptor>> getObjectMappings(
+            final TaxDto dtoInfo) {
+        return Arrays.stream(dtoInfo.mappedBusinessObjects())
+                .collect(Collectors.toUnmodifiableMap(
+                        TaxBusinessObjectMapping::businessObjectClass,
+                        mappedObject -> Pair.of(
+                                mappedObject, super.getClassDescriptor(mappedObject.businessObjectClass()))));
+    }
+
+    private List<Field> getAnnotatedDtoFields(final Class<?> dtoClass) {
         return Arrays.stream(dtoClass.getDeclaredFields())
-                .filter(fieldFilter)
+                .filter(field -> field.getAnnotation(TaxDtoField.class) != null)
                 .sorted(Comparator.comparing(Field::getName))
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    private boolean isDtoFieldMappedForExtraction(final Field dtoField) {
-        return dtoField.getAnnotation(TaxDtoField.class) != null;
+
+
+    private <T> TaxDtoFieldDefinition<T, ?> generateFieldDefinition(final Class<T> dtoClass, final Field dtoField,
+            final Function<Class<? extends BusinessObject>, Pair<TaxBusinessObjectMapping, ClassDescriptor>> mapper) {
+        return generateFieldExtractor(dtoClass, dtoField.getType(), dtoField, mapper);
     }
 
-    private boolean isDtoFieldMappedForUpdates(final Field dtoField) {
-        final TaxDtoField fieldAnnotation = dtoField.getAnnotation(TaxDtoField.class);
-        return fieldAnnotation != null && fieldAnnotation.updatable();
-    }
+    private <T, U> TaxDtoFieldDefinition<T, U> generateFieldExtractor(final Class<T> dtoClass,
+            final Class<U> fieldType, final Field dtoField,
+            final Function<Class<? extends BusinessObject>, Pair<TaxBusinessObjectMapping, ClassDescriptor>> mapper) {
+        final TaxDtoField fieldInfo = dtoField.getAnnotation(TaxDtoField.class);
+        Validate.validState(fieldInfo != null, "DTO field %s should have been annotated with TaxDtoField",
+                dtoField.getName());
 
-    private ClassDescriptor getClassDescriptorForFieldSource(final TaxDtoField fieldInfo,
-            final Map<Class<? extends BusinessObject>, ClassDescriptor> sourceBOMappings,
-            final Optional<Class<? extends BusinessObject>> singleSourceBO) {
-        if (sourceBOMappings.size() == 1) {
-            Validate.validState(
-                    BusinessObject.class.equals(fieldInfo.source()) || singleSourceBO.get().equals(fieldInfo.source()),
-                    "DTO field explicitly specified a source BO that the DTO had not marked as a valid source");
-            return sourceBOMappings.get(singleSourceBO.get());
-        } else {
-            Validate.validState(sourceBOMappings.containsKey(fieldInfo.source()),
-                    "DTO field on multi-BO-source DTO must explicitly specify a valid source BO");
-            return sourceBOMappings.get(fieldInfo.source());
-        }
+        final Pair<TaxBusinessObjectMapping, ClassDescriptor> boInfo = mapper.apply(fieldInfo.mappedBusinessObject());
+        Validate.validState(boInfo != null, "DTO field %s does not map to one of the expected business objects "
+                + "(or did not specify an explicit mapping for a DTO mapped to multiple BOs)", dtoField.getName());
+
+        final FieldDescriptor fieldDescriptor = getFieldDescriptor(dtoField, fieldInfo, boInfo.getRight());
+        final JDBCType jdbcType = JDBCType.valueOf(fieldDescriptor.getJdbcType().getType());
+        final String columnLabel = generateColumnLabelForQueryUsage(fieldDescriptor, boInfo.getLeft());
+        final Optional<TaxDtoFieldConverter> fieldConverter = generateFieldConverter(fieldDescriptor);
+
+        final Function<T, U> propertyGetter = generateLambdaForDtoPropertyGetter(dtoClass, fieldType, dtoField);
+        final BiConsumer<T, U> propertySetter = generateLambdaForDtoPropertySetter(dtoClass, fieldType, dtoField);
+
+        return new TaxDtoFieldDefinition<>(dtoClass, fieldType, dtoField.getName(), propertyGetter, propertySetter,
+                fieldInfo.updatable(), jdbcType, columnLabel, fieldConverter);
     }
 
     private FieldDescriptor getFieldDescriptor(final Field dtoField, final TaxDtoField fieldInfo,
@@ -183,36 +213,25 @@ public class TaxTableMetadataLookupServiceOjbImpl extends PersistenceServiceStru
         return fieldDescriptor;
     }
 
-    private <T> TaxDtoFieldExtractor<T, ?> generateFieldExtractor(final Class<T> dtoClass, final Field dtoField,
-            final FieldDescriptor fieldDescriptor) {
-        return generateFieldExtractor(dtoClass, dtoField.getType(), dtoField, fieldDescriptor);
+    private String generateColumnLabelForQueryUsage(final FieldDescriptor fieldDescriptor,
+            final TaxBusinessObjectMapping boMapping) {
+        final String tableAlias = boMapping.tableAliasForQuery();
+        final String columnName = fieldDescriptor.getColumnName();
+        return StringUtils.isNotBlank(tableAlias)
+                ? StringUtils.join(tableAlias, KFSConstants.DELIMITER, columnName)
+                : columnName;
     }
 
-    private <T, U> TaxDtoFieldExtractor<T, U> generateFieldExtractor(final Class<T> dtoClass,
-            final Class<U> fieldType, final Field dtoField, final FieldDescriptor fieldDescriptor) {
-        final FailableBiFunction<ResultSet, String, U, SQLException> columnValueExtractor =
-                generateColumnValueExtractor(fieldDescriptor, fieldType);
-        final BiConsumer<T, U> propertySetter = generateLambdaForDtoPropertySetter(dtoClass, fieldType, dtoField);
-        return new TaxDtoFieldExtractor<>(dtoClass, fieldDescriptor.getColumnName(), dtoField.getName(),
-                columnValueExtractor, propertySetter);
-    }
-
-    private <U> FailableBiFunction<ResultSet, String, U, SQLException> generateColumnValueExtractor(
-            final FieldDescriptor fieldDescriptor, final Class<U> fieldType) {
+    private Optional<TaxDtoFieldConverter> generateFieldConverter(final FieldDescriptor fieldDescriptor) {
         final FieldConversion fieldConversion = fieldDescriptor.getFieldConversion();
-        if (fieldConversion != null) {
-            return (resultSet, columnLabel) -> {
-                final Object columnValue = resultSet.getObject(columnLabel);
-                final Object convertedValue = fieldConversion.sqlToJava(columnValue);
-                return fieldType.cast(convertedValue);
-            };
-        } else {
-            return (resultSet, columnLabel) -> resultSet.getObject(columnLabel, fieldType);
-        }
+        return Optional.ofNullable(fieldConversion)
+                .map(TaxDtoFieldConverterOjbImpl::new);
     }
+
+
 
     /*
-     * Dynamically creates a BiConsumer for handling the setter method of a DTO property,
+     * Dynamically creates a BiConsumer lambda for handling the setter method of a DTO property,
      * using MethodHandle-related objects instead of reflection for better performance.
      * The returned BiConsumer expects the DTO as the first argument and the property value
      * as the second argument.
@@ -226,6 +245,8 @@ public class TaxTableMetadataLookupServiceOjbImpl extends PersistenceServiceStru
             final Class<U> fieldType, final Field dtoField) {
         try {
             final String setterMethodName = determineSetterMethodName(dtoField);
+            verifyBeanPropertyMethodIsPublic(dtoClass, setterMethodName, fieldType);
+
             final MethodHandle setterMethodHandle = lookup.findVirtual(dtoClass, setterMethodName,
                     MethodType.methodType(void.class, fieldType));
             final MethodType adjustedSetterMethodType = setterMethodHandle.type()
@@ -242,6 +263,40 @@ public class TaxTableMetadataLookupServiceOjbImpl extends PersistenceServiceStru
 
             final MethodHandle biConsumerFactory = callSite.getTarget();
             return (BiConsumer<T, U>) biConsumerFactory.invoke();
+
+        } catch (final RuntimeException e) {
+            throw e;
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        } catch (final Throwable t) {
+            throw new AssertionError(t);
+        }
+    }
+
+    /*
+     * See the related generateLambdaForDtoPropertySetter() method for further details
+     * on the logic that is being performed.
+     */
+    private <T, U> Function<T, U> generateLambdaForDtoPropertyGetter(final Class<T> dtoClass,
+            final Class<U> fieldType, final Field dtoField) {
+        try {
+            final String getterMethodName = determineGetterMethodName(dtoField);
+            verifyBeanPropertyMethodIsPublic(dtoClass, getterMethodName);
+
+            final MethodHandle getterMethodHandle = lookup.findVirtual(dtoClass, getterMethodName,
+                    MethodType.methodType(fieldType));
+            final MethodType adjustedGetterMethodType = getterMethodHandle.type().wrap();
+
+            final CallSite callSite = LambdaMetafactory.metafactory(
+                    lookup,
+                    APPLY_METHOD,
+                    MethodType.methodType(Function.class),
+                    adjustedGetterMethodType.erase(),
+                    getterMethodHandle,
+                    adjustedGetterMethodType);
+
+            final MethodHandle functionFactory = callSite.getTarget();
+            return (Function<T, U>) functionFactory.invoke();
 
         } catch (final RuntimeException e) {
             throw e;
@@ -269,98 +324,36 @@ public class TaxTableMetadataLookupServiceOjbImpl extends PersistenceServiceStru
         }
     }
 
-
-
-    @Override
-    public <T> TaxDtoUpdaterDefinition<T> getDtoMetadataForSqlUpdates(final Class<T> dtoClass) {
-        Validate.notNull(dtoClass, "dtoClass cannot be null");
-        final UpdatableTaxDto updateInfo = getAndValidateUpdaterAnnotation(dtoClass);
-        final List<TaxDtoFieldUpdater<T, ?>> fieldUpdaters = generateFieldUpdaters(dtoClass, updateInfo);
-        return new TaxDtoUpdaterDefinition<>(dtoClass, updateInfo.targetBusinessObject(), fieldUpdaters);
-    }
-
-    private UpdatableTaxDto getAndValidateUpdaterAnnotation(final Class<?> dtoClass) {
-        final UpdatableTaxDto updateInfo = dtoClass.getAnnotation(UpdatableTaxDto.class);
-        Validate.notNull(updateInfo, "dtoClass does not have the UpdatableTaxDto annotation");
-        return updateInfo;
-    }
-
-    private <T> List<TaxDtoFieldUpdater<T, ?>> generateFieldUpdaters(final Class<T> dtoClass,
-            final UpdatableTaxDto updateInfo) {
-        final Class<? extends BusinessObject> targetBusinessObject = updateInfo.targetBusinessObject();
-        final ClassDescriptor classDescriptor = super.getClassDescriptor(targetBusinessObject);
-        final List<Field> dtoFields = getAnnotatedDtoFieldsForDataUpdates(dtoClass);
-        final Stream.Builder<TaxDtoFieldUpdater<T, ?>> fieldUpdaters = Stream.builder();
-        Validate.validState(dtoFields.size() > 0, "dtoClass does not have any properly annotated fields for update");
-
-        for (final Field dtoField : dtoFields) {
-            final TaxDtoField fieldInfo = dtoField.getAnnotation(TaxDtoField.class);
-            Validate.validState(fieldInfo != null, "DTO field should have been annotated but wasn't");
-            Validate.validState(fieldInfo.updatable(), "DTO field should have been marked as updatable but wasn't");
-            final FieldDescriptor fieldDescriptor = getFieldDescriptor(dtoField, fieldInfo, classDescriptor);
-            final TaxDtoFieldUpdater<T, ?> fieldExtractor = generateFieldUpdater(
-                    dtoClass, dtoField, fieldDescriptor);
-            fieldUpdaters.add(fieldExtractor);
-        }
-
-        return fieldUpdaters.build()
-                .collect(Collectors.toUnmodifiableList());
-    }
-
-    private <T> TaxDtoFieldUpdater<T, ?> generateFieldUpdater(final Class<T> dtoClass, final Field dtoField,
-            final FieldDescriptor fieldDescriptor) {
-        return generateFieldUpdater(dtoClass, dtoField.getType(), dtoField, fieldDescriptor);
-    }
-
-    private <T, U> TaxDtoFieldUpdater<T, U> generateFieldUpdater(final Class<T> dtoClass,
-            final Class<U> fieldType, final Field dtoField, final FieldDescriptor fieldDescriptor) {
-        final CuFailableTriConsumer<ResultSet, String, U, SQLException> columnValueUpdater =
-                generateColumnValueUpdater(fieldDescriptor, fieldType);
-        final Function<T, U> propertyGetter = generateLambdaForDtoPropertyGetter(dtoClass, fieldType, dtoField);
-        return new TaxDtoFieldUpdater<>(dtoClass, fieldDescriptor.getColumnName(), dtoField.getName(),
-                columnValueUpdater, propertyGetter);
-    }
-
-    private <U> CuFailableTriConsumer<ResultSet, String, U, SQLException> generateColumnValueUpdater(
-            final FieldDescriptor fieldDescriptor, final Class<U> fieldType) {
-        final int jdbcTypeInteger = fieldDescriptor.getJdbcType().getType();
-        final JDBCType jdbcType = JDBCType.valueOf(jdbcTypeInteger);
-        final FieldConversion fieldConversion = fieldDescriptor.getFieldConversion();
-
-        if (fieldConversion != null) {
-            return (resultSet, columnLabel, propertyValue) -> {
-                final Object convertedValue = fieldConversion.javaToSql(propertyValue);
-                resultSet.updateObject(columnLabel, convertedValue, jdbcType);
-            };
-        } else {
-            return (resultSet, columnLabel, propertyValue) -> {
-                resultSet.updateObject(columnLabel, propertyValue, jdbcType);
-            }; 
-        }
-    }
-
-    /*
-     * See the related generateLambdaForDtoPropertySetter() method for further details
-     * on the logic that is being performed.
-     */
-    private <T, U> Function<T, U> generateLambdaForDtoPropertyGetter(final Class<T> dtoClass,
-            final Class<U> fieldType, final Field dtoField) {
+    private void verifyBeanPropertyMethodIsPublic(final Class<?> dtoClass, final String methodName,
+            final Class<?>... parameterTypes) {
         try {
-            final String getterMethodName = determineGetterMethodName(dtoField);
-            final MethodHandle getterMethodHandle = lookup.findVirtual(dtoClass, getterMethodName,
-                    MethodType.methodType(fieldType));
-            final MethodType adjustedGetterMethodType = getterMethodHandle.type().wrap();
+            Method beanPropertyMethod = dtoClass.getDeclaredMethod(methodName, parameterTypes);
+            Validate.validState(Modifier.isPublic(beanPropertyMethod.getModifiers()),
+                    "Bean accessor method %s on dtoClass %s is not declared as public", methodName, dtoClass);
+        } catch (final NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
+    private <T> Supplier<T> generateLambdaForDefaultDtoConstructor(final Class<T> dtoClass) {
+        try {
+            verifyNoArgConstructorIsAvailableAndPublic(dtoClass);
+
+            final MethodHandle constructorHandle = lookup.findConstructor(dtoClass, MethodType.methodType(void.class));
+            final MethodType constructorType = constructorHandle.type();
 
             final CallSite callSite = LambdaMetafactory.metafactory(
                     lookup,
-                    APPLY_METHOD,
-                    MethodType.methodType(Function.class),
-                    adjustedGetterMethodType.erase(),
-                    getterMethodHandle,
-                    adjustedGetterMethodType);
+                    GET_METHOD,
+                    MethodType.methodType(Supplier.class),
+                    constructorType.erase(),
+                    constructorHandle,
+                    constructorType);
 
-            final MethodHandle functionFactory = callSite.getTarget();
-            return (Function<T, U>) functionFactory.invoke();
+            final MethodHandle supplierFactory = callSite.getTarget();
+            return (Supplier<T>) supplierFactory.invoke();
 
         } catch (final RuntimeException e) {
             throw e;
@@ -368,6 +361,16 @@ public class TaxTableMetadataLookupServiceOjbImpl extends PersistenceServiceStru
             throw new RuntimeException(e);
         } catch (final Throwable t) {
             throw new AssertionError(t);
+        }
+    }
+
+    private void verifyNoArgConstructorIsAvailableAndPublic(final Class<?> dtoClass) {
+        try {
+            final Constructor<?> noArgConstructor = dtoClass.getDeclaredConstructor();
+            Validate.validState(Modifier.isPublic(noArgConstructor.getModifiers()),
+                    "Default no-arg constructor on dtoClass %s is not declared as public", dtoClass);
+        } catch (final NoSuchMethodException e) {
+            throw new RuntimeException(e);
         }
     }
 

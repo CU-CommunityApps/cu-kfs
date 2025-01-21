@@ -3,7 +3,7 @@ package edu.cornell.kfs.tax.batch.annotation;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.sys.KFSConstants;
 
-public @interface ExtractionSource {
+public @interface TaxBusinessObjectMapping {
 
     Class<? extends BusinessObject> businessObjectClass();
 

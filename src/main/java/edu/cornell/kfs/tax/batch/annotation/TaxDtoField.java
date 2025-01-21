@@ -5,7 +5,7 @@ import org.kuali.kfs.sys.KFSConstants;
 
 public @interface TaxDtoField {
 
-    Class<? extends BusinessObject> source() default BusinessObject.class;
+    Class<? extends BusinessObject> mappedBusinessObject() default BusinessObject.class;
 
     String actualBOField() default KFSConstants.EMPTY_STRING;
 
