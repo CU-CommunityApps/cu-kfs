@@ -37,6 +37,7 @@
 <%@ attribute name="addClass" required="false" description="Additional class(es) to add to the input" %>
 <%@ attribute name="newLookup" required="false" description="Determines whether this lookup should use the new framework or not" %>
 <%@ attribute name="fieldPropertyName" required="false" description="The property name of the field associated with this lookup" %>
+<%@ attribute name="staticLookupFieldData" required="false" description="Static data to populate in the new lookup" %>
 <%-- CU Customization: Added a new attribute to assist with handling Person lookups. --%>
 <%@ attribute name="alreadyAdjustedForPerson" required="false" description="For Person lookups, indicates whether the parent tag has already made adjustments to potentially mask the relevant Person data." %>
 
@@ -96,6 +97,7 @@ ${kfunc:registerEditableProperty(KualiForm, epMethodToCallAttribute)}
       data-lookup-parameters="${lookupParameters}"
       data-field-conversions="${fieldConversions}"
       data-read-only-fields="${readOnlyFields}"
+      data-static-lookup-field-data="${staticLookupFieldData}"
     />
   </c:when>
   <c:otherwise>
