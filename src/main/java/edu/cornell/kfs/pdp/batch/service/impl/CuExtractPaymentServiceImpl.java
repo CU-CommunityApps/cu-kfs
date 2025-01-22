@@ -1,45 +1,21 @@
 package edu.cornell.kfs.pdp.batch.service.impl;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.pdp.PdpConstants;
-import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.batch.service.impl.ExtractPaymentServiceImpl;
 import org.kuali.kfs.pdp.batch.service.impl.Iso20022FormatExtractor;
-import org.kuali.kfs.pdp.businessobject.CustomerProfile;
-import org.kuali.kfs.pdp.businessobject.PaymentDetail;
-import org.kuali.kfs.pdp.businessobject.PaymentGroup;
-import org.kuali.kfs.pdp.businessobject.PaymentNoteText;
-import org.kuali.kfs.pdp.businessobject.PaymentProcess;
 import org.kuali.kfs.pdp.businessobject.PaymentStatus;
-import org.kuali.kfs.sys.KFSConstants;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
 import edu.cornell.kfs.pdp.batch.service.CuPayeeAddressService;
-import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     private static final Logger LOG = LogManager.getLogger();
