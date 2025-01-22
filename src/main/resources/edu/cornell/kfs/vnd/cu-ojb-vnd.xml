@@ -119,34 +119,6 @@
     <field-descriptor name="vendorLocale" column="VNDR_LCLE" jdbc-type="VARCHAR"/>
 </class-descriptor>
 
-<class-descriptor class="org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity" table="PUR_VNDR_SUPP_DVRST_T">
-    <field-descriptor name="vendorHeaderGeneratedIdentifier" column="VNDR_HDR_GNRTD_ID" jdbc-type="INTEGER" primarykey="true" index="true"/>
-    <field-descriptor name="vendorSupplierDiversityCode" column="VNDR_SUPP_DVRST_CD" jdbc-type="VARCHAR" primarykey="true" index="true"/>
-   <!-- <field-descriptor name="vendorSupplierDiversityExpirationDate" column="VNDR_SUPP_DVRST_EXPIR_DATE" jdbc-type="DATE" />   -->
-    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
-    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
-    <field-descriptor name="active" column="DOBJ_MAINT_CD_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <reference-descriptor name="vendorHeader" class-ref="org.kuali.kfs.vnd.businessobject.VendorHeader" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-        <foreignkey field-ref="vendorHeaderGeneratedIdentifier" />
-    </reference-descriptor>
-    <reference-descriptor name="vendorSupplierDiversity" class-ref="org.kuali.kfs.vnd.businessobject.SupplierDiversity" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-        <foreignkey field-ref="vendorSupplierDiversityCode" />
-    </reference-descriptor>
-   <reference-descriptor name="extension" class-ref="edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
-        <foreignkey field-ref="vendorHeaderGeneratedIdentifier" />        
-        <foreignkey field-ref="vendorSupplierDiversityCode" />        
-    </reference-descriptor> 
-</class-descriptor>
-
-<class-descriptor class="edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension" table="PUR_VNDR_SUPP_DVRST_TX">
-    <field-descriptor name="vendorHeaderGeneratedIdentifier" column="VNDR_HDR_GNRTD_ID" jdbc-type="INTEGER" primarykey="true" index="true"/>
-    <field-descriptor name="vendorSupplierDiversityCode" column="VNDR_SUPP_DVRST_CD" jdbc-type="VARCHAR" primarykey="true" index="true"/>
-    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
-    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
-
-    <field-descriptor name="vendorSupplierDiversityExpirationDate" column="VNDR_SUPP_DVRST_EXPIR_DATE" jdbc-type="DATE" /> 
-</class-descriptor>
-
 <class-descriptor class="org.kuali.kfs.vnd.businessobject.VendorDetail" table="PUR_VNDR_DTL_T">
     <field-descriptor name="vendorHeaderGeneratedIdentifier" column="VNDR_HDR_GNRTD_ID" jdbc-type="INTEGER" primarykey="true" index="true"/>
     <field-descriptor name="vendorDetailAssignedIdentifier" column="VNDR_DTL_ASND_ID" jdbc-type="INTEGER" primarykey="true" index="true"/>
