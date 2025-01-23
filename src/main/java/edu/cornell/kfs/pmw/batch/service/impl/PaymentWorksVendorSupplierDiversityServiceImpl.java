@@ -20,7 +20,6 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.dataaccess.KfsSupplierDiversityDao;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorSupplierDiversityService;
-import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 
 public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWorksVendorSupplierDiversityService {
     private static final Logger LOG = LogManager.getLogger(PaymentWorksVendorSupplierDiversityServiceImpl.class);
@@ -73,12 +72,9 @@ public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWo
         VendorSupplierDiversity vendorSupplierDiversity = new VendorSupplierDiversity();
         vendorSupplierDiversity.setVendorSupplierDiversityCode(vendorSupplierDiversityCode);
         vendorSupplierDiversity.setActive(true);
+        vendorSupplierDiversity.setVendorSupplierDiversityCode(vendorSupplierDiversityCode);
+        vendorSupplierDiversity.setCertificationExpirationDate(buildDateOneYearFromToday());
         
-        CuVendorSupplierDiversityExtension diversityExtension = new CuVendorSupplierDiversityExtension();
-        diversityExtension.setVendorSupplierDiversityCode(vendorSupplierDiversityCode);
-        diversityExtension.setVendorSupplierDiversityExpirationDate(buildDateOneYearFromToday());
-        
-        vendorSupplierDiversity.setExtension(diversityExtension);
         return vendorSupplierDiversity;
     }
     
