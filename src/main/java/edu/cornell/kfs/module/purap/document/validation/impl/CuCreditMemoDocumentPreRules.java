@@ -6,7 +6,6 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.document.AccountsPayableDocument;
-import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.validation.impl.CreditMemoDocumentPreRules;
 import org.kuali.kfs.sys.KFSConstants;
@@ -14,6 +13,7 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.validation.PaymentSourcePreRulesService;
 
+import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
 
 public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
@@ -27,7 +27,7 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
         boolean preRulesOK = true;
         
         // KFSUPGRADE-779
-        preRulesOK &= checkWireTransferTabState((VendorCreditMemoDocument) document);
+        preRulesOK &= getPaymentSourcePreRulesService().checkWireTransferTabState((PromptBeforeValidationBase)this, (CuVendorCreditMemoDocument) document);
 
         preRulesOK &= getCuCheckStubService().performPreRulesValidationOfIso20022CheckStubLength(document, this);
 
@@ -61,11 +61,6 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
             return false;
         }    
           return true;  
-    }
-
-    protected boolean checkWireTransferTabState(final VendorCreditMemoDocument cmDocument) {
-        return getPaymentSourcePreRulesService().checkWireTransferTabState((PromptBeforeValidationBase)this,
-                cmDocument.getPaymentRequestDocument());
     }
 
     public CuCheckStubService getCuCheckStubService() {
