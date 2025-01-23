@@ -68,7 +68,7 @@
         <jaxws-ri.version>2.3.0</jaxws-ri.version>
         <jta.version>1.1</jta.version>
         <log4j.version>2.22.1</log4j.version>
-        <cxf.version>3.5.8</cxf.version>
+        <cxf.version>3.5.10</cxf.version>
         <wss4j.version>2.4.3</wss4j.version>
     </properties>
     <profiles>
