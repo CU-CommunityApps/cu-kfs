@@ -33,7 +33,6 @@ import edu.cornell.kfs.vnd.CUVendorKeyConstants;
 import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorCreditCardMerchant;
-import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuVendorRule extends CuVendorRuleBase {
@@ -103,11 +102,11 @@ public class CuVendorRule extends CuVendorRuleBase {
     		{
     			int i = 0;
     			for(final VendorSupplierDiversity vendor : vendorSupplierDiversities) {
-    				if (((CuVendorSupplierDiversityExtension)vendor.getExtension()).getVendorSupplierDiversityExpirationDate() == null ) {
+    				if (vendor.getCertificationExpirationDate() == null ) {
     					success = false;
     					putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);
     				}
-    				else if (((CuVendorSupplierDiversityExtension)vendor.getExtension()).getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
+    				else if (vendor.getCertificationExpirationDate().before( new Date() ) ) {
     		            // Only check expiration date on new vendors
     		            if(document.isNew()) {
     		            	success = false;
@@ -328,11 +327,11 @@ public class CuVendorRule extends CuVendorRuleBase {
 		{
 			int i = 0;
 			for(final VendorSupplierDiversity vendor : vendorSupplierDiversities) {
-				if (((CuVendorSupplierDiversityExtension)vendor.getExtension()).getVendorSupplierDiversityExpirationDate() == null ) {
+				if (vendor.getCertificationExpirationDate() == null ) {
 					success = false;
 					putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);				
 				}
-				else if (((CuVendorSupplierDiversityExtension)vendor.getExtension()).getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
+				else if (vendor.getCertificationExpirationDate().before( new Date() ) ) {
 					// Only check expiration date on new vendors
 					if(document.isNew()) {
 						success = false;
@@ -415,12 +414,12 @@ public class CuVendorRule extends CuVendorRuleBase {
 	
 	protected boolean validateSupplierDiversityAddition(final VendorSupplierDiversity vendorSupplierDiversity) {
 	    boolean success = true;
-	    if (((CuVendorSupplierDiversityExtension)vendorSupplierDiversity.getExtension()).getVendorSupplierDiversityExpirationDate() == null) {
+	    if (vendorSupplierDiversity.getCertificationExpirationDate() == null) {
 	    	success = false;
             putFieldError("add."+VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);
             return success;
 	    }
-        if (((CuVendorSupplierDiversityExtension)vendorSupplierDiversity.getExtension()).getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
+        if (vendorSupplierDiversity.getCertificationExpirationDate().before( new Date() ) ) {
             success = false;
             putFieldError("add."+VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
             return success;

@@ -3,21 +3,8 @@ package edu.cornell.kfs.concur.batch.fixture;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.coa.businessobject.Account;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-
-import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedAccountingEntry;
-import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
-import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedGroupEntry;
-import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedHeaderEntry;
-import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedPayeeIdEntry;
-import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedTrailerEntry;
-import edu.cornell.kfs.concur.ConcurTestConstants.PdpFeedFileConstants;
 
 public enum PdpFeedFileBaseEntryFixture {
 
