@@ -1086,11 +1086,12 @@
                  <!--
                   - As of 5.2.1, this transitive dependency results in KFS using SLF4J 1.7.36. Excluding so a newer
                   - SLF4J version will be used.
-                 -->
+                 
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
+                -->
             </exclusions>
         </dependency>
         <dependency>
