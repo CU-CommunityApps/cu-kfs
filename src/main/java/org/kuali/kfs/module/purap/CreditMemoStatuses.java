@@ -35,7 +35,7 @@ public final class CreditMemoStatuses {
     public static final String APPDOC_COMPLETE = "Complete";
     public static final String APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW = "Awaiting AP Review";
     // CU Customization: Added new APPDOC status
-    public static final String APPDOC_PAYMENT_METHOD_REVIEW = "Awaiting Treasury Manager Approval";
+    public static final String APPDOC_PAYMENT_METHOD_REVIEW = "Awaiting Payment Method Review";
 
     public static final String NODE_ADHOC_REVIEW = "AdHoc";
     public static final String NODE_ACCOUNT_REVIEW = "Account";
