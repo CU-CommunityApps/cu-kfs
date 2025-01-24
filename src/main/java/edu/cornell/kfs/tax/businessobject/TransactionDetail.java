@@ -1,75 +1,196 @@
 package edu.cornell.kfs.tax.businessobject;
 
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
+import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
+
+import edu.cornell.kfs.tax.batch.annotation.TaxBusinessObjectMapping;
+import edu.cornell.kfs.tax.batch.annotation.TaxDto;
+import edu.cornell.kfs.tax.batch.annotation.TaxDtoField;
 
 /**
  * Convenience lightweight BO to allow for ORM tools to map to the
  * transaction detail table easily. This class is not meant for
- * persisting or retrieving detail rows; it is only meant for
- * configuring the table column mappings via an ORM tool like OJB.
+ * persisting or retrieving detail rows directly; it is meant for
+ * configuring the table column mappings via an ORM tool like OJB,
+ * and for doubling as a DTO that can be used by the tax module's
+ * custom SQL handling.
  */
+@TaxDto(mappedBusinessObjects = {
+        @TaxBusinessObjectMapping(businessObjectClass = TransactionDetail.class)
+})
 public class TransactionDetail extends TransientBusinessObjectBase {
     private static final long serialVersionUID = -2558957331012161515L;
 
+    @TaxDtoField
     private String transactionDetailId;
+
+    @TaxDtoField
     private Integer reportYear;
+
+    @TaxDtoField
     private String documentNumber;
+
+    @TaxDtoField
     private String documentType;
+
+    @TaxDtoField
     private Integer financialDocumentLineNumber;
+
+    @TaxDtoField
     private String finObjectCode;
+
+    @TaxDtoField
     private KualiDecimal netPaymentAmount;
+
+    @TaxDtoField
     private String documentTitle;
+
+    @TaxDtoField
     private String vendorTaxNumber;
+
+    @TaxDtoField
     private String incomeCode;
+
+    @TaxDtoField
     private String incomeCodeSubType;
+
+    @TaxDtoField
     private String dvCheckStubText;
+
+    @TaxDtoField
     private String payeeId;
+
+    @TaxDtoField
     private String vendorName;
+
+    @TaxDtoField
     private String parentVendorName;
+
+    @TaxDtoField
     private String vendorTypeCode;
+
+    @TaxDtoField
     private String vendorOwnershipCode;
+
+    @TaxDtoField
     private String vendorOwnershipCategoryCode;
+
+    @TaxDtoField
     private Boolean vendorForeignIndicator;
+
+    @TaxDtoField
     private String vendorEmailAddress;
+
+    @TaxDtoField
     private String vendorChapter4StatusCode;
+
+    @TaxDtoField
     private String vendorGIIN;
+
+    @TaxDtoField
     private String vendorLine1Address;
+
+    @TaxDtoField
     private String vendorLine2Address;
+
+    @TaxDtoField
     private String vendorCityName;
+
+    @TaxDtoField
     private String vendorStateCode;
+
+    @TaxDtoField
     private String vendorZipCode;
+
+    @TaxDtoField
     private String vendorForeignLine1Address;
+
+    @TaxDtoField
     private String vendorForeignLine2Address;
+
+    @TaxDtoField
     private String vendorForeignCityName;
+
+    @TaxDtoField
     private String vendorForeignZipCode;
+
+    @TaxDtoField
     private String vendorForeignProvinceName;
+
+    @TaxDtoField
     private String vendorForeignCountryCode;
+
+    @TaxDtoField
     private Boolean nraPaymentIndicator;
+
+    @TaxDtoField
     private java.sql.Date paymentDate;
+
+    @TaxDtoField
     private String paymentPayeeName;
+
+    @TaxDtoField
     private String incomeClassCode;
+
+    @TaxDtoField
     private Boolean incomeTaxTreatyExemptIndicator;
+
+    @TaxDtoField
     private Boolean foreignSourceIncomeIndicator;
+
+    @TaxDtoField
     private KualiDecimal federalIncomeTaxPercent;
+
+    @TaxDtoField
     private String paymentDescription;
+
+    @TaxDtoField
     private String paymentLine1Address;
+
+    @TaxDtoField
     private String paymentCountryName;
+
+    @TaxDtoField
     private String chartCode;
+
+    @TaxDtoField
     private String accountNumber;
+
+    @TaxDtoField
     private String initiatorNetId;
+
+    @TaxDtoField
     private String form1099Type;
+
+    @TaxDtoField
     private String form1099Box;
+
+    @TaxDtoField
     private String form1099OverriddenType;
+
+    @TaxDtoField
     private String form1099OverriddenBox;
+
+    @TaxDtoField
     private String form1042SBox;
+
+    @TaxDtoField
     private String form1042SOverriddenBox;
+
+    @TaxDtoField
     private String paymentReasonCode;
 
+    @TaxDtoField
     private KualiInteger disbursementNbr;
+
+    @TaxDtoField
     private String paymentStatusCode;
+
+    @TaxDtoField
     private String disbursementTypeCode;
+
+    @TaxDtoField
     private String ledgerDocumentTypeCode;
 
     public String getTransactionDetailId() {

@@ -16,7 +16,7 @@ import edu.cornell.kfs.tax.batch.metadata.TaxDtoMappingDefinition;
 public class TaxDataExtractorImpl<T> implements TaxDataExtractor<T> {
 
     /*
-     * This Map contains a subset of the mappings listed in Oracle's Java documentation:
+     * This Map contains a subset of the JDBC type mappings listed in Oracle's Java documentation:
      * 
      * https://docs.oracle.com/javase/1.5.0/docs/guide/jdbc/getstart/mapping.html
      */

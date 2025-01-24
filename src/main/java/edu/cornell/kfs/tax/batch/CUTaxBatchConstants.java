@@ -523,6 +523,13 @@ public final class CUTaxBatchConstants {
 
 
 
+    public static final class QueryTableAliases {
+        public static final String VENDOR_HEADER = "HDR";
+        public static final String VENDOR_DETAIL = "DTL";
+    }
+
+
+
     private CUTaxBatchConstants() {
         throw new UnsupportedOperationException("do not call");
     }
