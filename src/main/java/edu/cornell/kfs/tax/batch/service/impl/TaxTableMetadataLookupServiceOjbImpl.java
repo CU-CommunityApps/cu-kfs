@@ -41,6 +41,7 @@ import edu.cornell.kfs.tax.batch.annotation.TaxDtoField;
 import edu.cornell.kfs.tax.batch.metadata.TaxDtoFieldConverter;
 import edu.cornell.kfs.tax.batch.metadata.TaxDtoFieldDefinition;
 import edu.cornell.kfs.tax.batch.metadata.TaxDtoMappingDefinition;
+import edu.cornell.kfs.tax.batch.metadata.TaxDtoTableDefinition;
 import edu.cornell.kfs.tax.batch.service.TaxTableMetadataLookupService;
 
 public class TaxTableMetadataLookupServiceOjbImpl extends PersistenceServiceStructureImplBase
@@ -65,8 +66,7 @@ public class TaxTableMetadataLookupServiceOjbImpl extends PersistenceServiceStru
         Validate.notNull(dtoClass, "dtoClass cannot be null");
         Validate.isTrue(Modifier.isPublic(dtoClass.getModifiers()), "dtoClass must be declared as public", dtoClass);
         final TaxDto dtoInfo = getAndValidateTaxDtoAnnotation(dtoClass);
-        final List<Pair<Class<? extends BusinessObject>, String>> businessObjectMappings =
-                generateBusinessObjectMappings(dtoInfo);
+        final List<TaxDtoTableDefinition> businessObjectMappings = generateBusinessObjectMappings(dtoInfo);
         final List<TaxDtoFieldDefinition<T, ?>> fieldDefinitions = generateFieldDefinitions(dtoClass, dtoInfo);
         final Supplier<T> dtoConstructor = generateLambdaForDefaultDtoConstructor(dtoClass);
         return new TaxDtoMappingDefinition<>(dtoClass, dtoConstructor, businessObjectMappings, fieldDefinitions);
@@ -103,15 +103,18 @@ public class TaxTableMetadataLookupServiceOjbImpl extends PersistenceServiceStru
         return dtoInfo;
     }
 
-    private List<Pair<Class<? extends BusinessObject>, String>> generateBusinessObjectMappings(final TaxDto dtoInfo) {
+    private List<TaxDtoTableDefinition> generateBusinessObjectMappings(final TaxDto dtoInfo) {
         return Arrays.stream(dtoInfo.mappedBusinessObjects())
                 .map(this::generateBusinessObjectMapping)
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    private Pair<Class<? extends BusinessObject>, String> generateBusinessObjectMapping(
-            final TaxBusinessObjectMapping boMapping) {
-        return Pair.of(boMapping.businessObjectClass(), boMapping.tableAliasForQuery());
+    private TaxDtoTableDefinition generateBusinessObjectMapping(final TaxBusinessObjectMapping boMapping) {
+        final ClassDescriptor classDescriptor = super.getClassDescriptor(boMapping.businessObjectClass());
+        final Optional<String> tableAliasForQuery = Optional.ofNullable(boMapping.tableAliasForQuery())
+                .filter(StringUtils::isNotBlank);
+        return new TaxDtoTableDefinition(boMapping.businessObjectClass(), classDescriptor.getFullTableName(),
+                tableAliasForQuery);
     }
 
     private <T> List<TaxDtoFieldDefinition<T, ?>> generateFieldDefinitions(final Class<T> dtoClass,
@@ -131,9 +134,6 @@ public class TaxTableMetadataLookupServiceOjbImpl extends PersistenceServiceStru
         for (final Field dtoField : dtoFields) {
             final TaxDtoFieldDefinition<T, ?> fieldDefinition = generateFieldDefinition(
                     dtoClass, dtoField, objectMapper);
-            Validate.validState(!fieldDefinition.isUpdatable() || objectMappingCount == 1,
-                    "Unsupported configuration: Cannot mark field %s as updatable because the annotation for dtoClass "
-                            + "%s specifies more than one mapped business object", dtoField.getName(), dtoClass);
             fieldDefinitions.add(fieldDefinition);
         }
 
@@ -197,7 +197,7 @@ public class TaxTableMetadataLookupServiceOjbImpl extends PersistenceServiceStru
         final BiConsumer<T, U> propertySetter = generateLambdaForDtoPropertySetter(dtoClass, fieldType, dtoField);
 
         return new TaxDtoFieldDefinition<>(dtoClass, fieldType, dtoField.getName(), propertyGetter, propertySetter,
-                fieldInfo.updatable(), jdbcType, columnLabel, fieldConverter);
+                jdbcType, columnLabel, fieldConverter);
     }
 
     private FieldDescriptor getFieldDescriptor(final Field dtoField, final TaxDtoField fieldInfo,

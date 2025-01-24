@@ -18,18 +18,20 @@ public class UpdatableTaxDataExtractorImpl<T, U> extends TaxDataExtractorImpl<T>
             final TaxDtoMappingDefinition<U> dtoDefinitionForUpdates, final ResultSet resultSet) {
         super(dtoDefinition, resultSet);
         Validate.notNull(dtoDefinitionForUpdates, "dtoDefinitionForUpdates cannot be null");
+        Validate.isTrue(dtoDefinitionForUpdates.getBusinessObjectMappings().size() == 1,
+                "dtoDefinitionForUpdates must specify exactly 1 business object mapping");
         this.dtoDefinitionForUpdates = dtoDefinitionForUpdates;
     }
 
     @Override
     public void updateCurrentRow(final U dtoContainingUpdates) throws SQLException {
         for (final TaxDtoFieldDefinition<U, ?> fieldMapping : dtoDefinitionForUpdates.getFieldMappings()) {
-            stageSqlUpdateFromField(dtoContainingUpdates, fieldMapping);
+            stageSqlUpdateForField(dtoContainingUpdates, fieldMapping);
         }
         getResultSet().updateRow();
     }
 
-    private <V> void stageSqlUpdateFromField(final U dtoContainingUpdates,
+    private <V> void stageSqlUpdateForField(final U dtoContainingUpdates,
             final TaxDtoFieldDefinition<U, V> fieldMapping) throws SQLException {
         final V dtoFieldValue = fieldMapping.getPropertyGetter().apply(dtoContainingUpdates);
         final Object convertedValue = fieldMapping.hasFieldConverter()
