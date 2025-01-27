@@ -25,7 +25,7 @@
                     </split>
                     <split name="RequiresVendorManager">
                         <branch name="True">
-                            <role name="VendorManager" nextNode="JoinRequiresVendorManager"/>
+                            <role name="Vendor-Manager" nextNode="JoinRequiresVendorManager"/>
                         </branch>
                         <branch name="False">
                             <simple name="Do Nothing" nextNode="JoinRequiresVendorManager"/>
@@ -45,7 +45,7 @@
                 <role name="Management">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                 </role>
-                <role name="VendorManager">
+                <role name="Vendor-Manager">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                 </role>
                 <role name="Initiator">
