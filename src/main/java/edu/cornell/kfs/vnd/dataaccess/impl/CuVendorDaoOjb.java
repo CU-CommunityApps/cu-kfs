@@ -86,7 +86,7 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         final Criteria commodityCode = new Criteria();
         final Criteria supplierDiversity = new Criteria();
         final Criteria vendorOwnershipCode = new Criteria();
-        final Criteria vendorSupplierDiversityExpirationDate = new Criteria();
+        final Criteria certificationExpirationDate = new Criteria();
         
         String headerVal = fieldValues.get(VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID);
         String detailVal = fieldValues.get(VendorPropertyConstants.VENDOR_DETAIL_ASSIGNED_ID);
@@ -98,8 +98,8 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         String supplierDiversityVal = fieldValues.get(CUVendorPropertyConstants.VENDOR_HEADER_PREFIX + CUVendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITY_CODE);
         String vendorOwnershipCodeVal = fieldValues.get(VendorPropertyConstants.VENDOR_OWNERSHIP_CODE);
         String commodityCodeVal = fieldValues.get(VendorPropertyConstants.VENDOR_COMMODITIES_CODE_PURCHASING_COMMODITY_CODE);
-        String vendorSupplierDiversityExpirationDateVal = fieldValues.get(CUVendorPropertyConstants.VENDOR_HEADER_PREFIX  +
-                VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES + "." + CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION);
+        String certificationExpirationDateVal = fieldValues.get(CUVendorPropertyConstants.VENDOR_HEADER_PREFIX  +
+                VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES + "." + CUVendorPropertyConstants.CERTIFICATION_EXPRIATION_DATE);
         
         final String defaultPaymentMethodCodeVal = fieldValues.get("defaultPaymentMethodCode");
         
@@ -158,12 +158,12 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
             vendorOwnershipCode.addEqualTo(VendorPropertyConstants.VENDOR_OWNERSHIP_CODE, vendorOwnershipCodeVal); //VNDR_HDR
             header.addAndCriteria(vendorOwnershipCode);
         }
-        if (StringUtils.isNotBlank(vendorSupplierDiversityExpirationDateVal)) {
+        if (StringUtils.isNotBlank(certificationExpirationDateVal)) {
             try {
-                final Date date = new java.sql.Date(new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US).parse(vendorSupplierDiversityExpirationDateVal).getTime());
-                vendorSupplierDiversityExpirationDate.addGreaterOrEqualThan(CUVendorPropertyConstants.VENDOR_HEADER_PREFIX +
-                        VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES + "." + CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, date);
-                header.addAndCriteria(vendorSupplierDiversityExpirationDate);
+                final Date date = new java.sql.Date(new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US).parse(certificationExpirationDateVal).getTime());
+                certificationExpirationDate.addGreaterOrEqualThan(CUVendorPropertyConstants.VENDOR_HEADER_PREFIX +
+                        VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES + "." + CUVendorPropertyConstants.CERTIFICATION_EXPRIATION_DATE, date);
+                header.addAndCriteria(certificationExpirationDate);
             } catch (final ParseException e) {
                 LOG.error("unable to parse date");
             }

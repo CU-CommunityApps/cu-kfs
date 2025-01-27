@@ -104,13 +104,13 @@ public class CuVendorRule extends CuVendorRuleBase {
     			for(final VendorSupplierDiversity vendor : vendorSupplierDiversities) {
     				if (vendor.getCertificationExpirationDate() == null ) {
     					success = false;
-    					putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);
+    					putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.CERTIFICATION_EXPRIATION_DATE, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);
     				}
     				else if (vendor.getCertificationExpirationDate().before( new Date() ) ) {
     		            // Only check expiration date on new vendors
     		            if(document.isNew()) {
     		            	success = false;
-    		            	putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
+    		            	putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.CERTIFICATION_EXPRIATION_DATE, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
     		            }
     				}
     				i++;
@@ -329,13 +329,13 @@ public class CuVendorRule extends CuVendorRuleBase {
 			for(final VendorSupplierDiversity vendor : vendorSupplierDiversities) {
 				if (vendor.getCertificationExpirationDate() == null ) {
 					success = false;
-					putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);				
+					putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.CERTIFICATION_EXPRIATION_DATE, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);				
 				}
 				else if (vendor.getCertificationExpirationDate().before( new Date() ) ) {
 					// Only check expiration date on new vendors
 					if(document.isNew()) {
 						success = false;
-						putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
+						putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.CERTIFICATION_EXPRIATION_DATE, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
 					}
 				}
 				i++;
@@ -416,12 +416,12 @@ public class CuVendorRule extends CuVendorRuleBase {
 	    boolean success = true;
 	    if (vendorSupplierDiversity.getCertificationExpirationDate() == null) {
 	    	success = false;
-            putFieldError("add."+VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);
+            putFieldError("add."+VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"."+CUVendorPropertyConstants.CERTIFICATION_EXPRIATION_DATE, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);
             return success;
 	    }
         if (vendorSupplierDiversity.getCertificationExpirationDate().before( new Date() ) ) {
             success = false;
-            putFieldError("add."+VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
+            putFieldError("add."+VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"."+CUVendorPropertyConstants.CERTIFICATION_EXPRIATION_DATE, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
             return success;
         }
 

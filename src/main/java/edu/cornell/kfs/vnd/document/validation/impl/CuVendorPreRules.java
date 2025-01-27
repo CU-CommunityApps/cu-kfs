@@ -87,7 +87,7 @@ public class CuVendorPreRules extends VendorPreRules {
                 	expired.add(CUVendorConstants.EXPIRABLE_COVERAGES.SUPPLIER_DIVERSITY_CERTIFICATION);
                     GlobalVariables.getMessageMap().putError(KFSConstants.MAINTENANCE_NEW_MAINTAINABLE+VendorConstants.VENDOR_HEADER_ATTR+"."+
                     										 VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+
-                    										 CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, 
+                    										 CUVendorPropertyConstants.CERTIFICATION_EXPRIATION_DATE, 
                     										 CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
                     break;
                 }
