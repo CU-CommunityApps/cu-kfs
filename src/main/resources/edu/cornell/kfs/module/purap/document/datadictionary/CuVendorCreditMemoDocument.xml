@@ -21,11 +21,9 @@
     <!-- workflow attributes -->
     <bean id="VendorCreditMemoDocument-workflowAttributes" parent="VendorCreditMemoDocument-workflowAttributes-parentBean">
     	<property name="routingTypeDefinitions">
-            <map>
-                <!-- no qualifiers for RequiresImageAttachment -->
-                <entry key="Account" value-ref="RoutingType-PurchasingAccountsPayableDocument-Account"/>
-                <entry key="ObjectCode" value-ref="RoutingType-PurchasingAccountsPayableDocument-ObjectCode"/>
-                <entry key="PaymentMethod" value-ref="VendorCreditMemoDocument-RoutingType-PaymentMethod" />
+            <map merge="true">
+                <!-- Adding Cornell specific routing to base code routing. -->
+                <entry key="PaymentMethod" value-ref="VendorCreditMemoDocument-RoutingType-PaymentMethod"/>
             </map>
         </property>
         <property name="searchingTypeDefinitions">
