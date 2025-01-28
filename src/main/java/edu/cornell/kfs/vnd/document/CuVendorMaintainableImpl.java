@@ -79,10 +79,8 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
             } else {
                 vendorTaxNumber = vendorDetail.getVendorHeader().getVendorTaxNumber();
             }
-            
             return isVendorTypeApplicableForTaxIdRoute() && isVendorTaxNumberInWorkday(vendorTaxNumber);
         }
-        
         return super.answerSplitNodeQuestion(nodeName);
     }
     
