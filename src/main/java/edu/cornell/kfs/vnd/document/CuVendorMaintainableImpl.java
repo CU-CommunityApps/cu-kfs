@@ -33,6 +33,7 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
@@ -46,7 +47,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private static final String PROC_METHODS_FIELD_NAME = "extension.procurementMethods";
     private static final String PROC_METHODS_MULTISELECT_FIELD_NAME = "extension.procurementMethodsArray";
     private static final String MULTISELECT_FIELD_PATH_PREFIX = "dataObject.";
-    private static final String REQUIRES_VENDOR_MANAGER = "RequiresVendorManager";
+    private static final String REQUIRES_VENDOR_TAX_ID_MANAGER = "RequiresVendorTaxIdManager";
     
     protected transient PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     
@@ -70,30 +71,36 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
             return true;
         }
         
-        if (nodeName.equals(REQUIRES_VENDOR_MANAGER)) {
-            LOG.info("answerSplitNodeQuestion, entering requires vendor manager node");
+        if (nodeName.equals(REQUIRES_VENDOR_TAX_ID_MANAGER)) {
             final VendorDetail vendorDetail = (VendorDetail) super.getBusinessObject();
             String vendorTaxNumber;
             if (vendorDetail.getVendorHeader().getVendorForeignIndicator()) {
-                LOG.info("answerSplitNodeQuestion, foreign vendor");
                 vendorTaxNumber = vendorDetail.getVendorHeader().getVendorForeignTaxId();
             } else {
-                LOG.info("answerSplitNodeQuestion, domestic vendor");
                 vendorTaxNumber = vendorDetail.getVendorHeader().getVendorTaxNumber();
             }
             
-            return isVendorTaxNumberInWorkday(vendorTaxNumber);
+            return isVendorTypeApplicableForTaxIdRoute() && isVendorTaxNumberInWorkday(vendorTaxNumber);
         }
         
         return super.answerSplitNodeQuestion(nodeName);
     }
     
+    private boolean isVendorTypeApplicableForTaxIdRoute() {
+        final VendorDetail vendorDetail = (VendorDetail) super.getBusinessObject();
+        boolean shouldRouteForTaxId = StringUtils.equalsIgnoreCase(vendorDetail.getVendorHeader().getVendorOwnershipCode(), 
+                CUPurapConstants.JaggaerLegalStructure.INDIVIDUAL.kfsOwnerShipTypeCode);
+        LOG.info("isVendorTypeApplicableForTaxIdRoute, returning {}", shouldRouteForTaxId);
+        return shouldRouteForTaxId;
+    }
+    
     private boolean isVendorTaxNumberInWorkday(final String vendorTaxNumber) {
-        LOG.info("isVendorTaxNumberInWorkday, entering");
         /*
          * @todo implement me
          */
-        return true;
+        boolean isInWorkDay = true;
+        LOG.info("isVendorTaxNumberInWorkday, returning {}", isInWorkDay);
+        return isInWorkDay;
     }
 
     private void populateGeneratedHerderId(final VendorHeader vendorHeader) {

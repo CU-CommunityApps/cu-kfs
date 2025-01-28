@@ -229,13 +229,13 @@
         <property name="routingTypeDefinitions">
             <map>
                 <entry key="Management" value-ref="RoutingType-VendorMaintenanceDocument-Management" />
-                <entry key="Vendor-Manager" value-ref="RoutingType-VendorMaintenanceDocument-Vendor-Manager" />
+                <entry key="Vendor Tax ID Reviewer" value-ref="RoutingType-VendorMaintenanceDocument-VendorTaxIdReviewer" />
             </map>
         </property>
     </bean>
 
     <!-- This is a duplication of RoutingType-VendorMaintenanceDocument-Management, maybe it is not needed -->
-    <bean id="RoutingType-VendorMaintenanceDocument-Vendor-Manager" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
+    <bean id="RoutingType-VendorMaintenanceDocument-VendorTaxIdReviewer" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
         <property name="routingAttributes">
             <list>
                 <bean class="org.kuali.kfs.krad.datadictionary.RoutingAttribute" p:qualificationAttributeName="vendorTypeCode" />
