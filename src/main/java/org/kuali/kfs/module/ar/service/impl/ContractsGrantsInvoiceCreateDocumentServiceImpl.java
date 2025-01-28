@@ -54,8 +54,6 @@ import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.gl.businessobject.Balance;
-import org.kuali.kfs.integration.ar.AccountsReceivableCustomer;
-import org.kuali.kfs.integration.ar.AccountsReceivableCustomerAddressEmail;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAgency;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
@@ -86,6 +84,7 @@ import org.kuali.kfs.module.ar.businessobject.ContractsGrantsLetterOfCreditRevie
 import org.kuali.kfs.module.ar.businessobject.CostCategory;
 import org.kuali.kfs.module.ar.businessobject.Customer;
 import org.kuali.kfs.module.ar.businessobject.CustomerAddress;
+import org.kuali.kfs.module.ar.businessobject.CustomerAddressEmail;
 import org.kuali.kfs.module.ar.businessobject.InvoiceAccountDetail;
 import org.kuali.kfs.module.ar.businessobject.InvoiceAddressDetail;
 import org.kuali.kfs.module.ar.businessobject.InvoiceBill;
@@ -613,7 +612,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
             invoiceGeneralDetail.setProposalNumber(award.getProposalNumber());
             invoiceGeneralDetail.setAward(award);
 
-            final Timestamp ts = new Timestamp(new java.util.Date().getTime());
+            final Timestamp ts = getDateTimeService().getCurrentTimestamp();
             final java.sql.Date today = new java.sql.Date(ts.getTime());
             final AccountingPeriod currPeriod = accountingPeriodService.getByDate(today);
             final BillingPeriod billingPeriod = verifyBillingFrequencyService
@@ -1006,7 +1005,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         if (StringUtils.isNotBlank(customerAddress.getCustomerInvoiceTemplateCode())) {
             invoiceAddressDetail.setCustomerInvoiceTemplateCode(customerAddress.getCustomerInvoiceTemplateCode());
         } else {
-            final AccountsReceivableCustomer customer = award.getAgency().getCustomer();
+            final Customer customer = award.getAgency().getCustomer();
             if (ObjectUtils.isNotNull(customer)
                     && StringUtils.isNotBlank(customer.getCustomerInvoiceTemplateCode())) {
                 invoiceAddressDetail.setCustomerInvoiceTemplateCode(customer.getCustomerInvoiceTemplateCode());
@@ -1019,7 +1018,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
 
         final CustomerAddress finalCustomerAddress = customerAddress;
         customerAddress.getCustomerAddressEmails().stream()
-                .filter(AccountsReceivableCustomerAddressEmail::isActive)
+                .filter(CustomerAddressEmail::isActive)
                 .forEach(email -> {
                     final InvoiceAddressDetail invoiceAddressDetailWithEmail = new InvoiceAddressDetail();
                     invoiceAddressDetailWithEmail.setCustomerNumber(finalCustomerAddress.getCustomerNumber());
@@ -1209,7 +1208,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
             if (StringUtils.isNotBlank(customerAddress.getCustomerInvoiceTemplateCode())) {
                 invoiceGeneralDetail.setCustomerInvoiceTemplateCode(customerAddress.getCustomerInvoiceTemplateCode());
             } else {
-                final AccountsReceivableCustomer customer = agency.getCustomer();
+                final Customer customer = agency.getCustomer();
                 if (ObjectUtils.isNotNull(customer) && StringUtils.isNotBlank(customer.getCustomerInvoiceTemplateCode())) {
                     invoiceGeneralDetail.setCustomerInvoiceTemplateCode(customer.getCustomerInvoiceTemplateCode());
                 }

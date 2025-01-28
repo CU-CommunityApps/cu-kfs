@@ -1,7 +1,7 @@
 package edu.cornell.kfs.module.purap.document.validation.impl;
 
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;

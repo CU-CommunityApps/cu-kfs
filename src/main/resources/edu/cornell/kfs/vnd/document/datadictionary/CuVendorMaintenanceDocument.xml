@@ -125,42 +125,6 @@
     </property>
   </bean>
 
-  <bean id="VendorMaintenanceDocument-SupplierDiversity" parent="VendorMaintenanceDocument-SupplierDiversity-parentBean">
-    <property name="maintainableItems">
-      <list>
-        <bean parent="MaintainableCollectionDefinition">
-          <property name="name" value="vendorHeader.vendorSupplierDiversities"/>
-          <property name="businessObjectClass" value="org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity"/>
-          <property name="summaryTitle" value="Supplier Diversity"/>
-          <property name="summaryFields">
-            <list>
-              <bean parent="MaintainableFieldDefinition" p:name="vendorSupplierDiversityCode"/>
-              <bean parent="MaintainableFieldDefinition" p:name="extension.vendorSupplierDiversityExpirationDate"/>
-            </list>
-          </property>
-          <property name="maintainableFields">
-            <list>
-              <bean parent="MaintainableFieldDefinition"
-                    p:name="vendorSupplierDiversityCode"
-                    p:noLookup="true"
-                    p:required="true"/>
-              <bean parent="MaintainableFieldDefinition" p:name="extension.vendorSupplierDiversityExpirationDate" p:required="true"/>
-              <bean parent="MaintainableFieldDefinition" p:name="vendorHeaderGeneratedIdentifier" p:unconditionallyReadOnly="true"/>
-              <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/>
-              <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
-            </list>
-          </property>
-          <property name="duplicateIdentificationFields">
-          	<list>
-          		<bean parent="MaintainableFieldDefinition" p:name="vendorSupplierDiversityCode"/>
-          	</list>
-          </property>
-        </bean>
-      </list>
-    </property>
-  </bean>
-
-
   <bean id="VendorMaintenanceDocument-InsuranceTracking" parent="VendorMaintenanceDocument-InsuranceTracking-parentBean"/>
 
   <bean id="VendorMaintenanceDocument-InsuranceTracking-parentBean" abstract="true" parent="MaintainableSectionDefinition">

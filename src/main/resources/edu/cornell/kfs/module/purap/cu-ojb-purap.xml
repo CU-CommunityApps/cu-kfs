@@ -2977,6 +2977,10 @@
     <reference-descriptor name="itemType" class-ref="org.kuali.kfs.module.purap.businessobject.ItemType" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         <foreignkey field-ref="itemTypeCode" />
     </reference-descriptor>
+    <reference-descriptor name="capitalAssetTransactionType" class-ref="org.kuali.kfs.module.cam.businessobject.AssetTransactionType"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+        <foreignkey field-ref="capitalAssetTransactionTypeCode"/>
+    </reference-descriptor>
     <!-- the account deletion is handled within our buildDeletionAwareLists, setting auto-delete=none as a workaround to Optimistic Locking Exception for now -->
     <collection-descriptor name="sourceAccountingLines" proxy="true" element-class-ref="org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="none">
         <orderby name="accountNumber" sort="ASC" />

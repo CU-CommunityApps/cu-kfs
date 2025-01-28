@@ -76,7 +76,7 @@
         <ref bean="IWantDocVendorDetail-vendorHeader.vendorForeignIndicator"/>
         <ref bean="IWantDocVendorDetail-vendorHeader.vendorTypeCode"/>
         <ref bean="IWantDocVendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityCode"/>
-        <ref bean="IWantDocVendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate"/>
+        <ref bean="IWantDocVendorDetail-vendorHeader.vendorSupplierDiversities.certificationExpirationDate"/>
         <ref bean="IWantDocVendorDetail-vendorShippingSpecialConditions.vendorShippingSpecialConditionCode"/>
         <ref bean="IWantDocVendorDetail-vendorAliases.vendorAliasName"/>
         <ref bean="IWantDocVendorDetail-vendorPhoneNumbers.vendorPhoneTypeCode"/>
@@ -526,10 +526,10 @@
   <bean id="IWantDocVendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityCode-parentBean" abstract="true" parent="VendorSupplierDiversity-vendorSupplierDiversityCode">
     <property name="name" value="vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityCode"/>
   </bean>
-  <bean id="IWantDocVendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate" parent="IWantDocVendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate-parentBean"/>
+  <bean id="IWantDocVendorDetail-vendorHeader.vendorSupplierDiversities.certificationExpirationDate" parent="IWantDocVendorDetail-vendorHeader.vendorSupplierDiversities.certificationExpirationDate-parentBean"/>
 
-  <bean id="IWantDocVendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate-parentBean" abstract="true" parent="VendorSupplierDiversityExtension-vendorSupplierDiversityExpirationDate">
-    <property name="name" value="vendorHeader.vendorSupplierDiversities.extension.vendorSupplierDiversityExpirationDate"/>
+  <bean id="IWantDocVendorDetail-vendorHeader.vendorSupplierDiversities.certificationExpirationDate-parentBean" abstract="true" parent="VendorSupplierDiversity-certificationExpirationDate">
+    <property name="name" value="vendorHeader.vendorSupplierDiversities.certificationExpirationDate"/>
   </bean>
   
   <bean id="IWantDocVendorDetail-vendorShippingSpecialConditions.vendorShippingSpecialConditionCode" parent="IWantDocVendorDetail-vendorShippingSpecialConditions.vendorShippingSpecialConditionCode-parentBean"/>
@@ -1045,7 +1045,7 @@
                 <property name="inquiryFields">
                   <list>
                     <bean parent="FieldDefinition" p:attributeName="vendorSupplierDiversityCode"/>
-                    <bean parent="FieldDefinition" p:attributeName="extension.vendorSupplierDiversityExpirationDate"/>
+                    <bean parent="FieldDefinition" p:attributeName="certificationExpirationDate"/>
                     <bean parent="FieldDefinition" p:attributeName="active"/>
                   </list>
                 </property>

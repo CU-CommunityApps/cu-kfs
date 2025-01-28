@@ -1,6 +1,5 @@
 package edu.cornell.kfs.fp.document.validation.impl;
 
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
@@ -17,7 +16,6 @@ import edu.cornell.kfs.pdp.service.CuCheckStubService;
 public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDocumentPreRules {
 
     private CuCheckStubService cuCheckStubService;
-    private ConfigurationService configurationService;
     
     /**
      * Executes pre-rules for Disbursement Voucher Document
@@ -59,14 +57,6 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
             cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
         }
         return cuCheckStubService;
-    }
-
-    //Copied from subclass due to being private
-    private ConfigurationService getConfigurationService() {
-        if (configurationService == null) {
-            configurationService = SpringContext.getBean(ConfigurationService.class);
-        }
-        return configurationService;
     }
     
 }

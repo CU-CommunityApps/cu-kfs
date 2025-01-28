@@ -54,7 +54,7 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
             }
         }
 
-        if (canViewInvoiceLink() && getAccountsReceivableModuleBillingService().isContractsGrantsBillingEnhancementActive()) {
+        if (canViewInvoiceLink() && contractsGrantsBillingUtilityService.isContractsGrantsBillingEnhancementActive()) {
             final AnchorHtmlData invoiceUrl = getInvoicesLookupUrl(businessObject);
             anchorHtmlDataList.add(invoiceUrl);
         }
@@ -66,7 +66,7 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
     public List<Column> getColumns() {
         final List<Column> columns = super.getColumns();
 
-        if (canInitAward() || !canViewInvoiceLink() || !getAccountsReceivableModuleBillingService().isContractsGrantsBillingEnhancementActive()) {
+        if (canInitAward() || !canViewInvoiceLink() || !contractsGrantsBillingUtilityService.isContractsGrantsBillingEnhancementActive()) {
             LOG.debug("getColumns, remove invoices column");
             for (final Iterator<Column> it = columns.iterator(); it.hasNext(); ) {
                 final Column column = it.next();
