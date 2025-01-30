@@ -62,7 +62,7 @@ public class ProcurementCardSummaryFeedServiceImpl implements ProcurementCardSum
 		List<ProcurementCardSummaryEntry> entriesToLoad = new ArrayList<ProcurementCardSummaryEntry>();
 		generatePCardEntryToLoadToDB(pcardSummaryList, entriesToLoad); 
 		
-		LOG.info("\n Loading data into the database: CU_FP_PCARD_SUMMARY_T table. \n");
+		LOG.info("\n Loading data into the database: CU_FP_PCARD_SUMMARY_T table. entriesToLoad={} \n", entriesToLoad.size());
 		// load entries into CU_FP_PCARD_SUMMARY_T table
 		loadDataInDB(entriesToLoad);
 		return true;
@@ -196,18 +196,22 @@ public class ProcurementCardSummaryFeedServiceImpl implements ProcurementCardSum
 			try {
 				businessObjectService.save(entry);
 			} catch (RuntimeException e) {
-			    logClassLoaderDebugInfo();
+			    logClassLoaderDebugInfo(entry, retrievedEntry);
 			    throw e;
 			}
 		}
 	}
 	
-    private void logClassLoaderDebugInfo() {
+    private void logClassLoaderDebugInfo(ProcurementCardSummaryEntry entry, ProcurementCardSummaryEntry retrievedEntry) {
         Class repoClass = org.apache.ojb.broker.metadata.ClassDescriptor.class;
         LOG.info("Repository Class Loader: " + repoClass.getClassLoader());
 
         Class pcardSummaryEntryClass = edu.cornell.kfs.fp.businessobject.ProcurementCardSummaryEntry.class;
         LOG.info("ProcurementCardSummaryEntry Class Loader: " + pcardSummaryEntryClass.getClassLoader());
+        
+        LOG.info("ProcurementCardSummaryEntry Class Loader: entry attributes = {}", entry.toString());
+        
+        LOG.info("ProcurementCardSummaryEntry Class Loader: retrievedEntry attributes = {}", retrievedEntry.toString());
     }
 	
 	
