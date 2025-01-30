@@ -53,7 +53,7 @@ public class ProcurementCardSummaryFeedServiceImpl implements ProcurementCardSum
 		List<ProcurementCardSummary> pcardSummaryList = readPCardFileContents(fileName);
 
 		// if there are no entries in the PCard Summary extract file then there is nothing to process
-		if (pcardSummaryList == null) {
+		if (pcardSummaryList == null) { //QUESTION: should this be changed to: if (ObjectUtils.isNull(pcardSummaryList) || pcardSummaryList.isEmpty())
 			LOG.info("No entries in the input file \n");
 			return true;
 		}
@@ -61,8 +61,8 @@ public class ProcurementCardSummaryFeedServiceImpl implements ProcurementCardSum
 		LOG.info("\n Generating entries from the valid ProcurementCardSummary list. \n");
 		List<ProcurementCardSummaryEntry> entriesToLoad = new ArrayList<ProcurementCardSummaryEntry>();
 		generatePCardEntryToLoadToDB(pcardSummaryList, entriesToLoad); 
-		
-		LOG.info("\n Loading data into the database: CU_FP_PCARD_SUMMARY_T table. \n");
+		//QUESTION: Should if-check be added to return true when entriesToLoad.isEmpty
+		LOG.info("\n Loading data into the database: CU_FP_PCARD_SUMMARY_T table. \n"); //Question: should: entriesToLoad.size be added to the log statement
 		// load entries into CU_FP_PCARD_SUMMARY_T table
 		loadDataInDB(entriesToLoad);
 		return true;
@@ -182,13 +182,13 @@ public class ProcurementCardSummaryFeedServiceImpl implements ProcurementCardSum
 				new HashMap<String, String>());
 
 		// do the add records now; 
-		for (ProcurementCardSummaryEntry entry : entriesToLoad) {
+		for (ProcurementCardSummaryEntry entry : entriesToLoad) { //I want to log the index of the entry being operated on but that seems like too much noise.
 			ProcurementCardSummaryEntry retrievedEntry = (ProcurementCardSummaryEntry) businessObjectService
 						.retrieve(entry);
 		//	entriesToLoad
 		//	.addAll(generateCalculatedSalaryFoundationTrackerCollection(psPositionJobExtractEntry));
 
-			
+			//QUESTION: Should the try-block be included in this if-statement with an else added to log that no save was performed due to a null being detected
 			if (ObjectUtils.isNotNull(retrievedEntry)) {
 					entry.setVersionNumber(retrievedEntry
 							.getVersionNumber());
@@ -196,7 +196,7 @@ public class ProcurementCardSummaryFeedServiceImpl implements ProcurementCardSum
 			try {
 				businessObjectService.save(entry);
 			} catch (RuntimeException e) {
-			    logClassLoaderDebugInfo();
+			    logClassLoaderDebugInfo();   //This is the previous logging that was added. Should we add identifying info for the entry that was being processed to the log.
 			    throw e;
 			}
 		}
