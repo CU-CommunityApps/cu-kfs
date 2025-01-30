@@ -38,6 +38,8 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
+import edu.cornell.kfs.vnd.businessobject.WorkdayKfsVendorLooupResultsDTO;
+import edu.cornell.kfs.vnd.service.CuVendorWorkDayService;
 
 public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private static final Logger LOG = LogManager.getLogger();
@@ -66,26 +68,39 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     @Override
     protected boolean answerSplitNodeQuestion(final String nodeName) {
         final Document document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(getDocumentNumber());
+        
          
         if (nodeName.equals(VENDOR_REQUIRES_APPROVAL_SPLIT_NODE)) {
             return true;
         }
         
         if (nodeName.equals(REQUIRES_VENDOR_TAX_ID_MANAGER)) {
-            final VendorDetail vendorDetail = (VendorDetail) super.getBusinessObject();
-            String vendorTaxNumber;
-            if (vendorDetail.getVendorHeader().getVendorForeignIndicator()) {
-                vendorTaxNumber = vendorDetail.getVendorHeader().getVendorForeignTaxId();
+            if (enableTaxIdReviewerNode()) {
+                final VendorDetail vendorDetail = (VendorDetail) super.getBusinessObject();
+                String vendorTaxNumber;
+                if (vendorDetail.getVendorHeader().getVendorForeignIndicator()) {
+                    vendorTaxNumber = vendorDetail.getVendorHeader().getVendorForeignTaxId();
+                } else {
+                    vendorTaxNumber = vendorDetail.getVendorHeader().getVendorTaxNumber();
+                }
+                return isVendorTypeApplicableForTaxIdRoute(vendorDetail) && isVendorTaxNumberInWorkday(vendorTaxNumber);
             } else {
-                vendorTaxNumber = vendorDetail.getVendorHeader().getVendorTaxNumber();
+                LOG.debug("answerSplitNodeQuestion, tax id manager route node has been disabled");
+                return false;
             }
-            return isVendorTypeApplicableForTaxIdRoute() && isVendorTaxNumberInWorkday(vendorTaxNumber);
         }
+        
         return super.answerSplitNodeQuestion(nodeName);
     }
     
-    private boolean isVendorTypeApplicableForTaxIdRoute() {
-        final VendorDetail vendorDetail = (VendorDetail) super.getBusinessObject();
+    private boolean enableTaxIdReviewerNode() {
+        /*
+         * @todo drive this off a parameter
+         */
+        return true;
+    }
+    
+    private boolean isVendorTypeApplicableForTaxIdRoute(final VendorDetail vendorDetail) {
         boolean shouldRouteForTaxId = StringUtils.equalsIgnoreCase(vendorDetail.getVendorHeader().getVendorOwnershipCode(), 
                 CUPurapConstants.JaggaerLegalStructure.INDIVIDUAL.kfsOwnerShipTypeCode);
         LOG.info("isVendorTypeApplicableForTaxIdRoute, returning {}", shouldRouteForTaxId);
@@ -93,12 +108,18 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     }
     
     private boolean isVendorTaxNumberInWorkday(final String vendorTaxNumber) {
-        /*
-         * @todo implement me
-         */
-        boolean isInWorkDay = true;
-        LOG.info("isVendorTaxNumberInWorkday, returning {}", isInWorkDay);
-        return isInWorkDay;
+        try {
+            CuVendorWorkDayService workDayService = SpringContext.getBean(CuVendorWorkDayService.class);
+            WorkdayKfsVendorLooupResultsDTO result = workDayService.findEmployeeBySocialSecurityNumber(vendorTaxNumber);
+            boolean isInWorkDay = result.isActive();
+            LOG.info("isVendorTaxNumberInWorkday, returning {}", isInWorkDay);
+            return isInWorkDay;
+        } catch (RuntimeException e) {
+            LOG.error("isVendorTaxNumberInWorkday, got an error calling workday.", e);
+            
+            return true;
+        }
+        
     }
 
     private void populateGeneratedHerderId(final VendorHeader vendorHeader) {
