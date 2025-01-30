@@ -48,8 +48,9 @@ public class TaxTableMetadataLookupServiceOjbImpl extends PersistenceServiceStru
         implements TaxTableMetadataLookupService {
 
     private static final Pattern NAME_CHARS_LOWERCASE_FIRST_UPPERCASE_SECOND = Pattern.compile("^[a-z][A-Z].*$");
-    private static final String GET_METHOD_PREFIX = "get";
-    private static final String SET_METHOD_PREFIX = "set";
+    private static final String BOOLEAN_GETTER_METHOD_PREFIX = "is";
+    private static final String GETTER_METHOD_PREFIX = "get";
+    private static final String SETTER_METHOD_PREFIX = "set";
     private static final String ACCEPT_METHOD = "accept";
     private static final String APPLY_METHOD = "apply";
     private static final String GET_METHOD = "get";
@@ -280,7 +281,7 @@ public class TaxTableMetadataLookupServiceOjbImpl extends PersistenceServiceStru
     private <T, U> Function<T, U> generateLambdaForDtoPropertyGetter(final Class<T> dtoClass,
             final Class<U> fieldType, final Field dtoField) {
         try {
-            final String getterMethodName = determineGetterMethodName(dtoField);
+            final String getterMethodName = determineGetterMethodName(dtoField, fieldType);
             verifyBeanPropertyMethodIsPublic(dtoClass, getterMethodName);
 
             final MethodHandle getterMethodHandle = lookup.findVirtual(dtoClass, getterMethodName,
@@ -307,12 +308,16 @@ public class TaxTableMetadataLookupServiceOjbImpl extends PersistenceServiceStru
         }
     }
 
-    private String determineGetterMethodName(final Field dtoField) {
-        return determineBeanPropertyMethodName(dtoField, GET_METHOD_PREFIX);
+    private String determineGetterMethodName(final Field dtoField, final Class<?> fieldType) {
+        if (boolean.class.isAssignableFrom(fieldType)) {
+            return determineBeanPropertyMethodName(dtoField, BOOLEAN_GETTER_METHOD_PREFIX);
+        } else {
+            return determineBeanPropertyMethodName(dtoField, GETTER_METHOD_PREFIX);
+        }
     }
 
     private String determineSetterMethodName(final Field dtoField) {
-        return determineBeanPropertyMethodName(dtoField, SET_METHOD_PREFIX);
+        return determineBeanPropertyMethodName(dtoField, SETTER_METHOD_PREFIX);
     }
 
     private String determineBeanPropertyMethodName(final Field dtoField, final String beanMethodPrefix) {
