@@ -11,6 +11,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -19,10 +23,13 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.io.input.CloseShieldInputStream;
+import org.apache.commons.io.output.CloseShieldOutputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.function.FailableFunction;
+import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.diff.Diff;
 import org.xmlunit.diff.Difference;
@@ -30,6 +37,9 @@ import org.xmlunit.diff.DifferenceEvaluator;
 import org.xmlunit.diff.DifferenceEvaluators;
 
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
+import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.annotation.XmlDocumentFilter;
+import edu.cornell.kfs.sys.batch.CuBatchFileUtils;
 
 public class CuXMLUnitTestUtils {
 
@@ -66,17 +76,52 @@ public class CuXMLUnitTestUtils {
 
 
 
-    public static void filterXml(final String sourceFile, final String targetFile, Object annotatedItem)
-            throws IOException, XMLStreamException {
-        final FailableFunction<String, InputStream, IOException> sourceBuilder;
-        if (StringUtils.startsWithIgnoreCase(sourceFile, TestSpringContextExtension.CLASSPATH_PREFIX)) {
-            sourceBuilder = CuCoreUtilities::getResourceAsStream;
+
+    public static String getXmlFileNameWithoutPathOrClasspathPrefix(final String fileName) {
+        String result = CuBatchFileUtils.getFileNameWithoutPath(fileName);
+        if (StringUtils.startsWithIgnoreCase(result, ResourcePatternResolver.CLASSPATH_URL_PREFIX)) {
+            result = StringUtils.substringAfter(result, ResourcePatternResolver.CLASSPATH_URL_PREFIX);
+        }
+        return result;
+    }
+
+    public static InputStream getXmlInputStream(final String sourceFile) throws IOException {
+        if (StringUtils.startsWithIgnoreCase(sourceFile, ResourcePatternResolver.CLASSPATH_URL_PREFIX)) {
+            return CuCoreUtilities.getResourceAsStream(sourceFile);
         } else {
-            sourceBuilder = FileInputStream::new;
+            return new FileInputStream(sourceFile);
+        }
+    }
+
+
+
+    public static List<String> filterXml(final String targetDirectory, final Object annotatedItem,
+            final String... sourceFiles) throws IOException, XMLStreamException {
+        return filterXml(targetDirectory, annotatedItem, List.of(sourceFiles));
+    }
+
+    public static List<String> filterXml(final String targetDirectory, final Object annotatedItem,
+            final Collection<String> sourceFiles) throws IOException, XMLStreamException {
+        Validate.isTrue(StringUtils.endsWith(targetDirectory, CUKFSConstants.SLASH),
+                "targetDirectory must contain a trailing slash");
+        Validate.notEmpty(sourceFiles, "At least one source file must be specified");
+
+        final Stream.Builder<String> newFilesWithFilteredXml = Stream.builder();
+
+        for (final String sourceFile : sourceFiles) {
+            final String sourceFileWithoutPath = getXmlFileNameWithoutPathOrClasspathPrefix(sourceFile);
+            final String targetFile = targetDirectory + sourceFileWithoutPath;
+            filterXml(sourceFile, targetFile, annotatedItem);
+            newFilesWithFilteredXml.add(targetFile);
         }
 
+        return newFilesWithFilteredXml.build().collect(Collectors.toUnmodifiableList());
+    }
+
+    public static void filterXml(final String sourceFile, final String targetFile, Object annotatedItem)
+            throws IOException, XMLStreamException {
         try (
-                final InputStream source = sourceBuilder.apply(sourceFile);
+                final InputStream source = getXmlInputStream(sourceFile);
                 final OutputStream target = new FileOutputStream(targetFile);
         ) {
             filterXml(source, target, annotatedItem);
@@ -89,8 +134,10 @@ public class CuXMLUnitTestUtils {
         XMLStreamWriter xmlWriter = null;
 
         try (
-                final InputStreamReader reader = new InputStreamReader(source, StandardCharsets.UTF_8);
-                final OutputStreamWriter writer = new OutputStreamWriter(target, StandardCharsets.UTF_8);
+                final CloseShieldInputStream shieldedSource = CloseShieldInputStream.wrap(source);
+                final CloseShieldOutputStream shieldedTarget = CloseShieldOutputStream.wrap(target);
+                final InputStreamReader reader = new InputStreamReader(shieldedSource, StandardCharsets.UTF_8);
+                final OutputStreamWriter writer = new OutputStreamWriter(shieldedTarget, StandardCharsets.UTF_8);
         ) {
             final XMLInputFactory inFactory = XMLInputFactory.newInstance();
             inFactory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
@@ -104,8 +151,11 @@ public class CuXMLUnitTestUtils {
                 xmlFilterer = new CuXmlFilterer(xmlReader, xmlWriter, (Class<?>) annotatedItem);
             } else if (annotatedItem instanceof Enum) {
                 xmlFilterer = new CuXmlFilterer(xmlReader, xmlWriter, (Enum<?>) annotatedItem);
+            } else if (annotatedItem instanceof XmlDocumentFilter) {
+                xmlFilterer = new CuXmlFilterer(xmlReader, xmlWriter, (XmlDocumentFilter) annotatedItem);
             } else {
-                throw new IllegalArgumentException("annotatedItem was not a class or an enum constant");
+                throw new IllegalArgumentException(
+                        "annotatedItem was not a class or an enum constant or the annotation itself");
             }
             
             xmlFilterer.filterXml();

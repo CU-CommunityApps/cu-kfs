@@ -30,7 +30,7 @@ import edu.cornell.kfs.sys.annotation.XmlElementFilter;
  * 
  * To specify what content should be filtered, use the XmlDocumentFilter annotation (and the XmlElementFilter
  * and XmlAttributeMatcher sub-annotations) to configure which child elements to preserve. The root annotation
- * may be placed on a class, field or enum constant; use the appropriate CuXmlFilterer constructor to auto-retrieve
+ * may be placed on a class or an enum constant; use the appropriate CuXmlFilterer constructor to auto-retrieve
  * the XmlDocumentFilter annotation.
  * 
  * Note that this implementation currently only supports filtering based on annotation values within

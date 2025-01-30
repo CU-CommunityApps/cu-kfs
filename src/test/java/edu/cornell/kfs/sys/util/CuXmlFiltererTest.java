@@ -38,6 +38,7 @@ public class CuXmlFiltererTest {
 
 
     enum LocalTestCase {
+
         @XmlDocumentFilter(rootElementName = "descriptor-repository", directChildElementsToKeep = {
                 @XmlElementFilter(name = "class-descriptor", matchConditions = {
                         @XmlAttributeMatcher(name = "class", values = {
@@ -125,6 +126,7 @@ public class CuXmlFiltererTest {
         private LocalTestCase(final String expectedResultsFileName) {
             this.expectedResultsFileName = expectedResultsFileName;
         }
+
     }
 
     static Stream<Arguments> validOjbSysXmlFilters() {
