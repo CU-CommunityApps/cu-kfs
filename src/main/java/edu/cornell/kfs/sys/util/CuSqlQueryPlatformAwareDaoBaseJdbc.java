@@ -2,21 +2,15 @@ package edu.cornell.kfs.sys.util;
 
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
-import org.springframework.jdbc.core.ArgumentTypePreparedStatementSetter;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameterValue;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.dataaccess.CuPreparedStatementCreatorImpl;
 
 public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDaoBaseJdbc {
     private static final Logger LOG = LogManager.getLogger();
@@ -50,42 +44,6 @@ public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDa
                 logSQL(sqlQuery);
             }
             LOG.error("update, Unexpected error encountered while running query!", e);
-            throw e;
-        }
-    }
-    
-    protected <T> T queryForResults(final CuSqlQuery sqlQuery, ResultSetExtractor<T> resultSetExtractor) {
-        return queryForResults(sqlQuery, resultSetExtractor, true);
-    }
-    
-    protected <T> T queryForResults(final CuSqlQuery sqlQuery, ResultSetExtractor<T> resultSetExtractor,
-            boolean logSQLOnError) {
-        return queryForResults(sqlQuery, resultSetExtractor, CuPreparedStatementCreatorImpl::forReadOnlyResults,
-                logSQLOnError);
-    }
-    
-    protected <T> T queryForUpdatableResults(final CuSqlQuery sqlQuery, ResultSetExtractor<T> resultSetExtractor) {
-        return queryForResults(sqlQuery, resultSetExtractor, true);
-    }
-    
-    protected <T> T queryForUpdatableResults(final CuSqlQuery sqlQuery, ResultSetExtractor<T> resultSetExtractor,
-            boolean logSQLOnError) {
-        return queryForResults(sqlQuery, resultSetExtractor, CuPreparedStatementCreatorImpl::forUpdatableResults,
-                logSQLOnError);
-    }
-    
-    private <T> T queryForResults(final CuSqlQuery sqlQuery, final ResultSetExtractor<T> resultSetExtractor,
-            final Function<String, PreparedStatementCreator> statementCreatorFactory, final boolean logSQLOnError) {
-        try {
-            final PreparedStatementCreator statementCreator = statementCreatorFactory.apply(sqlQuery.getQueryString());
-            final PreparedStatementSetter statementSetter = new ArgumentTypePreparedStatementSetter(
-                    sqlQuery.getParameterValuesArray(), sqlQuery.getParameterTypesArray());
-            return getJdbcTemplate().query(statementCreator, statementSetter, resultSetExtractor);
-        } catch (RuntimeException e) {
-            if (logSQLOnError || LOG.isDebugEnabled()) {
-                logSQL(sqlQuery);
-            }
-            LOG.error("queryForResults, Unexpected error encountered while running query!", e);
             throw e;
         }
     }

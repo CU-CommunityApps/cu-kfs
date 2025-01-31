@@ -24,7 +24,6 @@ import org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanCon
 import org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion;
 
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
-import edu.cornell.kfs.sys.annotation.ForCodeDocumentationOnly;
 import edu.cornell.kfs.sys.businessobject.TestOjbMaintenanceDocument;
 import edu.cornell.kfs.sys.businessobject.TestOjbState;
 import edu.cornell.kfs.sys.dataaccess.fixture.ClassDescriptorFixture;
@@ -55,11 +54,6 @@ public class TestOjbMetadataUtilsTest {
     }
 
 
-
-    @ForCodeDocumentationOnly
-    private static @interface CombineExpectedItemsFromOtherTests {
-
-    }
 
     enum LocalTestCase {
 
@@ -102,7 +96,7 @@ public class TestOjbMetadataUtilsTest {
         })
         OJB_METADATA_FOR_TEST_STATE("test-ojb-state.xml"),
 
-        @CombineExpectedItemsFromOtherTests
+        @DescriptorRepositoryFixture(hasCustomDescriptorDerivation = true)
         OJB_METDATA_FOR_TEST_MAINT_DOCUMENT_AND_STATE("test-ojb-maintenance-doc-and-state.xml",
                 OJB_METADATA_FOR_TEST_MAINT_DOCUMENT, OJB_METADATA_FOR_TEST_STATE);
 

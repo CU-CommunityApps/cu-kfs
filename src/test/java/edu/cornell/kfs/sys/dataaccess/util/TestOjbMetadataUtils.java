@@ -11,6 +11,7 @@ import org.apache.commons.lang3.function.FailableSupplier;
 import org.apache.ojb.broker.accesslayer.conversions.FieldConversion;
 import org.apache.ojb.broker.accesslayer.conversions.FieldConversionDefaultImpl;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
+import org.apache.ojb.broker.metadata.ClassNotPersistenceCapableException;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
 import org.apache.ojb.broker.metadata.FieldDescriptor;
 import org.apache.ojb.broker.metadata.JdbcType;
@@ -70,12 +71,21 @@ public final class TestOjbMetadataUtils {
                         repository -> repository.getDescriptorFor(Mockito.any(Class.class)),
                         invocation -> {
                             final Class<?> mappedClass = invocation.getArgument(0);
-                            return classDescriptorsMap.get(mappedClass.getName());
+                            return getExistingClassDescriptor(classDescriptorsMap, mappedClass.getName());
                         })
                 .withAnswer(
                         repository -> repository.getDescriptorFor(Mockito.anyString()),
-                        invocation -> classDescriptorsMap.get(invocation.getArgument(0)))
+                        invocation -> getExistingClassDescriptor(classDescriptorsMap, invocation.getArgument(0)))
                 .build();
+    }
+
+    private static ClassDescriptor getExistingClassDescriptor(final Map<String, ClassDescriptor> classDescriptorsMap,
+            final String className) {
+        final ClassDescriptor result = classDescriptorsMap.get(className);
+        if (result == null) {
+            throw new ClassNotPersistenceCapableException("No mock class descriptor exists for class: " + className);
+        }
+        return result;
     }
 
     public static <T> ClassDescriptor createMockClassDescriptor(final Class<?> mappedClass, final String tableName,

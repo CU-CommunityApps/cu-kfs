@@ -19,6 +19,7 @@
           p:classContainingXmlFilterAnnotation="${unit.test.classname}">
         <property name="ojbFilesToFilter">
             <list>
+                <value>classpath:org/kuali/kfs/sys/ojb-sys.xml</value>
                 <value>classpath:org/kuali/kfs/vnd/ojb-vnd.xml</value>
                 <value>classpath:edu/cornell/kfs/tax/batch/metadata-tests/test-ojb-tax-object.xml</value>
             </list>

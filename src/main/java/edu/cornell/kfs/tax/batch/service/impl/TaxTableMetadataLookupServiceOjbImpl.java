@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.ojb.broker.accesslayer.conversions.FieldConversion;
+import org.apache.ojb.broker.accesslayer.conversions.FieldConversionDefaultImpl;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
 import org.apache.ojb.broker.metadata.FieldDescriptor;
 import org.kuali.kfs.krad.bo.BusinessObject;
@@ -226,6 +227,7 @@ public class TaxTableMetadataLookupServiceOjbImpl extends PersistenceServiceStru
     private Optional<TaxDtoFieldConverter> generateFieldConverter(final FieldDescriptor fieldDescriptor) {
         final FieldConversion fieldConversion = fieldDescriptor.getFieldConversion();
         return Optional.ofNullable(fieldConversion)
+                .filter(conversion -> !FieldConversionDefaultImpl.class.equals(conversion.getClass()))
                 .map(TaxDtoFieldConverterOjbImpl::new);
     }
 
