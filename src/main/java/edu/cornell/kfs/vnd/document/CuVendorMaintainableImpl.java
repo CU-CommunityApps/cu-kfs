@@ -14,7 +14,9 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.document.authorization.FieldRestriction;
 import org.kuali.kfs.kns.document.authorization.MaintenanceDocumentRestrictions;
@@ -35,6 +37,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
+import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
@@ -67,9 +70,6 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
 
     @Override
     protected boolean answerSplitNodeQuestion(final String nodeName) {
-        final Document document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(getDocumentNumber());
-        
-         
         if (nodeName.equals(VENDOR_REQUIRES_APPROVAL_SPLIT_NODE)) {
             return true;
         }
@@ -116,6 +116,12 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
             return isInWorkDay;
         } catch (RuntimeException e) {
             LOG.error("isVendorTaxNumberInWorkday, got an error calling workday.", e);
+            DocumentService docService = SpringContext.getBean(DocumentService.class);
+            ConfigurationService configService = SpringContext.getBean(ConfigurationService.class);
+            
+            final Document document = docService.getByDocumentHeaderId(getDocumentNumber());
+            final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+            workflowDocument.logAnnotation(configService.getPropertyValueAsString(CUVendorPropertyConstants.VENDOR_UNABLE_TO_CALL_WORKDAY));
             
             return true;
         }
