@@ -297,9 +297,7 @@ public class GlTransactionStep extends AbstractStep {
     }
     
     private void logClassLoaderDebugInfo() {
-        Class classHelperClass = org.apache.ojb.broker.util.ClassHelper.class;
-        LOG.info("logClassLoaderDebugInfo:: OJB Broker ClassHelper.ClassLoader.name: {}", 
-                (ObjectUtils.isNull(classHelperClass) || ObjectUtils.isNull(classHelperClass.getClassLoader()) ? "ClassHelper or ClassLoader IS NULL" : classHelperClass.getClassLoader().getName()));
+        LOG.info("logClassLoaderDebugInfo:: OJB Broker ClassHelper ClassLoader: {}", org.apache.ojb.broker.util.ClassHelper.getClassLoader());
         
         Class repoClass = org.apache.ojb.broker.metadata.ClassDescriptor.class;
         LOG.info("logClassLoaderDebugInfo:: Repository Class Loader: {}", repoClass.getClassLoader());
