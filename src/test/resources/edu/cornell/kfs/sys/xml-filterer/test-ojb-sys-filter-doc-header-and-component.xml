@@ -1,0 +1,36 @@
+<descriptor-repository version="1.0">
+    <class-descriptor class="org.kuali.kfs.sys.businessobject.DocumentHeader" table="FS_DOC_HEADER_T">
+        <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="documentDescription" column="FDOC_DESC" jdbc-type="VARCHAR"/>
+        <field-descriptor name="organizationDocumentNumber" column="ORG_DOC_HDR_ID" jdbc-type="VARCHAR"
+                          indexed="true"/>
+        <field-descriptor name="documentTemplateNumber" column="TMPL_DOC_HDR_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="explanation" column="EXPLANATION" jdbc-type="VARCHAR"/>
+        <field-descriptor name="financialDocumentTotalAmount" column="FDOC_TOTAL_AMT" jdbc-type="DECIMAL"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="financialDocumentInErrorNumber" column="FDOC_IN_ERR_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="financialDocumentStatusCode" column="FDOC_STATUS_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="workflowDocumentStatusCode" column="FDOC_HDR_STAT_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="applicationDocumentStatus" column="APP_DOC_STAT" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="initiatorPrincipalId" column="INITR_PRNCPL_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="workflowDocumentTypeName" column="FDOC_TYP_NM" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="workflowCreateDate" column="FDOC_CRTE_DT" jdbc-type="TIMESTAMP"/>
+        <field-descriptor name="processedDate" column="FDOC_PRCSSD_DT" jdbc-type="TIMESTAMP"/>
+    </class-descriptor>
+
+    <class-descriptor class="org.kuali.kfs.coreservice.impl.component.Component" table="KRCR_CMPNT_T">
+        <field-descriptor name="namespaceCode" column="NMSPC_CD" jdbc-type="VARCHAR" primarykey="true"/>
+        <field-descriptor name="code" column="CMPNT_CD" jdbc-type="VARCHAR" primarykey="true"/>
+        <field-descriptor name="name" column="NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <reference-descriptor name="namespace" class-ref="org.kuali.kfs.coreservice.impl.namespace.Namespace"
+                              auto-retrieve="true" auto-update="none" auto-delete="none">
+            <foreignkey field-ref="namespaceCode" target-field-ref="code"/>
+        </reference-descriptor>
+    </class-descriptor>
+</descriptor-repository>
