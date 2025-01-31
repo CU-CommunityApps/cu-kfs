@@ -17,7 +17,7 @@ public abstract class TaxDtoFieldAccessorBase<T, U> {
             final Function<T, U> propertyGetter, final BiConsumer<T, U> propertySetter) {
         Validate.notNull(dtoClass, "dtoClass cannot be null");
         Validate.notNull(fieldClass, "fieldClass cannot be null");
-        Validate.notBlank(propertyName, "propertyName cannot be null");
+        Validate.notBlank(propertyName, "propertyName cannot be blank");
         Validate.notNull(propertyGetter, "propertyGetter cannot be null");
         Validate.notNull(propertySetter, "propertySetter cannot be null");
 

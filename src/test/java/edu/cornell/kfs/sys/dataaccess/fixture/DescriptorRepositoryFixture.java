@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.Validate;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
 
 import edu.cornell.kfs.sys.dataaccess.util.TestOjbMetadataUtils;
@@ -17,13 +18,17 @@ import edu.cornell.kfs.sys.dataaccess.util.TestOjbMetadataUtils;
 @Target(ElementType.FIELD)
 public @interface DescriptorRepositoryFixture {
 
-    ClassDescriptorFixture[] classDescriptors();
+    ClassDescriptorFixture[] classDescriptors() default {};
+
+    boolean hasCustomDescriptorDerivation() default false;
 
 
 
     public static final class Utils {
 
         public static DescriptorRepository toOjbDescriptorRepository(final DescriptorRepositoryFixture fixture) {
+            Validate.isTrue(!fixture.hasCustomDescriptorDerivation(),
+                    "This method cannot be used by fixtures that specify their own custom descriptor derivation");
             return createMockDescriptorRepository(List.of(fixture.classDescriptors()));
         }
 

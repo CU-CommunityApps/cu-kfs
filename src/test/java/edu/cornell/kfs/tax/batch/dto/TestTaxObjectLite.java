@@ -24,6 +24,9 @@ public class TestTaxObjectLite {
     @TaxDtoField
     private String secretValue;
 
+    @TaxDtoField(actualBOField = "itemLabel")
+    private String computedLabel;
+
     @TaxDtoField
     private int count;
 
@@ -60,6 +63,14 @@ public class TestTaxObjectLite {
 
     public void setSecretValue(final String secretValue) {
         this.secretValue = secretValue;
+    }
+
+    public String getComputedLabel() {
+        return computedLabel;
+    }
+
+    public void setComputedLabel(final String computedLabel) {
+        this.computedLabel = computedLabel;
     }
 
     public int getCount() {
