@@ -297,11 +297,13 @@ public class GlTransactionStep extends AbstractStep {
     }
     
     private void logClassLoaderDebugInfo() {
+        LOG.info("logClassLoaderDebugInfo:: OJB Broker ClassHelper ClassLoader: {}", org.apache.ojb.broker.util.ClassHelper.getClassLoader());
+        
         Class repoClass = org.apache.ojb.broker.metadata.ClassDescriptor.class;
-        LOG.info("Repository Class Loader: " + repoClass.getClassLoader());
+        LOG.info("logClassLoaderDebugInfo:: Repository Class Loader: {}", repoClass.getClassLoader());
 
         Class bankClass = org.kuali.kfs.sys.businessobject.Bank.class;
-        LOG.info("Bank Class Loader: " + bankClass.getClassLoader());
+        LOG.info("logClassLoaderDebugInfo:: Bank Class Loader: {}", bankClass.getClassLoader());
     }
 
     /**
