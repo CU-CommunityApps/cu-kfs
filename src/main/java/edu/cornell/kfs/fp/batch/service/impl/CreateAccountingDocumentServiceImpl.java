@@ -282,7 +282,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     }
     
     private void logClassLoaderDebugInfo() {
-        LOG.info("logClassLoaderDebugInfo:: OJB Broker ClassHelper.ClassLoader.name: {}", org.apache.ojb.broker.util.ClassHelper.getClassLoader());
+        LOG.info("logClassLoaderDebugInfo:: OJB Broker ClassHelper ClassLoader: {}", org.apache.ojb.broker.util.ClassHelper.getClassLoader());
         
         Class repoClass = org.apache.ojb.broker.metadata.ClassDescriptor.class;
         LOG.info("logClassLoaderDebugInfo:: Repository Class Loader: {}", repoClass.getClassLoader());

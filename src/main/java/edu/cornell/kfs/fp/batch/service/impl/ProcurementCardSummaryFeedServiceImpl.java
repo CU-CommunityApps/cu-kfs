@@ -197,13 +197,13 @@ public class ProcurementCardSummaryFeedServiceImpl implements ProcurementCardSum
 	}
 	
     private void logClassLoaderDebugInfo(ProcurementCardSummaryEntry entry, ProcurementCardSummaryEntry retrievedEntry) {
-        LOG.info("logClassLoaderDebugInfo:: OJB Broker ClassHelper.ClassLoader.name: {}", org.apache.ojb.broker.util.ClassHelper.getClassLoader());
+        LOG.info("logClassLoaderDebugInfo:: OJB Broker ClassHelper ClassLoader: {}", org.apache.ojb.broker.util.ClassHelper.getClassLoader());
         
         Class repoClass = org.apache.ojb.broker.metadata.ClassDescriptor.class;
         LOG.info("logClassLoaderDebugInfo:: Repository Class Loader: {}", repoClass.getClassLoader());
         
         Class pcardSummaryEntryClass = edu.cornell.kfs.fp.businessobject.ProcurementCardSummaryEntry.class;
-        LOG.info("logClassLoaderDebugInfo:: ProcurementCardSummaryEntry Class Loader:{} ", pcardSummaryEntryClass.getClassLoader());
+        LOG.info("logClassLoaderDebugInfo:: ProcurementCardSummaryEntry Class Loader: {} ", pcardSummaryEntryClass.getClassLoader());
         
         LOG.info("logClassLoaderDebugInfo:: ProcurementCardSummaryEntry Class Loader: entry = {}", (ObjectUtils.isNull(entry) ? "IS NULL" : entry.toString()));
         
