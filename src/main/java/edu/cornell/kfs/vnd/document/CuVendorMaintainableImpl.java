@@ -41,7 +41,7 @@ import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
-import edu.cornell.kfs.vnd.businessobject.WorkdayKfsVendorLooupResultsDTO;
+import edu.cornell.kfs.vnd.jsonobject.WorkdayKfsVendorLookupResult;
 import edu.cornell.kfs.vnd.service.CuVendorWorkDayService;
 
 public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
@@ -110,7 +110,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private boolean isVendorTaxNumberInWorkday(final String vendorTaxNumber) {
         try {
             CuVendorWorkDayService workDayService = SpringContext.getBean(CuVendorWorkDayService.class);
-            WorkdayKfsVendorLooupResultsDTO result = workDayService.findEmployeeBySocialSecurityNumber(vendorTaxNumber);
+            WorkdayKfsVendorLookupResult result = workDayService.findEmployeeBySocialSecurityNumber(vendorTaxNumber);
             boolean isInWorkDay = result.isActive();
             LOG.info("isVendorTaxNumberInWorkday, returning {}", isInWorkDay);
             return isInWorkDay;

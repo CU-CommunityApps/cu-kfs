@@ -1,9 +1,9 @@
 package edu.cornell.kfs.vnd.service;
 
-import edu.cornell.kfs.vnd.businessobject.WorkdayKfsVendorLooupResultsDTO;
+import edu.cornell.kfs.vnd.jsonobject.WorkdayKfsVendorLookupResult;
 
 public interface CuVendorWorkDayService {
     
-    public WorkdayKfsVendorLooupResultsDTO findEmployeeBySocialSecurityNumber(String socialSecurityNumber);  
+    public WorkdayKfsVendorLookupResult findEmployeeBySocialSecurityNumber(String socialSecurityNumber);  
 
 }
