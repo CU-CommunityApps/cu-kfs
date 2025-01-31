@@ -282,17 +282,21 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     }
     
     private void logClassLoaderDebugInfo() {
+        Class classHelperClass = org.apache.ojb.broker.util.ClassHelper.class;
+        LOG.info("logClassLoaderDebugInfo:: OJB Broker ClassHelper.ClassLoader.name: {}", 
+                (ObjectUtils.isNull(classHelperClass) || ObjectUtils.isNull(classHelperClass.getClassLoader()) ? "ClassHelper or ClassLoader IS NULL" : classHelperClass.getClassLoader().getName()));
+        
         Class repoClass = org.apache.ojb.broker.metadata.ClassDescriptor.class;
-        LOG.info("Repository Class Loader: " + repoClass.getClassLoader());
+        LOG.info("logClassLoaderDebugInfo:: Repository Class Loader: {}", repoClass.getClassLoader());
         
         Class accountClass = org.kuali.kfs.coa.businessobject.Account.class;
-        LOG.info("Account Class Loader: " + accountClass.getClassLoader());
+        LOG.info("logClassLoaderDebugInfo:: Account Class Loader: {}", accountClass.getClassLoader());
         
         Class orgClass = org.kuali.kfs.coa.businessobject.Organization.class;
-        LOG.info("Organization Class Loader: " + orgClass.getClassLoader());
+        LOG.info("logClassLoaderDebugInfo:: Organization Class Loader: {}", orgClass.getClassLoader());
         
         Class targetAcctLineClass = org.kuali.kfs.sys.businessobject.TargetAccountingLine.class;
-        LOG.info("Target Accounting Line Class Loader: " + targetAcctLineClass.getClassLoader());
+        LOG.info("logClassLoaderDebugInfo:: Target Accounting Line Class Loader: {}", targetAcctLineClass.getClassLoader());
     }
 
     @SuppressWarnings("unchecked")
