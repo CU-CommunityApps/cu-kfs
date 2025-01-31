@@ -378,18 +378,6 @@
     </reference-descriptor>
 </class-descriptor>
 
-	
-<class-descriptor class="edu.cornell.kfs.fp.businessobject.ProcurementCardSummaryEntry" table="CU_FP_PCARD_SUMMARY_T">
-	<field-descriptor name="cardHolderAccountNumber" column="CARD_ACCOUNT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
-	<field-descriptor name="cardHolderName" column="EMPL_NAME" jdbc-type="VARCHAR" />
-	<field-descriptor name="emplid" column="EMPLID" jdbc-type="VARCHAR" primarykey="true" index="true" />
-	<field-descriptor name="netid" column="NETID" jdbc-type="VARCHAR" />
-	<field-descriptor name="accountStatus" column="ACCOUNT_STATUS" jdbc-type="VARCHAR" />
-	<field-descriptor name="cycleStartDate" column="CYCLE_START_DATE" jdbc-type="DATE" />
-    <field-descriptor name="summaryAmount" column="SUMMARY_AMOUNT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
-    <field-descriptor name="loadDate" column="LOAD_DATE" jdbc-type="DATE" />
-</class-descriptor>
-
 
 <class-descriptor class="edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAttribute" table="FP_CPTL_AST_INFO_DTL_EXT_T" >
 	<field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true"/>

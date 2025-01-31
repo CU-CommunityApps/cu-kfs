@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.ojb.broker.util.ClassHelper;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
@@ -62,7 +63,7 @@ public class ProcurementCardSummaryFeedServiceImpl implements ProcurementCardSum
 		List<ProcurementCardSummaryEntry> entriesToLoad = new ArrayList<ProcurementCardSummaryEntry>();
 		generatePCardEntryToLoadToDB(pcardSummaryList, entriesToLoad); 
 		
-		LOG.info("\n Loading data into the database: CU_FP_PCARD_SUMMARY_T table. \n");
+		LOG.info("\n Loading data into the database: CU_FP_PCARD_SUMMARY_T table. entriesToLoad={} \n", entriesToLoad.size());
 		// load entries into CU_FP_PCARD_SUMMARY_T table
 		loadDataInDB(entriesToLoad);
 		return true;
@@ -185,29 +186,28 @@ public class ProcurementCardSummaryFeedServiceImpl implements ProcurementCardSum
 		for (ProcurementCardSummaryEntry entry : entriesToLoad) {
 			ProcurementCardSummaryEntry retrievedEntry = (ProcurementCardSummaryEntry) businessObjectService
 						.retrieve(entry);
-		//	entriesToLoad
-		//	.addAll(generateCalculatedSalaryFoundationTrackerCollection(psPositionJobExtractEntry));
 
-			
-			if (ObjectUtils.isNotNull(retrievedEntry)) {
-					entry.setVersionNumber(retrievedEntry
-							.getVersionNumber());
-				}
 			try {
 				businessObjectService.save(entry);
 			} catch (RuntimeException e) {
-			    logClassLoaderDebugInfo();
+			    logClassLoaderDebugInfo(entry, retrievedEntry);
 			    throw e;
 			}
 		}
 	}
 	
-    private void logClassLoaderDebugInfo() {
+    private void logClassLoaderDebugInfo(ProcurementCardSummaryEntry entry, ProcurementCardSummaryEntry retrievedEntry) {
+        LOG.info("logClassLoaderDebugInfo:: OJB Broker ClassHelper ClassLoader: {}", org.apache.ojb.broker.util.ClassHelper.getClassLoader());
+        
         Class repoClass = org.apache.ojb.broker.metadata.ClassDescriptor.class;
-        LOG.info("Repository Class Loader: " + repoClass.getClassLoader());
-
+        LOG.info("logClassLoaderDebugInfo:: Repository Class Loader: {}", repoClass.getClassLoader());
+        
         Class pcardSummaryEntryClass = edu.cornell.kfs.fp.businessobject.ProcurementCardSummaryEntry.class;
-        LOG.info("ProcurementCardSummaryEntry Class Loader: " + pcardSummaryEntryClass.getClassLoader());
+        LOG.info("logClassLoaderDebugInfo:: ProcurementCardSummaryEntry Class Loader: {} ", pcardSummaryEntryClass.getClassLoader());
+        
+        LOG.info("logClassLoaderDebugInfo:: ProcurementCardSummaryEntry Class Loader: entry = {}", (ObjectUtils.isNull(entry) ? "IS NULL" : entry.toString()));
+        
+        LOG.info("logClassLoaderDebugInfo:: ProcurementCardSummaryEntry Class Loader: retrievedEntry = {}", (ObjectUtils.isNull(retrievedEntry) ? "IS NULL" : retrievedEntry.toString()));
     }
 	
 	

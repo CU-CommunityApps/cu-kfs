@@ -3,6 +3,8 @@ package edu.cornell.kfs.fp.businessobject;
 import java.sql.Date;
 import java.util.LinkedHashMap;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
@@ -84,4 +86,9 @@ public class ProcurementCardSummaryEntry extends PersistableBusinessObjectBase {
 		this.loadDate = loadDate;
 	}
 
+	@Override
+	public String toString() {
+	    ReflectionToStringBuilder builder = new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE);
+	    return builder.build();
+	}
 }
