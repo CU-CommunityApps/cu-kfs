@@ -1,6 +1,7 @@
 package edu.cornell.kfs.vnd.document;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -8,15 +9,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.vnd.businessobject.VendorAddress;
-import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.vnd.businessobject.VendorHeader;
-import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
-import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kew.api.WorkflowDocument;
-import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.document.authorization.FieldRestriction;
 import org.kuali.kfs.kns.document.authorization.MaintenanceDocumentRestrictions;
@@ -25,23 +20,29 @@ import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.kns.web.ui.Field;
 import org.kuali.kfs.kns.web.ui.Row;
 import org.kuali.kfs.kns.web.ui.Section;
-import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.maintenance.MaintenanceLock;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
-import org.kuali.kfs.krad.util.ObjectPropertyUtils;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectPropertyUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.vnd.CuVendorParameterConstants;
+import org.kuali.kfs.vnd.businessobject.VendorAddress;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.kfs.vnd.businessobject.VendorHeader;
+import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
+import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
-import edu.cornell.kfs.vnd.jsonobject.WorkdayKfsVendorLookupResult;
+import edu.cornell.kfs.vnd.jsonobject.WorkdayKfsVendorLookupRoot;
 import edu.cornell.kfs.vnd.service.CuVendorWorkDayService;
 
 public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
@@ -55,6 +56,10 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private static final String REQUIRES_VENDOR_TAX_ID_MANAGER = "RequiresVendorTaxIdManager";
     
     protected transient PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
+    protected transient ConfigurationService configurationService;
+    protected transient ParameterService parameterService;
+    protected transient DocumentService documentService;
+    protected transient CuVendorWorkDayService cuVendorWorkDayService;
     
     @Override
     public void saveBusinessObject() {
@@ -73,9 +78,9 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         if (nodeName.equals(VENDOR_REQUIRES_APPROVAL_SPLIT_NODE)) {
             return true;
         }
-        
+
         if (nodeName.equals(REQUIRES_VENDOR_TAX_ID_MANAGER)) {
-            if (enableTaxIdReviewerNode()) {
+            if (isTaxIdReviewerNodeEnabled()) {
                 final VendorDetail vendorDetail = (VendorDetail) super.getBusinessObject();
                 String vendorTaxNumber;
                 if (vendorDetail.getVendorHeader().getVendorForeignIndicator()) {
@@ -83,45 +88,43 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
                 } else {
                     vendorTaxNumber = vendorDetail.getVendorHeader().getVendorTaxNumber();
                 }
-                return isVendorTypeApplicableForTaxIdRoute(vendorDetail) && isVendorTaxNumberInWorkday(vendorTaxNumber);
+                return isVendorOwernshipCodeApplicableForTaxIdRoute(vendorDetail)
+                        && isVendorTaxNumberInWorkday(vendorTaxNumber);
             } else {
                 LOG.debug("answerSplitNodeQuestion, tax id manager route node has been disabled");
                 return false;
             }
         }
-        
+
         return super.answerSplitNodeQuestion(nodeName);
     }
     
-    private boolean enableTaxIdReviewerNode() {
-        /*
-         * @todo drive this off a parameter
-         */
-        return true;
+    private boolean isTaxIdReviewerNodeEnabled() {
+        boolean enabled = getParameterService().getParameterValueAsBoolean(VendorDetail.class,
+                CuVendorParameterConstants.VENDOR_TAX_ID_REVIEW_NODE_ENABLED);
+        LOG.debug("isTaxIdReviewerNodeEnableds, returning {}", enabled);
+        return enabled;
     }
     
-    private boolean isVendorTypeApplicableForTaxIdRoute(final VendorDetail vendorDetail) {
-        boolean shouldRouteForTaxId = StringUtils.equalsIgnoreCase(vendorDetail.getVendorHeader().getVendorOwnershipCode(), 
-                CUPurapConstants.JaggaerLegalStructure.INDIVIDUAL.kfsOwnerShipTypeCode);
-        LOG.info("isVendorTypeApplicableForTaxIdRoute, returning {}", shouldRouteForTaxId);
+    private boolean isVendorOwernshipCodeApplicableForTaxIdRoute(final VendorDetail vendorDetail) {
+        Collection<String> ownerShipCodes = getParameterService().getParameterValuesAsString(VendorDetail.class,
+                CuVendorParameterConstants.VENDOR_OWNERSHIP_CODES_FOR_TAX_ID_REVIEW);
+        boolean shouldRouteForTaxId = ownerShipCodes.contains(vendorDetail.getVendorHeader().getVendorOwnershipCode());
+        LOG.debug("isVendorOwernshipCodeApplicableForTaxIdRoute, returning {}", shouldRouteForTaxId);
         return shouldRouteForTaxId;
     }
     
     private boolean isVendorTaxNumberInWorkday(final String vendorTaxNumber) {
         try {
-            CuVendorWorkDayService workDayService = SpringContext.getBean(CuVendorWorkDayService.class);
-            WorkdayKfsVendorLookupResult result = workDayService.findEmployeeBySocialSecurityNumber(vendorTaxNumber);
-            boolean isInWorkDay = result.isActive();
-            LOG.info("isVendorTaxNumberInWorkday, returning {}", isInWorkDay);
+            WorkdayKfsVendorLookupRoot result = getCuVendorWorkDayService().findEmployeeBySocialSecurityNumber(vendorTaxNumber);
+            boolean isInWorkDay = result.isActiveEmployee();
+            LOG.debug("isVendorTaxNumberInWorkday, returning {}", isInWorkDay);
             return isInWorkDay;
         } catch (RuntimeException e) {
             LOG.error("isVendorTaxNumberInWorkday, got an error calling workday.", e);
-            DocumentService docService = SpringContext.getBean(DocumentService.class);
-            ConfigurationService configService = SpringContext.getBean(ConfigurationService.class);
-            
-            final Document document = docService.getByDocumentHeaderId(getDocumentNumber());
+            final Document document = getDocumentService().getByDocumentHeaderId(getDocumentNumber());
             final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-            workflowDocument.logAnnotation(configService.getPropertyValueAsString(CUVendorPropertyConstants.VENDOR_UNABLE_TO_CALL_WORKDAY));
+            workflowDocument.logAnnotation(getConfigurationService().getPropertyValueAsString(CUVendorPropertyConstants.VENDOR_UNABLE_TO_CALL_WORKDAY));
             
             return true;
         }
@@ -374,5 +377,49 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
 
     public void setPaymentWorksBatchUtilityService(final PaymentWorksBatchUtilityService paymentWorksBatchUtilityService) {
         this.paymentWorksBatchUtilityService = paymentWorksBatchUtilityService;
+    }
+
+    public ConfigurationService getConfigurationService() {
+        if (configurationService == null) {
+            configurationService = SpringContext.getBean(ConfigurationService.class);
+        }
+        return configurationService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
+    }
+
+    public ParameterService getParameterService() {
+        if (parameterService == null) {
+            parameterService = SpringContext.getBean(ParameterService.class);
+        }
+        return parameterService;
+    }
+
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
+    }
+
+    public DocumentService getDocumentService() {
+        if (documentService == null) {
+            documentService = SpringContext.getBean(DocumentService.class);
+        }
+        return documentService;
+    }
+
+    public void setDocumentService(DocumentService documentService) {
+        this.documentService = documentService;
+    }
+
+    public CuVendorWorkDayService getCuVendorWorkDayService() {
+        if (cuVendorWorkDayService == null) {
+            cuVendorWorkDayService = SpringContext.getBean(CuVendorWorkDayService.class);
+        }
+        return cuVendorWorkDayService;
+    }
+
+    public void setCuVendorWorkDayService(CuVendorWorkDayService cuVendorWorkDayService) {
+        this.cuVendorWorkDayService = cuVendorWorkDayService;
     }
 }

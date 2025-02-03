@@ -30,6 +30,17 @@ public class WorkdayKfsVendorLookupRoot {
         this.results = results;
     }
     
+    public boolean isActiveEmployee() {
+        
+        boolean isActive = false;
+        for (WorkdayKfsVendorLookupResult result : results) {
+            if (result.isActive()) {
+                isActive = true;
+            }
+        }
+        return isActive;
+    }
+    
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
