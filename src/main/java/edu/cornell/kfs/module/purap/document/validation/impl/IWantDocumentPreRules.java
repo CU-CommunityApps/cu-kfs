@@ -34,7 +34,7 @@ public class IWantDocumentPreRules extends PromptBeforeValidationBase {
 
     private boolean hasAttachment(List<Note> notes) {
 
-        if (!ObjectUtils.isEmpty(notes)){
+        if (!ObjectUtils.isEmpty(notes)) {
 
             for (Note note : notes) {
                 if (note.getAttachment() != null) {
