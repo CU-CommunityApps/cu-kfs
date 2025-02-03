@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.document.authorization.FieldRestriction;
 import org.kuali.kfs.kns.document.authorization.MaintenanceDocumentRestrictions;
@@ -20,6 +22,7 @@ import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.kns.web.ui.Field;
 import org.kuali.kfs.kns.web.ui.Row;
 import org.kuali.kfs.kns.web.ui.Section;
+import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.maintenance.MaintenanceLock;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -28,6 +31,7 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectPropertyUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.CuVendorParameterConstants;
@@ -122,13 +126,29 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
             return isInWorkDay;
         } catch (RuntimeException e) {
             LOG.error("isVendorTaxNumberInWorkday, got an error calling workday.", e);
-            final Document document = getDocumentService().getByDocumentHeaderId(getDocumentNumber());
-            final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-            workflowDocument.logAnnotation(getConfigurationService().getPropertyValueAsString(CUVendorPropertyConstants.VENDOR_UNABLE_TO_CALL_WORKDAY));
-            
+            annotateCouldNotCallWorkDay();
             return true;
         }
         
+    }
+    
+    private void annotateCouldNotCallWorkDay() {
+        try {
+            GlobalVariables.doInNewGlobalVariables(new UserSession(KFSConstants.SYSTEM_USER), new Callable<Object>() {
+                @Override
+                public Object call() throws WorkflowException {
+                    final Document document = getDocumentService().getByDocumentHeaderId(getDocumentNumber());
+                    final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+                    final String message = getConfigurationService().getPropertyValueAsString(CUVendorPropertyConstants.VENDOR_UNABLE_TO_CALL_WORKDAY);
+                    LOG.debug("annotateCouldNotCallWorkDay, the annotation message: {}", message);
+                    workflowDocument.logAnnotation(message);
+                    return document;
+                }
+            });
+        } catch (Exception e) {
+            LOG.error("annotateCouldNotCallWorkDay, unable to annotate in new user session that workday could not be called", e);
+            throw new RuntimeException(e);
+        }
     }
 
     private void populateGeneratedHerderId(final VendorHeader vendorHeader) {
