@@ -18,6 +18,7 @@ import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteLevelChange;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
+import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Copyable;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.util.KRADConstants;
@@ -1631,6 +1632,21 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     public void setProcurementAssistantName(String procurementAssistantName) {
         this.procurementAssistantName = procurementAssistantName;
+    }
+
+    public boolean hasAttachment() {
+
+        if (!org.apache.commons.lang3.ObjectUtils.isEmpty(getNotes())) {
+
+            for (Note note : getNotes()) {
+                if (note.getAttachment() != null) {
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
     }
 
 }

@@ -11,8 +11,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import edu.cornell.kfs.module.ar.CuArConstants;
-import edu.cornell.kfs.module.purap.document.validation.impl.IWantDocumentPreRules;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -610,7 +608,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         boolean rulePassed = true;
         rulePassed &= ruleService.applyRules(new RouteDocumentEvent("", iWantDocument));
 
-        if (!hasAttachment(iWantDocument.getNotes())) {
+        if (!iWantDocument.hasAttachment()) {
 
             final Object question = request.getParameter(PurapConstants.QUESTION_INDEX);
             final Object buttonClicked = request.getParameter(KFSConstants.QUESTION_CLICKED_BUTTON);
@@ -620,26 +618,10 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
             } else if (buttonClicked != null && StringUtils.equals(buttonClicked.toString(), "1")) {
                 // if the "No" button is clicked then return to the Notes page
-                return mapping.findForward(KFSConstants.MAPPING_BASIC);
+                rulePassed = false;
             }
 
         }
-
-
-//        final ReasonPrompt sscPrompt = new ReasonPrompt(
-//                CUPurapConstants.IWNT_NO_ATTACHMENTS_QUESTION_ID,
-//                CUPurapKeyConstants.IWNT_NO_ATTACHMENTS_QUESTION,
-//                KRADConstants.CONFIRMATION_QUESTION,
-//                CUPurapKeyConstants.IWNT_NO_ATTACHMENTS_QUESTION,
-//                CUPurapConstants.MAPPING_IWNT_NO_ATTACHMENTS_CONFIRM,
-//                ConfirmationQuestion.NO,
-//                CUPurapKeyConstants.IWNT_RETURN_TO_SSC_NOTE_TEXT_INTRO
-//        );
-//        final ReasonPrompt.Response sscResponse = sscPrompt.ask(mapping, form, request, response);
-//
-//        if (sscResponse.forward != null) {
-//            return sscResponse.forward;
-//        }
 
         if (rulePassed) {
             iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.ROUTING_STEP);
@@ -822,22 +804,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
         IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
 
-//        if (!hasAttachment(iWantDocument.getNotes())) {
-//
-//            ConfigurationService configurationService = SpringContext.getBean(ConfigurationService.class);
-//            String warningMessage = configurationService.getPropertyValueAsString("message.iwant.document.no.attachments.confirm");
-//
-////            boolean yesContinueSelected = askOrAnalyzeYesNoQuestion(CUPurapConstants.IWNT_NO_ATTACHMENTS_QUESTION_ID, warningMessage);
-//
-////            performQuestionWithoutInput(mapping, form, request, response, CUPurapConstants.IWNT_NO_ATTACHMENTS_QUESTION_ID,
-////                    warningMessage, KFSConstants.CONFIRMATION_QUESTION, KFSConstants.ROUTE_METHOD, StringUtils.EMPTY);
-//
-////            if (!yesContinueSelected) {
-////                return mapping.findForward(KFSConstants.MAPPING_BASIC);
-////            }
-//
-//        }
-
         boolean added = true;
         
         if (initiatorEnteredOwnNetidAsApprover(form)) {
@@ -924,25 +890,10 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             iWantDocForm.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
             iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
 
-            return mapping.findForward("finish"); // this is preventing Prerule Question
+            return mapping.findForward("finish");
         }
 
         return actionForward;
-    }
-
-    private boolean hasAttachment(List<Note> notes) {
-
-        if (!org.apache.commons.lang3.ObjectUtils.isEmpty(notes)) {
-
-            for (Note note : notes) {
-                if (note.getAttachment() != null) {
-                    return true;
-                }
-            }
-
-        }
-
-        return false;
     }
     
     private void saveUserOption(String principalId, String userOptionName, String userOptionValue) {

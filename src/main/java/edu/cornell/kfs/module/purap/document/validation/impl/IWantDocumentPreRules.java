@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap.document.validation.impl;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.document.IWantDocument;
 import org.apache.commons.lang3.ObjectUtils;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.kns.rules.PromptBeforeValidationBase;
@@ -15,8 +16,9 @@ public class IWantDocumentPreRules extends PromptBeforeValidationBase {
 
     @Override
     public boolean doPrompts(Document document) {
+        IWantDocument iWantDocument = (IWantDocument) document;
 
-        if (!hasAttachment(document.getNotes())) {
+        if (!iWantDocument.hasAttachment()) {
 
             ConfigurationService configurationService = SpringContext.getBean(ConfigurationService.class);
             String questionText = configurationService.getPropertyValueAsString("message.iwant.document.no.attachments.confirm");
@@ -30,21 +32,6 @@ public class IWantDocumentPreRules extends PromptBeforeValidationBase {
         }
 
         return true;
-    }
-
-    private boolean hasAttachment(List<Note> notes) {
-
-        if (!ObjectUtils.isEmpty(notes)) {
-
-            for (Note note : notes) {
-                if (note.getAttachment() != null) {
-                    return true;
-                }
-            }
-
-        }
-
-        return false;
     }
 
 }
