@@ -31,7 +31,6 @@ public class WorkdayKfsVendorLookupRoot {
     }
     
     public boolean isActiveEmployee() {
-        
         boolean isActive = false;
         for (WorkdayKfsVendorLookupResult result : results) {
             if (result.isActive()) {

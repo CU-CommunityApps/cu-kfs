@@ -7,7 +7,7 @@ public class CuVendorWorkDayServiceImpl implements CuVendorWorkDayService {
 
     @Override
     public WorkdayKfsVendorLookupRoot findEmployeeBySocialSecurityNumber(String socialSecurityNumber) {
-        throw new RuntimeException("Calling workday enpoint is not implemented yet.");
+        throw new RuntimeException("Calling workday endpoint is not implemented yet.");
     }
 
 }

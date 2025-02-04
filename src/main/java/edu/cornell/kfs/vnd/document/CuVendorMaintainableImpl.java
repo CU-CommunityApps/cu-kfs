@@ -42,6 +42,7 @@ import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
 
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
+import edu.cornell.kfs.vnd.CUVendorKeyConstants;
 import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
@@ -92,7 +93,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
                 } else {
                     vendorTaxNumber = vendorDetail.getVendorHeader().getVendorTaxNumber();
                 }
-                return isVendorOwernshipCodeApplicableForTaxIdRoute(vendorDetail)
+                return isVendorOwnershipCodeApplicableForTaxIdRoute(vendorDetail)
                         && isVendorTaxNumberInWorkday(vendorTaxNumber);
             } else {
                 LOG.debug("answerSplitNodeQuestion, tax id manager route node has been disabled");
@@ -106,15 +107,15 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private boolean isTaxIdReviewerNodeEnabled() {
         boolean enabled = getParameterService().getParameterValueAsBoolean(VendorDetail.class,
                 CuVendorParameterConstants.VENDOR_TAX_ID_REVIEW_NODE_ENABLED);
-        LOG.debug("isTaxIdReviewerNodeEnableds, returning {}", enabled);
+        LOG.debug("isTaxIdReviewerNodeEnabled, returning {}", enabled);
         return enabled;
     }
     
-    private boolean isVendorOwernshipCodeApplicableForTaxIdRoute(final VendorDetail vendorDetail) {
+    private boolean isVendorOwnershipCodeApplicableForTaxIdRoute(final VendorDetail vendorDetail) {
         Collection<String> ownerShipCodes = getParameterService().getParameterValuesAsString(VendorDetail.class,
                 CuVendorParameterConstants.VENDOR_OWNERSHIP_CODES_FOR_TAX_ID_REVIEW);
         boolean shouldRouteForTaxId = ownerShipCodes.contains(vendorDetail.getVendorHeader().getVendorOwnershipCode());
-        LOG.debug("isVendorOwernshipCodeApplicableForTaxIdRoute, returning {}", shouldRouteForTaxId);
+        LOG.debug("isVendorOwnershipCodeApplicableForTaxIdRoute, returning {}", shouldRouteForTaxId);
         return shouldRouteForTaxId;
     }
     
@@ -129,20 +130,28 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
             annotateCouldNotCallWorkDay();
             return true;
         }
-        
     }
     
+    @SuppressWarnings("deprecation")
     private void annotateCouldNotCallWorkDay() {
         try {
             GlobalVariables.doInNewGlobalVariables(new UserSession(KFSConstants.SYSTEM_USER), new Callable<Object>() {
                 @Override
                 public Object call() throws WorkflowException {
                     final Document document = getDocumentService().getByDocumentHeaderId(getDocumentNumber());
-                    final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-                    final String message = getConfigurationService().getPropertyValueAsString(CUVendorPropertyConstants.VENDOR_UNABLE_TO_CALL_WORKDAY);
-                    LOG.debug("annotateCouldNotCallWorkDay, the annotation message: {}", message);
-                    workflowDocument.logAnnotation(message);
-                    return document;
+                    if (ObjectUtils.isNotNull(document)) {
+                        final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+                        if (ObjectUtils.isNotNull(workflowDocument)) {
+                            final String message = getConfigurationService().getPropertyValueAsString(CUVendorKeyConstants.VENDOR_UNABLE_TO_CALL_WORKDAY);
+                            LOG.debug("annotateCouldNotCallWorkDay, the annotation message: {}", message);
+                            workflowDocument.logAnnotation(message);
+                            return document;
+                        } else {
+                            throw new WorkflowException("Unable to get workflow document for document id " + getDocumentNumber());
+                        }
+                    } else {
+                        throw new WorkflowException("Unable to get document for document id " + getDocumentNumber());
+                    }
                 }
             });
         } catch (Exception e) {
