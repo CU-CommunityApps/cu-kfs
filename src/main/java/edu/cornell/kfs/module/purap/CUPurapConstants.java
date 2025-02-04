@@ -568,4 +568,6 @@ public class CUPurapConstants {
         public static final String IWNT_ORG_AUTHORIZER = "IWNT Organization Authorizer";
         public static final String IWNT_PROCUREMENT_CONTRACT_ASSISTANT = "Procurement Contract Assistant(cu)";
     }
+
+    public static final String IWNT_NO_ATTACHMENTS_QUESTION_ID = "IWantDocumentNoAttachments";
 }
