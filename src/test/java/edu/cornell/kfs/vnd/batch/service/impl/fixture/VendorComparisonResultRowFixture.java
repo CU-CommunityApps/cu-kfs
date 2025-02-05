@@ -25,13 +25,13 @@ public enum VendorComparisonResultRowFixture {
     MARY_SMITH,
 
     @VendorComparisonResultRow(
-            vendorId = "8644-0", employeeId = "8648648", netId = "dls99", active = OptionLabels.YES,
+            vendorId = "8644-0", employeeId = "8648648", netId = "dls99", active = "1",
             hireDate = "2022-09-21", terminationDate = "",  terminationDateGreaterThanProcessingDate = "2024-10-31"
     )
     DAN_SMITH,
 
     @VendorComparisonResultRow(
-            vendorId = "99911-0", employeeId = "8888888", netId = "jjj33", active = OptionLabels.NO,
+            vendorId = "99911-0", employeeId = "8888888", netId = "jjj33", active = "0",
             hireDate = "2020-02-29", terminationDate = "2024-04-01",  terminationDateGreaterThanProcessingDate = ""
     )
     JACK_JONES,
