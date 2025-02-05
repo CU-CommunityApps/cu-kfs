@@ -6,7 +6,7 @@ import java.util.Locale;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.sys.KFSConstants.OptionLabels;
+import org.kuali.kfs.core.api.util.Truth;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.vnd.businessobject.VendorEmployeeComparisonResult;
@@ -52,12 +52,13 @@ public enum VendorEmployeeComparisonResultCsv {
             return (resultRow, propertyStringValue) -> {
                 if (StringUtils.isBlank(propertyStringValue)) {
                     setter.accept(resultRow, null);
-                } else if (StringUtils.equalsIgnoreCase(propertyStringValue, OptionLabels.YES)) {
-                    setter.accept(resultRow, Boolean.TRUE);
-                } else if (StringUtils.equalsIgnoreCase(propertyStringValue, OptionLabels.NO)) {
-                    setter.accept(resultRow, Boolean.FALSE);
                 } else {
-                    throw new IllegalArgumentException("Invalid Yes/No string value detected: " + propertyStringValue);
+                    final Boolean booleanValue = Truth.strToBooleanIgnoreCase(propertyStringValue);
+                    if (booleanValue == null) {
+                        throw new IllegalArgumentException("Invalid boolean string value detected: "
+                                + propertyStringValue);
+                    }
+                    setter.accept(resultRow, booleanValue);
                 }
             };
         }
