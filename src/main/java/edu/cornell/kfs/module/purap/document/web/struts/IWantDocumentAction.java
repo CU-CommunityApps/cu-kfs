@@ -634,7 +634,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     private ActionForward confirmNoAttachmentsWithQuestion(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                                            HttpServletResponse response) throws Exception {
         ConfigurationService configurationService = SpringContext.getBean(ConfigurationService.class);
-        String warningMessage = configurationService.getPropertyValueAsString("message.iwant.document.no.attachments.confirm");
+        String warningMessage = configurationService.getPropertyValueAsString(CUPurapKeyConstants.IWNT_NO_ATTACHMENTS_QUESTION);
 
         ActionForward actionForward = performQuestionWithoutInput(
                 mapping,
@@ -803,7 +803,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
         IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
-
         boolean added = true;
         
         if (initiatorEnteredOwnNetidAsApprover(form)) {

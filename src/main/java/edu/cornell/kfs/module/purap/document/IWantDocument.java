@@ -1639,7 +1639,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         if (!org.apache.commons.lang3.ObjectUtils.isEmpty(getNotes())) {
 
             for (Note note : getNotes()) {
-                if (note.getAttachment() != null) {
+                if (ObjectUtils.isNotNull(note.getAttachment())) {
                     return true;
                 }
             }
