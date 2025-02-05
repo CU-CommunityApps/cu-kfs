@@ -608,12 +608,47 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         boolean rulePassed = true;
         rulePassed &= ruleService.applyRules(new RouteDocumentEvent("", iWantDocument));
 
+        if (!iWantDocument.hasAttachment()) {
+
+            final Object question = request.getParameter(PurapConstants.QUESTION_INDEX);
+            final Object buttonClicked = request.getParameter(KFSConstants.QUESTION_CLICKED_BUTTON);
+
+            if (question == null || !StringUtils.equals(question.toString(), CUPurapConstants.IWNT_NO_ATTACHMENTS_QUESTION_ID)) {
+                return confirmNoAttachmentsWithQuestion(mapping, form, request, response);
+
+            } else if (buttonClicked != null && StringUtils.equals(buttonClicked.toString(), "1")) {
+                // if the "No" button is clicked then return to the Notes page
+                rulePassed = false;
+            }
+
+        }
+
         if (rulePassed) {
             iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.ROUTING_STEP);
             iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.ROUTING_STEP);
         }
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+
+    private ActionForward confirmNoAttachmentsWithQuestion(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                                           HttpServletResponse response) throws Exception {
+        ConfigurationService configurationService = SpringContext.getBean(ConfigurationService.class);
+        String warningMessage = configurationService.getPropertyValueAsString(CUPurapKeyConstants.IWNT_NO_ATTACHMENTS_QUESTION);
+
+        ActionForward actionForward = performQuestionWithoutInput(
+                mapping,
+                form,
+                request,
+                response,
+                CUPurapConstants.IWNT_NO_ATTACHMENTS_QUESTION_ID,
+                warningMessage,
+                KFSConstants.CONFIRMATION_QUESTION,
+                KFSConstants.ROUTE_METHOD,
+                StringUtils.EMPTY
+        );
+
+        return  actionForward;
     }
 
     /**
