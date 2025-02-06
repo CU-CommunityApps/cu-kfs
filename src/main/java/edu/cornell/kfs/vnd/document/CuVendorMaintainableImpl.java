@@ -1,5 +1,6 @@
 package edu.cornell.kfs.vnd.document;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -34,7 +35,6 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.vnd.CuVendorParameterConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
@@ -44,6 +44,7 @@ import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.vnd.CUVendorKeyConstants;
 import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
+import edu.cornell.kfs.vnd.CuVendorParameterConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
@@ -125,7 +126,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
             boolean isInWorkDay = result.isActiveEmployee();
             LOG.debug("isVendorTaxNumberInWorkday, returning {}", isInWorkDay);
             return isInWorkDay;
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | URISyntaxException e) {
             LOG.error("isVendorTaxNumberInWorkday, got an error calling workday.", e);
             annotateCouldNotCallWorkDay();
             return true;

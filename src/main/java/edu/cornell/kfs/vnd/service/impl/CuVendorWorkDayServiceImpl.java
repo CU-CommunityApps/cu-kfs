@@ -12,6 +12,9 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants.COMPONENT;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants.NAMESPACE;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -19,9 +22,12 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.service.impl.DisposableClientServiceImplBase;
 import edu.cornell.kfs.sys.util.CUJsonUtils;
+import edu.cornell.kfs.vnd.CuVendorParameterConstants;
 import edu.cornell.kfs.vnd.jsonobject.WorkdayKfsVendorLookupRoot;
 import edu.cornell.kfs.vnd.service.CuVendorWorkDayService;
 
+@NAMESPACE(namespace = KFSConstants.CoreModuleNamespaces.VENDOR)
+@COMPONENT(component = "CuVendorWorkDayService")
 public class CuVendorWorkDayServiceImpl extends DisposableClientServiceImplBase implements CuVendorWorkDayService {
     private static final Logger LOG = LogManager.getLogger();
     private static final String INCLUDE_TERMINATED_WORKERS_URL_PARAM = "Include_Terminated_Workers";
@@ -55,7 +61,8 @@ public class CuVendorWorkDayServiceImpl extends DisposableClientServiceImplBase 
     }
     
     protected String buildAuthenticationValue() {
-        byte[] byteArrayEncodedCredentials = Base64.encodeBase64(getCredentialValues().getBytes());
+        String unEncodedCredentialValues = getCredentialValues();
+        byte[] byteArrayEncodedCredentials = Base64.encodeBase64(unEncodedCredentialValues.getBytes());
         String stringEncodedCredentials = new String(byteArrayEncodedCredentials, StandardCharsets.UTF_8);
         return CUKFSConstants.BASIC_AUTHENTICATION_STARTER + stringEncodedCredentials;
     }
@@ -83,23 +90,26 @@ public class CuVendorWorkDayServiceImpl extends DisposableClientServiceImplBase 
     }
     
     private String getWorkdayEndpointBase() {
-        //@todo pull this from a paremter
-        return "https://services1.myworkday.com/ccx/service/customreport2/cornell/intsys-HRIS/CRINT127C_KFS_Vendor_Lookup?";
+        return callParameterService(CuVendorParameterConstants.WORKDAY_ENDPOINT);
     }
     
     private String getIncludeTerminatedWorkers() {
-      //@todo pull this from a paremter
-        return "1";
+        return callParameterService(CuVendorParameterConstants.WORKDAY_INCLUDE_TERMINDATED_WORKERS);
     }
     
     private int getMaximumRetries() {
-        //@todo get this from a parameter
-        return 5;
+        String maxString = callParameterService(CuVendorParameterConstants.WORKDAY_SERVICE_RETRY_COUNT);
+        return Integer.parseInt(maxString);
+    }
+    
+    private String callParameterService(String parameterName) {
+        return parameterService.getParameterValueAsString(CuVendorWorkDayServiceImpl.class, parameterName);
     }
     
     private String getCredentialValues() {
-        //@todo get this from web service credentials
-        return "user:password";
+        return webServiceCredentialService.getWebServiceCredentialValue(
+                CuVendorParameterConstants.WORKDAY_WEBSERVICE_CREDENTIAL_GROUP_CODE,
+                CuVendorParameterConstants.WORKDAY_WEBSERVICE_CREDENTIAL_KEY);
     }
 
     public void setParameterService(ParameterService parameterService) {
