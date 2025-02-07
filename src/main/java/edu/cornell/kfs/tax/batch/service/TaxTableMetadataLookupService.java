@@ -1,9 +1,10 @@
 package edu.cornell.kfs.tax.batch.service;
 
-import edu.cornell.kfs.tax.batch.metadata.TaxDtoMappingDefinition;
+import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
+import edu.cornell.kfs.tax.batch.metadata.TaxDtoDbMetadata;
 
 public interface TaxTableMetadataLookupService {
 
-    <T> TaxDtoMappingDefinition<T> getDatabaseMappingMetadataForDto(final Class<T> dtoClass);
+    TaxDtoDbMetadata getDatabaseMappingMetadataForDto(final Class<? extends TaxDtoFieldEnum> dtoFieldEnumClass);
 
 }

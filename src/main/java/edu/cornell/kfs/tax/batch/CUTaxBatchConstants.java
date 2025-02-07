@@ -18,6 +18,8 @@ public final class CUTaxBatchConstants {
     public static final String INCOME_CODE = "incomeCode";
     public static final String VENDOR_EMAIL_ADDRESS = "vendorEmailAddress";
 
+    public static final String KFS_SCHEMA = "KFS";
+
     /**
      * Helper enum identifying the various sources/types of the tax data/output fields
      * from a TaxDataDefinition or TaxOutputDefinition.

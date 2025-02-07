@@ -6,13 +6,15 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
 import edu.cornell.kfs.tax.batch.service.TaxTableMetadataLookupService;
 
 /**
- * The default OJB implementation of TaxTableMetadataLookupService extends from a base financials class
+ * The current OJB implementation of TaxTableMetadataLookupService relies upon a base financials class
  * that makes a call to a static OJB method within its constructor. To make it easier to mock/override
  * the service's OJB setup for unit/integration tests, this factory bean was introduced so that subclasses
  * can inject Mockito's static mocking functionality into the instantiation process.
  * 
  * The default implementation creates the service bean by calling the default constructor on the given
  * service class.
+ * 
+ * TODO: If we're not implementing the OJB variant of the lookup service at this time, then remove this class.
  */
 public class TaxTableMetadataLookupServiceFactoryBean
         extends AbstractFactoryBean<TaxTableMetadataLookupService> {

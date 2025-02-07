@@ -1,55 +1,28 @@
 package edu.cornell.kfs.tax.batch.dto;
 
+import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.krad.bo.BusinessObject;
+import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 
-import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.QueryTableAliases;
-import edu.cornell.kfs.tax.batch.annotation.TaxBusinessObjectMapping;
-import edu.cornell.kfs.tax.batch.annotation.TaxDto;
-import edu.cornell.kfs.tax.batch.annotation.TaxDtoField;
+import edu.cornell.kfs.tax.batch.annotation.HasNestedEnumWithDtoFieldListing;
+import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 
-@TaxDto(mappedBusinessObjects = {
-        @TaxBusinessObjectMapping(businessObjectClass = VendorHeader.class,
-                tableAliasForQuery = QueryTableAliases.VENDOR_HEADER),
-        @TaxBusinessObjectMapping(businessObjectClass = VendorDetail.class,
-                tableAliasForQuery = QueryTableAliases.VENDOR_DETAIL)
-})
+@HasNestedEnumWithDtoFieldListing
 public class VendorDetailLite {
 
-    @TaxDtoField(mappedBusinessObject = VendorDetail.class)
     private Integer vendorHeaderGeneratedIdentifier;
-
-    @TaxDtoField(mappedBusinessObject = VendorDetail.class)
     private Integer vendorDetailAssignedIdentifier;
-
-    @TaxDtoField(mappedBusinessObject = VendorDetail.class)
     private boolean vendorParentIndicator;
-
-    @TaxDtoField(mappedBusinessObject = VendorDetail.class)
     private boolean vendorFirstLastNameIndicator;
-
-    @TaxDtoField(mappedBusinessObject = VendorDetail.class)
     private String vendorName;
-
-    @TaxDtoField(mappedBusinessObject = VendorHeader.class)
     private String vendorTaxNumber;
-
-    @TaxDtoField(mappedBusinessObject = VendorHeader.class)
     private String vendorTypeCode;
-
-    @TaxDtoField(mappedBusinessObject = VendorHeader.class)
     private String vendorOwnershipCode;
-
-    @TaxDtoField(mappedBusinessObject = VendorHeader.class)
     private String vendorOwnershipCategoryCode;
-
-    @TaxDtoField(mappedBusinessObject = VendorHeader.class)
     private boolean vendorForeignIndicator;
-
-    @TaxDtoField(mappedBusinessObject = VendorHeader.class)
     private String vendorGIIN;
-
-    @TaxDtoField(mappedBusinessObject = VendorHeader.class)
     private String vendorChapter4StatusCode;
 
     public Integer getVendorHeaderGeneratedIdentifier() {
@@ -146,6 +119,49 @@ public class VendorDetailLite {
 
     public void setVendorChapter4StatusCode(final String vendorChapter4StatusCode) {
         this.vendorChapter4StatusCode = vendorChapter4StatusCode;
+    }
+
+
+
+    public enum VendorField implements TaxDtoFieldEnum {
+        vendorHeaderGeneratedIdentifier_forHeader(
+                VendorHeader.class, VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID),
+        vendorHeaderGeneratedIdentifier_forDetail(
+                VendorDetail.class, VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID),
+        vendorDetailAssignedIdentifier(VendorDetail.class),
+        vendorParentIndicator(VendorDetail.class),
+        vendorFirstLastNameIndicator(VendorDetail.class),
+        vendorName(VendorDetail.class),
+        vendorTaxNumber(VendorHeader.class),
+        vendorTypeCode(VendorHeader.class),
+        vendorOwnershipCode(VendorHeader.class),
+        vendorOwnershipCategoryCode(VendorHeader.class),
+        vendorForeignIndicator(VendorHeader.class),
+        vendorGIIN(VendorHeader.class),
+        vendorChapter4StatusCode(VendorHeader.class);
+
+        private final Class<? extends BusinessObject> mappedClass;
+        private final String fieldName;
+
+        private VendorField(final Class<? extends BusinessObject> mappedClass) {
+            this(mappedClass, null);
+        }
+
+        private VendorField(final Class<? extends BusinessObject> mappedClass, final String fieldName) {
+            this.mappedClass = mappedClass;
+            this.fieldName = StringUtils.defaultIfBlank(fieldName, name());
+        }
+
+        @Override
+        public String getFieldName() {
+            return fieldName;
+        }
+
+        @Override
+        public Class<? extends BusinessObject> getMappedBusinessObjectClass() {
+            return mappedClass;
+        }
+
     }
 
 }

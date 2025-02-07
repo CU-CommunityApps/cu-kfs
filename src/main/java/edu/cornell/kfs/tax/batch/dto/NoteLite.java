@@ -1,23 +1,16 @@
 package edu.cornell.kfs.tax.batch.dto;
 
+import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.bo.Note;
 
-import edu.cornell.kfs.tax.batch.annotation.TaxBusinessObjectMapping;
-import edu.cornell.kfs.tax.batch.annotation.TaxDto;
-import edu.cornell.kfs.tax.batch.annotation.TaxDtoField;
+import edu.cornell.kfs.tax.batch.annotation.HasNestedEnumWithDtoFieldListing;
+import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 
-@TaxDto(mappedBusinessObjects = {
-        @TaxBusinessObjectMapping(businessObjectClass = Note.class)
-})
+@HasNestedEnumWithDtoFieldListing
 public class NoteLite {
 
-    @TaxDtoField
     private Long noteIdentifier;
-
-    @TaxDtoField
     private String remoteObjectIdentifier;
-
-    @TaxDtoField
     private String noteText;
 
     public Long getNoteIdentifier() {
@@ -42,6 +35,20 @@ public class NoteLite {
 
     public void setNoteText(final String noteText) {
         this.noteText = noteText;
+    }
+
+
+
+    public enum NoteField implements TaxDtoFieldEnum {
+        noteIdentifier,
+        remoteObjectIdentifier,
+        noteText;
+
+        @Override
+        public Class<? extends BusinessObject> getMappedBusinessObjectClass() {
+            return Note.class;
+        }
+
     }
 
 }

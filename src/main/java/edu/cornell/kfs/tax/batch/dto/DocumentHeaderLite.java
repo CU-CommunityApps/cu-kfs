@@ -1,20 +1,15 @@
 package edu.cornell.kfs.tax.batch.dto;
 
+import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 
-import edu.cornell.kfs.tax.batch.annotation.TaxBusinessObjectMapping;
-import edu.cornell.kfs.tax.batch.annotation.TaxDto;
-import edu.cornell.kfs.tax.batch.annotation.TaxDtoField;
+import edu.cornell.kfs.tax.batch.annotation.HasNestedEnumWithDtoFieldListing;
+import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 
-@TaxDto(mappedBusinessObjects = {
-        @TaxBusinessObjectMapping(businessObjectClass = DocumentHeader.class)
-})
+@HasNestedEnumWithDtoFieldListing
 public class DocumentHeaderLite {
 
-    @TaxDtoField
     private String documentNumber;
-
-    @TaxDtoField
     private String objectId;
 
     public String getDocumentNumber() {
@@ -31,6 +26,18 @@ public class DocumentHeaderLite {
 
     public void setObjectId(final String objectId) {
         this.objectId = objectId;
+    }
+
+
+
+    public enum DocumentHeaderField implements TaxDtoFieldEnum {
+        documentNumber,
+        objectId;
+
+        @Override
+        public Class<? extends BusinessObject> getMappedBusinessObjectClass() {
+            return DocumentHeader.class;
+        }
     }
 
 }

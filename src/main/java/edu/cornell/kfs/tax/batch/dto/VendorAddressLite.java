@@ -1,56 +1,27 @@
 package edu.cornell.kfs.tax.batch.dto;
 
+import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
-import edu.cornell.kfs.tax.batch.annotation.TaxBusinessObjectMapping;
-import edu.cornell.kfs.tax.batch.annotation.TaxDto;
-import edu.cornell.kfs.tax.batch.annotation.TaxDtoField;
+import edu.cornell.kfs.tax.batch.annotation.HasNestedEnumWithDtoFieldListing;
+import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 
-@TaxDto(mappedBusinessObjects = {
-        @TaxBusinessObjectMapping(businessObjectClass = VendorAddress.class)
-})
+@HasNestedEnumWithDtoFieldListing
 public class VendorAddressLite {
 
-    @TaxDtoField
     private Integer vendorAddressGeneratedIdentifier;
-
-    @TaxDtoField
     private Integer vendorHeaderGeneratedIdentifier;
-
-    @TaxDtoField
     private Integer vendorDetailAssignedIdentifier;
-
-    @TaxDtoField
     private String vendorAddressTypeCode;
-
-    @TaxDtoField
     private String vendorLine1Address;
-
-    @TaxDtoField
     private String vendorLine2Address;
-
-    @TaxDtoField
     private String vendorCityName;
-
-    @TaxDtoField
     private String vendorStateCode;
-
-    @TaxDtoField
     private String vendorZipCode;
-
-    @TaxDtoField
     private String vendorCountryCode;
-
-    @TaxDtoField
     private String vendorAttentionName;
-
-    @TaxDtoField
     private String vendorAddressInternationalProvinceName;
-
-    @TaxDtoField
     private String vendorAddressEmailAddress;
-
-    @TaxDtoField
     private boolean active;
 
     public Integer getVendorAddressGeneratedIdentifier() {
@@ -163,6 +134,31 @@ public class VendorAddressLite {
 
     public void setActive(final boolean active) {
         this.active = active;
+    }
+
+
+
+    public enum VendorAddressField implements TaxDtoFieldEnum {
+        vendorAddressGeneratedIdentifier,
+        vendorHeaderGeneratedIdentifier,
+        vendorDetailAssignedIdentifier,
+        vendorAddressTypeCode,
+        vendorLine1Address,
+        vendorLine2Address,
+        vendorCityName,
+        vendorStateCode,
+        vendorZipCode,
+        vendorCountryCode,
+        vendorAttentionName,
+        vendorAddressInternationalProvinceName,
+        vendorAddressEmailAddress,
+        active;
+
+        @Override
+        public Class<? extends BusinessObject> getMappedBusinessObjectClass() {
+            return VendorAddress.class;
+        }
+
     }
 
 }
