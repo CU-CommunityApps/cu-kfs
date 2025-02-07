@@ -11,7 +11,7 @@ import edu.cornell.kfs.tax.batch.metadata.TaxDtoDbMetadata;
 
 public class NoteLiteMapper extends ReadOnlyTaxDtoRowMapperBase<NoteLite> {
 
-    protected NoteLiteMapper(final EncryptionService encryptionService, final TaxDtoDbMetadata metadata,
+    public NoteLiteMapper(final EncryptionService encryptionService, final TaxDtoDbMetadata metadata,
             final ResultSet resultSet) {
         super(NoteLite::new, encryptionService, metadata, resultSet);
     }

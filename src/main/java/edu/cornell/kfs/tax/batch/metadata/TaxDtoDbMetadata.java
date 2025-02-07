@@ -29,4 +29,12 @@ public final class TaxDtoDbMetadata {
         return columnLabels.get(fieldDefinition);
     }
 
+    public int getMappedTableCount() {
+        return tableNames.size();
+    }
+
+    public int getMappedColumnCount() {
+        return columnLabels.size();
+    }
+
 }

@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.exception.ClassNotPersistableException;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
@@ -135,6 +136,12 @@ public class TaxTableMetadataLookupServiceDefaultImpl
     @Override
     protected Class<? extends BusinessObject> getMetadataForBusinessObject(            
             final Class<? extends BusinessObject> businessObjectClass) {
+        if (!MAPPED_TABLES.containsKey(businessObjectClass)) {
+            final RuntimeException nestedException = new RuntimeException(
+                    "Business object is not mapped for tax use: " + businessObjectClass.getName());
+            throw new ClassNotPersistableException(
+                    "Invalid/Non-persistable business object: " + businessObjectClass.getName(), nestedException);
+        }
         return businessObjectClass;
     }
 
