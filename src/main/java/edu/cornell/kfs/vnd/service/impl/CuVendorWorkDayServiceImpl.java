@@ -33,7 +33,7 @@ public class CuVendorWorkDayServiceImpl extends DisposableClientServiceImplBase 
     private static final String INCLUDE_TERMINATED_WORKERS_URL_PARAM = "Include_Terminated_Workers";
     private static final String SOCIAL_SECURITY_NUMBER_URL_PARAM = "Social_Security_Number";
     private static final String JSON_FORMAT_URL = "format=json";
-    
+
     protected ParameterService parameterService;
     protected WebServiceCredentialService webServiceCredentialService;
 
@@ -53,20 +53,20 @@ public class CuVendorWorkDayServiceImpl extends DisposableClientServiceImplBase 
         Invocation request = builder.buildGet();
         return request;
     }
-    
+
     protected String buildWorkdayServiceCall(String socialSecurityNumber) {
         return getWorkdayEndpointBase() + INCLUDE_TERMINATED_WORKERS_URL_PARAM + CUKFSConstants.EQUALS_SIGN
                 + getIncludeTerminatedWorkers() + CUKFSConstants.AMPERSAND + SOCIAL_SECURITY_NUMBER_URL_PARAM
                 + CUKFSConstants.EQUALS_SIGN + socialSecurityNumber + CUKFSConstants.AMPERSAND + JSON_FORMAT_URL;
     }
-    
+
     protected String buildAuthenticationValue() {
         String unEncodedCredentialValues = getCredentialValues();
         byte[] byteArrayEncodedCredentials = Base64.encodeBase64(unEncodedCredentialValues.getBytes());
         String stringEncodedCredentials = new String(byteArrayEncodedCredentials, StandardCharsets.UTF_8);
         return CUKFSConstants.BASIC_AUTHENTICATION_STARTER + stringEncodedCredentials;
     }
-    
+
     protected WorkdayKfsVendorLookupRoot callWorkDayService(Invocation request) {
         int retryCount = 1;
         int maximumRetries = getMaximumRetries();
@@ -76,10 +76,12 @@ public class CuVendorWorkDayServiceImpl extends DisposableClientServiceImplBase 
                 if (response.getStatus() == Response.Status.OK.getStatusCode()) {
                     String responseString = response.readEntity(String.class);
                     ObjectMapper objectMapper = CUJsonUtils.buildObjectMapperUsingDefaultTimeZone();
-                    WorkdayKfsVendorLookupRoot root = objectMapper.readValue(responseString, WorkdayKfsVendorLookupRoot.class);
+                    WorkdayKfsVendorLookupRoot root = objectMapper.readValue(responseString,
+                            WorkdayKfsVendorLookupRoot.class);
                     return root;
                 } else {
-                    LOG.error("findEmployeeBySocialSecurityNumber, on try {}, got a bad response from workday, the response code was {}", retryCount, response.getStatus());
+                    LOG.error("findEmployeeBySocialSecurityNumber, on try {}, got a bad response from workday, the response code was {}",
+                            retryCount, response.getStatus());
                 }
             } catch (Exception e) {
                 LOG.error("findEmployeeBySocialSecurityNumber on try {}, got an error", retryCount, e);
@@ -88,24 +90,24 @@ public class CuVendorWorkDayServiceImpl extends DisposableClientServiceImplBase 
         }
         throw new RuntimeException("Unable to call workday endpoint.");
     }
-    
+
     private String getWorkdayEndpointBase() {
         return callParameterService(CuVendorParameterConstants.WORKDAY_ENDPOINT);
     }
-    
+
     private String getIncludeTerminatedWorkers() {
         return callParameterService(CuVendorParameterConstants.WORKDAY_INCLUDE_TERMINDATED_WORKERS);
     }
-    
+
     private int getMaximumRetries() {
         String maxString = callParameterService(CuVendorParameterConstants.WORKDAY_SERVICE_RETRY_COUNT);
         return Integer.parseInt(maxString);
     }
-    
+
     private String callParameterService(String parameterName) {
         return parameterService.getParameterValueAsString(CuVendorWorkDayServiceImpl.class, parameterName);
     }
-    
+
     private String getCredentialValues() {
         return webServiceCredentialService.getWebServiceCredentialValue(
                 CuVendorParameterConstants.WORKDAY_WEBSERVICE_CREDENTIAL_GROUP_CODE,

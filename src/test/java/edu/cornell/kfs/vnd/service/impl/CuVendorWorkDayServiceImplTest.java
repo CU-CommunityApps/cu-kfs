@@ -7,8 +7,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
-import javax.ws.rs.client.Invocation;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -39,7 +37,6 @@ class CuVendorWorkDayServiceImplTest {
     @BeforeEach
     void setUp() throws Exception {
         cuVendorWorkDayService = new CuVendorWorkDayServiceImpl();
-        //cuVendorWorkDayService.setParameterService(buildMockParameterService());
         cuVendorWorkDayService.setWebServiceCredentialService(buildMockWebServiceCredentialService());
     }
 
@@ -56,10 +53,11 @@ class CuVendorWorkDayServiceImplTest {
                 CuVendorParameterConstants.WORKDAY_INCLUDE_TERMINDATED_WORKERS)).thenReturn(terminatedWorkers);
         return service;
     }
-    
+
     private WebServiceCredentialService buildMockWebServiceCredentialService() {
         WebServiceCredentialService service = Mockito.mock(WebServiceCredentialService.class);
-        Mockito.when(service.getWebServiceCredentialValue(CuVendorParameterConstants.WORKDAY_WEBSERVICE_CREDENTIAL_GROUP_CODE,
+        Mockito.when(service.getWebServiceCredentialValue(
+                CuVendorParameterConstants.WORKDAY_WEBSERVICE_CREDENTIAL_GROUP_CODE,
                 CuVendorParameterConstants.WORKDAY_WEBSERVICE_CREDENTIAL_KEY)).thenReturn(WORKDAY_CREDENTIAL_VALUE);
         return service;
     }
@@ -72,25 +70,24 @@ class CuVendorWorkDayServiceImplTest {
         LOG.info("testBuildWorkdayServiceCall, actualResultsL {}", actualResults);
         assertEquals(buildTestingServiceCallUrl(ssn, terminatedWorkers), actualResults);
     }
-    
+
     @ParameterizedTest
     @MethodSource("workdayServiceArguemnts")
     public void testBuildInvocation(String ssn, String terminatedWorkers) throws URISyntaxException {
         cuVendorWorkDayService.setParameterService(buildMockParameterService(terminatedWorkers));
         assertDoesNotThrow(() -> cuVendorWorkDayService.buildInvocation(ssn));
     }
-    
+
     private static Stream<Arguments> workdayServiceArguemnts() {
         return Stream.of(
-                Arguments.of("000000000", "1"),
+                Arguments.of("000000000", "1"), 
                 Arguments.of("111-22-3333", "1"),
-                Arguments.of("111111111", "0"),
-                Arguments.of("222-77-9999", null),
+                Arguments.of("111111111", "0"), 
+                Arguments.of("222-77-9999", null), 
                 Arguments.of(null, "1"),
-                Arguments.of(StringUtils.EMPTY, "1"),
+                Arguments.of(StringUtils.EMPTY, "1"), 
                 Arguments.of(StringUtils.EMPTY, StringUtils.EMPTY),
-                Arguments.of(null, null)
-                );
+                Arguments.of(null, null));
     }
 
     @Test
@@ -98,9 +95,10 @@ class CuVendorWorkDayServiceImplTest {
         String actualResults = cuVendorWorkDayService.buildAuthenticationValue();
         assertEquals(buildTestingAuthenticationValue(), actualResults);
     }
-    
+
     private String buildTestingServiceCallUrl(String ssn, String terminatedWorkers) {
-        String url = WORKDAY_URL_STARTER + WORKDAY_URL_TERMINATED_WORKERS + terminatedWorkers + WORKDAY_URL_SSN + ssn + WORKDAY_URL_END;
+        String url = WORKDAY_URL_STARTER + WORKDAY_URL_TERMINATED_WORKERS + terminatedWorkers + WORKDAY_URL_SSN + ssn
+                + WORKDAY_URL_END;
         return url;
     }
 

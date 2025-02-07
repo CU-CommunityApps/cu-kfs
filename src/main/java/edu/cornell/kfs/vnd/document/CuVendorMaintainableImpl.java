@@ -43,7 +43,6 @@ import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
 
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.vnd.CUVendorKeyConstants;
-import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
 import edu.cornell.kfs.vnd.CuVendorParameterConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
@@ -52,6 +51,7 @@ import edu.cornell.kfs.vnd.jsonobject.WorkdayKfsVendorLookupRoot;
 import edu.cornell.kfs.vnd.service.CuVendorWorkDayService;
 
 public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
+    private static final long serialVersionUID = -181405787799707576L;
     private static final Logger LOG = LogManager.getLogger();
     private static final String HEADER_ID_SEQ = "VNDR_HDR_GNRTD_ID";
     private static final String ADDRESS_HEADER_ID_SEQ = "VNDR_ADDR_GNRTD_ID";
