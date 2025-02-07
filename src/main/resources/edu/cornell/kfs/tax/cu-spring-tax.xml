@@ -141,7 +141,7 @@
     <bean id="taxTableMetadataLookupService-parentBean"
           abstract="true"
           class="edu.cornell.kfs.tax.batch.service.impl.TaxTableMetadataLookupServiceFactoryBean"
-          p:serviceClass="edu.cornell.kfs.tax.batch.service.impl.TaxTableMetadataLookupServiceOjbImpl"/>
+          p:serviceClass="edu.cornell.kfs.tax.batch.service.impl.TaxTableMetadataLookupServiceDefaultImpl"/>
 
     <!-- Batch Jobs -->
 
