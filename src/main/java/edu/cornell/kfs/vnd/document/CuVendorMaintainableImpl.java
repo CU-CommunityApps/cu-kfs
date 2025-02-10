@@ -97,7 +97,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
                 return isVendorOwnershipCodeApplicableForTaxIdRoute(vendorDetail)
                         && isVendorTaxNumberInWorkday(vendorTaxNumber);
             } else {
-                LOG.info("answerSplitNodeQuestion, tax id manager route node has been disabled");
+                LOG.debug("answerSplitNodeQuestion, tax id manager route node has been disabled");
                 return false;
             }
         }
@@ -108,7 +108,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private boolean isTaxIdReviewerNodeEnabled() {
         boolean enabled = getParameterService().getParameterValueAsBoolean(VendorDetail.class,
                 CuVendorParameterConstants.VENDOR_TAX_ID_REVIEW_NODE_ENABLED);
-        LOG.info("isTaxIdReviewerNodeEnabled, returning {}", enabled);
+        LOG.debug("isTaxIdReviewerNodeEnabled, returning {}", enabled);
         return enabled;
     }
     
@@ -116,7 +116,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         Collection<String> ownerShipCodes = getParameterService().getParameterValuesAsString(VendorDetail.class,
                 CuVendorParameterConstants.VENDOR_OWNERSHIP_CODES_FOR_TAX_ID_REVIEW);
         boolean shouldRouteForTaxId = ownerShipCodes.contains(vendorDetail.getVendorHeader().getVendorOwnershipCode());
-        LOG.info("isVendorOwnershipCodeApplicableForTaxIdRoute, returning {} for document {}", shouldRouteForTaxId, getDocumentNumber());
+        LOG.debug("isVendorOwnershipCodeApplicableForTaxIdRoute, returning {} for document {}", shouldRouteForTaxId, getDocumentNumber());
         return shouldRouteForTaxId;
     }
     
@@ -124,7 +124,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         try {
             WorkdayKfsVendorLookupRoot result = getCuVendorWorkDayService().findEmployeeBySocialSecurityNumber(vendorTaxNumber, getDocumentNumber());
             boolean isInWorkDay = result.isActiveEmployee();
-            LOG.info("isVendorTaxNumberInWorkday, returning {} for document {}", isInWorkDay, getDocumentNumber());
+            LOG.debug("isVendorTaxNumberInWorkday, returning {} for document {}", isInWorkDay, getDocumentNumber());
             return isInWorkDay;
         } catch (RuntimeException | URISyntaxException e) {
             LOG.error("isVendorTaxNumberInWorkday, got an error calling workday for document " + getDocumentNumber(), e);
@@ -144,7 +144,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
                         final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
                         if (ObjectUtils.isNotNull(workflowDocument)) {
                             final String message = getConfigurationService().getPropertyValueAsString(CUVendorKeyConstants.VENDOR_UNABLE_TO_CALL_WORKDAY);
-                            LOG.info("annotateCouldNotCallWorkDay, the annotation message: {}", message);
+                            LOG.debug("annotateCouldNotCallWorkDay, the annotation message: {}", message);
                             workflowDocument.logAnnotation(message);
                             return document;
                         } else {
