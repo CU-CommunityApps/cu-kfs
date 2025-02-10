@@ -84,7 +84,8 @@ public class CuVendorWorkDayServiceImpl extends DisposableClientServiceImplBase 
                             documentNumber, retryCount, response.getStatus());
                 }
             } catch (Exception e) {
-                LOG.error("findEmployeeBySocialSecurityNumber, for document {} on try {}, got an error", documentNumber, retryCount, e);
+                LOG.error("findEmployeeBySocialSecurityNumber, for document {} on try {}, got an error that wwe can't log as it might contain an SSN",
+                        documentNumber, retryCount);
             }
             retryCount++;
         }
