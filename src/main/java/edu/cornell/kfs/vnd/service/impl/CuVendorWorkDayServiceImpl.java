@@ -30,18 +30,18 @@ import edu.cornell.kfs.vnd.service.CuVendorWorkDayService;
 @COMPONENT(component = "CuVendorWorkDayService")
 public class CuVendorWorkDayServiceImpl extends DisposableClientServiceImplBase implements CuVendorWorkDayService {
     private static final Logger LOG = LogManager.getLogger();
-    private static final String INCLUDE_TERMINATED_WORKERS_URL_PARAM = "Include_Terminated_Workers";
-    private static final String SOCIAL_SECURITY_NUMBER_URL_PARAM = "Social_Security_Number";
+    public static final String INCLUDE_TERMINATED_WORKERS_URL_PARAM = "Include_Terminated_Workers";
+    public static final String SOCIAL_SECURITY_NUMBER_URL_PARAM = "Social_Security_Number";
     private static final String JSON_FORMAT_URL = "format=json";
 
     protected ParameterService parameterService;
     protected WebServiceCredentialService webServiceCredentialService;
 
     @Override
-    public WorkdayKfsVendorLookupRoot findEmployeeBySocialSecurityNumber(String socialSecurityNumber) throws URISyntaxException {
+    public WorkdayKfsVendorLookupRoot findEmployeeBySocialSecurityNumber(String socialSecurityNumber, String documentId) throws URISyntaxException {
         LOG.debug("findEmployeeBySocialSecurityNumber, entering");
         Invocation request = buildInvocation(socialSecurityNumber);
-        return callWorkDayService(request);
+        return callWorkDayService(request, documentId);
     }
 
     protected Invocation buildInvocation(String socialSecurityNumber) throws URISyntaxException {
@@ -67,7 +67,7 @@ public class CuVendorWorkDayServiceImpl extends DisposableClientServiceImplBase 
         return CUKFSConstants.BASIC_AUTHENTICATION_STARTER + stringEncodedCredentials;
     }
 
-    protected WorkdayKfsVendorLookupRoot callWorkDayService(Invocation request) {
+    protected WorkdayKfsVendorLookupRoot callWorkDayService(Invocation request, String documentNumber) {
         int retryCount = 1;
         int maximumRetries = getMaximumRetries();
         while (retryCount <= maximumRetries) {
@@ -80,15 +80,15 @@ public class CuVendorWorkDayServiceImpl extends DisposableClientServiceImplBase 
                             WorkdayKfsVendorLookupRoot.class);
                     return root;
                 } else {
-                    LOG.error("findEmployeeBySocialSecurityNumber, on try {}, got a bad response from workday, the response code was {}",
-                            retryCount, response.getStatus());
+                    LOG.error("findEmployeeBySocialSecurityNumber, for document {}, on try {}, got a bad response from workday, the response code was {}",
+                            documentNumber, retryCount, response.getStatus());
                 }
             } catch (Exception e) {
-                LOG.error("findEmployeeBySocialSecurityNumber on try {}, got an error", retryCount, e);
+                LOG.error("findEmployeeBySocialSecurityNumber, for document {} on try {}, got an error", documentNumber, retryCount, e);
             }
             retryCount++;
         }
-        throw new RuntimeException("Unable to call workday endpoint.");
+        throw new RuntimeException("Unable to call workday endpoint for document " + documentNumber);
     }
 
     private String getWorkdayEndpointBase() {

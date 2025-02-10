@@ -108,7 +108,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private boolean isTaxIdReviewerNodeEnabled() {
         boolean enabled = getParameterService().getParameterValueAsBoolean(VendorDetail.class,
                 CuVendorParameterConstants.VENDOR_TAX_ID_REVIEW_NODE_ENABLED);
-        LOG.debug("isTaxIdReviewerNodeEnabled, returning {}", enabled);
+        LOG.debug("isTaxIdReviewerNodeEnabled, returning {} for document {}", enabled);
         return enabled;
     }
     
@@ -116,18 +116,18 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         Collection<String> ownerShipCodes = getParameterService().getParameterValuesAsString(VendorDetail.class,
                 CuVendorParameterConstants.VENDOR_OWNERSHIP_CODES_FOR_TAX_ID_REVIEW);
         boolean shouldRouteForTaxId = ownerShipCodes.contains(vendorDetail.getVendorHeader().getVendorOwnershipCode());
-        LOG.debug("isVendorOwnershipCodeApplicableForTaxIdRoute, returning {}", shouldRouteForTaxId);
+        LOG.debug("isVendorOwnershipCodeApplicableForTaxIdRoute, returning {} for document {}", shouldRouteForTaxId, getDocumentNumber());
         return shouldRouteForTaxId;
     }
     
     private boolean isVendorTaxNumberInWorkday(final String vendorTaxNumber) {
         try {
-            WorkdayKfsVendorLookupRoot result = getCuVendorWorkDayService().findEmployeeBySocialSecurityNumber(vendorTaxNumber);
+            WorkdayKfsVendorLookupRoot result = getCuVendorWorkDayService().findEmployeeBySocialSecurityNumber(vendorTaxNumber, getDocumentNumber());
             boolean isInWorkDay = result.isActiveEmployee();
-            LOG.debug("isVendorTaxNumberInWorkday, returning {}", isInWorkDay);
+            LOG.debug("isVendorTaxNumberInWorkday, returning {} for document {}", isInWorkDay, getDocumentNumber());
             return isInWorkDay;
         } catch (RuntimeException | URISyntaxException e) {
-            LOG.error("isVendorTaxNumberInWorkday, got an error calling workday.", e);
+            LOG.error("isVendorTaxNumberInWorkday, got an error calling workday for document " + getDocumentNumber(), e);
             annotateCouldNotCallWorkDay();
             return true;
         }

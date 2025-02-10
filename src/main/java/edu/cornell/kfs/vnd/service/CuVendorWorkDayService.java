@@ -6,6 +6,6 @@ import edu.cornell.kfs.vnd.jsonobject.WorkdayKfsVendorLookupRoot;
 
 public interface CuVendorWorkDayService {
     
-    public WorkdayKfsVendorLookupRoot findEmployeeBySocialSecurityNumber(String socialSecurityNumber) throws URISyntaxException;  
+    public WorkdayKfsVendorLookupRoot findEmployeeBySocialSecurityNumber(String socialSecurityNumber, String documentNumber) throws URISyntaxException;  
 
 }
