@@ -108,7 +108,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private boolean isTaxIdReviewerNodeEnabled() {
         boolean enabled = getParameterService().getParameterValueAsBoolean(VendorDetail.class,
                 CuVendorParameterConstants.VENDOR_TAX_ID_REVIEW_NODE_ENABLED);
-        LOG.debug("isTaxIdReviewerNodeEnabled, returning {} for document {}", enabled);
+        LOG.debug("isTaxIdReviewerNodeEnabled, returning {}", enabled);
         return enabled;
     }
     
