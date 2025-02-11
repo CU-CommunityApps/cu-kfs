@@ -34,6 +34,18 @@ public final class CuSqlQuery {
         return parameters.toArray();
     }
 
+    public Object[] getParameterValuesArray() {
+        return parameters.stream()
+                .map(SqlParameterValue::getValue)
+                .toArray();
+    }
+
+    public int[] getParameterTypesArray() {
+        return parameters.stream()
+                .mapToInt(SqlParameterValue::getSqlType)
+                .toArray();
+    }
+
     public static CuSqlQuery of(CharSequence... sqlChunks) {
         return CuSqlChunk.of(sqlChunks).toQuery();
     }

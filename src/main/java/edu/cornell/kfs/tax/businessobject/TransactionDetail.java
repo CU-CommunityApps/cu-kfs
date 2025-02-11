@@ -1,15 +1,22 @@
 package edu.cornell.kfs.tax.businessobject;
 
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
+import org.kuali.kfs.krad.bo.BusinessObject;
+import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
+
+import edu.cornell.kfs.tax.batch.annotation.HasNestedEnumWithDtoFieldListing;
+import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 
 /**
  * Convenience lightweight BO to allow for ORM tools to map to the
  * transaction detail table easily. This class is not meant for
- * persisting or retrieving detail rows; it is only meant for
- * configuring the table column mappings via an ORM tool like OJB.
+ * persisting or retrieving detail rows directly; it is meant for
+ * configuring the table column mappings via an ORM tool like OJB,
+ * and for doubling as a DTO that can be used by the tax module's
+ * custom SQL handling.
  */
+@HasNestedEnumWithDtoFieldListing
 public class TransactionDetail extends TransientBusinessObjectBase {
     private static final long serialVersionUID = -2558957331012161515L;
 
@@ -66,7 +73,6 @@ public class TransactionDetail extends TransientBusinessObjectBase {
     private String form1042SBox;
     private String form1042SOverriddenBox;
     private String paymentReasonCode;
-
     private KualiInteger disbursementNbr;
     private String paymentStatusCode;
     private String disbursementTypeCode;
@@ -527,4 +533,73 @@ public class TransactionDetail extends TransientBusinessObjectBase {
     public void setLedgerDocumentTypeCode(String ledgerDocumentTypeCode) {
         this.ledgerDocumentTypeCode = ledgerDocumentTypeCode;
     }
+
+
+
+    public enum TransactionDetailField implements TaxDtoFieldEnum {
+        transactionDetailId,
+        reportYear,
+        documentNumber,
+        documentType,
+        financialDocumentLineNumber,
+        finObjectCode,
+        netPaymentAmount,
+        documentTitle,
+        vendorTaxNumber,
+        incomeCode,
+        incomeCodeSubType,
+        dvCheckStubText,
+        payeeId,
+        vendorName,
+        parentVendorName,
+        vendorTypeCode,
+        vendorOwnershipCode,
+        vendorOwnershipCategoryCode,
+        vendorForeignIndicator,
+        vendorEmailAddress,
+        vendorChapter4StatusCode,
+        vendorGIIN,
+        vendorLine1Address,
+        vendorLine2Address,
+        vendorCityName,
+        vendorStateCode,
+        vendorZipCode,
+        vendorForeignLine1Address,
+        vendorForeignLine2Address,
+        vendorForeignCityName,
+        vendorForeignZipCode,
+        vendorForeignProvinceName,
+        vendorForeignCountryCode,
+        nraPaymentIndicator,
+        paymentDate,
+        paymentPayeeName,
+        incomeClassCode,
+        incomeTaxTreatyExemptIndicator,
+        foreignSourceIncomeIndicator,
+        federalIncomeTaxPercent,
+        paymentDescription,
+        paymentLine1Address,
+        paymentCountryName,
+        chartCode,
+        accountNumber,
+        initiatorNetId,
+        form1099Type,
+        form1099Box,
+        form1099OverriddenType,
+        form1099OverriddenBox,
+        form1042SBox,
+        form1042SOverriddenBox,
+        paymentReasonCode,
+        disbursementNbr,
+        paymentStatusCode,
+        disbursementTypeCode,
+        ledgerDocumentTypeCode;
+
+        @Override
+        public Class<? extends BusinessObject> getMappedBusinessObjectClass() {
+            return TransactionDetail.class;
+        }
+
+    }
+
 }
