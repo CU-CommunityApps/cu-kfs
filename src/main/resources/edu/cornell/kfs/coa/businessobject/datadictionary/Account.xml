@@ -332,6 +332,14 @@
     <bean id="invoiceTypeValuesFinder"
           class="edu.cornell.kfs.module.cg.businessobject.options.InvoiceTypeValuesFinder"
           p:keyValuesService-ref="keyValuesService"/>
+          
+    <bean id="ChartAttribute-SimpleDropdown-no-default" abstract="true" parent="ChartAttribute-TextControl" p:control-ref="ChartSimpleDropdownControl" />
+    
+    <bean id="Account-reportsToCOACode"
+          parent="ChartAttribute-SimpleDropdown-no-default"
+          p:label="Reports To Chart Of Accounts Code"
+          p:name="organization.reportsToChartOfAccountsCode"
+          p:shortLabel="Rpts to COA Code"/>
       
 </beans>
 
