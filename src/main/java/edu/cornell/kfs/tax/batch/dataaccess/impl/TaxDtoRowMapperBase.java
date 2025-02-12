@@ -48,7 +48,13 @@ public abstract class TaxDtoRowMapperBase<T, U> implements TaxDtoRowMapper<T, U>
 
     protected abstract void populateDtoFromCurrentRow(final T dto) throws SQLException;
 
+    @Override
+    public void updateCurrentRow(final U dtoContainingUpdates) throws SQLException {
+        prepareCurrentRowForUpdate(dtoContainingUpdates);
+        resultSet.updateRow();
+    }
 
+    protected abstract void prepareCurrentRowForUpdate(final U dtoContainingUpdates) throws SQLException;
 
     protected String getColumnLabel(final Enum<?> fieldDefinition) {
         return metadata.getFullColumnLabel(fieldDefinition);
