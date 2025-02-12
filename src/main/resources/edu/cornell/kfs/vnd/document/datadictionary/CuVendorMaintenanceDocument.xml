@@ -223,6 +223,15 @@
         <bean parent="MaintainableFieldDefinition" p:name="extension.merchantNotes"/>
       </list>
     </property>
-  </bean>  
+  </bean>
+
+    <bean id="VendorMaintenanceDocument-workflowAttributes" parent="VendorMaintenanceDocument-workflowAttributes-parentBean">
+        <property name="routingTypeDefinitions">
+            <map>
+                <entry key="Management" value-ref="RoutingType-VendorMaintenanceDocument-Management" />
+                <entry key="VendorTaxIDReviewer" value-ref="RoutingType-VendorMaintenanceDocument-Management" />
+            </map>
+        </property>
+    </bean>
 
 </beans>
