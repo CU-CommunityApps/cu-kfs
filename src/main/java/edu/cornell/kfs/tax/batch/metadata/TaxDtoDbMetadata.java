@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.kuali.kfs.krad.bo.BusinessObject;
 
+import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
+
 public final class TaxDtoDbMetadata {
 
     private final Map<Class<? extends BusinessObject>, String> tableNames;
@@ -35,6 +37,11 @@ public final class TaxDtoDbMetadata {
 
     public int getMappedColumnCount() {
         return columnLabels.size();
+    }
+
+    public Class<? extends TaxDtoFieldEnum> getFieldEnumClass() {
+        // TODO: Implement!
+        return null;
     }
 
 }
