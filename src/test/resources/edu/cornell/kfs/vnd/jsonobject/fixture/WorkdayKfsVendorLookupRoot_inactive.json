@@ -1,0 +1,12 @@
+{
+  "Report_Entry": [
+    {
+      "NetID": "abc123",
+      "Active_Status": "0",
+      "Employee_ID": "1234567",
+      "Termination_Date": "2024-05-27",
+      "Hire_Date": "2023-09-10",
+      "Termination_Date_Greater_than_Processing_Date": "2024-05-27"
+    }
+  ]
+}

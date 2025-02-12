@@ -22,6 +22,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import com.google.gson.Gson;
 
 import edu.cornell.kfs.concur.ConcurConstants.ConcurAIConstants;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 
 public class ConcurAIAuthFilter implements Filter {
@@ -68,9 +69,9 @@ public class ConcurAIAuthFilter implements Filter {
                 .encodeBase64(getAllowableUserNamePassword().getBytes());
         String encodedAllowableUserNamePassword = new String(byteArrayEncodedAllowableUserNamePassword,
                 StandardCharsets.UTF_8);
-        String authorizationFromRequest = request.getHeader(ConcurAIConstants.AUTHORIZATION_HEADER_KEY);
+        String authorizationFromRequest = request.getHeader(CUKFSConstants.AUTHORIZATION_HEADER_KEY);
         return StringUtils.equals(authorizationFromRequest,
-                ConcurAIConstants.BASIC_AUTHENTICATION_STARTER + encodedAllowableUserNamePassword);
+                CUKFSConstants.BASIC_AUTHENTICATION_STARTER + encodedAllowableUserNamePassword);
 
     }
 

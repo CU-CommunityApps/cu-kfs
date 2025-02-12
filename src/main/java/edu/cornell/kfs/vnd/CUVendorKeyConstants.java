@@ -74,5 +74,7 @@ public class CUVendorKeyConstants {
         public static final String DETAIL_TABLE_ROW = PREFIX + "detail.table.row";
         public static final String EMPTY_DETAIL_SECTION_MESSAGE = PREFIX + "empty.detail.section.message";
     }
+    
+    public static final String VENDOR_UNABLE_TO_CALL_WORKDAY = "vendor.workday.call.error";
 
 }

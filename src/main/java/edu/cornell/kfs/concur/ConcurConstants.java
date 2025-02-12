@@ -282,8 +282,6 @@ public class ConcurConstants {
         public static final String ACCOUNT_NOT_FOUND_MESSAGE = "Could not find an account with a chart of {0} and account number {1}";
         public static final String RESOURCE_NAME = "Concur AI resouce.";
         public static final String UNAUTHORIZED = "Unauthorized";
-        public static final String AUTHORIZATION_HEADER_KEY = "authorization";
-        public static final String BASIC_AUTHENTICATION_STARTER = "Basic ";
         public static final String ACCESS_CONTROL_HEADER_NAME = "Access-Control-Allow-Methods";
         public static final String WEBSERVICE_CRED_GROUP_CODE = "CONCURAI";
         public static final String WEBSERVICE_CRED_KEY = "usernamepassword";

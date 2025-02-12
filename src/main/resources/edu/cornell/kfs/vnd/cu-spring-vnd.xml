@@ -269,5 +269,11 @@
           class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl"
           parent="reportWriterService"
           p:filePath="${reports.directory}/vnd"/>
+          
+    <bean id="cuVendorWorkDayService" parent="cuVendorWorkDayService-parentBean"/>
+    <bean id="cuVendorWorkDayService-parentBean" abstract="true"
+          class="edu.cornell.kfs.vnd.service.impl.CuVendorWorkDayServiceImpl"
+          p:parameterService-ref="parameterService"
+          p:webServiceCredentialService-ref="webServiceCredentialService"/>
 
 </beans>

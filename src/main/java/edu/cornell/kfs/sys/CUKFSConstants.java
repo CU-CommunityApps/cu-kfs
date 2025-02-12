@@ -236,4 +236,7 @@ public class CUKFSConstants {
     public static final class CuPaymentSourceConstants {
         public static final String PAYMENT_METHOD_INTERNAL_BILLING = "B";
     }
+    
+    public static final String AUTHORIZATION_HEADER_KEY = "authorization";
+    public static final String BASIC_AUTHENTICATION_STARTER = "Basic ";
 }
