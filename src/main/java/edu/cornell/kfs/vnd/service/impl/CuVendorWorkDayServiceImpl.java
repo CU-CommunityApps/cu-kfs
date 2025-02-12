@@ -55,9 +55,12 @@ public class CuVendorWorkDayServiceImpl extends DisposableClientServiceImplBase 
     }
 
     protected String buildWorkdayServiceCall(String socialSecurityNumber) {
-        return getWorkdayEndpointBase() + INCLUDE_TERMINATED_WORKERS_URL_PARAM + CUKFSConstants.EQUALS_SIGN
-                + getIncludeTerminatedWorkers() + CUKFSConstants.AMPERSAND + SOCIAL_SECURITY_NUMBER_URL_PARAM
-                + CUKFSConstants.EQUALS_SIGN + socialSecurityNumber + CUKFSConstants.AMPERSAND + JSON_FORMAT_URL;
+        StringBuilder sb = new StringBuilder(getWorkdayEndpointBase());
+        sb.append(INCLUDE_TERMINATED_WORKERS_URL_PARAM).append(CUKFSConstants.EQUALS_SIGN);
+        sb.append(getIncludeTerminatedWorkers()).append(CUKFSConstants.AMPERSAND);
+        sb.append(SOCIAL_SECURITY_NUMBER_URL_PARAM).append(CUKFSConstants.EQUALS_SIGN);
+        sb.append(socialSecurityNumber).append(CUKFSConstants.AMPERSAND).append(JSON_FORMAT_URL);
+        return sb.toString();
     }
 
     protected String buildAuthenticationValue() {

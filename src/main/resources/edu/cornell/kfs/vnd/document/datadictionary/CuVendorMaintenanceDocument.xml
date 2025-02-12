@@ -229,7 +229,7 @@
         <property name="routingTypeDefinitions">
             <map>
                 <entry key="Management" value-ref="RoutingType-VendorMaintenanceDocument-Management" />
-                <entry key="Vendor Tax ID Reviewer" value-ref="RoutingType-VendorMaintenanceDocument-Management" />
+                <entry key="VendorTaxIDReviewer" value-ref="RoutingType-VendorMaintenanceDocument-Management" />
             </map>
         </property>
     </bean>

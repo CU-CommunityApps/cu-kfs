@@ -1,7 +1,5 @@
 package edu.cornell.kfs.vnd.jsonobject.fixture;
 
-import org.apache.commons.lang3.StringUtils;
-
 import edu.cornell.kfs.vnd.jsonobject.WorkdayKfsVendorLookupResult;
 
 public enum WorkdayKfsVendorLookupResultEnum {

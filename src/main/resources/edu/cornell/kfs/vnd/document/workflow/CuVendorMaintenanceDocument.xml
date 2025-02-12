@@ -25,7 +25,7 @@
                     </split>
                     <split name="RequiresVendorTaxIdManager">
                         <branch name="True">
-                            <role name="Vendor Tax ID Reviewer" nextNode="JoinRequiresVendorTaxIdManager"/>
+                            <role name="VendorTaxIDReviewer" nextNode="JoinRequiresVendorTaxIdManager"/>
                         </branch>
                         <branch name="False">
                             <simple name="Do Nothing" nextNode="JoinRequiresVendorTaxIdManager"/>
@@ -45,7 +45,7 @@
                 <role name="Management">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                 </role>
-                <role name="Vendor Tax ID Reviewer">
+                <role name="VendorTaxIDReviewer">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                 </role>
                 <role name="Initiator">

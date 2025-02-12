@@ -91,9 +91,10 @@ public class CuVendorWorkDayServiceImplTest {
     }
     
     private String buildTestingServiceCallUrl(String ssn, String terminatedWorkers) {
-        String url = buildWorkdayUrlStarter() + WORKDAY_URL_TERMINATED_WORKERS + terminatedWorkers + WORKDAY_URL_SSN
-                + ssn + WORKDAY_URL_END;
-        return url;
+        StringBuilder sb = new StringBuilder(buildWorkdayUrlStarter());
+        sb.append(WORKDAY_URL_TERMINATED_WORKERS).append(terminatedWorkers);
+        sb.append(WORKDAY_URL_SSN).append(ssn).append(WORKDAY_URL_END);
+        return sb.toString();
     }
 
     @ParameterizedTest
