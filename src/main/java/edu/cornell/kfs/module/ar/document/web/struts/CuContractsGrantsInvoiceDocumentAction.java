@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.kuali.kfs.integration.ar.ArIntegrationConstants;
 import org.kuali.kfs.kns.question.ConfirmationQuestion;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -158,9 +157,9 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     
     private boolean shouldValidateBillingPeriodDateRange(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
         String frequencyCode = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getBillingFrequencyCode();
-        if (StringUtils.equalsIgnoreCase(frequencyCode, ArIntegrationConstants.BillingFrequencyValues.LETTER_OF_CREDIT) ||
-                StringUtils.equalsIgnoreCase(frequencyCode, ArIntegrationConstants.BillingFrequencyValues.PREDETERMINED_BILLING) ||
-                StringUtils.equalsIgnoreCase(frequencyCode, ArIntegrationConstants.BillingFrequencyValues.MILESTONE)) {
+        if (StringUtils.equalsIgnoreCase(frequencyCode, ArConstants.BillingFrequencyValues.LETTER_OF_CREDIT.getCode()) ||
+                StringUtils.equalsIgnoreCase(frequencyCode, ArConstants.BillingFrequencyValues.PREDETERMINED_BILLING.getCode()) ||
+                StringUtils.equalsIgnoreCase(frequencyCode, ArConstants.BillingFrequencyValues.MILESTONE.getCode())) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("shouldValidateBillingPeriodDateRange, the billing frequency '" + frequencyCode + "' should NOT require validation of billing period date range ");
             }

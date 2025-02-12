@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.kuali.kfs.module.ld.LaborConstants;
 import org.kuali.kfs.module.ld.document.LaborExpenseTransferDocumentBase;
 import org.kuali.kfs.sys.KFSPropertyConstants;

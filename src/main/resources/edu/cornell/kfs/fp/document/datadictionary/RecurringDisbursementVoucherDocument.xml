@@ -11,11 +11,11 @@
 		express or implied. See the License for the specific language governing permissions 
 		and limitations under the License. -->
 
-	<bean id="RecurringDisbursementVoucherDocument" parent="DisbursementVoucherDocument-parentBean">
+	<bean id="RecurringDisbursementVoucherDocument" parent="DisbursementVoucherDocument-parentBean"
+        p:promptBeforeValidationFactory-ref="recurringDisbursementVoucherDocumentPreRulesFactory">
 		<property name="documentTypeName" value="RCDV" />
 		<property name="documentClass" value="edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument" />
 		<property name="baseDocumentClass" value="edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument" />
-        <property name="promptBeforeValidationClass" value="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherDocumentPreRules"/>
 		<property name="validationMap" ref="RecurringDisbursementVoucherDocument-validations"/>
 		<property name="accountingLineGroups">
 			<map>
@@ -145,5 +145,23 @@
     <bean id="recurringDisbursementVoucherPaymentMethodValuesFinder"
           class="edu.cornell.kfs.fp.businessobject.options.RecurringDisbursementVoucherPaymentMethodValuesFinder"
           p:keyValuesService-ref="keyValuesService"/>
+     
+    <bean id="recurringDisbursementVoucherDocumentPreRules"
+          parent="disbursementVoucherDocumentPreRules-parentBean"
+    />
+    <bean id="recurringDisbursementVoucherDocumentPreRules-parentBean"
+          class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherDocumentPreRules"
+          p:configurationService-ref="configurationService"
+          p:disbursementVoucherValidationService-ref="disbursementVoucherValidationService"
+          p:parameterService-ref="parameterService"
+          p:paymentSourcePreRulesService-ref="paymentSourcePreRulesService"
+          scope="prototype"
+    />
 
+    <bean id="recurringDisbursementVoucherDocumentPreRulesFactory"
+          class="org.kuali.springframework.beans.factory.config.SerializableObjectFactoryCreatingFactoryBean">
+          <property name="targetBeanName">
+              <idref bean="recurringDisbursementVoucherDocumentPreRules" />
+          </property>
+    </bean>
 </beans>

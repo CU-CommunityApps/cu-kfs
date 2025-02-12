@@ -36,7 +36,6 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
-import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 
 public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private static final Logger LOG = LogManager.getLogger();
@@ -80,8 +79,8 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         if (CollectionUtils.isNotEmpty(vendorHeader.getVendorSupplierDiversities())) {
             for (final VendorSupplierDiversity supplierDiversity : vendorHeader.getVendorSupplierDiversities()) {
                 supplierDiversity.setVendorHeaderGeneratedIdentifier(vendorHeader.getVendorHeaderGeneratedIdentifier());
-                ((CuVendorSupplierDiversityExtension)supplierDiversity.getExtension()).setVendorHeaderGeneratedIdentifier(vendorHeader.getVendorHeaderGeneratedIdentifier());
-                ((CuVendorSupplierDiversityExtension)supplierDiversity.getExtension()).setVendorSupplierDiversityCode(supplierDiversity.getVendorSupplierDiversityCode());
+                supplierDiversity.setVendorHeaderGeneratedIdentifier(vendorHeader.getVendorHeaderGeneratedIdentifier());
+                supplierDiversity.setVendorSupplierDiversityCode(supplierDiversity.getVendorSupplierDiversityCode());
             }
         }
     }

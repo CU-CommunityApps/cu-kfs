@@ -22,27 +22,40 @@
         <property name="maintainableClass" value="edu.cornell.kfs.module.cg.document.CuAwardMaintainableImpl"/>
         <property name="defaultExistenceChecks">
             <list>
-                <bean parent="ReferenceDefinition" p:attributeName="proposal"
+                <bean parent="ReferenceDefinition" 
+                      p:attributeName="proposal"
                       p:attributeToHighlightOnFail="proposalNumber"/>
-                <bean parent="ReferenceDefinition" p:attributeName="proposalAwardType"
+                <bean parent="ReferenceDefinition" 
+                      p:attributeName="proposalAwardType"
                       p:attributeToHighlightOnFail="proposalAwardTypeCode"/>
-                <bean parent="ReferenceDefinition" p:attributeName="awardStatus"
+                <bean parent="ReferenceDefinition" 
+                      p:attributeName="awardStatus"
                       p:attributeToHighlightOnFail="awardStatusCode"/>
-                <bean parent="ReferenceDefinition" p:attributeName="letterOfCreditFundGroup"
+                <bean parent="ReferenceDefinition" 
+                      p:attributeName="letterOfCreditFundGroup"
                       p:attributeToHighlightOnFail="letterOfCreditFundGroupCode"/>
-                <bean parent="ReferenceDefinition" p:attributeName="grantDescription"
+                <bean parent="ReferenceDefinition" 
+                      p:attributeName="grantDescription"
                       p:attributeToHighlightOnFail="grantDescriptionCode"/>
-                <bean parent="ReferenceDefinition" p:attributeName="agency"
+                <bean parent="ReferenceDefinition" 
+                      p:attributeName="agency"
                       p:attributeToHighlightOnFail="agencyNumber"/>
-                <bean parent="ReferenceDefinition" p:attributeName="federalPassThroughAgency"
+                <bean parent="ReferenceDefinition" 
+                      p:attributeName="federalPassThroughAgency"
                       p:attributeToHighlightOnFail="federalPassThroughAgencyNumber"/>
-                <bean parent="ReferenceDefinition" p:attributeName="awardPurpose"
+                <bean parent="ReferenceDefinition" 
+                      p:attributeName="awardPurpose"
                       p:attributeToHighlightOnFail="awardPurposeCode"/>
-                <bean parent="ReferenceDefinition" p:attributeName="organization" p:collection="awardOrganizations"
+                <bean parent="ReferenceDefinition" 
+                      p:attributeName="organization" 
+                      p:collection="awardOrganizations"
                       p:attributeToHighlightOnFail="organizationCode"/>
-                <bean parent="ReferenceDefinition" p:attributeName="subcontractor" p:collection="awardSubcontractors"
+                <bean parent="ReferenceDefinition" 
+                      p:attributeName="subcontractor" 
+                      p:collection="awardSubcontractors"
                       p:attributeToHighlightOnFail="subcontractorNumber"/>
-                <bean parent="ReferenceDefinition" p:attributeName="instrumentType"
+                <bean parent="ReferenceDefinition" 
+                      p:attributeName="instrumentType"
                       p:attributeToHighlightOnFail="instrumentTypeCode"/>                    
             </list>
         </property>
