@@ -35,6 +35,7 @@
 		</property>
         <property name="batchFileDirectories">
           <list merge="true">
+            <value>${reports.directory}/vnd</value>
             <value>${staging.directory}/vnd</value>
             <value>${staging.directory}/vnd/emplCompareWorkday</value>
             <value>${staging.directory}/vnd/emplCompareWorkday/outbound</value>
