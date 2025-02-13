@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 
 import org.kuali.kfs.core.api.encryption.EncryptionService;
 
+import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 import edu.cornell.kfs.tax.batch.metadata.TaxDtoDbMetadata;
 
 public abstract class ReadOnlyTaxDtoRowMapperBase<T> extends TaxDtoRowMapperBase<T, T> {
@@ -21,7 +22,7 @@ public abstract class ReadOnlyTaxDtoRowMapperBase<T> extends TaxDtoRowMapperBase
     }
 
     @Override
-    protected void updateString(final Enum<?> fieldDefinition, final String value) throws SQLException {
+    protected void updateString(final TaxDtoFieldEnum fieldDefinition, final String value) throws SQLException {
         throw new UnsupportedOperationException("This mapper implementation does not support row updates");
     }
 

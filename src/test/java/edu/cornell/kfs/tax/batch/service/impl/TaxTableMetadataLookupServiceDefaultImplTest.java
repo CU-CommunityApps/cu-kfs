@@ -120,7 +120,7 @@ public class TaxTableMetadataLookupServiceDefaultImplTest {
             assertEquals(fieldKey.name(), fieldFixture.key(), "Wrong ordering of expected fields within the fixture; "
                     + "they should have matched the declaration order of the related enum");
 
-            final String actualColumnLabel = metadata.getFullColumnLabel((Enum<?>) fieldKey);
+            final String actualColumnLabel = metadata.getFullColumnLabel(fieldKey);
             assertEquals(fieldFixture.column(), actualColumnLabel, "Wrong column label");
         }
     }

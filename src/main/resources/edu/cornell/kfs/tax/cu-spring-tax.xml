@@ -125,15 +125,25 @@
           p:outputClass="edu.cornell.kfs.tax.batch.xml.TaxOutputDefinitionV2"
           p:dateTimeService-ref="dateTimeService"/>
 
-    <bean id="taxFileGenerationService"
-          class="edu.cornell.kfs.tax.batch.service.impl.TaxFileGenerationServiceNoOpImpl"/>
+    <bean id="taxFileGenerationServiceFor1042S" parent="taxFileGenerationServiceFor1042S-parentBean"/>
+    <bean id="taxFileGenerationServiceFor1042S-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.tax.batch.service.impl.TaxFileGenerationServiceSprintaxImpl"/>
+
+    <bean id="taxFileGenerationServiceForTransactionPrinting"
+          parent="taxFileGenerationServiceForTransactionPrinting-parentBean"/>
+
+    <bean id="taxFileGenerationServiceForTransactionPrinting-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.tax.batch.service.impl.TaxFileGenerationServiceTransactionPrinterImpl"/>
 
     <bean id="taxProcessingV2Service" parent="taxProcessingV2Service-parentBean"/>
     <bean id="taxProcessingV2Service-parentBean"
           abstract="true"
           class="edu.cornell.kfs.tax.service.impl.TaxProcessingV2ServiceImpl"
           p:legacyTaxProcessingDao-ref="taxProcessingDao"
-          p:taxFileGenerationService-ref="taxFileGenerationService"
+          p:taxFileGenerationServiceFor1042S-ref="taxFileGenerationServiceFor1042S"
+          p:taxFileGenerationServiceForTransactionPrinting-ref="taxFileGenerationServiceForTransactionPrinting"
           p:taxParameterService-ref="taxParameterService"
           p:dateTimeService-ref="dateTimeService"/>
 
