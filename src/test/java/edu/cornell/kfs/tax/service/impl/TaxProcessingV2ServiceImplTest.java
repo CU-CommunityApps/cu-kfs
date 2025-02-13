@@ -53,7 +53,8 @@ public class TaxProcessingV2ServiceImplTest {
 
     private TaxProcessingV2ServiceImpl taxProcessingV2Service;
     private ParameterService mockParameterService;
-    private AtomicReference<TaxBatchConfig> taxConfigHolder;
+    private AtomicReference<TaxBatchConfig> taxConfigHolderFor1042S;
+    private AtomicReference<TaxBatchConfig> taxConfigHolderForTransactionPrinting;
 
     @SuppressWarnings("unchecked")
     @BeforeEach
@@ -62,14 +63,24 @@ public class TaxProcessingV2ServiceImplTest {
                 TaxSpringBeans.TAX_PROCESSING_V2_SERVICE, TaxProcessingV2ServiceImpl.class);
         mockParameterService = springContextExtension.getBean(
                 TaxSpringBeans.BASE_PARAMETER_SERVICE, ParameterService.class);
-        taxConfigHolder = springContextExtension.getBean(
-                TaxSpringBeans.TEST_TAX_CONFIG_HOLDER, AtomicReference.class);
-        taxConfigHolder.set(null);
+        taxConfigHolderFor1042S = springContextExtension.getBean(
+                TaxSpringBeans.TEST_TAX_CONFIG_HOLDER_FOR_1042S, AtomicReference.class);
+        taxConfigHolderForTransactionPrinting = springContextExtension.getBean(
+                TaxSpringBeans.TEST_TAX_CONFIG_HOLDER_FOR_TRANSACTION_PRINTING, AtomicReference.class);
+        taxConfigHolderFor1042S.set(null);
+        taxConfigHolderForTransactionPrinting.set(null);
     }
 
     @AfterEach
     void shutDown() throws Exception {
-        taxConfigHolder = null;
+        if (taxConfigHolderForTransactionPrinting != null) {
+            taxConfigHolderForTransactionPrinting.set(null);
+        }
+        if (taxConfigHolderFor1042S != null) {
+            taxConfigHolderFor1042S.set(null);
+        }
+        taxConfigHolderForTransactionPrinting = null;
+        taxConfigHolderFor1042S = null;
         mockParameterService = null;
         taxProcessingV2Service = null;
     }
@@ -177,20 +188,30 @@ public class TaxProcessingV2ServiceImplTest {
     @ParameterizedTest
     @MethodSource("taxBatchConfigurationsFor1042S")
     void testTaxBatchConfigObjectSetupFor1042S(final TaxConfigTestCase testCase) throws Exception {
-        assertTaxConfigHolderIsInDefaultState();
+        assertTaxConfigHoldersAreInDefaultState();
         update1042SDatesToProcessParameter(testCase.datesToProcessSetting());
 
         final java.util.Date testStartDate = TestDateUtils.toUtilDate(testCase.processingStartDate());
         final TaxBatchConfig expectedConfig = TaxConfigTestCase.Utils.toTaxBatchConfig(testCase);
+        final TaxBatchConfig expectedPrintingConfig = TaxConfigTestCase.Utils.toTaxBatchConfig(
+                testCase, TaxBatchConfig.Mode.PRINT_TRANSACTION_ROWS);
+
         taxProcessingV2Service.performTaxProcessingFor1042S(testStartDate);
 
-        final TaxBatchConfig actualConfig = taxConfigHolder.get();
-        assertNotNull(actualConfig, "A new TaxBatchConfig reference should have been created and processed");
+        final TaxBatchConfig actualConfig = taxConfigHolderFor1042S.get();
+        final TaxBatchConfig actualPrintingConfig = taxConfigHolderForTransactionPrinting.get();
+
+        assertNotNull(actualConfig, "A new TaxBatchConfig 1042-S reference should have been created and processed");
+        assertNotNull(actualPrintingConfig,
+                "A new TaxBatchConfig transaction-printing reference should have been created and processed");
         assertTaxBatchConfigWasPreparedProperly(expectedConfig, actualConfig);
+        assertTaxBatchConfigWasPreparedProperly(expectedPrintingConfig, actualPrintingConfig);
     }
 
-    private void assertTaxConfigHolderIsInDefaultState() {
-        assertNull(taxConfigHolder.get(), "The TaxBatchConfig reference should have been null");
+    private void assertTaxConfigHoldersAreInDefaultState() {
+        assertNull(taxConfigHolderFor1042S.get(), "The TaxBatchConfig 1042-S reference should have been null");
+        assertNull(taxConfigHolderForTransactionPrinting.get(),
+                "The TaxBatchConfig transaction-printing reference should have been null");
     }
 
     private void update1042SDatesToProcessParameter(final String value) {
@@ -203,6 +224,7 @@ public class TaxProcessingV2ServiceImplTest {
 
     private void assertTaxBatchConfigWasPreparedProperly(final TaxBatchConfig expectedConfig,
             final TaxBatchConfig actualConfig) {
+        assertEquals(expectedConfig.getMode(), actualConfig.getMode(), "Wrong tax processing mode");
         assertEquals(expectedConfig.getTaxType(), actualConfig.getTaxType(), "Wrong tax type");
         assertEquals(expectedConfig.getReportYear(), actualConfig.getReportYear(), "Wrong report year");
         assertEquals(expectedConfig.getProcessingStartDate(), actualConfig.getProcessingStartDate(),
@@ -230,12 +252,12 @@ public class TaxProcessingV2ServiceImplTest {
     })
     void testInvalidDatesToProcessSettingsFor1042S(final String datesToProcessSetting) throws Exception {
         final java.util.Date testStartDate = TestDateUtils.toUtilDate("2025-01-12T10:55:34");
-        assertTaxConfigHolderIsInDefaultState();
+        assertTaxConfigHoldersAreInDefaultState();
         update1042SDatesToProcessParameter(datesToProcessSetting);
 
         assertThrows(RuntimeException.class, () -> taxProcessingV2Service.performTaxProcessingFor1042S(testStartDate),
                 "The processing should have failed as the result of an invalid dates-to-process parameter value");
-        assertTaxConfigHolderIsInDefaultState();
+        assertTaxConfigHoldersAreInDefaultState();
     }
 
 }

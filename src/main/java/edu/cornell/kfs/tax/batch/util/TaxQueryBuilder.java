@@ -2,7 +2,6 @@ package edu.cornell.kfs.tax.batch.util;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -130,11 +129,11 @@ public class TaxQueryBuilder {
         }
 
         int i = 0;
-        for (final Consumer<TaxQueryBuilder> criterion : criteria) {
+        for (final Criteria criterion : criteria) {
             if (i > 0) {
                 sqlChunk.append(paddedOperand);
             }
-            criterion.accept(this);
+            criterion.applyToQuery(this);
             i++;
         }
 
@@ -200,7 +199,7 @@ public class TaxQueryBuilder {
     }
 
     protected String getColumnLabel(final TaxDtoFieldEnum field) {
-        final String columnLabel = mappingMetadata.getFullColumnLabel((Enum<?>) field);
+        final String columnLabel = mappingMetadata.getFullColumnLabel(field);
         Validate.notBlank(columnLabel, "Unexpected field enum constant: " + field.name());
         return columnLabel;
     }

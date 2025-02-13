@@ -46,10 +46,10 @@ public abstract class TaxTableMetadataLookupServiceBase<T> implements TaxTableMe
         final Map<Class<? extends BusinessObject>, T> metadataMappings = getMetadataForBusinessObjects(mappedClasses);
         final Map<Class<? extends BusinessObject>, String> tableNameMappings = getTableNameMappings(metadataMappings);
         final Map<Class<? extends BusinessObject>, String> tableAliasMappings = getTableAliasMappings(mappedClasses);
-        final Map<Enum<?>, String> columnLabelMappings = getColumnLabelMappings(dtoFieldEnumClass, metadataMappings,
-                tableAliasMappings);
+        final Map<TaxDtoFieldEnum, String> columnLabelMappings = getColumnLabelMappings(
+                dtoFieldEnumClass, metadataMappings, tableAliasMappings);
 
-        return new TaxDtoDbMetadata(tableNameMappings, tableAliasMappings, columnLabelMappings);
+        return new TaxDtoDbMetadata(tableNameMappings, tableAliasMappings, dtoFieldEnumClass, columnLabelMappings);
     }
 
     protected List<Class<? extends BusinessObject>> getAndSortMappedBusinessObjectClasses(
@@ -100,12 +100,13 @@ public abstract class TaxTableMetadataLookupServiceBase<T> implements TaxTableMe
                 .collect(Collectors.toUnmodifiableMap(Pair::getLeft, Pair::getRight));
     }
 
-    protected Map<Enum<?>, String> getColumnLabelMappings(final Class<? extends TaxDtoFieldEnum> dtoFieldEnumClass,
+    protected Map<TaxDtoFieldEnum, String> getColumnLabelMappings(
+            final Class<? extends TaxDtoFieldEnum> dtoFieldEnumClass,
             final Map<Class<? extends BusinessObject>, T> metadataMappings,
             final Map<Class<? extends BusinessObject>, String> tableAliasMappings) {
         return Arrays.stream(dtoFieldEnumClass.getEnumConstants())
                 .collect(Collectors.toUnmodifiableMap(
-                        Enum.class::cast,
+                        Function.identity(),
                         fieldMapping -> getQualifiedColumnLabel(fieldMapping, metadataMappings, tableAliasMappings)));
     }
 

@@ -3,7 +3,6 @@ package edu.cornell.kfs.tax.batch.util;
 import java.sql.Types;
 import java.util.AbstractMap;
 import java.util.Collection;
-import java.util.function.Consumer;
 
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 
@@ -36,6 +35,8 @@ public final class TaxQueryUtils {
             return getValue();
         }
 
+
+
         public static QuerySort ascending(final TaxDtoFieldEnum field) {
             return new QuerySort(field, "ASC");
         }
@@ -51,7 +52,11 @@ public final class TaxQueryUtils {
     }
 
     @FunctionalInterface
-    public static interface Criteria extends Consumer<TaxQueryBuilder> {
+    public static interface Criteria {
+
+        void applyToQuery(final TaxQueryBuilder queryBuilder);
+
+
 
         public static Criteria equal(final TaxDtoFieldEnum field, final String value) {
             return equal(field, Types.VARCHAR, value);

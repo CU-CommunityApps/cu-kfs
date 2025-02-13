@@ -10,13 +10,20 @@ public final class TaxDtoDbMetadata {
 
     private final Map<Class<? extends BusinessObject>, String> tableNames;
     private final Map<Class<? extends BusinessObject>, String> tableAliases;
-    private final Map<Enum<?>, String> columnLabels;
+    private final Class<? extends TaxDtoFieldEnum> fieldEnumClass;
+    private final Map<TaxDtoFieldEnum, String> columnLabels;
 
     public TaxDtoDbMetadata(final Map<Class<? extends BusinessObject>, String> tableNames,
-            final Map<Class<? extends BusinessObject>, String> tableAliases, final Map<Enum<?>, String> columnLabels) {
+            final Map<Class<? extends BusinessObject>, String> tableAliases,
+            final Class<? extends TaxDtoFieldEnum> fieldEnumClass, final Map<TaxDtoFieldEnum, String> columnLabels) {
         this.tableNames = tableNames;
         this.tableAliases = tableAliases;
+        this.fieldEnumClass = fieldEnumClass;
         this.columnLabels = columnLabels;
+    }
+
+    public Class<? extends TaxDtoFieldEnum> getFieldEnumClass() {
+        return fieldEnumClass;
     }
 
     public String getQualifiedTableName(final Class<? extends BusinessObject> businessObjectClass) {
@@ -27,7 +34,7 @@ public final class TaxDtoDbMetadata {
         return tableAliases.get(businessObjectClass);
     }
 
-    public String getFullColumnLabel(final Enum<?> fieldDefinition) {
+    public String getFullColumnLabel(final TaxDtoFieldEnum fieldDefinition) {
         return columnLabels.get(fieldDefinition);
     }
 
@@ -37,11 +44,6 @@ public final class TaxDtoDbMetadata {
 
     public int getMappedColumnCount() {
         return columnLabels.size();
-    }
-
-    public Class<? extends TaxDtoFieldEnum> getFieldEnumClass() {
-        // TODO: Implement!
-        return null;
     }
 
 }
