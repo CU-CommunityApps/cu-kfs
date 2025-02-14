@@ -1182,10 +1182,10 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
     public boolean generateGeneralLedgerPendingEntries(
             final GeneralLedgerPendingEntrySourceDetail glpeSourceDetail,
             final GeneralLedgerPendingEntrySequenceHelper sequenceHelper
-    ) {
+    ) { LOG.info("PaymentReqeustDocument.generateGeneralLedgerPendingEntries was called Section of code removed for PRNC.");
         final boolean glpesGenerated = super.generateGeneralLedgerPendingEntries(glpeSourceDetail, sequenceHelper);
 
-        // CU customization: remove code that generates bank offsets as this will be generated for PRNC
+        // CU customization: remove code that generates bank offsets as this will be generated for PRNC 
 //        final boolean bankOffsetsOk;
 //        if (generateExternalEntries) {
 //            bankOffsetsOk = generateBankOffsetGeneralLedgerPendingEntries(
