@@ -137,6 +137,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
         PaymentMethod pm = businessObjectService.findBySinglePrimaryKey(PaymentMethod.class, paymentMethodCode);
         // no payment method? abort.
         if ( pm == null ) {
+            LOG.info("returning false.");
             return false;
         }
         
@@ -145,8 +146,10 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
         if ( !extendedAttribute.isProcessedUsingPdp() && StringUtils.isNotBlank( bankCode ) ) {
             if(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE.equalsIgnoreCase(paymentMethodCode) || KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT.equalsIgnoreCase(paymentMethodCode)){
                 //do not create bank offsets unless DM approval
+                LOG.info("do not create bank offsets unless DM approval");
             }
             else{
+                LOG.info("generateDocumentBankOffsetEntries bankOffsetAmount={}    feesWaived={}     reverseCharge={}", bankOffsetAmount, feesWaived, reverseCharge);
                 generateDocumentBankOffsetEntries(document,bankCode,bankCodePropertyName,templatePendingEntry.getFinancialDocumentTypeCode(), sequenceHelper, bankOffsetAmount );
             }
         }
