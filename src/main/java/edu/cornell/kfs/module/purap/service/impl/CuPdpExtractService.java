@@ -95,7 +95,7 @@ public class CuPdpExtractService extends PdpExtractService {
     /*
      * Cornell Modification: 
      * We do not use the DisbursementTypeCodes of EXTERNAL but we DO need to set DisbursementTypeCodes
-     * when they are null (not defined for a payment.
+     * when they are null (not defined for a payment).
      */
     @Override
     protected PaymentGroup populatePaymentGroup(
@@ -104,6 +104,7 @@ public class CuPdpExtractService extends PdpExtractService {
         final PaymentGroup paymentGroup = super.populatePaymentGroup(paymentRequestDocument, batch);
         
         if (ObjectUtils.isNull(paymentGroup.getDisbursementTypeCode()) ||
+                StringUtils.isBlank(paymentGroup.getDisbursementTypeCode()) ||
                 StringUtils.equals(paymentGroup.getDisbursementTypeCode(), PdpConstants.DisbursementTypeCodes.EXTERNAL)) {
             if (paymentGroup.isPayableByACH()) {
                 paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
@@ -117,13 +118,14 @@ public class CuPdpExtractService extends PdpExtractService {
     /*
      * Cornell Modification: 
      * We do not use the DisbursementTypeCodes of EXTERNAL but we DO need to set DisbursementTypeCodes
-     * when they are null (not defined for a payment.
+     * when they are null (not defined for a payment).
      */
     @Override
     protected PaymentGroup populatePaymentGroup(final VendorCreditMemoDocument creditMemoDocument, final Batch batch) {
         PaymentGroup paymentGroup = super.populatePaymentGroup(creditMemoDocument, batch);
         
         if (ObjectUtils.isNull(paymentGroup.getDisbursementTypeCode()) ||
+                StringUtils.isBlank(paymentGroup.getDisbursementTypeCode()) ||
                 StringUtils.equals(paymentGroup.getDisbursementTypeCode(), PdpConstants.DisbursementTypeCodes.EXTERNAL)) {
             if (paymentGroup.isPayableByACH()) {
                 paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
