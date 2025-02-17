@@ -18,6 +18,7 @@ import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 import org.kuali.kfs.kim.impl.identity.Person;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 
@@ -91,13 +92,19 @@ public class CuPdpExtractService extends PdpExtractService {
         pnt.setCustomerNoteText("Sales Tax: " + accountsPayableDocument.getTotalRemitTax());
     }
     
+    /*
+     * Cornell Modification: 
+     * We do not use the DisbursementTypeCodes of EXTERNAL but we DO need to set DisbursementTypeCodes
+     * when they are null (not defined for a payment.
+     */
     @Override
     protected PaymentGroup populatePaymentGroup(
             final PaymentRequestDocument paymentRequestDocument, 
             final Batch batch) {
         final PaymentGroup paymentGroup = super.populatePaymentGroup(paymentRequestDocument, batch);
         
-        if (StringUtils.equals(paymentGroup.getDisbursementTypeCode(), PdpConstants.DisbursementTypeCodes.EXTERNAL)) {
+        if (ObjectUtils.isNull(paymentGroup.getDisbursementTypeCode()) ||
+                StringUtils.equals(paymentGroup.getDisbursementTypeCode(), PdpConstants.DisbursementTypeCodes.EXTERNAL)) {
             if (paymentGroup.isPayableByACH()) {
                 paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
             } else {
@@ -107,11 +114,17 @@ public class CuPdpExtractService extends PdpExtractService {
         return paymentGroup;
     }
     
+    /*
+     * Cornell Modification: 
+     * We do not use the DisbursementTypeCodes of EXTERNAL but we DO need to set DisbursementTypeCodes
+     * when they are null (not defined for a payment.
+     */
     @Override
     protected PaymentGroup populatePaymentGroup(final VendorCreditMemoDocument creditMemoDocument, final Batch batch) {
         PaymentGroup paymentGroup = super.populatePaymentGroup(creditMemoDocument, batch);
         
-        if (StringUtils.equals(paymentGroup.getDisbursementTypeCode(), PdpConstants.DisbursementTypeCodes.EXTERNAL)) {
+        if (ObjectUtils.isNull(paymentGroup.getDisbursementTypeCode()) ||
+                StringUtils.equals(paymentGroup.getDisbursementTypeCode(), PdpConstants.DisbursementTypeCodes.EXTERNAL)) {
             if (paymentGroup.isPayableByACH()) {
                 paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
             } else {
