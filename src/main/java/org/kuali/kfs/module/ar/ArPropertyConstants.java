@@ -498,6 +498,13 @@ public final class ArPropertyConstants {
         public static final String ZIP = "zip";
         public static final String COUNTY = "county";
         public static final String UEI = "uei";
+        // Cornell customization
+        public static final String AWARD_COST_SHARE_AMT = "awd_cost_share_amt";
+        public static final String CINV_COST_SHARE_AMT = "cinv_cost_share_amt";
+        public static final String REMAINING_COST_SHARE_AMT ="remaining_cost_share_amt";
+        public static final String CG_MANAGER_FIRST_NAME ="cg_manager_first_name";
+        public static final String CG_MANAGER_MIDDLE_NAME ="cg_manager_middle_name";
+        public static final String CG_MANAGER_LAST_NAME ="cg_manager_last_name";
     }
 
     public static class ContractsAndGrantsBillingAwardFields {
