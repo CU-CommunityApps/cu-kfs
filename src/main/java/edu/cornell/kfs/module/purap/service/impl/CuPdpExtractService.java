@@ -18,8 +18,6 @@ import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.krad.util.ObjectUtils;
-
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 
 public class CuPdpExtractService extends PdpExtractService {
