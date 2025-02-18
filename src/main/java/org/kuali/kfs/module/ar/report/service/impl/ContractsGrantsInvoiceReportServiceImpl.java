@@ -32,6 +32,9 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfWriter;
 import com.opencsv.CSVWriter;
+
+import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -74,6 +77,7 @@ import org.kuali.kfs.module.ar.document.service.ContractsGrantsBillingAwardVerif
 import org.kuali.kfs.module.ar.document.service.ContractsGrantsInvoiceDocumentService;
 import org.kuali.kfs.module.ar.report.service.ContractsGrantsInvoiceReportService;
 import org.kuali.kfs.module.ar.service.ContractsGrantsBillingUtilityService;
+import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.PdfFormFillerUtil;
@@ -472,10 +476,11 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                             getDateTimeService().toDateString(awardAccount.getAccount().getAccountEffectiveDate())
                     );
                 }
+                //Cornell customization
                 if (ObjectUtils.isNotNull(awardAccount.getAccount().getAccountExpirationDate())) {
                     contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                             ArPropertyConstants.FederalFormReportFields.INDIRECT_EXPENSE_PERIOD_TO + "_" + index,
-                            getDateTimeService().toDateString(awardAccount.getAccount().getAccountExpirationDate())
+                            reportingPeriod
                     );
                 }
                 contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
@@ -526,6 +531,20 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                     ArPropertyConstants.FederalFormReportFields.INDIRECT_EXPENSE_FEDERAL_SUM,
                     contractsGrantsBillingUtilityService.formatForCurrency(amountSum)
             );
+            
+            // Cornell customization
+            contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
+                    ArPropertyConstants.FederalFormReportFields.CG_MANAGER_FIRST_NAME,
+                    award.getAwardPrimaryFundManager().getFundManager().getFirstName()
+            );
+            contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
+                    ArPropertyConstants.FederalFormReportFields.CG_MANAGER_MIDDLE_NAME,
+                    award.getAwardPrimaryFundManager().getFundManager().getMiddleName()
+            );
+            contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
+                    ArPropertyConstants.FederalFormReportFields.CG_MANAGER_LAST_NAME,
+                    award.getAwardPrimaryFundManager().getFundManager().getLastName()
+            );
         }
 
         final SystemInformation sysInfo = retrieveSystemInformationForAward(award, year);
@@ -556,7 +575,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
         );
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                 ArPropertyConstants.FederalFormReportFields.FEDERAL_GRANT_NUMBER,
-                award.getAwardDocumentNumber()
+                award.getProposal().getGrantNumber()
         );
         if (CollectionUtils.isNotEmpty(award.getActiveAwardAccounts())) {
             contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
@@ -573,7 +592,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
         if (ObjectUtils.isNotNull(award.getAwardClosingDate())) {
             contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                     ArPropertyConstants.FederalFormReportFields.GRANT_PERIOD_TO,
-                    getDateTimeService().toDateString(award.getAwardClosingDate())
+                    getDateTimeService().toDateString(((AwardExtendedAttribute)((Award)award).getExtension()).getBudgetEndingDate())
             );
         }
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
@@ -582,7 +601,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
         );
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                 ArPropertyConstants.FederalFormReportFields.TOTAL_FEDERAL_FUNDS_AUTHORIZED,
-                contractsGrantsBillingUtilityService.formatForCurrency(award.getAwardTotalAmount())
+                contractsGrantsBillingUtilityService.formatForCurrency(((AwardExtendedAttribute)((Award)award).getExtension()).getBudgetTotalAmount())
         );
 
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
@@ -615,6 +634,20 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
         }
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                 ArPropertyConstants.FederalFormReportFields.FEDERAL_SHARE_OF_UNLIQUIDATED_OBLIGATION,
+                contractsGrantsBillingUtilityService.formatForCurrency(KualiDecimal.ZERO)
+        );
+        
+        // Cornell customization
+        contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
+                ArPropertyConstants.FederalFormReportFields.AWARD_COST_SHARE_AMT,
+                contractsGrantsBillingUtilityService.formatForCurrency(KualiDecimal.ZERO)
+        );
+        contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
+                ArPropertyConstants.FederalFormReportFields.CINV_COST_SHARE_AMT,
+                contractsGrantsBillingUtilityService.formatForCurrency(KualiDecimal.ZERO)
+        );
+        contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
+                ArPropertyConstants.FederalFormReportFields.REMAINING_COST_SHARE_AMT,
                 contractsGrantsBillingUtilityService.formatForCurrency(KualiDecimal.ZERO)
         );
 
@@ -852,7 +885,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
             if (i < awards.size()) {
                 contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                         ArPropertyConstants.FederalFormReportFields.FEDERAL_GRANT_NUMBER + " " + (i + 1),
-                        awards.get(i).getAwardDocumentNumber()
+                        awards.get(i).getProposal().getGrantNumber()
                 );
                 contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                         ArPropertyConstants.FederalFormReportFields.RECIPIENT_ACCOUNT_NUMBER + " " + (i + 1),
