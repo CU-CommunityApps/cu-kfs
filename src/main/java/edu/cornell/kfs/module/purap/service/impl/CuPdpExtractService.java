@@ -103,8 +103,7 @@ public class CuPdpExtractService extends PdpExtractService {
             final Batch batch) {
         final PaymentGroup paymentGroup = super.populatePaymentGroup(paymentRequestDocument, batch);
         
-        if (ObjectUtils.isNull(paymentGroup.getDisbursementTypeCode()) ||
-                StringUtils.isBlank(paymentGroup.getDisbursementTypeCode()) ||
+        if (StringUtils.isBlank(paymentGroup.getDisbursementTypeCode()) ||
                 StringUtils.equals(paymentGroup.getDisbursementTypeCode(), PdpConstants.DisbursementTypeCodes.EXTERNAL)) {
             if (paymentGroup.isPayableByACH()) {
                 paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
@@ -124,8 +123,7 @@ public class CuPdpExtractService extends PdpExtractService {
     protected PaymentGroup populatePaymentGroup(final VendorCreditMemoDocument creditMemoDocument, final Batch batch) {
         PaymentGroup paymentGroup = super.populatePaymentGroup(creditMemoDocument, batch);
         
-        if (ObjectUtils.isNull(paymentGroup.getDisbursementTypeCode()) ||
-                StringUtils.isBlank(paymentGroup.getDisbursementTypeCode()) ||
+        if (StringUtils.isBlank(paymentGroup.getDisbursementTypeCode()) ||
                 StringUtils.equals(paymentGroup.getDisbursementTypeCode(), PdpConstants.DisbursementTypeCodes.EXTERNAL)) {
             if (paymentGroup.isPayableByACH()) {
                 paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
