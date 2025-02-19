@@ -8,7 +8,7 @@
     <name>KFS war</name>
     <version>current</version>
     <description>
-        This project wraps the KFS war with a war overlay.
+        This project wraps the KFS war with a war overlay. any change will do
     </description>
     <inceptionYear>2013</inceptionYear>
     <organization>
