@@ -88,7 +88,7 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
     protected boolean generateEntriesPaymentRequest(
             final PaymentRequestDocument preq, final List encumbrances,
             final List summaryAccounts, final String processType) {
-        LOG.debug("generateEntriesPaymentRequest() started");
+        LOG.info("1-generateEntriesPaymentRequest() started: basecode version with cu mod removed");
         final boolean success = true;
         preq.setGeneralLedgerPendingEntries(new ArrayList<>());
 
@@ -105,123 +105,154 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
         if (encumbrances != null && !(CANCEL_PAYMENT_REQUEST.equals(processType)
                 && PurchaseOrderStatuses.APPDOC_CLOSED.equals(
                         preq.getPurchaseOrderDocument().getApplicationDocumentStatus()))) {
-            LOG.debug("generateEntriesPaymentRequest() generate encumbrance entries");
+            LOG.info("2-generateEntriesPaymentRequest() generate encumbrance entries, Not a PREQ cancel and PO is not closed");
             if (CREATE_PAYMENT_REQUEST.equals(processType)) {
                 // on create, use CREDIT code for encumbrances
+                LOG.info("3-generateEntriesPaymentRequest() on create, use CREDIT code for encumbrances");
                 preq.setDebitCreditCodeForGLEntries(KFSConstants.GL_CREDIT_CODE);
             } else if (CANCEL_PAYMENT_REQUEST.equals(processType)) {
+                LOG.info("4-generateEntriesPaymentRequest() on cancel, use DEBIT code");
                 // on cancel, use DEBIT code
                 preq.setDebitCreditCodeForGLEntries(KFSConstants.GL_DEBIT_CODE);
             }
-
+            LOG.info("5-generateEntriesPaymentRequest() debitCreditCodeForGLEntries={}", preq.getDebitCreditCodeForGLEntries());
+            LOG.info("6-generateEntriesPaymentRequest() setting generateEncumbranceEntries to TRUE");
             preq.setGenerateEncumbranceEntries(true);
             for (final Object encumbrance : encumbrances) {
                 final AccountingLine accountingLine = (AccountingLine) encumbrance;
+                LOG.info("7-generateEntriesPaymentRequest() in for-loop to generate encumbrances"); 
                 preq.generateGeneralLedgerPendingEntries(accountingLine, sequenceHelper);
                 sequenceHelper.increment();
             }
         }
 
         if (ObjectUtils.isNotNull(summaryAccounts) && !summaryAccounts.isEmpty()) {
-            LOG.debug("generateEntriesPaymentRequest() now book the actuals");
+            LOG.info("8-generateEntriesPaymentRequest() now book the actuals if-summaryAccounts is not null nor empty");
             preq.setGenerateEncumbranceEntries(false);
-
+            LOG.info("9-generateEntriesPaymentRequest() now book the actuals just set generateEncumbranceEntries to FALSE");
             if (CREATE_PAYMENT_REQUEST.equals(processType) || MODIFY_PAYMENT_REQUEST.equals(processType)) {
+                LOG.info("10-generateEntriesPaymentRequest() on create and modify, use DEBIT code");
                 // on create and modify, use DEBIT code
                 preq.setDebitCreditCodeForGLEntries(KFSConstants.GL_DEBIT_CODE);
             } else if (CANCEL_PAYMENT_REQUEST.equals(processType)) {
+                LOG.info("11-generateEntriesPaymentRequest() on cancel, use CREDIT code");
                 // on cancel, use CREDIT code
                 preq.setDebitCreditCodeForGLEntries(KFSConstants.GL_CREDIT_CODE);
 
                 preq.setGenerateExternalEntries(cancellingShouldReverseExternalEntries(preq));
                 preq.setGenerateWireTransferEntries(cancellingShouldReverseWireTransferEntries(preq));
+                LOG.info("12-generateEntriesPaymentRequest() cancel payment, cancellingShouldReverseExternalEntries={}, cancellingShouldReverseWireTransferEntries={}", cancellingShouldReverseExternalEntries(preq), cancellingShouldReverseWireTransferEntries(preq));
             }
 
+            LOG.info("13-generateEntriesPaymentRequest() right before summaryAccounts for loop : in if-book-the-actuals");
             for (final Object account : summaryAccounts) {
                 final SummaryAccount summaryAccount = (SummaryAccount) account;
+                LOG.info("14-generateEntriesPaymentRequest() in summaryAccount for-loop to book the actuals");
                 preq.generateGeneralLedgerPendingEntries(summaryAccount.getAccount(), sequenceHelper);
                 sequenceHelper.increment();
             }
-
+            LOG.info("15-generateEntriesPaymentRequest() setting  preq.setGenerateExternalEntries(false), preq.setGenerateWireTransferEntries(false)");
             preq.setGenerateExternalEntries(false);
             preq.setGenerateWireTransferEntries(false);
 
             // generate offset accounts for use tax if it exists (useTaxContainers will be empty if not a use tax
             // document)
+            LOG.info("16-generateEntriesPaymentRequest() generate offset accounts for use tax if it exists");
             final List<UseTaxContainer> useTaxContainers = purapAccountingService.generateUseTaxAccount(preq);
             for (final UseTaxContainer useTaxContainer : useTaxContainers) {
                 final List<SourceAccountingLine> accounts = useTaxContainer.getAccounts();
+                LOG.info("17-generateEntriesPaymentRequest() OUTER for-loop generate offset accounts for use tax if it exists (useTaxContainers will be empty if not a use tax document");
                 for (final SourceAccountingLine sourceAccountingLine : accounts) {
+                    LOG.info("18-generateEntriesPaymentRequest() INNER for-loop recursive call with the usetaxcontainer"); 
                     preq.generateGeneralLedgerPendingEntries(sourceAccountingLine, sequenceHelper,
                             useTaxContainer.getUseTax());
                     sequenceHelper.increment();
                 }
 
             }
-
+            LOG.info("19-generateEntriesPaymentRequest() Manually save preq summary accounts");
             // Manually save preq summary accounts
             if (MODIFY_PAYMENT_REQUEST.equals(processType)) {
+                LOG.info("20-generateEntriesPaymentRequest() Manually save preq summary accounts: for modify, regenerate the summary from the doc");
                 //for modify, regenerate the summary from the doc
                 final List<SummaryAccount> summaryAccountsForModify =
                         purapAccountingService.generateSummaryAccountsWithNoZeroTotalsNoUseTax(preq);
                 saveAccountsPayableSummaryAccounts(summaryAccountsForModify, preq.getPurapDocumentIdentifier(),
                         PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT);
             } else {
+                LOG.info("21-generateEntriesPaymentRequest() Manually save preq summary accounts: for create, process and cancel, use the summary accounts");
                 //for create, process and cancel, use the summary accounts
                 saveAccountsPayableSummaryAccounts(summaryAccounts, preq.getPurapDocumentIdentifier(),
                         PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT);
             }
 
+            LOG.info("22-generateEntriesPaymentRequest()manually save cm account change tables (CAMS needs this)");
             // manually save cm account change tables (CAMS needs this)
             if (CREATE_PAYMENT_REQUEST.equals(processType)
                 || MODIFY_PAYMENT_REQUEST.equals(processType)
                 || PROCESS_PAYMENT_REQUEST.equals(processType)
             ) {
+                LOG.info("23-generateEntriesPaymentRequest() manually save cm account change tables : create, modify, process");
                 purapAccountRevisionService.savePaymentRequestAccountRevisions(preq.getItems(),
                         preq.getPostingYearFromPendingGLEntries(), preq.getPostingPeriodCodeFromPendingGLEntries());
             } else if (CANCEL_PAYMENT_REQUEST.equals(processType)) {
+                LOG.info("24-generateEntriesPaymentRequest() manually save cm account change tables cancel payment");
                 purapAccountRevisionService.cancelPaymentRequestAccountRevisions(preq.getItems(),
                         preq.getPostingYearFromPendingGLEntries(), preq.getPostingPeriodCodeFromPendingGLEntries());
+            } else {
+                LOG.info("25-generateEntriesPaymentRequest()manually save cm account change tables: else nothing done");
             }
 
+            LOG.info("26-Start: Cornell Customization: KFSPTS-1891");
             // Start: Cornell Customization: KFSPTS-1891
             // generate any document level GL entries (offsets or fee charges)
             // we would only want to do this when booking the actuals (not the encumbrances)
             if (preq.getGeneralLedgerPendingEntries() == null || preq.getGeneralLedgerPendingEntries().size() < 2) {
-                LOG.warn("No gl entries for accounting lines.");
+                LOG.info("27-Start: Cornell Customization: KFSPTS-1891:: if-then:: No gl entries for accounting lines.");
             } else {
                 // Upon a modify, we need to skip re-assessing any fees
                 // in fact, we need to skip making any of these entries since there could be a combination
                 // of debits and credit entries in the entry list - this will cause problems if the first is a
                 // credit since it uses that to determine the sign of all the other transactions
-            
+                LOG.info("28-Start: Cornell Customization: KFSPTS-1891:: if-elseIf-else:: Upon a modify, we need to skip re-assessing any fees");
                 // upon create, build the entries normally
                 if ( CREATE_PAYMENT_REQUEST.equals(processType) ) {
+                    LOG.info("29-Start: Cornell Customization: KFSPTS-1891:: CREATE_PAYMENT_REQUEST.equals(processType):: calling getPaymentMethodGeneralLedgerPendingEntryService().generatePaymentMethodSpecificDocumentGeneralLedgerPendingEntries");
                     getPaymentMethodGeneralLedgerPendingEntryService().generatePaymentMethodSpecificDocumentGeneralLedgerPendingEntries(
                             preq, preq.getPaymentMethodCode(), preq.getBankCode(), KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", preq.getGeneralLedgerPendingEntry(0), false, false, sequenceHelper);
                 } else if ( MODIFY_PAYMENT_REQUEST.equals(processType) ) {
+                    LOG.info("30-Start: Cornell Customization: KFSPTS-1891:: MODIFY_PAYMENT_REQUEST.equals(processType):: upon modify, we need to calculate the deltas here and pass them in so the appropriate adjustments are created");
                     // upon modify, we need to calculate the deltas here and pass them in so the appropriate adjustments are created
                     KualiDecimal bankOffsetAmount = KualiDecimal.ZERO;
                     final Map<String,KualiDecimal> changesByChart = new HashMap<String, KualiDecimal>();
                     if (ObjectUtils.isNotNull(summaryAccounts) && !summaryAccounts.isEmpty()) {
+                        LOG.info("31-Start: Cornell Customization: KFSPTS-1891:: if-then: summary accounts exists");
                         for ( final SummaryAccount a : (List<SummaryAccount>)summaryAccounts ) {
                             bankOffsetAmount = bankOffsetAmount.add(a.getAccount().getAmount());
+                            LOG.info("32-Start: Cornell Customization: KFSPTS-1891:: for-loop:: summary account bankOffsetAmount={}", bankOffsetAmount);
                             if (changesByChart.get(a.getAccount().getChartOfAccountsCode()) == null) {
+                                LOG.info("33-Start: Cornell Customization: KFSPTS-1891:: for-loop:: if-then detected null chartOfAccountsCode");
                                 changesByChart.put(a.getAccount().getChartOfAccountsCode(), a.getAccount().getAmount());
                             } else {
+                               LOG.info("34-Start: Cornell Customization: KFSPTS-1891:: for-loop:: if-else making changes by chart");
                                changesByChart.put(a.getAccount().getChartOfAccountsCode(), changesByChart.get(a.getAccount().getChartOfAccountsCode()).add(a.getAccount().getAmount()));
                             }
                         }
+                    } else {
+                        LOG.info("35-Start: Cornell Customization: KFSPTS-1891:: if-else: summary accounts do not exist - nothing going to be done");
                     }
-                
+                    LOG.info("36-Start: Cornell Customization: KFSPTS-1891:: else-if MODIFY_PAYMENT_REQUEST getPaymentMethodGeneralLedgerPendingEntryService().generatePaymentMethodSpecificDocumentGeneralLedgerPendingEntries(");
                     getPaymentMethodGeneralLedgerPendingEntryService().generatePaymentMethodSpecificDocumentGeneralLedgerPendingEntries(
                             preq, preq.getPaymentMethodCode(), preq.getBankCode(), KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", preq.getGeneralLedgerPendingEntry(0), true, false, sequenceHelper, bankOffsetAmount, changesByChart);
+                } else {
+                    LOG.info("37-Start: Cornell Customization: KFSPTS-1891:: ELSE condition: if-elseIf-else:: Upon a modify, we need to skip re-assessing any fees doing nothing");
                 }
             }
+            LOG.info("38-Start: Cornell Customization: KFSPTS-1891: calling  preq.generateDocumentGeneralLedgerPendingEntries(sequenceHelpe)");
             preq.generateDocumentGeneralLedgerPendingEntries(sequenceHelper);
             // End: Cornell Customization: KFSPTS-1891
         }
-
+        LOG.info("39-Manually save GL entries for Payment Request and encumbrances");
         // Manually save GL entries for Payment Request and encumbrances
         saveGLEntries(preq.getGeneralLedgerPendingEntries());
 

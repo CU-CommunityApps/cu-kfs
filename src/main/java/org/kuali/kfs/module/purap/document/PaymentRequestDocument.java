@@ -737,7 +737,7 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
 
     @Override
     public void doRouteStatusChange(final DocumentRouteStatusChange statusChangeEvent) {
-        LOG.debug("doRouteStatusChange() started");
+        LOG.info("PaymentRequestDocument.doRouteStatusChange() started");
 
         super.doRouteStatusChange(statusChangeEvent);
         //KFSCNTRB-1207 - UMD - Muddu -- start
@@ -754,7 +754,9 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
                 populateDocumentForRouting();
                 updateAndSaveAppDocStatus(PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED);
             }
-            getPurapGeneralLedgerService().generateEntriesProcessedPaymentRequest(this);
+            //GLPE issue, try removing code that may duplicate entries
+            //getPurapGeneralLedgerService().generateEntriesProcessedPaymentRequest(this);
+            LOG.info("PaymentRequestDocument.doRouteStatusChange() REMOVED: getPurapGeneralLedgerService().generateEntriesProcessedPaymentRequest(this");
             final boolean isExternal =
                     KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_EXTERNAL.equals(paymentMethodCode);
             final boolean isWireTransfer =
@@ -825,6 +827,7 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
      */
     @Override
     public void doActionTaken(final ActionTakenEvent event) {
+        LOG.info("PaymentRequestDocument.doActionTaken() started");
         super.doActionTaken(event);
         final WorkflowDocument workflowDocument = getDocumentHeader().getWorkflowDocument();
         String currentNode = null;
@@ -835,10 +838,14 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
                 currentNode = (String) names[0];
             }
         }
-
+        LOG.info("PaymentRequestDocument.doActionTaken(): if-statement :: PaymentRequestStatuses.getNodesRequiringCorrectingGeneralLedgerEntries().contains(currentNode)");
         // everything in the below list requires correcting entries to be written to the GL
         if (PaymentRequestStatuses.getNodesRequiringCorrectingGeneralLedgerEntries().contains(currentNode)) {
+            LOG.info("PaymentRequestDocument.doActionTaken(): if-statement TRUE-CALLING: getPurapGeneralLedgerService().generateEntriesModifyPaymentRequest(this)");
             getPurapGeneralLedgerService().generateEntriesModifyPaymentRequest(this);
+        } else
+        {
+            LOG.info("PaymentRequestDocument.doActionTaken(): if-statement FALSE - NO CALL MADE TO --> getPurapGeneralLedgerService().generateEntriesModifyPaymentRequest(this)");
         }
     }
 
