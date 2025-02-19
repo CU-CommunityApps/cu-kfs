@@ -737,7 +737,7 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
 
     @Override
     public void doRouteStatusChange(final DocumentRouteStatusChange statusChangeEvent) {
-        LOG.debug("doRouteStatusChange() started");
+        LOG.info("doRouteStatusChange() started");
 
         super.doRouteStatusChange(statusChangeEvent);
         //KFSCNTRB-1207 - UMD - Muddu -- start
@@ -754,7 +754,9 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
                 populateDocumentForRouting();
                 updateAndSaveAppDocStatus(PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED);
             }
-            getPurapGeneralLedgerService().generateEntriesProcessedPaymentRequest(this);
+            //GLPE issue, try removing code that may duplicate entries
+            LOG.info("doRouteStatusChange() not calling getPurapGeneralLedgerService().generateEntriesProcessedPaymentRequest(this)");
+            //getPurapGeneralLedgerService().generateEntriesProcessedPaymentRequest(this);
             final boolean isExternal =
                     KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_EXTERNAL.equals(paymentMethodCode);
             final boolean isWireTransfer =
@@ -1182,7 +1184,7 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
     public boolean generateGeneralLedgerPendingEntries(
             final GeneralLedgerPendingEntrySourceDetail glpeSourceDetail,
             final GeneralLedgerPendingEntrySequenceHelper sequenceHelper
-    ) { LOG.info("PaymentReqeustDocument.generateGeneralLedgerPendingEntries was called Section of code removed for PRNC.");
+    ) { LOG.info("PaymentReqeustDocument.generateGeneralLedgerPendingEntries was called Section of code removed for PRNC. bank offset would have been done in base code.");
         final boolean glpesGenerated = super.generateGeneralLedgerPendingEntries(glpeSourceDetail, sequenceHelper);
 
         // CU customization: remove code that generates bank offsets as this will be generated for PRNC 
