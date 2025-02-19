@@ -721,6 +721,9 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
         return null;
     }
 
+    /* Cornell Modification: Removed service call due to it creating duplicate GL entries for PRNC documents
+     * after the 04/19/2023 KualiCo patch was applied.
+     */
     /**
      * Determines the indicator text that will appear in the workflow document title
      *
@@ -754,7 +757,9 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
                 populateDocumentForRouting();
                 updateAndSaveAppDocStatus(PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED);
             }
-            getPurapGeneralLedgerService().generateEntriesProcessedPaymentRequest(this);
+            // Cornell Modification: Removed service call due to it creating duplicate GL entries for PRNC documents
+            // after the 04/19/2023 KualiCo patch was applied.
+            //getPurapGeneralLedgerService().generateEntriesProcessedPaymentRequest(this);
             final boolean isExternal =
                     KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_EXTERNAL.equals(paymentMethodCode);
             final boolean isWireTransfer =
