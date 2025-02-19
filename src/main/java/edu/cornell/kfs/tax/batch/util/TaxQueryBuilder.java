@@ -76,6 +76,8 @@ public class TaxQueryBuilder {
     protected String getTableReferenceDeclaration(final Class<? extends BusinessObject> businessObjectClass) {
         final String qualifiedTableName = mappingMetadata.getQualifiedTableName(businessObjectClass);
         final String tableAlias = mappingMetadata.getTableAlias(businessObjectClass);
+        Validate.notBlank(qualifiedTableName, "Table name not found for BO: " + businessObjectClass);
+        Validate.notBlank(tableAlias, "Table alias not found for BO: " + businessObjectClass);
         return StringUtils.join(qualifiedTableName, KFSConstants.BLANK_SPACE, tableAlias);
     }
 
