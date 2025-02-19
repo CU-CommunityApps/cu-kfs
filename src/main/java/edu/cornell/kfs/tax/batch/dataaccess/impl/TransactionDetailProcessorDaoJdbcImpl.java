@@ -66,9 +66,9 @@ public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwa
 
         return queryForUpdatableResults(query, resultSet -> {
             try {
-                final TransactionDetailRowMapper<U> rowMapper = rowMapperFactory.apply(
+                final TransactionDetailRowMapper<U> rowMapper = rowMapperFactory.createMapper(
                         encryptionService, transactionDetailMetadata, resultSet);
-                return handler.apply(config, rowMapper);
+                return handler.performProcessing(config, rowMapper);
             } catch (final IOException e) {
                 throw new UncheckedIOException(e);
             } catch (final SQLException | RuntimeException e) {
