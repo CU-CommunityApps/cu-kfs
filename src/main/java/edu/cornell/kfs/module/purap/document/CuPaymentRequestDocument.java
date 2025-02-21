@@ -37,6 +37,7 @@ import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
+import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants;
 import edu.cornell.kfs.module.purap.businessobject.CuPaymentRequestItemExtension;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -240,6 +241,20 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         
         return Stream.concat(otherDocIdsToLock, poDocIdsToLock)
                 .collect(Collectors.toUnmodifiableList());
+    }
+    
+    @Override
+    public boolean answerSplitNodeQuestion(final String nodeName) throws UnsupportedOperationException {
+        if (nodeName.equals(CUPurapWorkflowConstants.TREASURY_MANAGER)) {
+            /*
+             * CU Customization KFSPTS-34074
+             * This fixes canceled and disapproved PREQ documents that were done before 2/9/2025,
+             * which is when the 2023-04-19 version of Kuali Financials was installed into cu-kfs.  
+             */
+            return false;
+        }
+        
+        return super.answerSplitNodeQuestion(nodeName);
     }
     
     protected static CuCheckStubService getCuCheckStubService() {

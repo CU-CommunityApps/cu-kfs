@@ -19,6 +19,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.PaymentSource;
 
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
+import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
 
 public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument implements PaymentSource {
@@ -83,6 +84,14 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument impleme
     public boolean answerSplitNodeQuestion(final String nodeName) throws UnsupportedOperationException {
         if (nodeName.equals(PurapWorkflowConstants.REQUIRES_IMAGE_ATTACHMENT)) {
             return requiresAccountsPayableReviewRouting();
+        }
+        if (nodeName.equals(CUPurapWorkflowConstants.TREASURY_MANAGER)) {
+            /*
+             * CU Customization KFSPTS-34074
+             * This fixes canceled and disapproved CM documents that were done before 2/9/2025,
+             * which is when the 2023-04-19 version of Kuali Financials was installed into cu-kfs.  
+             */
+            return false;
         }
         throw new UnsupportedOperationException("Cannot answer split question for this node you call \""+nodeName+"\"");
     }
