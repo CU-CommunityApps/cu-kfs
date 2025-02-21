@@ -95,8 +95,6 @@ import java.util.Set;
 public class PaymentRequestDocument extends AccountsPayableDocumentBase implements PaymentSource {
 
     private static final Logger LOG = LogManager.getLogger();
-    
-    private static final String TREASURY_MANAGER_ROUTE_NODE = "TreasuryManager";
 
     protected Date invoiceDate;
     protected String invoiceNumber;
@@ -1240,14 +1238,6 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
         }
         if (nodeName.equals(PurapWorkflowConstants.IS_DOCUMENT_AUTO_APPROVED)) {
             return isAutoApprovedIndicator();
-        }
-        if (nodeName.equals(TREASURY_MANAGER_ROUTE_NODE)) {
-            /*
-             * CU Customization KFSPTS-34074
-             * This allows canceled and disapproved PREQ documents that were done before 2/9/2025,
-             * which is when the 2023-04-19 version of Kuali Financials was installed into cu-kfs.  
-             */
-            return false;
         }
         throw new UnsupportedOperationException("Cannot answer split question for this node you call \"" + nodeName +
                 "\"");
