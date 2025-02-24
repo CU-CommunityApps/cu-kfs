@@ -8,6 +8,7 @@
             <xsd:element name="section" type="taxSectionType" minOccurs="1" maxOccurs="unbounded"/>
         </xsd:sequence>
         <xsd:attribute name="fieldSeparator" type="xsd:string" use="required"/>
+        <xsd:attribute name="includeQuotes" type="xsd:boolean" use="optional" default="true"/>
     </xsd:complexType>
 
     <xsd:complexType name="taxSectionType">

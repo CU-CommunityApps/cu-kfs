@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
@@ -29,7 +31,13 @@ public class TaxFileRowWriterTransactionPrinterImpl extends TaxFileRowWriterCsvB
         return Map.ofEntries(
                 Map.entry(TransactionDetailField.vendorTaxNumber, this::maskTaxNumberIfNecessary),
                 Map.entry(TransactionDetailField.vendorGIIN, this::maskGIINIfNecessary),
-                Map.entry(TransactionDetailField.dvCheckStubText, this::formatDvCheckStubText)
+                Map.entry(TransactionDetailField.dvCheckStubText, this::formatDvCheckStubText),
+                Map.entry(TransactionDetailField.netPaymentAmount, this::formatKualiDecimal),
+                Map.entry(TransactionDetailField.federalIncomeTaxPercent, this::formatKualiDecimal),
+                Map.entry(TransactionDetailField.vendorForeignIndicator, this::formatBoolean),
+                Map.entry(TransactionDetailField.nraPaymentIndicator, this::formatBoolean),
+                Map.entry(TransactionDetailField.incomeTaxTreatyExemptIndicator, this::formatBoolean),
+                Map.entry(TransactionDetailField.foreignSourceIncomeIndicator, this::formatBoolean)
         );
     }
 
@@ -51,6 +59,19 @@ public class TaxFileRowWriterTransactionPrinterImpl extends TaxFileRowWriterCsvB
         return value != null
                 ? whitespacePattern.matcher(value.toString()).replaceAll(KFSConstants.BLANK_SPACE)
                 : KFSConstants.EMPTY_STRING;
+    }
+
+    private String formatKualiDecimal(final String sectionName, final Object value) {
+        return value != null
+                ? ((KualiDecimal) value).bigDecimalValue().toPlainString()
+                : KFSConstants.EMPTY_STRING;
+    }
+
+    private String formatBoolean(final String sectionName, final Object value) {
+        if (value == null) {
+            return KFSConstants.EMPTY_STRING;
+        }
+        return ((Boolean) value).booleanValue() ? KRADConstants.YES_INDICATOR_VALUE : KRADConstants.NO_INDICATOR_VALUE;
     }
 
 }

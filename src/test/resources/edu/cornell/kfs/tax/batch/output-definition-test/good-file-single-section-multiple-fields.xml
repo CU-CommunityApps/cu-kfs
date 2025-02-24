@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<taxOutputDefinition fieldSeparator="&#x9;">
+<taxOutputDefinition fieldSeparator="&#x9;" includeQuotes="false">
     <section name="Tax_Section" hasHeaderRow="true" useExactFieldLengths="true">
         <field name="recipient_id" length="25" type="DERIVED" key="recipientId"/>
         <field name="full_name" length="90" type="DERIVED" key="recipientName"/>

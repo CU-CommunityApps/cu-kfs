@@ -82,7 +82,7 @@ public class TaxOutputDefinitionV2FileTypeTest {
         })
         SINGLE_SECTION_SINGLE_FIELD,
 
-        @TaxOutputDefinitionFixture(fieldSeparator = "\t", sections = {
+        @TaxOutputDefinitionFixture(fieldSeparator = "\t", includeQuotes = false, sections = {
                 @TaxOutputSectionFixture(name = "Tax_Section", hasHeaderRow = true,
                             useExactFieldLengths = true, fields = {
                         @TaxOutputFieldFixture(
@@ -105,7 +105,7 @@ public class TaxOutputDefinitionV2FileTypeTest {
         })
         SINGLE_SECTION_MULTIPLE_FIELDS,
 
-        @TaxOutputDefinitionFixture(fieldSeparator = KFSConstants.COMMA, sections = {
+        @TaxOutputDefinitionFixture(fieldSeparator = KFSConstants.COMMA, includeQuotes = true, sections = {
                 @TaxOutputSectionFixture(name = "Biographic_Section", hasHeaderRow = true, fields = {
                         @TaxOutputFieldFixture(
                                 name = "recipient_id", length = 25,

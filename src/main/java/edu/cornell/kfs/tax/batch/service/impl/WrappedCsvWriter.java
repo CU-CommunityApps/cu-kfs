@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.kuali.kfs.sys.KFSConstants;
 
+import com.opencsv.CSVWriter;
 import com.opencsv.CSVWriterBuilder;
 import com.opencsv.ICSVWriter;
 
@@ -37,7 +38,8 @@ public class WrappedCsvWriter implements Closeable {
         try {
             outputStream = new FileOutputStream(outputFileName);
             streamWriter = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
-            csvWriter = buildCSVWriter(streamWriter, taxOutputDefinition.getFieldSeparator());
+            csvWriter = buildCSVWriter(streamWriter, taxOutputDefinition.getFieldSeparator(),
+                    taxOutputDefinition.isIncludeQuotes());
             this.outputStream = outputStream;
             this.streamWriter = streamWriter;
             this.csvWriter = csvWriter;
@@ -50,10 +52,15 @@ public class WrappedCsvWriter implements Closeable {
         }
     }
 
-    private static ICSVWriter buildCSVWriter(final Writer fileWriter, final String separator) {
+    private static ICSVWriter buildCSVWriter(final Writer fileWriter, final String separator,
+            final boolean includeQuotes) {
         Validate.isTrue(StringUtils.length(separator) == 1, "separator should have been exactly 1 character long");
+
+        final char quoteChar = includeQuotes ? CSVWriter.DEFAULT_QUOTE_CHARACTER : CSVWriter.NO_QUOTE_CHARACTER;
+
         return new CSVWriterBuilder(fileWriter)
                 .withSeparator(separator.charAt(0))
+                .withQuoteChar(quoteChar)
                 .withLineEnd(KFSConstants.NEWLINE)
                 .build();
     }
