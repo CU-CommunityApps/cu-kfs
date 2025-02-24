@@ -43,6 +43,7 @@
                 <value>${reports.directory}/tax</value>
                 <value>${staging.directory}/tax</value>
                 <value>${staging.directory}/tax/sprintax</value>
+                <value>${staging.directory}/tax/transactions</value>
               </list>
         </property>
     </bean>
@@ -128,14 +129,20 @@
     <bean id="taxFileGenerationServiceFor1042S" parent="taxFileGenerationServiceFor1042S-parentBean"/>
     <bean id="taxFileGenerationServiceFor1042S-parentBean"
           abstract="true"
-          class="edu.cornell.kfs.tax.batch.service.impl.TaxFileGenerationServiceSprintaxImpl"/>
+          class="edu.cornell.kfs.tax.batch.service.impl.TaxFileGenerationServiceSprintaxImpl"
+          p:transactionDetailProcessorDao-ref="transactionDetailProcessorDao"/>
 
     <bean id="taxFileGenerationServiceForTransactionPrinting"
           parent="taxFileGenerationServiceForTransactionPrinting-parentBean"/>
 
     <bean id="taxFileGenerationServiceForTransactionPrinting-parentBean"
           abstract="true"
-          class="edu.cornell.kfs.tax.batch.service.impl.TaxFileGenerationServiceTransactionPrinterImpl"/>
+          class="edu.cornell.kfs.tax.batch.service.impl.TaxFileGenerationServiceTransactionPrinterImpl"
+          p:transactionDetailProcessorDao-ref="transactionDetailProcessorDao"
+          p:taxOutputDefinitionV2FileType-ref="taxOutputDefinitionV2FileType"
+          p:outputDefinitionFilePath="classpath:edu/cornell/kfs/tax/batch/DefaultTransactionRowOutputDefinitionV2.xml"
+          p:fileOutputDirectory="${staging.directory}/tax/transactions"
+          p:maskSensitiveData="${tax.output.scrubbed}"/>
 
     <bean id="taxProcessingV2Service" parent="taxProcessingV2Service-parentBean"/>
     <bean id="taxProcessingV2Service-parentBean"
@@ -146,6 +153,13 @@
           p:taxFileGenerationServiceForTransactionPrinting-ref="taxFileGenerationServiceForTransactionPrinting"
           p:taxParameterService-ref="taxParameterService"
           p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="transactionDetailProcessorDao" parent="transactionDetailProcessorDao-parentBean"/>
+    <bean id="transactionDetailProcessorDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.tax.batch.dataaccess.impl.TransactionDetailProcessorDaoJdbcImpl"
+          p:taxTableMetadataLookupService-ref="taxTableMetadataLookupService"
+          p:encryptionService-ref="encryptionService"/>
 
     <bean id="taxTableMetadataLookupService" parent="taxTableMetadataLookupService-parentBean"/>
     <bean id="taxTableMetadataLookupService-parentBean"

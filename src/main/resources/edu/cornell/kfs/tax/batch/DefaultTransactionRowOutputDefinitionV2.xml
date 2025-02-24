@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taxOutputDefinition fieldSeparator="&#x9;" includeQuotes="false">
+    <section name="Plain_Transaction_Detail_Row" hasHeaderRow="true" useExactFieldLengths="false">
+        <field name="Transaction_Detail_ID" length="40" type="DERIVED" key="transactionDetailId"/>
+        <field name="Report_Year" length="11" type="DERIVED" key="reportYear"/>
+        <field name="Doc_Number" length="14" type="DERIVED" key="documentNumber"/>
+        <field name="Doc_Type" length="8" type="DERIVED" key="documentType"/>
+        <field name="Doc_Line_Number" length="15" type="DERIVED" key="financialDocumentLineNumber"/>
+        <field name="Object_Code" length="11" type="DERIVED" key="finObjectCode"/>
+        <field name="Payment_Amount" length="23" type="DERIVED" key="netPaymentAmount"/>
+        <field name="Document_Title" length="255" type="DERIVED" key="documentTitle"/>
+        <field name="Vendor_Tax_Number" length="255" type="DERIVED" key="vendorTaxNumber"/>
+        <field name="Income_Code" length="11" type="DERIVED" key="incomeCode"/>
+        <field name="Income_Code_Sub-Type" length="20" type="DERIVED" key="incomeCodeSubType"/>
+        <field name="DV_Check_Stub_Text" length="1400" type="DERIVED" key="dvCheckStubText"/>
+        <field name="Payee_ID" length="25" type="DERIVED" key="payeeId"/>
+        <field name="Vendor_Name" length="45" type="DERIVED" key="vendorName"/>
+        <field name="Parent_Vendor_Name" length="45" type="DERIVED" key="parentVendorName"/>
+        <field name="Vendor_Type" length="11" type="DERIVED" key="vendorTypeCode"/>
+        <field name="Vendor_Owner" length="12" type="DERIVED" key="vendorOwnershipCode"/>
+        <field name="Vendor_Ownership_Category" length="25" type="DERIVED" key="vendorOwnershipCategoryCode"/>
+        <field name="Foreign_Vendor" length="14" type="DERIVED" key="vendorForeignIndicator"/>
+        <field name="Vendor_Email" length="90" type="DERIVED" key="vendorEmailAddress"/>
+        <field name="Vendor_Chapter4_Status" length="22" type="DERIVED" key="vendorChapter4StatusCode"/>
+        <field name="Vendor_GIIN" length="19" type="DERIVED" key="vendorGIIN"/>
+        <field name="Vendor_Address_Line_1" length="45" type="DERIVED" key="vendorLine1Address"/>
+        <field name="Vendor_Address_Line_2" length="45" type="DERIVED" key="vendorLine2Address"/>
+        <field name="Vendor_City" length="45" type="DERIVED" key="vendorCityName"/>
+        <field name="Vendor_State" length="12" type="DERIVED" key="vendorStateCode"/>
+        <field name="Vendor_Zip" length="20" type="DERIVED" key="vendorZipCode"/>
+        <field name="Vendor_Foreign_Address_Line_1" length="45" type="DERIVED" key="vendorForeignLine1Address"/>
+        <field name="Vendor_Foreign_Address_Line_2" length="45" type="DERIVED" key="vendorForeignLine2Address"/>
+        <field name="Vendor_Foreign_City" length="45" type="DERIVED" key="vendorForeignCityName"/>
+        <field name="Vendor_Foreign_Zip" length="20" type="DERIVED" key="vendorForeignZipCode"/>
+        <field name="Vendor_Foreign_Province_Name" length="45" type="DERIVED" key="vendorForeignProvinceName"/>
+        <field name="Vendor_Foreign_Country" length="22" type="DERIVED" key="vendorForeignCountryCode"/>
+        <field name="NRA_Payment" length="11" type="DERIVED" key="nraPaymentIndicator"/>
+        <field name="Payment_Date" length="12" type="DERIVED" key="paymentDate"/>
+        <field name="Payee_Name" length="123" type="DERIVED" key="paymentPayeeName"/>
+        <field name="Income_Class" length="12" type="DERIVED" key="incomeClassCode"/>
+        <field name="Tax_Treaty_Exempt" length="17" type="DERIVED" key="incomeTaxTreatyExemptIndicator"/>
+        <field name="Foreign_Source" length="14" type="DERIVED" key="foreignSourceIncomeIndicator"/>
+        <field name="Fed_Inc_Tax_Percent" length="19" type="DERIVED" key="federalIncomeTaxPercent"/>
+        <field name="Payment_Description" length="100" type="DERIVED" key="paymentDescription"/>
+        <field name="Payment_Address_Line_1" length="55" type="DERIVED" key="paymentLine1Address"/>
+        <field name="Payment_Country_Name" length="30" type="DERIVED" key="paymentCountryName"/>
+        <field name="Chart_Code" length="10" type="DERIVED" key="chartCode"/>
+        <field name="Account_Number" length="14" type="DERIVED" key="accountNumber"/>
+        <field name="Initiator_NetId" length="100" type="DERIVED" key="initiatorNetId"/>
+        <field name="1099_Type" length="9" type="DERIVED" key="form1099Type"/>
+        <field name="1099_Box" length="8" type="DERIVED" key="form1099Box"/>
+        <field name="1099_Overridden_Type" length="20" type="DERIVED" key="form1099OverriddenType"/>
+        <field name="1099_Overridden_Box" length="19" type="DERIVED" key="form1099OverriddenBox"/>
+        <field name="1042S_Box" length="10" type="DERIVED" key="form1042SBox"/>
+        <field name="1042S_Overridden_Box" length="20" type="DERIVED" key="form1042SOverriddenBox"/>
+        <field name="Payment_Reason" length="14" type="DERIVED" key="paymentReasonCode"/>
+        <field name="Disbursement_Number" length="19" type="DERIVED" key="disbursementNbr"/>
+        <field name="Payment_Status_Code" length="19" type="DERIVED" key="paymentStatusCode"/>
+        <field name="Disbursement_Type_Code" length="22" type="DERIVED" key="disbursementTypeCode"/>
+        <field name="Ledger_Document_Type_Code" length="25" type="DERIVED" key="ledgerDocumentTypeCode"/>
+    </section>
+</taxOutputDefinition>

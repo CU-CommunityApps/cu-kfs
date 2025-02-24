@@ -18,6 +18,7 @@ import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxFileSections;
 import edu.cornell.kfs.tax.batch.TaxBatchConfig;
 import edu.cornell.kfs.tax.batch.TaxOutputDefinitionV2FileType;
 import edu.cornell.kfs.tax.batch.TaxStatistics;
+import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailHandler;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailProcessorDao;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailRowMapper;
 import edu.cornell.kfs.tax.batch.dataaccess.impl.TransactionDetailMapperForPrintingRowContents;
@@ -25,7 +26,8 @@ import edu.cornell.kfs.tax.batch.service.TaxFileGenerationService;
 import edu.cornell.kfs.tax.batch.xml.TaxOutputDefinitionV2;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail;
 
-public class TaxFileGenerationServiceTransactionPrinterImpl implements TaxFileGenerationService {
+public class TaxFileGenerationServiceTransactionPrinterImpl implements TaxFileGenerationService,
+        TransactionDetailHandler<TransactionDetail> {
 
     private TransactionDetailProcessorDao transactionDetailProcessorDao;
     private TaxOutputDefinitionV2FileType taxOutputDefinitionV2FileType;
@@ -40,10 +42,11 @@ public class TaxFileGenerationServiceTransactionPrinterImpl implements TaxFileGe
                 "config should have specified PRINT_TRANSACTION_ROWS mode");
 
         return transactionDetailProcessorDao.processTransactionDetails(
-                config, TransactionDetailMapperForPrintingRowContents::new, this::generateTransactionDetailFile);
+                config, TransactionDetailMapperForPrintingRowContents::new, this);
     }
 
-    private TaxStatistics generateTransactionDetailFile(final TaxBatchConfig config,
+    @Override
+    public TaxStatistics performProcessing(final TaxBatchConfig config,
             final TransactionDetailRowMapper<TransactionDetail> rowMapper) throws Exception {
         final String fileName = generateTransactionDetailFileName(config);
         final TaxOutputDefinitionV2 outputDefinition = parseOutputDefinitionForPrintingTransactionRows();

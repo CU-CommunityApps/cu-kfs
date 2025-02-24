@@ -27,6 +27,13 @@ public class TaxOutputDefinitionV2 {
     @XmlAttribute(name = "fieldSeparator", required = true)
     private String fieldSeparator;
 
+    @XmlAttribute(name = "includeQuotes", required = false)
+    private boolean includeQuotes;
+
+    public TaxOutputDefinitionV2() {
+        this.includeQuotes = true;
+    }
+
     public List<TaxOutputSectionV2> getSections() {
         if (sections == null) {
             sections = new ArrayList<>();
@@ -44,6 +51,14 @@ public class TaxOutputDefinitionV2 {
 
     public void setFieldSeparator(final String fieldSeparator) {
         this.fieldSeparator = fieldSeparator;
+    }
+
+    public boolean isIncludeQuotes() {
+        return includeQuotes;
+    }
+
+    public void setIncludeQuotes(final boolean includeQuotes) {
+        this.includeQuotes = includeQuotes;
     }
 
     @Override
