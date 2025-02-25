@@ -748,8 +748,7 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
         if (isAutoApprovedIndicator()) {
             updateAndSaveAppDocStatus(PaymentRequestStatuses.APPDOC_AUTO_APPROVED);
             // DOCUMENT PROCESSED .. //KFSCNTRB-1207 - UMD - Muddu -- end
-        }
-        if (getDocumentHeader().getWorkflowDocument().isProcessed()) {
+        } else if (getDocumentHeader().getWorkflowDocument().isProcessed()) {  //nkk4 made this an else if like the older base code
             if (!PaymentRequestStatuses.APPDOC_AUTO_APPROVED.equals(getApplicationDocumentStatus())) {
                 populateDocumentForRouting();
                 updateAndSaveAppDocStatus(PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED);
@@ -1209,18 +1208,18 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
         final boolean glpesGenerated = super.generateGeneralLedgerPendingEntries(glpeSourceDetail, sequenceHelper);
 
         // CU customization: remove code that generates bank offsets as this will be generated for PRNC
-        final boolean bankOffsetsOk;
-        if (generateExternalEntries) {
-            bankOffsetsOk = generateBankOffsetGeneralLedgerPendingEntries(
-                    sequenceHelper,
-                    PurapDocTypeCodes.PAYMENT_REQUEST_EXTERNAL);
-        } else if (generateWireTransferEntries) {
-            bankOffsetsOk = generateBankOffsetGeneralLedgerPendingEntries(
-                    sequenceHelper,
-                    PurapDocTypeCodes.PAYMENT_REQUEST_WIRE_TRANSFER);
-        } else {
-            bankOffsetsOk = true;
-        }
+//        final boolean bankOffsetsOk;
+//        if (generateExternalEntries) {
+//            bankOffsetsOk = generateBankOffsetGeneralLedgerPendingEntries(
+//                    sequenceHelper,
+//                    PurapDocTypeCodes.PAYMENT_REQUEST_EXTERNAL);
+//        } else if (generateWireTransferEntries) {
+//            bankOffsetsOk = generateBankOffsetGeneralLedgerPendingEntries(
+//                    sequenceHelper,
+//                    PurapDocTypeCodes.PAYMENT_REQUEST_WIRE_TRANSFER);
+//        } else {
+//            bankOffsetsOk = true;
+//        }
 
         return glpesGenerated;
     }
