@@ -158,6 +158,7 @@
     <bean id="transactionDetailProcessorDao-parentBean"
           abstract="true"
           class="edu.cornell.kfs.tax.batch.dataaccess.impl.TransactionDetailProcessorDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
           p:taxTableMetadataLookupService-ref="taxTableMetadataLookupService"
           p:encryptionService-ref="encryptionService"/>
 

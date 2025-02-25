@@ -15,6 +15,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants;
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 import edu.cornell.kfs.tax.batch.metadata.TaxDtoDbMetadata;
@@ -32,6 +33,13 @@ import edu.cornell.kfs.tax.batch.service.TaxTableMetadataLookupService;
  * 1. Sort the related enum's mapped business object classes in classname order.
  * 2. Take the first 3 characters from each mapped class's simple name, uppercase them,
  *            and append a unique numeric suffix (starting from zero).
+ * 
+ * For column aliases, this implementation will derive them as follows:
+ * 
+ * -- If the enum constant does not indicate a need for an explicit alias, then the corresponding
+ *            unprefixed table column name will be used as the alias.
+ * -- Otherwise, an alias will be formed by taking the table-alias-prefixed column name
+ *            and converting the dot into an underscore. (Example: DOC1.OBJ_ID --> DOC1_OBJ_ID)
  */
 public abstract class TaxTableMetadataLookupServiceBase<T> implements TaxTableMetadataLookupService {
 
@@ -48,8 +56,10 @@ public abstract class TaxTableMetadataLookupServiceBase<T> implements TaxTableMe
         final Map<Class<? extends BusinessObject>, String> tableAliasMappings = getTableAliasMappings(mappedClasses);
         final Map<TaxDtoFieldEnum, String> columnLabelMappings = getColumnLabelMappings(
                 dtoFieldEnumClass, metadataMappings, tableAliasMappings);
+        final Map<TaxDtoFieldEnum, String> columnAliasMappings = getColumnAliasMappings(columnLabelMappings);
 
-        return new TaxDtoDbMetadata(tableNameMappings, tableAliasMappings, dtoFieldEnumClass, columnLabelMappings);
+        return new TaxDtoDbMetadata(tableNameMappings, tableAliasMappings, dtoFieldEnumClass, columnLabelMappings,
+                columnAliasMappings);
     }
 
     protected List<Class<? extends BusinessObject>> getAndSortMappedBusinessObjectClasses(
@@ -119,6 +129,25 @@ public abstract class TaxTableMetadataLookupServiceBase<T> implements TaxTableMe
         final String tableAlias = tableAliasMappings.get(mappedClass);
         final String simpleColumnLabel = getColumnLabel(fieldMapping, metadata);
         return StringUtils.join(tableAlias, KFSConstants.DELIMITER, simpleColumnLabel);
+    }
+
+    protected Map<TaxDtoFieldEnum, String> getColumnAliasMappings(
+            final Map<TaxDtoFieldEnum, String> columnLabelMappings) {
+        final Stream.Builder<Map.Entry<TaxDtoFieldEnum, String>> aliasMappings = Stream.builder();
+
+        for (final Map.Entry<TaxDtoFieldEnum, String> labelMapping : columnLabelMappings.entrySet()) {
+            final TaxDtoFieldEnum key = labelMapping.getKey();
+            final String alias;
+            if (key.needsExplicitAlias()) {
+                alias = StringUtils.replace(
+                        labelMapping.getValue(), KFSConstants.DELIMITER, CUKFSConstants.UNDERSCORE);
+            } else {
+                alias = StringUtils.substringAfter(labelMapping.getValue(), KFSConstants.DELIMITER);
+            }
+            aliasMappings.add(Map.entry(key, alias));
+        }
+
+        return aliasMappings.build().collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     protected abstract String getColumnLabel(final TaxDtoFieldEnum fieldMapping, final T metadata);

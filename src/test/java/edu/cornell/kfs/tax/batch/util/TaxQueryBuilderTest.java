@@ -105,7 +105,9 @@ public class TaxQueryBuilderTest {
                     .build();
         }),
 
-        @CuSqlQueryFixture(sql = "SELECT VEN0.VNDR_NM, VEN1.VNDR_TYP_CD FROM KFS.PUR_VNDR_DTL_T VEN0 "
+        @CuSqlQueryFixture(sql = "SELECT VEN0.VNDR_HDR_GNRTD_ID \"VEN0_VNDR_HDR_GNRTD_ID\", "
+                + "VEN0.VNDR_NM, VEN1.VNDR_TYP_CD "
+                + "FROM KFS.PUR_VNDR_DTL_T VEN0 "
                 + "JOIN KFS.PUR_VNDR_HDR_T VEN1 ON VEN0.VNDR_HDR_GNRTD_ID = VEN1.VNDR_HDR_GNRTD_ID "
                 + "WHERE VEN0.VNDR_HDR_GNRTD_ID IN (?, ?, ?)",
                 parameters = {
@@ -115,7 +117,8 @@ public class TaxQueryBuilderTest {
                 })
         QUERY_WITH_JOIN_CONDITION(metadataService -> {
             return createEmptyBuilder(metadataService, VendorField.class)
-                    .select(VendorField.vendorName, VendorField.vendorTypeCode)
+                    .select(VendorField.vendorHeaderGeneratedIdentifier_forDetail, VendorField.vendorName,
+                            VendorField.vendorTypeCode)
                     .from(VendorDetail.class)
                     .join(VendorHeader.class,
                             Criteria.equal(VendorField.vendorHeaderGeneratedIdentifier_forDetail,
@@ -130,7 +133,7 @@ public class TaxQueryBuilderTest {
 
         @CuSqlQueryFixture(sql = "SELECT VEN0.VNDR_NM FROM KFS.PUR_VNDR_DTL_T VEN0 "
                 + "WHERE VEN0.VNDR_HDR_GNRTD_ID = ("
-                        + "SELECT VEN1.VNDR_HDR_GNRTD_ID FROM KFS.PUR_VNDR_HDR_T VEN1 "
+                        + "SELECT VEN1.VNDR_HDR_GNRTD_ID \"VEN1_VNDR_HDR_GNRTD_ID\" FROM KFS.PUR_VNDR_HDR_T VEN1 "
                         + "WHERE VEN1.VNDR_US_TAX_NBR = ?"
                 + ")",
                 parameters = {
