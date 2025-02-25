@@ -156,7 +156,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
      * which saves the paymentRequestDocument to record the extracted and paid timestamps resulting in 
      * cash offset GL entries being duplicated.
      * This GL duplicate entry issue was because method populateDocumentForRouting is invoked after a 
-     * docuemnt is saved. This check was added to the method so that populateDocumentForRouting prevented
+     * document is saved. This check was added to the method so that populateDocumentForRouting prevented
      * from executing after the wire extraction process was run.
      */
     protected boolean paymentHasBeenExtractedOrPaid() {
