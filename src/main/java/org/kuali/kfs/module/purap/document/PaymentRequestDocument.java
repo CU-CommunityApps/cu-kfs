@@ -748,8 +748,7 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
         if (isAutoApprovedIndicator()) {
             updateAndSaveAppDocStatus(PaymentRequestStatuses.APPDOC_AUTO_APPROVED);
             // DOCUMENT PROCESSED .. //KFSCNTRB-1207 - UMD - Muddu -- end
-        }
-        if (getDocumentHeader().getWorkflowDocument().isProcessed()) {
+        } else if (getDocumentHeader().getWorkflowDocument().isProcessed()) {  //nkk4 made this an else if like the older base code
             if (!PaymentRequestStatuses.APPDOC_AUTO_APPROVED.equals(getApplicationDocumentStatus())) {
                 populateDocumentForRouting();
                 updateAndSaveAppDocStatus(PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED);
@@ -827,7 +826,7 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
      */
     @Override
     public void doActionTaken(final ActionTakenEvent event) {
-        LOG.info("PaymentRequestDocument.doActionTaken() started");
+        LOG.info("PaymentRequestDocument.doActionTaken() started for event.getDocumentEventCode()={}", event.getDocumentEventCode());
         super.doActionTaken(event);
         final WorkflowDocument workflowDocument = getDocumentHeader().getWorkflowDocument();
         String currentNode = null;
@@ -838,15 +837,31 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
                 currentNode = (String) names[0];
             }
         }
-        LOG.info("PaymentRequestDocument.doActionTaken(): if-statement :: PaymentRequestStatuses.getNodesRequiringCorrectingGeneralLedgerEntries().contains(currentNode)");
+        LOG.info("PaymentRequestDocument.doActionTaken(): if-statement :: PaymentRequestStatuses.getNodesRequiringCorrectingGeneralLedgerEntries().contains(currentNode)={}", currentNode);
         // everything in the below list requires correcting entries to be written to the GL
         if (PaymentRequestStatuses.getNodesRequiringCorrectingGeneralLedgerEntries().contains(currentNode)) {
-            LOG.info("PaymentRequestDocument.doActionTaken(): if-statement TRUE-CALLING: getPurapGeneralLedgerService().generateEntriesModifyPaymentRequest(this)");
+            logGlpesForDebugging("PaymentRequestDocument.doActionTaken(): if-statement TRUE-BEFORE-CALLING: getPurapGeneralLedgerService().generateEntriesModifyPaymentRequest(this)", this.getGeneralLedgerPendingEntries());
             getPurapGeneralLedgerService().generateEntriesModifyPaymentRequest(this);
-        } else
-        {
-            LOG.info("PaymentRequestDocument.doActionTaken(): if-statement FALSE - NO CALL MADE TO --> getPurapGeneralLedgerService().generateEntriesModifyPaymentRequest(this)");
+            logGlpesForDebugging("PaymentRequestDocument.doActionTaken(): if-statement TRUE-AFTER-CALLING: getPurapGeneralLedgerService().generateEntriesModifyPaymentRequest(this)", this.getGeneralLedgerPendingEntries());
+        } else {
+            logGlpesForDebugging("PaymentRequestDocument.doActionTaken(): if-statement FALSE - NO CALL MADE TO --> getPurapGeneralLedgerService().generateEntriesModifyPaymentRequest(this)", this.getGeneralLedgerPendingEntries());
         }
+    }
+    
+    protected void logGlpesForDebugging(String loggingMarker, List<GeneralLedgerPendingEntry> glpeList) {
+        if (ObjectUtils.isNull(glpeList) || glpeList.isEmpty()) {
+            LOG.info(loggingMarker + "=====> NO DATA TO OUTPUT; glpeList is null or empty");
+            return;
+        }
+        for (GeneralLedgerPendingEntry glpeItem : glpeList) {
+            LOG.info(loggingMarker + "=====>  glpeItem.getAccountNumber()={}, glpeItem.getFinancialObjectCode()={}, glpeItem.getCurrencyFormattedTransactionLedgerEntryAmount()={},"
+                    + "  glpeItem.getFinancialBalanceTypeCode()={}, glpeItem.getFinancialDocumentTypeCode()={}, glpeItem.getTransactionDebitCreditCode()={},"
+                    + "  glpeItem.getTransactionEncumbranceUpdateCode()={}, glpeItem.getTransactionEntryProcessedTs()={}, glpeItem.getFinancialObjectTypeCode()={}, glpeItem.getFinancialSystemDocumentType()={}",
+                    glpeItem.getAccountNumber(), glpeItem.getFinancialObjectCode(), glpeItem.getCurrencyFormattedTransactionLedgerEntryAmount(),
+                    glpeItem.getFinancialBalanceTypeCode(), glpeItem.getFinancialDocumentTypeCode(), glpeItem.getTransactionDebitCreditCode(), 
+                    glpeItem.getTransactionEncumbranceUpdateCode(), glpeItem.getTransactionEntryProcessedTs(), glpeItem.getFinancialObjectTypeCode(), glpeItem.getFinancialSystemDocumentType());
+        }
+        LOG.info("");
     }
 
     @Override

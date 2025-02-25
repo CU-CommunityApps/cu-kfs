@@ -47,7 +47,6 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.GeneralLedgerPostingDocument;
 import org.kuali.kfs.sys.document.service.AccountingDocumentRuleHelperService;
-import org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseConstants.GENERAL_LEDGER_PENDING_ENTRY_CODE;
 import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.springframework.cache.annotation.Cacheable;
@@ -143,12 +142,20 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
         PaymentMethodExtendedAttribute extendedAttribute = (PaymentMethodExtendedAttribute)pm.getExtension();
         
         if ( !extendedAttribute.isProcessedUsingPdp() && StringUtils.isNotBlank( bankCode ) ) {
+            LOG.info("CUPaymentMethodGeneralLedgerPendingEntryServiceImpl.generatePaymentMethodSpecificDocumentGeneralLedgerPendingEntries  IF-check:!extendedAttribute.isProcessedUsingPdp() && StringUtils.isNotBlank( bankCode );=====> NO-OP do not create bank offsets unless DM approval");
+            LOG.info(" ");
             if(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE.equalsIgnoreCase(paymentMethodCode) || KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT.equalsIgnoreCase(paymentMethodCode)){
                 //do not create bank offsets unless DM approval
+                LOG.info("CUPaymentMethodGeneralLedgerPendingEntryServiceImpl.generatePaymentMethodSpecificDocumentGeneralLedgerPendingEntries:: IF-Check: wire or draft detected, do nothing; do not create bank offsets unless DM approval");
+                LOG.info(" ");
             }
             else{
+                LOG.info("CUPaymentMethodGeneralLedgerPendingEntryServiceImpl.generatePaymentMethodSpecificDocumentGeneralLedgerPendingEntries: ELSE: LEFT call INPLACE to generateDocumentBankOffsetEntries");
                 generateDocumentBankOffsetEntries(document,bankCode,bankCodePropertyName,templatePendingEntry.getFinancialDocumentTypeCode(), sequenceHelper, bankOffsetAmount );
             }
+        } else {
+            LOG.info("CUPaymentMethodGeneralLedgerPendingEntryServiceImpl.generatePaymentMethodSpecificDocumentGeneralLedgerPendingEntries  ELSE-check:!extendedAttribute.isProcessedUsingPdp() && StringUtils.isNotBlank( bankCode );=====> BY-PASSING all logic");
+            LOG.info(" ");
         }
         
         return true;
@@ -191,6 +198,8 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
      */
     public boolean generateDocumentBankOffsetEntries(AccountingDocument document, String bankCode, String bankCodePropertyName, String documentTypeCode, GeneralLedgerPendingEntrySequenceHelper sequenceHelper, KualiDecimal bankOffsetAmount ) {
         boolean success = true;
+        LOG.info("CUPaymentMethodGeneralLedgerPendingEntryServiceImpl.generateDocumentBankOffsetEntries:: ENTERED METHOD ");
+        LOG.info(" ");
 
         if (!bankService.isBankSpecificationEnabled()) {
             return success;
@@ -201,12 +210,18 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
             bankOffsetAmount = generalLedgerPendingEntryService.getOffsetToCashAmount(document).negated();
         }
         if ( !KualiDecimal.ZERO.equals(bankOffsetAmount) ) {
+            LOG.info("CUPaymentMethodGeneralLedgerPendingEntryServiceImpl.generateDocumentBankOffsetEntries:: bankOffsetAmount={}", bankOffsetAmount);
+            LOG.info(" ");
             GeneralLedgerPendingEntry bankOffsetEntry = new GeneralLedgerPendingEntry();
             success &= generalLedgerPendingEntryService
                     .populateBankOffsetGeneralLedgerPendingEntry(bank, bankOffsetAmount, document, 
                             document.getPostingYear(), sequenceHelper, bankOffsetEntry, bankCodePropertyName);
+            LOG.info("CUPaymentMethodGeneralLedgerPendingEntryServiceImpl.generateDocumentBankOffsetEntries:: attempted GLPE creation for bankOffsetEntry was successful={}", success);
+            LOG.info(" ");
     
             if (success) {
+                LOG.info("CUPaymentMethodGeneralLedgerPendingEntryServiceImpl.generateDocumentBankOffsetEntries:: now attempting to create offsetting GLPE pair and add them to the document");
+                LOG.info(" ");
                 AccountingDocumentRuleHelperService accountingDocumentRuleUtil = SpringContext.getBean(AccountingDocumentRuleHelperService.class);
                 bankOffsetEntry.setTransactionLedgerEntryDescription(accountingDocumentRuleUtil.formatProperty(FPKeyConstants.DESCRIPTION_GLPE_BANK_OFFSET));
                 bankOffsetEntry.setFinancialDocumentTypeCode(documentTypeCode);
@@ -219,10 +234,33 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
 
                 document.addPendingEntry(offsetEntry);
                 sequenceHelper.increment();
+                
+                logGlpesForDebugging("CUPaymentMethodGeneralLedgerPendingEntryServiceImpl.generateDocumentBankOffsetEntries::::    ALL GLPE's after bank offsets were created:::: ", document.getGeneralLedgerPendingEntries());
+                LOG.info(" ");
             }
+        } else {
+            LOG.info("CUPaymentMethodGeneralLedgerPendingEntryServiceImpl.generateDocumentBankOffsetEntries:: ZERO bank offset amount detected. NO-OP. ");
+            LOG.info(" ");
         }
 
         return success;
+    }
+    
+    protected void logGlpesForDebugging(String loggingMarker, List<GeneralLedgerPendingEntry> glpeList) {
+        if (ObjectUtils.isNull(glpeList) || glpeList.isEmpty()) {
+            LOG.info(loggingMarker + "=====> NO DATA TO OUTPUT; glpeList is null or empty");
+            LOG.info("");
+            return;
+        }
+        for (GeneralLedgerPendingEntry glpeItem : glpeList) {
+            LOG.info(loggingMarker + "=====>  glpeItem.getAccountNumber()={}, glpeItem.getFinancialObjectCode()={}, glpeItem.getCurrencyFormattedTransactionLedgerEntryAmount()={},"
+                    + "  glpeItem.getFinancialBalanceTypeCode()={}, glpeItem.getFinancialDocumentTypeCode()={}, glpeItem.getTransactionDebitCreditCode()={},"
+                    + "  glpeItem.getTransactionEncumbranceUpdateCode()={}, glpeItem.getTransactionEntryProcessedTs()={}, glpeItem.getFinancialObjectTypeCode()={}, glpeItem.getFinancialSystemDocumentType()={}",
+                    glpeItem.getAccountNumber(), glpeItem.getFinancialObjectCode(), glpeItem.getCurrencyFormattedTransactionLedgerEntryAmount(),
+                    glpeItem.getFinancialBalanceTypeCode(), glpeItem.getFinancialDocumentTypeCode(), glpeItem.getTransactionDebitCreditCode(), 
+                    glpeItem.getTransactionEncumbranceUpdateCode(), glpeItem.getTransactionEntryProcessedTs(), glpeItem.getFinancialObjectTypeCode(), glpeItem.getFinancialSystemDocumentType());
+            LOG.info("");
+        }
     }
 
     /**
@@ -231,7 +269,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
      * 
      * @see edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService#generateFinalEntriesForPRNC(org.kuali.kfs.module.purap.document.PaymentRequestDocument)
      */
-    public void generateFinalEntriesForPRNC(PaymentRequestDocument document) {
+    public void generateFinalEntriesForPRNC(PaymentRequestDocument document) { //nkk
 
         GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper(getNextAvailableSequence(document.getDocumentNumber()));
         String documentType = CuPaymentRequestDocument.DOCUMENT_TYPE_NON_CHECK;
@@ -243,6 +281,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
         // generate bank offset
         if (KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT.equalsIgnoreCase(((CuPaymentRequestDocument)document).getPaymentMethodCode()) || KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE.equalsIgnoreCase(((CuPaymentRequestDocument)document).getPaymentMethodCode())) {
             generateDocumentBankOffsetEntries((AccountingDocument) document, document.getBankCode(), KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", documentType, sequenceHelper, document.getTotalDollarAmount().negated());
+            LOG.info("CUPaymentMethodGeneralLedgerPendingEntryServiceImpl..generateFinalEntriesForPRNC ==>>>  call to generate bank offset in Cornell customization when payment method draft or wire detected.");
         }
 
         // check for balance type Actual offset pending entries and replace the object code with chart cash object code (currently replacing object code 2900 with 1000)
@@ -309,7 +348,6 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
                 glpe.setFinancialDocumentApprovedCode(KFSConstants.PENDING_ENTRY_APPROVED_STATUS_CODE.APPROVED);
             }
         }
-
     }
 
     /**

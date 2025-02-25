@@ -88,7 +88,7 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
     protected boolean generateEntriesPaymentRequest(
             final PaymentRequestDocument preq, final List encumbrances,
             final List summaryAccounts, final String processType) {
-        LOG.info("1-generateEntriesPaymentRequest() started: basecode version with cu mod removed");
+        LOG.info("1-generateEntriesPaymentRequest() started: CU mod toward end of method.");
         final boolean success = true;
         preq.setGeneralLedgerPendingEntries(new ArrayList<>());
 
@@ -120,12 +120,15 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
             preq.setGenerateEncumbranceEntries(true);
             for (final Object encumbrance : encumbrances) {
                 final AccountingLine accountingLine = (AccountingLine) encumbrance;
-                LOG.info("7-generateEntriesPaymentRequest() in for-loop to generate encumbrances"); 
+                LOG.info("7before-generateEntriesPaymentRequest() in for-loop to generate encumbrances :: account={} objectCode={} amount={} balanceType={}", 
+                        accountingLine.getAccountNumber(), accountingLine.getObjectCode().getFinancialObjectCode(), accountingLine.getAmount(), accountingLine.getBalanceTypeCode()); 
                 preq.generateGeneralLedgerPendingEntries(accountingLine, sequenceHelper);
+                logGlpesForDebugging("7After Call to preq.generateGeneralLedgerPendingEntries(accountingLine, sequenceHelper) JUST COMPLETED WITH GLPEs NOW BEING: ", preq.getGeneralLedgerPendingEntries());
                 sequenceHelper.increment();
             }
         }
-
+        logGlpesForDebugging("7A-Just before summary account check, GLPEs are::::: ", preq.getGeneralLedgerPendingEntries());
+        
         if (ObjectUtils.isNotNull(summaryAccounts) && !summaryAccounts.isEmpty()) {
             LOG.info("8-generateEntriesPaymentRequest() now book the actuals if-summaryAccounts is not null nor empty");
             preq.setGenerateEncumbranceEntries(false);
@@ -144,11 +147,16 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
                 LOG.info("12-generateEntriesPaymentRequest() cancel payment, cancellingShouldReverseExternalEntries={}, cancellingShouldReverseWireTransferEntries={}", cancellingShouldReverseExternalEntries(preq), cancellingShouldReverseWireTransferEntries(preq));
             }
 
-            LOG.info("13-generateEntriesPaymentRequest() right before summaryAccounts for loop : in if-book-the-actuals");
+            LOG.info("13-generateEntriesPaymentRequest() right before summaryAccounts for loop : in if-book-the-actuals; detected summaryAccounts.size={}", summaryAccounts.size());
             for (final Object account : summaryAccounts) {
                 final SummaryAccount summaryAccount = (SummaryAccount) account;
-                LOG.info("14-generateEntriesPaymentRequest() in summaryAccount for-loop to book the actuals");
+                LOG.info("14BEFORE-generateEntriesPaymentRequest() in summaryAccount for-loop to book the actuals BEFORE call to preq.generateGeneralLedgerPendingEntries(summaryAccount.getAccount(), sequenceHelper); :: postingYear={} chart={} account={} sub-account={} objectCode={} sub-object={} project={} orgRefId={} amount={} balanceType={}",
+                        summaryAccount.getAccount().getPostingYear(), summaryAccount.getAccount().getChartOfAccountsCode(), summaryAccount.getAccount().getAccountNumber(), summaryAccount.getAccount().getSubAccountNumber(),
+                        summaryAccount.getAccount().getObjectCode().getFinancialObjectCode(), summaryAccount.getAccount().getSubObjectCode(), summaryAccount.getAccount().getProjectCode(),
+                        summaryAccount.getAccount().getOrganizationReferenceId(), summaryAccount.getAccount().getAmount(), summaryAccount.getAccount().getBalanceTypeCode());
+                LOG.info("");
                 preq.generateGeneralLedgerPendingEntries(summaryAccount.getAccount(), sequenceHelper);
+                logGlpesForDebugging("14-After for-loop call to preq.generateGeneralLedgerPendingEntries(summaryAccount.getAccount(), sequenceHelper); NEWLY GENERATED GLPEs are ==> ", preq.getGeneralLedgerPendingEntries());
                 sequenceHelper.increment();
             }
             LOG.info("15-generateEntriesPaymentRequest() setting  preq.setGenerateExternalEntries(false), preq.setGenerateWireTransferEntries(false)");
@@ -252,13 +260,30 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
             preq.generateDocumentGeneralLedgerPendingEntries(sequenceHelper);
             // End: Cornell Customization: KFSPTS-1891
         }
-        LOG.info("39-Manually save GL entries for Payment Request and encumbrances");
+        logGlpesForDebugging("39-Right before manually saving GL entries for Payment Request and encumbrances", preq.getGeneralLedgerPendingEntries());
         // Manually save GL entries for Payment Request and encumbrances
         saveGLEntries(preq.getGeneralLedgerPendingEntries());
 
         return success;
     }
-
+    
+    protected void logGlpesForDebugging(String loggingMarker, List<GeneralLedgerPendingEntry> glpeList) {
+        if (ObjectUtils.isNull(glpeList) || glpeList.isEmpty()) {
+            LOG.info(loggingMarker + "=====> NO DATA TO OUTPUT; glpeList is null or empty");
+            LOG.info("");
+            return;
+        }
+        for (GeneralLedgerPendingEntry glpeItem : glpeList) {
+            LOG.info(loggingMarker + "=====>  glpeItem.getAccountNumber()={}, glpeItem.getFinancialObjectCode()={}, glpeItem.getCurrencyFormattedTransactionLedgerEntryAmount()={},"
+                    + "  glpeItem.getFinancialBalanceTypeCode()={}, glpeItem.getFinancialDocumentTypeCode()={}, glpeItem.getTransactionDebitCreditCode()={},"
+                    + "  glpeItem.getTransactionEncumbranceUpdateCode()={}, glpeItem.getTransactionEntryProcessedTs()={}, glpeItem.getFinancialObjectTypeCode()={}, glpeItem.getFinancialSystemDocumentType()={}",
+                    glpeItem.getAccountNumber(), glpeItem.getFinancialObjectCode(), glpeItem.getCurrencyFormattedTransactionLedgerEntryAmount(),
+                    glpeItem.getFinancialBalanceTypeCode(), glpeItem.getFinancialDocumentTypeCode(), glpeItem.getTransactionDebitCreditCode(), 
+                    glpeItem.getTransactionEncumbranceUpdateCode(), glpeItem.getTransactionEntryProcessedTs(), glpeItem.getFinancialObjectTypeCode(), glpeItem.getFinancialSystemDocumentType());
+            LOG.info("");
+        }
+    }
+    
     /* Cornell Customization:
      * KualiCo 2023-04-19 version of the method had to be copied into this class due to base code's restrictive scope.
      * 

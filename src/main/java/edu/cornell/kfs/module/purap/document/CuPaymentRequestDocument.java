@@ -131,22 +131,44 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     }
     
     @Override
-    public void populateDocumentForRouting() {
+    public void populateDocumentForRouting() { //nkk this is where the problem is -- remove have no bank entries; leave in have double.
     	super.populateDocumentForRouting();
+    	LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: Cornell mod when paymentMethod is wire, draft, internalBilling: code executed after super call");
+    	
     	// KFSPTS-1891
-    	if (this.getDocumentHeader().getWorkflowDocument().isProcessed() && !PaymentRequestStatuses.APPDOC_AUTO_APPROVED.equals(getApplicationDocumentStatus())) {
-
+    	if (this.getDocumentHeader().getWorkflowDocument().isProcessed() 
+    	        && !PaymentRequestStatuses.APPDOC_AUTO_APPROVED.equals(getApplicationDocumentStatus())) {
+    	    
+    	    LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: Taking IF-path: detected IS Processed edoc that was NOT Auto-approved");
+    	    LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: Taking IF-path: this.getDocumentHeader()={}  getApplicationDocumentStatus={}", this.getDocumentHeader().getWorkflowDocumentTypeName(), getApplicationDocumentStatus());
+    	    LOG.info(" ");
     		//generate bank offsets for payment method wire or foreign draft, reverse 2900 to 1000
     		final String paymentMethodCode = getPaymentMethodCode();
-    		if(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT.equalsIgnoreCase(paymentMethodCode) || KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE.equalsIgnoreCase(paymentMethodCode) || CUKFSConstants.CuPaymentSourceConstants.PAYMENT_METHOD_INTERNAL_BILLING.equalsIgnoreCase(paymentMethodCode)){
+    		if(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT.equalsIgnoreCase(paymentMethodCode)
+    		        || KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE.equalsIgnoreCase(paymentMethodCode)
+    		        || CUKFSConstants.CuPaymentSourceConstants.PAYMENT_METHOD_INTERNAL_BILLING.equalsIgnoreCase(paymentMethodCode)){
+    		    LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: Taking IF-path: TO generate bank offsets for payment method wire or foreign draft, reverse 2900 to 1000");
+    		    LOG.info(" ");
     			getPaymentMethodGeneralLedgerPendingEntryService().generateFinalEntriesForPRNC(this);
+    		} else {
+    		    LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: ELSE-path added for logging NOOP: PRNC type document needing bank reversals NOT detected.");
+                LOG.info(" ");
     		}
-
+    		
+    		logGlpesForDebugging("populateDocumentForRouting with GLPE values===> ", getGeneralLedgerPendingEntries());
+    		LOG.info(" ");
     		// KFSPTS-2581 : GLPE need to be saved separately because not in ojb config
     		// All GLPE approve cd has been set to 'A'
     		saveGeneralLedgerPendingEntries();
+    	} else {
+    	    LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: ELSE-path added NO-OP: NO CALL BEING MADE TO getPaymentMethodGeneralLedgerPendingEntryService().generateFinalEntriesForPRNC(this);");
+    	    LOG.info(" ");
     	}
+    	
+    	LOG.info("CuPaymentRequestDocument.populateDocumentForRouting: leaving: this.getDocumentHeader().getWorkflowDocumentStatusCode()={}", this.getDocumentHeader().getWorkflowDocumentStatusCode());
     }
+    
+
     
     protected void saveGeneralLedgerPendingEntries() {
     	// All the approve cd is set to 'A' by glpepostingdocument
@@ -208,25 +230,27 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     }
     
     public void doActionTaken(final ActionTakenEvent event) {
+        LOG.info("CuPaymentRequestDocument.doActionTaken:: Removed all code in Cornell's customization for method. Was EXACTLY SAME AS SUPER CLASS.  Just calling super class method. WOULD NEED TO MAKE THIS AS A CODE CHANGE.");
         super.doActionTaken(event);
-        final WorkflowDocument workflowDocument = getDocumentHeader().getWorkflowDocument();
-        String currentNode = null;
-        final Set<String> currentNodes = workflowDocument.getCurrentNodeNames();
-        if (CollectionUtils.isNotEmpty(currentNodes)) {
-            final Object[] names = currentNodes.toArray();
-            if (names.length > 0) {
-                currentNode = (String)names[0];
-            }
-        }
-
-        // everything in the below list requires correcting entries to be written to the GL
-            if (PaymentRequestStatuses.getNodesRequiringCorrectingGeneralLedgerEntries().contains(currentNode)) {
-            	// KFSPTS-2598 : Treasury also can 'calculate'
-                if (PaymentRequestStatuses.NODE_ACCOUNT_REVIEW.equals(currentNode) || PaymentRequestStatuses.NODE_VENDOR_TAX_REVIEW.equals(currentNode)
-                		|| PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW.equals(currentNode)) {
-                    SpringContext.getBean(PurapGeneralLedgerService.class).generateEntriesModifyPaymentRequest(this);
-                }
-            }
+        
+//        final WorkflowDocument workflowDocument = getDocumentHeader().getWorkflowDocument();
+//        String currentNode = null;
+//        final Set<String> currentNodes = workflowDocument.getCurrentNodeNames();
+//        if (CollectionUtils.isNotEmpty(currentNodes)) {
+//            final Object[] names = currentNodes.toArray();
+//            if (names.length > 0) {
+//                currentNode = (String)names[0];
+//            }
+//        }
+//
+//        // everything in the below list requires correcting entries to be written to the GL
+//            if (PaymentRequestStatuses.getNodesRequiringCorrectingGeneralLedgerEntries().contains(currentNode)) {
+//            	// KFSPTS-2598 : Treasury also can 'calculate'
+//                if (PaymentRequestStatuses.NODE_ACCOUNT_REVIEW.equals(currentNode) || PaymentRequestStatuses.NODE_VENDOR_TAX_REVIEW.equals(currentNode)
+//                		|| PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW.equals(currentNode)) {
+//                    SpringContext.getBean(PurapGeneralLedgerService.class).generateEntriesModifyPaymentRequest(this);
+//                }
+//            }
         }
 
     @Override
