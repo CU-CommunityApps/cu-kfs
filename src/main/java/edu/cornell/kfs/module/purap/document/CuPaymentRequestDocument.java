@@ -137,7 +137,8 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     	
     	// KFSPTS-1891
     	if (this.getDocumentHeader().getWorkflowDocument().isProcessed() 
-    	        && !PaymentRequestStatuses.APPDOC_AUTO_APPROVED.equals(getApplicationDocumentStatus())) {
+    	        && !PaymentRequestStatuses.APPDOC_AUTO_APPROVED.equals(getApplicationDocumentStatus())
+    	        && !paymentHasBeenExtractedAndPaid(this)) { //IfTimeStampsAreNoteSetExecuteThisBlock ) KFSPTS-34015
     	    
     	    LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: Taking IF-path: detected IS Processed edoc that was NOT Auto-approved");
     	    LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: Taking IF-path: this.getDocumentHeader()={}  getApplicationDocumentStatus={}", this.getDocumentHeader().getWorkflowDocumentTypeName(), getApplicationDocumentStatus());
@@ -169,6 +170,24 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     }
     
 
+    //Cornell customization KFSPTS-34015
+    //both timestamps will be null if the payment has not been extract and paid
+    protected boolean paymentHasBeenExtractedAndPaid(PaymentRequestDocument paymentRequestDocument) {
+        if (ObjectUtils.isNotNull(paymentRequestDocument.getExtractedTimestamp())
+                || ObjectUtils.isNotNull(paymentRequestDocument.getPaymentPaidTimestamp())) {
+            return true;
+        }
+        return false;
+    }
+    
+//    new method boolean ifTimeStampsSet
+//    {
+//        retrun both null ==> execute the block
+//        if either not null do not execute ==> 
+//        paymentRequestDocument.setExtractedTimestamp(dateTimeService.getTimestamp(runDateTime));
+//        paymentRequestDocument.setPaymentPaidTimestamp(dateTimeService.getTimestamp(runDateTime));
+//    }
+    
     
     protected void saveGeneralLedgerPendingEntries() {
     	// All the approve cd is set to 'A' by glpepostingdocument

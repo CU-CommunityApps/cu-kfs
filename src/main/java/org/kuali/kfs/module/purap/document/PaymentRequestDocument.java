@@ -753,8 +753,8 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
                 populateDocumentForRouting();
                 updateAndSaveAppDocStatus(PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED);
             }
-            //GLPE issue, try removing code that may duplicate entries
-            //getPurapGeneralLedgerService().generateEntriesProcessedPaymentRequest(this);
+            //GLPE issue, try removing code that may duplicate entries FIRST FIX
+            //getPurapGeneralLedgerService().generateEntriesProcessedPaymentRequest(this);  commenting out is FIRST FIX
             LOG.info("PaymentRequestDocument.doRouteStatusChange() REMOVED: getPurapGeneralLedgerService().generateEntriesProcessedPaymentRequest(this");
             final boolean isExternal =
                     KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_EXTERNAL.equals(paymentMethodCode);
