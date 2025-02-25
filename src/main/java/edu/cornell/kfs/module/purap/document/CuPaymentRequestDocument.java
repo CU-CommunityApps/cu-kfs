@@ -2,7 +2,6 @@ package edu.cornell.kfs.module.purap.document;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -10,8 +9,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.kew.api.WorkflowDocument;
-import org.kuali.kfs.kew.framework.postprocessor.ActionTakenEvent;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.kfs.kns.service.DocumentHelperService;
@@ -25,7 +22,6 @@ import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderView;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
-import org.kuali.kfs.module.purap.service.PurapGeneralLedgerService;
 import org.kuali.kfs.module.purap.util.ExpiredOrClosedAccountEntry;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
@@ -135,7 +131,9 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     public void populateDocumentForRouting() {
     	super.populateDocumentForRouting();
     	// KFSPTS-1891
-    	if (this.getDocumentHeader().getWorkflowDocument().isProcessed() && !PaymentRequestStatuses.APPDOC_AUTO_APPROVED.equals(getApplicationDocumentStatus())) {
+    	if (this.getDocumentHeader().getWorkflowDocument().isProcessed() 
+    	        && !PaymentRequestStatuses.APPDOC_AUTO_APPROVED.equals(getApplicationDocumentStatus())
+    	        && !paymentHasBeenExtractedOrPaid()) {
 
     		//generate bank offsets for payment method wire or foreign draft, reverse 2900 to 1000
     		final String paymentMethodCode = getPaymentMethodCode();
@@ -147,6 +145,26 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     		// All GLPE approve cd has been set to 'A'
     		saveGeneralLedgerPendingEntries();
     	}
+    }
+    
+    /* Cornell Customization : KFSPTS-34015
+     * We needed local fixes due to changes introduced by the KualiCo 2023-04-19 Upgrade patch changes.
+     * 
+     * In that patch, method org.kuali.kfs.module.purap.document.PaymentRequestDocument.doRouteStatusChange 
+     * introduced the following service call
+     *       getPdpExtractService().extractPaymentRequestDocument(this);
+     * which saves the paymentRequestDocument to record the extracted and paid timestamps resulting in 
+     * cash offset GL entries being duplicated.
+     * This GL duplicate entry issue was because method populateDocumentForRouting is invoked after a 
+     * docuemnt is saved. This check was added to the method so that populateDocumentForRouting prevented
+     * from executing after the wire extraction process was run.
+     */
+    protected boolean paymentHasBeenExtractedOrPaid() {
+        if (ObjectUtils.isNotNull(getExtractedTimestamp())
+                    || ObjectUtils.isNotNull(getPaymentPaidTimestamp())) {
+            return true;
+        }
+        return false;
     }
     
     protected void saveGeneralLedgerPendingEntries() {
@@ -208,28 +226,6 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         }
     }
     
-    public void doActionTaken(final ActionTakenEvent event) {
-        super.doActionTaken(event);
-        final WorkflowDocument workflowDocument = getDocumentHeader().getWorkflowDocument();
-        String currentNode = null;
-        final Set<String> currentNodes = workflowDocument.getCurrentNodeNames();
-        if (CollectionUtils.isNotEmpty(currentNodes)) {
-            final Object[] names = currentNodes.toArray();
-            if (names.length > 0) {
-                currentNode = (String)names[0];
-            }
-        }
-
-        // everything in the below list requires correcting entries to be written to the GL
-            if (PaymentRequestStatuses.getNodesRequiringCorrectingGeneralLedgerEntries().contains(currentNode)) {
-            	// KFSPTS-2598 : Treasury also can 'calculate'
-                if (PaymentRequestStatuses.NODE_ACCOUNT_REVIEW.equals(currentNode) || PaymentRequestStatuses.NODE_VENDOR_TAX_REVIEW.equals(currentNode)
-                		|| PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW.equals(currentNode)) {
-                    SpringContext.getBean(PurapGeneralLedgerService.class).generateEntriesModifyPaymentRequest(this);
-                }
-            }
-        }
-
     @Override
     public List<String> getWorkflowEngineDocumentIdsToLock() {
         final Stream<String> otherDocIdsToLock = Stream.of(super.getWorkflowEngineDocumentIdsToLock())
