@@ -57,24 +57,24 @@ public abstract class TaxDtoRowMapperBase<T, U> implements TaxDtoRowMapper<T, U>
 
     protected abstract void prepareCurrentRowForUpdate(final U dtoContainingUpdates) throws SQLException;
 
-    protected String getColumnLabel(final TaxDtoFieldEnum fieldDefinition) {
-        return metadata.getFullColumnLabel(fieldDefinition);
+    protected String getColumnAlias(final TaxDtoFieldEnum fieldDefinition) {
+        return metadata.getColumnAlias(fieldDefinition);
     }
 
     protected String getString(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
-        return resultSet.getString(getColumnLabel(fieldDefinition));
+        return resultSet.getString(getColumnAlias(fieldDefinition));
     }
 
     protected int getInt(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
-        return resultSet.getInt(getColumnLabel(fieldDefinition));
+        return resultSet.getInt(getColumnAlias(fieldDefinition));
     }
 
     protected long getLong(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
-        return resultSet.getLong(getColumnLabel(fieldDefinition));
+        return resultSet.getLong(getColumnAlias(fieldDefinition));
     }
 
     protected java.sql.Date getDate(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
-        return resultSet.getDate(getColumnLabel(fieldDefinition));
+        return resultSet.getDate(getColumnAlias(fieldDefinition));
     }
 
     protected String getAndDecryptString(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
@@ -98,7 +98,7 @@ public abstract class TaxDtoRowMapperBase<T, U> implements TaxDtoRowMapper<T, U>
     }
 
     protected KualiDecimal getKualiDecimal(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
-        final BigDecimal value = resultSet.getBigDecimal(getColumnLabel(fieldDefinition));
+        final BigDecimal value = resultSet.getBigDecimal(getColumnAlias(fieldDefinition));
         return (value != null) ? new KualiDecimal(value) : null;
     }
 
@@ -108,7 +108,7 @@ public abstract class TaxDtoRowMapperBase<T, U> implements TaxDtoRowMapper<T, U>
     }
 
     protected void updateString(final TaxDtoFieldEnum fieldDefinition, final String value) throws SQLException {
-        resultSet.updateString(getColumnLabel(fieldDefinition), value);
+        resultSet.updateString(getColumnAlias(fieldDefinition), value);
     }
 
 }

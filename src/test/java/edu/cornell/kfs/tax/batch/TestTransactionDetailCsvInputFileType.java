@@ -16,6 +16,9 @@ import edu.cornell.kfs.sys.util.TestDateUtils;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail.TransactionDetailField;
 
+/**
+ * Convenience class for generating a list of TransactionDetail objects from a CSV file.
+ */
 public class TestTransactionDetailCsvInputFileType extends CsvBatchInputFileTypeBase<TransactionDetailField> {
 
     public static final String IDENTIFIER = "testTransactionDetailSourceData";

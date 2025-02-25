@@ -15,6 +15,10 @@ public interface TaxDtoFieldEnum {
         return name();
     }
 
+    default boolean needsExplicitAlias() {
+        return false;
+    }
+
     Class<? extends BusinessObject> getMappedBusinessObjectClass();
 
 }

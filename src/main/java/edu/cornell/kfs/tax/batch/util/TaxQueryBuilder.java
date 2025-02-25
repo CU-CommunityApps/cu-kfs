@@ -50,21 +50,31 @@ public class TaxQueryBuilder {
 
     public TaxQueryBuilder selectAllMappedFields() {
         final Class<? extends TaxDtoFieldEnum> enumClass = mappingMetadata.getFieldEnumClass();
-        final Stream<String> columnLabels = Arrays.stream(enumClass.getEnumConstants())
-                .map(this::getColumnLabel);
-        return select(columnLabels);
+        final Stream<TaxDtoFieldEnum> fields = Arrays.stream(enumClass.getEnumConstants());
+        return select(fields);
     }
 
     public TaxQueryBuilder select(final TaxDtoFieldEnum... fields) {
-        final Stream<String> columnLabels = Stream.of(fields)
-                .map(this::getColumnLabel);
-        return select(columnLabels);
+        return select(Stream.of(fields));
     }
 
-    protected TaxQueryBuilder select(final Stream<String> columnLabels) {
-        final String columnList = columnLabels.collect(Collectors.joining(CUKFSConstants.COMMA_AND_SPACE));
+    protected TaxQueryBuilder select(final Stream<TaxDtoFieldEnum> fields) {
+        final String columnList = fields.map(this::getPotentiallyAliasedColumnLabelForSelectClause)
+                .collect(Collectors.joining(CUKFSConstants.COMMA_AND_SPACE));
         sqlChunk.append("SELECT ", columnList);
         return this;
+    }
+
+    protected String getPotentiallyAliasedColumnLabelForSelectClause(final TaxDtoFieldEnum field) {
+        if (field.needsExplicitAlias()) {
+            final String fullLabel = getColumnLabel(field);
+            final String alias = mappingMetadata.getColumnAlias(field);
+            Validate.notBlank(alias, "Unexpected blank alias for field: " + field.name());
+            return StringUtils.join(fullLabel, KFSConstants.BLANK_SPACE,
+                    CUKFSConstants.DOUBLE_QUOTE, alias, CUKFSConstants.DOUBLE_QUOTE);
+        } else {
+            return getColumnLabel(field);
+        }
     }
 
     public TaxQueryBuilder from(final Class<? extends BusinessObject> baseBusinessObjectClass) {

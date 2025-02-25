@@ -61,7 +61,7 @@ public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDa
     }
     
     protected <T> T queryForUpdatableResults(final CuSqlQuery sqlQuery, ResultSetExtractor<T> resultSetExtractor) {
-        return queryForResults(sqlQuery, resultSetExtractor, true);
+        return queryForUpdatableResults(sqlQuery, resultSetExtractor, true);
     }
     
     protected <T> T queryForUpdatableResults(final CuSqlQuery sqlQuery, ResultSetExtractor<T> resultSetExtractor,
