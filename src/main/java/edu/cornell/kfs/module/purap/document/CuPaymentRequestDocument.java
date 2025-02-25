@@ -134,38 +134,38 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     public void populateDocumentForRouting() { //nkk this is where the problem is -- remove have no bank entries; leave in have double.
     	super.populateDocumentForRouting();
     	LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: Cornell mod when paymentMethod is wire, draft, internalBilling: code executed after super call");
-    	
-    	// KFSPTS-1891
-    	if (this.getDocumentHeader().getWorkflowDocument().isProcessed() 
-    	        && !PaymentRequestStatuses.APPDOC_AUTO_APPROVED.equals(getApplicationDocumentStatus())) {
-    	    
-    	    LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: Taking IF-path: detected IS Processed edoc that was NOT Auto-approved");
-    	    LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: Taking IF-path: this.getDocumentHeader()={}  getApplicationDocumentStatus={}", this.getDocumentHeader().getWorkflowDocumentTypeName(), getApplicationDocumentStatus());
-    	    LOG.info(" ");
-    		//generate bank offsets for payment method wire or foreign draft, reverse 2900 to 1000
-    		final String paymentMethodCode = getPaymentMethodCode();
-    		if(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT.equalsIgnoreCase(paymentMethodCode)
-    		        || KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE.equalsIgnoreCase(paymentMethodCode)
-    		        || CUKFSConstants.CuPaymentSourceConstants.PAYMENT_METHOD_INTERNAL_BILLING.equalsIgnoreCase(paymentMethodCode)){
-    		    LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: Taking IF-path: TO generate bank offsets for payment method wire or foreign draft, reverse 2900 to 1000");
-    		    LOG.info(" ");
-    			getPaymentMethodGeneralLedgerPendingEntryService().generateFinalEntriesForPRNC(this);
-    		} else {
-    		    LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: ELSE-path added for logging NOOP: PRNC type document needing bank reversals NOT detected.");
-                LOG.info(" ");
-    		}
-    		
-    		logGlpesForDebugging("populateDocumentForRouting with GLPE values===> ", getGeneralLedgerPendingEntries());
-    		LOG.info(" ");
-    		// KFSPTS-2581 : GLPE need to be saved separately because not in ojb config
-    		// All GLPE approve cd has been set to 'A'
-    		saveGeneralLedgerPendingEntries();
-    	} else {
-    	    LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: ELSE-path added NO-OP: NO CALL BEING MADE TO getPaymentMethodGeneralLedgerPendingEntryService().generateFinalEntriesForPRNC(this);");
-    	    LOG.info(" ");
-    	}
-    	
-    	LOG.info("CuPaymentRequestDocument.populateDocumentForRouting: leaving: this.getDocumentHeader().getWorkflowDocumentStatusCode()={}", this.getDocumentHeader().getWorkflowDocumentStatusCode());
+//    	
+//    	// KFSPTS-1891
+//    	if (this.getDocumentHeader().getWorkflowDocument().isProcessed() 
+//    	        && !PaymentRequestStatuses.APPDOC_AUTO_APPROVED.equals(getApplicationDocumentStatus())) {
+//    	    
+//    	    LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: Taking IF-path: detected IS Processed edoc that was NOT Auto-approved");
+//    	    LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: Taking IF-path: this.getDocumentHeader()={}  getApplicationDocumentStatus={}", this.getDocumentHeader().getWorkflowDocumentTypeName(), getApplicationDocumentStatus());
+//    	    LOG.info(" ");
+//    		//generate bank offsets for payment method wire or foreign draft, reverse 2900 to 1000
+//    		final String paymentMethodCode = getPaymentMethodCode();
+//    		if(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT.equalsIgnoreCase(paymentMethodCode)
+//    		        || KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE.equalsIgnoreCase(paymentMethodCode)
+//    		        || CUKFSConstants.CuPaymentSourceConstants.PAYMENT_METHOD_INTERNAL_BILLING.equalsIgnoreCase(paymentMethodCode)){
+//    		    LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: Taking IF-path: TO generate bank offsets for payment method wire or foreign draft, reverse 2900 to 1000");
+//    		    LOG.info(" ");
+//    			getPaymentMethodGeneralLedgerPendingEntryService().generateFinalEntriesForPRNC(this);
+//    		} else {
+//    		    LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: ELSE-path added for logging NOOP: PRNC type document needing bank reversals NOT detected.");
+//                LOG.info(" ");
+//    		}
+//    		
+//    		logGlpesForDebugging("populateDocumentForRouting with GLPE values===> ", getGeneralLedgerPendingEntries());
+//    		LOG.info(" ");
+//    		// KFSPTS-2581 : GLPE need to be saved separately because not in ojb config
+//    		// All GLPE approve cd has been set to 'A'
+//    		saveGeneralLedgerPendingEntries();
+//    	} else {
+//    	    LOG.info("CuPaymentRequestDocument.populateDocumentForRouting :::: ELSE-path added NO-OP: NO CALL BEING MADE TO getPaymentMethodGeneralLedgerPendingEntryService().generateFinalEntriesForPRNC(this);");
+//    	    LOG.info(" ");
+//    	}
+//    	
+//    	LOG.info("CuPaymentRequestDocument.populateDocumentForRouting: leaving: this.getDocumentHeader().getWorkflowDocumentStatusCode()={}", this.getDocumentHeader().getWorkflowDocumentStatusCode());
     }
     
 
