@@ -9,6 +9,7 @@ import java.net.URLConnection;
 import java.util.Collection;
 import java.util.Locale;
 
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.Response;
@@ -69,8 +70,7 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
                 throw new ValidationException(UNABLE_TO_DOWNLOAD_ATTACHMENT_MESSAGE + accountingXmlDocumentBackupLink.getLinkUrl());
             }
         } catch (IOException e) {
-            LOG.error("createAttachmentFromBackupLink, Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl(), e);
-            throw new ValidationException(UNABLE_TO_DOWNLOAD_ATTACHMENT_MESSAGE + accountingXmlDocumentBackupLink.getLinkUrl());
+            return handleFileException(e, accountingXmlDocumentBackupLink);
         } catch (IllegalArgumentException iae) {
             if (StringUtils.equalsIgnoreCase(CUKFSConstants.ANTIVIRUS_FAILED_MESSAGE, iae.getMessage())) {
                 throw new ValidationException("Unable to download attachment due to failing antivirus scan: " + accountingXmlDocumentBackupLink.getLinkUrl());
@@ -78,7 +78,14 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
                 LOG.error("createAttachmentFromBackupLink, Unable to download attachment due to illegal argument exception: " + accountingXmlDocumentBackupLink.getLinkUrl(), iae);
                 throw new ValidationException(UNABLE_TO_DOWNLOAD_ATTACHMENT_MESSAGE + accountingXmlDocumentBackupLink.getLinkUrl());
             }
+        } catch (ProcessingException processingException) {
+            return handleFileException(processingException, accountingXmlDocumentBackupLink);
         }
+    }
+
+    protected Attachment handleFileException(Exception e, AccountingXmlDocumentBackupLink backupDocLink) throws ValidationException {
+        LOG.error("createAttachmentFromBackupLink, Unable to download attachment: " + backupDocLink.getLinkUrl(), e);
+        throw new ValidationException(UNABLE_TO_DOWNLOAD_ATTACHMENT_MESSAGE + backupDocLink.getLinkUrl());
     }
 
     protected String findMimeType(String uploadFileName) {
