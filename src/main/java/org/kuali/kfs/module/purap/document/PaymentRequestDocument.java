@@ -735,6 +735,9 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
         return "";
     }
 
+    /* Cornell Customization : KFSPTS-34015
+     * We needed local fixes due to changes introduced by the KualiCo 2023-04-19 Upgrade patch changes.
+     */
     @Override
     public void doRouteStatusChange(final DocumentRouteStatusChange statusChangeEvent) {
         LOG.debug("doRouteStatusChange() started");
@@ -748,13 +751,16 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
         if (isAutoApprovedIndicator()) {
             updateAndSaveAppDocStatus(PaymentRequestStatuses.APPDOC_AUTO_APPROVED);
             // DOCUMENT PROCESSED .. //KFSCNTRB-1207 - UMD - Muddu -- end
-        }
-        if (getDocumentHeader().getWorkflowDocument().isProcessed()) {
+        } else if (getDocumentHeader().getWorkflowDocument().isProcessed()) {
+          // Cornell Customization : KFSPTS-34015: Made above line "else if" to be logic prior to 202304-19 changes.
+
             if (!PaymentRequestStatuses.APPDOC_AUTO_APPROVED.equals(getApplicationDocumentStatus())) {
                 populateDocumentForRouting();
                 updateAndSaveAppDocStatus(PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED);
             }
-            getPurapGeneralLedgerService().generateEntriesProcessedPaymentRequest(this);
+            // Cornell Customization : KFSPTS-34015:
+            //The line of code below need to be commented out to prevent mulitple GLPEs from being generated.
+            //getPurapGeneralLedgerService().generateEntriesProcessedPaymentRequest(this);
             final boolean isExternal =
                     KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_EXTERNAL.equals(paymentMethodCode);
             final boolean isWireTransfer =
