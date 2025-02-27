@@ -770,11 +770,6 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         return null;
     }
 
-    /*
-     * CU Customization KFSPTS-27212: UCI local fix KFS-2775 for FINP-9026
-     * Fix for Cost Reimbursable CINV where cumulative expendature in invoice
-     * detail is incorrect when expenditures contain sub-accounts. 
-     */
     /**
      * Updates the appropriate amounts for the InvoiceDetailAccountObjectCode matching the given balance
      *
@@ -800,12 +795,8 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                 ArConstants.BillingFrequencyValues.isLetterOfCredit(invoiceGeneralDetail)) {
                 final KualiDecimal balanceAmount =
                         contractsGrantsInvoiceDocumentService.calculateCumulativeBalanceAmount(balance);
-                
-                /* CU Customization KFSPTS-27212 */    
-                //invoiceDetailAccountObjectCode.setCumulativeExpenditures(balanceAmount);
                 invoiceDetailAccountObjectCode.setCumulativeExpenditures(invoiceDetailAccountObjectCode.getCumulativeExpenditures()
                         .add(balanceAmount));
-
             } else {
                 // For other billing frequencies
                 cleanAmount(balance.getContractsGrantsBeginningBalanceAmount()).add(
