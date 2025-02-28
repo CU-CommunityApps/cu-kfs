@@ -20,8 +20,8 @@ Total Vendors Representing Active Employees with Upcoming Termination Dates: 0
 ***********************************************************************************************************************
 
 
-Vendor ID        Vendor Type    Employee ID    NetID         Active    Last Hired    Last Terminated    Pending Termination Date
+    Vendor ID    Vendor Type    Employee ID    NetID         Active    Last Hired    Last Terminated    Pending Termination Date
 -------------    -----------    -----------    ----------    ------    ----------    ---------------    ------------------------
 
-12345-0          DV             5544332        jd111         Yes       2023-01-01    N/A                N/A                     
+      12345-0    DV             5544332        jd111         Yes       2023-01-01    N/A                N/A                     
 
