@@ -186,9 +186,6 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
 
         // send list of warnings
         paymentFileEmailService.sendLoadEmail(paymentFile, warnings);
-        if (paymentFile.isTaxEmailRequired()) {
-            paymentFileEmailService.sendTaxEmail(paymentFile);
-        }
 
         removeDoneFile(incomingFileName);
 

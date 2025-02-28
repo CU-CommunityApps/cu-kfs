@@ -1377,6 +1377,25 @@
             </pattern>
         </pattern>
         <pattern>
+            <class>org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity</class>
+            <pattern>
+                <match>extension</match>
+                <replacement>()MOVE_MARKED_NODES_TO_PARENT)</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorSupplierDiversityExpirationDate</match>
+                <replacement>certificationExpirationDate</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorHeaderGeneratedIdentifier</match>
+                <replacement>vendorHeaderGeneratedIdentifier</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorSupplierDiversityCode</match>
+                <replacement>vendorSupplierDiversityCode</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
             <class>edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension</class>
             <pattern>
                 <match>vendorW9ReceivedDate</match>

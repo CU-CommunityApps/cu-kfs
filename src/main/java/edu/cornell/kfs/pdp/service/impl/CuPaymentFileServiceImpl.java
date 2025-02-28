@@ -84,9 +84,6 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
 
         // send list of warnings
         paymentFileEmailService.sendLoadEmail(paymentFile, warnings);
-        if (paymentFile.isTaxEmailRequired()) {
-            paymentFileEmailService.sendTaxEmail(paymentFile);
-        }
 
         removeDoneFile(incomingFileName);
 

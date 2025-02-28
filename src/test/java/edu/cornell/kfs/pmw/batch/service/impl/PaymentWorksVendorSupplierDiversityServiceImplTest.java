@@ -19,7 +19,6 @@ import org.mockito.Mockito;
 import edu.cornell.kfs.pmw.batch.businessobject.KfsToPMWSupplierDiversityDTO;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.dataaccess.KfsSupplierDiversityDao;
-import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 
 class PaymentWorksVendorSupplierDiversityServiceImplTest {
     private static final String DAV_DESCRIPTION = "Disabled Veteran Owned Business";
@@ -133,8 +132,6 @@ class PaymentWorksVendorSupplierDiversityServiceImplTest {
         assertEquals(1, actualDiversities.size());
         VendorSupplierDiversity diversity = actualDiversities.get(0);
         assertEquals(EIGHT_A_CODE, diversity.getVendorSupplierDiversityCode());
-        CuVendorSupplierDiversityExtension diversityExtension = (CuVendorSupplierDiversityExtension) diversity.getExtension();
-        assertEquals(EIGHT_A_CODE, diversityExtension.getVendorSupplierDiversityCode());
     }
     
     @Test
