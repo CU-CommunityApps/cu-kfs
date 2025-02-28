@@ -37,6 +37,7 @@ import edu.cornell.kfs.sys.service.impl.DisposableClientServiceImplBase;
 public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends DisposableClientServiceImplBase implements AccountingXmlDocumentDownloadAttachmentService, DisposableBean {
     private static final Logger LOG = LogManager.getLogger(AccountingXmlDocumentDownloadAttachmentServiceImpl.class);
     private static final String UNABLE_TO_DOWNLOAD_ATTACHMENT_MESSAGE = "Unable to download attachment: ";
+    private static final String SSL_HANDSHAKE_ERROR_MESSAGE = "When attempting to download the backup documentation url %s, the following error was encountered. Please contact your IT support.\n%s";
 
     protected AttachmentService attachmentService;
     protected WebServiceCredentialService webServiceCredentialService;
@@ -70,7 +71,8 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
                 throw new ValidationException(UNABLE_TO_DOWNLOAD_ATTACHMENT_MESSAGE + accountingXmlDocumentBackupLink.getLinkUrl());
             }
         } catch (IOException e) {
-            return handleFileException(e, accountingXmlDocumentBackupLink);
+            LOG.error("createAttachmentFromBackupLink, Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl(), e);
+            throw new ValidationException(UNABLE_TO_DOWNLOAD_ATTACHMENT_MESSAGE + accountingXmlDocumentBackupLink.getLinkUrl());
         } catch (IllegalArgumentException iae) {
             if (StringUtils.equalsIgnoreCase(CUKFSConstants.ANTIVIRUS_FAILED_MESSAGE, iae.getMessage())) {
                 throw new ValidationException("Unable to download attachment due to failing antivirus scan: " + accountingXmlDocumentBackupLink.getLinkUrl());
@@ -79,13 +81,11 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
                 throw new ValidationException(UNABLE_TO_DOWNLOAD_ATTACHMENT_MESSAGE + accountingXmlDocumentBackupLink.getLinkUrl());
             }
         } catch (ProcessingException processingException) {
-            return handleFileException(processingException, accountingXmlDocumentBackupLink);
-        }
-    }
+            LOG.error("createAttachmentFromBackupLink, Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl(), processingException);
 
-    protected Attachment handleFileException(Exception e, AccountingXmlDocumentBackupLink backupDocLink) throws ValidationException {
-        LOG.error("createAttachmentFromBackupLink, Unable to download attachment: " + backupDocLink.getLinkUrl(), e);
-        throw new ValidationException(UNABLE_TO_DOWNLOAD_ATTACHMENT_MESSAGE + backupDocLink.getLinkUrl());
+            String errorMessage = String.format(SSL_HANDSHAKE_ERROR_MESSAGE, accountingXmlDocumentBackupLink.getLinkUrl(), processingException.getMessage());
+            throw new ValidationException(errorMessage);
+        }
     }
 
     protected String findMimeType(String uploadFileName) {
