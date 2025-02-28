@@ -9,6 +9,7 @@ import java.net.URLConnection;
 import java.util.Collection;
 import java.util.Locale;
 
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.Response;
@@ -36,6 +37,7 @@ import edu.cornell.kfs.sys.service.impl.DisposableClientServiceImplBase;
 public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends DisposableClientServiceImplBase implements AccountingXmlDocumentDownloadAttachmentService, DisposableBean {
     private static final Logger LOG = LogManager.getLogger(AccountingXmlDocumentDownloadAttachmentServiceImpl.class);
     private static final String UNABLE_TO_DOWNLOAD_ATTACHMENT_MESSAGE = "Unable to download attachment: ";
+    private static final String SSL_HANDSHAKE_ERROR_MESSAGE = "When attempting to download the backup documentation url %s, the following error was encountered. Please contact your IT support.\n%s";
 
     protected AttachmentService attachmentService;
     protected WebServiceCredentialService webServiceCredentialService;
@@ -78,6 +80,11 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
                 LOG.error("createAttachmentFromBackupLink, Unable to download attachment due to illegal argument exception: " + accountingXmlDocumentBackupLink.getLinkUrl(), iae);
                 throw new ValidationException(UNABLE_TO_DOWNLOAD_ATTACHMENT_MESSAGE + accountingXmlDocumentBackupLink.getLinkUrl());
             }
+        } catch (ProcessingException processingException) {
+            LOG.error("createAttachmentFromBackupLink, Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl(), processingException);
+
+            String errorMessage = String.format(SSL_HANDSHAKE_ERROR_MESSAGE, accountingXmlDocumentBackupLink.getLinkUrl(), processingException.getMessage());
+            throw new ValidationException(errorMessage);
         }
     }
 
