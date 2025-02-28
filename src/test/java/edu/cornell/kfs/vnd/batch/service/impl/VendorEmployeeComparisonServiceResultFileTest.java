@@ -14,9 +14,10 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,12 +38,14 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.mockito.Mockito;
 
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 import edu.cornell.kfs.sys.util.CreateTestDirectories;
+import edu.cornell.kfs.sys.util.CuMockBuilder;
 import edu.cornell.kfs.sys.util.FixtureUtils;
 import edu.cornell.kfs.sys.util.SpringXmlTestBeanFactoryMethod;
 import edu.cornell.kfs.sys.util.TestSpringContextExtension;
@@ -53,6 +56,7 @@ import edu.cornell.kfs.vnd.batch.service.impl.annotation.VendorComparisonResult;
 import edu.cornell.kfs.vnd.batch.service.impl.annotation.VendorComparisonResultRow;
 import edu.cornell.kfs.vnd.batch.service.impl.fixture.VendorComparisonResultRowFixture;
 import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
+import edu.cornell.kfs.vnd.document.service.CUVendorService;
 
 @Execution(ExecutionMode.SAME_THREAD)
 @CreateTestDirectories(
@@ -80,27 +84,41 @@ public class VendorEmployeeComparisonServiceResultFileTest {
     static TestSpringContextExtension springContextExtension = TestSpringContextExtension.forClassPathSpringXmlFile(
             "edu/cornell/kfs/vnd/batch/service/impl/cu-spring-vnd-empl-comparison-result-test.xml");
 
-    private static Map<String, File> resultFileAndReportFilePairs;
-
     private VendorEmployeeComparisonService vendorEmployeeComparisonService;
-    private VendorEmployeeComparisonReportServiceImpl vendorEmployeeComparisonReportService;
+    private ConcurrentMap<String, File> resultFileAndReportFilePairs;
+    private ConcurrentMap<String, VendorDetail> vendorMappings;
 
+    @SuppressWarnings("unchecked")
     @BeforeEach
     void setUp() throws Exception {
-        resultFileAndReportFilePairs = new HashMap<>();
         vendorEmployeeComparisonService = springContextExtension.getBean(
                 VendorSpringBeans.VENDOR_EMPLOYEE_COMPARISON_SERVICE, VendorEmployeeComparisonService.class);
-        vendorEmployeeComparisonReportService = springContextExtension.getBean(
-                VendorSpringBeans.VENDOR_EMPLOYEE_COMPARISON_REPORT_SERVICE,
-                VendorEmployeeComparisonReportServiceImpl.class);
+        resultFileAndReportFilePairs = springContextExtension.getBean(
+                VendorSpringBeans.RESULT_FILE_AND_REPORT_FILE_PAIRS, ConcurrentMap.class);
+        vendorMappings = springContextExtension.getBean(VendorSpringBeans.VENDOR_MAPPINGS, ConcurrentMap.class);
+
+        resultFileAndReportFilePairs.clear();
+        vendorMappings.clear();
     }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        vendorMappings = null;
+        resultFileAndReportFilePairs = null;
+        vendorEmployeeComparisonService = null;
+    }
+
+
 
     @SpringXmlTestBeanFactoryMethod
-    public static BiConsumer<String, File> buildTestReportFileTracker() {
-        return (resultFile, reportFile) -> trackResultFileAndReportFilePair(resultFile, reportFile);
+    public static BiConsumer<String, File> buildTestReportFileTracker(
+            final ConcurrentMap<String, File> resultFileAndReportFilePairs) {
+        return (resultFile, reportFile) -> trackResultFileAndReportFilePair(resultFile, reportFile,
+                resultFileAndReportFilePairs);
     }
 
-    private static void trackResultFileAndReportFilePair(final String resultFile, final File reportFile) {
+    private static void trackResultFileAndReportFilePair(final String resultFile, final File reportFile,
+            final ConcurrentMap<String, File> resultFileAndReportFilePairs) {
         assertFalse(resultFileAndReportFilePairs.containsKey(resultFile),
                 "Unexpected attempt to track the following result file twice: " + resultFile);
         resultFileAndReportFilePairs.put(resultFile, reportFile);
@@ -121,20 +139,26 @@ public class VendorEmployeeComparisonServiceResultFileTest {
         return Mockito.mock(ParameterService.class);
     }
 
-    @AfterEach
-    void tearDown() throws Exception {
-        cleanUpReportServiceQuietly();
-        vendorEmployeeComparisonReportService = null;
-        vendorEmployeeComparisonService = null;
-        resultFileAndReportFilePairs = null;
+    @SpringXmlTestBeanFactoryMethod
+    public static ConcurrentMap<String, File> buildMapForResultFileAndReportFilePairs() {
+        return new ConcurrentHashMap<>();
     }
 
-    private void cleanUpReportServiceQuietly() {
-        try {
-            vendorEmployeeComparisonReportService.manuallyCleanUpInternalReportWriter();
-        } catch (Exception e) {
-            // Ignore
-        }
+    @SpringXmlTestBeanFactoryMethod
+    public static ConcurrentMap<String, VendorDetail> buildMapForVendorMappings() {
+        return new ConcurrentHashMap<>();
+    }
+
+    @SpringXmlTestBeanFactoryMethod
+    public static CUVendorService buildMockCUVendorService(final Map<String, VendorDetail> vendorMappings) {
+        return new CuMockBuilder<>(CUVendorService.class)
+                .withAnswer(
+                        vendorService -> vendorService.getByVendorNumber(Mockito.anyString()),
+                        invocation -> {
+                            final String vendorId = StringUtils.defaultString(invocation.getArgument(0));
+                            return vendorMappings.get(vendorId);
+                        })
+                .build();
     }
 
 
@@ -194,6 +218,16 @@ public class VendorEmployeeComparisonServiceResultFileTest {
         final String indexedValue = StringUtils.leftPad(
                 String.valueOf(testCaseFixture.index()), 2, '0');
         return MessageFormat.format(fileNamePattern, indexedValue);
+    }
+
+    private void populateVendorMappings(final VendorComparisonResult... fixtures) {
+        Stream.of(fixtures)
+                .flatMap(fixture -> Arrays.stream(fixture.csvDataRows()))
+                .distinct()
+                .map(fixture -> FixtureUtils.getAnnotationBasedFixture(fixture, VendorComparisonResultRow.class))
+                .filter(VendorComparisonResultRow.Converters::canConvertToVendorDetail)
+                .forEach(fixture -> vendorMappings.computeIfAbsent(
+                        fixture.vendorId(), key -> VendorComparisonResultRow.Converters.toVendorDetail(fixture)));
     }
 
 
@@ -375,6 +409,7 @@ public class VendorEmployeeComparisonServiceResultFileTest {
     void testSuccessfulFileProcessing(final VendorComparisonResult testCaseFixture) throws Exception {
         createTestCsvFile(testCaseFixture);
         createTestDoneFile(testCaseFixture);
+        populateVendorMappings(testCaseFixture);
         assertCsvFileProcessingSucceeds();
         assertOnlyCsvFilesRemainInResultsDirectory(testCaseFixture);
         assertReportFilesHaveExpectedContent(testCaseFixture);
@@ -385,6 +420,7 @@ public class VendorEmployeeComparisonServiceResultFileTest {
     void testFilesResultingInProcessingErrors(final VendorComparisonResult testCaseFixture) throws Exception {
         createTestCsvFile(testCaseFixture);
         createTestDoneFile(testCaseFixture);
+        populateVendorMappings(testCaseFixture);
         assertCsvFileProcessingFails();
         assertOnlyCsvFilesRemainInResultsDirectory(testCaseFixture);
         assertDirectoryIsEmpty(TEST_VND_REPORTS_DIRECTORY);
@@ -399,6 +435,7 @@ public class VendorEmployeeComparisonServiceResultFileTest {
                 .anyMatch(fixture -> !fixture.expectingSuccess());
         createTestCsvFiles(testCaseFixtures);
         createTestDoneFiles(testCaseFixtures);
+        populateVendorMappings(testCaseFixtures);
 
         if (atLeastOneFileShouldFail) {
             assertCsvFileProcessingFails();
@@ -419,6 +456,7 @@ public class VendorEmployeeComparisonServiceResultFileTest {
     void testSkipProcessingWhenCsvFileIsPresentButDoneFileIsAbsent(final VendorComparisonResult testCaseFixture)
             throws Exception {
         createTestCsvFiles(testCaseFixture);
+        populateVendorMappings(testCaseFixture);
         assertCsvFileProcessingSucceeds();
         assertOnlyCsvFilesRemainInResultsDirectory(testCaseFixture);
         assertDirectoryIsEmpty(TEST_VND_REPORTS_DIRECTORY);
@@ -429,6 +467,7 @@ public class VendorEmployeeComparisonServiceResultFileTest {
     void testSkipProcessingWhenCsvFileIsAbsentButDoneFileIsPresent(final VendorComparisonResult testCaseFixture)
             throws Exception {
         createTestDoneFiles(testCaseFixture);
+        populateVendorMappings(testCaseFixture);
         assertCsvFileProcessingSucceeds();
         assertOnlyDoneFilesRemainInResultsDirectory(testCaseFixture);
         assertDirectoryIsEmpty(TEST_VND_REPORTS_DIRECTORY);

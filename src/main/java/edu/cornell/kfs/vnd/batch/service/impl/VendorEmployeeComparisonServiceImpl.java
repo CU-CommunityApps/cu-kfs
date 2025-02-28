@@ -190,13 +190,22 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
         LOG.info("processVendorEmployeeComparisonResultFile, Processing employee comparison result file: {}",
                 resultFileSimpleName);
         final List<VendorEmployeeComparisonResult> parsedResult = parseVendorComparisonResultFile(resultFile);
-        LOG.info("processVendorEmployeeComparisonResultFile, Generating report for result file: {}",
-                resultFileSimpleName);
-        final File reportFile = vendorEmployeeComparisonReportService.generateReportForVendorEmployeeComparisonResults(
-                resultFile, parsedResult);
-        LOG.info("processVendorEmployeeComparisonResultFile, Finished generating report for result file: {}",
-                resultFileSimpleName);
-        reportFileTracker.accept(resultFileSimpleName, reportFile);
+        boolean successfullyWroteReport = false;
+
+        try {
+            LOG.info("processVendorEmployeeComparisonResultFile, Generating report for result file: {}",
+                    resultFileSimpleName);
+            final File reportFile = vendorEmployeeComparisonReportService
+                    .generateReportForVendorEmployeeComparisonResults(resultFile, parsedResult);
+            successfullyWroteReport = true;
+            LOG.info("processVendorEmployeeComparisonResultFile, Finished generating report for result file: {}",
+                    resultFileSimpleName);
+            reportFileTracker.accept(resultFileSimpleName, reportFile);
+        } finally {
+            if (!successfullyWroteReport) {
+                vendorEmployeeComparisonReportService.cleanUpFailedReportGenerationQuietly();
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")

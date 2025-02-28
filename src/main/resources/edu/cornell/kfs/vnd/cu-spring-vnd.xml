@@ -260,7 +260,8 @@
           abstract="true"
           class="edu.cornell.kfs.vnd.batch.service.impl.VendorEmployeeComparisonReportServiceImpl"
           p:reportWriterService-ref="vendorEmployeeComparisonReportWriterService"
-          p:configurationService-ref="configurationService"/>
+          p:configurationService-ref="configurationService"
+          p:cuVendorService-ref="cuVendorService"/>
 
     <bean id="vendorEmployeeComparisonReportWriterService"
           parent="vendorEmployeeComparisonReportWriterService-parentBean"/>

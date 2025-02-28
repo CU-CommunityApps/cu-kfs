@@ -20,8 +20,8 @@ Total Vendors Representing Active Employees with Upcoming Termination Dates: 0
 ***********************************************************************************************************************
 
 
-Vendor ID        Employee ID    NetID         Active    Last Hired    Last Terminated    Pending Termination Date
--------------    -----------    ----------    ------    ----------    ---------------    ------------------------
+    Vendor ID    Vendor Type    Employee ID    NetID         Active    Last Hired    Last Terminated    Pending Termination Date
+-------------    -----------    -----------    ----------    ------    ----------    ---------------    ------------------------
 
-N/A              N/A            N/A           N/A       N/A           N/A                N/A                     
+          N/A    N/A            N/A            N/A           N/A       N/A           N/A                N/A                     
 
