@@ -18,6 +18,8 @@
  */
 package org.kuali.kfs.sys.cache;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.BalanceType;
@@ -50,6 +52,7 @@ import org.kuali.kfs.kim.impl.role.RoleMember;
 import org.kuali.kfs.kim.impl.role.RoleResponsibility;
 import org.kuali.kfs.kim.impl.type.KimType;
 import org.kuali.kfs.krad.maintenance.MaintenanceUtils;
+import org.kuali.kfs.krad.service.KRADServiceLocator;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.HomeOrigination;
@@ -68,6 +71,8 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
+
 import java.time.Duration;
 import java.util.Map;
 import java.util.Set;
@@ -79,6 +84,7 @@ import static java.util.Map.entry;
 @EnableCaching
 @Profile("cache-redis")
 public class CacheConfiguration {
+    private static final Logger LOG = LogManager.getLogger();
     
     /*
      * Cornell Customization 
@@ -189,7 +195,8 @@ public class CacheConfiguration {
     ) {
         // CU Customization: Remove the call to "disableKeyPrefix()" when building the cache configuration.
         final RedisCacheConfiguration cacheDefaults = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofSeconds(redisDefaultTtl));
+                .entryTtl(Duration.ofSeconds(redisDefaultTtl))
+                .prefixCacheNameWith(getEnvironmentPrefix());
 
         final Map<String, RedisCacheConfiguration> cacheConfigurations = cacheExpires.keySet()
                 .stream()
@@ -204,5 +211,11 @@ public class CacheConfiguration {
                 .build();
 
         return redisCacheManager;
+    }
+    
+    protected String getEnvironmentPrefix() {
+        String prefix = KRADServiceLocator.getKualiConfigurationService().getPropertyValueAsString(CUKFSConstants.CU_CACHE_ENVIRONEMNT_PREFIX);
+        LOG.info("getEnvironmentPrefix, the environment prefix is '{}'", prefix);
+        return prefix;
     }
 }
