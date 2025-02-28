@@ -17,6 +17,6 @@ public interface TaxDtoRowMapper<T, U> {
 
     T readCurrentRow() throws SQLException;
 
-    void prepareCurrentRowForUpdate(final U dtoContainingUpdates) throws SQLException;
+    void updateCurrentRow(final U dtoContainingUpdates) throws SQLException;
 
 }

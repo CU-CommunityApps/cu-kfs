@@ -5,14 +5,15 @@ import java.sql.SQLException;
 
 import org.kuali.kfs.core.api.encryption.EncryptionService;
 
-import edu.cornell.kfs.tax.batch.dto.SprintaxInfo1042S;
+import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailRowMapper;
 import edu.cornell.kfs.tax.batch.metadata.TaxDtoDbMetadata;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail.TransactionDetailField;
 
-public class TransactionDetailMapper extends TaxDtoRowMapperBase<TransactionDetail, SprintaxInfo1042S> {
+public abstract class TransactionDetailMapperBase<U> extends TaxDtoRowMapperBase<TransactionDetail, U>
+        implements TransactionDetailRowMapper<U> {
 
-    public TransactionDetailMapper(final EncryptionService encryptionService, final TaxDtoDbMetadata metadata,
+    public TransactionDetailMapperBase(final EncryptionService encryptionService, final TaxDtoDbMetadata metadata,
             final ResultSet resultSet) {
         super(TransactionDetail::new, encryptionService, metadata, resultSet);
     }
@@ -76,15 +77,6 @@ public class TransactionDetailMapper extends TaxDtoRowMapperBase<TransactionDeta
         detail.setPaymentStatusCode(getString(TransactionDetailField.paymentStatusCode));
         detail.setDisbursementTypeCode(getString(TransactionDetailField.disbursementTypeCode));
         detail.setLedgerDocumentTypeCode(getString(TransactionDetailField.ledgerDocumentTypeCode));
-    }
-
-    /*
-     * This method will be fully implemented in a future user story. Only some very minimal coding
-     * has been added thus far for demonstration purposes.
-     */
-    @Override
-    public void prepareCurrentRowForUpdate(final SprintaxInfo1042S sprintaxInfo) throws SQLException {
-        updateString(TransactionDetailField.vendorName, sprintaxInfo.getVendorNameForOutput());
     }
 
 }

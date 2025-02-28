@@ -125,9 +125,9 @@ public class VendorDetailLite {
 
     public enum VendorField implements TaxDtoFieldEnum {
         vendorHeaderGeneratedIdentifier_forHeader(
-                VendorHeader.class, VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID),
+                VendorHeader.class, VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID, true),
         vendorHeaderGeneratedIdentifier_forDetail(
-                VendorDetail.class, VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID),
+                VendorDetail.class, VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID, true),
         vendorDetailAssignedIdentifier(VendorDetail.class),
         vendorParentIndicator(VendorDetail.class),
         vendorFirstLastNameIndicator(VendorDetail.class),
@@ -142,14 +142,17 @@ public class VendorDetailLite {
 
         private final Class<? extends BusinessObject> mappedClass;
         private final String fieldName;
+        private final boolean needsExplicitAlias;
 
         private VendorField(final Class<? extends BusinessObject> mappedClass) {
-            this(mappedClass, null);
+            this(mappedClass, null, false);
         }
 
-        private VendorField(final Class<? extends BusinessObject> mappedClass, final String fieldName) {
+        private VendorField(final Class<? extends BusinessObject> mappedClass, final String fieldName,
+                final boolean needsExplicitAlias) {
             this.mappedClass = mappedClass;
             this.fieldName = StringUtils.defaultIfBlank(fieldName, name());
+            this.needsExplicitAlias = needsExplicitAlias;
         }
 
         @Override
@@ -160,6 +163,11 @@ public class VendorDetailLite {
         @Override
         public Class<? extends BusinessObject> getMappedBusinessObjectClass() {
             return mappedClass;
+        }
+
+        @Override
+        public boolean needsExplicitAlias() {
+            return needsExplicitAlias;
         }
 
     }

@@ -1,5 +1,7 @@
 package edu.cornell.kfs.tax.util;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -37,6 +39,28 @@ public final class TaxUtils {
     public static boolean is1099BoxNumberMappingKeyFormattedProperly(String boxNumberMappingKey) {
         return StringUtils.isNotBlank(boxNumberMappingKey)
                 && CUTaxConstants.TAX_1099_BOX_MAPPING_KEY_PATTERN.matcher(boxNumberMappingKey).matches();
+    }
+
+    public static java.util.Date copyDate(final java.util.Date value) {
+        return new java.util.Date(value.getTime());
+    }
+
+    public static java.sql.Date copyDate(final java.sql.Date value) {
+        return new java.sql.Date(value.getTime());
+    }
+
+    public static DecimalFormat buildDefaultAmountFormatForFileOutput() {
+        final DecimalFormat newFormat = new DecimalFormat(CUTaxConstants.DEFAULT_AMOUNT_FORMAT,
+                new DecimalFormatSymbols(Locale.US));
+        newFormat.setMaximumIntegerDigits(CUTaxConstants.DEFAULT_AMOUNT_MAX_INT_DIGITS);
+        return newFormat;
+    }
+
+    public static DecimalFormat buildDefaultPercentFormatForSprintaxFileOutput() {
+        final DecimalFormat newFormat = new DecimalFormat(CUTaxConstants.DEFAULT_SPRINTAX_PERCENT_FORMAT,
+                new DecimalFormatSymbols(Locale.US));
+        newFormat.setMaximumIntegerDigits(CUTaxConstants.DEFAULT_PERCENT_MAX_INT_DIGITS);
+        return newFormat;
     }
 
     private TaxUtils() {
