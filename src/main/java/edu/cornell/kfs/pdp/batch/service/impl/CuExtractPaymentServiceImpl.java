@@ -7,21 +7,12 @@ import java.util.Locale;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.batch.service.impl.ExtractPaymentServiceImpl;
 import org.kuali.kfs.pdp.batch.service.impl.Iso20022FormatExtractor;
-import org.kuali.kfs.pdp.businessobject.PaymentStatus;
-
-import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
-
-import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
-import edu.cornell.kfs.pdp.batch.service.CuPayeeAddressService;
 
 public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     private static final Logger LOG = LogManager.getLogger();
-    
-    protected AchBundlerHelperService achBundlerHelperService;
-    protected CuPayeeAddressService cuPayeeAddressService;
+
     protected Iso20022FormatExtractor iso20022FormatExtractor;
 
     public CuExtractPaymentServiceImpl() {
@@ -49,36 +40,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         return filename;
     }
     
-    /**
-    * MOD: Overridden to detect if the Bundle ACH Payments system parameter is on and if so, to 
-    * call the new extraction bundler method
-    */
-    @Override
-    public void extractAchPayments() {
-        LOG.debug("MOD - extractAchPayments() - Enter");
-
-        PaymentStatus extractedStatus = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class,
-                PdpConstants.PaymentStatusCodes.EXTRACTED);
-
-        iso20022FormatExtractor.extractAchs(extractedStatus, directoryName);
-
-    }
-
-    
-    
-    protected String updateNoteLine(String noteLine) {
-        // Had to add this code to check for and remove the colons (::) that were added in
-        // DisbursementVoucherExtractServiceImpl.java line 506 v4229 if they exist.  If not
-        // then just return what was sent.  This was placed in a method as it is used in
-        // two locations in this class
-
-        if (noteLine.length() >= 2 && noteLine.substring(0,2).contains(CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER)) {
-            noteLine = noteLine.substring(2);     
-        }
-
-        return noteLine;
-    }
-    
     protected boolean renameFile(final String fromFile, final String toFile) {
         boolean bResult = false;
         try {
@@ -91,15 +52,4 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         return bResult;
     }
     
-    public AchBundlerHelperService getAchBundlerHelperService() {
-        return achBundlerHelperService;
-    }
-
-    public void setAchBundlerHelperService(final AchBundlerHelperService achBundlerHelperService) {
-        this.achBundlerHelperService = achBundlerHelperService;
-    }
-
-    public void setCuPayeeAddressService(final CuPayeeAddressService cuPayeeAddressService) {
-        this.cuPayeeAddressService = cuPayeeAddressService;
-    }
 }

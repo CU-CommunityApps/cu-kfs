@@ -1171,7 +1171,7 @@ public class KualiDocumentActionBase extends KualiAction {
                 if (parameterName.endsWith(".recipientName")) {
                     final int lineNumber = Integer.parseInt(StringUtils.substringBetween(parameterName, "[", "]"));
                     //check for namespace
-                    String namespaceParam = "adHocRouteWorkgroup[" + lineNumber + "].recipientNamespaceCode";
+                    final String namespaceParam = "adHocRouteWorkgroup[" + lineNumber + "].recipientNamespaceCode";
                     String namespace = KFSConstants.CoreModuleNamespaces.KFS;
                     // CU customization: use StringUtils.isNotBlank instead of StringUtils.isNotEmpty and trim which is not null safe
                     if (StringUtils.isNotBlank(request.getParameter(namespaceParam))) {
