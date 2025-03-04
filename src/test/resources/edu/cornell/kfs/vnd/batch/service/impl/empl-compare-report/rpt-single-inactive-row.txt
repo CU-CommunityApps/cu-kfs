@@ -20,8 +20,8 @@ Total Vendors Representing Active Employees with Upcoming Termination Dates: 0
 ***********************************************************************************************************************
 
 
-Vendor ID        Employee ID    NetID         Active    Last Hired    Last Terminated    Pending Termination Date
--------------    -----------    ----------    ------    ----------    ---------------    ------------------------
+    Vendor ID    Vendor Type    Employee ID    NetID         Active    Last Hired    Last Terminated    Pending Termination Date
+-------------    -----------    -----------    ----------    ------    ----------    ---------------    ------------------------
 
-23232-0          1357531        mms223        No        2021-12-15    2023-10-22         N/A                     
+      23232-0    RV             1357531        mms223        No        2021-12-15    2023-10-22         N/A                     
 

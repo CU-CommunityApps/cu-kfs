@@ -10,4 +10,6 @@ public interface VendorEmployeeComparisonReportService {
     File generateReportForVendorEmployeeComparisonResults(final String csvFileName,
             final List<VendorEmployeeComparisonResult> resultRows);
 
+    void cleanUpFailedReportGenerationQuietly();
+
 }
