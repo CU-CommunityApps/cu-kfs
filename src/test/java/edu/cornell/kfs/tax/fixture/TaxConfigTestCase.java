@@ -28,7 +28,13 @@ public @interface TaxConfigTestCase {
 
     public static final class Utils {
         public static TaxBatchConfig toTaxBatchConfig(final TaxConfigTestCase testCase) {
+            return toTaxBatchConfig(testCase, TaxBatchConfig.Mode.CREATE_TAX_FILES);
+        }
+
+        public static TaxBatchConfig toTaxBatchConfig(final TaxConfigTestCase testCase,
+                final TaxBatchConfig.Mode mode) {
             return new TaxBatchConfig(
+                    mode,
                     testCase.taxType(),
                     testCase.reportYear(),
                     TestDateUtils.toUtilDate(testCase.processingStartDate()),

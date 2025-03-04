@@ -12,6 +12,7 @@ import org.kuali.kfs.core.api.util.Truth;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 
+import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoRowMapper;
 import edu.cornell.kfs.tax.batch.metadata.TaxDtoDbMetadata;
 
@@ -48,29 +49,35 @@ public abstract class TaxDtoRowMapperBase<T, U> implements TaxDtoRowMapper<T, U>
 
     protected abstract void populateDtoFromCurrentRow(final T dto) throws SQLException;
 
-
-
-    protected String getColumnLabel(final Enum<?> fieldDefinition) {
-        return metadata.getFullColumnLabel(fieldDefinition);
+    @Override
+    public void updateCurrentRow(final U dtoContainingUpdates) throws SQLException {
+        prepareCurrentRowForUpdate(dtoContainingUpdates);
+        resultSet.updateRow();
     }
 
-    protected String getString(final Enum<?> fieldDefinition) throws SQLException {
-        return resultSet.getString(getColumnLabel(fieldDefinition));
+    protected abstract void prepareCurrentRowForUpdate(final U dtoContainingUpdates) throws SQLException;
+
+    protected String getColumnAlias(final TaxDtoFieldEnum fieldDefinition) {
+        return metadata.getColumnAlias(fieldDefinition);
     }
 
-    protected int getInt(final Enum<?> fieldDefinition) throws SQLException {
-        return resultSet.getInt(getColumnLabel(fieldDefinition));
+    protected String getString(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
+        return resultSet.getString(getColumnAlias(fieldDefinition));
     }
 
-    protected long getLong(final Enum<?> fieldDefinition) throws SQLException {
-        return resultSet.getLong(getColumnLabel(fieldDefinition));
+    protected int getInt(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
+        return resultSet.getInt(getColumnAlias(fieldDefinition));
     }
 
-    protected java.sql.Date getDate(final Enum<?> fieldDefinition) throws SQLException {
-        return resultSet.getDate(getColumnLabel(fieldDefinition));
+    protected long getLong(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
+        return resultSet.getLong(getColumnAlias(fieldDefinition));
     }
 
-    protected String getAndDecryptString(final Enum<?> fieldDefinition) throws SQLException {
+    protected java.sql.Date getDate(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
+        return resultSet.getDate(getColumnAlias(fieldDefinition));
+    }
+
+    protected String getAndDecryptString(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
         final String value = getString(fieldDefinition);
         try {
             return encryptionService.decrypt(value);
@@ -79,28 +86,29 @@ public abstract class TaxDtoRowMapperBase<T, U> implements TaxDtoRowMapper<T, U>
         }
     }
 
-    protected Boolean getBoolean(final Enum<?> fieldDefinition) throws SQLException {
+    protected Boolean getBoolean(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
         final String value = getString(fieldDefinition);
         return Truth.strToBooleanIgnoreCase(value);
     }
 
-    protected Boolean getBoolean(final Enum<?> fieldDefinition, final Boolean defaultValue) throws SQLException {
+    protected Boolean getBoolean(final TaxDtoFieldEnum fieldDefinition, final Boolean defaultValue)
+            throws SQLException {
         final String value = getString(fieldDefinition);
         return Truth.strToBooleanIgnoreCase(value, defaultValue);
     }
 
-    protected KualiDecimal getKualiDecimal(final Enum<?> fieldDefinition) throws SQLException {
-        final BigDecimal value = resultSet.getBigDecimal(getColumnLabel(fieldDefinition));
+    protected KualiDecimal getKualiDecimal(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
+        final BigDecimal value = resultSet.getBigDecimal(getColumnAlias(fieldDefinition));
         return (value != null) ? new KualiDecimal(value) : null;
     }
 
-    protected KualiInteger getKualiInteger(final Enum<?> fieldDefinition) throws SQLException {
+    protected KualiInteger getKualiInteger(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
         final long value = getLong(fieldDefinition);
         return new KualiInteger(value);
     }
 
-    protected void updateString(final Enum<?> fieldDefinition, final String value) throws SQLException {
-        resultSet.updateString(getColumnLabel(fieldDefinition), value);
+    protected void updateString(final TaxDtoFieldEnum fieldDefinition, final String value) throws SQLException {
+        resultSet.updateString(getColumnAlias(fieldDefinition), value);
     }
 
 }
