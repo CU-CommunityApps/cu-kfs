@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans.xsd">
@@ -28,13 +29,22 @@
           parent="vendorEmployeeComparisonReportWriterService-parentBean"
           p:pageLength="999"/>
 
-    <bean id="testReportFileTracker" class="${unit.test.classname}" factory-method="buildTestReportFileTracker"/>
+    <bean id="resultFileAndReportFilePairs" class="${unit.test.classname}"
+          factory-method="buildMapForResultFileAndReportFilePairs"/>
+
+    <bean id="testReportFileTracker" class="${unit.test.classname}" factory-method="buildTestReportFileTracker"
+          c:resultFileAndReportFilePairs-ref="resultFileAndReportFilePairs"/>
 
     <bean id="vendorDao" class="${unit.test.classname}" factory-method="buildMockVendorDao"/>
 
     <bean id="dateTimeService" class="${unit.test.classname}" factory-method="buildTestDateTimeService"/>
 
     <bean id="parameterService" class="${unit.test.classname}" factory-method="buildMockParameterService"/>
+
+    <bean id="vendorMappings" class="${unit.test.classname}" factory-method="buildMapForVendorMappings"/>
+
+    <bean id="cuVendorService" class="${unit.test.classname}" factory-method="buildMockCUVendorService"
+          c:vendorMappings-ref="vendorMappings"/>
 
     <bean id="configurationService" class="edu.cornell.kfs.sys.service.impl.TestConfigurationServiceImpl"
           p:properties-ref="cuVendorResources"/>
@@ -57,10 +67,13 @@
                 <idref bean="reportWriterService-parentBean"/>
                 <idref bean="batchInputFileService"/>
                 <idref bean="batchInputFileService-parentBean"/>
+                <idref bean="resultFileAndReportFilePairs"/>
                 <idref bean="testReportFileTracker"/>
                 <idref bean="vendorDao"/>
                 <idref bean="dateTimeService"/>
                 <idref bean="parameterService"/>
+                <idref bean="vendorMappings"/>
+                <idref bean="cuVendorService"/>
                 <idref bean="configurationService"/>
                 <idref bean="cuVendorResources"/>
             </set>

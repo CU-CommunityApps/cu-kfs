@@ -6,17 +6,22 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSConstants.OptionLabels;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.kfs.vnd.businessobject.VendorHeader;
 
 import edu.cornell.kfs.sys.batch.CuBatchFileUtils;
 import edu.cornell.kfs.sys.service.ReportWriterService;
-import edu.cornell.kfs.sys.util.ForUnitTestConvenience;
 import edu.cornell.kfs.vnd.CUVendorKeyConstants.EmployeeComparisonReportKeys;
 import edu.cornell.kfs.vnd.batch.VendorEmployeeComparisonResultCsv;
 import edu.cornell.kfs.vnd.batch.service.VendorEmployeeComparisonReportService;
 import edu.cornell.kfs.vnd.businessobject.VendorEmployeeComparisonResult;
+import edu.cornell.kfs.vnd.document.service.CUVendorService;
 
 public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployeeComparisonReportService {
 
@@ -39,10 +44,13 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
         }
     }
 
+    private static final Logger LOG = LogManager.getLogger();
+
     private static final int SECTION_TITLE_LENGTH = 49;
 
     private ReportWriterService reportWriterService;
     private ConfigurationService configurationService;
+    private CUVendorService cuVendorService;
 
     @Override
     public File generateReportForVendorEmployeeComparisonResults(final String csvFileName,
@@ -102,14 +110,39 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
     }
 
     private void writeDetailRow(final VendorEmployeeComparisonResult resultRow) {
+        final VendorDetail vendor = getVendor(resultRow.getVendorId());
+
         writeMessageLine(EmployeeComparisonReportKeys.DETAIL_TABLE_ROW,
                 formatStringCell(resultRow.getVendorId()),
+                formatStringCell(vendor.getVendorHeader().getVendorTypeCode()),
                 formatStringCell(resultRow.getEmployeeId()),
                 formatStringCell(resultRow.getNetId()),
                 formatBooleanCell(resultRow.getActive()),
                 formatDateCell(resultRow.getHireDate()),
                 formatDateCell(resultRow.getTerminationDate()),
                 formatDateCell(resultRow.getTerminationDateGreaterThanProcessingDate()));
+    }
+
+    private VendorDetail getVendor(final String vendorId) {
+        if (StringUtils.isBlank(vendorId)) {
+            return createEmptyVendor();
+        }
+
+        final VendorDetail vendor = cuVendorService.getByVendorNumber(vendorId);
+        if (ObjectUtils.isNull(vendor)) {
+            LOG.warn("getVendor, Vendor {} does not exist in KFS, which should NEVER happen! The dependent "
+                    + "fields in the report will show 'N/A' values instead.", vendorId);
+            return createEmptyVendor();
+        }
+
+        return vendor;
+    }
+
+    private VendorDetail createEmptyVendor() {
+        final VendorDetail vendorDetail = new VendorDetail();
+        final VendorHeader vendorHeader = new VendorHeader();
+        vendorDetail.setVendorHeader(vendorHeader);
+        return vendorDetail;
     }
 
     private String formatStringCell(final String value) {
@@ -155,9 +188,13 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
         return configurationService.getPropertyValueAsString(propertyName);
     }
 
-    @ForUnitTestConvenience
-    protected void manuallyCleanUpInternalReportWriter() {
-        reportWriterService.destroy();
+    @Override
+    public void cleanUpFailedReportGenerationQuietly() {
+        try {
+            reportWriterService.destroy();
+        } catch (final Exception e) {
+            // Ignore
+        }
     }
 
     public void setReportWriterService(final ReportWriterService reportWriterService) {
@@ -166,6 +203,10 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
 
     public void setConfigurationService(final ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+
+    public void setCuVendorService(final CUVendorService cuVendorService) {
+        this.cuVendorService = cuVendorService;
     }
 
 }

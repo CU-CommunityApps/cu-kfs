@@ -20,16 +20,16 @@ Total Vendors Representing Active Employees with Upcoming Termination Dates: 1
 ***********************************************************************************************************************
 
 
-Vendor ID        Employee ID    NetID         Active    Last Hired    Last Terminated    Pending Termination Date
--------------    -----------    ----------    ------    ----------    ---------------    ------------------------
+    Vendor ID    Vendor Type    Employee ID    NetID         Active    Last Hired    Last Terminated    Pending Termination Date
+-------------    -----------    -----------    ----------    ------    ----------    ---------------    ------------------------
 
-12345-0          5544332        jd111         Yes       2023-01-01    N/A                N/A                     
+      12345-0    DV             5544332        jd111         Yes       2023-01-01    N/A                N/A                     
 
-7777-0           9876543        jqd58         Yes       2024-04-01    2023-06-30         N/A                     
+       7777-0    DV             9876543        jqd58         Yes       2024-04-01    2023-06-30         N/A                     
 
-23232-0          1357531        mms223        No        2021-12-15    2023-10-22         N/A                     
+      23232-0    RV             1357531        mms223        No        2021-12-15    2023-10-22         N/A                     
 
-8644-0           8648648        dls99         Yes       2022-09-21    N/A                2024-10-31              
+       8644-0    PO             8648648        dls99         Yes       2022-09-21    N/A                2024-10-31              
 
-99911-0          8888888        jjj33         No        2020-02-29    2024-04-01         N/A                     
+      99911-0    N/A            8888888        jjj33         No        2020-02-29    2024-04-01         N/A                     
 
