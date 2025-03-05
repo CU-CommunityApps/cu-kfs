@@ -5,11 +5,21 @@ import java.util.Date;
 import java.util.Locale;
 
 import org.kuali.kfs.pdp.batch.service.impl.ExtractPaymentServiceImpl;
+import org.kuali.kfs.pdp.batch.service.impl.Iso20022FormatExtractor;
 
 public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
 
+    protected Iso20022FormatExtractor iso20022FormatExtractor;
+
     public CuExtractPaymentServiceImpl() {
         super(null);
+    }
+    
+    public CuExtractPaymentServiceImpl(
+            final Iso20022FormatExtractor iso20022FormatExtractor
+    ) {
+    	super(iso20022FormatExtractor);
+    	this.iso20022FormatExtractor = iso20022FormatExtractor;
     }
 
     /**
