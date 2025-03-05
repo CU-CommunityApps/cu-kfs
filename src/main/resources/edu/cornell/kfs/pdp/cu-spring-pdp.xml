@@ -96,8 +96,6 @@
     <bean id="pdpPaymentMaintenanceService" parent="pdpPaymentMaintenanceService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentMaintenanceServiceImpl" />
     
     <bean id="pdpExtractPaymentService" parent="pdpExtractPaymentService-parentBean" class="edu.cornell.kfs.pdp.batch.service.impl.CuExtractPaymentServiceImpl" >
-        <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />
-        <property name="cuPayeeAddressService" ref="cuPayeeAddressService" />  
     </bean>
     
     <bean id="zipcodeValidationPatternForIso20022"

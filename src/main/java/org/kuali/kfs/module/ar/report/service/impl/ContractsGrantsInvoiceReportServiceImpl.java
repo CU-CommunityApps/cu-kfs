@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -109,7 +109,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * CU Customization: Backported the FINP-7147 and FINP-9927 changes into this file.
+ * CU Customization: Backported the FINP-9927 changes into this file.
  * This overlay can be removed when we upgrade to the 2023-10-11 financials patch.
  * 
  * This class implements the methods for report generation services for Contracts & Grants.
@@ -152,7 +152,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
      * @param os
      * @param locDocument
      */
-    protected void generateLOCReviewInPdf(final OutputStream os, ContractsGrantsLetterOfCreditReviewDocument locDocument) {
+    protected void generateLOCReviewInPdf(final OutputStream os, final ContractsGrantsLetterOfCreditReviewDocument locDocument) {
         try {
             final Document document =
                     new Document(new Rectangle(ArConstants.LOCReviewPdf.LENGTH, ArConstants.LOCReviewPdf.WIDTH));

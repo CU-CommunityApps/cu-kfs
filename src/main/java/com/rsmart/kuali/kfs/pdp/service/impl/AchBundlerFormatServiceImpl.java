@@ -110,7 +110,7 @@ public class AchBundlerFormatServiceImpl extends CuFormatServiceImpl {
             LOG.debug("performFormat() Step 1 Payment Group ID " + paymentGroup.getId());
 
             // process payment group data
-            boolean groupProcessed = processPaymentGroup(paymentGroup, paymentProcess, false);
+            boolean groupProcessed = processPaymentGroup(paymentGroup, paymentProcess);
             if (!groupProcessed) {
                 LOG.info("Sending failure email to {}", pdpFormatFailureToEmailAddress);
                 sendFailureEmail(pdpFormatFailureToEmailAddress, processId);

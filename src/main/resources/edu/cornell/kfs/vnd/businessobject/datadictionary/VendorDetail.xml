@@ -14,7 +14,7 @@
 	<bean id="VendorDetail" parent="VendorDetail-parentBean" >
 		<property name="attributes">
 			<list merge="true">
-			    <ref bean="VendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate"/>
+			    <ref bean="VendorDetail-vendorHeader.vendorSupplierDiversities.certificationExpirationDate"/>
 			    <ref bean="VendorDetail-vendorHeader.vendorLocale" />
 				<ref bean="VendorDetail-extension-insuranceRequiredIndicator"/> 
 				<ref bean="VendorDetail-extension-insuranceRequirementsCompleteIndicator"/> 
@@ -63,10 +63,10 @@
 	<!-- Attribute Definitions -->
 
 		
-	<bean id="VendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate" parent="VendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate-parentBean"/> 
-	<bean id="VendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate-parentBean" 
-		abstract="true" parent="VendorSupplierDiversityExtension-vendorSupplierDiversityExpirationDate"> 
-		<property name="name" value="vendorHeader.vendorSupplierDiversities.extension.vendorSupplierDiversityExpirationDate"/> 
+	<bean id="VendorDetail-vendorHeader.vendorSupplierDiversities.certificationExpirationDate" parent="VendorDetail-vendorHeader.vendorSupplierDiversities.certificationExpirationDate-parentBean"/> 
+	<bean id="VendorDetail-vendorHeader.vendorSupplierDiversities.certificationExpirationDate-parentBean" 
+		abstract="true" parent="VendorSupplierDiversity-certificationExpirationDate"> 
+		<property name="name" value="vendorHeader.vendorSupplierDiversities.certificationExpirationDate"/> 
 	</bean> 
 
     <bean id="VendorDetail-vendorHeader.vendorLocale" parent="VendorDetail-vendorHeader.vendorLocale-parentBean" />
@@ -337,26 +337,6 @@
 			 </bean>
 
           </list>
-      </property>
-  </bean>
- 
-    <bean parent="DataDictionaryBeanOverride">
-      <property name="beanName" value="VendorDetail-inquiryCollectionDefinition-supplierDiversities" />
-      <property name="fieldOverrides">
-          <list>
-              <bean parent="FieldOverrideForListElementInsert">
-                  <property name="propertyName" value="inquiryFields" />
-                  <property name="propertyNameForElementCompare" value="attributeName" />
-                  <property name="element">
-                      <bean parent="FieldDefinition" p:attributeName="vendorSupplierDiversityCode" />
-                  </property>
-                  <property name="insertAfter">
-                      <list>
-                          <bean parent="FieldDefinition" p:attributeName="extension.vendorSupplierDiversityExpirationDate" />
-                      </list>
-                  </property>
-                  </bean>
-             </list>
       </property>
   </bean>
  

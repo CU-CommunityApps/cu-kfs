@@ -390,10 +390,7 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
 
     private boolean isPaymentDetailInCancelableStatus(String paymentDetailStatus) {
         return StringUtils.equals(PdpConstants.PaymentStatusCodes.OPEN, paymentDetailStatus)
-                || StringUtils.equals(PdpConstants.PaymentStatusCodes.HELD_CD, paymentDetailStatus)
-                || StringUtils.equals(PdpConstants.PaymentStatusCodes.HELD_TAX_EMPLOYEE_CD, paymentDetailStatus)
-                || StringUtils.equals(PdpConstants.PaymentStatusCodes.HELD_TAX_NONRESIDENT_CD, paymentDetailStatus)
-                || StringUtils.equals(PdpConstants.PaymentStatusCodes.HELD_TAX_NONRESIDENT_EMPL_CD, paymentDetailStatus);
+                || StringUtils.equals(PdpConstants.PaymentStatusCodes.HELD_CD, paymentDetailStatus);
     }
 
     private void noteChangeOnRecurringDV(RecurringDisbursementVoucherDocument recurringDV, String noteText, Set<String> setOfStrings) {

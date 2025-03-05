@@ -30,9 +30,9 @@
 	
 	<bean id="awardLookupableHelperService-parentBean" abstract="true" class="edu.cornell.kfs.module.cg.businessobject.lookup.CuAwardLookupableHelperServiceImpl" 
 		scope="prototype" parent="lookupableHelperService">
-		<property name="accountsReceivableModuleBillingService" ref="accountsReceivableModuleBillingService"/>
 		<property name="contractsAndGrantsLookupService" ref="contractsAndGrantsLookupService"/>
-		<property name="documentHelperService" ref="documentHelperService"/>
+		<property name="contractsGrantsBillingUtilityService" ref="contractsGrantsBillingUtilityService"/>
+        <property name="documentHelperService" ref="documentHelperService"/>
 		<property name="permissionService" ref="permissionService"/>
     </bean>
     
