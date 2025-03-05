@@ -40,46 +40,45 @@ import edu.cornell.kfs.tax.batch.TaxBatchConfig;
 import edu.cornell.kfs.tax.batch.TaxBatchConfig.Mode;
 import edu.cornell.kfs.tax.batch.TaxStatistics;
 import edu.cornell.kfs.tax.batch.TestTransactionDetailCsvInputFileType;
+import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoRowMapper;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailHandler;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailProcessorDao;
-import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailRowMapper;
-import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailRowMapperFactory;
-import edu.cornell.kfs.tax.batch.dataaccess.impl.TestTransactionDetailRowMapper;
+import edu.cornell.kfs.tax.batch.dataaccess.impl.TaxDtoRowMapperTestImpl;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail;
 
 @Execution(ExecutionMode.SAME_THREAD)
 @CreateTestDirectories(
-        baseDirectory = TaxFileGenerationServiceTransactionPrinterImplTest.TEST_TAX_DIRECTORY,
+        baseDirectory = TaxFileGenerationServiceTransactionListPrinterImplTest.TEST_TAX_DIRECTORY,
         subDirectories = {
-                TaxFileGenerationServiceTransactionPrinterImplTest.TEST_TAX_STAGING_DIRECTORY,
-                TaxFileGenerationServiceTransactionPrinterImplTest.TEST_TAX_TRANSACTIONS_DIRECTORY,
-                TaxFileGenerationServiceTransactionPrinterImplTest.TEST_TAX_TRANSACTIONS_CSV_DIRECTORY
+                TaxFileGenerationServiceTransactionListPrinterImplTest.TEST_TAX_STAGING_DIRECTORY,
+                TaxFileGenerationServiceTransactionListPrinterImplTest.TEST_TAX_TRANSACTIONS_DIRECTORY,
+                TaxFileGenerationServiceTransactionListPrinterImplTest.TEST_TAX_TRANSACTIONS_CSV_DIRECTORY
         }
 )
-public class TaxFileGenerationServiceTransactionPrinterImplTest {
+public class TaxFileGenerationServiceTransactionListPrinterImplTest {
 
-    static final String TEST_TAX_DIRECTORY = "test/tax_transaction_print/";
+    static final String TEST_TAX_DIRECTORY = "test/tax_transaction_list_print/";
     static final String TEST_TAX_STAGING_DIRECTORY = TEST_TAX_DIRECTORY + "staging/tax/";
     static final String TEST_TAX_TRANSACTIONS_DIRECTORY = TEST_TAX_STAGING_DIRECTORY + "transactions/";
     static final String TEST_TAX_TRANSACTIONS_CSV_DIRECTORY = TEST_TAX_STAGING_DIRECTORY + "transactions_csv/";
 
     private static final String BASE_TRANSACTION_FILES_DIRECTORY =
-            "classpath:edu/cornell/kfs/tax/batch/transaction-printing-test/";
+            "classpath:edu/cornell/kfs/tax/batch/transaction-list-printing-test/";
     private static final String MASKED_TRANSACTION_FILE_SUFFIX = "-masked" + CUKFSConstants.TEXT_FILE_EXTENSION;
 
     @RegisterExtension
     static TestSpringContextExtension springContextExtension = TestSpringContextExtension.forClassPathSpringXmlFile(
-            "edu/cornell/kfs/tax/batch/cu-spring-tax-transaction-printing-test.xml");
+            "edu/cornell/kfs/tax/batch/cu-spring-tax-transaction-list-printing-test.xml");
 
-    private TaxFileGenerationServiceTransactionPrinterImpl taxFileGenerationService;
+    private TaxFileGenerationServiceTransactionListPrinterImpl taxFileGenerationService;
     private AtomicReference<LocalTestCase> testCaseHolder;
 
     @SuppressWarnings("unchecked")
     @BeforeEach
     void setUp() throws Exception {
         taxFileGenerationService = springContextExtension.getBean(
-                TaxSpringBeans.TAX_FILE_GENERATION_SERVICE_FOR_TRANSACTION_PRINTING,
-                TaxFileGenerationServiceTransactionPrinterImpl.class);
+                TaxSpringBeans.TAX_FILE_GENERATION_SERVICE_FOR_TRANSACTION_LIST_PRINTING,
+                TaxFileGenerationServiceTransactionListPrinterImpl.class);
         testCaseHolder = springContextExtension.getBean(
                 TaxSpringBeans.TEST_CASE_HOLDER, AtomicReference.class);
 
@@ -106,7 +105,7 @@ public class TaxFileGenerationServiceTransactionPrinterImplTest {
             final AtomicReference<LocalTestCase> testCaseHolder) throws Exception {
         return new CuMockBuilder<>(TransactionDetailProcessorDao.class)
                 .withAnswer(
-                        dao -> dao.processTransactionDetails(Mockito.any(), Mockito.any(), Mockito.any()),
+                        dao -> dao.processTransactionDetails(Mockito.any(), Mockito.any()),
                         invocation -> processPredefinedTransactionDetails(
                                 invocation, transactionDetailCsvFileType, testCaseHolder))
                 .build();
@@ -116,16 +115,14 @@ public class TaxFileGenerationServiceTransactionPrinterImplTest {
             final TestTransactionDetailCsvInputFileType transactionDetailCsvFileType,
             final AtomicReference<LocalTestCase> testCaseHolder) throws Exception {
         final TaxBatchConfig config = invocation.getArgument(0);
-        final TransactionDetailRowMapperFactory<TransactionDetail> rowMapperFactory = invocation.getArgument(1);
-        final TransactionDetailHandler<TransactionDetail> handler = invocation.getArgument(2);
+        final TransactionDetailHandler handler = invocation.getArgument(1);
         Validate.notNull(config, "config should not have been null");
-        Validate.notNull(rowMapperFactory, "rowMapperFactory should not have been null");
         Validate.notNull(handler, "handler should not have been null");
 
         final List<TransactionDetail> transactionDetails = buildTransactionDetailsFromCsvData(
                 transactionDetailCsvFileType, testCaseHolder);
-        final TransactionDetailRowMapper<TransactionDetail> rowMapper =
-                new TestTransactionDetailRowMapper(transactionDetails);
+        final TaxDtoRowMapper<TransactionDetail> rowMapper =
+                new TaxDtoRowMapperTestImpl<>(transactionDetails);
 
         return GlobalResourceLoaderUtils.doWithResourceRetrievalDelegatedToKradResourceLoaderUtil(
                 () -> handler.performProcessing(config, rowMapper));
@@ -192,7 +189,7 @@ public class TaxFileGenerationServiceTransactionPrinterImplTest {
     }
 
     private TaxBatchConfig buildTaxBatchConfigFor1042S() {
-        return new TaxBatchConfig(Mode.PRINT_TRANSACTION_ROWS, CUTaxConstants.TAX_TYPE_1042S, 2025,
+        return new TaxBatchConfig(Mode.CREATE_TRANSACTION_LIST_FILE, CUTaxConstants.TAX_TYPE_1042S, 2025,
                 TestDateUtils.toUtilDate("2025-03-01T14:30:45"),
                 TestDateUtils.toSqlDate("2024-01-01"), TestDateUtils.toSqlDate("2024-12-31"));
     }

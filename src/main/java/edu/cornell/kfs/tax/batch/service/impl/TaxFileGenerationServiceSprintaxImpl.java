@@ -5,13 +5,15 @@ import java.sql.SQLException;
 
 import org.apache.commons.lang3.Validate;
 
+import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.batch.TaxBatchConfig;
 import edu.cornell.kfs.tax.batch.TaxStatistics;
+import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoRowMapper;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailProcessorDao;
-import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailRowMapper;
-import edu.cornell.kfs.tax.batch.dataaccess.impl.TransactionDetailMapperForSprintax;
-import edu.cornell.kfs.tax.batch.dto.SprintaxInfo1042S;
+import edu.cornell.kfs.tax.batch.dto.SprintaxRowData;
 import edu.cornell.kfs.tax.batch.service.TaxFileGenerationService;
+import edu.cornell.kfs.tax.businessobject.TransactionDetail;
+import edu.cornell.kfs.tax.businessobject.TransactionDetail.TransactionDetailField;
 
 /*
  * This service will be fully implemented in a follow-up user story.
@@ -26,8 +28,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         Validate.isTrue(config.getMode() == TaxBatchConfig.Mode.CREATE_TAX_FILES,
                 "config should have specified CREATE_TAX_FILES mode");
 
-        return transactionDetailProcessorDao.processTransactionDetails(
-                config, TransactionDetailMapperForSprintax::new, this::generateSprintaxFiles);
+        return transactionDetailProcessorDao.processTransactionDetails(config, this::generateSprintaxFiles);
     }
 
     /*
@@ -35,12 +36,14 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
      * Future user stories will put such handling in place.
      */
     private TaxStatistics generateSprintaxFiles(final TaxBatchConfig config,
-            final TransactionDetailRowMapper<SprintaxInfo1042S> rowMapper) throws Exception {
-        final SprintaxInfo1042S sprintaxInfo = new SprintaxInfo1042S();
-        sprintaxInfo.setVendorNameForOutput("Test Vendor");
+            final TaxDtoRowMapper<TransactionDetail> rowMapper) throws Exception {
+        final SprintaxRowData sprintaxRow = new SprintaxRowData();
+        sprintaxRow.setVendorName("Test Vendor");
+        sprintaxRow.setForm1042SBox(CUTaxConstants.TAX_1042S_UNKNOWN_BOX_KEY);
 
         while (rowMapper.moveToNextRow()) {
-            rowMapper.updateCurrentRow(sprintaxInfo);
+            rowMapper.updateStringFieldsOnCurrentRow(sprintaxRow,
+                    TransactionDetailField.vendorName, TransactionDetailField.form1042SBox);
         }
 
         return new TaxStatistics();

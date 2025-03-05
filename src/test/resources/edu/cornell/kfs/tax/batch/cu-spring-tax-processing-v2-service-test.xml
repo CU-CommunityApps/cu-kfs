@@ -12,16 +12,16 @@
 
     <bean id="testTaxConfigHolderFor1042S" class="${unit.test.classname}" factory-method="buildTaxConfigHolder"/>
 
-    <bean id="testTaxConfigHolderForTransactionPrinting" class="${unit.test.classname}"
+    <bean id="testTaxConfigHolderForTransactionListPrinting" class="${unit.test.classname}"
           factory-method="buildTaxConfigHolder"/>
 
     <bean id="taxFileGenerationServiceFor1042S" class="${unit.test.classname}"
           factory-method="buildMockTaxFileGenerationService"
           c:configHolder-ref="testTaxConfigHolderFor1042S"/>
 
-    <bean id="taxFileGenerationServiceForTransactionPrinting" class="${unit.test.classname}"
+    <bean id="taxFileGenerationServiceForTransactionListPrinting" class="${unit.test.classname}"
           factory-method="buildMockTaxFileGenerationService"
-          c:configHolder-ref="testTaxConfigHolderForTransactionPrinting"/>
+          c:configHolder-ref="testTaxConfigHolderForTransactionListPrinting"/>
 
     <bean id="taxProcessingDao" class="${unit.test.classname}" factory-method="buildMockTaxProcessingDao"/>
 
@@ -34,13 +34,13 @@
                 <idref bean="taxProcessingV2Service-parentBean"/>
                 <idref bean="taxProcessingDao"/>
                 <idref bean="taxFileGenerationServiceFor1042S"/>
-                <idref bean="taxFileGenerationServiceForTransactionPrinting"/>
+                <idref bean="taxFileGenerationServiceForTransactionListPrinting"/>
                 <idref bean="taxParameterService"/>
                 <idref bean="taxParameterService-parentBean"/>
                 <idref bean="parameterService"/>
                 <idref bean="dateTimeService"/>
                 <idref bean="testTaxConfigHolderFor1042S"/>
-                <idref bean="testTaxConfigHolderForTransactionPrinting"/>
+                <idref bean="testTaxConfigHolderForTransactionListPrinting"/>
             </set>
         </property>
     </bean>

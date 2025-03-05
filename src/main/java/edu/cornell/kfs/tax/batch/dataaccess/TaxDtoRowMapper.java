@@ -8,15 +8,16 @@ import java.sql.SQLException;
  * 
  * The "T" type represents the DTO type that will be extracted from the ResultSet.
  * 
- * The "U" type represents the DTO type that will be used for updating the ResultSet (if supported);
- * it can be the same as the "T" type if desired.
+ * A DTO type other than the "T" type may be used when calling the updateStringFieldsOnCurrentRow() method,
+ * as long as the DTO fields being accessed have the same names as those on the "T" DTO.
  */
-public interface TaxDtoRowMapper<T, U> {
+public interface TaxDtoRowMapper<T> {
 
     boolean moveToNextRow() throws SQLException;
 
     T readCurrentRow() throws SQLException;
 
-    void updateCurrentRow(final U dtoContainingUpdates) throws SQLException;
+    void updateStringFieldsOnCurrentRow(final Object dtoContainingUpdates,
+            final TaxDtoFieldEnum... fieldsToUpdate) throws SQLException;
 
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <taxOutputDefinition fieldSeparator="&#x9;" includeQuotes="false">
-    <section name="Plain_Transaction_Detail_Row" hasHeaderRow="true" useExactFieldLengths="false">
+    <section name="Plain_Transaction_Detail_Row" useExactFieldLengths="false">
         <field name="Transaction_Detail_ID" length="40" type="DERIVED" key="transactionDetailId"/>
         <field name="Report_Year" length="11" type="DERIVED" key="reportYear"/>
         <field name="Doc_Number" length="14" type="DERIVED" key="documentNumber"/>

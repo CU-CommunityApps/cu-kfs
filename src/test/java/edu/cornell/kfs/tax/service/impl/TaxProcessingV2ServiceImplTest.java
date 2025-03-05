@@ -66,7 +66,7 @@ public class TaxProcessingV2ServiceImplTest {
         taxConfigHolderFor1042S = springContextExtension.getBean(
                 TaxSpringBeans.TEST_TAX_CONFIG_HOLDER_FOR_1042S, AtomicReference.class);
         taxConfigHolderForTransactionPrinting = springContextExtension.getBean(
-                TaxSpringBeans.TEST_TAX_CONFIG_HOLDER_FOR_TRANSACTION_PRINTING, AtomicReference.class);
+                TaxSpringBeans.TEST_TAX_CONFIG_HOLDER_FOR_TRANSACTION_LIST_PRINTING, AtomicReference.class);
         taxConfigHolderFor1042S.set(null);
         taxConfigHolderForTransactionPrinting.set(null);
     }
@@ -194,7 +194,7 @@ public class TaxProcessingV2ServiceImplTest {
         final java.util.Date testStartDate = TestDateUtils.toUtilDate(testCase.processingStartDate());
         final TaxBatchConfig expectedConfig = TaxConfigTestCase.Utils.toTaxBatchConfig(testCase);
         final TaxBatchConfig expectedPrintingConfig = TaxConfigTestCase.Utils.toTaxBatchConfig(
-                testCase, TaxBatchConfig.Mode.PRINT_TRANSACTION_ROWS);
+                testCase, TaxBatchConfig.Mode.CREATE_TRANSACTION_LIST_FILE);
 
         taxProcessingV2Service.performTaxProcessingFor1042S(testStartDate);
 
