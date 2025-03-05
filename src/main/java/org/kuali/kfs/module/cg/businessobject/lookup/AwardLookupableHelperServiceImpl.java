@@ -44,6 +44,8 @@ import java.util.Map;
 /**
  * Allows custom handling of Awards within the lookup framework.
  */
+// Cornell customization: contractsGrantsBillingUtilityService access has been changed from private to protected so that it could be accessed
+// from the CuAwardLookupableHelperServiceImpl local implementation class
 public class AwardLookupableHelperServiceImpl extends KualiLookupableHelperServiceImpl {
 
     protected ContractsAndGrantsLookupService contractsAndGrantsLookupService;

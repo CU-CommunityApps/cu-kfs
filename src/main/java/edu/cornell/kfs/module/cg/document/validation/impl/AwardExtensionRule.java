@@ -321,52 +321,6 @@ public class AwardExtensionRule extends AwardRule {
         return award.getBillingFrequency().getFrequencyDescription();
     }
     
-    private boolean hasActiveUnbilledMilestones(
-            final String proposalNumber,
-            final String chartOfAccountsCode,
-            final String accountNumber
-    ) {
-        final Map<String, Object> primaryKeys = new HashMap<>();
-        primaryKeys.put(KFSPropertyConstants.PROPOSAL_NUMBER, proposalNumber);
-        primaryKeys.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartOfAccountsCode);
-        primaryKeys.put(KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber);
-
-        final MilestoneSchedule schedule = getBoService().findByPrimaryKey(MilestoneSchedule.class, primaryKeys);
-        if (ObjectUtils.isNotNull(schedule)) {
-            for (final Milestone milestone : schedule.getMilestones()) {
-                if (milestone.isActive() && !milestone.isBilled()) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-    
-    private boolean hasActiveUnbilledBills(
-            final String proposalNumber,
-            final String chartOfAccountsCode,
-            final String accountNumber
-    ) {
-        final Map<String, Object> primaryKeys = new HashMap<>();
-        primaryKeys.put(KFSPropertyConstants.PROPOSAL_NUMBER, proposalNumber);
-        primaryKeys.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartOfAccountsCode);
-        primaryKeys.put(KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber);
-
-        final PredeterminedBillingSchedule schedule =
-                getBoService().findByPrimaryKey(PredeterminedBillingSchedule.class, primaryKeys);
-
-        if (ObjectUtils.isNotNull(schedule)) {
-            for (final Bill bill : schedule.getBills()) {
-                if (bill.isActive() && !bill.isBilled()) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
     /**
      * Gets the parameterService
      * 

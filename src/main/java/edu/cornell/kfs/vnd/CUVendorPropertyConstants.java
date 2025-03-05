@@ -23,7 +23,7 @@ public class CUVendorPropertyConstants {
     public static final String HEALTH_OFFSITE_LICENSE_REQUIRED = "extension.healthOffSiteCateringLicenseReq";
 
 
-    public static final String CERTIFICATION_EXPRIATION_DATE = "extension.vendorSupplierDiversityExpirationDate";
+    public static final String CERTIFICATION_EXPRIATION_DATE = "certificationExpirationDate";
  
     public static final String VENDOR_W9_RECEIVED_INDICATOR = "vendorHeader.vendorW9ReceivedIndicator";
     

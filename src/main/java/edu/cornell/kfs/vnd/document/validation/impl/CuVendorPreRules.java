@@ -84,11 +84,11 @@ public class CuVendorPreRules extends VendorPreRules {
             int i = 0;
             for(final VendorSupplierDiversity vendor : vendorSupplierDiversities) {
                 if (vendor.getCertificationExpirationDate().before( new Date() ) ) {
-                	expired.add(CUVendorConstants.EXPIRABLE_COVERAGES.SUPPLIER_DIVERSITY_CERTIFICATION);
+                    expired.add(CUVendorConstants.EXPIRABLE_COVERAGES.SUPPLIER_DIVERSITY_CERTIFICATION);
                     GlobalVariables.getMessageMap().putError(KFSConstants.MAINTENANCE_NEW_MAINTAINABLE+VendorConstants.VENDOR_HEADER_ATTR+"."+
-                    										 VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+
-                    										 CUVendorPropertyConstants.CERTIFICATION_EXPRIATION_DATE, 
-                    										 CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
+                                                             VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+
+                                                             CUVendorPropertyConstants.CERTIFICATION_EXPRIATION_DATE, 
+                                                             CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
                     break;
                 }
                 i++;

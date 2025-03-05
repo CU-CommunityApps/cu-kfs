@@ -1,35 +1,23 @@
 package edu.cornell.kfs.pdp.batch.service.impl;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.pdp.batch.service.impl.ExtractPaymentServiceImpl;
-import org.kuali.kfs.pdp.batch.service.impl.Iso20022FormatExtractor;
 
 public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
-    private static final Logger LOG = LogManager.getLogger();
-
-    protected Iso20022FormatExtractor iso20022FormatExtractor;
 
     public CuExtractPaymentServiceImpl() {
-    	super(null);
+        super(null);
     }
 
-    public CuExtractPaymentServiceImpl(
-            final Iso20022FormatExtractor iso20022FormatExtractor
-    ) {
-    	super(iso20022FormatExtractor);
-    	this.iso20022FormatExtractor = iso20022FormatExtractor;
-    }
-
-    /** MOD: Overridden to make filename unique by adding milliseconds to filename **/
+    /**
+     * MOD: Overridden to make filename unique by adding milliseconds to filename
+     **/
     @Override
     protected String getOutputFile(final String fileprefix, final Date runDate) {
-        //add a step to check for directory paths
+        // add a step to check for directory paths
         prepareDirectories(getRequiredDirectoryNames());
 
         String filename = directoryName + "/" + fileprefix + "_";
@@ -39,17 +27,5 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
 
         return filename;
     }
-    
-    protected boolean renameFile(final String fromFile, final String toFile) {
-        boolean bResult = false;
-        try {
-            final File f = new File(fromFile);
-            f.renameTo(new File(toFile));
-        } catch (final Exception ex) {
-            LOG.error("renameFile Exception: " + ex.getMessage());
-            LOG.error("fromFile: " + fromFile + ", toFile: " + toFile);
-        }
-        return bResult;
-    }
-    
+
 }

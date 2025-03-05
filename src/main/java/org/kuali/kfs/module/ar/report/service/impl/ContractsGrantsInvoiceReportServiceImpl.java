@@ -152,7 +152,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
      * @param os
      * @param locDocument
      */
-    protected void generateLOCReviewInPdf(final OutputStream os, ContractsGrantsLetterOfCreditReviewDocument locDocument) {
+    protected void generateLOCReviewInPdf(final OutputStream os, final ContractsGrantsLetterOfCreditReviewDocument locDocument) {
         try {
             final Document document =
                     new Document(new Rectangle(ArConstants.LOCReviewPdf.LENGTH, ArConstants.LOCReviewPdf.WIDTH));
