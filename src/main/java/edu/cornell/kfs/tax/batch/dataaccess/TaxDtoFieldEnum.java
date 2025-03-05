@@ -19,6 +19,10 @@ public interface TaxDtoFieldEnum {
         return false;
     }
 
+    default boolean needsEncryptedStorage() {
+        return false;
+    }
+
     Class<? extends BusinessObject> getMappedBusinessObjectClass();
 
 }

@@ -18,16 +18,15 @@ import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxFileSections;
 import edu.cornell.kfs.tax.batch.TaxBatchConfig;
 import edu.cornell.kfs.tax.batch.TaxOutputDefinitionV2FileType;
 import edu.cornell.kfs.tax.batch.TaxStatistics;
+import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoRowMapper;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailHandler;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailProcessorDao;
-import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailRowMapper;
-import edu.cornell.kfs.tax.batch.dataaccess.impl.TransactionDetailMapperForPrintingRowContents;
 import edu.cornell.kfs.tax.batch.service.TaxFileGenerationService;
 import edu.cornell.kfs.tax.batch.xml.TaxOutputDefinitionV2;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail;
 
-public class TaxFileGenerationServiceTransactionPrinterImpl implements TaxFileGenerationService,
-        TransactionDetailHandler<TransactionDetail> {
+public class TaxFileGenerationServiceTransactionListPrinterImpl implements TaxFileGenerationService,
+        TransactionDetailHandler {
 
     private TransactionDetailProcessorDao transactionDetailProcessorDao;
     private TaxOutputDefinitionV2FileType taxOutputDefinitionV2FileType;
@@ -38,16 +37,15 @@ public class TaxFileGenerationServiceTransactionPrinterImpl implements TaxFileGe
     @Override
     public Object generateFiles(final TaxBatchConfig config) throws IOException, SQLException {
         Validate.notNull(config, "config cannot be null");
-        Validate.isTrue(config.getMode() == TaxBatchConfig.Mode.PRINT_TRANSACTION_ROWS,
-                "config should have specified PRINT_TRANSACTION_ROWS mode");
+        Validate.isTrue(config.getMode() == TaxBatchConfig.Mode.CREATE_TRANSACTION_LIST_FILE,
+                "config should have specified CREATE_TRANSACTION_LIST_FILE mode");
 
-        return transactionDetailProcessorDao.processTransactionDetails(
-                config, TransactionDetailMapperForPrintingRowContents::new, this);
+        return transactionDetailProcessorDao.processTransactionDetails(config, this);
     }
 
     @Override
     public TaxStatistics performProcessing(final TaxBatchConfig config,
-            final TransactionDetailRowMapper<TransactionDetail> rowMapper) throws Exception {
+            final TaxDtoRowMapper<TransactionDetail> rowMapper) throws Exception {
         final String fileName = generateTransactionDetailFileName(config);
         final TaxOutputDefinitionV2 outputDefinition = parseOutputDefinitionForPrintingTransactionRows();
 
@@ -61,7 +59,7 @@ public class TaxFileGenerationServiceTransactionPrinterImpl implements TaxFileGe
     }
 
     private TaxStatistics generateTransactionDetailFile(final TaxBatchConfig config,
-            final TransactionDetailRowMapper<TransactionDetail> rowMapper,
+            final TaxDtoRowMapper<TransactionDetail> rowMapper,
             final TaxFileRowWriterTransactionPrinterImpl rowWriter) throws Exception {
         rowWriter.writeHeaderRow(TaxFileSections.PLAIN_TRANSACTION_DETAIL_ROW);
 

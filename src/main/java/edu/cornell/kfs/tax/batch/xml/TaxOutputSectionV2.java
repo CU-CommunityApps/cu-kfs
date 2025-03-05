@@ -25,9 +25,6 @@ public class TaxOutputSectionV2 {
     @XmlAttribute(name = "name", required = true)
     private String name;
 
-    @XmlAttribute(name = "hasHeaderRow")
-    private boolean hasHeaderRow;
-
     @XmlAttribute(name = "useExactFieldLengths")
     private boolean useExactFieldLengths;
 
@@ -48,14 +45,6 @@ public class TaxOutputSectionV2 {
 
     public void setName(final String name) {
         this.name = name;
-    }
-
-    public boolean isHasHeaderRow() {
-        return hasHeaderRow;
-    }
-
-    public void setHasHeaderRow(final boolean hasHeaderRow) {
-        this.hasHeaderRow = hasHeaderRow;
     }
 
     public boolean isUseExactFieldLengths() {

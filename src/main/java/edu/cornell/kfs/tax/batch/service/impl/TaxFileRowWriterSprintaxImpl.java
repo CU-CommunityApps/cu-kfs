@@ -9,12 +9,12 @@ import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
-import edu.cornell.kfs.tax.batch.dto.SprintaxInfo1042S;
-import edu.cornell.kfs.tax.batch.dto.SprintaxInfo1042S.SprintaxField;
+import edu.cornell.kfs.tax.batch.dto.SprintaxRowData;
+import edu.cornell.kfs.tax.batch.dto.SprintaxRowData.SprintaxField;
 import edu.cornell.kfs.tax.batch.xml.TaxOutputDefinitionV2;
 import edu.cornell.kfs.tax.util.TaxUtils;
 
-public class TaxFileRowWriterSprintaxImpl extends TaxFileRowWriterCsvBase<SprintaxInfo1042S> {
+public class TaxFileRowWriterSprintaxImpl extends TaxFileRowWriterCsvBase<SprintaxRowData> {
 
     private final DecimalFormat amountFormat;
     private final DecimalFormat percentFormat;

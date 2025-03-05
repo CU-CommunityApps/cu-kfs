@@ -14,8 +14,6 @@ public @interface TaxOutputSectionFixture {
 
     String name();
 
-    boolean hasHeaderRow() default false;
-
     boolean useExactFieldLengths() default false;
 
     TaxOutputFieldFixture[] fields();
@@ -26,7 +24,6 @@ public @interface TaxOutputSectionFixture {
         public static TaxOutputSectionV2 toDTO(final TaxOutputSectionFixture fixture) {
             final TaxOutputSectionV2 taxSection = new TaxOutputSectionV2();
             taxSection.setName(fixture.name());
-            taxSection.setHasHeaderRow(fixture.hasHeaderRow());
             taxSection.setUseExactFieldLengths(fixture.useExactFieldLengths());
             taxSection.setFields(
                     FixtureUtils.convertFixtures(TaxOutputFieldFixture.Utils::toDTO, fixture.fields()));

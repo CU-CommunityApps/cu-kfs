@@ -83,8 +83,7 @@ public class TaxOutputDefinitionV2FileTypeTest {
         SINGLE_SECTION_SINGLE_FIELD,
 
         @TaxOutputDefinitionFixture(fieldSeparator = "\t", includeQuotes = false, sections = {
-                @TaxOutputSectionFixture(name = "Tax_Section", hasHeaderRow = true,
-                            useExactFieldLengths = true, fields = {
+                @TaxOutputSectionFixture(name = "Tax_Section", useExactFieldLengths = true, fields = {
                         @TaxOutputFieldFixture(
                                 name = "recipient_id", length = 25,
                                 type = TaxOutputFieldType.DERIVED, key = "recipientId"
@@ -106,7 +105,7 @@ public class TaxOutputDefinitionV2FileTypeTest {
         SINGLE_SECTION_MULTIPLE_FIELDS,
 
         @TaxOutputDefinitionFixture(fieldSeparator = KFSConstants.COMMA, includeQuotes = true, sections = {
-                @TaxOutputSectionFixture(name = "Biographic_Section", hasHeaderRow = true, fields = {
+                @TaxOutputSectionFixture(name = "Biographic_Section", fields = {
                         @TaxOutputFieldFixture(
                                 name = "recipient_id", length = 25,
                                 type = TaxOutputFieldType.DERIVED, key = "recipientId"
@@ -124,7 +123,7 @@ public class TaxOutputDefinitionV2FileTypeTest {
                                 type = TaxOutputFieldType.STATIC, value = ""
                         )
                 }),
-                @TaxOutputSectionFixture(name = "Payment_Section", hasHeaderRow = true, fields = {
+                @TaxOutputSectionFixture(name = "Payment_Section", fields = {
                         @TaxOutputFieldFixture(
                                 name = "recipient_id", length = 25,
                                 type = TaxOutputFieldType.DERIVED, key = "recipientId"

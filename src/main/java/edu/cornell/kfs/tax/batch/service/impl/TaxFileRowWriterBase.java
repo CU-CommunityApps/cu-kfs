@@ -54,9 +54,6 @@ public abstract class TaxFileRowWriterBase<T> implements TaxFileRowWriter<T> {
         Validate.notBlank(sectionName, "sectionName cannot be blank");
 
         final TaxOutputSectionV2 section = getSection(sectionName);
-        Validate.validState(section.isHasHeaderRow(),
-                "Section does not treat its field names as header labels: %s", sectionName);
-
         final Stream<String> headers = section.getFields().stream()
                 .map(TaxOutputFieldV2::getName);
 

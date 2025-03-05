@@ -25,7 +25,7 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
 
     private TaxProcessingDao legacyTaxProcessingDao;
     private TaxFileGenerationService taxFileGenerationServiceFor1042S;
-    private TaxFileGenerationService taxFileGenerationServiceForTransactionPrinting;
+    private TaxFileGenerationService taxFileGenerationServiceForTransactionListPrinting;
     private TaxParameterService taxParameterService;
     private DateTimeService dateTimeService;
 
@@ -59,8 +59,8 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
 
     private void generateFileContainingPlainTransactionDetails(final TaxBatchConfig config) throws Exception {
         LOG.info("generateFileContainingPlainTransactionDetails, Generating plain transaction details file...");
-        TaxBatchConfig printConfig = config.withMode(TaxBatchConfig.Mode.PRINT_TRANSACTION_ROWS);
-        taxFileGenerationServiceForTransactionPrinting.generateFiles(printConfig);
+        TaxBatchConfig printConfig = config.withMode(TaxBatchConfig.Mode.CREATE_TRANSACTION_LIST_FILE);
+        taxFileGenerationServiceForTransactionListPrinting.generateFiles(printConfig);
     }
 
     private TaxBatchConfig buildTaxBatchConfigFor1042S(final java.util.Date processingStartDate) {
@@ -153,9 +153,9 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
         this.taxFileGenerationServiceFor1042S = taxFileGenerationServiceFor1042S;
     }
 
-    public void setTaxFileGenerationServiceForTransactionPrinting(
-            final TaxFileGenerationService taxFileGenerationServiceForTransactionPrinting) {
-        this.taxFileGenerationServiceForTransactionPrinting = taxFileGenerationServiceForTransactionPrinting;
+    public void setTaxFileGenerationServiceForTransactionListPrinting(
+            final TaxFileGenerationService taxFileGenerationServiceForTransactionListPrinting) {
+        this.taxFileGenerationServiceForTransactionListPrinting = taxFileGenerationServiceForTransactionListPrinting;
     }
 
     public void setTaxParameterService(final TaxParameterService taxParameterService) {

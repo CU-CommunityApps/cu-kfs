@@ -11,7 +11,7 @@
     <bean id="propertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer-parentBean">
         <property name="properties">
             <props merge="true">
-                <prop key="staging.directory">test/tax_transaction_print/staging</prop>
+                <prop key="staging.directory">test/tax_transaction_list_print/staging</prop>
                 <prop key="tax.output.scrubbed">false</prop>
             </props>
         </property>
@@ -36,8 +36,8 @@
         <property name="beanWhitelist">
             <set merge="true">
                 <idref bean="transactionDetailProcessorDao"/>
-                <idref bean="taxFileGenerationServiceForTransactionPrinting"/>
-                <idref bean="taxFileGenerationServiceForTransactionPrinting-parentBean"/>
+                <idref bean="taxFileGenerationServiceForTransactionListPrinting"/>
+                <idref bean="taxFileGenerationServiceForTransactionListPrinting-parentBean"/>
                 <idref bean="taxOutputDefinitionV2FileType"/>
                 <idref bean="taxOutputDefinitionV2FileType-parentBean"/>
                 <idref bean="testTransactionDetailCsvInputFileType"/>

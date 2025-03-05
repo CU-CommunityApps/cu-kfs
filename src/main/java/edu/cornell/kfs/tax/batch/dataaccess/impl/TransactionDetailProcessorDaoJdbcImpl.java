@@ -27,10 +27,9 @@ import edu.cornell.kfs.sys.util.CuSqlQueryPlatformAwareDaoBaseJdbc;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.batch.TaxBatchConfig;
 import edu.cornell.kfs.tax.batch.TaxStatistics;
+import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoRowMapper;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailHandler;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailProcessorDao;
-import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailRowMapper;
-import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailRowMapperFactory;
 import edu.cornell.kfs.tax.batch.dto.DocumentHeaderLite.DocumentHeaderField;
 import edu.cornell.kfs.tax.batch.dto.NoteLite;
 import edu.cornell.kfs.tax.batch.dto.NoteLite.NoteField;
@@ -57,17 +56,16 @@ public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwa
     private EncryptionService encryptionService;
 
     @Override
-    public <U> TaxStatistics processTransactionDetails(final TaxBatchConfig config,
-            final TransactionDetailRowMapperFactory<U> rowMapperFactory,
-            final TransactionDetailHandler<U> handler) throws SQLException {
+    public TaxStatistics processTransactionDetails(final TaxBatchConfig config,
+            final TransactionDetailHandler handler) {
         final TaxDtoDbMetadata transactionDetailMetadata = taxTableMetadataLookupService
                 .getDatabaseMappingMetadataForDto(TransactionDetailField.class);
         final CuSqlQuery query = createTransactionDetailQuery(config, transactionDetailMetadata);
 
         return queryForUpdatableResults(query, resultSet -> {
             try {
-                final TransactionDetailRowMapper<U> rowMapper = rowMapperFactory.createMapper(
-                        encryptionService, transactionDetailMetadata, resultSet);
+                final TaxDtoRowMapper<TransactionDetail> rowMapper = new TaxDtoRowMapperImpl<>(
+                        TransactionDetail::new, encryptionService, transactionDetailMetadata, resultSet);
                 return handler.performProcessing(config, rowMapper);
             } catch (final IOException e) {
                 throw new UncheckedIOException(e);
@@ -119,15 +117,13 @@ public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwa
 
 
     @Override
-    public VendorQueryResults getVendor(final Integer vendorHeaderId, final Integer vendorDetailId)
-            throws SQLException {
+    public VendorQueryResults getVendor(final Integer vendorHeaderId, final Integer vendorDetailId) {
         final Pair<Integer, Integer> vendorId = Pair.of(vendorHeaderId, vendorDetailId);
         final TaxDtoDbMetadata vendorMetadata = taxTableMetadataLookupService
                 .getDatabaseMappingMetadataForDto(VendorField.class);
         final CuSqlQuery query = createVendorQuery(vendorId, vendorMetadata);
 
-        return queryForResults(query,
-                resultSet -> extractVendorQueryResults(resultSet, vendorId, vendorMetadata));
+        return queryForResults(query, resultSet -> readVendorQueryResults(resultSet, vendorId, vendorMetadata));
     }
 
     private CuSqlQuery createVendorQuery(final Pair<Integer, Integer> vendorId,
@@ -151,27 +147,24 @@ public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwa
                 .build();
     }
 
-    private VendorQueryResults extractVendorQueryResults(final ResultSet resultSet,
+    private VendorQueryResults readVendorQueryResults(final ResultSet resultSet,
             final Pair<Integer, Integer> vendorId,
             final TaxDtoDbMetadata vendorMetadata) throws SQLException {
-        final VendorDetailLiteMapper vendorMapper = new VendorDetailLiteMapper(
-                encryptionService, vendorMetadata, resultSet);
+        final TaxDtoRowMapper<VendorDetailLite> vendorMapper = new TaxDtoRowMapperImpl<>(
+                VendorDetailLite::new, encryptionService, vendorMetadata, resultSet);
         if (!vendorMapper.moveToNextRow()) {
             return new VendorQueryResults(null, null);
         }
 
         final VendorDetailLite vendorDetail = vendorMapper.readCurrentRow();
-        final VendorDetailLite parentDetail;
         if (!vendorMapper.moveToNextRow()) {
             if (vendorId.getRight().equals(vendorDetail.getVendorDetailAssignedIdentifier())) {
-                parentDetail = null;
                 return new VendorQueryResults(vendorDetail, null);
             } else {
-                parentDetail = vendorDetail;
-                return new VendorQueryResults(null, parentDetail);
+                return new VendorQueryResults(null, vendorDetail);
             }
         } else {
-            parentDetail = vendorMapper.readCurrentRow();
+            final VendorDetailLite parentDetail = vendorMapper.readCurrentRow();
             if (vendorMapper.moveToNextRow()) {
                 LOG.warn("extractVendorDetailResults, More than 2 vendors were found by a query that should have "
                         + "only fetched vendor {}-{} and/or its parent. The remaining results will be ignored.",
@@ -194,24 +187,23 @@ public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwa
 
     @Override
     public VendorAddressLite getHighestPriorityUSVendorAddress(final Integer vendorHeaderId,
-            final Integer vendorDetailId) throws SQLException {
+            final Integer vendorDetailId) {
         return getHighestPriorityVendorAddress(Pair.of(vendorHeaderId, vendorDetailId), true);
     }
 
     @Override
     public VendorAddressLite getHighestPriorityForeignVendorAddress(final Integer vendorHeaderId,
-            final Integer vendorDetailId) throws SQLException {
+            final Integer vendorDetailId) {
         return getHighestPriorityVendorAddress(Pair.of(vendorHeaderId, vendorDetailId), false);
     }
 
     private VendorAddressLite getHighestPriorityVendorAddress(final Pair<Integer, Integer> vendorId,
-            final boolean searchForUSAddresses) throws SQLException {
+            final boolean searchForUSAddresses) {
         final TaxDtoDbMetadata addressMetadata = taxTableMetadataLookupService
                 .getDatabaseMappingMetadataForDto(VendorAddressField.class);
         final CuSqlQuery query = createVendorAddressQuery(vendorId, searchForUSAddresses, addressMetadata);
 
-        return queryForResults(query,
-                resultSet -> extractVendorAddressResults(resultSet, addressMetadata));
+        return queryForResults(query, resultSet -> readVendorAddressResults(resultSet, addressMetadata));
     }
 
     private CuSqlQuery createVendorAddressQuery(final Pair<Integer, Integer> vendorId,
@@ -247,10 +239,10 @@ public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwa
                 .build();
     }
 
-    private VendorAddressLite extractVendorAddressResults(final ResultSet resultSet,
+    private VendorAddressLite readVendorAddressResults(final ResultSet resultSet,
             final TaxDtoDbMetadata addressMetadata) throws SQLException {
-        final VendorAddressLiteMapper addressMapper = new VendorAddressLiteMapper(
-                encryptionService, addressMetadata, resultSet);
+        final TaxDtoRowMapper<VendorAddressLite> addressMapper = new TaxDtoRowMapperImpl<>(
+                VendorAddressLite::new, encryptionService, addressMetadata, resultSet);
         if (addressMapper.moveToNextRow()) {
             return addressMapper.readCurrentRow();
         } else {
@@ -261,14 +253,13 @@ public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwa
 
 
     @Override
-    public List<NoteLite> getNotesByDocumentNumber(final String documentNumber) throws SQLException {
+    public List<NoteLite> getNotesByDocumentNumber(final String documentNumber) {
         final TaxDtoDbMetadata noteMetadata = taxTableMetadataLookupService
                 .getDatabaseMappingMetadataForDto(NoteField.class);
         final TaxDtoDbMetadata docHeaderMetadata = taxTableMetadataLookupService
                 .getDatabaseMappingMetadataForDto(DocumentHeaderField.class);
         final CuSqlQuery query = createNoteQuery(documentNumber, noteMetadata, docHeaderMetadata);
-        return queryForResults(query,
-                resultSet -> extractNoteResults(resultSet, noteMetadata));
+        return queryForResults(query, resultSet -> readNoteResults(resultSet, noteMetadata));
     }
 
     private CuSqlQuery createNoteQuery(final String documentNumber, final TaxDtoDbMetadata noteMetadata,
@@ -286,9 +277,10 @@ public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwa
                 .build();
     }
 
-    private List<NoteLite> extractNoteResults(final ResultSet resultSet,
+    private List<NoteLite> readNoteResults(final ResultSet resultSet,
             final TaxDtoDbMetadata noteMetadata) throws SQLException {
-        final NoteLiteMapper noteMapper = new NoteLiteMapper(encryptionService, noteMetadata, resultSet);
+        final TaxDtoRowMapper<NoteLite> noteMapper = new TaxDtoRowMapperImpl<>(
+                NoteLite::new, encryptionService, noteMetadata, resultSet);
         Stream.Builder<NoteLite> notes = Stream.builder();
         while (noteMapper.moveToNextRow()) {
             notes.add(noteMapper.readCurrentRow());

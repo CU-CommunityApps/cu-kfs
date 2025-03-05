@@ -8,7 +8,7 @@ public final class TaxBatchConfig {
 
     public enum Mode {
         CREATE_TAX_FILES,
-        PRINT_TRANSACTION_ROWS;
+        CREATE_TRANSACTION_LIST_FILE;
     }
 
     private final Mode mode;
