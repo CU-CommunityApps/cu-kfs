@@ -70,6 +70,10 @@ public class WrappedCsvWriter implements Closeable {
         IOUtils.closeQuietly(csvWriter, streamWriter, outputStream);
     }
 
+    public void writeNext(final String[] nextLine) {
+        csvWriter.writeNext(nextLine);
+    }
+
     public ICSVWriter getCsvWriter() {
         return csvWriter;
     }

@@ -28,10 +28,8 @@ public class TaxDtoRowMapperImpl<T> implements TaxDtoRowMapper<T> {
 
     private static final Map<Class<?>, FieldReader> FIELD_READERS = Map.ofEntries(
             Map.entry(String.class, TaxDtoRowMapperImpl::getString),
-            Map.entry(Integer.class, TaxDtoRowMapperImpl::getInt),
-            Map.entry(int.class, TaxDtoRowMapperImpl::getInt),
+            Map.entry(Integer.class, TaxDtoRowMapperImpl::getInteger),
             Map.entry(Long.class, TaxDtoRowMapperImpl::getLong),
-            Map.entry(long.class, TaxDtoRowMapperImpl::getLong),
             Map.entry(java.sql.Date.class, TaxDtoRowMapperImpl::getDate),
             Map.entry(Boolean.class, TaxDtoRowMapperImpl::getBoolean),
             Map.entry(boolean.class, TaxDtoRowMapperImpl::getOrDefaultBoolean),
@@ -113,12 +111,14 @@ public class TaxDtoRowMapperImpl<T> implements TaxDtoRowMapper<T> {
         return resultSet.getString(getColumnAlias(fieldDefinition));
     }
 
-    private int getInt(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
-        return resultSet.getInt(getColumnAlias(fieldDefinition));
+    private Integer getInteger(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
+        final int value = resultSet.getInt(getColumnAlias(fieldDefinition));
+        return resultSet.wasNull() ? null : Integer.valueOf(value);
     }
 
-    private long getLong(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
-        return resultSet.getLong(getColumnAlias(fieldDefinition));
+    private Long getLong(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
+        final long value = resultSet.getLong(getColumnAlias(fieldDefinition));
+        return resultSet.wasNull() ? null : Long.valueOf(value);
     }
 
     private java.sql.Date getDate(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
@@ -139,7 +139,7 @@ public class TaxDtoRowMapperImpl<T> implements TaxDtoRowMapper<T> {
         return Truth.strToBooleanIgnoreCase(value);
     }
 
-    private boolean getOrDefaultBoolean(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
+    private Boolean getOrDefaultBoolean(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
         final String value = getString(fieldDefinition);
         return Truth.strToBooleanIgnoreCase(value, Boolean.FALSE);
     }
@@ -150,8 +150,8 @@ public class TaxDtoRowMapperImpl<T> implements TaxDtoRowMapper<T> {
     }
 
     private KualiInteger getKualiInteger(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
-        final long value = getLong(fieldDefinition);
-        return new KualiInteger(value);
+        final Long value = getLong(fieldDefinition);
+        return (value != null) ? new KualiInteger(value) : null;
     }
 
     private void updateString(final TaxDtoFieldEnum fieldDefinition, final String value) throws SQLException {

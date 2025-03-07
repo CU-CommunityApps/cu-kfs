@@ -70,7 +70,6 @@ public final class CUTaxConstants {
     // Constants pertaining to number and date formatting for output.
     public static final String DEFAULT_AMOUNT_FORMAT = "#########.##";
     public static final String DEFAULT_PERCENT_FORMAT = "00.00";
-    public static final String DEFAULT_SPRINTAX_PERCENT_FORMAT = "00.##";
     public static final String DEFAULT_DATE_FORMAT = "MM/dd/yyyy";
     public static final String FILENAME_SUFFIX_DATE_FORMAT = "_MMddyyyy_HH_mm_ss_SSS";
     public static final int DEFAULT_AMOUNT_MAX_INT_DIGITS = 9;

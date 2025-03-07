@@ -27,6 +27,12 @@ public class TaxOutputDefinitionV2 {
     @XmlAttribute(name = "fieldSeparator", required = true)
     private String fieldSeparator;
 
+    @XmlAttribute(name = "amountFormat", required = false)
+    private String amountFormat;
+
+    @XmlAttribute(name = "percentFormat", required = false)
+    private String percentFormat;
+
     @XmlAttribute(name = "includeQuotes", required = false)
     private boolean includeQuotes;
 
@@ -51,6 +57,22 @@ public class TaxOutputDefinitionV2 {
 
     public void setFieldSeparator(final String fieldSeparator) {
         this.fieldSeparator = fieldSeparator;
+    }
+
+    public String getAmountFormat() {
+        return amountFormat;
+    }
+
+    public void setAmountFormat(final String amountFormat) {
+        this.amountFormat = amountFormat;
+    }
+
+    public String getPercentFormat() {
+        return percentFormat;
+    }
+
+    public void setPercentFormat(final String percentFormat) {
+        this.percentFormat = percentFormat;
     }
 
     public boolean isIncludeQuotes() {

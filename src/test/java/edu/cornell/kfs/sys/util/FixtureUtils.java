@@ -8,8 +8,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.provider.Arguments;
+
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public final class FixtureUtils {
 
@@ -44,6 +47,10 @@ public final class FixtureUtils {
         return Stream.of(annotationBasedFixtures)
                 .map(converter)
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    public static String convertToNullIfEqualToTheWordNull(final String value) {
+        return StringUtils.equalsIgnoreCase(value, CUKFSConstants.NULL) ? null : value;
     }
 
 }
