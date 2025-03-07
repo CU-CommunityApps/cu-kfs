@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<taxOutputDefinition fieldSeparator=",">
-    <section name="Biographic_Section" hasHeaderRow="true" useExactFieldLengths="false">
-        <field name="recipient_id" length="25" type="DERIVED" key="recipientId"/>
-        <field name="full_name" length="90" type="DERIVED" key="recipientName"/>
-        <field name="primary_address" length="120" type="DERIVED" key="recipientAddress"/>
+<taxOutputDefinition fieldSeparator="," includeQuotes="true" amountFormat="#######.##" percentFormat="00.00">
+    <section name="Biographic_Section" useExactFieldLengths="false">
+        <field name="recipient_id" length="25" type="STRING" key="recipientId"/>
+        <field name="full_name" length="90" type="STRING" key="recipientName"/>
+        <field name="primary_address" length="120" type="STRING" key="recipientAddress"/>
         <field name="extra_address" length="120" type="STATIC" value=""/>
+        <field name="tax_id" length="9" type="SENSITIVE_STRING" key="taxId" mask="ZZZZZZZZZ"/>
     </section>
-    <section name="Payment_Section" hasHeaderRow="true" useExactFieldLengths="false">
-        <field name="recipient_id" length="25" type="DERIVED" key="recipientId"/>
+    <section name="Payment_Section" useExactFieldLengths="false">
+        <field name="recipient_id" length="25" type="STRING" key="recipientId"/>
         <field name="payment_source" length="10" type="STATIC" value="Cornell"/>
-        <field name="tax_amount" length="15" type="DERIVED" key="taxAmount"/>
+        <field name="tax_amount" length="15" type="AMOUNT" key="taxAmount"/>
     </section>
 </taxOutputDefinition>

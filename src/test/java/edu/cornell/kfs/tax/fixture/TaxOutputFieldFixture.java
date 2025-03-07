@@ -5,9 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.apache.commons.lang3.StringUtils;
-
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.util.FixtureUtils;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxOutputFieldType;
 import edu.cornell.kfs.tax.batch.xml.TaxOutputFieldV2;
 
@@ -25,6 +24,8 @@ public @interface TaxOutputFieldFixture {
 
     String value() default CUKFSConstants.NULL;
 
+    String mask() default CUKFSConstants.NULL;
+
 
 
     public static final class Utils {
@@ -33,13 +34,10 @@ public @interface TaxOutputFieldFixture {
             taxField.setName(fixture.name());
             taxField.setLength(fixture.length());
             taxField.setType(fixture.type());
-            taxField.setKey(convertNullWordToNullStringIfPresent(fixture.key()));
-            taxField.setValue(convertNullWordToNullStringIfPresent(fixture.value()));
+            taxField.setKey(FixtureUtils.convertToNullIfEqualToTheWordNull(fixture.key()));
+            taxField.setValue(FixtureUtils.convertToNullIfEqualToTheWordNull(fixture.value()));
+            taxField.setMask(FixtureUtils.convertToNullIfEqualToTheWordNull(fixture.mask()));
             return taxField;
-        }
-
-        private static String convertNullWordToNullStringIfPresent(final String value) {
-            return StringUtils.equalsIgnoreCase(value, CUKFSConstants.NULL) ? null : value;
         }
     }
 

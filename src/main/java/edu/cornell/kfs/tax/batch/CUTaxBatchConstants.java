@@ -71,7 +71,16 @@ public final class CUTaxBatchConstants {
 
     public enum TaxOutputFieldType {
         STATIC,
-        DERIVED;
+        STRING,
+        NORMALIZED_STRING,
+        SENSITIVE_STRING,
+        INTEGER,
+        BOOLEAN,
+        DATE,
+        AMOUNT,
+        NEGATED_AMOUNT,
+        PERCENT,
+        PLAIN_DECIMAL;
     }
 
     /**
@@ -521,6 +530,12 @@ public final class CUTaxBatchConstants {
         private DerivedFieldNames() {
             throw new UnsupportedOperationException("do not call DerivedFieldNames constructor");
         }
+    }
+
+    public static final class TaxFileSections {
+        public static final String SPRINTAX_BIOGRAPHIC_ROW_1042S = "Sprintax_Bio_Row_1042S";
+        public static final String SPRINTAX_PAYMENT_ROW_1042S = "Sprintax_Payment_Row_1042S";
+        public static final String PLAIN_TRANSACTION_DETAIL_ROW = "Plain_Transaction_Detail_Row";
     }
 
 

@@ -49,9 +49,10 @@ public class TaxTableMetadataLookupServiceDefaultImplTest {
                                 tableName = "KFS.KRNS_NTE_T", tableAlias = "NOT0")
                 },
                 mappedFields = {
-                        @TaxFieldFixture(key = "noteIdentifier", column = "NOT0.NTE_ID"),
-                        @TaxFieldFixture(key = "remoteObjectIdentifier", column = "NOT0.RMT_OBJ_ID"),
-                        @TaxFieldFixture(key = "noteText", column = "NOT0.TXT")
+                        @TaxFieldFixture(key = "noteIdentifier", column = "NOT0.NTE_ID", alias = "NTE_ID"),
+                        @TaxFieldFixture(key = "remoteObjectIdentifier", column = "NOT0.RMT_OBJ_ID",
+                                alias = "RMT_OBJ_ID"),
+                        @TaxFieldFixture(key = "noteText", column = "NOT0.TXT", alias = "TXT")
                 }
         )
         NOTE_METADATA,
@@ -66,23 +67,31 @@ public class TaxTableMetadataLookupServiceDefaultImplTest {
                 },
                 mappedFields = {
                         @TaxFieldFixture(key = "vendorHeaderGeneratedIdentifier_forHeader",
-                                column = "VEN1.VNDR_HDR_GNRTD_ID"),
+                                column = "VEN1.VNDR_HDR_GNRTD_ID", alias = "VEN1_VNDR_HDR_GNRTD_ID"),
                         @TaxFieldFixture(key = "vendorHeaderGeneratedIdentifier_forDetail",
-                                column = "VEN0.VNDR_HDR_GNRTD_ID"),
-                        @TaxFieldFixture(key = "vendorDetailAssignedIdentifier", column = "VEN0.VNDR_DTL_ASND_ID"),
-                        @TaxFieldFixture(key = "vendorParentIndicator", column = "VEN0.VNDR_PARENT_IND"),
-                        @TaxFieldFixture(key = "vendorFirstLastNameIndicator", column = "VEN0.VNDR_1ST_LST_NM_IND"),
-                        @TaxFieldFixture(key = "vendorName", column = "VEN0.VNDR_NM"),
-                        @TaxFieldFixture(key = "vendorTaxNumber", column = "VEN1.VNDR_US_TAX_NBR"),
-                        @TaxFieldFixture(key = "vendorTypeCode", column = "VEN1.VNDR_TYP_CD"),
-                        @TaxFieldFixture(key = "vendorOwnershipCode", column = "VEN1.VNDR_OWNR_CD"),
-                        @TaxFieldFixture(key = "vendorOwnershipCategoryCode", column = "VEN1.VNDR_OWNR_CTGRY_CD"),
-                        @TaxFieldFixture(key = "vendorForeignIndicator", column = "VEN1.VNDR_FRGN_IND"),
-                        @TaxFieldFixture(key = "vendorGIIN", column = "VEN1.VNDR_GIIN"),
-                        @TaxFieldFixture(key = "vendorChapter4StatusCode", column = "VEN1.VNDR_CHAP_4_STAT_CD")
+                                column = "VEN0.VNDR_HDR_GNRTD_ID", alias = "VEN0_VNDR_HDR_GNRTD_ID"),
+                        @TaxFieldFixture(key = "vendorDetailAssignedIdentifier", column = "VEN0.VNDR_DTL_ASND_ID",
+                                alias = "VNDR_DTL_ASND_ID"),
+                        @TaxFieldFixture(key = "vendorParentIndicator", column = "VEN0.VNDR_PARENT_IND",
+                                alias = "VNDR_PARENT_IND"),
+                        @TaxFieldFixture(key = "vendorFirstLastNameIndicator", column = "VEN0.VNDR_1ST_LST_NM_IND",
+                                alias = "VNDR_1ST_LST_NM_IND"),
+                        @TaxFieldFixture(key = "vendorName", column = "VEN0.VNDR_NM", alias = "VNDR_NM"),
+                        @TaxFieldFixture(key = "vendorTaxNumber", column = "VEN1.VNDR_US_TAX_NBR",
+                                alias = "VNDR_US_TAX_NBR"),
+                        @TaxFieldFixture(key = "vendorTypeCode", column = "VEN1.VNDR_TYP_CD", alias = "VNDR_TYP_CD"),
+                        @TaxFieldFixture(key = "vendorOwnershipCode", column = "VEN1.VNDR_OWNR_CD",
+                                alias = "VNDR_OWNR_CD"),
+                        @TaxFieldFixture(key = "vendorOwnershipCategoryCode", column = "VEN1.VNDR_OWNR_CTGRY_CD",
+                                alias = "VNDR_OWNR_CTGRY_CD"),
+                        @TaxFieldFixture(key = "vendorForeignIndicator", column = "VEN1.VNDR_FRGN_IND",
+                                alias = "VNDR_FRGN_IND"),
+                        @TaxFieldFixture(key = "vendorGIIN", column = "VEN1.VNDR_GIIN", alias = "VNDR_GIIN"),
+                        @TaxFieldFixture(key = "vendorChapter4StatusCode", column = "VEN1.VNDR_CHAP_4_STAT_CD",
+                                alias = "VNDR_CHAP_4_STAT_CD")
                 }
         )
-        VENDOR_METDATA;
+        VENDOR_METADATA;
 
     }
 
@@ -120,8 +129,11 @@ public class TaxTableMetadataLookupServiceDefaultImplTest {
             assertEquals(fieldKey.name(), fieldFixture.key(), "Wrong ordering of expected fields within the fixture; "
                     + "they should have matched the declaration order of the related enum");
 
-            final String actualColumnLabel = metadata.getFullColumnLabel((Enum<?>) fieldKey);
+            final String actualColumnLabel = metadata.getFullColumnLabel(fieldKey);
             assertEquals(fieldFixture.column(), actualColumnLabel, "Wrong column label");
+
+            final String actualColumnAlias = metadata.getColumnAlias(fieldKey);
+            assertEquals(fieldFixture.alias(), actualColumnAlias, "Wrong column alias");
         }
     }
 

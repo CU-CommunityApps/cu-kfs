@@ -24,7 +24,8 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
     private static final Logger LOG = LogManager.getLogger();
 
     private TaxProcessingDao legacyTaxProcessingDao;
-    private TaxFileGenerationService taxFileGenerationService;
+    private TaxFileGenerationService taxFileGenerationServiceFor1042S;
+    private TaxFileGenerationService taxFileGenerationServiceForTransactionListPrinting;
     private TaxParameterService taxParameterService;
     private DateTimeService dateTimeService;
 
@@ -40,7 +41,8 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
 
             LOG.info("performTaxProcessingFor1042S, Generating 1042-S files...");
             LOG.warn("performTaxProcessingFor1042S, 1042-S tax file generation has not been fully implemented yet");
-            taxFileGenerationService.generateFiles(config);
+            taxFileGenerationServiceFor1042S.generateFiles(config);
+            generateFileContainingPlainTransactionDetails(config);
 
             LOG.info("performTaxProcessingFor1042S, Finished 1042-S tax processing");
         } catch (final Exception e) {
@@ -53,6 +55,12 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
         legacyTaxProcessingDao.doTaxProcessing(CUTaxConstants.TAX_TYPE_1042S_CREATE_TRANSACTION_ROWS_ONLY,
                 config.getReportYear(), config.getStartDate(), config.getEndDate(), true,
                 config.getProcessingStartDate());
+    }
+
+    private void generateFileContainingPlainTransactionDetails(final TaxBatchConfig config) throws Exception {
+        LOG.info("generateFileContainingPlainTransactionDetails, Generating plain transaction details file...");
+        TaxBatchConfig printConfig = config.withMode(TaxBatchConfig.Mode.CREATE_TRANSACTION_LIST_FILE);
+        taxFileGenerationServiceForTransactionListPrinting.generateFiles(printConfig);
     }
 
     private TaxBatchConfig buildTaxBatchConfigFor1042S(final java.util.Date processingStartDate) {
@@ -141,8 +149,13 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
         this.legacyTaxProcessingDao = legacyTaxProcessingDao;
     }
 
-    public void setTaxFileGenerationService(final TaxFileGenerationService taxFileGenerationService) {
-        this.taxFileGenerationService = taxFileGenerationService;
+    public void setTaxFileGenerationServiceFor1042S(final TaxFileGenerationService taxFileGenerationServiceFor1042S) {
+        this.taxFileGenerationServiceFor1042S = taxFileGenerationServiceFor1042S;
+    }
+
+    public void setTaxFileGenerationServiceForTransactionListPrinting(
+            final TaxFileGenerationService taxFileGenerationServiceForTransactionListPrinting) {
+        this.taxFileGenerationServiceForTransactionListPrinting = taxFileGenerationServiceForTransactionListPrinting;
     }
 
     public void setTaxParameterService(final TaxParameterService taxParameterService) {
