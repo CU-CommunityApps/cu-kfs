@@ -71,7 +71,16 @@ public final class CUTaxBatchConstants {
 
     public enum TaxOutputFieldType {
         STATIC,
-        DERIVED;
+        STRING,
+        NORMALIZED_STRING,
+        SENSITIVE_STRING,
+        INTEGER,
+        BOOLEAN,
+        DATE,
+        AMOUNT,
+        NEGATED_AMOUNT,
+        PERCENT,
+        PLAIN_DECIMAL;
     }
 
     /**

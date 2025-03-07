@@ -600,6 +600,10 @@ public class TransactionDetail extends TransientBusinessObjectBase {
             return TransactionDetail.class;
         }
 
+        @Override
+        public boolean needsEncryptedStorage() {
+            return this == vendorTaxNumber;
+        }
     }
 
 }

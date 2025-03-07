@@ -170,6 +170,10 @@ public class VendorDetailLite {
             return needsExplicitAlias;
         }
 
+        @Override
+        public boolean needsEncryptedStorage() {
+            return this == vendorTaxNumber;
+        }
     }
 
 }

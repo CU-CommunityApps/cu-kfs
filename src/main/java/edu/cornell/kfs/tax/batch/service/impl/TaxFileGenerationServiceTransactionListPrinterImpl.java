@@ -22,8 +22,10 @@ import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoRowMapper;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailHandler;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailProcessorDao;
 import edu.cornell.kfs.tax.batch.service.TaxFileGenerationService;
+import edu.cornell.kfs.tax.batch.service.TaxFileRowWriter;
 import edu.cornell.kfs.tax.batch.xml.TaxOutputDefinitionV2;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail;
+import edu.cornell.kfs.tax.businessobject.TransactionDetail.TransactionDetailField;
 
 public class TaxFileGenerationServiceTransactionListPrinterImpl implements TaxFileGenerationService,
         TransactionDetailHandler {
@@ -49,18 +51,15 @@ public class TaxFileGenerationServiceTransactionListPrinterImpl implements TaxFi
         final String fileName = generateTransactionDetailFileName(config);
         final TaxOutputDefinitionV2 outputDefinition = parseOutputDefinitionForPrintingTransactionRows();
 
-        try (
-                final WrappedCsvWriter csvWriter = new WrappedCsvWriter(fileName, outputDefinition);
-                final TaxFileRowWriterTransactionPrinterImpl rowWriter = new TaxFileRowWriterTransactionPrinterImpl(
-                        outputDefinition, csvWriter, maskSensitiveData);
-        ) {
+        try (final TaxFileRowWriter rowWriter = new TaxFileRowWriterImpl(
+                outputDefinition, TransactionDetailField.class, fileName, maskSensitiveData)) {
             return generateTransactionDetailFile(config, rowMapper, rowWriter);
         }
     }
 
     private TaxStatistics generateTransactionDetailFile(final TaxBatchConfig config,
             final TaxDtoRowMapper<TransactionDetail> rowMapper,
-            final TaxFileRowWriterTransactionPrinterImpl rowWriter) throws Exception {
+            final TaxFileRowWriter rowWriter) throws Exception {
         rowWriter.writeHeaderRow(TaxFileSections.PLAIN_TRANSACTION_DETAIL_ROW);
 
         while (rowMapper.moveToNextRow()) {

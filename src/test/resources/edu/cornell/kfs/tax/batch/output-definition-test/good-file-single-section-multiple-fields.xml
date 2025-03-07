@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <taxOutputDefinition fieldSeparator="&#x9;" includeQuotes="false">
     <section name="Tax_Section" useExactFieldLengths="true">
-        <field name="recipient_id" length="25" type="DERIVED" key="recipientId"/>
-        <field name="full_name" length="90" type="DERIVED" key="recipientName"/>
-        <field name="tax_amount" length="15" type="DERIVED" key="taxAmount"/>
+        <field name="recipient_id" length="25" type="STRING" key="recipientId"/>
+        <field name="full_name" length="90" type="STRING" key="recipientName"/>
+        <field name="tax_amount" length="15" type="AMOUNT" key="taxAmount"/>
         <field name="other_amount" length="15" type="STATIC" value="0.00"/>
     </section>
 </taxOutputDefinition>
