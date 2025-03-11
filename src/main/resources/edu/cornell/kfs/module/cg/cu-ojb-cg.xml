@@ -104,6 +104,15 @@
                               auto-update="none" auto-delete="none" proxy="true">
             <foreignkey field-ref="instrumentTypeCode"/>
 		</reference-descriptor>
+        <reference-descriptor name="customerAddress"
+                              class-ref="org.kuali.kfs.module.ar.businessobject.CustomerAddress"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="customerNumber"/>
+            <foreignkey field-ref="customerAddressIdentifier"/>
+        </reference-descriptor>
 	    <collection-descriptor name="awardProjectDirectors" element-class-ref="org.kuali.kfs.module.cg.businessobject.AwardProjectDirector" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" proxy="true" auto-retrieve="true" auto-update="object" auto-delete="object">
 	        <orderby name="principalId" sort="ASC" />
 	        <inverse-foreignkey field-ref="proposalNumber" />

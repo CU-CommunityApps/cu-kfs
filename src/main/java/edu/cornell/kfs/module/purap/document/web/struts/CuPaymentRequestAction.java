@@ -1,7 +1,6 @@
 //UPGRADE-911 commenting out wire stuff
 package edu.cornell.kfs.module.purap.document.web.struts;
 
-import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -79,25 +78,6 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
         super.loadDocument(kualiDocumentFormBase);
         getCuCheckStubService().addIso20022CheckStubLengthWarningToDocumentIfNecessary(
                 kualiDocumentFormBase.getDocument());
-    }
-
-	@Override
-	protected void createDocument(final KualiDocumentFormBase kualiDocumentFormBase) {
-		super.createDocument(kualiDocumentFormBase);
-        // set wire charge message in form
-        ((CuPaymentRequestForm) kualiDocumentFormBase).setWireChargeMessage(retrieveWireChargeMessage());
-	}
-	
-    protected String retrieveWireChargeMessage() {
-
-        String message = "";/*SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSKeyConstants.MESSAGE_DV_WIRE_CHARGE);
-        WireCharge wireCharge = new WireCharge();
-        wireCharge.setUniversityFiscalYear(SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear());
-
-        wireCharge = (WireCharge) SpringContext.getBean(BusinessObjectService.class).retrieve(wireCharge);
-        Object[] args = { wireCharge.getDomesticChargeAmt(), wireCharge.getForeignChargeAmt() };*/
-
-        return MessageFormat.format(message, "");
     }
     
     @Override

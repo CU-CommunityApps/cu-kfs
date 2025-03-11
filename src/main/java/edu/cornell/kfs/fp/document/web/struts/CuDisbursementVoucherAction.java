@@ -17,9 +17,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.fp.document.service.impl.DisbursementVoucherPayeeServiceImpl;
 import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherAction;
-import org.kuali.kfs.integration.ar.AccountsReceivableCustomer;
-import org.kuali.kfs.integration.ar.AccountsReceivableCustomerAddress;
-import org.kuali.kfs.integration.ar.AccountsReceivableModuleService;
+import org.kuali.kfs.module.ar.businessobject.Customer;
+import org.kuali.kfs.module.ar.businessobject.CustomerAddress;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kns.document.authorization.TransactionalDocumentAuthorizer;
@@ -149,17 +148,20 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
         
         // check for multiple custom addresses
         if (isPayeeLookupable && dvForm.isCustomer()) {
-            AccountsReceivableCustomer customer = SpringContext.getBean(AccountsReceivableModuleService.class).findCustomer(payeeIdNumber);
+            final Customer customer = SpringContext.getBean(BusinessObjectService.class)
+                                        .findBySinglePrimaryKey(Customer.class, payeeIdNumber);
 
-            AccountsReceivableCustomerAddress defaultCustomerAddress = null;
+            CustomerAddress defaultCustomerAddress = null;
             if (customer != null) {
                 defaultCustomerAddress = customer.getPrimaryAddress();
 
                 Map<String, String> addressSearch = new HashMap<>();
                 addressSearch.put(KFSPropertyConstants.CUSTOMER_NUMBER, payeeIdNumber);
 
-                List<AccountsReceivableCustomerAddress> customerAddresses = (List<AccountsReceivableCustomerAddress>)
-                                             SpringContext.getBean(AccountsReceivableModuleService.class).searchForCustomerAddresses(addressSearch);
+                final List<CustomerAddress> customerAddresses =
+                                        (List<CustomerAddress>) getBusinessObjectService().findMatching(CustomerAddress.class,
+                                                addressSearch
+                                        );
                 if (customerAddresses != null && !customerAddresses.isEmpty()) {
                     if (customerAddresses.size() > 1) {
                         dvForm.setHasMultipleAddresses(true);

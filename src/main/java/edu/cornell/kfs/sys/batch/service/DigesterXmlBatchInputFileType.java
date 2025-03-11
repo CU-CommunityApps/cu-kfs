@@ -20,6 +20,7 @@ import org.kuali.kfs.sys.exception.XmlErrorHandler;
 public abstract class DigesterXmlBatchInputFileType extends XmlBatchInputFileTypeBase<Object> {
     
     private static final Logger LOG = LogManager.getLogger();
+    protected String digestorRulesFileName;
     
     @Override
     public Object parse(byte[] fileByteContent) throws ParseException {
@@ -83,6 +84,14 @@ public abstract class DigesterXmlBatchInputFileType extends XmlBatchInputFileTyp
         digester.setXMLSchema(schema);
 
         return digester;
+    }
+    
+    public String getDigestorRulesFileName() {
+        return digestorRulesFileName;
+    }
+
+    public void setDigestorRulesFileName(final String digestorRulesFileName) {
+        this.digestorRulesFileName = digestorRulesFileName;
     }
 
 }

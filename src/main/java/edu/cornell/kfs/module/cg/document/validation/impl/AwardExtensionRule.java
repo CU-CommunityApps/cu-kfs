@@ -8,9 +8,12 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.integration.ar.AccountsReceivableModuleBillingService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
-import org.kuali.kfs.module.cg.CGConstants;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.cg.CGKeyConstants;
 import org.kuali.kfs.module.cg.CGPropertyConstants;
 import org.kuali.kfs.module.cg.businessobject.Award;
@@ -19,14 +22,9 @@ import org.kuali.kfs.module.cg.businessobject.AwardOrganization;
 import org.kuali.kfs.module.cg.businessobject.AwardProjectDirector;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.document.validation.impl.AwardRule;
-import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 import edu.cornell.kfs.module.cg.document.service.CuCGMaintenanceDocumentService;
@@ -285,19 +283,17 @@ public class AwardExtensionRule extends AwardRule {
         if (!StringUtils.equals(newBillingFrequencyCode, oldBillingFrequencyCode)) {
             final String proposalNumber = newAwardCopy.getProposalNumber();
             for(ContractsAndGrantsBillingAwardAccount awardAccount: newAwardCopy.getActiveAwardAccounts()) {
-                if (StringUtils.equals(oldBillingFrequencyCode, CGConstants.MILESTONE_BILLING_SCHEDULE_CODE) &&
-                    SpringContext.getBean(AccountsReceivableModuleBillingService.class)
-                        .hasActiveUnbilledMilestones(proposalNumber, awardAccount.getChartOfAccountsCode(),
+                if (StringUtils.equals(oldBillingFrequencyCode, ArConstants.BillingFrequencyValues.MILESTONE.getCode()) &&
+                    hasActiveUnbilledMilestones(proposalNumber, awardAccount.getChartOfAccountsCode(),
                             awardAccount.getAccountNumber())) {
                     success = false;
                     putFieldError(CGPropertyConstants.AwardFields.BILLING_FREQUENCY_CODE,
                         CGKeyConstants.AwardConstants.ERROR_CG_ACTIVE_MILESTONES_EXIST,
                         getBillingFrequencyDescription(newAwardCopy));
                     break;
-                } else if (StringUtils.equals(oldBillingFrequencyCode, CGConstants.PREDETERMINED_BILLING_SCHEDULE_CODE) &&
-                    SpringContext.getBean(AccountsReceivableModuleBillingService.class)
-                    		.hasActiveUnbilledBills(proposalNumber, awardAccount.getChartOfAccountsCode(),
-                    			awardAccount.getAccountNumber())) {
+                } else if (StringUtils.equals(oldBillingFrequencyCode, ArConstants.BillingFrequencyValues.PREDETERMINED_BILLING.getCode()) &&
+                    hasActiveUnbilledBills(proposalNumber, awardAccount.getChartOfAccountsCode(),
+                            awardAccount.getAccountNumber())) {
                     success = false;
                     putFieldError(CGPropertyConstants.AwardFields.BILLING_FREQUENCY_CODE,
                         CGKeyConstants.AwardConstants.ERROR_CG_ACTIVE_BILLS_EXIST,
@@ -316,7 +312,7 @@ public class AwardExtensionRule extends AwardRule {
         }
         return award.getBillingFrequency().getFrequencyDescription();
     }
-
+    
     /**
      * Gets the parameterService
      * 

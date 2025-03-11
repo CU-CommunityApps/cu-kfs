@@ -30,17 +30,23 @@
 <table cellpadding=0 class="datatable standard" summary="Wire Transfer Section">
 	<tbody>
 		<tr>
-			<td colspan="4" align="left" valign="middle" class="datacell"><bean:write name="KualiForm" property="wireChargeMessage" /></td>
+			<td colspan="4" align="left" valign="middle" class="datacell">
+                <c:if test="${not isPaymentRequestDocument}">
+                    <bean:write name="KualiForm" property="wireChargeMessage" />
+                </c:if>
+            </td>
 		</tr>
 		<tr>
 			<th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.automatedClearingHouseProfileNumber}"/></div></th>
 			<td class="datacell">
 				<kul:htmlControlAttribute attributeEntry="${wireTransAttributes.automatedClearingHouseProfileNumber}" property="document.wireTransfer.automatedClearingHouseProfileNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
 			</td>
-			<th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.wireTransferFeeWaiverIndicator}"/> </div></th>
-			<td class="datacell">
-				<kul:htmlControlAttribute attributeEntry="${wireTransAttributes.wireTransferFeeWaiverIndicator}" property="document.wireTransfer.wireTransferFeeWaiverIndicator" readOnly="${!wireEntryMode&&!frnEntryMode}"/>
-			</td>
+            <c:if test="${not isPaymentRequestDocument}">
+                <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.wireTransferFeeWaiverIndicator}"/> </div></th>
+                <td class="datacell">
+                    <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.wireTransferFeeWaiverIndicator}" property="document.wireTransfer.wireTransferFeeWaiverIndicator" readOnly="${!wireEntryMode&&!frnEntryMode}"/>
+                </td>
+            </c:if>
 		</tr>
 		<tr>
             <%-- Cornell Customization: Added * due to inability to make field required. --%>
@@ -124,8 +130,25 @@
 		<tr>
 			<th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.payeeAccountNumber}" forceRequired="true"/></div></th>
 			<td class="datacell" colspan="3">
-				<c:set var="mask" value="${not KualiForm.document.documentHeader.workflowDocument.initiated}"/>
-				<kul:htmlControlAttribute mask="${mask}" attributeEntry="${wireTransAttributes.payeeAccountNumber}" forceRequired="true" property="document.wireTransfer.payeeAccountNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}" />
+                <c:set var="accountNumberReadOnly"
+                       value="${
+                    not fullEntryMode
+                    and not wireEntryMode
+                    and not frnEntryMode
+                }"/>
+                <c:set var="mask"
+                       value="${
+                    accountNumberReadOnly
+                    or (
+                        not KualiForm.document.documentHeader.workflowDocument.initiated
+                        and not KualiForm.document.documentHeader.workflowDocument.saved
+                        and not wireEntryMode
+                    )
+                }"/>
+				<kul:htmlControlAttribute mask="${mask}"
+                                          attributeEntry="${wireTransAttributes.payeeAccountNumber}"
+                                          forceRequired="true" property="document.wireTransfer.payeeAccountNumber"
+                                          readOnly="${accountNumberReadOnly}" />
 			</td>
 		</tr>
 		<tr>

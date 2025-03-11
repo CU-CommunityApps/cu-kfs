@@ -19,7 +19,6 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import edu.cornell.kfs.vnd.CUVendorConstants;
 import edu.cornell.kfs.vnd.CUVendorKeyConstants;
 import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
-import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuVendorPreRules extends VendorPreRules {
@@ -84,12 +83,12 @@ public class CuVendorPreRules extends VendorPreRules {
         if (vendorSupplierDiversities.size() > 0) {
             int i = 0;
             for(final VendorSupplierDiversity vendor : vendorSupplierDiversities) {
-                if (((CuVendorSupplierDiversityExtension)vendor.getExtension()).getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
-                	expired.add(CUVendorConstants.EXPIRABLE_COVERAGES.SUPPLIER_DIVERSITY_CERTIFICATION);
-                    GlobalVariables.getMessageMap().putError(KFSConstants.MAINTENANCE_NEW_MAINTAINABLE+VendorConstants.VENDOR_HEADER_ATTR+"."+
-                    										 VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+
-                    										 CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, 
-                    										 CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
+                if (vendor.getCertificationExpirationDate().before( new Date() ) ) {
+                    expired.add(CUVendorConstants.EXPIRABLE_COVERAGES.SUPPLIER_DIVERSITY_CERTIFICATION);
+                    GlobalVariables.getMessageMap().putError(KFSConstants.MAINTENANCE_NEW_MAINTAINABLE+VendorConstants.VENDOR_HEADER_ATTR+"." +
+                                                             VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]." +
+                                                             CUVendorPropertyConstants.CERTIFICATION_EXPRIATION_DATE, 
+                                                             CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
                     break;
                 }
                 i++;

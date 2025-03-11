@@ -18,14 +18,6 @@
  */
 package org.kuali.kfs.kim.document.rule;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.criteria.PredicateFactory;
@@ -66,6 +58,14 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import edu.cornell.kfs.kim.CuKimConstants.AffiliationStatuses;
 import edu.cornell.kfs.kim.CuKimConstants.KfsAffiliations;
 import edu.cornell.kfs.kim.CuKimKeyConstants;
@@ -74,6 +74,8 @@ import edu.cornell.kfs.kim.api.identity.CuPersonService;
 import edu.cornell.kfs.kim.bo.ui.PersonDocumentAffiliation;
 import edu.cornell.kfs.kim.rule.event.ui.AddAffiliationEvent;
 import edu.cornell.kfs.kim.rule.ui.AddAffiliationRule;
+
+
 
 /*
  * CU Customization:
@@ -669,7 +671,7 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
         return rulePassed;
     }
 
-    private static boolean validAssignGroup(
+    private boolean validAssignGroup(
             final IdentityManagementPersonDocument document,
             final PersonDocumentGroup newGroup
     ) {

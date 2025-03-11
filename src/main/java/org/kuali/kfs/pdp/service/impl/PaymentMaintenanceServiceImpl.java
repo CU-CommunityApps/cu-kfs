@@ -171,35 +171,7 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
         if (!PdpConstants.PaymentStatusCodes.CANCEL_PAYMENT.equals(paymentStatus)) {
             LOG.debug("cancelPendingPayment() Payment status is {}; continue with cancel.", paymentStatus);
 
-            if (PdpConstants.PaymentStatusCodes.HELD_TAX_EMPLOYEE_CD.equals(paymentStatus)
-                || PdpConstants.PaymentStatusCodes.HELD_TAX_NONRESIDENT_CD.equals(paymentStatus)
-                || PdpConstants.PaymentStatusCodes.HELD_TAX_NONRESIDENT_EMPL_CD.equals(paymentStatus)) {
-                if (!pdpAuthorizationService.hasRemovePaymentTaxHoldPermission(user.getPrincipalId())) {
-                    LOG.warn(
-                            "cancelPendingPayment() Payment status is {}; user does not have rights to cancel. This "
-                            + "should not happen unless user is URL spoofing.",
-                            paymentStatus
-                    );
-                    throw new RuntimeException("cancelPendingPayment() Payment status is " + paymentStatus +
-                            "; user does not have rights to cancel. This should not happen unless user is URL spoofing.");
-                }
-
-                changeStatus(paymentGroup, PdpConstants.PaymentStatusCodes.CANCEL_PAYMENT,
-                        PdpConstants.PaymentChangeCodes.CANCEL_PAYMENT_CHNG_CD, note, user);
-
-                // set primary cancel indicator for EPIC to use
-                final Map<String, Integer> primaryKeys = new HashMap<>();
-                primaryKeys.put(PdpPropertyConstants.PaymentDetail.PAYMENT_ID, paymentDetailId);
-
-                final PaymentDetail pd = businessObjectService.findByPrimaryKey(PaymentDetail.class, primaryKeys);
-                if (pd != null) {
-                    pd.setPrimaryCancelledPayment(Boolean.TRUE);
-                }
-                businessObjectService.save(pd);
-                pdpEmailService.sendCancelEmail(paymentGroup, note, user);
-
-                LOG.debug("cancelPendingPayment() Pending payment cancelled and mail was sent; exit method.");
-            } else if (PdpConstants.PaymentStatusCodes.OPEN.equals(paymentStatus)
+            if (PdpConstants.PaymentStatusCodes.OPEN.equals(paymentStatus)
                     || PdpConstants.PaymentStatusCodes.HELD_CD.equals(paymentStatus)) {
                 if (!pdpAuthorizationService.hasCancelPaymentPermission(user.getPrincipalId())) {
                     LOG.warn(
@@ -312,22 +284,7 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
         if (!PdpConstants.PaymentStatusCodes.OPEN.equals(paymentStatus)) {
             LOG.debug("removeHoldPendingPayment() Payment status is {}; continue with hold removal.", paymentStatus);
 
-            if (PdpConstants.PaymentStatusCodes.HELD_TAX_EMPLOYEE_CD.equals(paymentStatus)
-                || PdpConstants.PaymentStatusCodes.HELD_TAX_NONRESIDENT_CD.equals(paymentStatus)
-                || PdpConstants.PaymentStatusCodes.HELD_TAX_NONRESIDENT_EMPL_CD.equals(paymentStatus)) {
-                if (!pdpAuthorizationService.hasRemovePaymentTaxHoldPermission(user.getPrincipalId())) {
-                    LOG.warn(
-                            "removeHoldPendingPayment() User {} does not have rights to remove tax holds. This should not happen unless user is URL spoofing.",
-                            user::getPrincipalId
-                    );
-                    throw new RuntimeException("removeHoldPendingPayment() User " + user.getPrincipalId() +
-                            " does not have rights to remove tax holds. This should not happen unless user is URL spoofing.");
-                }
-
-                changeStatus(paymentGroup, PdpConstants.PaymentStatusCodes.OPEN,
-                        PdpConstants.PaymentChangeCodes.REMOVE_HOLD_CHNG_CD, note, user);
-                LOG.debug("removeHoldPendingPayment() Pending payment was taken off hold; exit method.");
-            } else if (PdpConstants.PaymentStatusCodes.HELD_CD.equals(paymentStatus)) {
+            if (PdpConstants.PaymentStatusCodes.HELD_CD.equals(paymentStatus)) {
                 if (!pdpAuthorizationService.hasHoldPaymentPermission(user.getPrincipalId())) {
                     LOG.warn(
                             "removeHoldPendingPayment() User {} does not have rights to hold payments. This should not happen unless user is URL spoofing.",
