@@ -2,14 +2,21 @@ package edu.cornell.kfs.tax.batch.service.impl;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
+import edu.cornell.kfs.tax.CUTaxConstants.CUTaxKeyConstants;
+import edu.cornell.kfs.tax.CUTaxConstants.Tax1042SParameterNames;
+import edu.cornell.kfs.tax.CUTaxConstants.TaxCommonParameterNames;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxFileSections;
 import edu.cornell.kfs.tax.batch.TaxBatchConfig;
 import edu.cornell.kfs.tax.batch.TaxOutputDefinitionV2FileType;
@@ -19,8 +26,11 @@ import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoRowMapper;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailHandler;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailProcessorDao;
+import edu.cornell.kfs.tax.batch.dto.SprintaxPayee;
 import edu.cornell.kfs.tax.batch.dto.SprintaxPayment;
-import edu.cornell.kfs.tax.batch.dto.SprintaxRowData;
+import edu.cornell.kfs.tax.batch.dto.VendorAddressLite;
+import edu.cornell.kfs.tax.batch.dto.VendorDetailLite;
+import edu.cornell.kfs.tax.batch.dto.VendorQueryResults;
 import edu.cornell.kfs.tax.batch.service.TaxFileGenerationService;
 import edu.cornell.kfs.tax.batch.xml.TaxOutputDefinitionV2;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail;
@@ -83,7 +93,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
     }
 
     private TaxStatistics readAndProcessTransactions(final SprintaxHelper helper) throws IOException, SQLException {
-        SprintaxRowData currentData = null;
+        SprintaxPayee currentPayee = null;
 
         helper.bioFileWriter.writeHeaderRow(TaxFileSections.SPRINTAX_BIOGRAPHIC_ROW_1042S);
         helper.paymentsFileWriter.writeHeaderRow(TaxFileSections.SPRINTAX_PAYMENT_ROW_1042S);
@@ -120,26 +130,213 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         return helper.statistics;
     }
 
-    private SprintaxRowData createNewInfo(final TransactionDetail currentRow, final SprintaxHelper helper)
+
+
+    private SprintaxPayee createNewPayee(final TransactionDetail currentRow, final SprintaxHelper helper)
             throws SQLException {
-        final SprintaxRowData nextInfo = new SprintaxRowData();
-        //initializePayeeIdInformation(nextInfo, currentRow.getPayeeId());
-        nextInfo.setPayerEIN(payerEIN);
-        nextInfo.setTaxId(currentRow.getVendorTaxNumber());
-        nextInfo.setCurrentPayment(createNewPayment(currentRow, helper));
-        //initializeVendorData(nextInfo, helper);
-        return nextInfo;
+        final SprintaxPayee nextPayee = new SprintaxPayee();
+        initializePayeeIdInformation(nextPayee, currentRow.getPayeeId());
+        nextPayee.setPayerEIN(payerEIN);
+        nextPayee.setTaxId(currentRow.getVendorTaxNumber());
+        nextPayee.setCurrentPayment(createNewPayment(currentRow, helper));
+        initializeVendorData(nextPayee, helper);
+        return nextPayee;
     }
 
     private SprintaxPayment createNewPayment(final TransactionDetail currentRow, final SprintaxHelper helper) {
         final SprintaxPayment nextPayment = new SprintaxPayment();
-        //nextPayment.setUniqueFormId(generateUniqueFormId(currentRow));
+        nextPayment.setUniqueFormId(generateUniqueFormId(currentRow));
         nextPayment.setIncomeCode(currentRow.getIncomeCode());
         nextPayment.setIncomeCodeSubType(currentRow.getIncomeCodeSubType());
         nextPayment.setGrossAmount(KualiDecimal.ZERO);
         nextPayment.setFederalTaxWithheldAmount(KualiDecimal.ZERO);
         nextPayment.setStateIncomeTaxWithheldAmount(KualiDecimal.ZERO);
         return nextPayment;
+    }
+
+    private String generateUniqueFormId(final TransactionDetail currentRow) {
+        final String transactionDetailId = currentRow.getTransactionDetailId();
+        return StringUtils.length(transactionDetailId) > 10
+                ? StringUtils.right(transactionDetailId, 10)
+                : transactionDetailId;
+    }
+
+    private void initializePayeeIdInformation(final SprintaxPayee nextPayee, final String payeeId) {
+        final String vendorHeaderId = StringUtils.substringBefore(payeeId, KFSConstants.DASH);
+        final String vendorDetailId = StringUtils.substringAfter(payeeId, KFSConstants.DASH);
+        nextPayee.setPayeeId(payeeId);
+        nextPayee.setVendorHeaderId(Integer.valueOf(vendorHeaderId));
+        nextPayee.setVendorDetailId(Integer.valueOf(vendorDetailId));
+    }
+
+    private void initializeVendorData(final SprintaxPayee nextPayee, final SprintaxHelper helper)
+            throws SQLException {
+        final VendorQueryResults vendorResults = transactionDetailProcessorDao.getVendor(
+                nextPayee.getVendorHeaderId(), nextPayee.getVendorDetailId());
+        final VendorDetailLite matchingVendor = vendorResults.getVendor();
+        final VendorDetailLite vendorToProcess;
+
+        if (ObjectUtils.isNull(matchingVendor)) {
+            helper.increment(TaxStatType.NUM_NO_VENDOR);
+            nextPayee.setVendorName(createMessage(CUTaxKeyConstants.MESSAGE_TAX_OUTPUT_1042S_VENDOR_NOT_FOUND,
+                    nextPayee.getVendorHeaderId(), nextPayee.getVendorDetailId()));
+            vendorToProcess = null;
+        } else if (matchingVendor.isVendorParentIndicator()) {
+            vendorToProcess = matchingVendor;
+        } else if (ObjectUtils.isNull(vendorResults.getParentVendor())) {
+            initializeSoleProprietorParentVendorNameIfNecessary(nextPayee, matchingVendor, helper);
+            helper.increment(TaxStatType.NUM_NO_PARENT_VENDOR);
+            nextPayee.setVendorName(createMessage(
+                    CUTaxKeyConstants.MESSAGE_TAX_OUTPUT_1042S_VENDOR_PARENT_NOT_FOUND,
+                    nextPayee.getVendorHeaderId(), nextPayee.getVendorDetailId()));
+            vendorToProcess = null;
+        } else {
+            initializeSoleProprietorParentVendorNameIfNecessary(nextPayee, matchingVendor, helper);
+            vendorToProcess = vendorResults.getParentVendor();
+        }
+
+        if (ObjectUtils.isNotNull(vendorToProcess)) {
+            nextPayee.setVendorTypeCode(vendorToProcess.getVendorTypeCode());
+            nextPayee.setVendorOwnershipCode(vendorToProcess.getVendorOwnershipCode());
+            nextPayee.setVendorGIIN(vendorToProcess.getVendorGIIN());
+            nextPayee.setChapter4StatusCode(vendorToProcess.getVendorChapter4StatusCode());
+            initializeVendorName(nextPayee, vendorToProcess, helper);
+            initializeChapter4ExemptionCode(nextPayee, vendorToProcess);
+            initializeVendorAddressData(nextPayee, vendorToProcess, helper);
+        } else {
+            initializeWithDefaultChapter4ExemptionCode(nextPayee);
+            if (ObjectUtils.isNotNull(matchingVendor)) {
+                initializeVendorAddressData(nextPayee, matchingVendor, helper);
+            }
+        }
+
+        if (StringUtils.isBlank(nextPayee.getVendorEmailAddress())) {
+            nextPayee.setVendorEmailAddress(generatePlaceholderEmailAddress(nextPayee.getPayeeId()));
+        }
+    }
+
+    /*
+     * TODO: We need to revisit the parent-vendor-name setup and determine whether
+     * it should be renamed to sub-vendor-name or something similar.
+     */
+    private void initializeSoleProprietorParentVendorNameIfNecessary(final SprintaxPayee nextPayee,
+            final VendorDetailLite vendorDetail, final SprintaxHelper helper) {
+        final String soleProprietorOwnershipCode = getSuffixedParameter(
+                TaxCommonParameterNames.SOLE_PROPRIETOR_OWNER_CODE_PARAMETER_SUFFIX);
+        if (StringUtils.equals(vendorDetail.getVendorOwnershipCode(), soleProprietorOwnershipCode)) {
+            nextPayee.setParentVendorName(vendorDetail.getVendorName());
+        }
+    }
+
+    private void initializeVendorName(final SprintaxPayee nextPayee,
+            final VendorDetailLite vendorDetail, final SprintaxHelper helper) {
+        final String vendorName = vendorDetail.getVendorName();
+        nextPayee.setVendorName(vendorName);
+        if (StringUtils.isNotBlank(vendorName)) {
+            helper.increment(TaxStatType.NUM_VENDOR_NAMES_PARSED);
+            if (vendorDetail.isVendorFirstLastNameIndicator()
+                    && StringUtils.contains(vendorName, KFSConstants.COMMA)) {
+                nextPayee.setVendorLastName(StringUtils.trim(
+                        StringUtils.substringBefore(vendorName, KFSConstants.COMMA)));
+                nextPayee.setVendorFirstName(StringUtils.trim(
+                        StringUtils.substringAfter(vendorName, KFSConstants.COMMA)));
+            } else {
+                nextPayee.setVendorLastName(StringUtils.trim(vendorName));
+            }
+        } else {
+            helper.increment(TaxStatType.NUM_VENDOR_NAMES_NOT_PARSED);
+        }
+    }
+
+    private void initializeChapter4ExemptionCode(final SprintaxPayee nextPayee, final VendorDetailLite vendor) {
+        final String chapter4ExemptionCode = getSubParameter(
+                Tax1042SParameterNames.CHAPTER4_STATUS_CODES_TO_CHAPTER4_EXEMPTION_CODES,
+                vendor.getVendorChapter4StatusCode());
+        if (StringUtils.isNotBlank(chapter4ExemptionCode)) {
+            nextPayee.setChapter4ExemptionCode(chapter4ExemptionCode);
+        } else {
+            initializeWithDefaultChapter4ExemptionCode(nextPayee);
+        }
+    }
+
+    private void initializeWithDefaultChapter4ExemptionCode(final SprintaxPayee nextPayee) {
+        nextPayee.setChapter4ExemptionCode(getParameter(Tax1042SParameterNames.CHAPTER4_DEFAULT_EXEMPTION_CODE));
+    }
+
+    private void initializeVendorAddressData(final SprintaxPayee nextPayee,
+            final VendorDetailLite vendor, final SprintaxHelper helper) throws SQLException {
+        final VendorAddressLite usAddress = transactionDetailProcessorDao.getHighestPriorityUSVendorAddress(
+                vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
+        final VendorAddressLite foreignAddress = transactionDetailProcessorDao.getHighestPriorityForeignVendorAddress(
+                vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
+
+        if (ObjectUtils.isNotNull(usAddress)) {
+            nextPayee.setVendorUSAddressLine1(usAddress.getVendorLine1Address());
+            nextPayee.setVendorUSAddressLine2(usAddress.getVendorLine2Address());
+            nextPayee.setVendorUSCityName(usAddress.getVendorCityName());
+            nextPayee.setVendorUSStateCode(usAddress.getVendorStateCode());
+            nextPayee.setVendorUSZipCode(usAddress.getVendorZipCode());
+            if (ObjectUtils.isNull(foreignAddress)) {
+                nextPayee.setVendorEmailAddress(usAddress.getVendorAddressEmailAddress());
+            }
+        } else {
+            nextPayee.setVendorUSAddressLine1(CUTaxConstants.NO_US_VENDOR_ADDRESS);
+            helper.increment(TaxStatType.NUM_NO_VENDOR_ADDRESS_US);
+        }
+
+        if (ObjectUtils.isNotNull(foreignAddress)) {
+            nextPayee.setVendorForeignAddressLine1(foreignAddress.getVendorLine1Address());
+            nextPayee.setVendorForeignAddressLine2(foreignAddress.getVendorLine2Address());
+            nextPayee.setVendorForeignCityName(foreignAddress.getVendorCityName());
+            nextPayee.setVendorForeignProvinceName(foreignAddress.getVendorAddressInternationalProvinceName());
+            nextPayee.setVendorForeignZipCode(foreignAddress.getVendorZipCode());
+            nextPayee.setVendorForeignCountryCode(foreignAddress.getVendorCountryCode());
+            nextPayee.setVendorEmailAddress(foreignAddress.getVendorAddressEmailAddress());
+        } else {
+            nextPayee.setVendorForeignAddressLine1(CUTaxConstants.NO_FOREIGN_VENDOR_ADDRESS);
+            helper.increment(TaxStatType.NUM_NO_VENDOR_ADDRESS_FOREIGN);
+        }
+    }
+
+    private String generatePlaceholderEmailAddress(final String payeeId) {
+        final String emailFormat = configurationService.getPropertyValueAsString(
+                CUTaxKeyConstants.SPRINTAX_PLACEHOLDER_EMAIL_FORMAT);
+        return MessageFormat.format(emailFormat, payeeId);
+    }
+
+
+
+    private String getSuffixedParameter(final String parameterNameSuffix) {
+        return getParameter(CUTaxConstants.TAX_TYPE_1042S + parameterNameSuffix);
+    }
+
+    private String getParameter(final String parameterName) {
+        return taxParameterService.getParameterValueAsString(CUTaxConstants.TAX_1042S_PARM_DETAIL, parameterName);
+    }
+
+    private boolean multiValueParameterContains(final String parameterName, final String value) {
+        if (StringUtils.isBlank(value)) {
+            return false;
+        }
+        return getMultiValueParameter(parameterName).contains(value);
+    }
+
+    private Set<String> getMultiValueParameter(final String parameterName) {
+        return taxParameterService.getParameterValuesSetAsString(CUTaxConstants.TAX_1042S_PARM_DETAIL, parameterName);
+    }
+
+    private String getSubParameter(final String parameterName, final String subParameterName) {
+        if (StringUtils.isBlank(subParameterName)) {
+            return null;
+        }
+        final Map<String, String> subParameters = taxParameterService.getSubParameters(
+                CUTaxConstants.TAX_1042S_PARM_DETAIL, parameterName);
+        return subParameters.get(subParameterName);
+    }
+
+    private String createMessage(final String key, final Object... arguments) {
+        final String messagePattern = configurationService.getPropertyValueAsString(key);
+        return MessageFormat.format(messagePattern, arguments);
     }
 
 

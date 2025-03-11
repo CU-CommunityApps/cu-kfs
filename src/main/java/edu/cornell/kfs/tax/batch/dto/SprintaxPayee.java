@@ -10,7 +10,7 @@ import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 /*
  * NOTE: This object will be fully implemented in a follow-up user story.
  */
-public class SprintaxRowData {
+public class SprintaxPayee {
 
     private String rowId;
     private String taxId;
