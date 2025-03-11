@@ -1,7 +1,6 @@
 //UPGRADE-911 commenting out wire stuff
 package edu.cornell.kfs.module.purap.document.web.struts;
 
-import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Comparator;
 
