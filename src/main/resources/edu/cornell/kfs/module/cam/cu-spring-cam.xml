@@ -39,7 +39,7 @@
 		<property name="personService" ref="personService" />
 	</bean>
 
-	<bean id="capitalAssetManagementModuleService" parent="capitalAssetManagementModuleService-parentBean" class="edu.cornell.kfs.module.cam.service.impl.CuCapitalAssetManagementModuleServiceImpl" />
+	<bean id="capitalAssetManagementService" parent="capitalAssetManagementService-parentBean" class="edu.cornell.kfs.module.cam.service.impl.CuCapitalAssetManagementServiceImpl" />
 
 	<bean id="batchExtractService" parent="batchExtractService-parentBean" class="edu.cornell.kfs.module.cam.batch.service.impl.CuBatchExtractServiceImpl">
 		<property name="dataDictionaryService" ref="dataDictionaryService" />

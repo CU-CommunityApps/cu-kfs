@@ -181,14 +181,7 @@
         <versionNumber>15</versionNumber>
         <objectId>c5d0540c-060f-4864-8ebd-b3090a0e3000</objectId>
         <newCollectionRecord>false</newCollectionRecord>
-        <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension">
-          <versionNumber>15</versionNumber>
-          <objectId>5a066df4-5551-4b63-a76d-0f6dd4267000</objectId>
-          <newCollectionRecord>false</newCollectionRecord>
-          <vendorHeaderGeneratedIdentifier>61616</vendorHeaderGeneratedIdentifier>
-          <vendorSupplierDiversityCode>SB</vendorSupplierDiversityCode>
-          <vendorSupplierDiversityExpirationDate>2016-11-30</vendorSupplierDiversityExpirationDate>
-        </extension>
+        <certificationExpirationDate>2016-11-30</certificationExpirationDate>
         <vendorHeaderGeneratedIdentifier>61616</vendorHeaderGeneratedIdentifier>
         <vendorSupplierDiversityCode>SB</vendorSupplierDiversityCode>
         <active>true</active>
@@ -362,14 +355,7 @@
         <versionNumber>15</versionNumber>
         <objectId>c5d0540c-060f-4864-8ebd-b3090a0e3000</objectId>
         <newCollectionRecord>false</newCollectionRecord>
-        <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension">
-          <versionNumber>15</versionNumber>
-          <objectId>5a066df4-5551-4b63-a76d-0f6dd4267000</objectId>
-          <newCollectionRecord>false</newCollectionRecord>
-          <vendorHeaderGeneratedIdentifier>61616</vendorHeaderGeneratedIdentifier>
-          <vendorSupplierDiversityCode>SB</vendorSupplierDiversityCode>
-          <vendorSupplierDiversityExpirationDate>2016-11-30</vendorSupplierDiversityExpirationDate>
-        </extension>
+        <certificationExpirationDate>2016-11-30</certificationExpirationDate>
         <vendorHeaderGeneratedIdentifier>61616</vendorHeaderGeneratedIdentifier>
         <vendorSupplierDiversityCode>SB</vendorSupplierDiversityCode>
         <active>true</active>
@@ -583,14 +569,7 @@
         <versionNumber>15</versionNumber>
         <objectId>c5d0540c-060f-4864-8ebd-b3090a0e3000</objectId>
         <newCollectionRecord>false</newCollectionRecord>
-        <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension">
-          <versionNumber>15</versionNumber>
-          <objectId>5a066df4-5551-4b63-a76d-0f6dd4267000</objectId>
-          <newCollectionRecord>false</newCollectionRecord>
-          <vendorHeaderGeneratedIdentifier>61616</vendorHeaderGeneratedIdentifier>
-          <vendorSupplierDiversityCode>SB</vendorSupplierDiversityCode>
-          <vendorSupplierDiversityExpirationDate>2016-11-30</vendorSupplierDiversityExpirationDate>
-        </extension>
+        <certificationExpirationDate>2016-11-30</certificationExpirationDate>
         <vendorHeaderGeneratedIdentifier>61616</vendorHeaderGeneratedIdentifier>
         <vendorSupplierDiversityCode>SB</vendorSupplierDiversityCode>
         <active>true</active>
@@ -742,14 +721,7 @@
         <versionNumber>15</versionNumber>
         <objectId>c5d0540c-060f-4864-8ebd-b3090a0e3000</objectId>
         <newCollectionRecord>false</newCollectionRecord>
-        <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension">
-          <versionNumber>15</versionNumber>
-          <objectId>5a066df4-5551-4b63-a76d-0f6dd4267000</objectId>
-          <newCollectionRecord>false</newCollectionRecord>
-          <vendorHeaderGeneratedIdentifier>61616</vendorHeaderGeneratedIdentifier>
-          <vendorSupplierDiversityCode>SB</vendorSupplierDiversityCode>
-          <vendorSupplierDiversityExpirationDate>2016-11-30</vendorSupplierDiversityExpirationDate>
-        </extension>
+        <certificationExpirationDate>2016-11-30</certificationExpirationDate>
         <vendorHeaderGeneratedIdentifier>61616</vendorHeaderGeneratedIdentifier>
         <vendorSupplierDiversityCode>SB</vendorSupplierDiversityCode>
         <active>true</active>

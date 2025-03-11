@@ -10,9 +10,17 @@
                   
   <bean id="DisbursementVoucherDocument" parent="DisbursementVoucherDocument-parentBean" p:attachmentTypesValuesFinder-ref="cuConfidentialAttachmentTypeValuesFinder">
     <property name="documentClass" value="edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument"/>
-  	<property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.CuDisbursementVoucherDocumentPresentationController"/>
-  	<property name="promptBeforeValidationClass" value="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherDocumentPreRules"/>
   </bean>
+  
+  <bean id="disbursementVoucherDocumentPreRules"
+          parent="disbursementVoucherDocumentPreRules-parentBean"
+          class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherDocumentPreRules"
+  />
+    
+  <bean id="disbursementVoucherDocumentPresentationController"
+          parent="disbursementVoucherDocumentPresentationController-parentBean"
+          class="edu.cornell.kfs.fp.document.authorization.CuDisbursementVoucherDocumentPresentationController"
+  />
   
   <bean id="DisbursementVoucherDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes"> 
  

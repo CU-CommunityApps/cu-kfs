@@ -56,7 +56,7 @@
           abstract="true" parent="PurchasingAccountsPayable-newIndividualItemValidation"
           p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
           p:businessObjectService-ref="businessObjectService"
-          p:capitalAssetManagementModuleService-ref="capitalAssetManagementModuleService"
+          p:capitalAssetManagementService-ref="capitalAssetManagementService"
           p:unitOfMeasureValidation-ref="Purchasing-unitOfMeasureValidation"
           p:itemUnitPriceValidation-ref="Purchasing-itemUnitPriceValidation"
           p:itemDescriptionValidation-ref="Purchasing-itemDescriptionValidation"

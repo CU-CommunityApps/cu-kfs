@@ -46,7 +46,6 @@ import edu.cornell.kfs.vnd.CUVendorKeyConstants;
 import edu.cornell.kfs.vnd.CuVendorParameterConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
-import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 import edu.cornell.kfs.vnd.jsonobject.WorkdayKfsVendorLookupRoot;
 import edu.cornell.kfs.vnd.service.CuVendorWorkDayService;
 
@@ -170,8 +169,8 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         if (CollectionUtils.isNotEmpty(vendorHeader.getVendorSupplierDiversities())) {
             for (final VendorSupplierDiversity supplierDiversity : vendorHeader.getVendorSupplierDiversities()) {
                 supplierDiversity.setVendorHeaderGeneratedIdentifier(vendorHeader.getVendorHeaderGeneratedIdentifier());
-                ((CuVendorSupplierDiversityExtension)supplierDiversity.getExtension()).setVendorHeaderGeneratedIdentifier(vendorHeader.getVendorHeaderGeneratedIdentifier());
-                ((CuVendorSupplierDiversityExtension)supplierDiversity.getExtension()).setVendorSupplierDiversityCode(supplierDiversity.getVendorSupplierDiversityCode());
+                supplierDiversity.setVendorHeaderGeneratedIdentifier(vendorHeader.getVendorHeaderGeneratedIdentifier());
+                supplierDiversity.setVendorSupplierDiversityCode(supplierDiversity.getVendorSupplierDiversityCode());
             }
         }
     }
