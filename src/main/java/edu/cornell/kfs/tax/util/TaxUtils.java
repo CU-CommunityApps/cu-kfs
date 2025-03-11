@@ -39,6 +39,14 @@ public final class TaxUtils {
                 && CUTaxConstants.TAX_1099_BOX_MAPPING_KEY_PATTERN.matcher(boxNumberMappingKey).matches();
     }
 
+    public static java.util.Date copyDate(final java.util.Date value) {
+        return new java.util.Date(value.getTime());
+    }
+
+    public static java.sql.Date copyDate(final java.sql.Date value) {
+        return new java.sql.Date(value.getTime());
+    }
+
     private TaxUtils() {
         throw new UnsupportedOperationException("do not call");
     }

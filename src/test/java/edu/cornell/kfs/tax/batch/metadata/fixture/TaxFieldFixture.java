@@ -12,4 +12,6 @@ public @interface TaxFieldFixture {
 
     String column();
 
+    String alias();
+
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <taxOutputDefinition fieldSeparator=",">
-    <section name="Example_Section" hasHeaderRow="maybe">
-        <field name="recipient_id" length="25" type="DERIVED" key="recipientId"/>
+    <section name="Example_Section" useExactFieldLengths="maybe">
+        <field name="recipient_id" length="25" type="STRING" key="recipientId"/>
     </section>
 </taxOutputDefinition>
