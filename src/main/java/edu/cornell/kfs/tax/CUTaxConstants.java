@@ -132,7 +132,11 @@ public final class CUTaxConstants {
         public static final String TAX_TABLE_1099_PREFIX = "tax.table.1099.";
         public static final String TAX_TABLE_1042S_PREFIX = "tax.table.1042s.";
         public static final String TAX_CONFIG_DEFAULT_SUFFIX = "default";
-        
+
+        public static final String MESSAGE_TAX_OUTPUT_1042S_VENDOR_NOT_FOUND = "message.tax.output.1042s.vendor.not.found";
+        public static final String MESSAGE_TAX_OUTPUT_1042S_VENDOR_PARENT_NOT_FOUND = "message.tax.output.1042s.vendor.parent.not.found";
+        public static final String SPRINTAX_PLACEHOLDER_EMAIL_FORMAT = "sprintax.placeholder.email.format";
+
         private CUTaxKeyConstants() {
             throw new UnsupportedOperationException("do not call CUTaxKeyConstants constructor");
         }
