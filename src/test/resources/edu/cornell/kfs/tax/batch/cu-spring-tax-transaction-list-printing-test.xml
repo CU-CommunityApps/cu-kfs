@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="classpath:edu/cornell/kfs/tax/cu-spring-tax.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-base-test-beans.xml"/>
+
+    <bean id="propertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer-parentBean">
+        <property name="properties">
+            <props merge="true">
+                <prop key="staging.directory">test/tax_transaction_list_print/staging</prop>
+                <prop key="tax.output.scrubbed">false</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="testTransactionDetailCsvInputFileType"
+          class="edu.cornell.kfs.tax.batch.TestTransactionDetailCsvInputFileType"
+          p:directoryPath="${staging.directory}/tax/transactions_csv"
+          p:fileExtension="csv"
+          p:csvEnumClass="edu.cornell.kfs.tax.businessobject.TransactionDetail$TransactionDetailField"/>
+
+    <bean id="testCaseHolder" class="${unit.test.classname}" factory-method="buildTestCaseHolder"/>
+
+    <bean id="transactionDetailProcessorDao" class="${unit.test.classname}"
+          factory-method="buildMockTransactionDetailProcessorDao"
+          c:transactionDetailCsvFileType-ref="testTransactionDetailCsvInputFileType"
+          c:testCaseHolder-ref="testCaseHolder"/>
+
+    <bean id="dateTimeService" class="edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl"/>
+
+    <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
+        <property name="beanWhitelist">
+            <set merge="true">
+                <idref bean="transactionDetailProcessorDao"/>
+                <idref bean="taxFileGenerationServiceForTransactionListPrinting"/>
+                <idref bean="taxFileGenerationServiceForTransactionListPrinting-parentBean"/>
+                <idref bean="taxOutputDefinitionV2FileType"/>
+                <idref bean="taxOutputDefinitionV2FileType-parentBean"/>
+                <idref bean="testTransactionDetailCsvInputFileType"/>
+                <idref bean="testCaseHolder"/>
+                <idref bean="dateTimeService"/>
+            </set>
+        </property>
+    </bean>
+
+</beans>

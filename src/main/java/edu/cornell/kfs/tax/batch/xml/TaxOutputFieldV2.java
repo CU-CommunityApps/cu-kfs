@@ -33,6 +33,9 @@ public class TaxOutputFieldV2 {
     @XmlAttribute(name = "value")
     private String value;
 
+    @XmlAttribute(name = "mask")
+    private String mask;
+
     public String getName() {
         return name;
     }
@@ -73,6 +76,14 @@ public class TaxOutputFieldV2 {
         this.value = value;
     }
 
+    public String getMask() {
+        return mask;
+    }
+
+    public void setMask(final String mask) {
+        this.mask = mask;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         return EqualsBuilder.reflectionEquals(obj, this);
@@ -95,9 +106,13 @@ public class TaxOutputFieldV2 {
             } else if (StringUtils.isBlank(key)) {
                 throw new IllegalStateException(
                         "'field' tags that specify the 'key' attribute must not set a blank key");
-            } else if (type != TaxOutputFieldType.DERIVED) {
+            } else if (type == TaxOutputFieldType.STATIC) {
                 throw new IllegalStateException(
-                        "'field' tags that specify the 'key' attribute must set 'type' to DERIVED");
+                        "'field' tags that specify the 'key' attribute must not set 'type' to STATIC");
+            } else if ((type == TaxOutputFieldType.SENSITIVE_STRING) != StringUtils.isNotBlank(mask)) {
+                throw new IllegalStateException(
+                        "On 'field' tags, the 'mask' attribute must be non-blank for SENSITIVE_STRING types "
+                                + "and blank/unset for all other types");
             }
         } else if (StringUtils.isNotBlank(value)) {
             if (type != TaxOutputFieldType.STATIC) {

@@ -1,7 +1,6 @@
 package edu.cornell.kfs.sys.util;
 
-import java.util.function.Supplier;
-
+import org.apache.commons.lang3.function.FailableSupplier;
 import org.kuali.kfs.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.kfs.krad.util.ResourceLoaderUtil;
 import org.mockito.MockedStatic;
@@ -15,7 +14,8 @@ public final class GlobalResourceLoaderUtils {
      * the logic that calls the getResource() method must be wrapped by the given Supplier and must not branch off
      * into a separate thread.
      */
-    public static <T> T doWithResourceRetrievalDelegatedToKradResourceLoaderUtil(final Supplier<T> task) {
+    public static <E, T extends Throwable> E doWithResourceRetrievalDelegatedToKradResourceLoaderUtil(
+            final FailableSupplier<E, T> task) throws T {
         try (
                 final MockedStatic<GlobalResourceLoader> mockLoader = Mockito.mockStatic(GlobalResourceLoader.class)
         ) {
