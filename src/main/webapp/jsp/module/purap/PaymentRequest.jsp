@@ -38,8 +38,9 @@
     <%-- Cornell Customization: KFSPTS-1891 --%>
     <c:set var="wireEntryMode" value="${(canEdit || canSave) && KualiForm.editingMode['wireEntry']}" scope="request"/>
     <c:set var="frnEntryMode" value="${(canEdit || canSave) && KualiForm.editingMode['frnEntry']}" scope="request"/>
-    <%-- Display hold message if payment is on hold --%>
     <c:set var="isPaymentRequestDocument" value="${true}" scope="request" />
+    
+    <%-- Display hold message if payment is on hold --%>
     <c:if test="${KualiForm.paymentRequestDocument.holdIndicator}">
         <h4>This Payment Request has been Held by <c:out value="${KualiForm.paymentRequestDocument.lastActionPerformedByPersonName}"/></h4>
     </c:if>
