@@ -14,6 +14,10 @@ import java.util.List;
 @SuppressWarnings("deprecation")
 public class IWantDocumentPreRules extends PromptBeforeValidationBase {
 
+    /*
+     * NOTE: If additional prompts are added here, then adjustments might also be needed
+     *       to the IWantDocumentAction.promptBeforeValidation() method override.
+     */
     @Override
     public boolean doPrompts(Document document) {
         IWantDocument iWantDocument = (IWantDocument) document;

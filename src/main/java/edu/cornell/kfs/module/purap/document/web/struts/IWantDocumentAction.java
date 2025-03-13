@@ -884,7 +884,8 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         ActionForward actionForward = super.route(mapping, form, request, response);
         
-        if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step) && documentRoutingSucceeded()) {
+        if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)
+                && documentRoutingSuccessMessageIsPresent()) {
             iWantDocForm.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
             iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
 
@@ -911,8 +912,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         }
     }
 
-    // This logic is based upon the routing-succeeded check from the AccountsPayableActionBase.route() method.
-    private boolean documentRoutingSucceeded() {
+    private boolean documentRoutingSuccessMessageIsPresent() {
         return KNSGlobalVariables.getMessageList().stream().anyMatch(
                 message -> StringUtils.equals(message.getErrorKey(), KFSKeyConstants.MESSAGE_ROUTE_SUCCESSFUL));
     }
