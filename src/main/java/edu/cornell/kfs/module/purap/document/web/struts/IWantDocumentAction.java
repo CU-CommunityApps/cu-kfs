@@ -884,7 +884,8 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         ActionForward actionForward = super.route(mapping, form, request, response);
         
-        if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)) {
+        if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)
+                && documentRoutingSuccessMessageIsPresent()) {
             iWantDocForm.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
             iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
 
@@ -909,6 +910,30 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         } else {
             getBusinessObjectService().save(userOption);
         }
+    }
+
+    private boolean documentRoutingSuccessMessageIsPresent() {
+        return KNSGlobalVariables.getMessageList().stream().anyMatch(
+                message -> StringUtils.equals(message.getErrorKey(), KFSKeyConstants.MESSAGE_ROUTE_SUCCESSFUL));
+    }
+
+    /**
+     * Overridden to skip the missing-attachments prompt when submitting an IWNT document
+     * via the 4-step process, because that process already performs an equivalent prompt
+     * after Step 3 if necessary.
+     * 
+     * If we ever update the IWNT document to include additional prompts, then we may need
+     * to revisit this workaround or revisit the Step-3-prompting logic.
+     */
+    @Override
+    public ActionForward promptBeforeValidation(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response, final String methodToCall) throws Exception {
+        final IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
+        if (!StringUtils.equalsIgnoreCase(iWantDocForm.getStep(), CUPurapConstants.IWantDocumentSteps.REGULAR)) {
+            return null;
+        }
+        return super.promptBeforeValidation(mapping, form, request, response, methodToCall);
     }
 
     @Override
