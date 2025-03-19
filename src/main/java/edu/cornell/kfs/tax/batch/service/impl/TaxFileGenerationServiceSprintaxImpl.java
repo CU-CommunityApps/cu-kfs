@@ -45,9 +45,6 @@ import edu.cornell.kfs.tax.service.TaxParameterService;
 import edu.cornell.kfs.tax.service.TransactionOverrideService;
 import edu.cornell.kfs.tax.util.TaxUtils;
 
-/*
- * This service will be fully implemented in a follow-up user story.
- */
 public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationService, TransactionDetailHandler {
 
     private static final Logger LOG = LogManager.getLogger();
@@ -65,7 +62,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
     private boolean scrubOutput;
 
     @Override
-    public Object generateFiles(final TaxBatchConfig config) throws IOException, SQLException {
+    public TaxStatistics generateFiles(final TaxBatchConfig config) throws IOException, SQLException {
         Validate.notNull(config, "config cannot be null");
         Validate.isTrue(config.getMode() == TaxBatchConfig.Mode.CREATE_TAX_FILES,
                 "config should have specified CREATE_TAX_FILES mode");
@@ -97,7 +94,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
                         new TaxFileRowWriterImpl(paymentsFileDefinition, SprintaxField.class, paymentsFilePath,
                                 scrubOutput);
         ) {
-            final SprintaxHelper helper = new SprintaxHelper(config, rowMapper, demographicFileWriter,
+            final SprintaxHelper helper = new SprintaxHelper(rowMapper, demographicFileWriter,
                     paymentsFileWriter, transactionOverrides);
             return readAndProcessTransactions(helper);
         }
@@ -168,9 +165,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
     }
 
     private String generatePlaceholderEmailAddress(final String payeeId) {
-        final String emailFormat = configurationService.getPropertyValueAsString(
-                CUTaxKeyConstants.SPRINTAX_PLACEHOLDER_EMAIL_FORMAT);
-        return MessageFormat.format(emailFormat, payeeId);
+        return createMessage(CUTaxKeyConstants.SPRINTAX_PLACEHOLDER_EMAIL_FORMAT, payeeId);
     }
 
     private SprintaxPayment createNewPayment(final TransactionDetail currentRow, final SprintaxHelper helper) {
@@ -405,18 +400,18 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
 
 
     private void printTaxFileRow(final SprintaxPayee currentPayee, final SprintaxHelper helper) throws IOException {
-        if (!currentPayee.isBiographicRowWritten()) {
-            prepareForPrintingBiographicRow(currentPayee, helper);
+        if (!currentPayee.isDemographicRowWritten()) {
+            prepareForPrintingDemographicRow(currentPayee, helper);
             helper.demographicFileWriter.writeDataRow(TaxFileSections.SPRINTAX_DEMOGRAPHIC_ROW_1042S, currentPayee);
             helper.increment(TaxStatType.NUM_BIO_RECORDS_WRITTEN);
-            currentPayee.setBiographicRowWritten(true);
+            currentPayee.setDemographicRowWritten(true);
         }
         prepareForPrintingPaymentRow(currentPayee, helper);
         helper.paymentsFileWriter.writeDataRow(TaxFileSections.SPRINTAX_PAYMENT_ROW_1042S, currentPayee);
         helper.increment(TaxStatType.NUM_DETAIL_RECORDS_WRITTEN);
     }
 
-    private void prepareForPrintingBiographicRow(final SprintaxPayee currentPayee, final SprintaxHelper helper) {
+    private void prepareForPrintingDemographicRow(final SprintaxPayee currentPayee, final SprintaxHelper helper) {
         final String formattedTaxId = formatTaxIdForFile(currentPayee.getVendorTaxNumber());
         if (shouldTreatTaxIdAsITIN(currentPayee.getVendorTaxNumber())) {
             LOG.debug("prepareForPrintingBiographicRow, Biographic row for payee {} has an ITIN tax ID",
@@ -582,7 +577,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         this.taxParameterService = taxParameterService;
     }
 
-    public void setSprintaxBioFileDefinitionFilePath(final String sprintaxBioFileDefinitionFilePath) {
+    public void setSprintaxDemographicFileDefinitionFilePath(final String sprintaxBioFileDefinitionFilePath) {
         this.sprintaxDemographicFileDefinitionFilePath = sprintaxBioFileDefinitionFilePath;
     }
 
@@ -605,22 +600,20 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
 
 
     private static final class SprintaxHelper implements TaxStatisticsHandler {
-        private final TaxBatchConfig config;
         private final TaxDtoRowMapper<TransactionDetail> rowMapper;
         private final TaxFileRowWriterImpl demographicFileWriter;
         private final TaxFileRowWriterImpl paymentsFileWriter;
         private final Map<String, String> transactionOverrides;
         private final TaxStatistics statistics;
 
-        private SprintaxHelper(final TaxBatchConfig config, final TaxDtoRowMapper<TransactionDetail> rowMapper,
+        private SprintaxHelper(final TaxDtoRowMapper<TransactionDetail> rowMapper,
                 final TaxFileRowWriterImpl demographicFileWriter, final TaxFileRowWriterImpl paymentsFileWriter,
                 final Map<String, String> transactionOverrides) {
-            this.config = config;
             this.rowMapper = rowMapper;
             this.demographicFileWriter = demographicFileWriter;
             this.paymentsFileWriter = paymentsFileWriter;
             this.transactionOverrides = transactionOverrides;
-            this.statistics = new TaxStatistics();
+            this.statistics = TaxUtils.generateBaseStatisticsFor1042S();
         }
 
         @Override

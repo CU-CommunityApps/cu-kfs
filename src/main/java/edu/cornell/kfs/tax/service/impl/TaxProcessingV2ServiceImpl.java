@@ -4,18 +4,22 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.CUTaxConstants.TaxCommonParameterNames;
 import edu.cornell.kfs.tax.batch.TaxBatchConfig;
+import edu.cornell.kfs.tax.batch.TaxStatistics;
 import edu.cornell.kfs.tax.batch.service.TaxFileGenerationService;
 import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
+import edu.cornell.kfs.tax.dataaccess.impl.TaxStatType;
 import edu.cornell.kfs.tax.service.TaxParameterService;
 import edu.cornell.kfs.tax.service.TaxProcessingV2Service;
 
@@ -28,6 +32,7 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
     private TaxFileGenerationService taxFileGenerationServiceForTransactionListPrinting;
     private TaxParameterService taxParameterService;
     private DateTimeService dateTimeService;
+    private ConfigurationService configurationService;
 
     @Override
     public void performTaxProcessingFor1042S(final java.util.Date processingStartDate) {
@@ -40,9 +45,11 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
             createTransactionDetailRowsFor1042SUsingLegacyProcess(config);
 
             LOG.info("performTaxProcessingFor1042S, Generating 1042-S files...");
-            LOG.warn("performTaxProcessingFor1042S, 1042-S tax file generation has not been fully implemented yet");
-            taxFileGenerationServiceFor1042S.generateFiles(config);
-            generateFileContainingPlainTransactionDetails(config);
+            final TaxStatistics sprintaxStatistics = taxFileGenerationServiceFor1042S.generateFiles(config);
+            final TaxStatistics plainOutputStatistics = generateFileContainingPlainTransactionDetails(config);
+            LOG.info("performTaxProcessingFor1042S, Finished generating 1042-S files");
+
+            printStatistics(sprintaxStatistics, plainOutputStatistics);
 
             LOG.info("performTaxProcessingFor1042S, Finished 1042-S tax processing");
         } catch (final Exception e) {
@@ -57,10 +64,10 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
                 config.getProcessingStartDate());
     }
 
-    private void generateFileContainingPlainTransactionDetails(final TaxBatchConfig config) throws Exception {
+    private TaxStatistics generateFileContainingPlainTransactionDetails(final TaxBatchConfig config) throws Exception {
         LOG.info("generateFileContainingPlainTransactionDetails, Generating plain transaction details file...");
         TaxBatchConfig printConfig = config.withMode(TaxBatchConfig.Mode.CREATE_TRANSACTION_LIST_FILE);
-        taxFileGenerationServiceForTransactionListPrinting.generateFiles(printConfig);
+        return taxFileGenerationServiceForTransactionListPrinting.generateFiles(printConfig);
     }
 
     private TaxBatchConfig buildTaxBatchConfigFor1042S(final java.util.Date processingStartDate) {
@@ -143,6 +150,28 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
         }
     }
 
+    private void printStatistics(final TaxStatistics mainStatistics, final TaxStatistics plainOutputStatistics) {
+        final int numMainTransactionRows = mainStatistics.getTransactionRowCountStatistic();
+        final int numPlainOutputTransactionRows = plainOutputStatistics.getTransactionRowCountStatistic();
+        if (numMainTransactionRows != numPlainOutputTransactionRows) {
+            LOG.warn("printStatistics, {} transaction rows were processed when creating the main tax files, "
+                    + "but {} transaction rows were printed to the file containing the plain transactions list",
+                    numMainTransactionRows, numPlainOutputTransactionRows);
+        }
+
+        LOG.info("printStatistics, ======================================");
+        LOG.info("printStatistics, ============  STATISTICS  ============");
+        LOG.info("printStatistics, ======================================");
+        for (final Map.Entry<TaxStatType, Integer> statistic : mainStatistics.getOrderedResults().entrySet()) {
+            final String messageLabelKey = statistic.getKey().getPropKey();
+            final String messageLabel = configurationService.getPropertyValueAsString(messageLabelKey);
+            LOG.info("printStatistics, {}: {}", messageLabel, statistic.getValue());
+        }
+        LOG.info("printStatistics, ======================================");
+        LOG.info("printStatistics, ==========  END STATISTICS  ==========");
+        LOG.info("printStatistics, ======================================");
+    }
+
 
 
     public void setLegacyTaxProcessingDao(final TaxProcessingDao legacyTaxProcessingDao) {
@@ -164,6 +193,10 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
 
     public void setDateTimeService(final DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
+    }
+
+    public void setConfigurationService(final ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }

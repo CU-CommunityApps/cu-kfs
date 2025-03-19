@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <taxOutputDefinition fieldSeparator="," amountFormat="#########.##" percentFormat="00">
-    <section name="Sprintax_Payment_Row_1042S"
-             hasHeaderRow="true"
-             useExactFieldLengths="false">
+    <section name="Sprintax_Payment_Row_1042S" useExactFieldLengths="false">
         <field name="E-mail" length="90" type="STATIC" value=""/>
         <field name="Student number" length="40" type="STRING" key="payeeId"/>
         <field name="UNIQUE FORM IDENTIFIER" length="10" type="STRING" key="payment.uniqueFormId"/>
@@ -17,7 +15,7 @@
         <field name="Chapter 4 Tax Rate" length="2" type="STATIC" value="00"/>
         <field name="Withholding Allowance" length="15" type="STATIC" value="0"/>
         <field name="Net Income" length="15" type="STATIC" value=""/>
-        <field name="Federal Tax Withheld" length="15" type="NEGATED_AMOUNT" key="fedTaxWithheldAmount"/>
+        <field name="Federal Tax Withheld" length="15" type="NEGATED_AMOUNT" key="payment.federalTaxWithheldAmount"/>
         <field name="Check if tax not deposited with IRS pursuant to escrow prodecure"
                 length="1" type="STATIC" value=""/>
         <field name="Check if withholding occurred in subsequent year with respect to a partnership interest"
@@ -29,7 +27,8 @@
         <field name="Withholding agent's GIIN" length="19" type="STATIC" value=""/>
         <field name="Recipient Chapter 3 status code" length="2" type="STRING" key="chapter3StatusCode"/>
         <field name="Recipient Chapter 4 status code" length="2" type="STRING" key="vendorChapter4StatusCode"/>
-        <field name="Recipient's GIIN" length="19" type="STRING" key="vendorGIIN" mask="XXXXXXXXXXXXXXXXXXX"/>
+        <field name="Recipient's GIIN" length="19" type="SENSITIVE_STRING" key="vendorGIIN"
+               mask="XXXXXXXXXXXXXXXXXXX"/>
         <field name="LOB code" length="2" type="STATIC" value=""/>
         <field name="Recipient's account number" length="20" type="STATIC" value=""/>
         <field name="Primary Withholding Agent's Name (if applicapable)" length="40" type="STATIC" value=""/>
@@ -49,7 +48,8 @@
         <field name="Payer's GIIN" length="19" type="STATIC" value=""/>
         <field name="Payer's Chapter 3 Status Code" length="2" type="STATIC" value=""/>
         <field name="Payer's Chapter 4 Status Code" length="2" type="STATIC" value=""/>
-        <field name="State income tax withheld" length="15" type="NEGATED_AMOUNT" key="stateIncomeTaxWithheldAmount"/>
+        <field name="State income tax withheld" length="15" type="NEGATED_AMOUNT"
+               key="payment.stateIncomeTaxWithheldAmount"/>
         <field name="Payer's State Tax Number" length="20" type="STATIC" value=""/>
         <field name="Name of State" length="20" type="STATIC" value=""/>
     </section>

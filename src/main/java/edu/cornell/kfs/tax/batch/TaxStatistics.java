@@ -50,6 +50,11 @@ public class TaxStatistics implements TaxStatisticsHandler {
         increment(taxSourceSpecificEntryType);
     }
 
+    public int getTransactionRowCountStatistic() {
+        final MutableInt value = statistics.get(TaxStatType.NUM_TRANSACTION_ROWS);
+        return (value != null) ? value.getValue() : 0; 
+    }
+
     public Map<TaxStatType, Integer> getOrderedResults() {
         return getResultsAsUnmodifiableMapWithNaturalEnumOrdering();
     }
