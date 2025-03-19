@@ -122,18 +122,29 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private boolean isVendorTaxNumberInWorkday(final String vendorTaxNumber) {
         try {
             WorkdayKfsVendorLookupRoot result = getCuVendorWorkDayService().findEmployeeBySocialSecurityNumber(vendorTaxNumber, getDocumentNumber());
-            boolean isInWorkDay = result.isActiveEmployee();
-            LOG.debug("isVendorTaxNumberInWorkday, returning {} for document {}", isInWorkDay, getDocumentNumber());
-            return isInWorkDay;
+            boolean isActiveOrInactiveEmployee = result.isActiveOrInactiveEmployee();
+            boolean isActiveEmployee = result.isActiveEmployee();
+            if (isActiveOrInactiveEmployee) {
+                String message;
+                if (isActiveEmployee) {
+                    message = getConfigurationService().getPropertyValueAsString(CUVendorKeyConstants.ACTIVE_EMPLOYEE_MESSAGE);
+                } else {
+                    message = getConfigurationService().getPropertyValueAsString(CUVendorKeyConstants.TERMINATED_EMPLOYEE_MESSAGE);
+                }
+                annotateDocument(message);
+            }
+            LOG.debug("isVendorTaxNumberInWorkday, returning {} for document {}", isActiveOrInactiveEmployee, getDocumentNumber());
+            return isActiveOrInactiveEmployee;
         } catch (RuntimeException | URISyntaxException e) {
             LOG.error("isVendorTaxNumberInWorkday, got an error calling workday for document " + getDocumentNumber(), e);
-            annotateCouldNotCallWorkDay();
+            String message = getConfigurationService().getPropertyValueAsString(CUVendorKeyConstants.VENDOR_UNABLE_TO_CALL_WORKDAY);
+            annotateDocument(message);
             return true;
         }
     }
     
     @SuppressWarnings("deprecation")
-    private void annotateCouldNotCallWorkDay() {
+    private void annotateDocument(final String message) {
         try {
             GlobalVariables.doInNewGlobalVariables(new UserSession(KFSConstants.SYSTEM_USER), new Callable<Object>() {
                 @Override
@@ -142,8 +153,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
                     if (ObjectUtils.isNotNull(document)) {
                         final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
                         if (ObjectUtils.isNotNull(workflowDocument)) {
-                            final String message = getConfigurationService().getPropertyValueAsString(CUVendorKeyConstants.VENDOR_UNABLE_TO_CALL_WORKDAY);
-                            LOG.debug("annotateCouldNotCallWorkDay, the annotation message: {}", message);
+                            LOG.debug("annotateDocument, the annotation message: {}", message);
                             workflowDocument.logAnnotation(message);
                             return document;
                         } else {

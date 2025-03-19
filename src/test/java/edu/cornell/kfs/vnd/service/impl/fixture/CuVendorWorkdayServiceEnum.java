@@ -2,27 +2,26 @@ package edu.cornell.kfs.vnd.service.impl.fixture;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import edu.cornell.kfs.vnd.jsonobject.WorkdayKfsVendorLookupResult;
 import edu.cornell.kfs.vnd.jsonobject.WorkdayKfsVendorLookupRoot;
 
 public enum CuVendorWorkdayServiceEnum {
 
-    SSN_NO_HYPHENS_INCLUDE_TERMINATED("000000000", "1", "001", true, "xyz321", "1", "123456789", "06-01-1998"),
-    SSN_WITH_HYPHENS_INCLUDE_TERMINATED("111-22-3333", "1", "002", true, "abc123", "1", "98654321", "06-01-2019"),
-    SSN_NO_HYPHENS_EXCLUDE_TERMINATED("111111111", "0", "003", false, "def987", "0", "456789321", "07-01-2024", "08-01-2024", "08-01-2024"),
-    SSN_WITH_HYPHENS_EXCLUDE_TERMINATED("111-22-3333", "0", "004", false, "stu666", "0", "66666", "01-01-2025", "01-02-2025", "01-02-2025"),
-    EMPTY_SSN_INCLUDE_TERMINATED(StringUtils.EMPTY, "1", "005", false),
-    EMPTY_SSN_EMPTY_TERMINATED(StringUtils.EMPTY, StringUtils.EMPTY, "006", false),
-    SSN_WITH_HYPHENS_NULL_TERMINATED("222-77-9999", null, "007", false), 
-    NULL_SSN_INCLUDE_TERMINATED(null, "1", "008", false),
-    NULL_SSN_NULL_TERMINATED(null, null, "009", false);
+    SSN_NO_HYPHENS_INCLUDE_TERMINATED("000000000", "1", "001", true, true, "xyz321", "1", "123456789", "06-01-1998"),
+    SSN_WITH_HYPHENS_INCLUDE_TERMINATED("111-22-3333", "1", "002", true, true, "abc123", "1", "98654321", "06-01-2019"),
+    SSN_NO_HYPHENS_EXCLUDE_TERMINATED("111111111", "0", "003", true, false, "def987", "0", "456789321", "07-01-2024", "08-01-2024", "08-01-2024"),
+    SSN_WITH_HYPHENS_EXCLUDE_TERMINATED("111-22-3333", "0", "004", true, false, "stu666", "0", "66666", "01-01-2025", "01-02-2025", "01-02-2025"),
+    EMPTY_SSN_INCLUDE_TERMINATED(StringUtils.EMPTY, "1", "005", false, false),
+    EMPTY_SSN_EMPTY_TERMINATED(StringUtils.EMPTY, StringUtils.EMPTY, "006", false, false),
+    SSN_WITH_HYPHENS_NULL_TERMINATED("222-77-9999", null, "007", false, false), 
+    NULL_SSN_INCLUDE_TERMINATED(null, "1", "008", false, false),
+    NULL_SSN_NULL_TERMINATED(null, null, "009", false, false);
 
     public final String ssn;
     public final String includeTerminatedWorkers;
     public final String documentId;
-    public final boolean activeRecord;
+    public final boolean activeOrInactiveEmployee;
+    public final boolean activeEmployee;
     public final String netID;
     public final String activeStatus;
     public final String employeeID;
@@ -31,23 +30,24 @@ public enum CuVendorWorkdayServiceEnum {
     public final String terminationDateGreaterThanProcessingDate;
 
     private CuVendorWorkdayServiceEnum(String ssn, String includeTerminatedWorkers, String documentId,
-            boolean activeRecord) {
-        this(ssn, includeTerminatedWorkers, documentId, activeRecord, StringUtils.EMPTY, StringUtils.EMPTY,
+            boolean activeOrInactiveEmployee, boolean activeEmployee) {
+        this(ssn, includeTerminatedWorkers, documentId, activeOrInactiveEmployee, activeEmployee, StringUtils.EMPTY, StringUtils.EMPTY,
                 StringUtils.EMPTY, StringUtils.EMPTY);
     }
 
     private CuVendorWorkdayServiceEnum(String ssn, String includeTerminatedWorkers, String documentId,
-            boolean activeRecord, String netID, String activeStatus, String employeeID, String hireDate) {
-        this(ssn,includeTerminatedWorkers, documentId, activeRecord, netID, activeStatus, employeeID, hireDate, null, null);
+            boolean activeOrInactiveEmployee, boolean activeEmployee, String netID, String activeStatus, String employeeID, String hireDate) {
+        this(ssn,includeTerminatedWorkers, documentId, activeOrInactiveEmployee, activeEmployee, netID, activeStatus, employeeID, hireDate, null, null);
     }
     
     private CuVendorWorkdayServiceEnum(String ssn, String includeTerminatedWorkers, String documentId,
-            boolean activeRecord, String netID, String activeStatus, String employeeID, String hireDate,
+            boolean activeOrInactiveEmployee, boolean activeEmployee, String netID, String activeStatus, String employeeID, String hireDate,
             String terminationDate, String terminationDateGreaterThanProcessingDate) {
         this.ssn = ssn;
         this.includeTerminatedWorkers = includeTerminatedWorkers;
         this.documentId = documentId;
-        this.activeRecord = activeRecord;
+        this.activeOrInactiveEmployee = activeOrInactiveEmployee;
+        this.activeEmployee = activeEmployee;
         this.netID = netID;
         this.activeStatus = activeStatus;
         this.employeeID = employeeID;
