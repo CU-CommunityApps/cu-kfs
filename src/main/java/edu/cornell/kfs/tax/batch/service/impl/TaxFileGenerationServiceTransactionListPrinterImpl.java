@@ -26,6 +26,7 @@ import edu.cornell.kfs.tax.batch.service.TaxFileRowWriter;
 import edu.cornell.kfs.tax.batch.xml.TaxOutputDefinitionV2;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail.TransactionDetailField;
+import edu.cornell.kfs.tax.dataaccess.impl.TaxStatType;
 
 public class TaxFileGenerationServiceTransactionListPrinterImpl implements TaxFileGenerationService,
         TransactionDetailHandler {
@@ -37,7 +38,7 @@ public class TaxFileGenerationServiceTransactionListPrinterImpl implements TaxFi
     private boolean maskSensitiveData;
 
     @Override
-    public Object generateFiles(final TaxBatchConfig config) throws IOException, SQLException {
+    public TaxStatistics generateFiles(final TaxBatchConfig config) throws IOException, SQLException {
         Validate.notNull(config, "config cannot be null");
         Validate.isTrue(config.getMode() == TaxBatchConfig.Mode.CREATE_TRANSACTION_LIST_FILE,
                 "config should have specified CREATE_TRANSACTION_LIST_FILE mode");
@@ -60,15 +61,16 @@ public class TaxFileGenerationServiceTransactionListPrinterImpl implements TaxFi
     private TaxStatistics generateTransactionDetailFile(final TaxBatchConfig config,
             final TaxDtoRowMapper<TransactionDetail> rowMapper,
             final TaxFileRowWriter rowWriter) throws Exception {
+        final TaxStatistics statistics = new TaxStatistics(TaxStatType.NUM_TRANSACTION_ROWS);
         rowWriter.writeHeaderRow(TaxFileSections.PLAIN_TRANSACTION_DETAIL_ROW);
 
         while (rowMapper.moveToNextRow()) {
             final TransactionDetail transactionDetail = rowMapper.readCurrentRow();
             rowWriter.writeDataRow(TaxFileSections.PLAIN_TRANSACTION_DETAIL_ROW, transactionDetail);
+            statistics.increment(TaxStatType.NUM_TRANSACTION_ROWS);
         }
 
-        // TODO: Implement more statistics handling (if necessary) in subsequent user stories.
-        return new TaxStatistics();
+        return statistics;
     }
 
     private String generateTransactionDetailFileName(final TaxBatchConfig config) {

@@ -20,7 +20,7 @@ public class SprintaxPayee extends TaxPayeeBase {
     private String payerEIN;
     private String stateCode;
     private Date endDate;
-    private boolean biographicRowWritten;
+    private boolean demographicRowWritten;
 
     private SprintaxPayment currentPayment;
     private TaxBoxUpdates currentTaxBoxUpdates;
@@ -97,12 +97,16 @@ public class SprintaxPayee extends TaxPayeeBase {
         this.endDate = endDate;
     }
 
-    public boolean isBiographicRowWritten() {
-        return biographicRowWritten;
+    public boolean isDemographicRowWritten() {
+        return demographicRowWritten;
     }
 
-    public void setBiographicRowWritten(final boolean biographicRowWritten) {
-        this.biographicRowWritten = biographicRowWritten;
+    public void setDemographicRowWritten(final boolean demographicRowWritten) {
+        this.demographicRowWritten = demographicRowWritten;
+    }
+
+    public SprintaxPayment getPayment() {
+        return currentPayment;
     }
 
     public SprintaxPayment getCurrentPayment() {
