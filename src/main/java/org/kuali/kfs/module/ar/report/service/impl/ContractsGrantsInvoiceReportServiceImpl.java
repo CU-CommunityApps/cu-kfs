@@ -33,6 +33,8 @@ import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfWriter;
 import com.opencsv.CSVWriter;
 
+import edu.cornell.kfs.module.ar.CuArConstants;
+import edu.cornell.kfs.module.ar.document.service.CuContractsGrantsInvoiceDocumentService;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -410,46 +412,6 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
         cashReceipt = payments ;
         return cashReceipt;
     }
-    
-    protected final KualiDecimal getIndirectCostInvoiceDetailInvoiceAmount(final ContractsAndGrantsBillingAward award){
-        KualiDecimal indirectExpenseBase = KualiDecimal.ZERO;
-        final Map<String, String> fieldValues = new HashMap<>();
-        if (ObjectUtils.isNotNull(award) && ObjectUtils.isNotNull(award.getProposalNumber())) {
-            fieldValues.put(ArPropertyConstants.ContractsGrantsInvoiceDocumentFields.PROPOSAL_NUMBER,
-                    award.getProposalNumber()
-            );
-        }
-        final List<ContractsGrantsInvoiceDocument> list =
-                (List<ContractsGrantsInvoiceDocument>) contractsGrantsInvoiceDocumentService.retrieveAllCGInvoicesByCriteria(
-                        fieldValues);
-        if (!CollectionUtils.isEmpty(list)) {
-            for (final ContractsGrantsInvoiceDocument invoice : list) {
-                indirectExpenseBase = invoice.getTotalIndirectCostInvoiceDetail().getInvoiceAmount();
-                break;
-        }
-        }
-        return indirectExpenseBase;
-    }
-    
-    protected final KualiDecimal getDirectCostInvoiceDetailInvoiceAmount(final ContractsAndGrantsBillingAward award){
-        KualiDecimal directExpenseBase = KualiDecimal.ZERO;
-        final Map<String, String> fieldValues = new HashMap<>();
-        if (ObjectUtils.isNotNull(award) && ObjectUtils.isNotNull(award.getProposalNumber())) {
-            fieldValues.put(ArPropertyConstants.ContractsGrantsInvoiceDocumentFields.PROPOSAL_NUMBER,
-                    award.getProposalNumber()
-            );
-        }
-        final List<ContractsGrantsInvoiceDocument> list =
-                (List<ContractsGrantsInvoiceDocument>) contractsGrantsInvoiceDocumentService.retrieveAllCGInvoicesByCriteria(
-                        fieldValues);
-        if (!CollectionUtils.isEmpty(list)) {
-            for (final ContractsGrantsInvoiceDocument invoice : list) {
-                directExpenseBase = invoice.getTotalDirectCostInvoiceDetail().getInvoiceAmount();
-                break;
-        }
-        }
-        return directExpenseBase;
-    }
 
     /**
      * This method is used to populate the replacement list to replace values from pdf template to actual values for
@@ -498,12 +460,14 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                 if (ObjectUtils.isNotNull(awardAccount.getAccount().getAccountExpirationDate())) {
                     contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                             ArPropertyConstants.FederalFormReportFields.INDIRECT_EXPENSE_PERIOD_TO + "_" + index,
-                            reportingPeriod
+                            CuArConstants.REPORTING_PERIOD_LABEL_MAP.get(reportingPeriod)
                     );
                 }
+                
+                ContractsGrantsInvoiceDocument cinvDoc = ((CuContractsGrantsInvoiceDocumentService)contractsGrantsInvoiceDocumentService).retrieveLatestContractsGrantsInvoiceDocument(award.getProposalNumber());
                 contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                         ArPropertyConstants.FederalFormReportFields.INDIRECT_EXPENSE_BASE + "_" + index,
-                        contractsGrantsBillingUtilityService.formatForCurrency(getDirectCostInvoiceDetailInvoiceAmount(award))
+                        contractsGrantsBillingUtilityService.formatForCurrency(cinvDoc.getTotalDirectCostInvoiceDetail().getInvoiceAmount())
                 );
                 final Map<String, Object> key = new HashMap<>();
                 key.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
@@ -524,13 +488,14 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                     if (ObjectUtils.isNotNull(rate)) {
                         final KualiDecimal ONE_HUNDRED = new KualiDecimal(100);
                         final KualiDecimal indirectExpenseAmount = award.getAwardTotalAmount().multiply(rate).divide(ONE_HUNDRED);
+                        final KualiDecimal indirectCostInvoiceDetailInvoiceAmount = cinvDoc.getTotalIndirectCostInvoiceDetail().getInvoiceAmount();
                         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                                 ArPropertyConstants.FederalFormReportFields.INDIRECT_EXPENSE_AMOUNT + "_" + index,
-                                contractsGrantsBillingUtilityService.formatForCurrency(getIndirectCostInvoiceDetailInvoiceAmount(award))
+                                contractsGrantsBillingUtilityService.formatForCurrency(indirectCostInvoiceDetailInvoiceAmount)
                         );
                         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                                 ArPropertyConstants.FederalFormReportFields.INDIRECT_EXPENSE_FEDERAL + "_" + index,
-                                contractsGrantsBillingUtilityService.formatForCurrency(getIndirectCostInvoiceDetailInvoiceAmount(award))
+                                contractsGrantsBillingUtilityService.formatForCurrency(indirectCostInvoiceDetailInvoiceAmount)
                         );
                         amountSum = amountSum.add(indirectExpenseAmount);
                     }

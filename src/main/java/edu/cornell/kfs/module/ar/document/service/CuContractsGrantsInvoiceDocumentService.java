@@ -12,4 +12,6 @@ public interface CuContractsGrantsInvoiceDocumentService extends ContractsGrants
 
     //CUMod: KFSPTS-15342
     void setInvoiceDueDateBasedOnNetTermsAndCurrentDate(ContractsGrantsInvoiceDocument document);
+    
+    ContractsGrantsInvoiceDocument retrieveLatestContractsGrantsInvoiceDocument(final String proposalNumber);
 }

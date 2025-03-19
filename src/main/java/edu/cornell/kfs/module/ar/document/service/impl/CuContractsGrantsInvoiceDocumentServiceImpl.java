@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Date;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.SubFundGroup;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.integration.cg.CGIntegrationConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants;
@@ -30,7 +33,6 @@ import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.document.service.impl.ContractsGrantsInvoiceDocumentServiceImpl;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.ar.CuArParameterKeyConstants;
 import edu.cornell.kfs.module.ar.CuArPropertyConstants;
@@ -387,6 +389,21 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         }
         
         return Optional.empty();
+    }
+    
+    public ContractsGrantsInvoiceDocument retrieveLatestContractsGrantsInvoiceDocument(final String proposalNumber) {
+        Map<String, String> hashMap = new HashMap<String, String>();
+        hashMap.put(ArPropertyConstants.ContractsGrantsInvoiceDocumentFields.PROPOSAL_NUMBER, proposalNumber);
+        Collection<ContractsGrantsInvoiceDocument> invoiceDocuments = retrieveAllCGInvoicesByCriteria(hashMap);
+        if (!invoiceDocuments.isEmpty()) {
+            List<ContractsGrantsInvoiceDocument> docsList = invoiceDocuments.stream().collect(Collectors.toList());
+            Collections.sort(docsList, (o1, o2) -> o2.getDocumentHeader().getWorkflowDocument().getDateCreated()
+                    .compareTo(o1.getDocumentHeader().getWorkflowDocument().getDateCreated()));
+
+            return docsList.get(0);
+        } else {
+            return null;
+        }
     }
 
 }
