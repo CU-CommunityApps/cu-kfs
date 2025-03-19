@@ -34,6 +34,7 @@ public final class CUTaxConstants {
     public static final String NO_US_VENDOR_ADDRESS = "No US Address on File!";
     public static final String NO_FOREIGN_VENDOR_ADDRESS = "No Foreign Address on File!";
     public static final String NO_ANY_VENDOR_ADDRESS = "No Address on File!";
+    public static final String VENDOR_NOT_FOUND_MESSAGE = "Vendor Not Found";
     public static final String TAX_1099_MISC_FORM_TYPE = "MISC";
     public static final String TAX_1099_NEC_FORM_TYPE = "NEC";
     public static final String TAX_1099_UNKNOWN_FORM_TYPE = "????";
@@ -62,7 +63,7 @@ public final class CUTaxConstants {
     public static class Sprintax {
         public static final int MAX_FIELD_LENGTH = 90;
         public static final String PAYMENTS_OUTPUT_FILE_PREFIX = "irs_1042s_sprintax_payments_";
-        public static final String BIO_OUTPUT_FILE_PREFIX = "irs_1042s_sprintax_bio";
+        public static final String DEMOGRAPHIC_OUTPUT_FILE_PREFIX = "irs_1042s_sprintax_demographic_";
         public static final String TAX_CSV_FILE_SUFFIX = ".csv";
     }
 
@@ -133,8 +134,8 @@ public final class CUTaxConstants {
         public static final String TAX_TABLE_1042S_PREFIX = "tax.table.1042s.";
         public static final String TAX_CONFIG_DEFAULT_SUFFIX = "default";
 
-        public static final String MESSAGE_TAX_OUTPUT_1042S_VENDOR_NOT_FOUND = "message.tax.output.1042s.vendor.not.found";
-        public static final String MESSAGE_TAX_OUTPUT_1042S_VENDOR_PARENT_NOT_FOUND = "message.tax.output.1042s.vendor.parent.not.found";
+        public static final String MESSAGE_TAX_OUTPUT_VENDOR_NOT_FOUND = "message.tax.output.vendor.not.found";
+        public static final String MESSAGE_TAX_OUTPUT_VENDOR_PARENT_NOT_FOUND = "message.tax.output.vendor.parent.not.found";
         public static final String SPRINTAX_PLACEHOLDER_EMAIL_FORMAT = "sprintax.placeholder.email.format";
 
         private CUTaxKeyConstants() {
