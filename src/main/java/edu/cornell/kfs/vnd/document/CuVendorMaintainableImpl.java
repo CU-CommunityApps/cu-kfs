@@ -1,6 +1,7 @@
 package edu.cornell.kfs.vnd.document;
 
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -136,7 +137,8 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
                 if (isActiveEmployee(result)) {
                     message = getConfigurationService().getPropertyValueAsString(CUVendorKeyConstants.ACTIVE_EMPLOYEE_MESSAGE);
                 } else {
-                    message = getConfigurationService().getPropertyValueAsString(CUVendorKeyConstants.TERMINATED_EMPLOYEE_MESSAGE);
+                    message = MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUVendorKeyConstants.TERMINATED_EMPLOYEE_MESSAGE),
+                            getEmployeeTerminationNumberOfDays());
                 }
                 annotateDocument(message);
             }
@@ -190,7 +192,6 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         try {
             String numberOfDaysString = getParameterService().getParameterValueAsString(VendorDetail.class,
                     CuVendorParameterConstants.EMPLOYEE_TERMINATION_NUMBER_OF_DAYS_FOR_TAX_ID_REVIEW);
-            LOG.debug("getEmployeeTerminationNumberOfDays, the number of days is {}", numberOfDaysString);
             return Integer.parseInt(numberOfDaysString);
         } catch (Exception e) {
             LOG.error("getEmployeeTerminationNumberOfDays, unable to get the number of days from the parameter EMPLOYEE_TERMINATION_NUMBER_OF_DAYS_FOR_TAX_ID_REVIEWm returning 365", e);
