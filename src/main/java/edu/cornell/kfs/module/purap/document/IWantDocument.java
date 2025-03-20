@@ -146,6 +146,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     // Will service be performed on Campus: yes/no drop down box
     // Need to store as a String here due to drop-down usage; database already stores it as such.
     private String servicePerformedOnCampus;
+    private String serviceCountryCode;
 
     private String explanation;
 
@@ -172,6 +173,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private transient Chart collegeChartForSearch;
     private transient Organization collegeOrgForSearch;
     private transient Organization departmentOrgForSearch;
+    private transient Country serviceCountry;
 
     // The difference between the item and account totals; not persisted.
     private KualiDecimal itemAndAccountDifference;
@@ -1647,6 +1649,22 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         }
 
         return false;
+    }
+
+    public String getServiceCountryCode() {
+        return serviceCountryCode;
+    }
+
+    public void setServiceCountryCode(String serviceCountryCode) {
+        this.serviceCountryCode = serviceCountryCode;
+    }
+
+    public Country getServiceCountry() {
+        return serviceCountry;
+    }
+
+    public void setServiceCountry(Country serviceCountry) {
+        this.serviceCountry = serviceCountry;
     }
 
 }

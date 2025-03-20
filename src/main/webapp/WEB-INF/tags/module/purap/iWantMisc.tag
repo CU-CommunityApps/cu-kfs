@@ -22,6 +22,18 @@
                             tabindexOverride="${tabindexOverrideBase + 0}"/>
                 </td>
             </tr>
+            <tr>
+                <th class="right">
+                    <kul:htmlAttributeLabel attributeEntry="${documentAttributes.serviceCountryCode}"/>
+                </th>
+                <td align="left" valign="middle" class="neutral" width="70%">
+                    <kul:htmlControlAttribute
+                            attributeEntry="${documentAttributes.serviceCountryCode}"
+                            property="document.serviceCountryCode"
+                            readOnly="${not fullEntryMode}"
+                            tabindexOverride="${tabindexOverrideBase + 0}"/>
+                </td>
+            </tr>
         </table>
         <h3>Miscellaneous</h3>
         <table cellpadding="0" cellspacing="0" class="datatable" summary="Instructions">
