@@ -115,7 +115,8 @@
     	<field-descriptor name="collegeLevelOrganization" column="C_LEVEL_ORG" jdbc-type="VARCHAR"/>
     	<field-descriptor name="departmentLevelOrganization" column="D_LEVEL_ORG" jdbc-type="VARCHAR"/>
 
-    	<field-descriptor name="servicePerformedOnCampus" column="SRVC_PERF_ON_CAMPUS" jdbc-type="VARCHAR"/>  
+    	<field-descriptor name="servicePerformedOnCampus" column="SRVC_PERF_ON_CAMPUS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="serviceCountryCode" column="SRVC_CNTRY_CD" jdbc-type="VARCHAR"/>   
     	
     	<field-descriptor name="completeOption" column="COMPLETED" jdbc-type="VARCHAR"/> 
     	<field-descriptor name="currentRouteToNetId" column="CRNT_RT_TO_NET_ID" jdbc-type="VARCHAR" index="true"/>   
@@ -130,6 +131,10 @@
     	<reference-descriptor name="documentHeader" class-ref="org.kuali.kfs.sys.businessobject.DocumentHeader" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true" >
         	<foreignkey field-ref="documentNumber" />
     	</reference-descriptor>
+        
+        <reference-descriptor name="serviceCountry" class-ref="org.kuali.kfs.sys.businessobject.Country" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+            <foreignkey field-ref="serviceCountryCode" target-field-ref="code"/>
+        </reference-descriptor>
 
     	<collection-descriptor name="items" proxy="true" element-class-ref="edu.cornell.kfs.module.purap.businessobject.IWantItem" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
         	<inverse-foreignkey field-ref="documentNumber" />
