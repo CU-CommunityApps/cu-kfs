@@ -3,7 +3,6 @@ package edu.cornell.kfs.vnd.jsonobject;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -31,19 +30,6 @@ public class WorkdayKfsVendorLookupRoot {
 
     public void setResults(List<WorkdayKfsVendorLookupResult> results) {
         this.results = results;
-    }
-    
-    public boolean isActiveEmployee() {
-        for (WorkdayKfsVendorLookupResult result : results) {
-            if (result.isActive()) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public boolean isActiveOrInactiveEmployee() {
-        return !CollectionUtils.isEmpty(results);
     }
     
     @Override

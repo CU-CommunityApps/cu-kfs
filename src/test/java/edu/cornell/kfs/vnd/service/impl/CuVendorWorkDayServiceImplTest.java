@@ -117,8 +117,6 @@ public class CuVendorWorkDayServiceImplTest {
         WorkdayKfsVendorLookupRoot expectedRoot = serviceEnum.toWorkdayKfsVendorLookupRoot();
         LOG.info("testFindEmployeeBySocialSecurityNumber, actualRoot: {}", actualRoot.toString());
         assertEquals(expectedRoot, actualRoot);
-        assertEquals(serviceEnum.activeEmployee, actualRoot.isActiveEmployee());
-        assertEquals(serviceEnum.activeOrInactiveEmployee, actualRoot.isActiveOrInactiveEmployee());
     }
     
     @Test
