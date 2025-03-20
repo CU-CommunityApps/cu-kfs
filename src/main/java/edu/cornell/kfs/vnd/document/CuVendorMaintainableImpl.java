@@ -173,13 +173,14 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
                 DateTime employeeTerminationDate = DATE_FORMATTER.parseDateTime(employeeTerminationDateString);
                 DateTime miniumumTerminationDate = (new DateTime()).minusDays(getEmployeeTerminationNumberOfDays()).withTimeAtStartOfDay();
                 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("isTerminatedWithinDateRange, the employee terminate date string is {}", employeeTerminationDateString);
-                    LOG.debug("isTerminatedWithinDateRange, the minimum termination date to be routed to the tax id review route node is {}", miniumumTerminationDate);
-                }
-                return employeeTerminationDate.getMillis() >= miniumumTerminationDate.getMillis();
+                LOG.debug("isTerminatedWithinDateRange, the employee terminate date string is {}", employeeTerminationDateString);
+                LOG.debug("isTerminatedWithinDateRange, the minimum termination date to be routed to the tax id review route node is {}", miniumumTerminationDate);
                 
+                boolean isTerminatedInRange = employeeTerminationDate.getMillis() >= miniumumTerminationDate.getMillis();
+                LOG.debug("isTerminatedWithinDateRange, returning {} for netid {}", isTerminatedInRange, result.getNetID());
+                return isTerminatedInRange;
             }
+            LOG.warn("isTerminatedWithinDateRange, found an empty termination date, returning true by default for netid {}", result.getNetID());
             return true;
         }
         return false;

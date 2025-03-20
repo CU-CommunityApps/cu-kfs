@@ -12,10 +12,11 @@ import edu.cornell.kfs.vnd.jsonobject.WorkdayKfsVendorLookupRoot;
 
 public enum WorkdayKfsVendorLookupRootEnum {
     EMPTY_LIST(),
-    ACTIVE("1", 0, true, true, false),
-    RECENT_TERMINATED("0", CuVendorMaintainableImplTest.TERMINATION_DAYS_IN_THE_PAST - 3, false, true, true),
-    TERMINATED_AT_MAX("0", CuVendorMaintainableImplTest.TERMINATION_DAYS_IN_THE_PAST, false, true, true),
-    OLD_TERMINATED("0", CuVendorMaintainableImplTest.TERMINATION_DAYS_IN_THE_PAST + 5, false, false, false);
+    ACTIVE("active1", "1", true, true, false),
+    INACTIVE_NO_TERM_DATE("inactive1", "0", false, true, true),
+    RECENT_TERMINATED("inactive2", "0", CuVendorMaintainableImplTest.TERMINATION_DAYS_IN_THE_PAST - 3, false, true, true),
+    TERMINATED_AT_MAX("inactive3", "0", CuVendorMaintainableImplTest.TERMINATION_DAYS_IN_THE_PAST, false, true, true),
+    OLD_TERMINATED("inactive4", "0", CuVendorMaintainableImplTest.TERMINATION_DAYS_IN_THE_PAST + 5, false, false, false);
     
     public final WorkdayKfsVendorLookupRoot lookupRoot;
     public final boolean expectedActive;
@@ -29,9 +30,22 @@ public enum WorkdayKfsVendorLookupRootEnum {
         this.expectedTerminatedInRange = false;
     }
     
-    private WorkdayKfsVendorLookupRootEnum(String activeStatus, int numberOfDaysInThePast, boolean expectedActive, boolean expectedActiveOrTerminatedInRange, boolean expectedTerminatedInRange) {
+    private WorkdayKfsVendorLookupRootEnum(String netId, String activeStatus, boolean expectedActive, boolean expectedActiveOrTerminatedInRange, boolean expectedTerminatedInRange) {
         WorkdayKfsVendorLookupRoot root = new WorkdayKfsVendorLookupRoot();
         WorkdayKfsVendorLookupResult result = new WorkdayKfsVendorLookupResult();
+        result.setNetID(netId);
+        result.setActiveStatus(activeStatus);
+        root.getResults().add(result);
+        this.lookupRoot =  root;
+        this.expectedActive = expectedActive;
+        this.expectedActiveOrTerminatedInRange = expectedActiveOrTerminatedInRange;
+        this.expectedTerminatedInRange = expectedTerminatedInRange;
+    }
+    
+    private WorkdayKfsVendorLookupRootEnum(String netId, String activeStatus, int numberOfDaysInThePast, boolean expectedActive, boolean expectedActiveOrTerminatedInRange, boolean expectedTerminatedInRange) {
+        WorkdayKfsVendorLookupRoot root = new WorkdayKfsVendorLookupRoot();
+        WorkdayKfsVendorLookupResult result = new WorkdayKfsVendorLookupResult();
+        result.setNetID(netId);
         result.setActiveStatus(activeStatus);
         result.setTerminationDate(buildTerminationDate(numberOfDaysInThePast));
         root.getResults().add(result);
