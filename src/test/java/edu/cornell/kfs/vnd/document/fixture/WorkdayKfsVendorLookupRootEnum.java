@@ -71,7 +71,6 @@ public enum WorkdayKfsVendorLookupRootEnum {
     private static String buildTerminationDate(int numberOfDays) {
         LocalDateTime minimumTerminationDate = LocalDate.now().minus(numberOfDays, ChronoUnit.DAYS).atStartOfDay();
         String dateString = minimumTerminationDate.format(CuVendorMaintainableImpl.DATE_FORMATTER);
-        System.err.println("dateString: " + dateString);
         return dateString;
     }
 
