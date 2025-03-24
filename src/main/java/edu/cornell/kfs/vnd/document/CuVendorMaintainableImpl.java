@@ -154,11 +154,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     }
     
     public boolean isActiveEmployee(WorkdayKfsVendorLookupRoot root) {
-        if (root != null) {
-            return root.getResults().stream().anyMatch(result -> result.isActive());
-        } else {
-            return false;
-        }
+        return root != null && root.getResults().stream().anyMatch(result -> result.isActive());
     }
 
     public boolean isActiveOrTerminatedEmployeeWithinDateRange(WorkdayKfsVendorLookupRoot root) {
