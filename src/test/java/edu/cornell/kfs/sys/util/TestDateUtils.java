@@ -26,6 +26,10 @@ public final class TestDateUtils {
     private static final DateTimeFormatter FORMATTER_YYYY_MM_DD_T_HH_MM_SS =
             DateTimeFormatter.ISO_LOCAL_DATE_TIME.withLocale(Locale.US);
 
+    public static java.sql.Timestamp toSqlTimestamp(final String value) {
+        return java.sql.Timestamp.valueOf(toLocalDateTime(value));
+    }
+
     public static java.util.Date toUtilDate(final String value) {
         return java.util.Date.from(
                 toLocalDateTime(value)

@@ -41,12 +41,20 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
  * 
  * This implementation currently does not inject Spring beans or Spring contexts into the test class.
  * To retrieve a specific Spring bean during a test run, invoke this class's "getBean()" helper method.
+ * 
+ * If other extensions need access to this extension's Spring context, they can retrieve it from
+ * the JUnit ExtensionContext using this class's namespace and the "TestSpringContext" key,
+ * or by invoking the static getCurrentTestSpringContext() convenience method.
  */
 public class TestSpringContextExtension implements BeforeEachCallback, AfterEachCallback,
         BeforeAllCallback, AfterAllCallback {
 
     public static final String UNIT_TEST_CLASSNAME_PROPERTY = "unit.test.classname";
     public static final String CLASSPATH_PREFIX = "classpath:";
+    public static final String TEST_SPRING_CONTEXT_KEY = "TestSpringContext";
+
+    public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(
+            TestSpringContextExtension.class);
 
     private final String classPathSpringXmlFile;
 
@@ -67,6 +75,12 @@ public class TestSpringContextExtension implements BeforeEachCallback, AfterEach
     public static TestSpringContextExtension forClassPathSpringXmlFile(final String xmlSpringFile) {
         return new TestSpringContextExtension(xmlSpringFile);
     }
+
+    public static ClassPathXmlApplicationContext getCurrentTestSpringContext(final ExtensionContext junitContext) {
+        return junitContext.getStore(NAMESPACE).get(TEST_SPRING_CONTEXT_KEY, ClassPathXmlApplicationContext.class);
+    }
+
+
 
     @Override
     public void beforeAll(final ExtensionContext junitContext) throws Exception {
@@ -90,6 +104,8 @@ public class TestSpringContextExtension implements BeforeEachCallback, AfterEach
         springXmlContext.addBeanFactoryPostProcessor(propertyConfigurer);
         springXmlContext.setConfigLocation(classPathSpringXmlFile);
         springXmlContext.refresh();
+
+        junitContext.getStore(NAMESPACE).put(TEST_SPRING_CONTEXT_KEY, springXmlContext);
     }
 
     private PropertySourcesPlaceholderConfigurer createBeanPostProcessorForResolvingUnitTestClass(
@@ -113,19 +129,20 @@ public class TestSpringContextExtension implements BeforeEachCallback, AfterEach
     @Override
     public void afterEach(final ExtensionContext junitContext) throws Exception {
         if (!staticExtension) {
-            destroySpringContext();
+            destroySpringContext(junitContext);
         }
     }
 
     @Override
     public void afterAll(final ExtensionContext junitContext) throws Exception {
         if (staticExtension) {
-            destroySpringContext();
+            destroySpringContext(junitContext);
         }
     }
 
-    private void destroySpringContext() {
+    private void destroySpringContext(final ExtensionContext junitContext) {
         IOUtils.closeQuietly(springXmlContext);
+        junitContext.getStore(NAMESPACE).remove(TEST_SPRING_CONTEXT_KEY);
         springXmlContext = null;
     }
 

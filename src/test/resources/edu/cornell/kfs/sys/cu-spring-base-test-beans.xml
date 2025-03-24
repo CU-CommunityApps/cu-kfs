@@ -29,11 +29,14 @@
 
     <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean"/>
 
-    <bean id="beanFilterPostProcessor-parentBean" abstract="true" class="edu.cornell.kfs.sys.util.BeanFilterPostProcessor">
+    <bean id="beanFilterPostProcessor-parentBean" abstract="true" parent="beanFilterPostProcessor-base-parentBean"/>
+
+    <bean id="beanFilterPostProcessor-base-parentBean" abstract="true" class="edu.cornell.kfs.sys.util.BeanFilterPostProcessor">
         <property name="beanWhitelist">
             <set>
                 <idref bean="beanFilterPostProcessor"/>
                 <idref bean="beanFilterPostProcessor-parentBean"/>
+                <idref bean="beanFilterPostProcessor-base-parentBean"/>
                 <idref bean="propertyPlaceholderConfigurer"/>
                 <idref bean="propertyPlaceholderConfigurer-parentBean"/>
             </set>

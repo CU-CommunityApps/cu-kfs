@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This is the base Spring file that should be imported by any test cases
+    that need to run as integration tests, yet want to only configure
+    the minimum required integration points instead of spinning up KualiCo's
+    full test Spring context. This allows for micro/integration test hybrids
+    that can be initialized more quickly than standard integration tests.
+    
+    This file automatically imports the regular micro-test Spring beans
+    from "cu-spring-base-test-beans.xml", so there's no need to import
+    that file separately. Some of the configuration features from the other file
+    are still applicable to tests derived from this file, but with
+    the following changes:
+    
+    * The beans for loading KualiCo's integration test config and security
+        properties files have been copied into here from "kfs-startup-test.xml",
+        and "propertyPlaceholderConfigurer-parentBean" has been overridden to use
+        these properties, in addition to any manually configured property overrides.
+        To customize properties further, test cases should override the CU-specific
+        "propertyOverrides" bean, NOT the "propertyPlaceholderConfigurer" bean.
+        (The "propertyOverrides" bean is just a Spring PropertiesFactoryBean.)
+    
+    * The base data source and transaction manager beans will be imported
+        and initialized by this file. Note, though, that the "transactionManager"
+        bean definition has been explicitly copied into this file, to avoid
+        initializing potentially unwanted behavior from the "spring-core.xml" file
+        (such as component scanning). Also, a dummy "liquibase" bean is defined
+        in this file, to satisfy the "depends-on" settings of the datasource beans
+        without loading the "liquibase" bean from DataSourceConfiguration.java file.
+    
+    * This file also sets up a "testDataHelperDao" bean, which has convenience methods
+        for running arbitrary SQL or for bulk inserting data from CSV files.
+        See the related Javadoc comments for more information on how to use it.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <import resource="classpath:kfs-JTASpringBeans.xml"/>
+    <import resource="classpath:kfs-DataSourceSpringBeans.xml"/>
+    <import resource="classpath:org/kuali/kfs/krad/config/KRADSpringBeans.xml"/>
+    <import resource="classpath:edu/cornell/kfs/cu-spring-kfs.xml"/>
+    <import resource="classpath:edu/cornell/kfs/krad/config/CUKRADSpringBeans.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-base-test-beans.xml"/>
+
+    <bean id="properties" class="org.kuali.kfs.sys.context.PropertyLoadingFactoryBean" p:testMode="true"/>
+
+    <bean id="securityProperties" class="org.kuali.kfs.sys.context.PropertyLoadingFactoryBean" p:secureMode="true"
+          p:testMode="true"/>
+
+    <bean id="propertyOverrides" parent="propertyOverrides-parentBean"/>
+
+    <bean id="propertyOverrides-parentBean"
+          abstract="true"
+          class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="properties">
+            <props/>
+        </property>
+    </bean>
+
+    <bean id="propertyPlaceholderConfigurer-parentBean"
+          abstract="true"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="propertiesArray">
+            <array value-type="java.util.Properties">
+                <ref bean="properties"/>
+                <ref bean="securityProperties"/>
+                <ref bean="propertyOverrides"/>
+            </array>
+        </property>
+    </bean>
+
+    <bean id="liquibase" class="java.lang.String"/>
+
+    <bean id="transactionManager"
+          class="org.springframework.transaction.jta.JtaTransactionManager"
+          lazy-init="true"
+          p:userTransaction-ref="jtaUserTransaction"
+          p:transactionManager-ref="jtaTransactionManager"/>
+
+    <bean id="testDataHelperDao"
+          parent="platformAwareDaoJdbc"
+          class="edu.cornell.kfs.sys.dataaccess.impl.TestDataHelperDaoJdbcImpl"
+          p:encryptionService-ref="encryptionService"/>
+
+    <bean id="testStartupValidator" class="edu.cornell.kfs.sys.util.LiteIntegrationTestStartupValidator"
+          p:kfsDataSourceUrl="${kfs.datasource.url}"/>
+
+    <bean id="beanFilterPostProcessor-parentBean"
+          abstract="true"
+          parent="beanFilterPostProcessor-base-parentBean">
+        <property name="beanWhitelist">
+            <set merge="true">
+                <idref bean="properties"/>
+                <idref bean="securityProperties"/>
+                <idref bean="propertyOverrides"/>
+                <idref bean="propertyOverrides-parentBean"/>
+                <idref bean="testDataHelperDao"/>
+                <idref bean="testStartupValidator"/>
+                <idref bean="transactionManagerXAPool"/>
+                <idref bean="jtaTransactionManager"/>
+                <idref bean="jtaUserTransaction"/>
+                <idref bean="liquibase"/>
+                <idref bean="transactionManager"/>
+                <idref bean="dataSource"/>
+                <idref bean="nonTransactionalDataSource"/>
+                <idref bean="platformAwareDaoJdbc"/>
+                <idref bean="dbPlatform"/>
+                <idref bean="encryptionService"/>
+            </set>
+        </property>
+    </bean>
+
+</beans>
