@@ -46,7 +46,7 @@ public class CuVendorMaintainableImplTest {
     @ParameterizedTest
     @EnumSource
     public void isActiveEmployee(WorkdayKfsVendorLookupRootEnum rootEnum) {
-        boolean actualActive = vendorMaintainable.isActiveEmployee(rootEnum.lookupRoot);
+        boolean actualActive = vendorMaintainable.isActiveEmployee(rootEnum.buildWorkdayKfsVendorLookupRoot());
         assertEquals(rootEnum.expectedActive, actualActive);
     }
     
@@ -56,14 +56,14 @@ public class CuVendorMaintainableImplTest {
             names = {"EMPTY_LIST"},
             mode = EnumSource.Mode.EXCLUDE)
     public void isTerminatedWithinDateRange(WorkdayKfsVendorLookupRootEnum rootEnum) {
-        boolean actualTerminatedInRange = vendorMaintainable.isTerminatedWithinDateRange(rootEnum.lookupRoot.getResults().get(0));
+        boolean actualTerminatedInRange = vendorMaintainable.isTerminatedWithinDateRange(rootEnum.buildWorkdayKfsVendorLookupRoot().getResults().get(0));
         assertEquals(rootEnum.expectedTerminatedInRange, actualTerminatedInRange);
     }
     
     @ParameterizedTest
     @EnumSource
     public void isActiveOrTerminatedEmployeeWithinDateRange(WorkdayKfsVendorLookupRootEnum rootEnum) {
-        boolean actualActiveOrTerminatedInRange = vendorMaintainable.isActiveOrTerminatedEmployeeWithinDateRange(rootEnum.lookupRoot);
+        boolean actualActiveOrTerminatedInRange = vendorMaintainable.isActiveOrTerminatedEmployeeWithinDateRange(rootEnum.buildWorkdayKfsVendorLookupRoot());
         assertEquals(rootEnum.expectedActiveOrTerminatedInRange, actualActiveOrTerminatedInRange);
     }
 }

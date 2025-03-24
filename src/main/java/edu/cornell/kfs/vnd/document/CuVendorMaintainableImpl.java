@@ -2,6 +2,10 @@ package edu.cornell.kfs.vnd.document;
 
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -13,9 +17,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kew.api.WorkflowDocument;
@@ -66,7 +67,6 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private static final String PROC_METHODS_MULTISELECT_FIELD_NAME = "extension.procurementMethodsArray";
     private static final String MULTISELECT_FIELD_PATH_PREFIX = "dataObject.";
     private static final String REQUIRES_VENDOR_TAX_ID_MANAGER = "RequiresVendorTaxIdManager";
-    protected static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd).withLocale(Locale.US);
     
     protected transient PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     protected transient ConfigurationService configurationService;
@@ -74,6 +74,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     protected transient DocumentService documentService;
     protected transient CuVendorWorkDayService cuVendorWorkDayService;
     
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd, Locale.US);
     
     @Override
     public void saveBusinessObject() {
@@ -161,25 +162,22 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     }
 
     public boolean isActiveOrTerminatedEmployeeWithinDateRange(WorkdayKfsVendorLookupRoot root) {
-        if (root != null) {
-            return root.getResults().stream().anyMatch(result -> result.isActive() || isTerminatedWithinDateRange(result));
-        } else {
-            return false;
-        }
+        return root != null && 
+                root.getResults().stream().anyMatch(result -> result.isActive() || isTerminatedWithinDateRange(result));
     }
 
     public boolean isTerminatedWithinDateRange(WorkdayKfsVendorLookupResult result) {
         if (result != null && !result.isActive()) {
             String employeeTerminationDateString = result.getTerminationDate();
-            if (!StringUtils.isBlank(employeeTerminationDateString)) {
-                DateTime employeeTerminationDate = DATE_FORMATTER.parseDateTime(employeeTerminationDateString);
-                DateTime miniumumTerminationDate = (new DateTime()).minusDays(getEmployeeTerminationNumberOfDays()).withTimeAtStartOfDay();
+            if (StringUtils.isNotBlank(employeeTerminationDateString)) {
+                LocalDateTime employeeTerminationDate = LocalDate.parse(employeeTerminationDateString, DATE_FORMATTER).atStartOfDay();
+                LocalDateTime minimumTerminationDate = LocalDate.now().minus(getEmployeeTerminationNumberOfDays(), ChronoUnit.DAYS).atStartOfDay();
+                boolean isTerminatedInRange = employeeTerminationDate.compareTo(minimumTerminationDate) >= 0;
                 
-                LOG.debug("isTerminatedWithinDateRange, the employee terminate date string is {}", employeeTerminationDateString);
-                LOG.debug("isTerminatedWithinDateRange, the minimum termination date to be routed to the tax id review route node is {}", miniumumTerminationDate);
-                
-                boolean isTerminatedInRange = employeeTerminationDate.getMillis() >= miniumumTerminationDate.getMillis();
+                LOG.debug("isTerminatedWithinDateRange, the employee termination date string is {}", employeeTerminationDateString);
+                LOG.debug("isTerminatedWithinDateRange, the minimum termination date to be routed to the tax id review route node is {}", minimumTerminationDate);
                 LOG.debug("isTerminatedWithinDateRange, returning {} for netid {}", isTerminatedInRange, result.getNetID());
+
                 return isTerminatedInRange;
             }
             LOG.warn("isTerminatedWithinDateRange, found an empty termination date, returning true by default for netid {}", result.getNetID());
@@ -194,7 +192,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
                     CuVendorParameterConstants.EMPLOYEE_TERMINATION_NUMBER_OF_DAYS_FOR_TAX_ID_REVIEW);
             return Integer.parseInt(numberOfDaysString);
         } catch (Exception e) {
-            LOG.error("getEmployeeTerminationNumberOfDays, unable to get the number of days from the parameter EMPLOYEE_TERMINATION_NUMBER_OF_DAYS_FOR_TAX_ID_REVIEWm returning 365", e);
+            LOG.error("getEmployeeTerminationNumberOfDays, unable to get the number of days from the parameter EMPLOYEE_TERMINATION_NUMBER_OF_DAYS_FOR_TAX_ID_REVIEW, returning 365", e);
             return 365;
         }
     }
