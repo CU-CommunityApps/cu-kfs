@@ -190,7 +190,7 @@ public class CacheConfiguration {
     @Bean
     public RedisCacheManager cacheManager(
             @Value("${redis.default.ttl}") final Long redisDefaultTtl,
-            @Value("${cu.cache.environment.prefix}") final String environmentPrefix,
+            @Value("${cu.redis.cache.environment.prefix}") final String environmentPrefix,
             final Set<String> cacheNames,
             final Map<String, Duration> cacheExpires,
             final RedisConnectionFactory connectionFactory
