@@ -5,6 +5,7 @@ import java.sql.Date;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.krad.bo.BusinessObject;
 
+import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.batch.annotation.HasNestedEnumWithDtoFieldListing;
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 
@@ -133,6 +134,11 @@ public class SprintaxPayee extends TaxPayeeBase {
         return (currentTaxBoxUpdates != null) ? currentTaxBoxUpdates.getForm1042SOverriddenBox() : null;
     }
 
+    public String getCanadianProvinceName() {
+        return StringUtils.equalsIgnoreCase(getVendorForeignCountryCode(), CUTaxConstants.CANADA_FIPS_COUNTRY_CODE)
+                ? getVendorForeignProvinceName() : null;
+    }
+
 
 
     public enum SprintaxField implements TaxDtoFieldEnum {
@@ -153,6 +159,7 @@ public class SprintaxPayee extends TaxPayeeBase {
         vendorForeignProvinceName,
         vendorForeignZipCode,
         vendorForeignCountryCode,
+        canadianProvinceName,
         chapter4ExemptionCode,
         chapter3StatusCode,
         vendorChapter4StatusCode,

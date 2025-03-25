@@ -45,6 +45,7 @@ public final class CUTaxConstants {
     public static final String TAX_1042S_UNKNOWN_BOX_KEY = "????";
     public static final String ANY_OR_NONE_PAYMENT_REASON = "*";
     public static final String UNKNOWN_COUNTRY = "UC";
+    public static final String CANADA_FIPS_COUNTRY_CODE = "CA";
     public static final String MASKED_VALUE_9_CHARS = "XXXXXXXXX";
     public static final String MASKED_VALUE_11_CHARS = "XXXXXXXXXXX";
     public static final String MASKED_VALUE_19_CHARS = "XXXXXXXXXXXXXXXXXXX";

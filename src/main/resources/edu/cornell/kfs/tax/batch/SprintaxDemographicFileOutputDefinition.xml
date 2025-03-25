@@ -21,6 +21,6 @@
         <field name="NonUS_address_Country" length="40" type="STRING" key="vendorForeignCountryCode"/>
         <field name="NonUS-Address_postal_code" length="40" type="STRING" key="vendorForeignZipCode"/>
         <field name="Mailing_Address" length="40" type="STATIC" value=""/>
-        <field name="Canada_Province" length="40" type="STRING" key="vendorForeignProvinceName"/>
+        <field name="Canada_Province" length="40" type="STRING" key="canadianProvinceName"/>
     </section>
 </taxOutputDefinition>

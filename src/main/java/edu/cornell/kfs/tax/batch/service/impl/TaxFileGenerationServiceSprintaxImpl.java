@@ -80,11 +80,9 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         final TaxOutputDefinitionV2 paymentsFileDefinition = TaxUtils.parseTaxOutputDefinition(
                 taxOutputDefinitionV2FileType, sprintaxPaymentsFileDefinitionFilePath);
         final String demographicFilePath = TaxUtils.buildCsvTaxFilePath(
-                CUTaxConstants.Sprintax.DEMOGRAPHIC_OUTPUT_FILE_PREFIX, fileOutputDirectory,
-                config.getProcessingStartDate());
+                CUTaxConstants.Sprintax.DEMOGRAPHIC_OUTPUT_FILE_PREFIX, fileOutputDirectory, config);
         final String paymentsFilePath = TaxUtils.buildCsvTaxFilePath(
-                CUTaxConstants.Sprintax.PAYMENTS_OUTPUT_FILE_PREFIX, fileOutputDirectory,
-                        config.getProcessingStartDate());
+                CUTaxConstants.Sprintax.PAYMENTS_OUTPUT_FILE_PREFIX, fileOutputDirectory, config);
 
         try (
                 final TaxFileRowWriterImpl demographicFileWriter = 
