@@ -1,9 +1,16 @@
 package edu.cornell.kfs.sys.batch;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,12 +39,47 @@ public class CuDelimitedFlatFileParser extends FlatFileParserBase {
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(fileByteContent);
                 InputStreamReader streamReader = new InputStreamReader(inputStream);
                 BufferedReader bufferedReader = new BufferedReader(streamReader);
+//                preprocessCSV(bufferedReader);
                 CSVReader flatFileReader = buildFlatFileReader(bufferedReader)) {
             return parseResultFromReader(flatFileReader);
         } catch (Exception e) {
             throw new ParseException("Exception encountered while parsing delimited flat file", e);
         }
     }
+    
+//    public static String preprocessLine(String line) {
+//        // Regex pattern to match values enclosed in double quotes
+//        Pattern quotedPattern = Pattern.compile("\"([^\"]*)\"");
+//        Matcher matcher = quotedPattern.matcher(line);
+//        
+//        StringBuffer cleanedLine = new StringBuffer();
+//
+//        while (matcher.find()) {
+//            String value = matcher.group(1);
+//            // Fix unescaped quotes inside quoted fields by replacing `"` with `""`
+//            String fixedValue = value.replace("\"", "\"\"");
+//            matcher.appendReplacement(cleanedLine, "\"" + fixedValue + "\"");
+//        }
+//        matcher.appendTail(cleanedLine);
+//
+//        // Remove stray/unmatched quotes outside of proper quoted fields
+//        return cleanedLine.toString().replaceAll("(?<!\\|)\"(?!\\|)", "");
+//    }
+//
+//    public static BufferedReader processFileLineByLine(String filePath) throws IOException {
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
+//
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                writer.write(preprocessLine(line));
+//                writer.newLine();
+//            }
+//        }
+//        
+//        writer.flush();
+//        return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(outputStream.toByteArray()), StandardCharsets.UTF_8));
+//    }
 
     protected Object parseResultFromReader(CSVReader flatFileReader) {
         int lineNumber = 0;
@@ -76,7 +118,10 @@ public class CuDelimitedFlatFileParser extends FlatFileParserBase {
         }
         CSVParser parser = new CSVParserBuilder()
                 .withSeparator(delimiter.charAt(0))
-                .build();
+        .withQuoteChar('"')  // Ensure quoted values are handled correctly
+        .withIgnoreLeadingWhiteSpace(true)
+        .withStrictQuotes(false) // Allow unescaped quotes within fields
+        .build();
         return new CSVReaderBuilder(flatFileContent)
                 .withCSVParser(parser)
                 .build();
