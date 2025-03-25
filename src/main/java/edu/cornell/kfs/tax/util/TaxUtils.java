@@ -76,10 +76,11 @@ public final class TaxUtils {
     }
 
     public static String buildCsvTaxFilePath(final String fileNamePrefix, final String fileDirectory,
-            final java.util.Date dateTime) {
+            final TaxBatchConfig config) {
         final DateFormat dateFormat = new SimpleDateFormat(CUTaxConstants.FILENAME_SUFFIX_DATE_FORMAT, Locale.US);
-        return StringUtils.join(fileDirectory, CUKFSConstants.SLASH, fileNamePrefix, dateFormat.format(dateTime),
-                FileExtensions.CSV);
+        final String dateSuffix = dateFormat.format(config.getProcessingStartDate());
+        return StringUtils.join(fileDirectory, CUKFSConstants.SLASH, fileNamePrefix, config.getReportYear(),
+                dateSuffix, FileExtensions.CSV);
     }
 
     public static Map<String, String> buildTransactionOverridesMap(

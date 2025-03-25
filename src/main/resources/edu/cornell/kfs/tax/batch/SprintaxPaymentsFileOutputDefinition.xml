@@ -44,7 +44,7 @@
         <field name="NQI/FLW-THR/PTP Address Line" length="40" type="STATIC" value=""/>
         <field name="NQI/FLW-THR/PTP City" length="40" type="STATIC" value=""/>
         <field name="Payer's Name" length="40" type="STATIC" value=""/>
-        <field name="Payer's TIN" length="9" type="STRING" key="payerEIN"/>
+        <field name="Payer's TIN" length="9" type="SENSITIVE_STRING" key="payerEIN" mask="XXXXXXXXX"/>
         <field name="Payer's GIIN" length="19" type="STATIC" value=""/>
         <field name="Payer's Chapter 3 Status Code" length="2" type="STATIC" value=""/>
         <field name="Payer's Chapter 4 Status Code" length="2" type="STATIC" value=""/>
