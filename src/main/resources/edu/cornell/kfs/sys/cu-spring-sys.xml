@@ -538,4 +538,8 @@
           
     <!-- CU Customization: Historical Purge Table Job beans : ending point -->
     
+    <bean id="cacheService"
+          parent="cacheService-parentBean"
+          class="edu.cornell.kfs.sys.batch.service.impl.CuCacheServiceImpl"/>
+    
 </beans>

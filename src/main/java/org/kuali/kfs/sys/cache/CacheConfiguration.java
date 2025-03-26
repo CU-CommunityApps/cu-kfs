@@ -18,6 +18,8 @@
  */
 package org.kuali.kfs.sys.cache;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.BalanceType;
@@ -79,6 +81,7 @@ import static java.util.Map.entry;
 @EnableCaching
 @Profile("cache-redis")
 public class CacheConfiguration {
+    private static final Logger LOG = LogManager.getLogger();
     
     /*
      * Cornell Customization 
@@ -195,6 +198,7 @@ public class CacheConfiguration {
             final Map<String, Duration> cacheExpires,
             final RedisConnectionFactory connectionFactory
     ) {
+        LOG.info("cacheManager, building with environmentPrefix '{}' and redisDefaultTtl '{}'", environmentPrefix, redisDefaultTtl);
         final RedisCacheConfiguration cacheDefaults = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofSeconds(redisDefaultTtl))
                 .prefixCacheNameWith(environmentPrefix);
