@@ -159,7 +159,14 @@ public class TaxFileRowWriterImpl implements TaxFileRowWriter {
     }
 
     private String getPotentiallyMaskedValue(final TaxOutputFieldV2 field, final BeanWrapper wrappedDto) {
-        return maskSensitiveData ? field.getMask() : getStringValue(field, wrappedDto);
+        final String value = getStringValue(field, wrappedDto);
+        if (StringUtils.isBlank(value)) {
+            return KFSConstants.EMPTY_STRING;
+        } else if (maskSensitiveData) {
+            return field.getMask();
+        } else {
+            return value;
+        }
     }
 
     private String getFormattedBooleanValue(final TaxOutputFieldV2 field, final BeanWrapper wrappedDto) {

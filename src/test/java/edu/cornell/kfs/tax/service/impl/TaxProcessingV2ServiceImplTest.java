@@ -37,10 +37,13 @@ import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.CUTaxConstants.TaxCommonParameterNames;
 import edu.cornell.kfs.tax.CuTaxTestConstants.TaxSpringBeans;
 import edu.cornell.kfs.tax.batch.TaxBatchConfig;
+import edu.cornell.kfs.tax.batch.TaxStatistics;
 import edu.cornell.kfs.tax.batch.service.TaxFileGenerationService;
 import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
+import edu.cornell.kfs.tax.dataaccess.impl.TaxStatType;
 import edu.cornell.kfs.tax.fixture.TaxConfigTestCase;
 import edu.cornell.kfs.tax.util.TaxParameterUtils;
+import edu.cornell.kfs.tax.util.TaxUtils;
 
 @Execution(ExecutionMode.SAME_THREAD)
 public class TaxProcessingV2ServiceImplTest {
@@ -114,10 +117,13 @@ public class TaxProcessingV2ServiceImplTest {
                 .build();
     }
 
-    private static Object handleTaxFileGenerationServiceCall(
+    private static TaxStatistics handleTaxFileGenerationServiceCall(
             final InvocationOnMock invocation, final AtomicReference<TaxBatchConfig> configHolder) {
-        configHolder.set(invocation.getArgument(0));
-        return null;
+        final TaxBatchConfig config = invocation.getArgument(0);
+        configHolder.set(config);
+        return (config.getMode() == TaxBatchConfig.Mode.CREATE_TAX_FILES)
+                ? TaxUtils.generateBaseStatisticsFor1042S()
+                : new TaxStatistics(TaxStatType.NUM_TRANSACTION_ROWS);
     }
 
     @SpringXmlTestBeanFactoryMethod
