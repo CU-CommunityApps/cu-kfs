@@ -1,9 +1,8 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +21,7 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorSupplierDiversityService;
 
 public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWorksVendorSupplierDiversityService {
-    private static final Logger LOG = LogManager.getLogger(PaymentWorksVendorSupplierDiversityServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     protected KfsSupplierDiversityDao kfsSupplierDiversityDao;
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
@@ -79,15 +78,12 @@ public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWo
     }
     
     protected Date buildDateOneYearFromToday() {
-        return createDateOneYearFromDate(new Date(Calendar.getInstance().getTimeInMillis()));
+        return createDateOneYearFromDate(Date.valueOf(LocalDate.now()));
     }
     
     protected Date createDateOneYearFromDate(Date inputDate) {
-        GregorianCalendar calendarDateWithYearAdded = new GregorianCalendar();
-        calendarDateWithYearAdded.clear();
-        calendarDateWithYearAdded.setTimeInMillis(inputDate.getTime());
-        calendarDateWithYearAdded.add(GregorianCalendar.YEAR, 1);
-        return new Date(calendarDateWithYearAdded.getTimeInMillis());
+        LocalDate inputLocalDate = inputDate.toLocalDate();
+        return Date.valueOf(inputLocalDate.plusYears(1));
     }
 
     public void setKfsSupplierDiversityDao(KfsSupplierDiversityDao kfsSupplierDiversityDao) {
