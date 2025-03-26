@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This is the base Spring file that should be imported by any test cases
+    that need to run an in-memory or file-based database. This file already imports
+    "cu-spring-base-test-beans.xml" so that the test cases don't need to
+    explicitly import it.
+
+    Files that import this one should override the "propertyPlaceholderConfigurer" bean
+    and use it to set the "kfs.datasource.url" property to an appropriate value.
+    For an in-memory HyperSQL database, set it something like the following:
+
+    jdbc:hsqldb:mem:mydatabasename;sql.syntax_ora=true;shutdown=true
+
+    For a file-based HyperSQL database, set it to something like the following
+    (where an extra directory beneath "hsqldb" is recommended so that multiple
+    tests running HyperSQL don't interfere with each other):
+
+    jdbc:hsqldb:file:test/hsqldb/mytest/mydatabasename;sql.syntax_ora=true;shutdown=true
+
+    Note that "sql.syntax_ora=true" should be included in the URL so that the database
+    will behave similarly to Oracle. Also, it is strongly recommended to include
+    "shutdown=true" in the URL to force a DB shutdown when all of its connections are closed.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <import resource="classpath:kfs-JTASpringBeans.xml"/>
+    <import resource="classpath:kfs-DataSourceSpringBeans.xml"/>
+    <import resource="classpath:org/kuali/kfs/krad/config/KRADSpringBeans.xml"/>
+    <import resource="classpath:edu/cornell/kfs/cu-spring-kfs.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-base-test-beans.xml"/>
+
+    <bean id="propertyPlaceholderConfigurer-parentBean"
+          abstract="true"
+          parent="propertyPlaceholderConfigurer-base-parentBean">
+        <property name="properties">
+            <props merge="true">
+                <prop key="datasource.platform">org.kuali.kfs.core.framework.persistence.platform.OracleDatabasePlatform</prop>
+                <prop key="kfs.datasource.driver.name">org.hsqldb.jdbc.JDBCDriver</prop>
+                <prop key="kfs.datasource.url">NEEDS_TO_BE_OVERRIDDEN</prop>
+                <prop key="kfs.datasource.username">kfs</prop>
+                <prop key="kfs.datasource.password"></prop>
+                <prop key="kfs.datasource.validating.query">SELECT 1 FROM DUAL</prop>
+                <prop key="kfs.datasource.pool.initialSize">5</prop>
+                <prop key="kfs.datasource.pool.minIdle">5</prop>
+                <prop key="kfs.datasource.pool.maxActive">50</prop>
+                <prop key="kfs.datasource.pool.minSize">5</prop>
+                <prop key="kfs.datasource.pool.maxSize">50</prop>
+                <prop key="kfs.datasource.pool.maxWait">30000</prop>
+                <prop key="kfs.datasource.pool.accessToUnderlyingConnectionAllowed">true</prop>
+                <prop key="transaction.timeout">3600</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="databaseHelper" class="edu.cornell.kfs.sys.util.FileBasedDatabaseHelper"
+          c:databaseUrl="${kfs.datasource.url}"/>
+
+    <!--
+        The base KFS datasource beans depend on the presence of a "liquibase" bean,
+        so a related alias for the DB helper bean is being created here. This also
+        allows the helper bean to perform pre-test/post-test cleanup while the local
+        database is offline.
+
+        If/When KualiCo changes the datasource initialization to not depend on
+        a "liquibase" bean or to perform non-XML-based initialization, this will
+        need to be refactored accordingly.
+     -->
+    <alias name="databaseHelper" alias="liquibase"/>
+
+    <bean id="transactionManager"
+          class="org.springframework.transaction.jta.JtaTransactionManager"
+          lazy-init="true"
+          p:userTransaction-ref="jtaUserTransaction"
+          p:transactionManager-ref="jtaTransactionManager"/>
+
+    <bean id="testDataHelperDao"
+          parent="platformAwareDaoJdbc"
+          class="edu.cornell.kfs.sys.dataaccess.impl.TestDataHelperDaoJdbcImpl"
+          p:databaseHelper-ref="databaseHelper"
+          p:encryptionService-ref="encryptionService"/>
+
+    <bean id="encryptionService" class="edu.cornell.kfs.core.impl.encryption.TestEncryptionServiceImpl"/>
+
+    <bean id="beanFilterPostProcessor-parentBean" abstract="true" parent="beanFilterPostProcessor-base-parentBean">
+        <property name="beanWhitelist">
+            <set merge="true">
+                <idref bean="transactionManagerXAPool"/>
+                <idref bean="jtaTransactionManager"/>
+                <idref bean="jtaUserTransaction"/>
+                <idref bean="databaseHelper"/>
+                <idref bean="transactionManager"/>
+                <idref bean="dataSource"/>
+                <idref bean="nonTransactionalDataSource"/>
+                <idref bean="platformAwareDaoJdbc"/>
+                <idref bean="dbPlatform"/>
+                <idref bean="encryptionService"/>
+                <idref bean="testDataHelperDao"/>
+            </set>
+        </property>
+    </bean>
+
+</beans>

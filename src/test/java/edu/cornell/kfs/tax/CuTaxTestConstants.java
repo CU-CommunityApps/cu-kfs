@@ -9,6 +9,8 @@ public final class CuTaxTestConstants {
         public static final String TEST_TAX_CONFIG_HOLDER_FOR_1042S = "testTaxConfigHolderFor1042S";
         public static final String TEST_TAX_CONFIG_HOLDER_FOR_TRANSACTION_LIST_PRINTING =
                 "testTaxConfigHolderForTransactionListPrinting";
+        public static final String TAX_FILE_GENERATION_SERVICE_FOR_1042S =
+                "taxFileGenerationServiceFor1042S";
         public static final String TAX_FILE_GENERATION_SERVICE_FOR_TRANSACTION_LIST_PRINTING =
                 "taxFileGenerationServiceForTransactionListPrinting";
         public static final String TEST_CASE_HOLDER = "testCaseHolder";
