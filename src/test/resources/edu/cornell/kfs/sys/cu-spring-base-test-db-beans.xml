@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This is the base Spring file that should be imported by any test cases
+    that need to run an in-memory database. This file already imports
+    "cu-spring-base-test-beans.xml" so the test cases don't need to
+    explicitly import it.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <import resource="classpath:kfs-JTASpringBeans.xml"/>
+    <import resource="classpath:kfs-DataSourceSpringBeans.xml"/>
+    <import resource="classpath:org/kuali/kfs/krad/config/KRADSpringBeans.xml"/>
+    <import resource="classpath:edu/cornell/kfs/cu-spring-kfs.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-base-test-beans.xml"/>
+
+    <bean id="propertyPlaceholderConfigurer-parentBean"
+          abstract="true"
+          parent="propertyPlaceholderConfigurer-base-parentBean">
+        <property name="properties">
+            <props merge="true">
+            </props>
+        </property>
+    </bean>
+
+    <bean id="liquibase" class="java.lang.String"/>
+
+    <bean id="transactionManager"
+          class="org.springframework.transaction.jta.JtaTransactionManager"
+          lazy-init="true"
+          p:userTransaction-ref="jtaUserTransaction"
+          p:transactionManager-ref="jtaTransactionManager"/>
+
+    <bean id="testDataHelperDao"
+          parent="platformAwareDaoJdbc"
+          class="edu.cornell.kfs.sys.dataaccess.impl.TestDataHelperDaoJdbcImpl"
+          p:encryptionService-ref="encryptionService"/>
+
+    <bean id="beanFilterPostProcessor-parentBean" abstract="true" parent="beanFilterPostProcessor-base-parentBean">
+        <property name="beanWhitelist">
+            <set merge="true">
+                <idref bean="transactionManagerXAPool"/>
+                <idref bean="jtaTransactionManager"/>
+                <idref bean="jtaUserTransaction"/>
+                <idref bean="liquibase"/>
+                <idref bean="transactionManager"/>
+                <idref bean="dataSource"/>
+                <idref bean="nonTransactionalDataSource"/>
+                <idref bean="platformAwareDaoJdbc"/>
+                <idref bean="dbPlatform"/>
+                <idref bean="encryptionService"/>
+            </set>
+        </property>
+    </bean>
+
+</beans>
