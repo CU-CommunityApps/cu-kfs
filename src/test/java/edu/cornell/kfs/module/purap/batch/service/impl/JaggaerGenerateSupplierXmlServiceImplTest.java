@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.sql.Date;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -112,11 +114,14 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
     
     @Test
     void testDateFormatters() {
-        long dateTime = Long.parseLong("1684345725727");
-        String actualFileNameDateString = JaggaerGenerateSupplierXmlServiceImpl.DATE_FORMATTER_FOR_FILE_NAME.print(dateTime);
-        String actualHeaderDateString = JaggaerGenerateSupplierXmlServiceImpl.DATE_FORMATTER_FOR_HEADER_DATE.print(dateTime);
-        assertEquals("20230517_134845727", actualFileNameDateString);
-        assertEquals("2023-05-17T17:48:45.727Z", actualHeaderDateString);
+        //nanoseconds has 9 digit precision in java.time libraries.
+        //This requires all nonsecond digits to be specified to obtain the correct value.
+        LocalDateTime dateTime = LocalDateTime.of(2025, Month.MARCH, 26, 8, 49, 5, 734000000);
+        
+        String actualHeaderDateString = dateTime.format(JaggaerGenerateSupplierXmlServiceImpl.DATE_FORMATTER_FOR_HEADER_DATE);
+        String actualFileNameDateString = dateTime.format(JaggaerGenerateSupplierXmlServiceImpl.DATE_FORMATTER_FOR_FILE_NAME);
+        assertEquals("20250326_084905734", actualFileNameDateString);
+        assertEquals("2025-03-26T08:49:05.734Z", actualHeaderDateString);
     }
     
     @ParameterizedTest
