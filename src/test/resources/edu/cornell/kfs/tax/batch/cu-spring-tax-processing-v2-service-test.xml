@@ -27,6 +27,12 @@
 
     <bean id="dateTimeService" class="${unit.test.classname}" factory-method="buildSpiedTestDateTimeService"/>
 
+    <bean id="configurationService" class="edu.cornell.kfs.sys.service.impl.TestConfigurationServiceImpl"
+          p:properties-ref="cuTaxResources"/>
+
+    <bean id="cuTaxResources" class="org.springframework.beans.factory.config.PropertiesFactoryBean"
+          p:location="classpath:edu/cornell/kfs/tax/cu-tax-resources.properties"/>
+
     <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
         <property name="beanWhitelist">
             <set merge="true">
@@ -41,6 +47,8 @@
                 <idref bean="dateTimeService"/>
                 <idref bean="testTaxConfigHolderFor1042S"/>
                 <idref bean="testTaxConfigHolderForTransactionListPrinting"/>
+                <idref bean="configurationService"/>
+                <idref bean="cuTaxResources"/>
             </set>
         </property>
     </bean>
