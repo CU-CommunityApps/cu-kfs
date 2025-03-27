@@ -2,7 +2,7 @@
 <!--
     This is the base Spring file that should be imported by any test cases
     that need to run an in-memory database. This file already imports
-    "cu-spring-base-test-beans.xml" so the test cases don't need to
+    "cu-spring-base-test-beans.xml" so that the test cases don't need to
     explicitly import it.
  -->
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -21,6 +21,19 @@
           parent="propertyPlaceholderConfigurer-base-parentBean">
         <property name="properties">
             <props merge="true">
+                <prop key="kfs.datasource.driver.name">org.hsqldb.jdbc.JDBCDriver</prop>
+                <prop key="kfs.datasource.url">jdbc:hsqldb:mem:kfsunittest;sql.syntax_ora=true</prop>
+                <prop key="kfs.datasource.username">kfs</prop>
+                <prop key="kfs.datasource.password"></prop>
+                <prop key="kfs.datasource.validating.query">SELECT 1 FROM DUAL</prop>
+                <prop key="kfs.datasource.pool.initialSize">5</prop>
+                <prop key="kfs.datasource.pool.minIdle">5</prop>
+                <prop key="kfs.datasource.pool.maxActive">50</prop>
+                <prop key="kfs.datasource.pool.minSize">5</prop>
+                <prop key="kfs.datasource.pool.maxSize">50</prop>
+                <prop key="kfs.datasource.pool.maxWait">30000</prop>
+                <prop key="kfs.datasource.pool.accessToUnderlyingConnectionAllowed">true</prop>
+                <prop key="transaction.timeout">3600</prop>
             </props>
         </property>
     </bean>
