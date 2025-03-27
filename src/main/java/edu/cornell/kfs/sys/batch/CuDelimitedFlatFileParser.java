@@ -118,9 +118,9 @@ public class CuDelimitedFlatFileParser extends FlatFileParserBase {
         }
         CSVParser parser = new CSVParserBuilder()
                 .withSeparator(delimiter.charAt(0))
-        .withQuoteChar('"')  // Ensure quoted values are handled correctly
-        .withIgnoreLeadingWhiteSpace(true)
-        .withStrictQuotes(false) // Allow unescaped quotes within fields
+//        .withQuoteChar('"')  // Ensure quoted values are handled correctly
+//        .withIgnoreLeadingWhiteSpace(true)
+//        .withStrictQuotes(false) // Allow unescaped quotes within fields
         .build();
         return new CSVReaderBuilder(flatFileContent)
                 .withCSVParser(parser)
