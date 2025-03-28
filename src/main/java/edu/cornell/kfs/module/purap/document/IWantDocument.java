@@ -799,6 +799,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         setDvDocId(null);
         setProcessorNetId(null);
         setProcessorName(null);
+        setServiceCountryCode(KFSConstants.COUNTRY_CODE_UNITED_STATES);
 
         this.completeOption = null;
         this.completed = false;
@@ -816,6 +817,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         setDvDocId(null);
         setProcessorNetId(null);
         setProcessorName(null);
+        setServiceCountryCode(KFSConstants.COUNTRY_CODE_UNITED_STATES);
 
         this.completeOption = null;
         this.completed = false;
