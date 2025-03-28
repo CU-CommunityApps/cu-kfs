@@ -3,12 +3,15 @@ package edu.cornell.kfs.sys.batch;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,8 +41,8 @@ public class CuDelimitedFlatFileParser extends FlatFileParserBase {
     public Object parse(byte[] fileByteContent) throws ParseException {
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(fileByteContent);
                 InputStreamReader streamReader = new InputStreamReader(inputStream);
-                BufferedReader bufferedReader = new BufferedReader(streamReader);
-//                preprocessCSV(bufferedReader);
+                BufferedReader bufferedReader = new BufferedReader(streamReader);              
+                //BufferedReader processedBufferedReader = processFileLineByLine(bufferedReader);              
                 CSVReader flatFileReader = buildFlatFileReader(bufferedReader)) {
             return parseResultFromReader(flatFileReader);
         } catch (Exception e) {
@@ -47,39 +50,26 @@ public class CuDelimitedFlatFileParser extends FlatFileParserBase {
         }
     }
     
-//    public static String preprocessLine(String line) {
-//        // Regex pattern to match values enclosed in double quotes
-//        Pattern quotedPattern = Pattern.compile("\"([^\"]*)\"");
-//        Matcher matcher = quotedPattern.matcher(line);
-//        
-//        StringBuffer cleanedLine = new StringBuffer();
-//
-//        while (matcher.find()) {
-//            String value = matcher.group(1);
-//            // Fix unescaped quotes inside quoted fields by replacing `"` with `""`
-//            String fixedValue = value.replace("\"", "\"\"");
-//            matcher.appendReplacement(cleanedLine, "\"" + fixedValue + "\"");
-//        }
-//        matcher.appendTail(cleanedLine);
-//
-//        // Remove stray/unmatched quotes outside of proper quoted fields
-//        return cleanedLine.toString().replaceAll("(?<!\\|)\"(?!\\|)", "");
-//    }
-//
-//    public static BufferedReader processFileLineByLine(String filePath) throws IOException {
-//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
-//
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                writer.write(preprocessLine(line));
-//                writer.newLine();
-//            }
-//        }
-//        
-//        writer.flush();
-//        return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(outputStream.toByteArray()), StandardCharsets.UTF_8));
-//    }
+    public static String preprocessLine(String line) {
+        return line.replaceAll("\"", "\"\"");
+    }
+
+    public static BufferedReader processFileLineByLine(BufferedReader bufferedReader) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
+
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                LOG.info("line before processing: " + line);
+                String processedLine = preprocessLine(line);
+                writer.write(processedLine);
+                LOG.info("line after processing: " + processedLine);
+                writer.newLine();
+            }
+        
+        writer.flush();
+        return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(outputStream.toByteArray()), StandardCharsets.UTF_8));
+    }
 
     protected Object parseResultFromReader(CSVReader flatFileReader) {
         int lineNumber = 0;
