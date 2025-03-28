@@ -146,7 +146,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     // Will service be performed on Campus: yes/no drop down box
     // Need to store as a String here due to drop-down usage; database already stores it as such.
     private String servicePerformedOnCampus;
-    private String serviceCountryCode;
+    private String serviceCountryCode = KFSConstants.COUNTRY_CODE_UNITED_STATES;
 
     private String explanation;
 
