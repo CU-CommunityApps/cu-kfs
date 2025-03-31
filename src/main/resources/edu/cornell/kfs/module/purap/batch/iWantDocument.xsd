@@ -49,7 +49,8 @@
    
    <xsd:element name="goods" type="kfs:indicatorType"/> 
    
-   <xsd:element name="servicePerformedOnCampus" type="kfs:indicatorType"/> 
+   <xsd:element name="servicePerformedOnCampus" type="kfs:indicatorType"/>
+   <xsd:element name="serviceCountryCode" type="kfs:zeroToTwoCharType"/>  
    
    <xsd:element name="adHocRouteToNetID" type="kfs:zeroToThirtyCharType"/> 
    
