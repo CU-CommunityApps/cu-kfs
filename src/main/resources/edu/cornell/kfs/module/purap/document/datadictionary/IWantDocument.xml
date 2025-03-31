@@ -466,7 +466,7 @@
       <bean parent="CharsetValidationPattern" p:validChars="YN "/>
     </property>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinder-ref="iwntYesNoValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinder-ref="iWantYesNoValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
   
@@ -718,7 +718,7 @@
     <property name="shortLabel" value="Contract"/>
     <property name="required" value="false"/>
     <property name="control">
-        <bean parent="RadioControlDefinition" p:valuesFinder-ref="iwntYesNoValuesFinder" />
+        <bean parent="RadioControlDefinition" p:valuesFinder-ref="iWantYesNoValuesFinder" />
     </property>
   </bean>
   
@@ -911,8 +911,8 @@
 	
 	<bean id="orderCompletedValuesFinder"
           class="edu.cornell.kfs.module.purap.businessobject.options.OrderCompletedValuesFinder"/>
-	<bean id="iwntYesNoValuesFinder"
-          class="edu.cornell.kfs.module.purap.businessobject.options.YesNoValuesFinder"/>
+	<bean id="iWantYesNoValuesFinder"
+          class="edu.cornell.kfs.module.purap.businessobject.options.IWantYesNoValuesFinder"/>
 
     <bean id="collegeLevelOrganizationValuesFinder"
           class="edu.cornell.kfs.module.purap.businessobject.options.CollegeLevelOrganizationValuesFinder"

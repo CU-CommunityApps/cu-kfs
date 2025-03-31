@@ -7,7 +7,7 @@ import org.kuali.kfs.core.api.util.ConcreteKeyValue;
 import org.kuali.kfs.core.api.util.KeyValue;
 import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
 
-public class YesNoValuesFinder extends KeyValuesBase {
+public class IWantYesNoValuesFinder extends KeyValuesBase {
 
 	private static final long serialVersionUID = 1L;
 
