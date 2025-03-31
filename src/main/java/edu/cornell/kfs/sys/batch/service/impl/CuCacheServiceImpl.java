@@ -16,14 +16,14 @@ public class CuCacheServiceImpl extends CacheServiceImpl {
 
     @Override
     public void clearSystemCaches() {
-        LOG.debug("clearSystemCaches, cache manager class {}", cacheManager.getClass());
+        LOG.info("clearSystemCaches, cache manager class {}", cacheManager.getClass());
         RedisCacheManager redisManager = (RedisCacheManager) cacheManager;
         for (final String cacheName : redisManager.getCacheNames()) {
             
             Optional<String> configurationPrefix = ((RedisCache) redisManager.getCache(cacheName)).getCacheConfiguration().getKeyPrefix();
             String cachePreFix = ((RedisCache) redisManager.getCache(cacheName)).getCacheConfiguration().getKeyPrefixFor(cacheName);
          
-            LOG.debug("clearSystemCaches, attempting to clear cache for '{}', with configuration prefix '{}' and cachePrefix '{}'", cacheName, configurationPrefix, cachePreFix);
+            LOG.info("clearSystemCaches, attempting to clear cache for '{}', with configuration prefix '{}' and cachePrefix '{}'", cacheName, configurationPrefix, cachePreFix);
             cacheManager.getCache(cacheName).clear();
         }
     }
