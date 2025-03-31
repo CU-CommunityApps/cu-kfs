@@ -41,6 +41,7 @@
         <commentsAndSpecialInstructions>special instructions</commentsAndSpecialInstructions>
         <goods>Y</goods>
         <servicePerformedOnCampus>Y</servicePerformedOnCampus>
+        <serviceCountryCode>US</serviceCountryCode>
         <adHocRouteToNetID>se12</adHocRouteToNetID>
         <note>
             <noteText>note text</noteText>

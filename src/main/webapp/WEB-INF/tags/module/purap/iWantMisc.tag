@@ -31,7 +31,7 @@
                             attributeEntry="${documentAttributes.serviceCountryCode}"
                             property="document.serviceCountryCode"
                             readOnly="${not fullEntryMode}"
-                            tabindexOverride="${tabindexOverrideBase + 0}"/>
+                            tabindexOverride="${tabindexOverrideBase + 5}"/>
                 </td>
             </tr>
         </table>
@@ -46,7 +46,7 @@
                             attributeEntry="${documentAttributes.commentsAndSpecialInstructions}"
                             property="document.commentsAndSpecialInstructions"
                             readOnly="${not (fullEntryMode)}"
-                            tabindexOverride="${tabindexOverrideBase + 5}"/>
+                            tabindexOverride="${tabindexOverrideBase + 10}"/>
                     <div id="example" class="fineprint">
                         (i.e. date order is needed)
                     </div>
