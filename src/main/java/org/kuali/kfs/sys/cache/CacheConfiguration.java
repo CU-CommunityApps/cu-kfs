@@ -180,16 +180,24 @@ public class CacheConfiguration {
         return lettuceConnectionFactory;
     }
 
+    /*
+     * CU Customization:
+     * 
+     * -- Added a method argument for injecting a common cache name prefix.
+     * -- Removed the call to "disableKeyPrefix()" when building the cache configuration.
+     * -- Added a call to "prefixCacheNameWith()" when building the cache configuration.
+     */
     @Bean
     public RedisCacheManager cacheManager(
             @Value("${redis.default.ttl}") final Long redisDefaultTtl,
+            @Value("${cu.redis.cache.environment.prefix}") final String environmentPrefix,
             final Set<String> cacheNames,
             final Map<String, Duration> cacheExpires,
             final RedisConnectionFactory connectionFactory
     ) {
-        // CU Customization: Remove the call to "disableKeyPrefix()" when building the cache configuration.
         final RedisCacheConfiguration cacheDefaults = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofSeconds(redisDefaultTtl));
+                .entryTtl(Duration.ofSeconds(redisDefaultTtl))
+                .prefixCacheNameWith(environmentPrefix);
 
         final Map<String, RedisCacheConfiguration> cacheConfigurations = cacheExpires.keySet()
                 .stream()
