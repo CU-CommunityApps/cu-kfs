@@ -15,6 +15,7 @@
  limitations under the License.
 -->
   <import resource="classpath:edu/cornell/kfs/sys/cu-sys-lookup-beans.xml"/>
+  <import resource="classpath:org/kuali/kfs/sys/sys-lookup-beans.xml"/>
   
   <bean id="IWantDocument" parent="IWantDocument-parentBean"/>
 
@@ -93,6 +94,7 @@
         <ref bean="IWantDocument-documentationAttached"/>
        <!-- <ref bean="IWantDocument-goods"/>--> 
         <ref bean="IWantDocument-servicePerformedOnCampus"/>
+        <ref bean="IWantDocument-serviceCountryCode"/>
        <!-- <ref bean="IWantDocument-sensitive"/>--> 
        <ref bean="IWantDocument-totalDollarAmount"/>
        <ref bean="IWantDocument-itemAndAccountDifference" />
@@ -468,6 +470,19 @@
     <property name="control">
       <bean parent="SelectControlDefinition" p:valuesFinder-ref="iWantYesNoValuesFinder" p:includeKeyInLabel="false"/>
     </property>
+  </bean>
+  <bean id="IWantDocument-serviceCountryCode" parent="IWantDocument-serviceCountryCode-parentBean"/>
+
+  <bean id="IWantDocument-serviceCountryCode-parentBean" abstract="true" parent="Country-code">
+    <property name="name" value="serviceCountryCode"/>
+    <property name="label" value="Where will services be performed?"/>
+    <property name="maxLength" value="2"/>
+    <property name="required" value="false" />
+    <property name="control">
+        <bean parent="SelectControlDefinition"
+              p:includeKeyInLabel="false"
+              p:valuesFinder-ref="countryValuesFinder"/>
+     </property>
   </bean>
   
   <bean id="IWantDocument-sourceAccountingLineGroup" parent="IWantDocument-sourceAccountingLineGroup-parentBean"/>

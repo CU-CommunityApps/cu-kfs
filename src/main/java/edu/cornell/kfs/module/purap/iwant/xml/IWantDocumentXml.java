@@ -3,6 +3,7 @@ package edu.cornell.kfs.module.purap.iwant.xml;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -24,7 +25,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
         "requestorAddress", "sameAsRequestor", "deliverToNetID", "deliverToEmailAddress", "deliverToPhoneNumber",
         "deliverToAddress", "vendorId", "vendorName", "vendorDescription", "items", "transactionLines",
         "accountDescriptionTxt", "commentsAndSpecialInstructions", "goods", "servicePerformedOnCampus",
-        "adHocRouteToNetID", "notes" })
+        "serviceCountryCode", "adHocRouteToNetID", "notes" })
 @XmlRootElement(name = "iWantDocument", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
 public class IWantDocumentXml {
 
@@ -99,6 +100,9 @@ public class IWantDocumentXml {
     @XmlElement(name = "servicePerformedOnCampus", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     @XmlJavaTypeAdapter(BooleanJaxbAdapter.class)
     private Boolean servicePerformedOnCampus;
+    
+    @XmlElement(name = "serviceCountryCode", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
+    private String serviceCountryCode;
 
     @XmlElement(name = "adHocRouteToNetID", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String adHocRouteToNetID;
@@ -330,6 +334,10 @@ public class IWantDocumentXml {
         String servicePerformedOnCampusString = servicePerformedOnCampus ? KRADConstants.YES_INDICATOR_VALUE : KRADConstants.NO_INDICATOR_VALUE;
         doc.setServicePerformedOnCampus(servicePerformedOnCampusString);
         
+        if(StringUtils.isNotBlank(serviceCountryCode)) {
+            doc.setServiceCountryCode(serviceCountryCode);
+        }
+        
         doc.setCurrentRouteToNetId(adHocRouteToNetID);
         
         for (IWantItemXml item : getItems()) {
@@ -361,5 +369,13 @@ public class IWantDocumentXml {
     @Override
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    public String getServiceCountryCode() {
+        return serviceCountryCode;
+    }
+
+    public void setServiceCountryCode(String serviceCountryCode) {
+        this.serviceCountryCode = serviceCountryCode;
     }
 }
