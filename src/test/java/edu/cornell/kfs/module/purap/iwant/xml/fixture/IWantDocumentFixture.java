@@ -9,7 +9,7 @@ public enum IWantDocumentFixture {
     FULL_EXAMPLE("ccs1", "source number", "business purpose", "college org", "department org", "jdh34",
             "jdh34@cornell.edu", "6072559900", "req address", false, "ccs1", "ccs1@cornell.edu",
             "607-255-9900", "deliver address", "vendor id", "vendor name", "vendor description", "account description",
-            "special instructions", true, true, "se12",
+            "special instructions", true, true, "US", "se12",
             itemLines(IWantItemFixture.ITEM_TEST),
             transactionLines(IWantTransactionLineFixture.TRANSACTION_LINE_TEST),
             noteLines(IWantNoteFixture.NOTE_TEXT, IWantNoteFixture.ANOTHER_NOTE_TEXT));
@@ -35,6 +35,7 @@ public enum IWantDocumentFixture {
     public final String commentsAndSpecialInstructions;
     public final Boolean goods;
     public final Boolean servicePerformedOnCampus;
+    public final String serviceCountryCode;
     public final String adHocRouteToNetID;
     public final List<IWantItemFixture> items;
     public final List<IWantTransactionLineFixture> transactions;
@@ -46,7 +47,7 @@ public enum IWantDocumentFixture {
             Boolean sameAsRequestor, String deliverToNetID, String deliverToEmailAddress,
             String deliverToPhoneNumber, String deliverToAddress, String vendorId, String vendorName,
             String vendorDescription, String accountDescriptionTxt, String commentsAndSpecialInstructions,
-            Boolean goods, Boolean servicePerformedOnCampus, String adHocRouteToNetID,
+            Boolean goods, Boolean servicePerformedOnCampus, String serviceCountryCode, String adHocRouteToNetID,
             IWantItemFixture[] itemsArray,
             IWantTransactionLineFixture[] transactionsArray, IWantNoteFixture[] noteArray) {
         this.initiator = initiator;
@@ -70,6 +71,7 @@ public enum IWantDocumentFixture {
         this.commentsAndSpecialInstructions = commentsAndSpecialInstructions;
         this.goods = goods;
         this.servicePerformedOnCampus = servicePerformedOnCampus;
+        this.serviceCountryCode = serviceCountryCode;
         this.adHocRouteToNetID = adHocRouteToNetID;
         this.items = XmlDocumentFixtureUtils.toImmutableList(itemsArray);
         this.transactions = XmlDocumentFixtureUtils.toImmutableList(transactionsArray);
@@ -99,6 +101,7 @@ public enum IWantDocumentFixture {
         doc.setCommentsAndSpecialInstructions(commentsAndSpecialInstructions);
         doc.setGoods(goods);
         doc.setServicePerformedOnCampus(servicePerformedOnCampus);
+        doc.setServiceCountryCode(serviceCountryCode);
         doc.setAdHocRouteToNetID(adHocRouteToNetID);
 
         for (IWantItemFixture item : items) {

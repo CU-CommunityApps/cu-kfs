@@ -268,6 +268,10 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 					if (StringUtils.isNotBlank(batchIWantDocument.getServicePerformedOnCampus())) {
 						iWantDocument.setServicePerformedOnCampus(batchIWantDocument.getServicePerformedOnCampus());
 					}
+					
+                    if (StringUtils.isNotBlank(batchIWantDocument.getServiceCountryCode())) {
+                        iWantDocument.setServiceCountryCode(batchIWantDocument.getServiceCountryCode());
+                    }
 
 					if (StringUtils.isNotBlank(batchIWantDocument.getCurrentRouteToNetId())) {
 
