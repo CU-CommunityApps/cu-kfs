@@ -32,6 +32,9 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfWriter;
 import com.opencsv.CSVWriter;
+
+import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -74,6 +77,7 @@ import org.kuali.kfs.module.ar.document.service.ContractsGrantsBillingAwardVerif
 import org.kuali.kfs.module.ar.document.service.ContractsGrantsInvoiceDocumentService;
 import org.kuali.kfs.module.ar.report.service.ContractsGrantsInvoiceReportService;
 import org.kuali.kfs.module.ar.service.ContractsGrantsBillingUtilityService;
+import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.PdfFormFillerUtil;
@@ -400,32 +404,9 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
      */
     protected KualiDecimal getCashReceipts(final ContractsAndGrantsBillingAward award) {
         KualiDecimal cashReceipt = KualiDecimal.ZERO;
-        final Map<String, String> fieldValues = new HashMap<>();
-        if (ObjectUtils.isNotNull(award) && ObjectUtils.isNotNull(award.getProposalNumber())) {
-            fieldValues.put(ArPropertyConstants.ContractsGrantsInvoiceDocumentFields.PROPOSAL_NUMBER,
-                    award.getProposalNumber()
-            );
-        }
-        final List<ContractsGrantsInvoiceDocument> list =
-                (List<ContractsGrantsInvoiceDocument>) contractsGrantsInvoiceDocumentService.retrieveAllCGInvoicesByCriteria(
-                        fieldValues);
-        if (!CollectionUtils.isEmpty(list)) {
-            for (final ContractsGrantsInvoiceDocument invoice : list) {
-                final Map<String, String> primaryKeys = new HashMap<>();
-                primaryKeys.put(ArPropertyConstants.CustomerInvoiceDocumentFields.FINANCIAL_DOCUMENT_REF_INVOICE_NUMBER,
-                        invoice.getDocumentNumber()
-                );
-                final List<InvoicePaidApplied> ipas = (List<InvoicePaidApplied>) businessObjectService.findMatching(
-                        InvoicePaidApplied.class,
-                        primaryKeys
-                );
-                if (ObjectUtils.isNotNull(ipas)) {
-                    for (final InvoicePaidApplied ipa : ipas) {
-                        cashReceipt = cashReceipt.add(ipa.getInvoiceItemAppliedAmount());
-                    }
-                }
-            }
-        }
+        
+        final KualiDecimal payments = contractsGrantsInvoiceDocumentService.calculateTotalPaymentsToDateByAward(award);
+        cashReceipt = payments ;
         return cashReceipt;
     }
 
@@ -475,7 +456,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                 if (ObjectUtils.isNotNull(awardAccount.getAccount().getAccountExpirationDate())) {
                     contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                             ArPropertyConstants.FederalFormReportFields.INDIRECT_EXPENSE_PERIOD_TO + "_" + index,
-                            getDateTimeService().toDateString(awardAccount.getAccount().getAccountExpirationDate())
+                            getReportingPeriodEndDate(reportingPeriod, year)
                     );
                 }
                 contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
@@ -526,6 +507,20 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                     ArPropertyConstants.FederalFormReportFields.INDIRECT_EXPENSE_FEDERAL_SUM,
                     contractsGrantsBillingUtilityService.formatForCurrency(amountSum)
             );
+            
+            // Cornell customization
+            contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
+                    ArPropertyConstants.FederalFormReportFields.CG_MANAGER_FIRST_NAME,
+                    award.getAwardPrimaryFundManager().getFundManager().getFirstName()
+            );
+            contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
+                    ArPropertyConstants.FederalFormReportFields.CG_MANAGER_MIDDLE_NAME,
+                    award.getAwardPrimaryFundManager().getFundManager().getMiddleName()
+            );
+            contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
+                    ArPropertyConstants.FederalFormReportFields.CG_MANAGER_LAST_NAME,
+                    award.getAwardPrimaryFundManager().getFundManager().getLastName()
+            );
         }
 
         final SystemInformation sysInfo = retrieveSystemInformationForAward(award, year);
@@ -556,7 +551,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
         );
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                 ArPropertyConstants.FederalFormReportFields.FEDERAL_GRANT_NUMBER,
-                award.getAwardDocumentNumber()
+                award.getProposal().getGrantNumber()
         );
         if (CollectionUtils.isNotEmpty(award.getActiveAwardAccounts())) {
             contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
@@ -564,16 +559,20 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                     award.getActiveAwardAccounts().get(0).getAccountNumber()
             );
         }
-        if (ObjectUtils.isNotNull(award.getAwardBeginningDate())) {
+        
+        AwardExtendedAttribute awardExtendedAttribute = ((AwardExtendedAttribute)((Award)award).getExtension());
+        
+        if (ObjectUtils.isNotNull(awardExtendedAttribute.getBudgetBeginningDate())) {
             contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                     ArPropertyConstants.FederalFormReportFields.GRANT_PERIOD_FROM,
-                    getDateTimeService().toDateString(award.getAwardBeginningDate())
+                    getDateTimeService().toDateString(awardExtendedAttribute.getBudgetBeginningDate())
             );
         }
-        if (ObjectUtils.isNotNull(award.getAwardClosingDate())) {
+        
+        if (ObjectUtils.isNotNull(awardExtendedAttribute.getBudgetEndingDate())) {
             contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                     ArPropertyConstants.FederalFormReportFields.GRANT_PERIOD_TO,
-                    getDateTimeService().toDateString(award.getAwardClosingDate())
+                    getDateTimeService().toDateString(awardExtendedAttribute.getBudgetEndingDate())
             );
         }
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
@@ -615,6 +614,20 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
         }
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                 ArPropertyConstants.FederalFormReportFields.FEDERAL_SHARE_OF_UNLIQUIDATED_OBLIGATION,
+                contractsGrantsBillingUtilityService.formatForCurrency(KualiDecimal.ZERO)
+        );
+        
+        // Cornell customization
+        contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
+                ArPropertyConstants.FederalFormReportFields.AWARD_COST_SHARE_AMT,
+                contractsGrantsBillingUtilityService.formatForCurrency(KualiDecimal.ZERO)
+        );
+        contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
+                ArPropertyConstants.FederalFormReportFields.CINV_COST_SHARE_AMT,
+                contractsGrantsBillingUtilityService.formatForCurrency(KualiDecimal.ZERO)
+        );
+        contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
+                ArPropertyConstants.FederalFormReportFields.REMAINING_COST_SHARE_AMT,
                 contractsGrantsBillingUtilityService.formatForCurrency(KualiDecimal.ZERO)
         );
 
