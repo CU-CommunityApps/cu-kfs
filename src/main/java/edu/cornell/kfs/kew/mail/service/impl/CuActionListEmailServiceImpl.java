@@ -3,6 +3,7 @@ package edu.cornell.kfs.kew.mail.service.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kew.mail.service.impl.CustomizableActionListEmailServiceImpl;
 import org.kuali.kfs.krad.util.KRADConstants;
@@ -17,10 +18,15 @@ public class CuActionListEmailServiceImpl extends CustomizableActionListEmailSer
 
     private ParameterService parameterService;
 
-    @Override
+    public CuActionListEmailServiceImpl(final Environment environment) {
+        super(environment);
+    }
+
+    // TODO: Reimplement this functionality for compatibility with the 2023-08-30 financials patch!
+    /*@Override
     protected boolean isProduction() {
         return super.isProduction() || shouldSimulateProductionWorkflowEmailBehavior();
-    }
+    }*/
 
     protected boolean shouldSimulateProductionWorkflowEmailBehavior() {
         final String workflowEmailMode = parameterService.getParameterValueAsString(

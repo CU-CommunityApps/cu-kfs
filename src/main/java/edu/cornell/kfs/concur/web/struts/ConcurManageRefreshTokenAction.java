@@ -14,13 +14,13 @@ import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.core.api.config.Environment;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.kns.web.struts.action.KualiAction;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.core.api.config.property.ConfigContext;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
@@ -117,7 +117,8 @@ public class ConcurManageRefreshTokenAction extends KualiAction {
     }
 
     protected boolean isProduction() {
-        boolean isProd = ConfigContext.getCurrentContextConfig().isProductionEnvironment();
+        final Environment environment = SpringContext.getBean(Environment.class);
+        boolean isProd = environment.isProductionEnvironment();
         if (LOG.isDebugEnabled()) {
             LOG.debug("isProduction, isProd: " + isProd);
         }

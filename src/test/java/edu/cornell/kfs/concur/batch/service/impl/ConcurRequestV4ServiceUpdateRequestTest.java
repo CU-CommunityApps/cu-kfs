@@ -26,6 +26,7 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.mockito.Mockito;
@@ -415,6 +416,10 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
 
     private static class TestConcurRequestV4ServiceImpl extends ConcurRequestV4ServiceImpl {
         private boolean simulateProduction;
+        
+        public TestConcurRequestV4ServiceImpl() {
+            super(new Environment("unittest", "prd"));
+        }
         
         @Override
         protected boolean isProduction() {

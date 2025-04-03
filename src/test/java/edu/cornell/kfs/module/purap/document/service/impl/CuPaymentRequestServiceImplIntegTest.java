@@ -25,7 +25,7 @@ import org.kuali.kfs.module.purap.document.service.PaymentRequestService;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
+import org.kuali.kfs.sys.document.AccountingDocumentIntegTestUtils;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
@@ -116,7 +116,7 @@ public class CuPaymentRequestServiceImplIntegTest extends KualiIntegTestBase {
 
         paymentRequestDocument.prepareForSave();
 
-        AccountingDocumentTestUtils.saveDocument(paymentRequestDocument,
+        AccountingDocumentIntegTestUtils.saveDocument(paymentRequestDocument,
                 SpringContext.getBean(DocumentService.class));
 
         paymentRequestService.addHoldOnPaymentRequest(paymentRequestDocument,
@@ -144,7 +144,7 @@ public class CuPaymentRequestServiceImplIntegTest extends KualiIntegTestBase {
 
         paymentRequestDocument.prepareForSave();
 
-        AccountingDocumentTestUtils.saveDocument(paymentRequestDocument,
+        AccountingDocumentIntegTestUtils.saveDocument(paymentRequestDocument,
                 SpringContext.getBean(DocumentService.class));
 
         paymentRequestService.removeHoldOnPaymentRequest(
@@ -171,7 +171,7 @@ public class CuPaymentRequestServiceImplIntegTest extends KualiIntegTestBase {
 
         paymentRequestDocument.prepareForSave();
 
-        AccountingDocumentTestUtils.saveDocument(paymentRequestDocument,
+        AccountingDocumentIntegTestUtils.saveDocument(paymentRequestDocument,
                 SpringContext.getBean(DocumentService.class));
 
         paymentRequestService.requestCancelOnPaymentRequest(
@@ -200,7 +200,7 @@ public class CuPaymentRequestServiceImplIntegTest extends KualiIntegTestBase {
 
         paymentRequestDocument.prepareForSave();
 
-        AccountingDocumentTestUtils.saveDocument(paymentRequestDocument,
+        AccountingDocumentIntegTestUtils.saveDocument(paymentRequestDocument,
                 SpringContext.getBean(DocumentService.class));
 
         paymentRequestService.removeRequestCancelOnPaymentRequest(
@@ -229,7 +229,7 @@ public class CuPaymentRequestServiceImplIntegTest extends KualiIntegTestBase {
 
         paymentRequestDocument.prepareForSave();
 
-        AccountingDocumentTestUtils.saveDocument(paymentRequestDocument,
+        AccountingDocumentIntegTestUtils.saveDocument(paymentRequestDocument,
                 SpringContext.getBean(DocumentService.class));
 
         paymentRequestService.cancelExtractedPaymentRequest(
@@ -262,7 +262,7 @@ public class CuPaymentRequestServiceImplIntegTest extends KualiIntegTestBase {
 
         paymentRequestDocument.prepareForSave();
 
-        AccountingDocumentTestUtils.saveDocument(paymentRequestDocument,
+        AccountingDocumentIntegTestUtils.saveDocument(paymentRequestDocument,
                 SpringContext.getBean(DocumentService.class));
 
         paymentRequestService.resetExtractedPaymentRequest(
@@ -290,7 +290,7 @@ public class CuPaymentRequestServiceImplIntegTest extends KualiIntegTestBase {
 
         paymentRequestDocument.prepareForSave();
 
-        AccountingDocumentTestUtils.saveDocument(paymentRequestDocument,
+        AccountingDocumentIntegTestUtils.saveDocument(paymentRequestDocument,
                 SpringContext.getBean(DocumentService.class));
 
         paymentRequestService.markPaid(paymentRequestDocument, SpringContext
@@ -316,7 +316,7 @@ public class CuPaymentRequestServiceImplIntegTest extends KualiIntegTestBase {
 
         paymentRequestDocument.prepareForSave();
 
-        AccountingDocumentTestUtils.saveDocument(paymentRequestDocument,
+        AccountingDocumentIntegTestUtils.saveDocument(paymentRequestDocument,
                 SpringContext.getBean(DocumentService.class));
 
         paymentRequestService.populatePaymentRequest(paymentRequestDocument);
@@ -341,7 +341,7 @@ public class CuPaymentRequestServiceImplIntegTest extends KualiIntegTestBase {
 
         paymentRequestDocument.prepareForSave();
 
-        AccountingDocumentTestUtils.saveDocument(paymentRequestDocument,
+        AccountingDocumentIntegTestUtils.saveDocument(paymentRequestDocument,
                 SpringContext.getBean(DocumentService.class));
 
         paymentRequestService.changeVendor(paymentRequestDocument, 5314, 0);

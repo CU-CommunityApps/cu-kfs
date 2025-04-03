@@ -1,5 +1,7 @@
 package edu.cornell.kfs.module.ld.document.service.impl;
 
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.module.ld.businessobject.LaborLedgerPendingEntry;
 import org.kuali.kfs.module.ld.document.service.LaborPendingEntryConverterService;
@@ -7,10 +9,8 @@ import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
+import org.kuali.kfs.sys.document.AccountingDocumentIntegTestUtils;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.module.ld.document.CuSalaryExpenseTransferDocument;
 import edu.cornell.kfs.module.ld.fixture.CuSalaryExpenseTransferDocumentFixture;
@@ -31,7 +31,7 @@ public class CuLaborPendingEntryConverterServiceImplIntegTest extends KualiInteg
     
     public void testGetBenefitClearingPendingEntry() throws IllegalAccessException, InstantiationException, WorkflowException {
         CuSalaryExpenseTransferDocument document = CuSalaryExpenseTransferDocumentFixture.GOOD_ST.createSalaryExpenseDocument();
-        AccountingDocumentTestUtils.saveDocument(document, documentService);
+        AccountingDocumentIntegTestUtils.saveDocument(document, documentService);
         
         GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
         LaborLedgerPendingEntry laborLedgerPendingEntry = ((CuLaborPendingEntryConverterServiceImpl) laborPendingEntryConverterService).
