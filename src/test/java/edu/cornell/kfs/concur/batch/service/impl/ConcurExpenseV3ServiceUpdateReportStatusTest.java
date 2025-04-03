@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationWebApiService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -24,14 +23,15 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSConstants.ParameterValues;
 import org.mockito.Mockito;
 
 import edu.cornell.kfs.concur.ConcurConstants;
-import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationType;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationStatus;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationType;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurWorkflowActions;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -40,6 +40,7 @@ import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
 import edu.cornell.kfs.concur.ConcurTestConstants.PropertyTestValues;
 import edu.cornell.kfs.concur.ConcurTestWorkflowInfo;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
+import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationWebApiService;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationResponse;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
 import edu.cornell.kfs.concur.util.MockConcurUtils;
@@ -360,6 +361,10 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
 
     private static class TestConcurExpenseV3ServiceImpl extends ConcurExpenseV3ServiceImpl {
         private boolean simulateProduction;
+        
+        public TestConcurExpenseV3ServiceImpl() {
+            super(new Environment("unittest", "prd"));
+        }
         
         @Override
         protected boolean isProduction() {

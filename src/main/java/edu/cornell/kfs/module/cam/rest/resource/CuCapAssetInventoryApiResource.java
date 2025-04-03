@@ -25,11 +25,12 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import edu.cornell.kfs.module.cam.CuCamsPropertyConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -42,8 +43,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Building;
 import org.kuali.kfs.sys.businessobject.Room;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.core.api.config.property.ConfigContext;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -51,6 +50,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import edu.cornell.kfs.module.cam.CuCamsConstants;
+import edu.cornell.kfs.module.cam.CuCamsPropertyConstants;
 import edu.cornell.kfs.module.cam.dataaccess.CuCapAssetInventoryDao;
 import edu.cornell.kfs.module.cam.document.service.CuAssetService;
 import edu.cornell.kfs.module.cam.document.service.impl.CuAssetServiceImpl;
@@ -67,6 +67,7 @@ public class CuCapAssetInventoryApiResource {
     private CuAssetService cuAssetService;
     private DocumentService documentService;
     private DateTimeService dateTimeService;
+    private Environment environment;
 
     protected ConfigurationService configurationService;
 
@@ -84,7 +85,7 @@ public class CuCapAssetInventoryApiResource {
     @GET
     @Path("/showdevbanner")
     public Response showDevBanner() {
-        boolean showDevBanner = !ConfigContext.getCurrentContextConfig().isProductionEnvironment();
+        boolean showDevBanner = !getEnvironment().isProductionEnvironment();
         return Response.ok(showDevBanner).build();
     }
 
@@ -378,6 +379,13 @@ public class CuCapAssetInventoryApiResource {
             configurationService = SpringContext.getBean(ConfigurationService.class);
         }
         return configurationService;
+    }
+
+    private Environment getEnvironment() {
+        if (ObjectUtils.isNull(environment)) {
+            environment = SpringContext.getBean(Environment.class);
+        }
+        return environment;
     }
 
 }

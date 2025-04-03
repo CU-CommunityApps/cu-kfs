@@ -33,6 +33,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -725,6 +726,10 @@ public class ConcurRequestV4ServiceImplTest {
         private boolean simulateProductionMode;
         private List<ConcurRequestV4ListingDTO> encounteredRequestListings = new ArrayList<>();
         private boolean skipRequestListItemProcessing;
+        
+        public TestConcurRequestV4ServiceImpl() {
+            super(new Environment("unittest", "prd"));
+        }
         
         @Override
         protected Stream<ConcurEventNotificationResponse> processTravelRequestsSubset(

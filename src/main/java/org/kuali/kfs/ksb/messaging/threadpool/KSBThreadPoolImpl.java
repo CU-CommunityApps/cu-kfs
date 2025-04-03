@@ -88,12 +88,13 @@ public class KSBThreadPoolImpl extends ThreadPoolExecutor implements KSBThreadPo
     }
 
     private void loadSettings() {
-        final String threadPoolSizeStr = ConfigContext.getCurrentContextConfig().getProperty(Config.THREAD_POOL_SIZE);
-        final String threadPoolMaxSizeStr =
-                ConfigContext.getCurrentContextConfig().getProperty(Config.THREAD_POOL_MAX_SIZE);
+        // TODO: Either fix this method or just remove this whole overlay altogether!
+        final String threadPoolSizeStr = "10";// ConfigContext.getCurrentContextConfig().getProperty(Config.THREAD_POOL_SIZE);
+        final String threadPoolMaxSizeStr = "10";
+                //ConfigContext.getCurrentContextConfig().getProperty(Config.THREAD_POOL_MAX_SIZE);
         if (!poolSizeSet) {
-            final int poolSize = parsePoolSizeProperty(threadPoolSizeStr, Config.THREAD_POOL_SIZE);
-            final int maxPoolSize = parsePoolSizeProperty(threadPoolMaxSizeStr, Config.THREAD_POOL_MAX_SIZE);
+            final int poolSize = parsePoolSizeProperty(threadPoolSizeStr, "?");// Config.THREAD_POOL_SIZE);
+            final int maxPoolSize = parsePoolSizeProperty(threadPoolMaxSizeStr, "?");// Config.THREAD_POOL_MAX_SIZE);
             if (poolSize <= maxPoolSize && poolSize > 0) {
                 // CU Customization: Reversed setter order; we need to set max size BEFORE core size to avoid errors.
                 LOG.info("Setting max pool size to {} threads.", maxPoolSize);

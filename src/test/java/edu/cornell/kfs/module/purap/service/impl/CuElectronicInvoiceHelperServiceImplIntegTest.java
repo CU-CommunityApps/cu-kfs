@@ -17,7 +17,7 @@ import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.IntegTestUtils;
 import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
+import org.kuali.kfs.sys.document.AccountingDocumentIntegTestUtils;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 
 import edu.cornell.kfs.module.purap.fixture.CuElectronicInvoiceHelperServiceFixture;
@@ -58,7 +58,7 @@ public class CuElectronicInvoiceHelperServiceImplIntegTest extends KualiIntegTes
         poDocument.setVendorShippingPaymentTermsCode("AL");
         poDocument.setVendorPaymentTermsCode("00N30");
         poDocument.refreshNonUpdateableReferences();
-        AccountingDocumentTestUtils.saveDocument(poDocument, documentService);
+        AccountingDocumentIntegTestUtils.saveDocument(poDocument, documentService);
 
         String poNumber = String.valueOf(poDocument.getPurapDocumentIdentifier());
         String vendorDUNS = "055646846";
@@ -92,7 +92,7 @@ public class CuElectronicInvoiceHelperServiceImplIntegTest extends KualiIntegTes
         poDocument.setVendorShippingPaymentTermsCode("AL");
         poDocument.setVendorPaymentTermsCode("00N30");
         poDocument.refreshNonUpdateableReferences();
-        AccountingDocumentTestUtils.saveDocument(poDocument, documentService);
+        AccountingDocumentIntegTestUtils.saveDocument(poDocument, documentService);
 
         String poNumber = String.valueOf(poDocument.getPurapDocumentIdentifier());
         String vendorDUNS = "055646846";

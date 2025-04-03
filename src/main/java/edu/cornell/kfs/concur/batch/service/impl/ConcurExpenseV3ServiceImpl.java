@@ -1,13 +1,13 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
-import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationWebApiService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -16,8 +16,8 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.http.HttpMethod;
 
 import edu.cornell.kfs.concur.ConcurConstants;
-import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationType;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationStatus;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationType;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurWorkflowActions;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -25,6 +25,7 @@ import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.batch.ConcurWebRequest;
 import edu.cornell.kfs.concur.batch.ConcurWebRequestBuilder;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
+import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationWebApiService;
 import edu.cornell.kfs.concur.batch.service.ConcurExpenseV3Service;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationResponse;
@@ -45,6 +46,13 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     protected ConcurEventNotificationWebApiService concurEventNotificationWebApiService;
     protected ConcurAccountValidationService concurAccountValidationService;
     protected ConfigurationService configurationService;
+
+    private final Environment environment;
+
+    public ConcurExpenseV3ServiceImpl(final Environment environment) {
+        Validate.isTrue(environment != null, "environment must be supplied");
+        this.environment = environment;
+    }
 
     @Override
     public void processExpenseReports(String accessToken,
@@ -251,7 +259,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
 
     protected boolean isProduction() {
-        boolean isProd = ConfigContext.getCurrentContextConfig().isProductionEnvironment();
+        boolean isProd = environment.isProductionEnvironment();
         if (LOG.isDebugEnabled()) {
             LOG.debug("isProduction, isProd: " + isProd);
         }

@@ -1,11 +1,11 @@
 package edu.cornell.kfs.module.purap.fixture;
 
+import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
-import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.sys.document.AccountingDocumentIntegTestUtils;
 
 
 public enum PurchaseOrderFixture {
@@ -67,7 +67,7 @@ public enum PurchaseOrderFixture {
 
 		//purchaseOrderDocument.refreshNonUpdateableReferences();
 		purchaseOrderDocument.prepareForSave();
-		AccountingDocumentTestUtils.saveDocument(purchaseOrderDocument, documentService);
+		AccountingDocumentIntegTestUtils.saveDocument(purchaseOrderDocument, documentService);
 
 		return purchaseOrderDocument;
 	}
