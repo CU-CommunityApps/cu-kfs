@@ -3,8 +3,8 @@ package edu.cornell.kfs.pmw.batch.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -154,23 +154,20 @@ class PaymentWorksVendorSupplierDiversityServiceImplTest {
     
     @Test 
     void testCreateDateOneYearFromDateBasicDate() {
-        Date expectedDate = createCalendar(2021, Calendar.JANUARY, 31);
-        Date actualDate = supplierService.createDateOneYearFromDate(createCalendar(2020, Calendar.JANUARY, 31));
+        Date expectedDate = createSqlDate(2021, 1, 31);
+        Date actualDate = supplierService.createDateOneYearFromDate(createSqlDate(2020, 1, 31));
         assertEquals(expectedDate, actualDate);
     }
     
     @Test 
     void testCreateDateOneYearFromDateLeapYear() {
-        Date expectedDate = createCalendar(2021, Calendar.FEBRUARY, 28);
-        Date actualDate = supplierService.createDateOneYearFromDate(createCalendar(2020, Calendar.FEBRUARY, 29));
+        Date expectedDate = createSqlDate(2021, 2, 28);
+        Date actualDate = supplierService.createDateOneYearFromDate(createSqlDate(2020, 2, 29));
         assertEquals(expectedDate, actualDate);
     }
     
-    public static Date createCalendar(int year, int month, int date) {
-        Calendar cal = Calendar.getInstance();
-        cal.clear();
-        cal.set(year, month, date);
-        return new Date(cal.getTimeInMillis());
+    public static Date createSqlDate(int year, int month, int date) {
+        LocalDate sqlDateAsLocalDate = LocalDate.of(year, month, date);
+        return Date.valueOf(sqlDateAsLocalDate);
     }
-
 }

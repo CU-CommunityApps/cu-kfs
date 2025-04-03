@@ -3,7 +3,6 @@ package edu.cornell.kfs.pmw.batch.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Date;
-import java.util.Calendar;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -93,8 +92,8 @@ class PaymentWorksTaxRuleDependencyServiceImplTest {
     
     @Test
     void testBuildDateFromString() {
-        Date actualDate = taxRuleService.buildDateFromString("2020-07-01");
-        Date expectedDate = PaymentWorksVendorSupplierDiversityServiceImplTest.createCalendar(2020, Calendar.JULY, 1);
+        Date actualDate = taxRuleService.buildSqlDateFromString("2020-07-01");
+        Date expectedDate = PaymentWorksVendorSupplierDiversityServiceImplTest.createSqlDate(2020, 7, 1);
         
         assertEquals(expectedDate, actualDate);
     }

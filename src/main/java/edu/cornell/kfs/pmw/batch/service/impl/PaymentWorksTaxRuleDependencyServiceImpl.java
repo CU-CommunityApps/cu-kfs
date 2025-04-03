@@ -1,6 +1,8 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -8,8 +10,6 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.VendorConstants;
@@ -34,7 +34,9 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
     protected DateTimeService dateTimeService;
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     protected ConfigurationService configurationService;
-    private DateTimeFormatter dateTimeFormatter;
+
+    protected static final DateTimeFormatter DATE_SQL_DATE_FORMATTER_yyyy_MM_dd = 
+            DateTimeFormatter.ofPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd, Locale.US);
 
     @Override
     public KfsVendorDataWrapper buildKfsVendorDataWrapper(PaymentWorksVendor pmwVendor,
@@ -117,7 +119,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
         vendorHeader.setVendorGIIN(pmwVendor.getGiinCode());
         populateW8Attributes(vendorDataWrapper, pmwVendor, taxRule);
         if (taxRule.populateDateOfBirth && StringUtils.isNotBlank(pmwVendor.getDateOfBirth())) {
-            Date dob = new Date(getDateTimeFormatter().parseDateTime(pmwVendor.getDateOfBirth()).getMillis());
+            Date dob = buildSqlDateFromString(pmwVendor.getDateOfBirth());
             vendorHeader.setVendorDOB(dob);
         }
     }
@@ -194,7 +196,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
             vendorHeader.setVendorW8BenReceivedIndicator(true);
             vendorHeader.setVendorW8TypeCode(taxRule.w8TypeCode);
             if (StringUtils.isNotBlank(pmwVendor.getW8SignedDate())) {
-                vendorHeader.setVendorW8SignedDate(buildDateFromString(pmwVendor.getW8SignedDate()));
+                vendorHeader.setVendorW8SignedDate(buildSqlDateFromString(pmwVendor.getW8SignedDate()));
             }
             paymentWorksBatchUtilityService.createNoteRecordingAnyErrors(kfsVendorDataWrapper, 
                     configurationService.getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_W8_URL_EXISTS_MESSAGE), 
@@ -205,12 +207,13 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
         }
     }
     
-    protected Date buildDateFromString(String  dateString) {
-        Date w8Date = new Date(getDateTimeFormatter().parseDateTime(dateString).getMillis());
+    protected Date buildSqlDateFromString(String  dateString) {
+        LocalDate dateStringAsLocalDate = LocalDate.parse(dateString, DATE_SQL_DATE_FORMATTER_yyyy_MM_dd);
+        Date sqlDateBuiltFromLocalDate = Date.valueOf(dateStringAsLocalDate);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("buildDateFromString, dateString: " + dateString + " w8Date: " + w8Date);
+            LOG.debug("buildSqlDateFromString, dateString: {}  dateStringAsLocalDate: {}  sqlDateBuiltFromLocalDate: {}", dateString , dateStringAsLocalDate, sqlDateBuiltFromLocalDate);
         }
-        return w8Date;
+        return sqlDateBuiltFromLocalDate;
     }
     
     protected String truncateValueToMaxLength(String inputValue, int maxLength) {
@@ -275,12 +278,4 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
     }
-
-    public DateTimeFormatter getDateTimeFormatter() {
-        if (dateTimeFormatter == null) {
-            dateTimeFormatter = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd).withLocale(Locale.US);
-        }
-        return dateTimeFormatter;
-    }
-    
 }
