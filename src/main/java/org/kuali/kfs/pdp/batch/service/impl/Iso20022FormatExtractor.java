@@ -624,7 +624,8 @@ public class Iso20022FormatExtractor {
 
         final Date disbursementDate = extractTypeContext.getDisbursementDate();
         final XMLGregorianCalendar creditDateTime = constructXmlGregorianCalendarWithDateAndTime(disbursementDate);
-        groupHeader.setCreDtTm(creditDateTime);
+        // TODO: Fix this!
+        //groupHeader.setCreDtTm(creditDateTime);
 
         final int numberOfTransactions =
                 paymentInstructionInformationSet.stream()
@@ -740,7 +741,8 @@ public class Iso20022FormatExtractor {
          */
         final Date extractionDate = determineExtractionDate(processTemplatePaymentGroup, extractTypeContext);
         final XMLGregorianCalendar extractionDateForXml = constructXmlGregorianCalendarWithDateOnly(extractionDate);
-        paymentInstructionInformation.setReqdExctnDt(extractionDateForXml);
+        // TODO: Fix this!
+        //paymentInstructionInformation.setReqdExctnDt(extractionDateForXml);
 
         final PartyIdentification32 debtorPartyIdentification =
                 constructDebtorPartyIdentification(processTemplatePaymentGroup, extractTypeContext);
@@ -1631,7 +1633,8 @@ public class Iso20022FormatExtractor {
 
         final Date invoiceDate = new Date(paymentDetail.getInvoiceDate().getTime());
         final XMLGregorianCalendar rltdDate = constructXmlGregorianCalendarWithDateOnly(invoiceDate);
-        referredDocumentInformation.setRltdDt(rltdDate);
+        // TODO: Fix this!
+        //referredDocumentInformation.setRltdDt(rltdDate);
 
         return referredDocumentInformation;
     }
