@@ -34,6 +34,7 @@ public final class CUTaxConstants {
     public static final String NO_US_VENDOR_ADDRESS = "No US Address on File!";
     public static final String NO_FOREIGN_VENDOR_ADDRESS = "No Foreign Address on File!";
     public static final String NO_ANY_VENDOR_ADDRESS = "No Address on File!";
+    public static final String VENDOR_NOT_FOUND_MESSAGE = "Vendor Not Found";
     public static final String TAX_1099_MISC_FORM_TYPE = "MISC";
     public static final String TAX_1099_NEC_FORM_TYPE = "NEC";
     public static final String TAX_1099_UNKNOWN_FORM_TYPE = "????";
@@ -44,6 +45,7 @@ public final class CUTaxConstants {
     public static final String TAX_1042S_UNKNOWN_BOX_KEY = "????";
     public static final String ANY_OR_NONE_PAYMENT_REASON = "*";
     public static final String UNKNOWN_COUNTRY = "UC";
+    public static final String CANADA_FIPS_COUNTRY_CODE = "CA";
     public static final String MASKED_VALUE_9_CHARS = "XXXXXXXXX";
     public static final String MASKED_VALUE_11_CHARS = "XXXXXXXXXXX";
     public static final String MASKED_VALUE_19_CHARS = "XXXXXXXXXXXXXXXXXXX";
@@ -58,6 +60,12 @@ public final class CUTaxConstants {
     public static final String TAX_1042S_DETAIL_OUTPUT_FILE_PREFIX = "irs_1042s_detail_extract_";
     public static final String TAX_1042S_TRANSACTION_DETAILS_OUTPUT_FILE_PREFIX = "irs_1042s_transaction_details_";
     public static final String TAX_OUTPUT_FILE_SUFFIX = ".txt";
+
+    public static class Sprintax {
+        public static final int MAX_FIELD_LENGTH = 90;
+        public static final String PAYMENTS_OUTPUT_FILE_PREFIX = "irs_1042s_sprintax_payments_";
+        public static final String DEMOGRAPHIC_OUTPUT_FILE_PREFIX = "irs_1042s_sprintax_demographic_";
+    }
 
     public static final String FORM_1042S_GROSS_BOX = "GROSS";
     public static final String FORM_1042S_FED_TAX_WITHHELD_BOX = "FTW";
@@ -125,7 +133,11 @@ public final class CUTaxConstants {
         public static final String TAX_TABLE_1099_PREFIX = "tax.table.1099.";
         public static final String TAX_TABLE_1042S_PREFIX = "tax.table.1042s.";
         public static final String TAX_CONFIG_DEFAULT_SUFFIX = "default";
-        
+
+        public static final String MESSAGE_TAX_OUTPUT_VENDOR_NOT_FOUND = "message.tax.output.vendor.not.found";
+        public static final String MESSAGE_TAX_OUTPUT_VENDOR_PARENT_NOT_FOUND = "message.tax.output.vendor.parent.not.found";
+        public static final String SPRINTAX_PLACEHOLDER_EMAIL_FORMAT = "sprintax.placeholder.email.format";
+
         private CUTaxKeyConstants() {
             throw new UnsupportedOperationException("do not call CUTaxKeyConstants constructor");
         }

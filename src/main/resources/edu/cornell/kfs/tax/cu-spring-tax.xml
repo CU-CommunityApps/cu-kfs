@@ -126,11 +126,35 @@
           p:outputClass="edu.cornell.kfs.tax.batch.xml.TaxOutputDefinitionV2"
           p:dateTimeService-ref="dateTimeService"/>
 
+    <bean id="taxPayeeHelperService" parent="taxPayeeHelperService-parentBean"/>
+    <bean id="taxPayeeHelperService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.tax.batch.service.impl.TaxPayeeHelperServiceImpl"
+          p:transactionDetailProcessorDao-ref="transactionDetailProcessorDao"
+          p:configurationService-ref="configurationService"
+          p:taxParameterService-ref="taxParameterService"/>
+
+    <bean id="transactionOverrideService" parent="transactionOverrideService-parentBean"/>
+    <bean id="transactionOverrideService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.tax.service.impl.TransactionOverrideServiceImpl"
+          p:criteriaLookupService-ref="criteriaLookupService"/>
+
     <bean id="taxFileGenerationServiceFor1042S" parent="taxFileGenerationServiceFor1042S-parentBean"/>
     <bean id="taxFileGenerationServiceFor1042S-parentBean"
           abstract="true"
           class="edu.cornell.kfs.tax.batch.service.impl.TaxFileGenerationServiceSprintaxImpl"
-          p:transactionDetailProcessorDao-ref="transactionDetailProcessorDao"/>
+          p:transactionDetailProcessorDao-ref="transactionDetailProcessorDao"
+          p:taxOutputDefinitionV2FileType-ref="taxOutputDefinitionV2FileType"
+          p:taxPayeeHelperService-ref="taxPayeeHelperService"
+          p:transactionOverrideService-ref="transactionOverrideService"
+          p:configurationService-ref="configurationService"
+          p:taxParameterService-ref="taxParameterService"
+          p:sprintaxDemographicFileDefinitionFilePath="classpath:edu/cornell/kfs/tax/batch/SprintaxDemographicFileOutputDefinition.xml"
+          p:sprintaxPaymentsFileDefinitionFilePath="classpath:edu/cornell/kfs/tax/batch/SprintaxPaymentsFileOutputDefinition.xml"
+          p:fileOutputDirectory="${staging.directory}/tax/sprintax"
+          p:payerEIN="${tax.output.ein}"
+          p:scrubOutput="${tax.output.scrubbed}"/>
 
     <bean id="taxFileGenerationServiceForTransactionListPrinting"
           parent="taxFileGenerationServiceForTransactionListPrinting-parentBean"/>
@@ -152,7 +176,8 @@
           p:taxFileGenerationServiceFor1042S-ref="taxFileGenerationServiceFor1042S"
           p:taxFileGenerationServiceForTransactionListPrinting-ref="taxFileGenerationServiceForTransactionListPrinting"
           p:taxParameterService-ref="taxParameterService"
-          p:dateTimeService-ref="dateTimeService"/>
+          p:dateTimeService-ref="dateTimeService"
+          p:configurationService-ref="configurationService"/>
 
     <bean id="transactionDetailProcessorDao" parent="transactionDetailProcessorDao-parentBean"/>
     <bean id="transactionDetailProcessorDao-parentBean"
