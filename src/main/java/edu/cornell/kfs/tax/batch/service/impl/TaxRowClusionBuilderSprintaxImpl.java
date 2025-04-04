@@ -10,7 +10,9 @@ import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.CUTaxConstants.Tax1042SParameterNames;
 import edu.cornell.kfs.tax.CUTaxConstants.TaxCommonParameterNames;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxBoxType1042S;
+import edu.cornell.kfs.tax.batch.TaxParameterClusionHelper;
 import edu.cornell.kfs.tax.batch.TaxRowClusionBuilderBase;
+import edu.cornell.kfs.tax.batch.TaxRowClusionResult;
 import edu.cornell.kfs.tax.batch.TaxStatisticsHandler;
 import edu.cornell.kfs.tax.batch.dto.NoteLite;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxStatType;
@@ -64,7 +66,7 @@ public class TaxRowClusionBuilderSprintaxImpl extends TaxRowClusionBuilderBase {
                     Tax1042SParameterNames.EXCLUDED_DOC_NOTE_TEXT, noteTextStream,
                     TaxStatType.NUM_DOC_NOTES_EXCLUSIONS_DETERMINED);
         } else {
-            resultOfPreviousCheck = ClusionResult.INCLUDE;
+            resultOfPreviousCheck = TaxRowClusionResult.INCLUDE;
             statsHandler.increment(TaxStatType.NUM_DOC_NOTE_SETS_NOT_RETRIEVED, transactionDocType);
         }
         return this;
@@ -72,7 +74,7 @@ public class TaxRowClusionBuilderSprintaxImpl extends TaxRowClusionBuilderBase {
 
     public TaxRowClusionBuilderSprintaxImpl appendCheckForAccountOnRoyalties(
             final String objectCode, final String chartAndAccountPair) {
-        final ParameterCheckHelper helper = new ParameterCheckHelper(
+        final TaxParameterClusionHelper helper = new TaxParameterClusionHelper(
                 Tax1042SParameterNames.ROYALTIES_INCLUDED_OBJECT_CODE_CHART_ACCOUNT, true,
                 TaxStatType.NUM_ROYALTY_CHART_ACCOUNT_NEITHER_DETERMINED,
                 TaxStatType.NUM_ROYALTY_CHART_ACCOUNT_INCLUSIONS_DETERMINED,
@@ -83,7 +85,7 @@ public class TaxRowClusionBuilderSprintaxImpl extends TaxRowClusionBuilderBase {
 
     public TaxRowClusionBuilderSprintaxImpl appendCheckForDvCheckStubTextOnRoyalties(
             final String objectCode, final String dvCheckStubText) {
-        final ParameterCheckHelper helper = new ParameterCheckHelper(
+        final TaxParameterClusionHelper helper = new TaxParameterClusionHelper(
                 Tax1042SParameterNames.ROYALTIES_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT, true,
                 TaxStatType.NUM_ROYALTY_OBJ_DV_CHK_STUB_NEITHER_DETERMINED,
                 TaxStatType.NUM_ROYALTY_OBJ_DV_CHK_STUB_INCLUSIONS_DETERMINED,
@@ -94,7 +96,7 @@ public class TaxRowClusionBuilderSprintaxImpl extends TaxRowClusionBuilderBase {
 
     public TaxRowClusionBuilderSprintaxImpl appendCheckForAccountOnFederalTaxWithholding(
             final String objectCode, final String chartAndAccountPair) {
-        final ParameterCheckHelper helper = new ParameterCheckHelper(
+        final TaxParameterClusionHelper helper = new TaxParameterClusionHelper(
                 Tax1042SParameterNames.FEDERAL_TAX_WITHHELD_INCLUDED_OBJECT_CODE_CHART_ACCOUNT, true,
                 TaxStatType.NUM_FTW_CHART_ACCOUNT_NEITHER_DETERMINED,
                 TaxStatType.NUM_FTW_CHART_ACCOUNT_INCLUSIONS_DETERMINED,
@@ -105,7 +107,7 @@ public class TaxRowClusionBuilderSprintaxImpl extends TaxRowClusionBuilderBase {
 
     public TaxRowClusionBuilderSprintaxImpl appendCheckForAccountOnStateTaxWithholding(
             final String objectCode, final String chartAndAccountPair) {
-        final ParameterCheckHelper helper = new ParameterCheckHelper(
+        final TaxParameterClusionHelper helper = new TaxParameterClusionHelper(
                 Tax1042SParameterNames.STATE_INCOME_TAX_WITHHELD_INCLUDED_OBJECT_CODE_CHART_ACCOUNT, true,
                 TaxStatType.NUM_SITW_CHART_ACCOUNT_NEITHER_DETERMINED,
                 TaxStatType.NUM_SITW_CHART_ACCOUNT_INCLUSIONS_DETERMINED,
@@ -118,8 +120,8 @@ public class TaxRowClusionBuilderSprintaxImpl extends TaxRowClusionBuilderBase {
             final String incomeCode, final TaxBoxType1042S taxBoxType) {
         final String excludedIncomeCode = getParameter(Tax1042SParameterNames.EXCLUDED_INCOME_CODE);
         if (StringUtils.equals(incomeCode, excludedIncomeCode)) {
-            resultOfPreviousCheck = ClusionResult.EXCLUDE;
-            cumulativeResult = ClusionResult.EXCLUDE;
+            resultOfPreviousCheck = TaxRowClusionResult.EXCLUDE;
+            cumulativeResult = TaxRowClusionResult.EXCLUDE;
             if (taxBoxType == TaxBoxType1042S.GROSS_AMOUNT) {
                 statsHandler.increment(TaxStatType.NUM_INCOME_CODE_EXCLUDED_GROSS_AMOUNTS, transactionDocType);
             } else if (taxBoxType == TaxBoxType1042S.FEDERAL_TAX_WITHHELD_AMOUNT) {
@@ -128,7 +130,7 @@ public class TaxRowClusionBuilderSprintaxImpl extends TaxRowClusionBuilderBase {
                 statsHandler.increment(TaxStatType.NUM_INCOME_CODE_EXCLUDED_SITW_AMOUNTS, transactionDocType);
             }
         } else {
-            resultOfPreviousCheck = ClusionResult.INCLUDE;
+            resultOfPreviousCheck = TaxRowClusionResult.INCLUDE;
         }
         return this;
     }
@@ -137,8 +139,8 @@ public class TaxRowClusionBuilderSprintaxImpl extends TaxRowClusionBuilderBase {
             final String incomeCodeSubType, final TaxBoxType1042S taxBoxType) {
         final String excludedIncomeCodeSubType = getParameter(Tax1042SParameterNames.EXCLUDED_INCOME_CODE_SUB_TYPE);
         if (StringUtils.equals(incomeCodeSubType, excludedIncomeCodeSubType)) {
-            resultOfPreviousCheck = ClusionResult.EXCLUDE;
-            cumulativeResult = ClusionResult.EXCLUDE;
+            resultOfPreviousCheck = TaxRowClusionResult.EXCLUDE;
+            cumulativeResult = TaxRowClusionResult.EXCLUDE;
             if (taxBoxType == TaxBoxType1042S.GROSS_AMOUNT) {
                 statsHandler.increment(TaxStatType.NUM_INCOME_CODE_SUBTYPE_EXCLUDED_GROSS_AMOUNTS, transactionDocType);
             } else if (taxBoxType == TaxBoxType1042S.FEDERAL_TAX_WITHHELD_AMOUNT) {
@@ -147,7 +149,7 @@ public class TaxRowClusionBuilderSprintaxImpl extends TaxRowClusionBuilderBase {
                 statsHandler.increment(TaxStatType.NUM_INCOME_CODE_SUBTYPE_EXCLUDED_SITW_AMOUNTS, transactionDocType);
             }
         } else {
-            resultOfPreviousCheck = ClusionResult.INCLUDE;
+            resultOfPreviousCheck = TaxRowClusionResult.INCLUDE;
         }
         return this;
     }

@@ -58,12 +58,28 @@ public class SprintaxPayment {
         this.taxTreatyExemptIncome = taxTreatyExemptIncome;
     }
 
+    public boolean isExplicitlyMarkedAsTaxTreatyExemptIncome() {
+        return taxTreatyExemptIncome != null && taxTreatyExemptIncome.booleanValue();
+    }
+
+    public boolean isExplicitlyMarkedAsNotTaxTreatyExemptIncome() {
+        return taxTreatyExemptIncome != null && !taxTreatyExemptIncome.booleanValue();
+    }
+
     public Boolean getForeignSourceIncome() {
         return foreignSourceIncome;
     }
 
     public void setForeignSourceIncome(final Boolean foreignSourceIncome) {
         this.foreignSourceIncome = foreignSourceIncome;
+    }
+
+    public boolean isExplicitlyMarkedAsForeignSourceIncome() {
+        return foreignSourceIncome != null && foreignSourceIncome.booleanValue();
+    }
+
+    public boolean isExplicitlyMarkedAsNotForeignSourceIncome() {
+        return foreignSourceIncome != null && !foreignSourceIncome.booleanValue();
     }
 
     public KualiDecimal getFedIncomeTaxPercent() {

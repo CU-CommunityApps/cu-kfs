@@ -163,7 +163,7 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
         LOG.info("printStatistics, ============  STATISTICS  ============");
         LOG.info("printStatistics, ======================================");
         for (final Map.Entry<TaxStatType, Integer> statistic : mainStatistics.getOrderedResults().entrySet()) {
-            final String messageLabelKey = statistic.getKey().getPropKey();
+            final String messageLabelKey = statistic.getKey().propKey;
             final String messageLabel = configurationService.getPropertyValueAsString(messageLabelKey);
             LOG.info("printStatistics, {}: {}", messageLabel, statistic.getValue());
         }

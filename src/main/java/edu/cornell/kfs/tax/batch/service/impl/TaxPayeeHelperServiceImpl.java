@@ -97,8 +97,9 @@ public class TaxPayeeHelperServiceImpl implements TaxPayeeHelperService {
     }
 
     /*
-     * TODO: We need to revisit the parent-vendor-name setup and determine whether
-     * it should be renamed to something else.
+     * NOTE: The payee's "parentVendorName" field (and the corresponding TransactionDetail field)
+     *       should eventually be renamed to something that lines up better with the actual value
+     *       being stored. We will use the KFSPTS-34474 ticket to handle the appropriate updates.
      */
     private void initializeAlternateVendorNameIfSoleProprietor(final TaxPayeeBase payee,
             final VendorDetailLite vendorDetail, final String taxType) {
@@ -142,9 +143,6 @@ public class TaxPayeeHelperServiceImpl implements TaxPayeeHelperService {
             payee.setVendorCityName(usAddress.getVendorCityName());
             payee.setVendorStateCode(usAddress.getVendorStateCode());
             payee.setVendorZipCode(usAddress.getVendorZipCode());
-            if (ObjectUtils.isNull(foreignAddress)) {
-                payee.setVendorEmailAddress(usAddress.getVendorAddressEmailAddress());
-            }
         } else {
             payee.setVendorLine1Address(CUTaxConstants.NO_US_VENDOR_ADDRESS);
             statistics.increment(TaxStatType.NUM_NO_VENDOR_ADDRESS_US);
@@ -157,10 +155,15 @@ public class TaxPayeeHelperServiceImpl implements TaxPayeeHelperService {
             payee.setVendorForeignProvinceName(foreignAddress.getVendorAddressInternationalProvinceName());
             payee.setVendorForeignZipCode(foreignAddress.getVendorZipCode());
             payee.setVendorForeignCountryCode(foreignAddress.getVendorCountryCode());
-            payee.setVendorEmailAddress(foreignAddress.getVendorAddressEmailAddress());
         } else {
             payee.setVendorForeignLine1Address(CUTaxConstants.NO_FOREIGN_VENDOR_ADDRESS);
             statistics.increment(TaxStatType.NUM_NO_VENDOR_ADDRESS_FOREIGN);
+        }
+
+        if (ObjectUtils.isNotNull(foreignAddress)) {
+            payee.setVendorEmailAddress(foreignAddress.getVendorAddressEmailAddress());
+        } else if (ObjectUtils.isNotNull(usAddress)) {
+            payee.setVendorEmailAddress(usAddress.getVendorAddressEmailAddress());
         }
     }
 

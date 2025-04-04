@@ -322,10 +322,6 @@ public enum TaxStatType {
         this.hasTaxSourceSpecificSubStat = hasTaxSourceSpecificSubStat;
     }
 
-    public String getPropKey() {
-        return propKey;
-    }
-
     @Override
     public String toString() {
         return propKey;

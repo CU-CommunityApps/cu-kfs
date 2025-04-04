@@ -127,7 +127,7 @@ public class SprintaxPayee extends TaxPayeeBase {
     }
 
     public String getForm1042SBox() {
-        return (currentTaxBoxUpdates != null) ? currentTaxBoxUpdates.getForm1042SBox() : null;
+        return (currentTaxBoxUpdates != null) ? currentTaxBoxUpdates.getForm1042SBoxToUse() : null;
     }
 
     public String getForm1042SOverriddenBox() {

@@ -24,7 +24,7 @@ import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxBoxType1042S;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxFileSections;
 import edu.cornell.kfs.tax.batch.TaxBatchConfig;
 import edu.cornell.kfs.tax.batch.TaxOutputDefinitionV2FileType;
-import edu.cornell.kfs.tax.batch.TaxRowClusionBuilderBase.ClusionResult;
+import edu.cornell.kfs.tax.batch.TaxRowClusionResult;
 import edu.cornell.kfs.tax.batch.TaxStatistics;
 import edu.cornell.kfs.tax.batch.TaxStatisticsHandler;
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoRowMapper;
@@ -212,8 +212,8 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
 
     private boolean shouldPrintTaxFileRow(final SprintaxPayment currentPayment) {
         return currentPayment.isFoundAtLeastOneProcessableTransaction() && (
-                Boolean.TRUE.equals(currentPayment.getTaxTreatyExemptIncome())
-                        || Boolean.TRUE.equals(currentPayment.getForeignSourceIncome())
+                currentPayment.isExplicitlyMarkedAsTaxTreatyExemptIncome()
+                        || currentPayment.isExplicitlyMarkedAsForeignSourceIncome()
                         || (currentPayment.getFedIncomeTaxPercent() != null && !KualiDecimal.ZERO.equals(
                                 currentPayment.getFedIncomeTaxPercent()))
                         || !KualiDecimal.ZERO.equals(currentPayment.getFederalTaxWithheldAmount())
@@ -232,11 +232,11 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         final TaxBoxType1042S taxBoxType = determineTaxBoxType(currentRow, helper);
         Validate.validState(taxBoxType != null, "Tax Box Type cannot be null; it should be UNKNOWN if undetermined");
 
-        final ClusionResult rowClusionResult = checkForExclusions(currentPayee, currentRow, helper, taxBoxType);
+        final TaxRowClusionResult rowClusionResult = checkForExclusions(currentPayee, currentRow, helper, taxBoxType);
         final TaxBoxType1042S taxBoxOverride = findTaxBoxOverride(currentRow, helper);
         final TaxBoxType1042S taxBoxToUse = determineTaxBoxToUse(taxBoxType, taxBoxOverride, rowClusionResult);
         final TaxBoxUpdates taxBoxUpdates = new TaxBoxUpdates();
-        taxBoxUpdates.setForm1042SBox(taxBoxToUse.toString());
+        taxBoxUpdates.setForm1042SBoxToUse(taxBoxToUse.toString());
         taxBoxUpdates.setForm1042SOverriddenBox((taxBoxOverride != null) ? taxBoxType.toString() : null);
         currentPayee.setCurrentTaxBoxUpdates(taxBoxUpdates);
 
@@ -284,7 +284,8 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         return objectCodeToIncomeClassCodeMappings.getOrDefault(objectCode, Set.of());
     }
 
-    private ClusionResult checkForExclusions(final SprintaxPayee currentPayee, final TransactionDetail currentRow,
+    private TaxRowClusionResult checkForExclusions(
+            final SprintaxPayee currentPayee, final TransactionDetail currentRow,
             final SprintaxHelper helper, final TaxBoxType1042S taxBoxType) throws SQLException {
         final String objectCode = currentRow.getFinObjectCode();
         final TaxRowClusionBuilderSprintaxImpl clusionBuilder = new TaxRowClusionBuilderSprintaxImpl(
@@ -299,7 +300,8 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         boolean paymentReasonIsBlankOrProcessable = true;
         if (StringUtils.isNotBlank(currentRow.getPaymentReasonCode())) {
             clusionBuilder.appendCheckForPaymentReason(currentRow.getPaymentReasonCode());
-            paymentReasonIsBlankOrProcessable = clusionBuilder.getResultOfPreviousCheck() == ClusionResult.INCLUDE;
+            paymentReasonIsBlankOrProcessable =
+                    (clusionBuilder.getResultOfPreviousCheck() == TaxRowClusionResult.INCLUDE);
         }
 
         if (paymentReasonIsBlankOrProcessable && taxBoxType != TaxBoxType1042S.UNKNOWN) {
@@ -322,7 +324,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
             }
         }
 
-        if (clusionBuilder.getCumulativeResult() != ClusionResult.EXCLUDE) {
+        if (clusionBuilder.getCumulativeResult() != TaxRowClusionResult.EXCLUDE) {
             clusionBuilder.appendCheckForIncomeCode(currentRow.getIncomeCode(), taxBoxType)
                     .appendCheckForIncomeCodeSubType(currentRow.getIncomeCodeSubType(), taxBoxType);
         }
@@ -362,10 +364,10 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
     }
 
     private TaxBoxType1042S determineTaxBoxToUse(final TaxBoxType1042S taxBox, final TaxBoxType1042S taxBoxOverride,
-            final ClusionResult rowClusionResult) {
+            final TaxRowClusionResult rowClusionResult) {
         if (taxBoxOverride != null) {
             return taxBoxOverride;
-        } else if (rowClusionResult == ClusionResult.EXCLUDE) {
+        } else if (rowClusionResult == TaxRowClusionResult.EXCLUDE) {
             return TaxBoxType1042S.UNKNOWN;
         } else {
             return taxBox;
@@ -483,16 +485,15 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
             helper.increment(TaxStatType.NUM_DETAIL_LINES_WITH_POSITIVE_SITW_AMOUNT);
         }
 
-        final Boolean taxTreatyExemptIncomeIndicator = currentPayment.getTaxTreatyExemptIncome();
-        final KualiDecimal fedIncomeTaxPercent = currentPayment.getFedIncomeTaxPercent();
-        if (Boolean.TRUE.equals(taxTreatyExemptIncomeIndicator)) {
+        if (currentPayment.isExplicitlyMarkedAsTaxTreatyExemptIncome()) {
             currentPayment.setChapter3ExemptionCode(getChapter3TaxTreatyExemptionCode());
             currentPayment.setChapter3TaxRate(KualiDecimal.ZERO);
-        } else if (taxTreatyExemptIncomeIndicator != null
-                && Boolean.TRUE.equals(currentPayment.getForeignSourceIncome())) {
+        } else if (currentPayment.isExplicitlyMarkedAsNotTaxTreatyExemptIncome()
+                && currentPayment.isExplicitlyMarkedAsForeignSourceIncome()) {
             currentPayment.setChapter3ExemptionCode(getChapter3ForeignSourceExemptionCode());
             currentPayment.setChapter3TaxRate(KualiDecimal.ZERO);
         } else {
+            final KualiDecimal fedIncomeTaxPercent = currentPayment.getFedIncomeTaxPercent();
             currentPayment.setChapter3ExemptionCode(getChapter3ExemptionCodeRepresentingNoExemption());
             currentPayment.setChapter3TaxRate(fedIncomeTaxPercent != null ? fedIncomeTaxPercent : KualiDecimal.ZERO);
         }

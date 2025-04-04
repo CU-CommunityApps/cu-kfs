@@ -65,7 +65,6 @@ public final class CUTaxConstants {
         public static final int MAX_FIELD_LENGTH = 90;
         public static final String PAYMENTS_OUTPUT_FILE_PREFIX = "irs_1042s_sprintax_payments_";
         public static final String DEMOGRAPHIC_OUTPUT_FILE_PREFIX = "irs_1042s_sprintax_demographic_";
-        public static final String TAX_CSV_FILE_SUFFIX = ".csv";
     }
 
     public static final String FORM_1042S_GROSS_BOX = "GROSS";
