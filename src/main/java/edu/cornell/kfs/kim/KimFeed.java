@@ -3,6 +3,10 @@ package edu.cornell.kfs.kim;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -14,13 +18,12 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTime;
-import org.joda.time.MutableDateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
+import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import util.SimpleCommandLineParser;
 
 public class KimFeed {
@@ -36,7 +39,7 @@ public class KimFeed {
 	private static final String IT_PREFIX = "IT-";
 	private static final String SINGLE_SPACE = " ";
 	private static final String INACTIVE_VAL = "I";
-	private static final String DELTA_LOAD_DATE_PROPERTY_FORMAT = "MM/dd/yyyy";
+	private static final DateTimeFormatter DATE_ZONE_DEFAULT_FORMATTER_MM_dd_yyyy = DateTimeFormatter.ofPattern(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
 	private static final String LINE_INFO_MESSAGE_FORMAT = "%s. NetID: %s, CU_PERSON ID: %s, Employee ID: %s";
 
 	// Constants related to the retrieved rows.
@@ -508,7 +511,7 @@ public class KimFeed {
 			    LOG.info("getEDWData: Preparing to get EDW data for the load with this date, regardless of whether it has already been read: "
 			            + getDeltaLoadDate());
 			    getSQL += " AND LOAD_SEQ in (SELECT LOAD_SEQ from EDW.CU_PERSON_DATA_KFS_DELTA_MSTR WHERE FILE_DATE BETWEEN ? AND ?)";
-			    DateTime deltaLoadDate = getParsedDeltaLoadDate();
+			    LocalDate deltaLoadDate = getParsedDeltaLoadDate();
 			    queryArgs = new Object[] { getTimestampForStartOfDay(deltaLoadDate), getTimestampForEndOfDay(deltaLoadDate) };
 			} else {
 			    LOG.info("getEDWData: Preparing to get EDW data for only the loads that have not been read yet");
@@ -1032,25 +1035,35 @@ public class KimFeed {
         return StringUtils.isNotBlank(getDeltaLoadDate());
     }
 
-    private DateTime getParsedDeltaLoadDate() {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern(DELTA_LOAD_DATE_PROPERTY_FORMAT).withLocale(Locale.US);
-        return formatter.parseDateTime(getDeltaLoadDate());
+    private LocalDate getParsedDeltaLoadDate() {
+        String deltaLoadDate = getDeltaLoadDate();
+        if (ObjectUtils.isNull(deltaLoadDate) || StringUtils.isBlank(deltaLoadDate)) {
+            LOG.info("getParsedDeltaLoadDate: Properties file deltaLoadDate was detected to be blank or null. Returning null. Check value in system parameter {}", CUKFSParameterKeyConstants.KIM_FEED_DELTAS_TO_LOAD);
+            return null;
+        }
+        LocalDate parsedDeltaLoadDateAsLocalDate = LocalDate.parse(deltaLoadDate, DATE_ZONE_DEFAULT_FORMATTER_MM_dd_yyyy);
+        LOG.info("getParsedDeltaLoadDate: parsedDeltaLoadDateAsLocalDate={}", parsedDeltaLoadDateAsLocalDate.toString());
+        return parsedDeltaLoadDateAsLocalDate;
     }
 
-    private Timestamp getTimestampForStartOfDay(DateTime dateTime) {
-        MutableDateTime startOfDay = new MutableDateTime(dateTime);
-        startOfDay.setHourOfDay(0);
-        startOfDay.setMinuteOfHour(0);
-        startOfDay.setSecondOfMinute(0);
-        return new Timestamp(startOfDay.getMillis());
+    private Timestamp getTimestampForStartOfDay(LocalDate localDateToUse) {
+        if (ObjectUtils.isNull(localDateToUse)) {
+            LOG.info("getTimestampForStartOfDay: Input parameter date of type LocalDate was detected to be blank or null. Returning null.");
+            return null;
+        }
+        Timestamp startOfDayAsTimestamp = Timestamp.valueOf(LocalDateTime.of(localDateToUse, LocalTime.of(0, 0, 0, 0)));
+        LOG.info("getTimestampForStartOfDay: startOfDayAsTimestamp={}", startOfDayAsTimestamp.toString());
+        return startOfDayAsTimestamp;
     }
 
-    private Timestamp getTimestampForEndOfDay(DateTime dateTime) {
-        MutableDateTime endOfDay = new MutableDateTime(dateTime);
-        endOfDay.setHourOfDay(23);
-        endOfDay.setMinuteOfHour(59);
-        endOfDay.setSecondOfMinute(59);
-        return new Timestamp(endOfDay.getMillis());
+    private Timestamp getTimestampForEndOfDay(LocalDate localDateToUse) {
+        if (ObjectUtils.isNull(localDateToUse)) {
+            LOG.info("getTimestampForEndOfDay: Input parameter date of type LocalDate was detected to be blank or null. Returning null.");
+            return null;
+        }
+        Timestamp endOfDayTimestamp = Timestamp.valueOf(LocalDateTime.of(localDateToUse, LocalTime.of(23, 59, 59, 999999999)));
+        LOG.info("getTimestampForEndOfDay: endOfDayTimestamp={}", endOfDayTimestamp.toString());
+        return endOfDayTimestamp;
     }
 
     private String getDeltaLoadDate() {
