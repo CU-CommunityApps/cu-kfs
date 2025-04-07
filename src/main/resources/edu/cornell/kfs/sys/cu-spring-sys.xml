@@ -296,7 +296,9 @@
 
     <bean id="purgeTablesStep" parent="purgeTablesStep-parentBean"/>
     <bean id="purgeTablesStep-parentBean" class="edu.cornell.kfs.sys.batch.PurgeTablesStep"
-          parent="step" abstract="true" p:tablesPurgeService-ref="tablesPurgeService">
+          parent="step" abstract="true"
+          p:dateTimeService-ref="dateTimeService"
+          p:tablesPurgeService-ref="tablesPurgeService">
     </bean>
 
     <bean id="tablesPurgeService" parent="tablesPurgeService-parentBean"/>
@@ -377,7 +379,8 @@
     <bean id="tablePurgeRecordsDao-parentBean" parent="platformAwareDao"
           class="edu.cornell.kfs.sys.dataaccess.impl.TablePurgeRecordsDaoOjb" abstract="true"
           p:businessObjectService-ref="businessObjectService"
-          p:parameterService-ref="parameterService"> 
+          p:parameterService-ref="parameterService"
+          p:dateTimeService-ref="dateTimeService">
     </bean>
     
     <bean id="excludeInitiatorAndSubmitterSeparationOfDutiesRoleTypeService"
