@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.ar.service.impl;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,10 +12,14 @@ import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.ar.ArConstants;
+import org.kuali.kfs.module.ar.ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsLetterOfCreditReviewDetail;
 import org.kuali.kfs.module.ar.businessobject.InvoiceAccountDetail;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.service.impl.ContractsGrantsInvoiceCreateDocumentServiceImpl;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 
 import edu.cornell.kfs.module.ar.CuArParameterConstants;
 import edu.cornell.kfs.module.ar.document.service.CuContractsGrantsInvoiceDocumentService;
@@ -78,6 +83,53 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         //CUMod: KFSPTS-12866
         populateDocumentDescription(cgInvoiceDocument);
         return cgInvoiceDocument;
+    }
+    
+    public ContractsGrantsInvoiceDocument createCINVForReport(final ContractsAndGrantsBillingAward awd) {
+        final List<ErrorMessage> errorMessages = new ArrayList<>();
+        return generateContractsAndGrantsInvoiceDocumentForReport(awd, awd.getActiveAwardAccounts(),errorMessages, ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL, null, null);
+        
+    }
+    
+    protected ContractsGrantsInvoiceDocument generateContractsAndGrantsInvoiceDocumentForReport(
+        final ContractsAndGrantsBillingAward awd,
+        final List<ContractsAndGrantsBillingAwardAccount> validAwardAccounts, final List<ErrorMessage> errorMessages,
+        final ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType,
+        final List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, final String locCreationType) {
+    final ChartOrgHolder chartOrgHolder = financialSystemUserService.getPrimaryOrganization(
+            awd.getAwardPrimaryFundManager().getFundManager().getPrincipalId(),
+            KFSConstants.OptionalModuleNamespaces.ACCOUNTS_RECEIVABLE);
+
+    /* CU Customization KFSPTS-23690 */
+    awd.setCreationProcessType(creationProcessType);
+
+    final ContractsGrantsInvoiceDocument cgInvoiceDocument = createCGInvoiceDocumentByAwardInfo(awd, validAwardAccounts,
+            chartOrgHolder.getChartOfAccountsCode(), chartOrgHolder.getOrganizationCode(), errorMessages,
+            accountDetails, locCreationType);
+    return cgInvoiceDocument;
+//    if (ObjectUtils.isNotNull(cgInvoiceDocument)) {
+//        if (cgInvoiceDocument.getTotalInvoiceAmount().isPositive()
+//            || getContractsGrantsInvoiceDocumentService().getInvoiceMilestoneTotal(cgInvoiceDocument).isPositive()
+//            || getContractsGrantsInvoiceDocumentService().getBillAmountTotal(cgInvoiceDocument).isPositive()
+//            || ArConstants.BillingFrequencyValues.isTimeBased(awd)
+//            && ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL.equals(creationProcessType)) {
+//            documentService.saveDocument(cgInvoiceDocument, DocumentSystemSaveEvent.class);
+//        } else {
+//            final ErrorMessage errorMessage;
+//            final List<InvoiceAccountDetail> invoiceAccounts = cgInvoiceDocument.getAccountDetails();
+//            if (!invoiceAccounts.isEmpty()) {
+//                errorMessage = new ErrorMessage(
+//                  ArKeyConstants.ContractsGrantsInvoiceCreateDocumentConstants.NON_BILLABLE_ACCOUNT_AND_AWARD,
+//                  invoiceAccounts.get(0).getAccountNumber(), awd.getProposalNumber());
+//            } else {
+//                errorMessage = new ErrorMessage(
+//                        ArKeyConstants.ContractsGrantsInvoiceCreateDocumentConstants.NON_BILLABLE_AWARD,
+//                        awd.getProposalNumber()
+//                );
+//            }
+//            errorMessages.add(errorMessage);
+//        }
+//    }
     }
 
     /*

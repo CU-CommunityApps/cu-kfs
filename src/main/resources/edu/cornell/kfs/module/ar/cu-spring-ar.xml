@@ -80,7 +80,8 @@
      -->
     <bean id="contractsGrantsInvoiceReportService"
           parent="contractsGrantsInvoiceReportService-parentBean"
-          p:financialSystemUserService-ref="financialSystemUserService"/>
+          p:financialSystemUserService-ref="financialSystemUserService" 
+          p:contractsGrantsInvoiceCreateDocumentService-ref="contractsGrantsInvoiceCreateDocumentService"/>
 
 	<!-- CU Customization: Backport FINP-10040 This bean can be removed 2023-09-20 financials patch. -->
 	<bean class="org.kuali.kfs.module.ar.service.CashControlDetailImportService"
