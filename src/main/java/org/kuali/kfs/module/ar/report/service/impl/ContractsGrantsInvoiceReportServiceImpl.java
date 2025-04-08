@@ -33,6 +33,7 @@ import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfWriter;
 import com.opencsv.CSVWriter;
 
+import edu.cornell.kfs.module.ar.service.CuContractsGrantsInvoiceCreateDocumentService;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -77,6 +78,7 @@ import org.kuali.kfs.module.ar.document.service.ContractsGrantsBillingAwardVerif
 import org.kuali.kfs.module.ar.document.service.ContractsGrantsInvoiceDocumentService;
 import org.kuali.kfs.module.ar.report.service.ContractsGrantsInvoiceReportService;
 import org.kuali.kfs.module.ar.service.ContractsGrantsBillingUtilityService;
+import org.kuali.kfs.module.ar.service.ContractsGrantsInvoiceCreateDocumentService;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -138,6 +140,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
     protected ReportInfo reportInfo;
     protected ReportGenerationService reportGenerationService;
     protected ContractsGrantsInvoiceDocumentService contractsGrantsInvoiceDocumentService;
+    protected CuContractsGrantsInvoiceCreateDocumentService contractsGrantsInvoiceCreateDocumentService;
     protected ContractsGrantsBillingUtilityService contractsGrantsBillingUtilityService;
     protected OptionsService optionsService;
     private ContractsGrantsBillingAwardVerificationService contractsGrantsBillingAwardVerificationService;
@@ -426,6 +429,8 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
     ) {
         KualiDecimal cashDisbursement = KualiDecimal.ZERO;
         final SystemOptions systemOption = optionsService.getCurrentYearOptions();
+        ContractsGrantsInvoiceDocument cinv = contractsGrantsInvoiceCreateDocumentService.createCINVForReport(award);
+        KualiDecimal totalAmount = cinv.getTotalCostInvoiceDetail().getTotalBudget();
 
         for (final ContractsAndGrantsBillingAwardAccount awardAccount : award.getActiveAwardAccounts()) {
             int index = 0;
@@ -436,6 +441,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                             awardAccount,
                             systemOption.getActualFinancialBalanceTypeCd()
                     ));
+            
             if (ObjectUtils.isNotNull(awardAccount.getAccount().getFinancialIcrSeriesIdentifier())
                 && ObjectUtils.isNotNull(awardAccount.getAccount().getAcctIndirectCostRcvyTypeCd())) {
                 index++;
@@ -459,9 +465,10 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                             getReportingPeriodEndDate(reportingPeriod, year)
                     );
                 }
+
                 contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                         ArPropertyConstants.FederalFormReportFields.INDIRECT_EXPENSE_BASE + "_" + index,
-                        contractsGrantsBillingUtilityService.formatForCurrency(award.getAwardTotalAmount())
+                        contractsGrantsBillingUtilityService.formatForCurrency(cinv.getTotalDirectCostInvoiceDetail().getInvoiceAmount())
                 );
                 final Map<String, Object> key = new HashMap<>();
                 key.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
@@ -481,7 +488,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                     final KualiDecimal rate = new KualiDecimal(icrDetail.get(0).getAwardIndrCostRcvyRatePct());
                     if (ObjectUtils.isNotNull(rate)) {
                         final KualiDecimal ONE_HUNDRED = new KualiDecimal(100);
-                        final KualiDecimal indirectExpenseAmount = award.getAwardTotalAmount().multiply(rate).divide(ONE_HUNDRED);
+                        final KualiDecimal indirectExpenseAmount = cinv.getTotalIndirectCostInvoiceDetail().getInvoiceAmount();
                         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                                 ArPropertyConstants.FederalFormReportFields.INDIRECT_EXPENSE_AMOUNT + "_" + index,
                                 contractsGrantsBillingUtilityService.formatForCurrency(indirectExpenseAmount)
@@ -493,7 +500,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                         amountSum = amountSum.add(indirectExpenseAmount);
                     }
                 }
-                baseSum = baseSum.add(award.getAwardTotalAmount());
+                baseSum = baseSum.add(cinv.getTotalDirectCostInvoiceDetail().getInvoiceAmount());
             }
             contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                     ArPropertyConstants.FederalFormReportFields.INDIRECT_EXPENSE_BASE_SUM,
@@ -581,7 +588,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
         );
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                 ArPropertyConstants.FederalFormReportFields.TOTAL_FEDERAL_FUNDS_AUTHORIZED,
-                contractsGrantsBillingUtilityService.formatForCurrency(award.getAwardTotalAmount())
+                contractsGrantsBillingUtilityService.formatForCurrency(totalAmount)
         );
 
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
@@ -1543,6 +1550,15 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
 
     public void setFinancialSystemUserService(final FinancialSystemUserService financialSystemUserService) {
         this.financialSystemUserService = financialSystemUserService;
+    }
+
+    public CuContractsGrantsInvoiceCreateDocumentService getContractsGrantsInvoiceCreateDocumentService() {
+        return contractsGrantsInvoiceCreateDocumentService;
+    }
+
+    public void setContractsGrantsInvoiceCreateDocumentService(
+            CuContractsGrantsInvoiceCreateDocumentService contractsGrantsInvoiceCreateDocumentService) {
+        this.contractsGrantsInvoiceCreateDocumentService = contractsGrantsInvoiceCreateDocumentService;
     }
 
 }
