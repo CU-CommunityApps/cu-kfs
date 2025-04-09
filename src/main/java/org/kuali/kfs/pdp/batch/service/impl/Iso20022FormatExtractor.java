@@ -23,13 +23,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -39,16 +41,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeConstants;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
@@ -157,11 +155,6 @@ public class Iso20022FormatExtractor {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    /*
-     * CU Customization: Removed the private ADDTL_RMT_INF_MAX_LENGTH constant because our customized code
-     * no longer uses it.
-     */
-
     private static final String CURRENCY_USD = "USD";
     private static final int REF_MAX_LENGTH = 30;
 
@@ -170,6 +163,7 @@ public class Iso20022FormatExtractor {
      */
 
     private static final int VENDOR_NUM_MAX_LENGTH = 20;
+    private static final Pattern DANGLING_ESCAPE = Pattern.compile("&[^;]*$");
 
     /*
      * CU Customization: Added a helper regex for replacing newlines.
@@ -198,6 +192,8 @@ public class Iso20022FormatExtractor {
     private final CuCheckStubService cuCheckStubService;
     private final LocationService locationService;
     private final ZipcodeValidationPattern zipcodeValidationPattern;
+
+    private int addtlRmtInfMaxLength;
 
     private enum CheckDeliveryPriority {
         // 00000: Mail via Post to creditor's address. (Default if 'prtry' is omitted.)
@@ -450,7 +446,7 @@ public class Iso20022FormatExtractor {
     }
 
     /*
-     * This is a little awkward..but so is the data structure we're working with here. Ordinarily I'm against output
+     * This is a little awkward...but so is the data structure we're working with here. Ordinarily I'm against output
      * parameters; however this method will:
      *  - Increments transactionCounter parameter
      *  - Add to the amounts List
@@ -623,9 +619,8 @@ public class Iso20022FormatExtractor {
         groupHeader.setMsgId(messageId);
 
         final Date disbursementDate = extractTypeContext.getDisbursementDate();
-        final XMLGregorianCalendar creditDateTime = constructXmlGregorianCalendarWithDateAndTime(disbursementDate);
-        // TODO: Fix this!
-        //groupHeader.setCreDtTm(creditDateTime);
+        final OffsetDateTime creditDateTime = dateTimeService.toOffsetDateTime(disbursementDate);
+        groupHeader.setCreDtTm(creditDateTime);
 
         final int numberOfTransactions =
                 paymentInstructionInformationSet.stream()
@@ -665,40 +660,10 @@ public class Iso20022FormatExtractor {
         }
     }
 
-    private boolean checksWereExtracted(final CustomerCreditTransferInitiationV03 customerCreditTransferInitiation) {
+    private static boolean checksWereExtracted(
+            final CustomerCreditTransferInitiationV03 customerCreditTransferInitiation
+    ) {
         return Integer.parseInt(customerCreditTransferInitiation.getGrpHdr().getNbOfTxs()) > 0;
-    }
-
-    private static XMLGregorianCalendar constructXmlGregorianCalendarWithDateOnly(
-            final Date date
-    ) {
-        final XMLGregorianCalendar xmlGregorianCalendar = constructXmlGregorianCalendarWithDateAndTime(date);
-        if (xmlGregorianCalendar == null) {
-            return null;
-        }
-
-        // The XML should only include the date, not the time
-        xmlGregorianCalendar.setHour(DatatypeConstants.FIELD_UNDEFINED);
-        xmlGregorianCalendar.setMinute(DatatypeConstants.FIELD_UNDEFINED);
-        xmlGregorianCalendar.setSecond(DatatypeConstants.FIELD_UNDEFINED);
-        xmlGregorianCalendar.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
-
-        return xmlGregorianCalendar;
-    }
-
-    private static XMLGregorianCalendar constructXmlGregorianCalendarWithDateAndTime(
-            final Date date
-    ) {
-        XMLGregorianCalendar xmlGregorianCalendar = null;
-        try {
-            final GregorianCalendar gregorianCalendar = new GregorianCalendar();
-            gregorianCalendar.setTime(date);
-
-            xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
-        } catch (final DatatypeConfigurationException e) {
-            LOG.error("constructXmlGregorianCalendarWithDateAndTime(...) - Failed to create XMLGregorianCalendar", e);
-        }
-        return xmlGregorianCalendar;
     }
 
     private String retrieveInstitutionName() {
@@ -740,9 +705,8 @@ public class Iso20022FormatExtractor {
          * CU Customization: Moved most of the execution/extraction date setup to a separate method.
          */
         final Date extractionDate = determineExtractionDate(processTemplatePaymentGroup, extractTypeContext);
-        final XMLGregorianCalendar extractionDateForXml = constructXmlGregorianCalendarWithDateOnly(extractionDate);
-        // TODO: Fix this!
-        //paymentInstructionInformation.setReqdExctnDt(extractionDateForXml);
+        final LocalDate extractionDateForXml = dateTimeService.getLocalDate(extractionDate);
+        paymentInstructionInformation.setReqdExctnDt(extractionDateForXml);
 
         final PartyIdentification32 debtorPartyIdentification =
                 constructDebtorPartyIdentification(processTemplatePaymentGroup, extractTypeContext);
@@ -751,7 +715,8 @@ public class Iso20022FormatExtractor {
         final CashAccount16 debtorAccount = constructDebtorAccount(processTemplatePaymentGroup);
         paymentInstructionInformation.setDbtrAcct(debtorAccount);
 
-        final BranchAndFinancialInstitutionIdentification4 debtorAgent = constructDebtorAgent(processTemplatePaymentGroup);
+        final BranchAndFinancialInstitutionIdentification4 debtorAgent =
+                constructDebtorAgent(processTemplatePaymentGroup);
         paymentInstructionInformation.setDbtrAgt(debtorAgent);
 
         /*
@@ -811,7 +776,7 @@ public class Iso20022FormatExtractor {
         }
     }
 
-    private PaymentTypeInformation19 constructPaymentTypeInformationWithServiceLevel(
+    private static PaymentTypeInformation19 constructPaymentTypeInformationWithServiceLevel(
             final PaymentGroup templatePaymentGroup
     ) {
         final PaymentTypeInformation19 paymentTypeInformation = new PaymentTypeInformation19();
@@ -1581,7 +1546,7 @@ public class Iso20022FormatExtractor {
      * CU Customization: Updated this method to allow for deriving the check stub text from PDP notes,
      * if the PaymentDetail does not refer to a Disbursement Voucher.
      * 
-     * Also updated the method to derive the max check stub length from a helper service instead of a constant.
+     * Also updated the method to derive the max check stub length from a helper service instead of a variable.
      * 
      * Also updated the method to replace newlines in the check stub with spaces.
      */
@@ -1606,8 +1571,13 @@ public class Iso20022FormatExtractor {
             return;
         }
 
-        final String addtlRmtInf = StringUtils.truncate(cleanedCheckStubText,
+        final String encodedCheckStubText = StringEscapeUtils.escapeXml11(cleanedCheckStubText);
+        String addtlRmtInf = StringUtils.truncate(encodedCheckStubText,
                 cuCheckStubService.getCheckStubMaxLengthForIso20022());
+        if (DANGLING_ESCAPE.matcher(addtlRmtInf).find()) {
+            addtlRmtInf = StringUtils.substringBeforeLast(addtlRmtInf, "&");
+        }
+
         structuredRemittanceInformation.addAddtlRmtInf(addtlRmtInf);
     }
 
@@ -1615,7 +1585,7 @@ public class Iso20022FormatExtractor {
      * CU Customization: Added extraction context both as a method arg and as an extra arg on the Referred
      * Document Type setup.
      */
-    private static ReferredDocumentInformation3 constructReferredDocumentInformation(
+    private ReferredDocumentInformation3 constructReferredDocumentInformation(
             final PaymentDetail paymentDetail,
             final ExtractTypeContext extractTypeContext
     ) {
@@ -1632,9 +1602,8 @@ public class Iso20022FormatExtractor {
         referredDocumentInformation.setNb(documentNumber);
 
         final Date invoiceDate = new Date(paymentDetail.getInvoiceDate().getTime());
-        final XMLGregorianCalendar rltdDate = constructXmlGregorianCalendarWithDateOnly(invoiceDate);
-        // TODO: Fix this!
-        //referredDocumentInformation.setRltdDt(rltdDate);
+        final LocalDate rltdDate = dateTimeService.getLocalDate(invoiceDate);
+        referredDocumentInformation.setRltdDt(rltdDate);
 
         return referredDocumentInformation;
     }
@@ -1950,7 +1919,7 @@ public class Iso20022FormatExtractor {
             writeConfig.headerPrefix = null;
 
             final String xmlString = message.message(writeConfig);
-            os.write(xmlString.getBytes("UTF-8"));
+            os.write(xmlString.getBytes(StandardCharsets.UTF_8));
         } catch (final IOException e) {
             LOG.error("writeMessageToFile(...) - Problem writing message to file : filename={}", filename, e);
             // I don't like this but it's what the proprietary format is doing so keeping it for consistency.
@@ -1982,5 +1951,9 @@ public class Iso20022FormatExtractor {
                         "Errors encountered while saving the file: Unable to create .done file " + doneFilename);
             }
         }
+    }
+
+    public void setAddtlRmtInfMaxLength(final int addtlRmtInfMaxLength) {
+        this.addtlRmtInfMaxLength = addtlRmtInfMaxLength;
     }
 }
