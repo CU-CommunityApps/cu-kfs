@@ -78,10 +78,6 @@ public class SprintaxPayment {
         return foreignSourceIncome != null && foreignSourceIncome.booleanValue();
     }
 
-    public boolean isExplicitlyMarkedAsNotForeignSourceIncome() {
-        return foreignSourceIncome != null && !foreignSourceIncome.booleanValue();
-    }
-
     public KualiDecimal getFedIncomeTaxPercent() {
         return fedIncomeTaxPercent;
     }

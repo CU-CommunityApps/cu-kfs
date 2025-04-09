@@ -60,16 +60,15 @@ public class TaxStatistics implements TaxStatisticsHandler {
     }
 
     private Map<TaxStatType, Integer> getResultsAsUnmodifiableMapWithNaturalEnumOrdering() {
-        return statistics.entrySet().stream()
-                .collect(Collectors.collectingAndThen(
-                        Collectors.toMap(
-                                entry -> entry.getKey(),
-                                entry -> entry.getValue().getValue(),
-                                (value1, value2) -> value1,
-                                () -> new EnumMap<>(TaxStatType.class)
-                        ),
-                        Collections::unmodifiableMap
+        final EnumMap<TaxStatType, Integer> results = statistics.entrySet().stream()
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey(),
+                        entry -> entry.getValue().toInteger(),
+                        (value1, value2) -> value1,
+                        () -> new EnumMap<>(TaxStatType.class)
                 ));
+
+        return Collections.unmodifiableMap(results);
     }
 
 }

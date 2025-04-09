@@ -46,8 +46,6 @@ public abstract class TaxRowClusionBuilderBase {
         return cumulativeResult;
     }
 
-
-
     protected void checkAgainstExclusions(final String parameterName, final String value,
             final TaxStatType statToUpdateIfExcluded) {
         handleOutcomeOfExclusionCheck(
@@ -82,8 +80,6 @@ public abstract class TaxRowClusionBuilderBase {
             resultOfPreviousCheck = TaxRowClusionResult.INCLUDE;
         }
     }
-
-
 
     protected void checkAgainstSubValues(final TaxParameterClusionHelper helper, final String key,
             final String value) {
@@ -132,8 +128,6 @@ public abstract class TaxRowClusionBuilderBase {
             statsHandler.increment(helper.getTaxStatToUpdateForUndeterminedClusion(), transactionDocType);
         }
     }
-
-
 
     protected boolean multiValueParameterContains(final String parameterName, final String value) {
         return getMultiValueParameter(parameterName).contains(value);
