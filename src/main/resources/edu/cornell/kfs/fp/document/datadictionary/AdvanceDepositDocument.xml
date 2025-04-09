@@ -12,12 +12,12 @@
 		<property name="allowsErrorCorrection" value="false"/>
 	</bean>
 	
-	<bean id="AdvanceDepositDocument-workflowAttributes" parent="AdvanceDepositDocument-workflowAttributes-parentBean">
-		    <property name="routingTypeDefinitions">
-    		<map>
-    			<entry key="AccountingOrganizationHierarchy" value-ref="RoutingType-AccountingDocument-OrganizationHierarchy"/>
-    		</map>
-    	</property>
-    	
-	</bean>
+    <bean id="AdvanceDepositDocument-workflowAttributes" parent="AdvanceDepositDocument-workflowAttributes-parentBean">
+        <property name="routingTypeDefinitions">
+            <map merge="true">
+                <entry key="AccountingOrganizationHierarchy" value-ref="RoutingType-AccountingDocument-OrganizationHierarchy"/>
+            </map>
+        </property>
+    </bean>
+
 </beans>

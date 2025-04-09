@@ -1723,7 +1723,9 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- End of CXF dependencies. -->
+        <!--
+            End of CXF dependencies.
+         -->
 
         <!--
             Start of JAX-RS dependencies. These should be removed after we convert
@@ -1817,7 +1819,9 @@
             <artifactId>jakarta.el-api</artifactId>
             <version>${jakarta.el.el-api.version}</version>
         </dependency>
-        <!-- End of JAX-RS dependencies. -->
+        <!--
+            End of JAX-RS dependencies.
+         -->
 
         <dependency>
             <groupId>com.prowidesoftware</groupId>

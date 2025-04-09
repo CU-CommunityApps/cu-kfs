@@ -24,8 +24,6 @@ import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.api.document.DocumentStatus;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
-import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.kfs.kim.api.permission.PermissionService;
 import org.kuali.kfs.krad.datadictionary.exception.UnknownDocumentTypeException;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -43,15 +41,12 @@ import org.kuali.kfs.module.purap.businessobject.PaymentRequestView;
 import org.kuali.kfs.module.purap.businessobject.PurApGenericAttributes;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderView;
 import org.kuali.kfs.module.purap.businessobject.RequisitionView;
-import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
-import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.module.purap.service.PurapAuthorizationService;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class PurApRelatedViews {
 
@@ -139,22 +134,9 @@ public class PurApRelatedViews {
                     view.getDocumentNumber());
             if (!StringUtils.equals(documentStatus.getCode(), DocumentStatus.FINAL.getCode())) {
                 final String principalId = GlobalVariables.getUserSession().getPrincipalId();
-
-                final String namespaceCode = KFSConstants.CoreModuleNamespaces.KFS;
-                final String permissionTemplateName = KimConstants.PermissionTemplateNames.FULL_UNMASK_FIELD;
-
-                final Map<String, String> roleQualifiers = new HashMap<>();
-
-                final Map<String, String> permissionDetails = new HashMap<>();
-                permissionDetails.put(KimConstants.AttributeConstants.COMPONENT_NAME,
-                        PurchaseOrderDocument.class.getSimpleName());
-                permissionDetails.put(KimConstants.AttributeConstants.PROPERTY_NAME,
-                        PurapPropertyConstants.PURAP_DOC_ID);
-
-                final PermissionService permissionService =
-                        SpringContext.getBean(PermissionService.class);
-                final boolean isAuthorized = permissionService.isAuthorizedByTemplate(principalId,
-                        namespaceCode, permissionTemplateName, permissionDetails, roleQualifiers);
+                final PurapAuthorizationService purapAuthorizationService =
+                        SpringContext.getBean(PurapAuthorizationService.class);
+                final boolean isAuthorized = purapAuthorizationService.isAuthorizedToViewPurapDocId(principalId);
                 if (!isAuthorized) {
                     //not authorized to see... so mask the po number string
                     poIDstr = "";

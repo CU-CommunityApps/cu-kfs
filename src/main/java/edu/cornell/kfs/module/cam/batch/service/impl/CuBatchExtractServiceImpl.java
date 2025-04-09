@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.kuali.kfs.gl.businessobject.Entry;
 import org.apache.logging.log4j.LogManager;
@@ -280,9 +281,15 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                             assetAccount.setItemAccountTotalAmount(assetAccount.getItemAccountTotalAmount()
                                     .add(purApAccountingLine.getAmount()));
                         } else {
-                            assetAccount = createPurchasingAccountsPayableLineAssetAccount(currentEntry, cabPurapDoc, purApAccountingLine, itemAsset);
-                            assetAcctLines.put(acctLineKey, assetAccount);
-                            itemAsset.getPurchasingAccountsPayableLineAssetAccounts().add(assetAccount);
+                            assetAccount = createPurchasingAccountsPayableLineAssetAccount(currentEntry, cabPurapDoc,
+                                    purApAccountingLine, itemAsset);
+                            // Under rare circumstances (e.g. adding then removing sub-account on PREQ line), we may end up
+                            // with a duplicate assetAccount. Adding it to the collection will result in an
+                            // OptimisticLockException when the itemAsset is saved below, so we want to avoid that.
+                            if (itemAssetDoesNotContainAssetAccount(itemAsset, assetAccount)) {
+                                assetAcctLines.put(acctLineKey, assetAccount);
+                                itemAsset.getPurchasingAccountsPayableLineAssetAccounts().add(assetAccount);
+                            }
                         }
                     } else if (ObjectUtils.isNotNull(assetAccount)) {
                         // if account line key matches within same GL Entry, combine the amount
@@ -337,7 +344,33 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
         updateProcessLog(processLog, getReconciliationService());
         return purApDocuments;
     }
-    
+
+    /*
+     * Copied this private KualiCo method from the superclass.
+     */
+    private static boolean itemAssetDoesNotContainAssetAccount(
+            final PurchasingAccountsPayableItemAsset itemAsset,
+            final PurchasingAccountsPayableLineAssetAccount assetAccount
+    ) {
+        return itemAsset.getPurchasingAccountsPayableLineAssetAccounts()
+                .stream()
+                .noneMatch(existingAssetAccount ->
+                        Objects.equals(existingAssetAccount.getDocumentNumber(), assetAccount.getDocumentNumber())
+                        && Objects.equals(
+                                existingAssetAccount.getAccountsPayableLineItemIdentifier(),
+                                assetAccount.getAccountsPayableLineItemIdentifier()
+                        ) && Objects.equals(
+                                existingAssetAccount.getCapitalAssetBuilderLineNumber(),
+                                assetAccount.getCapitalAssetBuilderLineNumber()
+                        ) && Objects.equals(
+                                existingAssetAccount.getGeneralLedgerAccountIdentifier(),
+                                assetAccount.getGeneralLedgerAccountIdentifier()
+                        ) && Objects.equals(
+                                existingAssetAccount.getItemAccountTotalAmount(),
+                                assetAccount.getItemAccountTotalAmount()
+                        ));
+    }
+
     /**
      * Returns true if the item type code is trade-in or discount, since items with these types usually have negative amounts.
      */
