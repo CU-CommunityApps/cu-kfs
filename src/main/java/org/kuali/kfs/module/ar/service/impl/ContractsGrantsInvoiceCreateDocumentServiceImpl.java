@@ -495,8 +495,6 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         }
     }
     
-
-
     /*
      * CU Customization KFSPTS-23690 NOTE:
      * Currently, this method is only called from within this class from protected method
