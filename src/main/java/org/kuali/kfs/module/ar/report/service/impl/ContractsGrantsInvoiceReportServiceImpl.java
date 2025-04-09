@@ -429,6 +429,8 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
     ) {
         KualiDecimal cashDisbursement = KualiDecimal.ZERO;
         final SystemOptions systemOption = optionsService.getCurrentYearOptions();
+        //TODO: currently I am just creating a mock CINV to get the needed calculated values for this report; determine if there is a better way to do this.
+        //Cornell customization
         ContractsGrantsInvoiceDocument cinv = contractsGrantsInvoiceCreateDocumentService.createCINVForReport(award);
         KualiDecimal totalAmount = cinv.getTotalCostInvoiceDetail().getTotalBudget();
 
@@ -459,6 +461,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                             getDateTimeService().toDateString(awardAccount.getAccount().getAccountEffectiveDate())
                     );
                 }
+                //Cornell customization
                 if (ObjectUtils.isNotNull(awardAccount.getAccount().getAccountExpirationDate())) {
                     contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                             ArPropertyConstants.FederalFormReportFields.INDIRECT_EXPENSE_PERIOD_TO + "_" + index,
@@ -466,9 +469,10 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                     );
                 }
 
+                //Cornell customization
                 contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                         ArPropertyConstants.FederalFormReportFields.INDIRECT_EXPENSE_BASE + "_" + index,
-                        contractsGrantsBillingUtilityService.formatForCurrency(cinv.getTotalDirectCostInvoiceDetail().getInvoiceAmount())
+                        contractsGrantsBillingUtilityService.formatForCurrency(cinv.getTotalDirectCostInvoiceDetail().getTotalAmountBilledToDate())
                 );
                 final Map<String, Object> key = new HashMap<>();
                 key.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
@@ -488,7 +492,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                     final KualiDecimal rate = new KualiDecimal(icrDetail.get(0).getAwardIndrCostRcvyRatePct());
                     if (ObjectUtils.isNotNull(rate)) {
                         final KualiDecimal ONE_HUNDRED = new KualiDecimal(100);
-                        final KualiDecimal indirectExpenseAmount = cinv.getTotalIndirectCostInvoiceDetail().getInvoiceAmount();
+                        final KualiDecimal indirectExpenseAmount = cinv.getTotalIndirectCostInvoiceDetail().getTotalAmountBilledToDate();
                         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                                 ArPropertyConstants.FederalFormReportFields.INDIRECT_EXPENSE_AMOUNT + "_" + index,
                                 contractsGrantsBillingUtilityService.formatForCurrency(indirectExpenseAmount)
@@ -500,7 +504,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                         amountSum = amountSum.add(indirectExpenseAmount);
                     }
                 }
-                baseSum = baseSum.add(cinv.getTotalDirectCostInvoiceDetail().getInvoiceAmount());
+                baseSum = baseSum.add(cinv.getTotalDirectCostInvoiceDetail().getTotalAmountBilledToDate());
             }
             contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                     ArPropertyConstants.FederalFormReportFields.INDIRECT_EXPENSE_BASE_SUM,
@@ -586,10 +590,15 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                 ArPropertyConstants.FederalFormReportFields.CASH_RECEIPTS,
                 contractsGrantsBillingUtilityService.formatForCurrency(getCashReceipts(award))
         );
+        KualiDecimal expenditures = KualiDecimal.ZERO;
+        if (ObjectUtils.isNotNull(cashDisbursement)) {
+            expenditures = cashDisbursement;
+        }
+        // Cornell customization
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                 ArPropertyConstants.FederalFormReportFields.TOTAL_FEDERAL_FUNDS_AUTHORIZED,
-                contractsGrantsBillingUtilityService.formatForCurrency(totalAmount)
-        );
+                contractsGrantsBillingUtilityService.formatForCurrency(awardExtendedAttribute.getBudgetTotalAmount().subtract(expenditures))
+        ); //Total federal funds used to be: award.getAwardTotalAmount()
 
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                 ArPropertyConstants.FederalFormReportFields.REPORTING_PERIOD_END_DATE,
