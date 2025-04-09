@@ -7,11 +7,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
-import org.kuali.kfs.gl.businessobject.Entry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.gl.businessobject.Entry;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cam.CamsPropertyConstants;
@@ -31,7 +33,6 @@ import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.springframework.transaction.annotation.Transactional;
 
 public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
@@ -283,12 +284,13 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                         } else {
                             assetAccount = createPurchasingAccountsPayableLineAssetAccount(currentEntry, cabPurapDoc,
                                     purApAccountingLine, itemAsset);
-                            // Under rare circumstances (e.g. adding then removing sub-account on PREQ line), we may end up
-                            // with a duplicate assetAccount. Adding it to the collection will result in an
-                            // OptimisticLockException when the itemAsset is saved below, so we want to avoid that.
-                            if (itemAssetDoesNotContainAssetAccount(itemAsset, assetAccount)) {
+                            final int oldNumAssetAccounts =
+                                    itemAsset.getPurchasingAccountsPayableLineAssetAccounts().size();
+                            addOrUpdateAssetAccount(itemAsset, assetAccount);
+                            final int newNumAssetAccounts =
+                                    itemAsset.getPurchasingAccountsPayableLineAssetAccounts().size();
+                            if (newNumAssetAccounts > oldNumAssetAccounts) {
                                 assetAcctLines.put(acctLineKey, assetAccount);
-                                itemAsset.getPurchasingAccountsPayableLineAssetAccounts().add(assetAccount);
                             }
                         }
                     } else if (ObjectUtils.isNotNull(assetAccount)) {
@@ -346,29 +348,49 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
     }
 
     /*
-     * Copied this private KualiCo method from the superclass.
+     * Copied this private KualiCo method from the 2023-10-18 financials version of the superclass.
      */
-    private static boolean itemAssetDoesNotContainAssetAccount(
+    private static void addOrUpdateAssetAccount(
             final PurchasingAccountsPayableItemAsset itemAsset,
             final PurchasingAccountsPayableLineAssetAccount assetAccount
     ) {
-        return itemAsset.getPurchasingAccountsPayableLineAssetAccounts()
-                .stream()
-                .noneMatch(existingAssetAccount ->
-                        Objects.equals(existingAssetAccount.getDocumentNumber(), assetAccount.getDocumentNumber())
-                        && Objects.equals(
-                                existingAssetAccount.getAccountsPayableLineItemIdentifier(),
+        final Optional<PurchasingAccountsPayableLineAssetAccount> matchingAssetAccount =
+                itemAsset.getPurchasingAccountsPayableLineAssetAccounts()
+                        .stream()
+                        .filter(existingAssetAccount -> Objects.equals(existingAssetAccount.getDocumentNumber(),
+                                assetAccount.getDocumentNumber()
+                        ))
+                        .filter(existingAssetAccount ->
+                                Objects.equals(existingAssetAccount.getAccountsPayableLineItemIdentifier(),
                                 assetAccount.getAccountsPayableLineItemIdentifier()
-                        ) && Objects.equals(
-                                existingAssetAccount.getCapitalAssetBuilderLineNumber(),
+                        ))
+                        .filter(existingAssetAccount ->
+                                Objects.equals(existingAssetAccount.getCapitalAssetBuilderLineNumber(),
                                 assetAccount.getCapitalAssetBuilderLineNumber()
-                        ) && Objects.equals(
-                                existingAssetAccount.getGeneralLedgerAccountIdentifier(),
+                        ))
+                        .filter(existingAssetAccount ->
+                                Objects.equals(existingAssetAccount.getGeneralLedgerAccountIdentifier(),
                                 assetAccount.getGeneralLedgerAccountIdentifier()
-                        ) && Objects.equals(
-                                existingAssetAccount.getItemAccountTotalAmount(),
+                        ))
+                        .filter(existingAssetAccount ->
+                                Objects.equals(existingAssetAccount.getItemAccountTotalAmount(),
                                 assetAccount.getItemAccountTotalAmount()
-                        ));
+                        ))
+                        .findFirst();
+
+        // Under rare circumstances (e.g. adding then removing sub-account on PREQ line), we may end up with a duplicate
+        // assetAccount. Adding it to the collection will result in an OptimisticLockException (OLE) when the
+        // itemAsset is saved. In order to avoid the OLE and get the correct amount, we update the existing assetAccount
+        // instead of adding it again.
+        if (matchingAssetAccount.isPresent()) {
+            final PurchasingAccountsPayableLineAssetAccount purchasingAccountsPayableLineAssetAccount =
+                    matchingAssetAccount.get();
+            purchasingAccountsPayableLineAssetAccount.setItemAccountTotalAmount(
+                    purchasingAccountsPayableLineAssetAccount.getItemAccountTotalAmount()
+                            .add(assetAccount.getItemAccountTotalAmount()));
+        } else {
+            itemAsset.getPurchasingAccountsPayableLineAssetAccounts().add(assetAccount);
+        }
     }
 
     /**
