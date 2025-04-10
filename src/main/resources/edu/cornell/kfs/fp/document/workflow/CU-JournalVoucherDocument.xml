@@ -1,39 +1,34 @@
-<?xml version='1.0' encoding='UTF-8'?> 
-<!--
- Copyright 2008-2009 The Kuali Foundation
- 
- Licensed under the Educational Community License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
- 
- http://www.opensource.org/licenses/ecl2.php
- 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
--->
-<data xmlns="ns:workflow" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
-  <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
-    <documentType>
-      <name>JV</name>
-      <parent>FP</parent>
-      <label>Journal Voucher</label>
-      <docHandler>${kfs.url}/financialJournalVoucher.do?methodToCall=docHandler</docHandler>
-      <routePaths>
-        <routePath>
-          <start name="AdHoc" nextNode="JVApproval"/>
-          <requests name="JVApproval" />
-        </routePath>
-      </routePaths>
-      <routeNodes>
-        <start name="AdHoc"/>
-        <role name="JVApproval">
-			<qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-			<activationType>P</activationType>
-		</role>
-      </routeNodes>
-    </documentType>
-  </documentTypes>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<data xmlns="ns:workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
+    <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
+        <documentType>
+            <name>JV</name>
+            <parent>FP</parent>
+            <label>Journal Voucher</label>
+            <authorizer>org.kuali.kfs.krad.workflow.authorizer.CfDocumentTypeAuthorizer</authorizer>
+            <docHandler>${application.url}/financialJournalVoucher.do?methodToCall=docHandler</docHandler>
+            <helpDefinitionURL>default.htm?turl=WordDocuments%2Fjournalvoucher.htm</helpDefinitionURL>
+            <docSearchHelpURL>default.htm?turl=WordDocuments%2Fjournalvoucher.htm</docSearchHelpURL>
+            <active>true</active>
+            <routingVersion>2</routingVersion>
+            <routePaths>
+                <routePath>
+                    <start name="AdHoc" nextNode="AccountingOrganizationHierarchy"/>
+                    <role name="AccountingOrganizationHierarchy" nextNode="JVApproval"/>
+                    <role name="JVApproval"/>
+                </routePath>
+            </routePaths>
+            <routeNodes>
+                <start name="AdHoc"/>
+                <role name="AccountingOrganizationHierarchy">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="JVApproval">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+            </routeNodes>
+        </documentType>
+    </documentTypes>
 </data>
