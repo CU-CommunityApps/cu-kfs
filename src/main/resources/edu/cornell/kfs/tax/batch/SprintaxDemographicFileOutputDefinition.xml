@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taxOutputDefinition fieldSeparator="," amountFormat="#########.##" percentFormat="00">
+    <section name="Sprintax_Demographic_Row_1042S" useExactFieldLengths="false">
+        <field name="First_Name" length="40" type="STRING" key="vendorFirstName"/>
+        <field name="Middle_Name" length="40" type="STATIC" value=""/>
+        <field name="Last_Name" length="40" type="STRING" key="vendorLastName"/>
+        <field name="Email" length="90" type="STRING" key="vendorEmailAddress"/>
+        <field name="Unique_ID_Student_Number" length="40" type="STRING" key="payeeId"/>
+        <field name="TIN" length="11" type="SENSITIVE_STRING" key="formattedSSNValue" mask="XXXXXXXXXXX"/>
+        <field name="DOB" length="10" type="STATIC" value=""/>
+        <field name="Foreign_Tax_ID" length="11" type="SENSITIVE_STRING" key="formattedITINValue" mask="XXXXXXXXXXX"/>
+        <field name="Country_of_Residence" length="40" type="STRING" key="vendorForeignCountryCode"/>
+        <field name="US_Address_Line_1" length="40" type="STRING" key="vendorLine1Address"/>
+        <field name="US_Address_Line_2" length="40" type="STRING" key="vendorLine2Address"/>
+        <field name="US_City" length="40" type="STRING" key="vendorCityName"/>
+        <field name="US_State" length="40" type="STRING" key="vendorStateCode"/>
+        <field name="US_zip" length="40" type="STRING" key="vendorZipCode"/>
+        <field name="NOnUS_Address_Line_1" length="40" type="STRING" key="vendorForeignLine1Address"/>
+        <field name="NonUS_Address_Province" length="40" type="STRING" key="vendorForeignProvinceName"/>
+        <field name="NonUS_Address_City" length="40" type="STRING" key="vendorForeignCityName"/>
+        <field name="NonUS_address_Country" length="40" type="STRING" key="vendorForeignCountryCode"/>
+        <field name="NonUS-Address_postal_code" length="40" type="STRING" key="vendorForeignZipCode"/>
+        <field name="Mailing_Address" length="40" type="STATIC" value=""/>
+        <field name="Canada_Province" length="40" type="STRING" key="canadianProvinceName"/>
+    </section>
+</taxOutputDefinition>
