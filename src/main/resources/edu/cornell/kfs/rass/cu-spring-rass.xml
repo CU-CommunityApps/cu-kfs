@@ -131,9 +131,7 @@
 
 	<bean id="rassValueConverterBase" class="edu.cornell.kfs.rass.batch.RassValueConverterBase"
 			p:dataDictionaryService-ref="dataDictionaryService"/>
-	<bean id="rassPrimitiveValueConverter" abstract="true" class="edu.cornell.kfs.rass.batch.RassPrimitiveValueConverter"/>
-	<bean id="rassPrimitiveBooleanConverter" parent="rassPrimitiveValueConverter"
-			p:primitiveType="#{ T(java.lang.Boolean).TYPE }"/>
+	<bean id="rassBooleanConverter" class="edu.cornell.kfs.rass.batch.RassBooleanConverter"/>
 	<bean id="rassProposalOrganizationConverter" class="edu.cornell.kfs.rass.batch.RassOrganizationConverterForProposal"/>
 	<bean id="rassAwardOrganizationConverter" class="edu.cornell.kfs.rass.batch.RassOrganizationConverterForAward"/>
 	<bean id="rassPurposeCodeConverter" class="edu.cornell.kfs.rass.batch.RassPurposeCodeConverter"
@@ -199,7 +197,7 @@
 				<bean parent="rassProposalProperty" p:xmlPropertyName="purpose" p:boPropertyName="proposalPurposeCode" p:required="false" p:valueConverter-ref="rassPurposeCodeConverter"/>
 				<bean parent="rassProposalProperty" p:xmlPropertyName="grantNumber" p:boPropertyName="grantNumber" p:required="false" p:skipForObjectEdit="false"/>
 				<bean parent="rassProposalProperty" p:xmlPropertyName="federalPassThrough" p:boPropertyName="proposalFederalPassThroughIndicator" p:required="false"
-						p:valueConverter-ref="rassPrimitiveBooleanConverter"/>
+						p:valueConverter-ref="rassBooleanConverter"/>
 				<bean parent="rassProposalProperty" p:xmlPropertyName="federalPassThroughAgencyNumber" p:boPropertyName="federalPassThroughAgencyNumber" p:required="false"/>
 				<bean parent="rassProposalListPropertyWithProposalNumberMapping" p:xmlPropertyName="organizationCode" p:boPropertyName="proposalOrganizations" p:required="false"
 						p:valueConverter-ref="rassProposalOrganizationConverter" p:subObjectDefinition-ref="proposalOrganizationDefinition" p:skipForObjectEdit="false"/>
@@ -268,7 +266,7 @@
 				<bean parent="rassProperty" p:xmlPropertyName="purpose" p:boPropertyName="awardPurposeCode" p:required="true" p:valueConverter-ref="rassPurposeCodeConverter"/>
 				<bean parent="rassProperty" p:xmlPropertyName="grantDescription" p:boPropertyName="grantDescriptionCode" p:required="true" p:valueConverter-ref="rassGrantDescriptionConverter"/>
 				<bean parent="rassProperty" p:xmlPropertyName="federalPassThrough" p:boPropertyName="federalPassThroughIndicator" p:required="false"
-						p:valueConverter-ref="rassPrimitiveBooleanConverter"/>
+						p:valueConverter-ref="rassBooleanConverter"/>
 				<bean parent="rassProperty" p:xmlPropertyName="federalPassThroughAgencyNumber" p:boPropertyName="federalPassThroughAgencyNumber" p:required="false"/>
 				<bean parent="rassListPropertyWithProposalNumberMapping" p:xmlPropertyName="organizationCode" p:boPropertyName="awardOrganizations" p:required="true"
 						p:valueConverter-ref="rassAwardOrganizationConverter" p:subObjectDefinition-ref="awardOrganizationDefinition"/>
@@ -280,9 +278,9 @@
 				<bean parent="rassProperty" p:xmlPropertyName="primeAgreementNumber" p:boPropertyName="extension.primeAgreementNumber" p:required="false" p:truncateWithEllipsis="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="pricingType" p:boPropertyName="instrumentTypeCode" p:required="false" p:valueConverter-ref="rassInstrumentTypeCodeConverter"/>
 				<bean parent="rassProperty" p:xmlPropertyName="everify" p:boPropertyName="extension.everify" p:required="false"
-						p:valueConverter-ref="rassPrimitiveBooleanConverter"/>
+						p:valueConverter-ref="rassBooleanConverter"/>
 				<bean parent="rassProperty" p:xmlPropertyName="finalFinancialReportRequired" p:boPropertyName="extension.finalFinancialReportRequired" p:required="false"
-						p:valueConverter-ref="rassPrimitiveBooleanConverter"/>
+						p:valueConverter-ref="rassBooleanConverter"/>
 				<bean parent="rassListPropertyWithProposalNumberMapping" p:xmlPropertyName="principalAndCoPrincipalInvestigators" p:boPropertyName="awardProjectDirectors"
 						p:required="true" p:valueConverter-ref="rassAwardProjectDirectorConverter" p:subObjectDefinition-ref="awardProjectDirectorDefinition"/>
 			</list>
