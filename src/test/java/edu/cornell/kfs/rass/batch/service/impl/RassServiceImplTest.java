@@ -20,9 +20,12 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.kfs.kew.api.KewApiConstants;
+import org.kuali.kfs.kew.routeheader.service.RouteHeaderService;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.kns.maintenance.Maintainable;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.module.cg.businessobject.Agency;
@@ -37,9 +40,6 @@ import org.kuali.kfs.module.cg.businessobject.ProposalOrganization;
 import org.kuali.kfs.module.cg.service.AgencyService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
-import org.kuali.kfs.kew.api.KewApiConstants;
-import org.kuali.kfs.kew.routeheader.service.RouteHeaderService;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Stubber;
 
@@ -53,6 +53,7 @@ import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResult;
 import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResultGrouping;
 import edu.cornell.kfs.rass.batch.RassXmlFileParseResult;
 import edu.cornell.kfs.rass.batch.RassXmlFileProcessingResult;
+import edu.cornell.kfs.rass.batch.util.RassTestUtils;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXMLAwardPiCoPiEntryFixture;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAgencyEntryFixture;
@@ -947,13 +948,14 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     }
 
     private void assertXmlContentsPerformExpectedObjectUpdates(
-            List<FileWithExpectedResults> filesWithResults) throws Exception {
-        List<RassXmlFileParseResult> parseResults = filesWithResults.stream()
+            final List<FileWithExpectedResults> filesWithResults) throws Exception {
+        final List<RassXmlFileParseResult> parseResults = filesWithResults.stream()
                 .map(FileWithExpectedResults::getFileFixture)
                 .map(this::buildWrapperEncasedInSuccessfulFileResult)
                 .collect(Collectors.toCollection(ArrayList::new));
         
-        Map<String, RassXmlFileProcessingResult> actualFileResults = rassService.updateKFS(parseResults);
+        final Map<String, RassXmlFileProcessingResult> actualFileResults = RassTestUtils
+                .doWithMockHandlingOfProjectDirectorRefreshes(() -> rassService.updateKFS(parseResults));
         assertFilesPerformedExpectedObjectUpdates(filesWithResults, actualFileResults);
     }
 
