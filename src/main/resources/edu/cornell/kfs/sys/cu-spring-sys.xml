@@ -457,6 +457,10 @@
         <property name="isoCountryService" ref="isoCountryService" />
         <property name="configurationService" ref="configurationService" />
     </bean>
+    
+    <bean id="apiAuthenticatorService" class="edu.cornell.kfs.sys.service.impl.APIAuthenticatorServiceImpl">
+        <property name="businessObjectService" ref="businessObjectService" />
+    </bean>
 
     <bean id="testISOFIPSConversionMappingsJob" parent="testISOFIPSConversionMappingsJob-parentBean"/>
     <bean id="testISOFIPSConversionMappingsJob-parentBean" parent="scheduledJobDescriptor" abstract="true">

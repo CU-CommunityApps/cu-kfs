@@ -415,4 +415,28 @@
         <field-descriptor name="correspondentBankSwiftCode" column="CRSPNDT_BNK_SWIFT_CD" jdbc-type="VARCHAR"/>
     </class-descriptor>
     
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.APIEndpointDescriptor" table="KFS.CU_API_ENDPOINT_DESC_T">
+        <field-descriptor name="id" column="ID" jdbc-type="BIGINT" primarykey="true" index="true" autoincrement="true" sequence-name="KFS.CU_API_ENDPOINT_DESC_ID_SQ"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="apiCode" column="API_CODE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="apiDescription" column="API_DESCRIPTION" jdbc-type="VARCHAR"/>
+        <field-descriptor name="lastUpdateTimestamp" column="LAST_UPDATE_TS" jdbc-type="TIMESTAMP" index="true"/>
+    </class-descriptor>
+    
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.APIAuthenticator" table="KFS.CU_API_AUTHENTICATOR_T">
+        <field-descriptor name="id" column="ID" jdbc-type="VARCHAR" primarykey="true" index="true" sequence-name="KFS.CU_API_AUTHENTICATOR_ID_SQ"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="authenticationValue" column="AUTH_VALUE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="lastUpdateTimestamp" column="LAST_UPDATE_TS" jdbc-type="TIMESTAMP" index="true"/>
+        
+        <collection-descriptor name="apiEndpointDescriptors" 
+                               element-class-ref="edu.cornell.kfs.sys.businessobject.APIEndpointDescriptor" 
+                               collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" 
+                               indirection-table="KFS.CU_API_AUTH_ENDPOINT_T">
+            <fk-pointing-to-this-class column="API_AUTH_ID"/>
+            <fk-pointing-to-element-class column="API_ENDPOINT_ID"/>
+        </collection-descriptor>
+    </class-descriptor>
 </descriptor-repository>
