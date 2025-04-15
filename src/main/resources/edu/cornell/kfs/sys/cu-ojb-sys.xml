@@ -415,4 +415,32 @@
         <field-descriptor name="correspondentBankSwiftCode" column="CRSPNDT_BNK_SWIFT_CD" jdbc-type="VARCHAR"/>
     </class-descriptor>
     
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ResourceDescription" table="CU_SYS_RSC_DESC_T">
+        <field-descriptor name="resourceCode" column="RSC_CD" jdbc-type="VARCHAR" primarykey="true" indexed="true" />
+        <field-descriptor name="resourceDescription" column="RSC_DESC" jdbc-type="VARCHAR" />
+        <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true" />
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+        <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+    </class-descriptor>
+    
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ResourceAuthenticator" table="CU_SYS_RSC_AUTH_T">
+        <field-descriptor name="authenticatorId" column="AUTH_ID" jdbc-type="INTEGER" primarykey="true" indexed="true" autoincrement="true" sequence-name="CU_SYS_RSC_AUTH_ID_SEQ" />
+        <field-descriptor name="authenticatorDescrtion" column="AUTH_DESC" jdbc-type="VARCHAR" />
+        <field-descriptor name="userNamePassword" column="USR_NM_PWD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion" />
+        <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true" />
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+        <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+        
+        <collection-descriptor name="resourceDescriptions" proxy="true" element-class-ref="edu.cornell.kfs.sys.businessobject.ResourceDescription" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="none" auto-delete="none">
+            <inverse-foreignkey field-ref="authenticatorId" />
+            <fk-pointing-to-this-class column="AUTH_ID" />
+            <fk-pointing-to-element-class column="RSC_CD" />
+            <query-customizer class="org.apache.ojb.broker.accesslayer.QueryCustomizerDefaultImpl">
+                <attribute name="joinTable" value="CU_SYS_RSC_AUTH_DESC_T" />
+            </query-customizer>
+        </collection-descriptor>
+    </class-descriptor>
+    
 </descriptor-repository>
