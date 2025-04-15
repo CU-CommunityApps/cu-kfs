@@ -19,7 +19,7 @@
                             <role name="Initiator" nextNode="JoinRequiresApproval"/>
                         </branch>
                         <branch name="False">
-                            <simple name="NoOpManagement" nextNode="JoinRequiresApproval"/>
+                            <simple name="Do Nothing" nextNode="JoinRequiresApproval"/>
                         </branch>
                         <join name="JoinRequiresApproval"/>
                     </split>
@@ -28,7 +28,7 @@
                             <role name="VendorTaxIDReviewer" nextNode="JoinRequiresVendorTaxIdManager"/>
                         </branch>
                         <branch name="False">
-                            <simple name="NoOpTaxIdManager" nextNode="JoinRequiresVendorTaxIdManager"/>
+                            <simple name="Do Nothing" nextNode="JoinRequiresVendorTaxIdManager"/>
                         </branch>
                         <join name="JoinRequiresVendorTaxIdManager"/>
                     </split>
@@ -53,10 +53,7 @@
                 </role>
                 <join name="JoinRequiresApproval"/>
                 <join name="JoinRequiresVendorTaxIdManager"/>
-                <simple name="NoOpManagement">
-                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-                </simple>
-                <simple name="NoOpTaxIdManager">
+                <simple name="Do Nothing">
                     <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
                 </simple>
             </routeNodes>

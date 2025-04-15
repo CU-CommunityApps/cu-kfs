@@ -100,7 +100,7 @@ public class CuVendorWorkDayServiceImpl extends DisposableClientServiceImplBase 
     }
 
     private String getIncludeTerminatedWorkers() {
-        return callParameterService(CuVendorParameterConstants.WORKDAY_INCLUDE_TERMINATED_WORKERS);
+        return callParameterService(CuVendorParameterConstants.WORKDAY_INCLUDE_TERMINDATED_WORKERS);
     }
 
     private int getMaximumRetries() {
