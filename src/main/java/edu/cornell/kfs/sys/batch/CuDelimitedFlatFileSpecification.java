@@ -12,6 +12,8 @@ public class CuDelimitedFlatFileSpecification extends DelimitedFlatFileSpecifica
 
     private static final Logger LOG = LogManager.getLogger();
 
+    private boolean performCleanupOfInternalQuotes;
+
     @Override
     public void parseLineIntoObject(
             final FlatFileObjectSpecification parseSpecification, final String lineToParse,
@@ -41,6 +43,16 @@ public class CuDelimitedFlatFileSpecification extends DelimitedFlatFileSpecifica
     @Override
     public String getDelimiter() {
         return delimiter;
+    }
+
+    @Override
+    public boolean isPerformCleanupOfInternalQuotes() {
+        return performCleanupOfInternalQuotes;
+    }
+
+    public void setPerformCleanupOfInternalQuotes(
+            final boolean performCleanupOfInternalQuotes) {
+        this.performCleanupOfInternalQuotes = performCleanupOfInternalQuotes;
     }
 
 }
