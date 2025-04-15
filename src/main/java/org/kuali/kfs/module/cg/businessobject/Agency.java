@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Objects;
 
 /*
- * CU Customization back-pprt FINP-11685
+ * CU Customization back-port FINP-11685
  */
 
 /**
@@ -227,7 +227,7 @@ public class Agency extends PersistableBusinessObjectBase implements ContractsAn
     @Override
     public Customer getCustomer() {
         /*
-         * CU Customization back-pprt FINP-11685
+         * CU Customization back-port FINP-11685
          */
         if (StringUtils.isNotBlank(customerNumber)) {
             customer = SpringContext.getBean(BusinessObjectService.class)
