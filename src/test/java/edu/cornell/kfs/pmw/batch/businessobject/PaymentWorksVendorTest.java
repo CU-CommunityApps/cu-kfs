@@ -3,11 +3,12 @@ package edu.cornell.kfs.pmw.batch.businessobject;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.Month;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTime;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,8 +35,7 @@ class PaymentWorksVendorTest {
         pmwVendor.setPmwVendorRequestId("123");
         pmwVendor.setRequestingCompanyLegalName("Foo Bar Inc");
         
-        DateTime date = new DateTime(2021, 7, 15, 7, 51);
-        pmwVendor.setProcessTimestamp(new Timestamp(date.getMillis()));
+        pmwVendor.setProcessTimestamp(Timestamp.valueOf(LocalDateTime.of(2021, Month.JULY, 15, 7, 51)));
     }
 
     @AfterEach
