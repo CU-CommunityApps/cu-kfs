@@ -31,7 +31,6 @@ import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.businessobject.BillingFrequency;
@@ -992,10 +991,6 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
 
     @Override
     public BillingFrequency getBillingFrequency() {
-        if (billingFrequency == null || !StringUtils.equals(billingFrequency.getFrequency(), billingFrequencyCode)) {
-            billingFrequency = SpringContext.getBean(BusinessObjectService.class)
-                .findBySinglePrimaryKey(BillingFrequency.class, billingFrequencyCode);
-        }
         return billingFrequency;
     }
 

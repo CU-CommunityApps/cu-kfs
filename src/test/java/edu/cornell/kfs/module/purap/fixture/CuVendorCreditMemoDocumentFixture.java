@@ -3,15 +3,15 @@ package edu.cornell.kfs.module.purap.fixture;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.krad.document.DocumentBase;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.sys.document.AccountingDocumentIntegTestUtils;
 import org.powermock.api.mockito.PowerMockito;
 
 import edu.cornell.kfs.module.cam.CuCamsTestConstants;
@@ -73,7 +73,7 @@ public enum CuVendorCreditMemoDocumentFixture {
 		creditMemoDocument.setCreditMemoAmount(this.creditMemoAmount);
 
 		creditMemoDocument.prepareForSave();
-		AccountingDocumentTestUtils.saveDocument(creditMemoDocument, SpringContext.getBean(DocumentService.class));
+		AccountingDocumentIntegTestUtils.saveDocument(creditMemoDocument, SpringContext.getBean(DocumentService.class));
 		return creditMemoDocument;
 	}
 

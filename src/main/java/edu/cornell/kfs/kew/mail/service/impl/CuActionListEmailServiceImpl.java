@@ -3,8 +3,10 @@ package edu.cornell.kfs.kew.mail.service.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kew.mail.service.impl.CustomizableActionListEmailServiceImpl;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 
@@ -17,9 +19,21 @@ public class CuActionListEmailServiceImpl extends CustomizableActionListEmailSer
 
     private ParameterService parameterService;
 
+    // Ancestor class defines this field as private, so we need to redefine it here.
+    private final Environment environment;
+
+    public CuActionListEmailServiceImpl(final Environment environment) {
+        super(environment);
+        this.environment = environment;
+    }
+
     @Override
-    protected boolean isProduction() {
-        return super.isProduction() || shouldSimulateProductionWorkflowEmailBehavior();
+    protected String getEmailTo(final Person user) {
+        if (!environment.isProductionEnvironment() && shouldSimulateProductionWorkflowEmailBehavior()) {
+            return user.getEmailAddress();
+        } else {
+            return super.getEmailTo(user);
+        }
     }
 
     protected boolean shouldSimulateProductionWorkflowEmailBehavior() {

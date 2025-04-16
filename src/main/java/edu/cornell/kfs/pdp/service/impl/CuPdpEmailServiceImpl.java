@@ -4,10 +4,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.core.impl.config.property.Config;
 import org.kuali.kfs.core.web.format.CurrencyFormatter;
 import org.kuali.kfs.core.web.format.DateFormatter;
 import org.kuali.kfs.core.web.format.Formatter;
@@ -33,7 +34,13 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
     private static final Logger LOG = LogManager.getLogger();
     
     private AchBundlerHelperService achBundlerHelperService;
-    
+    private final Environment environment;
+
+    public CuPdpEmailServiceImpl(final Environment environment) {
+        Validate.isTrue(environment != null, "environment must be supplied");
+        this.environment = environment;
+    }
+
 	/**
 	 * Sends advice notification email to the payee receiving an ACH payment
 	 * 
@@ -71,13 +78,11 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
 	public void sendAchAdviceEmail(final PaymentGroup paymentGroup, final List<PaymentDetail> paymentDetails, final CustomerProfile customer) {		
         LOG.debug("sendAchAdviceEmail() with payment details list starting");	     
         Integer numPayments = 0;
-        final String productionEnvironmentCode = kualiConfigurationService.getPropertyValueAsString(Config.PROD_ENVIRONMENT_CODE);
-        final String environmentCode = kualiConfigurationService.getPropertyValueAsString(Config.ENVIRONMENT);
         final boolean shouldBundleAchPayments = getAchBundlerHelperService().shouldBundleAchPayments();
         if (shouldBundleAchPayments) {
         	//Send out one email to the payee listing all the payment details for the specified payment group
         	
-            final BodyMailMessage bundledMessage = createAdviceMessageAndPopulateHeader(paymentGroup, customer, productionEnvironmentCode, environmentCode);
+            final BodyMailMessage bundledMessage = createAdviceMessageAndPopulateHeader(paymentGroup, customer);
         	
         	//create the formatted body
    			// this seems wasteful, but since the total net amount is needed in the message body before the payment details...it's needed
@@ -155,7 +160,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
             	bundledMessage.setAttachmentContent(bundledAtachmentData.toString().getBytes());
             	bundledMessage.setAttachmentContentType(new String("text/csv"));
         	}        	
-        	sendFormattedAchAdviceEmail(bundledMessage, customer, paymentGroup, productionEnvironmentCode, environmentCode);        	
+        	sendFormattedAchAdviceEmail(bundledMessage, customer, paymentGroup);        	
         }
         else {
         	//Maintain original spec of sending the payee an email for each payment detail in the payment group
@@ -163,7 +168,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
         	//so that the appropriate mail "send" is invoked based on the message type that we created and passed.
         	for (final PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
         		numPayments = paymentGroup.getPaymentDetails().size();
-        		final BodyMailMessage nonBundledMessage = createAdviceMessageAndPopulateHeader(paymentGroup, customer, productionEnvironmentCode, environmentCode);
+        		final BodyMailMessage nonBundledMessage = createAdviceMessageAndPopulateHeader(paymentGroup, customer);
         		final StringBuffer nonBundledBody =  createAdviceMessageBody(paymentGroup, customer, paymentDetail.getNetPaymentAmount(), numPayments);
         		nonBundledBody.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_HEADER_LINE_ONE));
         		nonBundledBody.append(customer.getAdviceHeaderText());
@@ -171,7 +176,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
         		final boolean adviceIsForDV = (paymentDetail.getFinancialDocumentTypeCode().equalsIgnoreCase(DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH))?true:false;
         		nonBundledBody.append(createAdviceMessagePaymentDetail(paymentGroup, paymentDetail, adviceIsForDV, shouldBundleAchPayments));
         		nonBundledMessage.setMessage(nonBundledBody.toString());
-         		sendFormattedAchAdviceEmail(nonBundledMessage, customer, paymentGroup, productionEnvironmentCode, environmentCode);
+         		sendFormattedAchAdviceEmail(nonBundledMessage, customer, paymentGroup);
         	}
         }
         
@@ -181,7 +186,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
     * KFSPTS-1460: New method. created from code in sendAchAdviceEmail.
     * @return
     */
-    private BodyMailMessage createAdviceMessageAndPopulateHeader(final PaymentGroup paymentGroup, final CustomerProfile customer, final String productionEnvironmentCode, final String environmentCode) {
+    private BodyMailMessage createAdviceMessageAndPopulateHeader(final PaymentGroup paymentGroup, final CustomerProfile customer) {
     	LOG.debug("createAdviceMessageAndPopulateHeader() starting");
     	final BodyMailMessage message = new BodyMailMessage();
         	
@@ -191,7 +196,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
 			fromAddress = parameterService.getParameterValueAsString(CUKFSParameterKeyConstants.KFS_PDP, CUKFSParameterKeyConstants.ALL_COMPONENTS, CUKFSParameterKeyConstants.PDP_CUSTOMER_MISSING_ADVICE_RETURN_EMAIL);
 		}	
     	
-        if (StringUtils.equals(productionEnvironmentCode, environmentCode)) {
+        if (environment.isProductionEnvironment()) {
             message.addToAddress(paymentGroup.getAdviceEmailAddress());
             message.addCcAddress(paymentGroup.getAdviceEmailAddress());
             message.addBccAddress(paymentGroup.getAdviceEmailAddress());
@@ -203,7 +208,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
             message.addCcAddress(emailService.getDefaultToAddress());
             message.addBccAddress(emailService.getDefaultToAddress());
             message.setFromAddress(fromAddress);
-            message.setSubject(environmentCode + ": " + customer.getAdviceSubjectLine() + ":" + paymentGroup.getAdviceEmailAddress());
+            message.setSubject(environment.getName() + ": " + customer.getAdviceSubjectLine() + ":" + paymentGroup.getAdviceEmailAddress());
         }        
         
         LOG.debug("sending email to " + paymentGroup.getAdviceEmailAddress() + " for disb # " + paymentGroup.getDisbursementNbr());        
@@ -388,7 +393,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
      * KFSPTS-1460: broke this logic out of sendAchAdviceEmail
      * 
      */
-    private void sendFormattedAchAdviceEmail(final BodyMailMessage message, final CustomerProfile customer, final PaymentGroup paymentGroup, final String productionEnvironmentCode, final String environmentCode) {
+    private void sendFormattedAchAdviceEmail(final BodyMailMessage message, final CustomerProfile customer, final PaymentGroup paymentGroup) {
     	LOG.debug("sendFormattedAchAdviceEmail() starting");
     	emailService.sendMessage(message, false);
     }

@@ -7,11 +7,18 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.mutable.MutableInt;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.kew.api.KewApiConstants;
+import org.kuali.kfs.kew.routeheader.service.RouteHeaderService;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.api.role.RoleService;
+import org.kuali.kfs.kim.impl.identity.Person;
+import org.kuali.kfs.kim.impl.role.RoleLite;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.kns.maintenance.Maintainable;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.module.cg.businessobject.Agency;
@@ -25,11 +32,6 @@ import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.kfs.sys.service.EmailService;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.kew.api.KewApiConstants;
-import org.kuali.kfs.kew.routeheader.service.RouteHeaderService;
-import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.kim.api.identity.PersonService;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -37,13 +39,11 @@ import edu.cornell.kfs.module.cg.document.CuAgencyMaintainableImpl;
 import edu.cornell.kfs.module.cg.document.CuAwardMaintainableImpl;
 import edu.cornell.kfs.rass.RassKeyConstants;
 import edu.cornell.kfs.rass.RassTestConstants;
+import edu.cornell.kfs.rass.batch.util.RassTestUtils;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAgencyEntryFixture;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAwardEntryFixture;
 import edu.cornell.kfs.sys.service.mock.MockParameterServiceImpl;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
-
-import org.kuali.kfs.kim.api.role.RoleService;
-import org.kuali.kfs.kim.impl.role.RoleLite;
 
 
 public class RassMockServiceFactory {
@@ -137,15 +137,21 @@ public class RassMockServiceFactory {
     }
     
     public BusinessObjectService buildMockBusinessObjectService() throws Exception {
+        return RassTestUtils.doWithMockHandlingOfProjectDirectorRefreshes(
+                this::buildMockBusinessObjectServiceInternal);
+    }
+    
+    public BusinessObjectService buildMockBusinessObjectServiceInternal() throws Exception {
         BusinessObjectService businessObjectService = Mockito.mock(BusinessObjectService.class);
         
         Arrays.stream(RassXmlAwardEntryFixture.values())
                 .filter(fixture -> fixture.proposalExistsByDefaultForSearching)
                 .forEach(fixture -> {
-                    Map<String, Object> proposalPrimaryKeys = Collections.singletonMap(
+                    final Map<String, Object> proposalPrimaryKeys = Collections.singletonMap(
                             KFSPropertyConstants.PROPOSAL_NUMBER, fixture.proposalNumber);
+                    final Proposal mockProposal = fixture.toProposal();
                     Mockito.when(businessObjectService.findByPrimaryKey(Proposal.class, proposalPrimaryKeys))
-                            .thenReturn(fixture.toProposal());
+                            .thenReturn(mockProposal);
                 });
         
         Arrays.stream(RassXmlAwardEntryFixture.values())

@@ -8,6 +8,9 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.config.Environment;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
@@ -16,8 +19,8 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.POTransmissionMethods;
-import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
@@ -25,8 +28,6 @@ import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.impl.PurchaseOrderServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLineOverride;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kim.impl.identity.Person;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.document.service.CuPurapService;
@@ -36,6 +37,10 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
     private static final Logger LOG = LogManager.getLogger();
     
     private AttachmentService attachmentService;
+
+    public CuPurchaseOrderServiceImpl(final Environment environment) {
+        super(environment);
+    }
 
     @Override
     public void performPurchaseOrderFirstTransmitViaPrinting(final PurchaseOrderDocument po) {

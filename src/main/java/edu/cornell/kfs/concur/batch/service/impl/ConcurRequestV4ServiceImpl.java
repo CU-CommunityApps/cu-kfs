@@ -10,13 +10,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationWebApiService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.MutableDateTime;
+import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
@@ -28,8 +29,8 @@ import org.springframework.http.HttpMethod;
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiOperations;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiParameters;
-import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationType;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationStatus;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationType;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurWorkflowActions;
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Status;
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Views;
@@ -39,6 +40,7 @@ import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.batch.ConcurWebRequest;
 import edu.cornell.kfs.concur.batch.ConcurWebRequestBuilder;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
+import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationWebApiService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestV4Service;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationResponse;
@@ -70,6 +72,13 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
     protected ConcurAccountValidationService concurAccountValidationService;
     protected ConfigurationService configurationService;
     protected DateTimeService dateTimeService;
+
+    private final Environment environment;
+
+    public ConcurRequestV4ServiceImpl(final Environment environment) {
+        Validate.isTrue(environment != null, "environment must be supplied");
+        this.environment = environment;
+    }
 
     @Override
     public List<ConcurEventNotificationResponse> processTravelRequests(String accessToken) {
@@ -438,7 +447,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
     }
 
     protected boolean isProduction() {
-        return ConfigContext.getCurrentContextConfig().isProductionEnvironment();
+        return environment.isProductionEnvironment();
     }
 
     public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {
