@@ -1,7 +1,7 @@
 package edu.cornell.kfs.sys.batch.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,8 +15,8 @@ public class TablesPurgeServiceImpl implements TablesPurgeService {
     protected TablePurgeRecordsDao tablePurgeRecordsDao;
     protected ArrayList<TableDetailsForPurge> tablesDetailsForPurge;
     
-    public void purgeRecords(Date jobRunDate) {
-        getTablePurgeRecordsDao().purgeRecords(jobRunDate, tablesDetailsForPurge);
+    public void purgeRecords(LocalDateTime jobRunLocalDateTime) {
+        getTablePurgeRecordsDao().purgeRecords(jobRunLocalDateTime, tablesDetailsForPurge);
     }
 
     public TablePurgeRecordsDao getTablePurgeRecordsDao() {

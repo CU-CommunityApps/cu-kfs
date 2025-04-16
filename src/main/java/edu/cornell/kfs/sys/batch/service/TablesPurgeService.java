@@ -1,9 +1,9 @@
 package edu.cornell.kfs.sys.batch.service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public interface TablesPurgeService {
     
-    void purgeRecords(Date jobRunDate);
+    void purgeRecords(LocalDateTime jobRunLocalDateTime);
     
 }

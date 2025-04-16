@@ -1,6 +1,7 @@
 package edu.cornell.kfs.sys.dataaccess.impl;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.lang.String;
@@ -11,11 +12,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryFactory;
-import org.joda.time.DateTime;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.sys.util.KfsDateUtils;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,16 +29,17 @@ public class TablePurgeRecordsDaoOjb extends PlatformAwareDaoBaseOjb implements 
     private static final Logger LOG = LogManager.getLogger(TablePurgeRecordsDaoOjb.class); 
     private BusinessObjectService businessObjectService;
     protected ParameterService parameterService;
+    protected DateTimeService dateTimeService;
     
     @Override
-    public void purgeRecords(java.util.Date jobRunDate, List<TableDetailsForPurge> tableDetails) {
+    public void purgeRecords(LocalDateTime jobRunLocalDateTime, List<TableDetailsForPurge> tableDetails) {
         int daysOldToUse;
         Date dateForPurge;
         Criteria lookupCriteria;
         int defaultDaysOld = retrieveDefaultDaysBeforePurgeParameterValue();
         for (TableDetailsForPurge details : tableDetails) {
             daysOldToUse = details.isUseDefaultDaysBeforePurgeParameter() ? defaultDaysOld : retrieveDaysBeforePurgeParameterValue(details.getNameSpaceCode(), details.getComponent(), details.getParameterName());
-            dateForPurge = getPurgeDate(jobRunDate, daysOldToUse);
+            dateForPurge = getPurgeDate(jobRunLocalDateTime, daysOldToUse);
             lookupCriteria = buildTablePurgeCriteria(details.getServiceImplForPurgeTableLookupCriteria(), dateForPurge);
             identifyAndRequestRecordsDeletion(details, lookupCriteria);
         }
@@ -85,17 +86,16 @@ public class TablePurgeRecordsDaoOjb extends PlatformAwareDaoBaseOjb implements 
         return new Integer(parameterValue);
     }
     
-    protected Date getPurgeDate(java.util.Date jobRunDate, int daysOld) {
-        java.util.Date computedPurgeDate = computeDateAsDaysOldFromJobRunDate(jobRunDate, daysOld);
-        return KfsDateUtils.convertToSqlDate(computedPurgeDate);
+    protected Date getPurgeDate(LocalDateTime jobRunLocalDateTime, int daysOld) {
+        LocalDateTime computedPurgeLocalDateTime = computeDateTimeAsDaysOldFromJobRunDateTime(jobRunLocalDateTime, daysOld);
+        return getDateTimeService().getSqlDate(computedPurgeLocalDateTime);
     }
     
-    protected java.util.Date computeDateAsDaysOldFromJobRunDate(java.util.Date jobRunDate, int daysOld) {
-        LOG.info("computeDateAsDaysOldFromJobRunDate: jobRunDate = " + jobRunDate.toString() + " daysOld = " + daysOld);
-        DateTime jobRunDateAsDateTime = new DateTime(jobRunDate.getTime());
-        DateTime dateForPurgeAsDateTime = jobRunDateAsDateTime.minusDays(daysOld);
-        LOG.info("computeDateAsDaysOldFromJobRunDate: dateForPurgeAsDateTime = " + dateForPurgeAsDateTime.toLocalDate().toString());
-        return dateForPurgeAsDateTime.toDate();
+    protected LocalDateTime computeDateTimeAsDaysOldFromJobRunDateTime(LocalDateTime jobRunLocalDateTime, int daysOld) {
+        LOG.info("computeDateAsDaysOldFromJobRunDate: jobRunLocalDateTime = " + jobRunLocalDateTime.toString() + " daysOld = " + daysOld);
+        LocalDateTime dateForPurgeAsLocalDateTime = jobRunLocalDateTime.minusDays(daysOld);
+        LOG.info("computeDateAsDaysOldFromJobRunDate: dateForPurgeAsDateTime = " + dateForPurgeAsLocalDateTime.toString());
+        return dateForPurgeAsLocalDateTime;
     }
     
     public BusinessObjectService getBusinessObjectService() {
@@ -112,6 +112,14 @@ public class TablePurgeRecordsDaoOjb extends PlatformAwareDaoBaseOjb implements 
 
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
+    }
+
+    public DateTimeService getDateTimeService() {
+        return dateTimeService;
+    }
+
+    public void setDateTimeService(DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
     }
 
 }
