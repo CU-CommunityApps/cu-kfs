@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -16,10 +17,10 @@ import org.kuali.kfs.sys.batch.FlatFileParserBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.exception.ParseException;
 
-import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
+import com.opencsv.ICSVParser;
 
 public class CuDelimitedFlatFileParser extends FlatFileParserBase {
 
@@ -30,7 +31,7 @@ public class CuDelimitedFlatFileParser extends FlatFileParserBase {
     @Override
     public Object parse(byte[] fileByteContent) throws ParseException {
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(fileByteContent);
-                InputStreamReader streamReader = new InputStreamReader(inputStream);
+                InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
                 BufferedReader bufferedReader = new BufferedReader(streamReader);
                 CSVReader flatFileReader = buildFlatFileReader(bufferedReader)) {
             return parseResultFromReader(flatFileReader);
@@ -74,9 +75,12 @@ public class CuDelimitedFlatFileParser extends FlatFileParserBase {
             throw new IllegalStateException("The flat file specification should have had a single-character delimiter, but instead had '"
                     + delimiter + "'");
         }
-        CSVParser parser = new CSVParserBuilder()
+        ICSVParser parser = new CSVParserBuilder()
                 .withSeparator(delimiter.charAt(0))
                 .build();
+        if (preSplitSpec.isPerformCleanupOfInternalQuotes()) {
+            parser = new CuCSVParserWithInternalQuoteCleanup(parser);
+        }
         return new CSVReaderBuilder(flatFileContent)
                 .withCSVParser(parser)
                 .build();
