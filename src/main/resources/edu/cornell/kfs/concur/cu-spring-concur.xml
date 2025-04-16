@@ -147,6 +147,7 @@
         <property name="flatFileSpecification">
             <bean class="edu.cornell.kfs.concur.batch.ConcurSaeDelimitedFlatFileSpecification">
                 <property name="delimiter" value="|"/>
+                <property name="performCleanupOfInternalQuotes" value="true"/>
                 <property name="objectSpecifications">
                     <list>
                         <bean parent="FlatFilePrefixObjectSpecification"

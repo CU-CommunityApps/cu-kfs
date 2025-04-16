@@ -64,8 +64,29 @@ public class ConcurStandardAccountingExtractFileParserTest extends CuDelimitedFl
     }
 
     @Test
+    public void testLoadGoodSAEFileWithCorrectableInternalQuotes() throws Exception {
+        final Map<Integer, List<Integer>> expectedFilteredCells = Map.ofEntries(
+                Map.entry(2, columnNumbers(42)),
+                Map.entry(4, columnNumbers(23))
+        );
+        /*
+         * The "...NO_QUOTES_TEST" reference is intentional here because the parsing will ultimately remove
+         * the corrected quotes.
+         */
+        assertConcurSAEFileParsesCorrectly(
+                ConcurSAEFileFixture.PARSE_FLAT_FILE_NO_QUOTES_TEST,
+                "extract_CES_SAE_v3_testGoodFileWithCorrectableQuotes.txt",
+                expectedFilteredCells);
+    }
+
+    @Test
     public void testLoadBadSAEFileWithImproperlyQuotedDelimiters() throws Exception {
         assertConcurSAEFileFailsParsingDueToMisusedQuotes("extract_CES_SAE_v3_testBadQuoteFile.txt");
+    }
+
+    @Test
+    public void testLoadAnotherBadSAEFileWithImproperQuoting() throws Exception {
+        assertConcurSAEFileFailsParsingDueToMisusedQuotes("extract_CES_SAE_v3_testBadQuoteFile2.txt");
     }
 
     protected void assertConcurSAEFileParsesCorrectly(ConcurSAEFileFixture expectedFixture, String fileName) throws Exception {

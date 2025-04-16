@@ -13,4 +13,6 @@ public interface FlatFileSpecificationForProcessingPreSplitLines extends FlatFil
 
     String getDelimiter();
 
+    boolean isPerformCleanupOfInternalQuotes();
+
 }
