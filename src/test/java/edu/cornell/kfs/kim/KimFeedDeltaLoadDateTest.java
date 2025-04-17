@@ -30,7 +30,7 @@ public class KimFeedDeltaLoadDateTest {
     private static LocalDateTime localDateTimeNow = LocalDateTime.now();
     private static LocalDate localDateNow = localDateTimeNow.toLocalDate();
     private static LocalTime localTimeStartOfDay = LocalTime.MIDNIGHT;
-    private static LocalTime localTimeEndOfDay = LocalTime.MIDNIGHT.minusSeconds(1).plusNanos(999999999);
+    private static LocalTime localTimeEndOfDay = LocalTime.MAX;
     private static String localDayNowAsString = localDateTimeNow.format(DATE_ZONE_DEFAULT_FORMATTER_MM_dd_yyyy);
 
     @BeforeEach
@@ -78,7 +78,7 @@ public class KimFeedDeltaLoadDateTest {
 
     private LocalDate getParsedDeltaLoadDate() {
         String deltaLoadDate = getDeltaLoadDate();
-        if (ObjectUtils.isNull(deltaLoadDate) || StringUtils.isBlank(deltaLoadDate)) {
+        if (StringUtils.isBlank(deltaLoadDate)) {
             return null;
         }
         LocalDate parsedDeltaLoadDateAsLocalDate = LocalDate.parse(deltaLoadDate, DATE_ZONE_DEFAULT_FORMATTER_MM_dd_yyyy);
@@ -89,7 +89,7 @@ public class KimFeedDeltaLoadDateTest {
         if (ObjectUtils.isNull(localDateToUse)) {
             return null;
         }
-        Timestamp startOfDayAsTimestamp = Timestamp.valueOf(LocalDateTime.of(localDateToUse, LocalTime.of(0, 0, 0, 0)));
+        Timestamp startOfDayAsTimestamp = Timestamp.valueOf(localDateToUse.atStartOfDay());
         return startOfDayAsTimestamp;
     }
 
@@ -97,7 +97,7 @@ public class KimFeedDeltaLoadDateTest {
         if (ObjectUtils.isNull(localDateToUse)) {
             return null;
         }
-        Timestamp endOfDayTimestamp = Timestamp.valueOf(LocalDateTime.of(localDateToUse, LocalTime.of(23, 59, 59, 999999999)));
+        Timestamp endOfDayTimestamp = Timestamp.valueOf(localDateToUse.atTime(LocalTime.MAX));
         return endOfDayTimestamp;
     }
 

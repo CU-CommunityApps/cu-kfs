@@ -4,7 +4,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -1037,7 +1036,7 @@ public class KimFeed {
 
     private LocalDate getParsedDeltaLoadDate() {
         String deltaLoadDate = getDeltaLoadDate();
-        if (ObjectUtils.isNull(deltaLoadDate) || StringUtils.isBlank(deltaLoadDate)) {
+        if (StringUtils.isBlank(deltaLoadDate)) {
             LOG.info("getParsedDeltaLoadDate: Properties file deltaLoadDate was detected to be blank or null. Returning null. Check value in system parameter {}", CUKFSParameterKeyConstants.KIM_FEED_DELTAS_TO_LOAD);
             return null;
         }
@@ -1051,7 +1050,7 @@ public class KimFeed {
             LOG.info("getTimestampForStartOfDay: Input parameter date of type LocalDate was detected to be blank or null. Returning null.");
             return null;
         }
-        Timestamp startOfDayAsTimestamp = Timestamp.valueOf(LocalDateTime.of(localDateToUse, LocalTime.of(0, 0, 0, 0)));
+        Timestamp startOfDayAsTimestamp = Timestamp.valueOf(localDateToUse.atStartOfDay());
         LOG.info("getTimestampForStartOfDay: startOfDayAsTimestamp={}", startOfDayAsTimestamp.toString());
         return startOfDayAsTimestamp;
     }
@@ -1061,7 +1060,7 @@ public class KimFeed {
             LOG.info("getTimestampForEndOfDay: Input parameter date of type LocalDate was detected to be blank or null. Returning null.");
             return null;
         }
-        Timestamp endOfDayTimestamp = Timestamp.valueOf(LocalDateTime.of(localDateToUse, LocalTime.of(23, 59, 59, 999999999)));
+        Timestamp endOfDayTimestamp = Timestamp.valueOf(localDateToUse.atTime(LocalTime.MAX));
         LOG.info("getTimestampForEndOfDay: endOfDayTimestamp={}", endOfDayTimestamp.toString());
         return endOfDayTimestamp;
     }
