@@ -196,20 +196,47 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     }
     
     private void addSearchAliasAndSaveVendorDetailIfNeeded(WorkdayKfsVendorLookupRoot root) {
+        if (root == null || root.getResults().get(0) == null) {
+            LOG.error("addSearchAliasAndSaveVendorDetailIfNeeded, for document {}, WorkdayKfsVendorLookupRoot was null, or result list was empty, this shouldn't happen", getDocumentNumber());
+            return;
+        }
+        
+        WorkdayKfsVendorLookupResult result = root.getResults().get(0);
+        String employeeId = result.getEmployeeID();
+        if (StringUtils.isBlank(employeeId)) {
+            LOG.error("addSearchAliasAndSaveVendorDetailIfNeeded, for document {}, the employee ID was not returned from Workday, this should not happen", getDocumentNumber());
+            return ;
+        }
+        
         try {
             GlobalVariables.doInNewGlobalVariables(new UserSession(KFSConstants.SYSTEM_USER), new Callable<Object>() {
                 @Override
                 public Object call() throws WorkflowException {
-                    final Document document = getDocumentService().getByDocumentHeaderId(getDocumentNumber());
+                    MaintenanceDocument document = (MaintenanceDocument) getDocumentService().getByDocumentHeaderId(getDocumentNumber());
                     if (ObjectUtils.isNotNull(document)) {
-                        final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-                        if (ObjectUtils.isNotNull(workflowDocument)) {
-                            LOG.debug("annotateDocument, the annotation message: {}", message);
-                            workflowDocument.logAnnotation(message);
-                            return document;
+                        VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+                        VendorAlias alias = findEmployeeIdAlias(vendorDetail, employeeId);
+                        
+                        if (alias == null) {
+                            LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, adding alias named {}", vendorDetail.getVendorNumber(), employeeId);
+                            alias = new VendorAlias();
+                            alias.setActive(true);
+                            alias.setVendorAliasName(employeeId);
+                            alias.setNewCollectionRecord(true);
+                            alias.setVendorHeaderGeneratedIdentifier(vendorDetail.getVendorHeaderGeneratedIdentifier());
+                            alias.setVendorDetailAssignedIdentifier(vendorDetail.getVendorDetailAssignedIdentifier());
+                            vendorDetail.getVendorAliases().add(alias);
+                            getDocumentService().saveDocument(document);
                         } else {
-                            throw new WorkflowException("Unable to get workflow document for document id " + getDocumentNumber());
+                            if (alias.isActive()) {
+                                LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, already has active alias named {}", vendorDetail.getVendorNumber(), employeeId);
+                            } else {
+                                LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, updating alias named {} to active", vendorDetail.getVendorNumber(), employeeId);
+                                alias.setActive(true);
+                                getDocumentService().saveDocument(document);
+                            }
                         }
+                        return document;
                     } else {
                         throw new WorkflowException("Unable to get document for document id " + getDocumentNumber());
                     }
@@ -218,40 +245,6 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         } catch (Exception e) {
             LOG.error("annotateCouldNotCallWorkDay, unable to annotate in new user session that workday could not be called", e);
             throw new RuntimeException(e);
-        }
-        
-        
-        
-        if (root != null && root.getResults().get(0) != null) {
-            WorkdayKfsVendorLookupResult result = root.getResults().get(0);
-            String employeeId = result.getEmployeeID();
-            
-            MaintenanceDocument document = (MaintenanceDocument) getDocumentService().getByDocumentHeaderId(getDocumentNumber());
-            VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
-            VendorAlias alias = findEmployeeIdAlias(vendorDetail, employeeId);
-            
-            if (alias == null) {
-                LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, adding alias named {}", vendorDetail.getVendorNumber(), employeeId);
-                alias = new VendorAlias();
-                alias.setActive(true);
-                alias.setVendorAliasName(employeeId);
-                alias.setNewCollectionRecord(true);
-                alias.setVendorHeaderGeneratedIdentifier(vendorDetail.getVendorHeaderGeneratedIdentifier());
-                alias.setVendorDetailAssignedIdentifier(vendorDetail.getVendorDetailAssignedIdentifier());
-                vendorDetail.getVendorAliases().add(alias);
-                getDocumentService().saveDocument(document);
-            } else {
-                if (alias.isActive()) {
-                    LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, already has active alias named {}", vendorDetail.getVendorNumber(), employeeId);
-                } else {
-                    LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, updating alias named {} to active", vendorDetail.getVendorNumber(), employeeId);
-                    alias.setActive(true);
-                    getDocumentService().saveDocument(document);
-                }
-            }
-
-        } else {
-            LOG.error("addSearchAliasAndSaveVendorDetailIfNeeded, for document {}, WorkdayKfsVendorLookupRoot was null, or result list was empty, this shouldn't happen", getDocumentNumber());
         }
     }
     
