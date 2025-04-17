@@ -196,12 +196,38 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     }
     
     private void addSearchAliasAndSaveVendorDetailIfNeeded(WorkdayKfsVendorLookupRoot root) {
+        try {
+            GlobalVariables.doInNewGlobalVariables(new UserSession(KFSConstants.SYSTEM_USER), new Callable<Object>() {
+                @Override
+                public Object call() throws WorkflowException {
+                    final Document document = getDocumentService().getByDocumentHeaderId(getDocumentNumber());
+                    if (ObjectUtils.isNotNull(document)) {
+                        final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+                        if (ObjectUtils.isNotNull(workflowDocument)) {
+                            LOG.debug("annotateDocument, the annotation message: {}", message);
+                            workflowDocument.logAnnotation(message);
+                            return document;
+                        } else {
+                            throw new WorkflowException("Unable to get workflow document for document id " + getDocumentNumber());
+                        }
+                    } else {
+                        throw new WorkflowException("Unable to get document for document id " + getDocumentNumber());
+                    }
+                }
+            });
+        } catch (Exception e) {
+            LOG.error("annotateCouldNotCallWorkDay, unable to annotate in new user session that workday could not be called", e);
+            throw new RuntimeException(e);
+        }
+        
+        
+        
         if (root != null && root.getResults().get(0) != null) {
             WorkdayKfsVendorLookupResult result = root.getResults().get(0);
             String employeeId = result.getEmployeeID();
             
             MaintenanceDocument document = (MaintenanceDocument) getDocumentService().getByDocumentHeaderId(getDocumentNumber());
-            VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject();
+            VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
             VendorAlias alias = findEmployeeIdAlias(vendorDetail, employeeId);
             
             if (alias == null) {
