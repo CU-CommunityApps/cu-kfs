@@ -34,7 +34,6 @@
 		<property name="jobNames">
 			<list merge="true">
 				<value>accountReversionImportJob</value>
-				<value>createClosedAccountsCsvJob</value>
 				<value>createWorkdayOpenAccountsCsvJob</value>
 				<value>copyLegacyAccountAttachmentsJob</value>
 			</list>
@@ -42,8 +41,6 @@
         <property name="batchFileDirectories">
             <list merge="true">
                  <value>${staging.directory}/coa</value>
-                 <value>${staging.directory}/coa/closed-accounts-outbound</value>
-                 <value>${staging.directory}/coa/closed-accounts-outbound/being-written</value>
                  <value>${staging.directory}/coa/open-accounts-outbound</value>
                  <value>${staging.directory}/coa/open-accounts-outbound/being-written</value>
              </list>
@@ -196,34 +193,6 @@
         </property>
     </bean>
 
-    <bean id="createClosedAccountsCsvJob" parent="unscheduledJobDescriptor">
-        <property name="steps">
-            <list>
-                <ref bean="createClosedAccountsCsvStep" />
-            </list>
-        </property>
-    </bean>
-
-    <bean id="createClosedAccountsCsvStep" parent="step" class="edu.cornell.kfs.coa.batch.CreateClosedAccountsCsvStep">
-        <property name="createClosedAccountsCsvService" ref="createClosedAccountsCsvService" />
-    </bean>
-
-    <bean id="createClosedAccountsCsvService" parent="createClosedAccountsCsvService-parentBean" />
-    <bean id="createClosedAccountsCsvService-parentBean" class="edu.cornell.kfs.coa.batch.service.impl.CreateClosedAccountsCsvServiceImpl" abstract="true">
-        <property name="csvClosedAccountsExportDirectory">
-            <value>${staging.directory}/coa/closed-accounts-outbound/</value>
-        </property>
-        <property name="csvClosedAccountstFileCreationDirectory">
-            <value>${staging.directory}/coa/closed-accounts-outbound/being-written/</value>
-        </property>
-        <property name="closedAccountsByDateRangeDao" ref="closedAccountsByDateRangeDao" />
-        <property name="dateTimeService" ref="dateTimeService" />
-        <property name="parameterService" ref="parameterService" />
-    </bean>
-
-    <bean id="closedAccountsByDateRangeDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.coa.batch.dataaccess.impl.ClosedAccountsByDateRangeDaoJdbc">
-    </bean>
-    
     <bean id="createWorkdayOpenAccountsCsvJob" parent="unscheduledJobDescriptor">
         <property name="steps">
             <list>
