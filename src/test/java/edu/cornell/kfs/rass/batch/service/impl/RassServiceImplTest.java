@@ -61,6 +61,7 @@ import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlDocumentWrapperFixture;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.util.LoadSpringFile;
 import edu.cornell.kfs.sys.util.SpringEnabledMicroTestBase;
+import edu.cornell.kfs.sys.xmladapters.RassStringToJavaLocalDateAdapter;
 
 @LoadSpringFile("edu/cornell/kfs/rass/batch/cu-spring-rass-service-test.xml")
 public class RassServiceImplTest extends SpringEnabledMicroTestBase {
@@ -1107,8 +1108,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         assertEqualsOrBothBlank("Wrong proposal status at index " + i, expectedProposal.status, actualProposal.getProposalStatusCode());
         assertEqualsOrBothBlank("Wrong agency number at index " + i, expectedProposal.agencyNumber, actualProposal.getAgencyNumber());
         assertEqualsOrBothBlank("Wrong project title at index " + i, expectedProposal.projectTitle, actualProposal.getProposalProjectTitle());
-        assertEquals("Wrong start date at index " + i, expectedProposal.getStartDateAsSqlDate(), actualProposal.getProposalBeginningDate());
-        assertEquals("Wrong stop date at index " + i, expectedProposal.getStopDateAsSqlDate(), actualProposal.getProposalEndingDate());
+        assertEquals("Wrong start date at index " + i, RassStringToJavaLocalDateAdapter.convertLocalDateToSqlDate(expectedProposal.getStartDate()), actualProposal.getProposalBeginningDate());
+        assertEquals("Wrong stop date at index " + i, RassStringToJavaLocalDateAdapter.convertLocalDateToSqlDate(expectedProposal.getStopDate()), actualProposal.getProposalEndingDate());
         assertEquals("Wrong direct cost amount at index " + i, expectedProposal.directCostAmount, actualProposal.getProposalDirectCostAmount());
         assertEquals("Wrong indirect cost amount at index " + i, expectedProposal.indirectCostAmount, actualProposal.getProposalIndirectCostAmount());
         assertEqualsOrBothBlank("Wrong proposal purpose at index " + i, expectedProposal.purpose, actualProposal.getProposalPurposeCode());
@@ -1130,8 +1131,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         assertEqualsOrBothBlank("Wrong award status at index " + i, expectedAward.status, actualAward.getAwardStatusCode());
         assertEqualsOrBothBlank("Wrong agency number at index " + i, expectedAward.agencyNumber, actualAward.getAgencyNumber());
         assertEqualsOrBothBlank("Wrong project title at index " + i, expectedAward.projectTitle, actualAward.getAwardProjectTitle());
-        assertEquals("Wrong start date at index " + i, expectedAward.getStartDateAsSqlDate(), actualAward.getAwardBeginningDate());
-        assertEquals("Wrong stop date at index " + i, expectedAward.getStopDateAsSqlDate(), actualAward.getAwardEndingDate());
+        assertEquals("Wrong start date at index " + i,  RassStringToJavaLocalDateAdapter.convertLocalDateToSqlDate(expectedAward.getStartDate()), actualAward.getAwardBeginningDate());
+        assertEquals("Wrong stop date at index " + i, RassStringToJavaLocalDateAdapter.convertLocalDateToSqlDate(expectedAward.getStopDate()), actualAward.getAwardEndingDate());
         assertEquals("Wrong direct cost amount at index " + i, expectedAward.directCostAmount, actualAward.getAwardDirectCostAmount());
         assertEquals("Wrong indirect cost amount at index " + i, expectedAward.indirectCostAmount, actualAward.getAwardIndirectCostAmount());
         assertEqualsOrBothBlank("Wrong award purpose at index " + i, expectedAward.purpose, actualAward.getAwardPurposeCode());
@@ -1146,13 +1147,13 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         assertEquals("Wrong cost share required indicator at index " + i,
                 expectedAward.getNullSafeCostShareRequired(), actualExtension.isCostShareRequired());
         assertEquals("Wrong final fiscal report date at index " + i,
-                expectedAward.getFinalReportDueDateAsSqlDate(), actualExtension.getFinalFiscalReportDate());
+                RassStringToJavaLocalDateAdapter.convertLocalDateToSqlDate(expectedAward.getFinalReportDueDate()), actualExtension.getFinalFiscalReportDate());
         assertEqualsOrBothBlank("Wrong Prime Agreement Number at index " + i,
                 expectedAward.primeAgreementNumber, actualExtension.getPrimeAgreementNumber());
         assertEquals("Wrong Budget Beginning Date at index " + i,
-                expectedAward.getBudgetBeginningDateAsSqlDate(), actualExtension.getBudgetBeginningDate());
+                RassStringToJavaLocalDateAdapter.convertLocalDateToSqlDate(expectedAward.getBudgetStartDate()), actualExtension.getBudgetBeginningDate());
         assertEquals("Wrong Budget Ending Date at index " + i,
-                expectedAward.getBudgetEndingDateAsSqlDate(), actualExtension.getBudgetEndingDate());
+                RassStringToJavaLocalDateAdapter.convertLocalDateToSqlDate(expectedAward.getBudgetStopDate()), actualExtension.getBudgetEndingDate());
         assertEquals("Wrong Budget Total Amount at index " + i,
                 expectedAward.budgetTotalAmount, actualExtension.getBudgetTotalAmount());
         assertEquals("Wrong Everify at index " + i,

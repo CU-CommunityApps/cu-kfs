@@ -1,13 +1,12 @@
 package edu.cornell.kfs.rass.batch.xml.fixture;
 
+import java.time.LocalDateTime;
 import java.util.List;
-
-import org.joda.time.DateTime;
 
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils;
-import edu.cornell.kfs.sys.xmladapters.RassStringToJavaLongDateTimeAdapter;
+import edu.cornell.kfs.sys.xmladapters.RassStringToJavaLocalDateTimeZoneDefaultAdapter;
 
 public enum RassXmlDocumentWrapperFixture {
         RASS_EXAMPLE("2019-03-15T22:15:07.273", awardFixtures(RassXmlAwardEntryFixture.FIRST, RassXmlAwardEntryFixture.SECOND, RassXmlAwardEntryFixture.ANOTHER, RassXmlAwardEntryFixture.NULL_AMOUNTS),
@@ -88,25 +87,25 @@ public enum RassXmlDocumentWrapperFixture {
                 agencyFixtures());
     
     
-    public final DateTime extractDate;
+    public final LocalDateTime extractLocalDateTime;
     public final List<RassXmlAwardEntryFixture> awards;
     public final List<RassXmlAgencyEntryFixture> agencies;
     
     private RassXmlDocumentWrapperFixture(RassXmlDocumentWrapperFixture fixtureToCopy) {
-        this.extractDate = fixtureToCopy.extractDate;
+        this.extractLocalDateTime = fixtureToCopy.extractLocalDateTime;
         this.awards = fixtureToCopy.awards;
         this.agencies = fixtureToCopy.agencies;
     }
     
-    private RassXmlDocumentWrapperFixture(String extractDateString, RassXmlAwardEntryFixture[] awardsArray, RassXmlAgencyEntryFixture[] agencyArray) {
-        extractDate = RassStringToJavaLongDateTimeAdapter.parseToDateTime(extractDateString);
+    private RassXmlDocumentWrapperFixture(String extractDateTimeString, RassXmlAwardEntryFixture[] awardsArray, RassXmlAgencyEntryFixture[] agencyArray) {
+        extractLocalDateTime = RassStringToJavaLocalDateTimeZoneDefaultAdapter.parseToLocalDateTime(extractDateTimeString);
         awards = XmlDocumentFixtureUtils.toImmutableList(awardsArray);
         agencies = XmlDocumentFixtureUtils.toImmutableList(agencyArray);
     }
     
     public RassXmlDocumentWrapper toRassXmlDocumentWrapper() {
         RassXmlDocumentWrapper wrapper = new RassXmlDocumentWrapper();
-        wrapper.setExtractDate(extractDate.toDate());
+        wrapper.setExtractDate(extractLocalDateTime);
         for (RassXmlAgencyEntryFixture fixture : agencies) {
             wrapper.getAgencies().add(fixture.toRassXmlAgencyEntry());
         }

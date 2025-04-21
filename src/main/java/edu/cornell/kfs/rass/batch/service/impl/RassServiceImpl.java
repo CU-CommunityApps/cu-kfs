@@ -1,8 +1,8 @@
 package edu.cornell.kfs.rass.batch.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +42,7 @@ import edu.cornell.kfs.rass.batch.xml.RassXmlAwardEntry;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
 import edu.cornell.kfs.rass.batch.xml.RassXmlObject;
 import edu.cornell.kfs.sys.util.LoadFileUtils;
+import edu.cornell.kfs.sys.xmladapters.RassStringToJavaLocalDateTimeZoneDefaultAdapter;
 
 public class RassServiceImpl implements RassService {
 
@@ -155,11 +156,11 @@ public class RassServiceImpl implements RassService {
             
             try {
                 RassXmlDocumentWrapper documentWrapper = parsedFile.getParsedDocumentWrapper();
-                Date extractDate = documentWrapper.getExtractDate();
-                if (extractDate == null) {
+                LocalDateTime extractLocalDateTime = documentWrapper.getExtractDate();
+                if (extractLocalDateTime == null) {
                     LOG.warn("updateBOs, Processing a file that does not specify an extract date");
                 } else {
-                    LOG.info("updateBOs, Processing file with extract date " + extractDate);
+                    LOG.info("updateBOs, Processing file with extract date {}" + RassStringToJavaLocalDateTimeZoneDefaultAdapter.formatToDateTimeZoneDefault(extractLocalDateTime));
                 }
                 
                 List<?> xmlObjects = (List<?>) ObjectPropertyUtils.getPropertyValue(

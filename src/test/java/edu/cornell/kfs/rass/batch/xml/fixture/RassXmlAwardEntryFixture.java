@@ -1,12 +1,11 @@
 package edu.cornell.kfs.rass.batch.xml.fixture;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.DateTime;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.AwardAccount;
 import org.kuali.kfs.module.cg.businessobject.AwardFundManager;
@@ -22,7 +21,8 @@ import edu.cornell.kfs.rass.RassConstants;
 import edu.cornell.kfs.rass.RassTestConstants;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAwardEntry;
 import edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils;
-import edu.cornell.kfs.sys.xmladapters.RassStringToJavaShortDateTimeAdapter;
+
+import edu.cornell.kfs.sys.xmladapters.RassStringToJavaLocalDateAdapter;
 
 public enum RassXmlAwardEntryFixture {
     FIRST("141414", "OS", "2345", "First Example Project", "2017-12-31", null, 5300000.000, 700000.000, 6000000.000, StringUtils.EMPTY,
@@ -127,8 +127,8 @@ public enum RassXmlAwardEntryFixture {
     public final String status;
     public final String agencyNumber;
     public final String projectTitle;
-    public final DateTime startDate;
-    public final DateTime stopDate;
+    public final LocalDate startDate;
+    public final LocalDate stopDate;
     public final KualiDecimal directCostAmount;
     public final KualiDecimal indirectCostAmount;
     public final KualiDecimal totalAmount;
@@ -139,9 +139,9 @@ public enum RassXmlAwardEntryFixture {
     public final String federalPassThroughAgencyNumber;
     public final String organizationCode;
     public final Boolean costShareRequired;
-    public final DateTime finalReportDueDate;
-    public final DateTime budgetStartDate;
-    public final DateTime budgetStopDate;
+    public final LocalDate finalReportDueDate;
+    public final LocalDate budgetStartDate;
+    public final LocalDate budgetStopDate;
     public final KualiDecimal budgetTotalAmount;
     public final String primeAgreementNumber;
     public final String pricingType;
@@ -236,9 +236,9 @@ public enum RassXmlAwardEntryFixture {
         return StringUtils.EMPTY;
     }
     
-    private DateTime parseShortDate(String dateString) {
+    private LocalDate parseShortDate(String dateString) {
         if (StringUtils.isNotBlank(dateString)) {
-            return RassStringToJavaShortDateTimeAdapter.parseToDateTime(dateString);
+            return RassStringToJavaLocalDateAdapter.parseToLocalDate(dateString);
         } else {
             return null;
         }
@@ -251,8 +251,8 @@ public enum RassXmlAwardEntryFixture {
         award.setStatus(status);
         award.setAgencyNumber(agencyNumber);
         award.setProjectTitle(projectTitle);
-        award.setStartDate(buildDateFromDateTime(startDate));
-        award.setStopDate(buildDateFromDateTime(stopDate));
+        award.setStartDate(startDate);
+        award.setStopDate(stopDate);
         award.setDirectCostAmount(directCostAmount);
         award.setIndirectCostAmount(indirectCostAmount);
         award.setTotalAmount(totalAmount);
@@ -263,11 +263,11 @@ public enum RassXmlAwardEntryFixture {
         award.setFederalPassThroughAgencyNumber(federalPassThroughAgencyNumber);
         award.setOrganizationCode(organizationCode);
         award.setCostShareRequired(costShareRequired);
-        award.setFinalReportDueDate(buildDateFromDateTime(finalReportDueDate));
+        award.setFinalReportDueDate(finalReportDueDate);
         award.setEverify(everify);
         award.setFinalFinancialReportRequired(finalFinancialReportRequired);
-        award.setBudgetStartDate(buildDateFromDateTime(budgetStartDate));
-        award.setBudgetStopDate(buildDateFromDateTime(budgetStopDate));
+        award.setBudgetStartDate(budgetStartDate);
+        award.setBudgetStopDate(budgetStopDate);
         award.setBudgetTotalAmount(budgetTotalAmount);
         award.setPricingType(pricingType);
         award.setPrimeAgreementNumber(primeAgreementNumber);
@@ -288,8 +288,8 @@ public enum RassXmlAwardEntryFixture {
         proposal.setProposalStatusCode(defaultToNullIfBlank(status));
         proposal.setAgencyNumber(defaultToNullIfBlank(agencyNumber));
         proposal.setProposalProjectTitle(defaultToNullIfBlank(projectTitle));
-        proposal.setProposalBeginningDate(getStartDateAsSqlDate());
-        proposal.setProposalEndingDate(getStopDateAsSqlDate());
+        proposal.setProposalBeginningDate(RassStringToJavaLocalDateAdapter.convertLocalDateToSqlDate(startDate));
+        proposal.setProposalEndingDate(RassStringToJavaLocalDateAdapter.convertLocalDateToSqlDate(stopDate));
         proposal.setProposalDirectCostAmount(directCostAmount);
         proposal.setProposalIndirectCostAmount(indirectCostAmount);
         proposal.setProposalPurposeCode(defaultToNullIfBlank(purpose));
@@ -343,8 +343,8 @@ public enum RassXmlAwardEntryFixture {
         award.setAwardStatusCode(defaultToNullIfBlank(status));
         award.setAgencyNumber(defaultToNullIfBlank(agencyNumber));
         award.setAwardProjectTitle(defaultToNullIfBlank(projectTitle));
-        award.setAwardBeginningDate(getStartDateAsSqlDate());
-        award.setAwardEndingDate(getStopDateAsSqlDate());
+        award.setAwardBeginningDate(RassStringToJavaLocalDateAdapter.convertLocalDateToSqlDate(startDate));
+        award.setAwardEndingDate(RassStringToJavaLocalDateAdapter.convertLocalDateToSqlDate(stopDate));
         award.setAwardDirectCostAmount(directCostAmount);
         award.setAwardIndirectCostAmount(indirectCostAmount);
         award.setAwardPurposeCode(defaultToNullIfBlank(purpose));
@@ -356,12 +356,12 @@ public enum RassXmlAwardEntryFixture {
         AwardExtendedAttribute extension = new AwardExtendedAttribute();
         extension.setProposalNumber(defaultToNullIfBlank(proposalNumber));
         extension.setCostShareRequired(getNullSafeCostShareRequired());
-        extension.setFinalFiscalReportDate(getFinalReportDueDateAsSqlDate());
+        extension.setFinalFiscalReportDate(RassStringToJavaLocalDateAdapter.convertLocalDateToSqlDate(finalReportDueDate));
         extension.setEverify(getNullSafeEverify());
         extension.setFinalFinancialReportRequired(getNullSafeFinalFinancialReportRequired());
         extension.setPrimeAgreementNumber(defaultToNullIfBlank(primeAgreementNumber));
-        extension.setBudgetBeginningDate(buildSqlDateFromDateTime(budgetStartDate));
-        extension.setBudgetEndingDate(buildSqlDateFromDateTime(budgetStopDate));
+        extension.setBudgetBeginningDate(RassStringToJavaLocalDateAdapter.convertLocalDateToSqlDate(budgetStartDate));
+        extension.setBudgetEndingDate(RassStringToJavaLocalDateAdapter.convertLocalDateToSqlDate(budgetStopDate));
         extension.setBudgetTotalAmount(budgetTotalAmount);
         award.setExtension(extension);
         
@@ -429,34 +429,6 @@ public enum RassXmlAwardEntryFixture {
         return fundManager;
     }
 
-    private Date buildDateFromDateTime(DateTime dateTime) {
-        if (dateTime != null) {
-            return dateTime.toDate();
-        } else {
-            return null;
-        }
-    }
-
-    public java.sql.Date getStartDateAsSqlDate() {
-        return buildSqlDateFromDateTime(startDate);
-    }
-
-    public java.sql.Date getBudgetEndingDateAsSqlDate() {
-        return buildSqlDateFromDateTime(budgetStopDate);
-    }
-    
-    public java.sql.Date getBudgetBeginningDateAsSqlDate() {
-        return buildSqlDateFromDateTime(budgetStartDate);
-    }
-
-    public java.sql.Date getStopDateAsSqlDate() {
-        return buildSqlDateFromDateTime(stopDate);
-    }
-
-    public java.sql.Date getFinalReportDueDateAsSqlDate() {
-        return buildSqlDateFromDateTime(finalReportDueDate);
-    }
-
     public Boolean getNullSafeFederalPassThrough() {
         return defaultToFalseIfNull(federalPassThrough);
     }
@@ -473,14 +445,6 @@ public enum RassXmlAwardEntryFixture {
         return defaultToFalseIfNull(finalFinancialReportRequired);
     }
 
-    private java.sql.Date buildSqlDateFromDateTime(DateTime dateTime) {
-        if (dateTime != null) {
-            return new java.sql.Date(dateTime.getMillis());
-        } else {
-            return null;
-        }
-    }
-
     private String defaultToNullIfBlank(String value) {
         return StringUtils.defaultIfBlank(value, null);
     }
@@ -491,6 +455,26 @@ public enum RassXmlAwardEntryFixture {
         } else {
             return value;
         }
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getStopDate() {
+        return stopDate;
+    }
+
+    public LocalDate getFinalReportDueDate() {
+        return finalReportDueDate;
+    }
+
+    public LocalDate getBudgetStartDate() {
+        return budgetStartDate;
+    }
+
+    public LocalDate getBudgetStopDate() {
+        return budgetStopDate;
     }
 
 }

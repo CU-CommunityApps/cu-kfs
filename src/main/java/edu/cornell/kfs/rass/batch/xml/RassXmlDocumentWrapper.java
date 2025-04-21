@@ -1,7 +1,7 @@
 package edu.cornell.kfs.rass.batch.xml;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,15 +15,15 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import edu.cornell.kfs.sys.xmladapters.RassStringToJavaLongDateTimeAdapter;
+import edu.cornell.kfs.sys.xmladapters.RassStringToJavaLocalDateTimeZoneDefaultAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Kfs", namespace = StringUtils.EMPTY)
 public class RassXmlDocumentWrapper {
     
     @XmlElement(name = "Extract_Begin_Timestamp", namespace = StringUtils.EMPTY)
-    @XmlJavaTypeAdapter(RassStringToJavaLongDateTimeAdapter.class)
-    private Date extractDate;
+    @XmlJavaTypeAdapter(RassStringToJavaLocalDateTimeZoneDefaultAdapter.class)
+    private LocalDateTime extractDate;
     
     @XmlElementWrapper(name = "Awards", namespace = StringUtils.EMPTY)
     @XmlElement(name = "Award", namespace = StringUtils.EMPTY)
@@ -38,11 +38,11 @@ public class RassXmlDocumentWrapper {
         agencies = new ArrayList<RassXmlAgencyEntry>();
     }
 
-    public Date getExtractDate() {
+    public LocalDateTime getExtractDate() {
         return extractDate;
     }
 
-    public void setExtractDate(Date extractDate) {
+    public void setExtractDate(LocalDateTime extractDate) {
         this.extractDate = extractDate;
     }
 
