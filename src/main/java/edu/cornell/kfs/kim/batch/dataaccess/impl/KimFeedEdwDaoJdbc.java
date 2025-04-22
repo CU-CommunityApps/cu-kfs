@@ -4,17 +4,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
@@ -30,6 +30,8 @@ import edu.cornell.kfs.sys.util.CuSqlQuery;
 public class KimFeedEdwDaoJdbc extends PlatformAwareDaoBaseJdbc implements KimFeedEdwDao {
 
     private static final Logger LOG = LogManager.getLogger();
+    private static final DateTimeFormatter DATE_ZONE_DEFAULT_FORMATTER_MM_dd_yyyy = 
+            DateTimeFormatter.ofPattern(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
 
     private enum EdwColumn {
         CU_PERSON_SID("CU_PERSON_SID", EdwPerson::setCuPersonId),
@@ -105,7 +107,6 @@ public class KimFeedEdwDaoJdbc extends PlatformAwareDaoBaseJdbc implements KimFe
     }
 
     private ParameterService parameterService;
-    private DateTimeService dateTimeService;
 
     @Override
     public Stream<EdwPerson> getEdwDataAsCloseableStream() {
@@ -133,14 +134,14 @@ public class KimFeedEdwDaoJdbc extends PlatformAwareDaoBaseJdbc implements KimFe
         } else if (StringUtils.equals(CUKFSConstants.KimFeedConstants.LATEST_DATE_ONLY_MODE, deltasToLoad)) {
             query.append("AND LOAD_SEQ = (SELECT MAX(LOAD_SEQ) FROM EDW.CU_PERSON_DATA_KFS_DELTA_MSTR)");
         } else {
-            Date deltaLoadDate = parseDeltaLoadDate(deltasToLoad);
-            Date deltaDateRangeStart = dateTimeService.getUtilDateAtStartOfDay(deltaLoadDate);
-            Date deltaDateRangeEnd = dateTimeService.getUtilDateAtEndOfDay(deltaLoadDate);
+            LocalDate deltaLoadDate = parseDeltaLoadDate(deltasToLoad);
+            Timestamp deltaDateRangeStart = Timestamp.valueOf(deltaLoadDate.atStartOfDay());
+            Timestamp deltaDateRangeEnd = Timestamp.valueOf(deltaLoadDate.atTime(LocalTime.MAX));
             query.append("AND LOAD_SEQ IN (SELECT LOAD_SEQ FROM EDW.CU_PERSON_DATA_KFS_DELTA_MSTR ")
                     .append("WHERE FILE_DATE BETWEEN ")
-                    .appendAsParameter(Types.TIMESTAMP, new Timestamp(deltaDateRangeStart.getTime()))
+                    .appendAsParameter(Types.TIMESTAMP, deltaDateRangeStart)
                     .append(" AND ")
-                    .appendAsParameter(Types.TIMESTAMP, new Timestamp(deltaDateRangeEnd.getTime()))
+                    .appendAsParameter(Types.TIMESTAMP, deltaDateRangeEnd)
                     .append(")");
         }
 
@@ -150,13 +151,8 @@ public class KimFeedEdwDaoJdbc extends PlatformAwareDaoBaseJdbc implements KimFe
         return fullQuery;
     }
 
-    private Date parseDeltaLoadDate(String deltaLoadDate) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT);
-        try {
-            return dateFormat.parse(deltaLoadDate);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+    private LocalDate parseDeltaLoadDate(String deltaLoadDate) {
+        return LocalDate.parse(deltaLoadDate, DATE_ZONE_DEFAULT_FORMATTER_MM_dd_yyyy);
     }
 
     private EdwPerson mapToPersonDto(ResultSet rs, int rowNum) throws SQLException {
@@ -183,10 +179,6 @@ public class KimFeedEdwDaoJdbc extends PlatformAwareDaoBaseJdbc implements KimFe
 
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
-    }
-
-    public void setDateTimeService(DateTimeService dateTimeService) {
-        this.dateTimeService = dateTimeService;
     }
 
 }
