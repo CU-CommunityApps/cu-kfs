@@ -67,8 +67,7 @@
           parent="platformAwareDaoJdbc"
           class="edu.cornell.kfs.kim.batch.dataaccess.impl.KimFeedEdwDaoJdbc"
           p:dataSource-ref="edwDataSource"
-          p:parameterService-ref="parameterService"
-          p:dateTimeService-ref="dateTimeService"/>
+          p:parameterService-ref="parameterService"/>
 
     <bean id="kimFeedService" parent="kimFeedService-parentBean"/>
     <bean id="kimFeedService-parentBean"
