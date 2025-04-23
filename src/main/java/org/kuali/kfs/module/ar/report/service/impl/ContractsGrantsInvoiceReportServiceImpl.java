@@ -597,8 +597,8 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
         // Cornell customization
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                 ArPropertyConstants.FederalFormReportFields.TOTAL_FEDERAL_FUNDS_AUTHORIZED,
-                contractsGrantsBillingUtilityService.formatForCurrency(awardExtendedAttribute.getBudgetTotalAmount().subtract(expenditures))
-        ); //Total federal funds used to be: award.getAwardTotalAmount()
+                contractsGrantsBillingUtilityService.formatForCurrency(awardExtendedAttribute.getBudgetTotalAmount())
+        ); //Total federal funds used to be:award.getAwardTotalAmount()
 
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                 ArPropertyConstants.FederalFormReportFields.REPORTING_PERIOD_END_DATE,
@@ -624,8 +624,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
             );
             contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                     ArPropertyConstants.FederalFormReportFields.UNOBLIGATED_BALANCE_OF_FEDERAL_FUNDS,
-                    contractsGrantsBillingUtilityService.formatForCurrency(award.getAwardTotalAmount()
-                            .subtract(cashDisbursement))
+                    contractsGrantsBillingUtilityService.formatForCurrency(awardExtendedAttribute.getBudgetTotalAmount().subtract(expenditures))
             );
         }
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
