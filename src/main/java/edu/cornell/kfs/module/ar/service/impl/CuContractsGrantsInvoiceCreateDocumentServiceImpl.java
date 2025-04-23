@@ -100,36 +100,12 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
             awd.getAwardPrimaryFundManager().getFundManager().getPrincipalId(),
             KFSConstants.OptionalModuleNamespaces.ACCOUNTS_RECEIVABLE);
 
-    /* CU Customization KFSPTS-23690 */
     awd.setCreationProcessType(creationProcessType);
 
     final ContractsGrantsInvoiceDocument cgInvoiceDocument = createCGInvoiceDocumentByAwardInfo(awd, validAwardAccounts,
             chartOrgHolder.getChartOfAccountsCode(), chartOrgHolder.getOrganizationCode(), errorMessages,
             accountDetails, locCreationType);
     return cgInvoiceDocument;
-//    if (ObjectUtils.isNotNull(cgInvoiceDocument)) {
-//        if (cgInvoiceDocument.getTotalInvoiceAmount().isPositive()
-//            || getContractsGrantsInvoiceDocumentService().getInvoiceMilestoneTotal(cgInvoiceDocument).isPositive()
-//            || getContractsGrantsInvoiceDocumentService().getBillAmountTotal(cgInvoiceDocument).isPositive()
-//            || ArConstants.BillingFrequencyValues.isTimeBased(awd)
-//            && ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL.equals(creationProcessType)) {
-//            documentService.saveDocument(cgInvoiceDocument, DocumentSystemSaveEvent.class);
-//        } else {
-//            final ErrorMessage errorMessage;
-//            final List<InvoiceAccountDetail> invoiceAccounts = cgInvoiceDocument.getAccountDetails();
-//            if (!invoiceAccounts.isEmpty()) {
-//                errorMessage = new ErrorMessage(
-//                  ArKeyConstants.ContractsGrantsInvoiceCreateDocumentConstants.NON_BILLABLE_ACCOUNT_AND_AWARD,
-//                  invoiceAccounts.get(0).getAccountNumber(), awd.getProposalNumber());
-//            } else {
-//                errorMessage = new ErrorMessage(
-//                        ArKeyConstants.ContractsGrantsInvoiceCreateDocumentConstants.NON_BILLABLE_AWARD,
-//                        awd.getProposalNumber()
-//                );
-//            }
-//            errorMessages.add(errorMessage);
-//        }
-//    }
     }
 
     /*

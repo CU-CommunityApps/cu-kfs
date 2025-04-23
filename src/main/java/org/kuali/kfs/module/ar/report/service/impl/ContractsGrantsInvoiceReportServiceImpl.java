@@ -429,7 +429,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
     ) {
         KualiDecimal cashDisbursement = KualiDecimal.ZERO;
         final SystemOptions systemOption = optionsService.getCurrentYearOptions();
-        //TODO: currently I am just creating a mock CINV to get the needed calculated values for this report; determine if there is a better way to do this.
+        
         //Cornell customization
         ContractsGrantsInvoiceDocument cinv = contractsGrantsInvoiceCreateDocumentService.createCINVForReport(award);
         KualiDecimal totalAmount = cinv.getTotalCostInvoiceDetail().getTotalBudget();
@@ -560,6 +560,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                 ArPropertyConstants.FederalFormReportFields.FEDERAL_AGENCY,
                 award.getAgency().getFullName()
         );
+        // Cornell customization
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                 ArPropertyConstants.FederalFormReportFields.FEDERAL_GRANT_NUMBER,
                 award.getProposal().getGrantNumber()
@@ -574,6 +575,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
         AwardExtendedAttribute awardExtendedAttribute = ((AwardExtendedAttribute)((Award)award).getExtension());
         
         if (ObjectUtils.isNotNull(awardExtendedAttribute.getBudgetBeginningDate())) {
+            // Cornell customization
             contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                     ArPropertyConstants.FederalFormReportFields.GRANT_PERIOD_FROM,
                     getDateTimeService().toDateString(awardExtendedAttribute.getBudgetBeginningDate())
@@ -581,6 +583,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
         }
         
         if (ObjectUtils.isNotNull(awardExtendedAttribute.getBudgetEndingDate())) {
+            // Cornell customization
             contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                     ArPropertyConstants.FederalFormReportFields.GRANT_PERIOD_TO,
                     getDateTimeService().toDateString(awardExtendedAttribute.getBudgetEndingDate())
@@ -622,6 +625,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                     ArPropertyConstants.FederalFormReportFields.TOTAL_FEDERAL_SHARE,
                     contractsGrantsBillingUtilityService.formatForCurrency(cashDisbursement)
             );
+            // Cornell customization
             contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                     ArPropertyConstants.FederalFormReportFields.UNOBLIGATED_BALANCE_OF_FEDERAL_FUNDS,
                     contractsGrantsBillingUtilityService.formatForCurrency(awardExtendedAttribute.getBudgetTotalAmount().subtract(expenditures))
