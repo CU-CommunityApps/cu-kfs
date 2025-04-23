@@ -8,6 +8,9 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.sql.Date;
 import java.text.MessageFormat;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -69,10 +72,11 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     private static final Logger LOG = LogManager.getLogger();
     
     protected static final DateTimeFormatter DATE_TIME_ZONE_UTC_FORMATTER_yyyy_MM_dd_T_HH_mm_ss_SSS_Z = 
-            DateTimeFormatter.ofPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_Z).withZone(ZoneOffset.UTC).localizedBy(Locale.US);
+            DateTimeFormatter.ofPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_Z).withZone(ZoneId.of("UTC"));
+    private final Clock utcClock = Clock.systemUTC();
     
     protected static final DateTimeFormatter DATE_TIME_ZONE_DEFAULT_FORMATTER_yyyyMMdd_HHmmssSSS = 
-            DateTimeFormatter.ofPattern(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmssSSS).withZone(ZoneOffset.systemDefault()).localizedBy(Locale.US);
+            DateTimeFormatter.ofPattern(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmssSSS).withZone(ZoneOffset.systemDefault()).withLocale(Locale.US);
     
     private Pattern numberPattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
@@ -329,7 +333,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     private Header buildHeader() {
         Header header = new Header();
         header.setMessageId(UUID.randomUUID().toString());
-        header.setTimestamp(dateTimeService.getLocalDateTimeNow().format(DATE_TIME_ZONE_UTC_FORMATTER_yyyy_MM_dd_T_HH_mm_ss_SSS_Z));
+        header.setTimestamp(LocalDateTime.now(utcClock).format(DATE_TIME_ZONE_UTC_FORMATTER_yyyy_MM_dd_T_HH_mm_ss_SSS_Z));
         header.setAuthentication(buildAuthentication());
         return header;
     }

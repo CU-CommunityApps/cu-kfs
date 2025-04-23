@@ -4,9 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.sql.Date;
+import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 
 @Execution(ExecutionMode.SAME_THREAD)
 public class JaggaerGenerateSupplierXmlServiceImplTest {
-
+    
     private JaggaerGenerateSupplierXmlServiceImpl jaggaerGenerateSupplierXmlServiceImpl;
     
     private static final String OUTPUT_FILE_PATH = "test/jaggaer/JaggaerGenerateSupplierXmlServiceImplTest/";
@@ -116,7 +116,7 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
     }
     
     @Test
-    void testDateFormatters() {
+    void testDateFormattersOriginalTest() {
         long dateTimeLong = Long.parseLong("1684345725727");
         Instant dateTimeInstant = Instant.ofEpochMilli(dateTimeLong);
         ZonedDateTime zonedDateTimeUTC = dateTimeInstant.atZone(ZoneOffset.UTC);
@@ -124,6 +124,46 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
         String actualHeaderDateString = zonedDateTimeUTC.format(JaggaerGenerateSupplierXmlServiceImpl.DATE_TIME_ZONE_UTC_FORMATTER_yyyy_MM_dd_T_HH_mm_ss_SSS_Z);
         assertEquals("20230517_134845727", actualFileNameDateString);
         assertEquals("2023-05-17T17:48:45.727Z", actualHeaderDateString);
+    }
+    
+    @Test
+    void testDateFormatterLocaleFileName() {
+        Clock myClock = Clock.systemDefaultZone();
+        LocalDateTime dayAndTimeNow = LocalDateTime.now(myClock);
+        
+        String manualFileNameDateString = new String();
+        int myNanoSeconds = dayAndTimeNow.getNano() / 1000000;
+        manualFileNameDateString = manualFileNameDateString + dayAndTimeNow.getYear() 
+                + (dayAndTimeNow.getMonthValue() < 10 ? "0" + dayAndTimeNow.getMonthValue() : dayAndTimeNow.getMonthValue())
+                + (dayAndTimeNow.getDayOfMonth() < 10 ? "0" + dayAndTimeNow.getDayOfMonth() : dayAndTimeNow.getDayOfMonth())
+                + "_"
+                + (dayAndTimeNow.getHour() < 10 ? "0" + dayAndTimeNow.getHour() : dayAndTimeNow.getHour())
+                + (dayAndTimeNow.getMinute() < 10 ? "0" + dayAndTimeNow.getMinute() : dayAndTimeNow.getMinute())
+                + (dayAndTimeNow.getSecond() < 10 ? "0" + dayAndTimeNow.getSecond() : dayAndTimeNow.getSecond())
+                + (myNanoSeconds < 10 ? "00" + myNanoSeconds : (myNanoSeconds < 100 ? "0" + myNanoSeconds : myNanoSeconds));
+        
+        String formattedFileNameDateString = dayAndTimeNow.format(JaggaerGenerateSupplierXmlServiceImpl.DATE_TIME_ZONE_DEFAULT_FORMATTER_yyyyMMdd_HHmmssSSS);
+        assertEquals(manualFileNameDateString, formattedFileNameDateString);
+    }
+    
+    @Test
+    void testDateFormatterUtcFileHeader() {
+        Clock myClock = Clock.systemUTC();
+        LocalDateTime dayAndTimeNow = LocalDateTime.now(myClock);
+        
+        String manualHeaderDateString = new String();
+        int myNanoSeconds = dayAndTimeNow.getNano() / 1000000;
+        manualHeaderDateString = manualHeaderDateString + dayAndTimeNow.getYear() + "-"
+        + (dayAndTimeNow.getMonthValue() < 10 ? "0" + dayAndTimeNow.getMonthValue() : dayAndTimeNow.getMonthValue()) + "-"
+        + (dayAndTimeNow.getDayOfMonth() < 10 ? "0" + dayAndTimeNow.getDayOfMonth() : dayAndTimeNow.getDayOfMonth())
+        + "T"
+        + (dayAndTimeNow.getHour() < 10 ? "0" + dayAndTimeNow.getHour() : dayAndTimeNow.getHour()) + ":"
+        + (dayAndTimeNow.getMinute() < 10 ? "0" + dayAndTimeNow.getMinute() : dayAndTimeNow.getMinute()) + ":"
+        + (dayAndTimeNow.getSecond() < 10 ? "0" + dayAndTimeNow.getSecond() : dayAndTimeNow.getSecond()) + "."
+        + (myNanoSeconds < 10 ? "00" + myNanoSeconds : (myNanoSeconds < 100 ? "0" + myNanoSeconds : myNanoSeconds)) + "Z";
+        
+        String formattedHeaderDateString = dayAndTimeNow.format(JaggaerGenerateSupplierXmlServiceImpl.DATE_TIME_ZONE_UTC_FORMATTER_yyyy_MM_dd_T_HH_mm_ss_SSS_Z);
+        assertEquals(manualHeaderDateString, formattedHeaderDateString);
     }
     
     @ParameterizedTest
