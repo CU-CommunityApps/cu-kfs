@@ -211,11 +211,10 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
                     alias.setActive(true);
                     alias.setVendorAliasName(employeeId);
                     alias.setNewCollectionRecord(true);
-                    alias.setVendorHeaderGeneratedIdentifier(vendorDetail.getVendorHeaderGeneratedIdentifier());
-                    alias.setVendorDetailAssignedIdentifier(vendorDetail.getVendorDetailAssignedIdentifier());
+                    //alias.setVendorHeaderGeneratedIdentifier(vendorDetail.getVendorHeaderGeneratedIdentifier());
+                    //alias.setVendorDetailAssignedIdentifier(vendorDetail.getVendorDetailAssignedIdentifier());
                     vendorDetail.getVendorAliases().add(alias);
                     saveDocumentInNewGlobalVariables(document);
-                } else {
                     if (alias.isActive()) {
                         LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, already has active alias named {}",
                                 vendorDetail.getVendorNumber(), employeeId);
@@ -245,7 +244,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         }
         return employeeId;
     }
-    
+
     private void saveDocumentInNewGlobalVariables(MaintenanceDocument document) {
         try {
             GlobalVariables.doInNewGlobalVariables(new UserSession(KFSConstants.SYSTEM_USER), new Callable<Object>() {
