@@ -19,6 +19,7 @@ public class WorkdayOpenAccountDetailDTO {
     private String objectCode;
     private String subObjectCode;
     private String subObjectName;
+    private String accountCfdaNumber;
     
     public WorkdayOpenAccountDetailDTO() {
         super();
@@ -142,5 +143,13 @@ public class WorkdayOpenAccountDetailDTO {
 
     public void setSubObjectName(String subObjectName) {
         this.subObjectName = subObjectName;
+    }
+
+    public String getAccountCfdaNumber() {
+        return accountCfdaNumber;
+    }
+
+    public void setAccountCfdaNumber(String accountCfdaNumber) {
+        this.accountCfdaNumber = accountCfdaNumber;
     }
 }

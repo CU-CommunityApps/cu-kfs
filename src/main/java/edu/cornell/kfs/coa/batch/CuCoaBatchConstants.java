@@ -23,7 +23,8 @@ public class CuCoaBatchConstants {
         SUB_ACCOUNT_NUMBER_ACTIVE_IND("subAccountActiveIndicator"),
         OBJECT_CODE("objectCode"),
         SUB_OBJECT_CODE("subObjectCode"),
-        SUB_OBJECT_NAME("subObjectName");
+        SUB_OBJECT_NAME("subObjectName"),
+        ACCOUNT_CFDA_NUMBER("accountCfdaNumber");
         
         public final String headerLabel;
         public final String workdayOpenAccountDetailPropertyName;

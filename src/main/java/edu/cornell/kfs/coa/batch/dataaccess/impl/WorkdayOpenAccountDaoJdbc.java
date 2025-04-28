@@ -30,7 +30,7 @@ public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
     protected static final String FIN_OBJECT_CD = "FIN_OBJECT_CD";
     protected static final String FIN_SUB_OBJ_CD = "FIN_SUB_OBJ_CD";
     protected static final String FIN_SUB_OBJ_CD_NM = "FIN_SUB_OBJ_CD_NM";
-    
+    protected static final String CG_CFDA_NBR = "CG_CFDA_NBR";
     
     protected UniversityDateService universityDateService;
 
@@ -54,6 +54,7 @@ public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
                 detail.setObjectCode(resultSet.getString(FIN_OBJECT_CD));
                 detail.setSubObjectCode(resultSet.getString(FIN_SUB_OBJ_CD));
                 detail.setSubObjectName(resultSet.getString(FIN_SUB_OBJ_CD_NM));
+                detail.setAccountCfdaNumber(resultSet.getString(CG_CFDA_NBR));
                 return detail;
             };
             return this.getJdbcTemplate().query(buildFullOpenAccountSql(), rowMapper);
@@ -106,7 +107,7 @@ public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
         StringBuilder sb = new StringBuilder();
         sb.append(buildBaseSelect());
         sb.append(buildEmptySubAccountSelect());
-        sb.append("CSO.FIN_OBJECT_CD, CSO.FIN_SUB_OBJ_CD, CSO.FIN_SUB_OBJ_CD_NM ");
+        sb.append("CSO.FIN_OBJECT_CD, CSO.FIN_SUB_OBJ_CD, CSO.FIN_SUB_OBJ_CD_NM, CAT.CG_CFDA_NBR ");
         sb.append(buildBaseFromAndJoin());
         sb.append("JOIN KFS.CA_SUB_OBJECT_CD_T CSO ON CAT.FIN_COA_CD = CSO.FIN_COA_CD AND CAT.ACCOUNT_NBR = CSO.ACCOUNT_NBR ");
         sb.append("JOIN KFS.LD_LABOR_OBJ_T COC ON CAT.FIN_COA_CD = COC.FIN_COA_CD AND CSO.FIN_OBJECT_CD = COC.FIN_OBJECT_CD AND CSO.UNIV_FISCAL_YR = COC.UNIV_FISCAL_YR ");
@@ -128,7 +129,7 @@ public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
     }
     
     private String buildEmptySubObjectSelect() {
-        return "'' AS FIN_OBJECT_CD, '' AS FIN_SUB_OBJ_CD, '' AS FIN_SUB_OBJ_CD_NM ";
+        return "'' AS FIN_OBJECT_CD, '' AS FIN_SUB_OBJ_CD, '' AS FIN_SUB_OBJ_CD_NM, CAT.CG_CFDA_NBR ";
     }
     
     private String buildBaseFromAndJoin() {
