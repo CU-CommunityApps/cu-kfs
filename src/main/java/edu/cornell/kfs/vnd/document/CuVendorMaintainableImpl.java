@@ -209,22 +209,16 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
                     LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, adding alias named {}",
                             newVendorDetail.getVendorNumber(), employeeId);
                     addEmployeeIdliasToNewVendorDetail(newVendorDetail, employeeId);
-                    
-                    /*
-                     * We need to add a blank alias to the old vendor detail so the maintenance document can properly display all the changes
-                     */
                     addBlankAliasToOldVendorDetail(oldVendorDetail);
-                    
                     saveDocumentInNewGlobalVariables(document);
-                    if (alias.isActive()) {
-                        LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, already has active alias named {}",
-                                newVendorDetail.getVendorNumber(), employeeId);
-                    } else {
-                        LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, updating alias named {} to active",
-                                newVendorDetail.getVendorNumber(), employeeId);
-                        alias.setActive(true);
-                        saveDocumentInNewGlobalVariables(document);
-                    }
+                } else if (alias.isActive()) {
+                    LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, already has active alias named {}",
+                            newVendorDetail.getVendorNumber(), employeeId);
+                } else {
+                    LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, updating alias named {} to active",
+                            newVendorDetail.getVendorNumber(), employeeId);
+                    alias.setActive(true);
+                    saveDocumentInNewGlobalVariables(document);
                 }
             }
         }
@@ -264,6 +258,10 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     }
 
     private void addBlankAliasToOldVendorDetail(VendorDetail oldVendorDetail) {
+        /*
+         * A blank alias needs to be added to the old vendor detail to keep the alias List sizes in synch between 
+         * the old and new vendor detail detail on the maintenance document.
+         */
         VendorAlias blankAlias = new VendorAlias();
         blankAlias.setActive(false);
         blankAlias.setNewCollectionRecord(true);
