@@ -208,19 +208,12 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
                 if (alias == null) {
                     LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, adding alias named {}",
                             newVendorDetail.getVendorNumber(), employeeId);
-                    alias = new VendorAlias();
-                    alias.setActive(true);
-                    alias.setVendorAliasName(employeeId);
-                    alias.setNewCollectionRecord(true);
-                    newVendorDetail.getVendorAliases().add(alias);
+                    addEmployeeIdliasToNewVendorDetail(newVendorDetail, employeeId);
                     
                     /*
                      * We need to add a blank alias to the old vendor detail so the maintenance document can properly display all the changes
                      */
-                    VendorAlias blankAlias = new VendorAlias();
-                    blankAlias.setActive(false);
-                    blankAlias.setNewCollectionRecord(true);
-                    oldVendorDetail.getVendorAliases().add(blankAlias);
+                    addBlankAliasToOldVendorDetail(oldVendorDetail);
                     
                     saveDocumentInNewGlobalVariables(document);
                     if (alias.isActive()) {
@@ -233,11 +226,10 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
                         saveDocumentInNewGlobalVariables(document);
                     }
                 }
-                
             }
         }
     }
-
+    
     private String findEmployeeId(WorkdayKfsVendorLookupRoot root) {
         String employeeId = StringUtils.EMPTY;
         if (root == null || root.getResults().get(0) == null) {
@@ -261,6 +253,21 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
             }
         }
         return null;
+    }
+    
+    private void addEmployeeIdliasToNewVendorDetail(VendorDetail newVendorDetail, String employeeId) {
+        VendorAlias alias = new VendorAlias();
+        alias.setActive(true);
+        alias.setVendorAliasName(employeeId);
+        alias.setNewCollectionRecord(true);
+        newVendorDetail.getVendorAliases().add(alias);
+    }
+
+    private void addBlankAliasToOldVendorDetail(VendorDetail oldVendorDetail) {
+        VendorAlias blankAlias = new VendorAlias();
+        blankAlias.setActive(false);
+        blankAlias.setNewCollectionRecord(true);
+        oldVendorDetail.getVendorAliases().add(blankAlias);
     }
 
     private void saveDocumentInNewGlobalVariables(MaintenanceDocument document) {
