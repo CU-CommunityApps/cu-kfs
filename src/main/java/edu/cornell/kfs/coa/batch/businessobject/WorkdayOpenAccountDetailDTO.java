@@ -2,6 +2,9 @@ package edu.cornell.kfs.coa.batch.businessobject;
 
 import java.sql.Date;
 
+// KFSPTS-34678:
+// Field accountCfdaNumber was added after initial coding was performed.
+// That data element was not placed with the rest of the account table attributes per specific customer request.
 public class WorkdayOpenAccountDetailDTO {
     
     private String chart;

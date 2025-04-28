@@ -12,6 +12,10 @@ import org.springframework.jdbc.core.RowMapper;
 import edu.cornell.kfs.coa.batch.businessobject.WorkdayOpenAccountDetailDTO;
 import edu.cornell.kfs.coa.batch.dataaccess.WorkdayOpenAccountDao;
 
+// KFSPTS-34678:
+// Field CG_CFDA_NBR was added after initial coding was performed.
+// That data element was not placed with the rest of the account table attributes per specific customer request.
+
 public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implements WorkdayOpenAccountDao {
     private static final Logger LOG = LogManager.getLogger();
     

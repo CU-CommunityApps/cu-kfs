@@ -8,6 +8,9 @@ public class CuCoaBatchConstants {
         public static final String OUTPUT_FILE_NAME = "kfsOpenAccountsSubaccountsSubobjectcodes";
     }
     
+    // KFSPTS-34678:
+    // Field ACCOUNT_CFDA_NUMBER was added after initial coding was performed.
+    // That data element was not placed with the rest of the account table attributes per specific customer request.
     public enum WorkdayOpenAccountDetailDTOCsvColumn {
         CHART("chart"),
         ACCOUNT_NUMBER("accountNumber"),

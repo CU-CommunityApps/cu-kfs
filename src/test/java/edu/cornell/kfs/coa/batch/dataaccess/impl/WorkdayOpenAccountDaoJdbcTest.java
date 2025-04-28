@@ -29,6 +29,9 @@ public class WorkdayOpenAccountDaoJdbcTest {
         workdayOpenAccountDao = null;
     }
 
+    // KFSPTS-34678:
+    // Field CAT.CG_CFDA_NBR was added after initial coding was performed.
+    // That data element was not placed with the rest of the account table attributes per specific customer request.
     @Test
     void testBuildFullOpenAccountSql() {
         String actualSql = workdayOpenAccountDao.buildFullOpenAccountSql();
