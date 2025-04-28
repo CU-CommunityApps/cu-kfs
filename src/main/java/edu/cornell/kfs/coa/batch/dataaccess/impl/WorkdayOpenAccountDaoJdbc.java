@@ -12,6 +12,10 @@ import org.springframework.jdbc.core.RowMapper;
 import edu.cornell.kfs.coa.batch.businessobject.WorkdayOpenAccountDetailDTO;
 import edu.cornell.kfs.coa.batch.dataaccess.WorkdayOpenAccountDao;
 
+// KFSPTS-34678:
+// Field CG_CFDA_NBR was added after initial coding was performed.
+// That data element was not placed with the rest of the account table attributes per specific customer request.
+
 public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implements WorkdayOpenAccountDao {
     private static final Logger LOG = LogManager.getLogger();
     
@@ -30,7 +34,7 @@ public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
     protected static final String FIN_OBJECT_CD = "FIN_OBJECT_CD";
     protected static final String FIN_SUB_OBJ_CD = "FIN_SUB_OBJ_CD";
     protected static final String FIN_SUB_OBJ_CD_NM = "FIN_SUB_OBJ_CD_NM";
-    
+    protected static final String CG_CFDA_NBR = "CG_CFDA_NBR";
     
     protected UniversityDateService universityDateService;
 
@@ -54,6 +58,7 @@ public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
                 detail.setObjectCode(resultSet.getString(FIN_OBJECT_CD));
                 detail.setSubObjectCode(resultSet.getString(FIN_SUB_OBJ_CD));
                 detail.setSubObjectName(resultSet.getString(FIN_SUB_OBJ_CD_NM));
+                detail.setAccountCfdaNumber(resultSet.getString(CG_CFDA_NBR));
                 return detail;
             };
             return this.getJdbcTemplate().query(buildFullOpenAccountSql(), rowMapper);
@@ -106,7 +111,7 @@ public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
         StringBuilder sb = new StringBuilder();
         sb.append(buildBaseSelect());
         sb.append(buildEmptySubAccountSelect());
-        sb.append("CSO.FIN_OBJECT_CD, CSO.FIN_SUB_OBJ_CD, CSO.FIN_SUB_OBJ_CD_NM ");
+        sb.append("CSO.FIN_OBJECT_CD, CSO.FIN_SUB_OBJ_CD, CSO.FIN_SUB_OBJ_CD_NM, CAT.CG_CFDA_NBR ");
         sb.append(buildBaseFromAndJoin());
         sb.append("JOIN KFS.CA_SUB_OBJECT_CD_T CSO ON CAT.FIN_COA_CD = CSO.FIN_COA_CD AND CAT.ACCOUNT_NBR = CSO.ACCOUNT_NBR ");
         sb.append("JOIN KFS.LD_LABOR_OBJ_T COC ON CAT.FIN_COA_CD = COC.FIN_COA_CD AND CSO.FIN_OBJECT_CD = COC.FIN_OBJECT_CD AND CSO.UNIV_FISCAL_YR = COC.UNIV_FISCAL_YR ");
@@ -128,7 +133,7 @@ public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
     }
     
     private String buildEmptySubObjectSelect() {
-        return "'' AS FIN_OBJECT_CD, '' AS FIN_SUB_OBJ_CD, '' AS FIN_SUB_OBJ_CD_NM ";
+        return "'' AS FIN_OBJECT_CD, '' AS FIN_SUB_OBJ_CD, '' AS FIN_SUB_OBJ_CD_NM, CAT.CG_CFDA_NBR ";
     }
     
     private String buildBaseFromAndJoin() {
