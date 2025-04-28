@@ -201,30 +201,39 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
             MaintenanceDocument document = (MaintenanceDocument) getDocumentService()
                     .getByDocumentHeaderId(getDocumentNumber());
             if (ObjectUtils.isNotNull(document)) {
-                VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
-                VendorAlias alias = findEmployeeIdAlias(vendorDetail, employeeId);
+                VendorDetail newVendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+                VendorDetail oldVendorDetail = (VendorDetail) document.getOldMaintainableObject().getBusinessObject();
+                VendorAlias alias = findEmployeeIdAlias(newVendorDetail, employeeId);
 
                 if (alias == null) {
                     LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, adding alias named {}",
-                            vendorDetail.getVendorNumber(), employeeId);
+                            newVendorDetail.getVendorNumber(), employeeId);
                     alias = new VendorAlias();
                     alias.setActive(true);
                     alias.setVendorAliasName(employeeId);
                     alias.setNewCollectionRecord(true);
-                    //alias.setVendorHeaderGeneratedIdentifier(vendorDetail.getVendorHeaderGeneratedIdentifier());
-                    //alias.setVendorDetailAssignedIdentifier(vendorDetail.getVendorDetailAssignedIdentifier());
-                    vendorDetail.getVendorAliases().add(alias);
+                    newVendorDetail.getVendorAliases().add(alias);
+                    
+                    /*
+                     * We need to add a blank alias to the old vendor detail so the maintenance document can properly display all the changes
+                     */
+                    VendorAlias blankAlias = new VendorAlias();
+                    blankAlias.setActive(false);
+                    blankAlias.setNewCollectionRecord(true);
+                    oldVendorDetail.getVendorAliases().add(blankAlias);
+                    
                     saveDocumentInNewGlobalVariables(document);
                     if (alias.isActive()) {
                         LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, already has active alias named {}",
-                                vendorDetail.getVendorNumber(), employeeId);
+                                newVendorDetail.getVendorNumber(), employeeId);
                     } else {
                         LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, updating alias named {} to active",
-                                vendorDetail.getVendorNumber(), employeeId);
+                                newVendorDetail.getVendorNumber(), employeeId);
                         alias.setActive(true);
                         saveDocumentInNewGlobalVariables(document);
                     }
                 }
+                
             }
         }
     }
@@ -244,6 +253,15 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         }
         return employeeId;
     }
+    
+    private VendorAlias findEmployeeIdAlias(VendorDetail vendorDetail, String employeeId) {
+        for (VendorAlias alias : vendorDetail.getVendorAliases()) {
+            if (StringUtils.equalsAnyIgnoreCase(employeeId, alias.getVendorAliasName())) {
+                return alias;
+            }
+        }
+        return null;
+    }
 
     private void saveDocumentInNewGlobalVariables(MaintenanceDocument document) {
         try {
@@ -259,16 +277,6 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
             throw new RuntimeException(e);
         }
     }
-    
-    private VendorAlias findEmployeeIdAlias(VendorDetail vendorDetail, String employeeId) {
-        for (VendorAlias alias : vendorDetail.getVendorAliases()) {
-            if (StringUtils.equalsAnyIgnoreCase(employeeId, alias.getVendorAliasName())) {
-                return alias;
-            }
-        }
-        return null;
-    }
-
     
     @SuppressWarnings("deprecation")
     private void annotateDocument(final String message) {
