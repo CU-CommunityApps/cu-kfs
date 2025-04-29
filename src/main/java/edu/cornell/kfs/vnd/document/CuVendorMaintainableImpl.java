@@ -1,16 +1,10 @@
 package edu.cornell.kfs.vnd.document;
 
 import java.net.URISyntaxException;
-import java.text.MessageFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -48,12 +42,10 @@ import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
 
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
-import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.vnd.CUVendorKeyConstants;
 import edu.cornell.kfs.vnd.CuVendorParameterConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
-import edu.cornell.kfs.vnd.jsonobject.WorkdayKfsVendorLookupResult;
 import edu.cornell.kfs.vnd.jsonobject.WorkdayKfsVendorLookupRoot;
 import edu.cornell.kfs.vnd.service.CuVendorWorkDayService;
 
@@ -73,8 +65,6 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     protected transient ParameterService parameterService;
     protected transient DocumentService documentService;
     protected transient CuVendorWorkDayService cuVendorWorkDayService;
-    
-    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd, Locale.US);
     
     @Override
     public void saveBusinessObject() {
@@ -132,69 +122,18 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private boolean isVendorTaxNumberInWorkday(final String vendorTaxNumber) {
         try {
             WorkdayKfsVendorLookupRoot result = getCuVendorWorkDayService().findEmployeeBySocialSecurityNumber(vendorTaxNumber, getDocumentNumber());
-            final boolean isActiveOrTerminatedEmployee = isActiveOrTerminatedEmployeeWithinDateRange(result);
-            if (isActiveOrTerminatedEmployee) {
-                String message;
-                if (isActiveEmployee(result)) {
-                    message = getConfigurationService().getPropertyValueAsString(CUVendorKeyConstants.ACTIVE_EMPLOYEE_MESSAGE);
-                } else {
-                    message = MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUVendorKeyConstants.TERMINATED_EMPLOYEE_MESSAGE),
-                            getEmployeeTerminationNumberOfDays());
-                }
-                annotateDocument(message);
-            }
-            LOG.debug("isVendorTaxNumberInWorkday, returning {} for document {}", isActiveOrTerminatedEmployee, getDocumentNumber());
-            return isActiveOrTerminatedEmployee;
+            boolean isInWorkDay = result.isActiveEmployee();
+            LOG.debug("isVendorTaxNumberInWorkday, returning {} for document {}", isInWorkDay, getDocumentNumber());
+            return isInWorkDay;
         } catch (RuntimeException | URISyntaxException e) {
             LOG.error("isVendorTaxNumberInWorkday, got an error calling workday for document " + getDocumentNumber(), e);
-            String message = getConfigurationService().getPropertyValueAsString(CUVendorKeyConstants.VENDOR_UNABLE_TO_CALL_WORKDAY);
-            annotateDocument(message);
+            annotateCouldNotCallWorkDay();
             return true;
-        }
-    }
-    
-    public boolean isActiveEmployee(WorkdayKfsVendorLookupRoot root) {
-        return root != null && root.getResults().stream().anyMatch(result -> result.isActive());
-    }
-
-    public boolean isActiveOrTerminatedEmployeeWithinDateRange(WorkdayKfsVendorLookupRoot root) {
-        return root != null && 
-                root.getResults().stream().anyMatch(result -> result.isActive() || isTerminatedWithinDateRange(result));
-    }
-
-    public boolean isTerminatedWithinDateRange(WorkdayKfsVendorLookupResult result) {
-        if (result != null && !result.isActive()) {
-            String employeeTerminationDateString = result.getTerminationDate();
-            if (StringUtils.isNotBlank(employeeTerminationDateString)) {
-                LocalDateTime employeeTerminationDate = LocalDate.parse(employeeTerminationDateString, DATE_FORMATTER).atStartOfDay();
-                LocalDateTime minimumTerminationDate = LocalDate.now().minus(getEmployeeTerminationNumberOfDays(), ChronoUnit.DAYS).atStartOfDay();
-                boolean isTerminatedInRange = employeeTerminationDate.compareTo(minimumTerminationDate) >= 0;
-                
-                LOG.debug("isTerminatedWithinDateRange, the employee termination date string is {}", employeeTerminationDateString);
-                LOG.debug("isTerminatedWithinDateRange, the minimum termination date to be routed to the tax id review route node is {}", minimumTerminationDate);
-                LOG.debug("isTerminatedWithinDateRange, returning {} for netid {}", isTerminatedInRange, result.getNetID());
-
-                return isTerminatedInRange;
-            }
-            LOG.warn("isTerminatedWithinDateRange, found an empty termination date, returning true by default for netid {}", result.getNetID());
-            return true;
-        }
-        return false;
-    }
-    
-    private int getEmployeeTerminationNumberOfDays() {
-        try {
-            String numberOfDaysString = getParameterService().getParameterValueAsString(VendorDetail.class,
-                    CuVendorParameterConstants.EMPLOYEE_TERMINATION_NUMBER_OF_DAYS_FOR_TAX_ID_REVIEW);
-            return Integer.parseInt(numberOfDaysString);
-        } catch (Exception e) {
-            LOG.error("getEmployeeTerminationNumberOfDays, unable to get the number of days from the parameter EMPLOYEE_TERMINATION_NUMBER_OF_DAYS_FOR_TAX_ID_REVIEW, returning 365", e);
-            return 365;
         }
     }
     
     @SuppressWarnings("deprecation")
-    private void annotateDocument(final String message) {
+    private void annotateCouldNotCallWorkDay() {
         try {
             GlobalVariables.doInNewGlobalVariables(new UserSession(KFSConstants.SYSTEM_USER), new Callable<Object>() {
                 @Override
@@ -203,7 +142,8 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
                     if (ObjectUtils.isNotNull(document)) {
                         final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
                         if (ObjectUtils.isNotNull(workflowDocument)) {
-                            LOG.debug("annotateDocument, the annotation message: {}", message);
+                            final String message = getConfigurationService().getPropertyValueAsString(CUVendorKeyConstants.VENDOR_UNABLE_TO_CALL_WORKDAY);
+                            LOG.debug("annotateCouldNotCallWorkDay, the annotation message: {}", message);
                             workflowDocument.logAnnotation(message);
                             return document;
                         } else {
