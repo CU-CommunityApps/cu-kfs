@@ -326,7 +326,6 @@
         abstract="true"
         class="edu.cornell.kfs.module.purap.batch.service.impl.JaggaerGenerateSupplierXmlServiceImpl"
         p:jaggaerXmlDirectory="${staging.directory}/purap/jaggaer/xml/"
-        p:dateTimeService-ref="dateTimeService"
         p:cuMarshalService-ref="cuMarshalService"
         p:fileStorageService-ref="fileStorageService"
         p:isoFipsConversionService-ref="isoFipsConversionService"
