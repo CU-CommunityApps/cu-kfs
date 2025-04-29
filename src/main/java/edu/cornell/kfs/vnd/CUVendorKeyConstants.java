@@ -76,7 +76,5 @@ public class CUVendorKeyConstants {
     }
     
     public static final String VENDOR_UNABLE_TO_CALL_WORKDAY = "vendor.workday.call.error";
-    public static final String ACTIVE_EMPLOYEE_MESSAGE = "vendor.workday.active";
-    public static final String TERMINATED_EMPLOYEE_MESSAGE = "vendor.workday.terminated";
 
 }
