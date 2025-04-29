@@ -38,9 +38,12 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectPropertyUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.cam.businessobject.BarcodeInventoryErrorDetail;
+import org.kuali.kfs.module.cam.document.BarcodeInventoryErrorDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.validation.event.DocumentSystemSaveEvent;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorAlias;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
@@ -48,6 +51,7 @@ import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
 
+import edu.cornell.kfs.module.cam.CuCamsConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.vnd.CUVendorKeyConstants;
@@ -208,7 +212,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
                 if (alias == null) {
                     LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, adding alias named {}",
                             newVendorDetail.getVendorNumber(), employeeId);
-                    addEmployeeIdliasToNewVendorDetail(newVendorDetail, employeeId);
+                    addEmployeeIdAliasToNewVendorDetail(newVendorDetail, employeeId);
                     addBlankAliasToOldVendorDetail(oldVendorDetail);
                     saveDocumentInNewGlobalVariables(document);
                 } else if (alias.isActive()) {
@@ -242,14 +246,14 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     
     private VendorAlias findEmployeeIdAlias(VendorDetail vendorDetail, String employeeId) {
         for (VendorAlias alias : vendorDetail.getVendorAliases()) {
-            if (StringUtils.equalsAnyIgnoreCase(employeeId, alias.getVendorAliasName())) {
+            if (StringUtils.equalsIgnoreCase(employeeId, alias.getVendorAliasName())) {
                 return alias;
             }
         }
         return null;
     }
     
-    private void addEmployeeIdliasToNewVendorDetail(VendorDetail newVendorDetail, String employeeId) {
+    private void addEmployeeIdAliasToNewVendorDetail(VendorDetail newVendorDetail, String employeeId) {
         VendorAlias alias = new VendorAlias();
         alias.setActive(true);
         alias.setVendorAliasName(employeeId);
@@ -267,20 +271,25 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         blankAlias.setNewCollectionRecord(true);
         oldVendorDetail.getVendorAliases().add(blankAlias);
     }
-
+    
     private void saveDocumentInNewGlobalVariables(MaintenanceDocument document) {
         try {
-            GlobalVariables.doInNewGlobalVariables(new UserSession(KFSConstants.SYSTEM_USER), new Callable<Object>() {
-                @Override
-                public Object call() throws WorkflowException {
-                    getDocumentService().saveDocument(document);
-                    return document;
+            GlobalVariables.doInNewGlobalVariables(new UserSession(CuCamsConstants.CapAssetApi.KFS_SYSTEM_USER),
+                () -> {
+                    try {
+                        getDocumentService().saveDocument(document, DocumentSystemSaveEvent.class);
+                        return document;
+                    } catch (Exception e) {
+                        LOG.error("saveDocumentInNewGlobalVariables, unable to save document", e);
+                        throw new RuntimeException(e);
+                    }
                 }
-            });
-        } catch (Exception e) {
-            LOG.error("saveDocumentInNewGlobalVariables, unable to save document", e);
-            throw new RuntimeException(e);
+            );
+        } catch (Exception ex) {
+            LOG.error("createCapitalAssetErrorDocument", ex);
         }
+        
+
     }
     
     @SuppressWarnings("deprecation")
