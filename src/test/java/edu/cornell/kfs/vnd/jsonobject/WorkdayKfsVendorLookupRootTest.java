@@ -43,7 +43,6 @@ class WorkdayKfsVendorLookupRootTest {
         WorkdayKfsVendorLookupRoot actualLookupRoot = objectMapper.readValue(jsonFile, WorkdayKfsVendorLookupRoot.class);
         LOG.info("testWorkdayKfsVendorLookupRoot, results {}", actualLookupRoot.toString());
         assertEquals(rootEnum.toWorkdayKfsVendorLookupRoot(), actualLookupRoot);
-        assertEquals(rootEnum.activeResult, actualLookupRoot.isActiveEmployee());
     }
 
 }

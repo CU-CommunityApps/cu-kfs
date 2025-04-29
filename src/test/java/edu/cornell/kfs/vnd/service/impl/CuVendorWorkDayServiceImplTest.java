@@ -62,7 +62,7 @@ public class CuVendorWorkDayServiceImplTest {
         Mockito.when(service.getParameterValueAsString(CuVendorWorkDayServiceImpl.class,
                 CuVendorParameterConstants.WORKDAY_ENDPOINT)).thenReturn(buildWorkdayUrlStarter());
         Mockito.when(service.getParameterValueAsString(CuVendorWorkDayServiceImpl.class,
-                CuVendorParameterConstants.WORKDAY_INCLUDE_TERMINDATED_WORKERS)).thenReturn(terminatedWorkers);
+                CuVendorParameterConstants.WORKDAY_INCLUDE_TERMINATED_WORKERS)).thenReturn(terminatedWorkers);
         Mockito.when(service.getParameterValueAsString(CuVendorWorkDayServiceImpl.class,
                 CuVendorParameterConstants.WORKDAY_SERVICE_RETRY_COUNT)).thenReturn("2");
         return service;
@@ -117,7 +117,6 @@ public class CuVendorWorkDayServiceImplTest {
         WorkdayKfsVendorLookupRoot expectedRoot = serviceEnum.toWorkdayKfsVendorLookupRoot();
         LOG.info("testFindEmployeeBySocialSecurityNumber, actualRoot: {}", actualRoot.toString());
         assertEquals(expectedRoot, actualRoot);
-        assertEquals(serviceEnum.activeRecord, actualRoot.isActiveEmployee());
     }
     
     @Test

@@ -1,11 +1,16 @@
 package edu.cornell.kfs.vnd.document;
 
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.Locale;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,17 +40,21 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.validation.event.DocumentSystemSaveEvent;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
+import org.kuali.kfs.vnd.businessobject.VendorAlias;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
 
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.vnd.CUVendorKeyConstants;
 import edu.cornell.kfs.vnd.CuVendorParameterConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
+import edu.cornell.kfs.vnd.jsonobject.WorkdayKfsVendorLookupResult;
 import edu.cornell.kfs.vnd.jsonobject.WorkdayKfsVendorLookupRoot;
 import edu.cornell.kfs.vnd.service.CuVendorWorkDayService;
 
@@ -65,6 +74,8 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     protected transient ParameterService parameterService;
     protected transient DocumentService documentService;
     protected transient CuVendorWorkDayService cuVendorWorkDayService;
+    
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd, Locale.US);
     
     @Override
     public void saveBusinessObject() {
@@ -122,36 +133,169 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private boolean isVendorTaxNumberInWorkday(final String vendorTaxNumber) {
         try {
             WorkdayKfsVendorLookupRoot result = getCuVendorWorkDayService().findEmployeeBySocialSecurityNumber(vendorTaxNumber, getDocumentNumber());
-            boolean isInWorkDay = result.isActiveEmployee();
-            LOG.debug("isVendorTaxNumberInWorkday, returning {} for document {}", isInWorkDay, getDocumentNumber());
-            return isInWorkDay;
+            final boolean isActiveOrTerminatedEmployee = isActiveOrTerminatedEmployeeWithinDateRange(result);
+            if (isActiveOrTerminatedEmployee) {
+                String message;
+                if (isActiveEmployee(result)) {
+                    message = getConfigurationService().getPropertyValueAsString(CUVendorKeyConstants.ACTIVE_EMPLOYEE_MESSAGE);
+                } else {
+                    message = MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUVendorKeyConstants.TERMINATED_EMPLOYEE_MESSAGE),
+                            getEmployeeTerminationNumberOfDays());
+                }
+                addSearchAliasAndSaveVendorDetailIfNeeded(result);
+                annotateDocument(message);
+            }
+            LOG.debug("isVendorTaxNumberInWorkday, returning {} for document {}", isActiveOrTerminatedEmployee, getDocumentNumber());
+            return isActiveOrTerminatedEmployee;
         } catch (RuntimeException | URISyntaxException e) {
             LOG.error("isVendorTaxNumberInWorkday, got an error calling workday for document " + getDocumentNumber(), e);
-            annotateCouldNotCallWorkDay();
+            String message = getConfigurationService().getPropertyValueAsString(CUVendorKeyConstants.VENDOR_UNABLE_TO_CALL_WORKDAY);
+            annotateDocument(message);
             return true;
         }
     }
     
-    @SuppressWarnings("deprecation")
-    private void annotateCouldNotCallWorkDay() {
+    public boolean isActiveEmployee(WorkdayKfsVendorLookupRoot root) {
+        return root != null && root.getResults().stream().anyMatch(result -> result.isActive());
+    }
+
+    public boolean isActiveOrTerminatedEmployeeWithinDateRange(WorkdayKfsVendorLookupRoot root) {
+        return root != null && 
+                root.getResults().stream().anyMatch(result -> result.isActive() || isTerminatedWithinDateRange(result));
+    }
+
+    public boolean isTerminatedWithinDateRange(WorkdayKfsVendorLookupResult result) {
+        if (result != null && !result.isActive()) {
+            String employeeTerminationDateString = result.getTerminationDate();
+            if (StringUtils.isNotBlank(employeeTerminationDateString)) {
+                LocalDateTime employeeTerminationDate = LocalDate.parse(employeeTerminationDateString, DATE_FORMATTER).atStartOfDay();
+                LocalDateTime minimumTerminationDate = LocalDate.now().minus(getEmployeeTerminationNumberOfDays(), ChronoUnit.DAYS).atStartOfDay();
+                boolean isTerminatedInRange = employeeTerminationDate.compareTo(minimumTerminationDate) >= 0;
+                
+                LOG.debug("isTerminatedWithinDateRange, the employee termination date string is {}", employeeTerminationDateString);
+                LOG.debug("isTerminatedWithinDateRange, the minimum termination date to be routed to the tax id review route node is {}", minimumTerminationDate);
+                LOG.debug("isTerminatedWithinDateRange, returning {} for netid {}", isTerminatedInRange, result.getNetID());
+
+                return isTerminatedInRange;
+            }
+            LOG.warn("isTerminatedWithinDateRange, found an empty termination date, returning true by default for netid {}", result.getNetID());
+            return true;
+        }
+        return false;
+    }
+    
+    private int getEmployeeTerminationNumberOfDays() {
         try {
-            GlobalVariables.doInNewGlobalVariables(new UserSession(KFSConstants.SYSTEM_USER), new Callable<Object>() {
-                @Override
-                public Object call() throws WorkflowException {
-                    final Document document = getDocumentService().getByDocumentHeaderId(getDocumentNumber());
-                    if (ObjectUtils.isNotNull(document)) {
-                        final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-                        if (ObjectUtils.isNotNull(workflowDocument)) {
-                            final String message = getConfigurationService().getPropertyValueAsString(CUVendorKeyConstants.VENDOR_UNABLE_TO_CALL_WORKDAY);
-                            LOG.debug("annotateCouldNotCallWorkDay, the annotation message: {}", message);
-                            workflowDocument.logAnnotation(message);
-                            return document;
-                        } else {
-                            throw new WorkflowException("Unable to get workflow document for document id " + getDocumentNumber());
-                        }
+            String numberOfDaysString = getParameterService().getParameterValueAsString(VendorDetail.class,
+                    CuVendorParameterConstants.EMPLOYEE_TERMINATION_NUMBER_OF_DAYS_FOR_TAX_ID_REVIEW);
+            return Integer.parseInt(numberOfDaysString);
+        } catch (Exception e) {
+            LOG.error("getEmployeeTerminationNumberOfDays, unable to get the number of days from the parameter EMPLOYEE_TERMINATION_NUMBER_OF_DAYS_FOR_TAX_ID_REVIEW, returning 365", e);
+            return 365;
+        }
+    }
+    
+    private void addSearchAliasAndSaveVendorDetailIfNeeded(WorkdayKfsVendorLookupRoot root) {
+        String employeeId = findEmployeeId(root);
+        if (StringUtils.isNotBlank(employeeId)) {
+            MaintenanceDocument document = (MaintenanceDocument) getDocumentService()
+                    .getByDocumentHeaderId(getDocumentNumber());
+            if (ObjectUtils.isNotNull(document)) {
+                VendorDetail newVendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+                VendorDetail oldVendorDetail = (VendorDetail) document.getOldMaintainableObject().getBusinessObject();
+                VendorAlias alias = findEmployeeIdAlias(newVendorDetail, employeeId);
+
+                if (alias == null) {
+                    LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, adding alias named {}",
+                            newVendorDetail.getVendorNumber(), employeeId);
+                    addEmployeeIdAliasToNewVendorDetail(newVendorDetail, employeeId);
+                    addBlankAliasToOldVendorDetail(oldVendorDetail);
+                    saveDocumentInNewGlobalVariables(document);
+                } else if (alias.isActive()) {
+                    LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, already has active alias named {}",
+                            newVendorDetail.getVendorNumber(), employeeId);
+                } else {
+                    LOG.debug("addSearchAliasAndSaveVendorDetailIfNeeded, vendor {}, updating alias named {} to active",
+                            newVendorDetail.getVendorNumber(), employeeId);
+                    alias.setActive(true);
+                    saveDocumentInNewGlobalVariables(document);
+                }
+            }
+        }
+    }
+    
+    private String findEmployeeId(WorkdayKfsVendorLookupRoot root) {
+        String employeeId = StringUtils.EMPTY;
+        if (root == null || root.getResults().get(0) == null) {
+            LOG.error("findEmployeeId, for document {}, WorkdayKfsVendorLookupRoot was null, or result list was empty, this should not happen",
+                    getDocumentNumber());
+        } else {
+            WorkdayKfsVendorLookupResult result = root.getResults().get(0);
+            employeeId = result.getEmployeeID();
+            if (StringUtils.isBlank(employeeId)) {
+                LOG.error("findEmployeeId, for document {}, there was a Workday response, but no employee id was provided, this should not happen",
+                        getDocumentNumber());
+            }
+        }
+        return employeeId;
+    }
+    
+    private VendorAlias findEmployeeIdAlias(VendorDetail vendorDetail, String employeeId) {
+        for (VendorAlias alias : vendorDetail.getVendorAliases()) {
+            if (StringUtils.equalsIgnoreCase(employeeId, alias.getVendorAliasName())) {
+                return alias;
+            }
+        }
+        return null;
+    }
+    
+    private void addEmployeeIdAliasToNewVendorDetail(VendorDetail newVendorDetail, String employeeId) {
+        VendorAlias alias = new VendorAlias();
+        alias.setActive(true);
+        alias.setVendorAliasName(employeeId);
+        alias.setNewCollectionRecord(true);
+        newVendorDetail.getVendorAliases().add(alias);
+    }
+
+    private void addBlankAliasToOldVendorDetail(VendorDetail oldVendorDetail) {
+        /*
+         * A blank alias needs to be added to the old vendor detail to keep the alias List sizes in synch between 
+         * the old and new vendor detail detail on the maintenance document.
+         */
+        VendorAlias blankAlias = new VendorAlias();
+        blankAlias.setActive(false);
+        blankAlias.setNewCollectionRecord(true);
+        oldVendorDetail.getVendorAliases().add(blankAlias);
+    }
+    
+    private void saveDocumentInNewGlobalVariables(MaintenanceDocument document) {
+        try {
+            GlobalVariables.doInNewGlobalVariables(new UserSession(KFSConstants.SYSTEM_USER), () -> {
+                getDocumentService().saveDocument(document, DocumentSystemSaveEvent.class);
+                return document;
+            });
+        } catch (Exception ex) {
+            LOG.error("saveDocumentInNewGlobalVariables, unable to save document", ex);
+            throw new RuntimeException(ex);
+        }
+    }
+    
+    private void annotateDocument(final String message) {
+        try {
+            GlobalVariables.doInNewGlobalVariables(new UserSession(KFSConstants.SYSTEM_USER), () -> {
+                final Document document = getDocumentService().getByDocumentHeaderId(getDocumentNumber());
+                if (ObjectUtils.isNotNull(document)) {
+                    final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+                    if (ObjectUtils.isNotNull(workflowDocument)) {
+                        LOG.debug("annotateDocument, the annotation message: {}", message);
+                        workflowDocument.logAnnotation(message);
+                        return document;
                     } else {
-                        throw new WorkflowException("Unable to get document for document id " + getDocumentNumber());
+                        throw new WorkflowException(
+                                "Unable to get workflow document for document id " + getDocumentNumber());
                     }
+                } else {
+                    throw new WorkflowException("Unable to get document for document id " + getDocumentNumber());
                 }
             });
         } catch (Exception e) {
