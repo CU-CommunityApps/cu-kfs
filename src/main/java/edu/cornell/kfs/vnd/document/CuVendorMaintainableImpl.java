@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.Callable;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,8 +37,6 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectPropertyUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.module.cam.businessobject.BarcodeInventoryErrorDetail;
-import org.kuali.kfs.module.cam.document.BarcodeInventoryErrorDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -51,7 +48,6 @@ import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
 
-import edu.cornell.kfs.module.cam.CuCamsConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.vnd.CUVendorKeyConstants;
@@ -274,7 +270,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     
     private void saveDocumentInNewGlobalVariables(MaintenanceDocument document) {
         try {
-            GlobalVariables.doInNewGlobalVariables(new UserSession(CuCamsConstants.CapAssetApi.KFS_SYSTEM_USER),
+            GlobalVariables.doInNewGlobalVariables(new UserSession(KFSConstants.SYSTEM_USER),
                 () -> {
                     try {
                         getDocumentService().saveDocument(document, DocumentSystemSaveEvent.class);
@@ -286,31 +282,27 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
                 }
             );
         } catch (Exception ex) {
-            LOG.error("createCapitalAssetErrorDocument", ex);
+            LOG.error("saveDocumentInNewGlobalVariables", ex);
+            throw new RuntimeException(ex);
         }
-        
-
     }
     
-    @SuppressWarnings("deprecation")
     private void annotateDocument(final String message) {
         try {
-            GlobalVariables.doInNewGlobalVariables(new UserSession(KFSConstants.SYSTEM_USER), new Callable<Object>() {
-                @Override
-                public Object call() throws WorkflowException {
-                    final Document document = getDocumentService().getByDocumentHeaderId(getDocumentNumber());
-                    if (ObjectUtils.isNotNull(document)) {
-                        final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-                        if (ObjectUtils.isNotNull(workflowDocument)) {
-                            LOG.debug("annotateDocument, the annotation message: {}", message);
-                            workflowDocument.logAnnotation(message);
-                            return document;
-                        } else {
-                            throw new WorkflowException("Unable to get workflow document for document id " + getDocumentNumber());
-                        }
+            GlobalVariables.doInNewGlobalVariables(new UserSession(KFSConstants.SYSTEM_USER), () -> {
+                final Document document = getDocumentService().getByDocumentHeaderId(getDocumentNumber());
+                if (ObjectUtils.isNotNull(document)) {
+                    final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+                    if (ObjectUtils.isNotNull(workflowDocument)) {
+                        LOG.debug("annotateDocument, the annotation message: {}", message);
+                        workflowDocument.logAnnotation(message);
+                        return document;
                     } else {
-                        throw new WorkflowException("Unable to get document for document id " + getDocumentNumber());
+                        throw new WorkflowException(
+                                "Unable to get workflow document for document id " + getDocumentNumber());
                     }
+                } else {
+                    throw new WorkflowException("Unable to get document for document id " + getDocumentNumber());
                 }
             });
         } catch (Exception e) {
