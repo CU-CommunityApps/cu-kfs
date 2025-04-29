@@ -270,19 +270,12 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     
     private void saveDocumentInNewGlobalVariables(MaintenanceDocument document) {
         try {
-            GlobalVariables.doInNewGlobalVariables(new UserSession(KFSConstants.SYSTEM_USER),
-                () -> {
-                    try {
-                        getDocumentService().saveDocument(document, DocumentSystemSaveEvent.class);
-                        return document;
-                    } catch (Exception e) {
-                        LOG.error("saveDocumentInNewGlobalVariables, unable to save document", e);
-                        throw new RuntimeException(e);
-                    }
-                }
-            );
+            GlobalVariables.doInNewGlobalVariables(new UserSession(KFSConstants.SYSTEM_USER), () -> {
+                getDocumentService().saveDocument(document, DocumentSystemSaveEvent.class);
+                return document;
+            });
         } catch (Exception ex) {
-            LOG.error("saveDocumentInNewGlobalVariables", ex);
+            LOG.error("saveDocumentInNewGlobalVariables, unable to save document", ex);
             throw new RuntimeException(ex);
         }
     }
