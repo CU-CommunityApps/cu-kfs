@@ -36,7 +36,6 @@
 				<value>autoCancelBatchJob</value>
 				<value>kimFeedJob</value>
 				<value>kimFeedV2Job</value>
-				<value>awsSecretValidationJob</value>
                 <value>testISOFIPSConversionMappingsJob</value>
                 <value>historicalPurgeJob</value>
             </list>
@@ -164,27 +163,6 @@
 
 	<bean id="runKimFeedV2Step" class="edu.cornell.kfs.sys.batch.RunKimFeedV2Step" parent="step"
 		p:kimFeedService-ref="kimFeedService"/>
-
-	<bean id="awsSecretValidationJob"
-		parent="unscheduledJobDescriptor">
-		<property name="steps">
-			<list>
-				<ref bean="awsSecretValidationStep" />
-			</list>
-		</property>
-	</bean>
-
-	<bean id="awsSecretValidationStep" class="edu.cornell.kfs.sys.aws.batch.AwsSecretValidationStep" parent="step" >
-		<property name="awsSecretService" ref="awsSecretService" />
-	</bean>
-
-	<bean id="awsSecretService" parent="awsSecretService-parentBean" scope="prototype"/>
-	<bean id="awsSecretService-parentBean" abstract="true" class="edu.cornell.kfs.sys.service.impl.AwsSecretServiceImpl"
-		scope="prototype"
-		p:awsRegion="${aws.secret.region}"
-		p:kfsInstanceNamespace="${aws.secret.kfs.instance.namespace}"
-		p:kfsSharedNamespace="${aws.secret.kfs.shared.namespace}"
-		p:retryCount="${aws.secret.retry.count}" />
 
 <!-- KFSPTS-985 : User Favorites Profile -->
 

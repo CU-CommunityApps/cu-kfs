@@ -23,7 +23,6 @@
 
         <kfs.version>2023-06-28</kfs.version>
 
-        <aws-java-sdk.version>2.25.2</aws-java-sdk.version>
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>
         <checkstyle.version>10.12.0</checkstyle.version>
         <!-- CU customization to continue support for commons-digester after KualiCo has removed it from base code;
@@ -874,29 +873,6 @@
                 <exclusion>
                     <groupId>com.prowidesoftware</groupId>
                     <artifactId>pw-iso20022</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>secretsmanager</artifactId>
-            <version>${aws-java-sdk.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpclient</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpcore</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.reactivestreams</groupId>
-                    <artifactId>reactive-streams</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
