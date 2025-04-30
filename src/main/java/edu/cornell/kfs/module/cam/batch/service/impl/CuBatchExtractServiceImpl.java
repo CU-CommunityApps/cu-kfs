@@ -282,6 +282,10 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                             assetAccount.setItemAccountTotalAmount(assetAccount.getItemAccountTotalAmount()
                                     .add(purApAccountingLine.getAmount()));
                         } else {
+                            /*
+                             * CU Note: We have modified our custom logic below to backport and adjust the changes
+                             *          from FINP-10196 in the 2023-10-18 financials release.
+                             */
                             assetAccount = createPurchasingAccountsPayableLineAssetAccount(currentEntry, cabPurapDoc,
                                     purApAccountingLine, itemAsset);
                             final int oldNumAssetAccounts =
@@ -292,6 +296,9 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                             if (newNumAssetAccounts > oldNumAssetAccounts) {
                                 assetAcctLines.put(acctLineKey, assetAccount);
                             }
+                            /*
+                             * End FINP-10196 adjustments
+                             */
                         }
                     } else if (ObjectUtils.isNotNull(assetAccount)) {
                         // if account line key matches within same GL Entry, combine the amount
@@ -348,7 +355,8 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
     }
 
     /*
-     * Copied this private KualiCo method from the 2023-10-18 financials version of the superclass.
+     * Copied this private KualiCo method from the 2023-10-18 financials version of the superclass,
+     * to backport the FINP-10196 changes into our custom subclass.
      */
     private static void addOrUpdateAssetAccount(
             final PurchasingAccountsPayableItemAsset itemAsset,

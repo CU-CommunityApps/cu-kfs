@@ -137,7 +137,8 @@
         <property name="cuAchAdviceNotificationErrorReportService" ref="cuAchAdviceNotificationErrorReportService" />
     </bean>
     
-    <bean id="pdpEmailService" parent="pdpEmailService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPdpEmailServiceImpl">
+    <bean id="pdpEmailService" parent="pdpEmailService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPdpEmailServiceImpl"
+          c:environment-ref="environment">
         <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />   
     </bean>
     
