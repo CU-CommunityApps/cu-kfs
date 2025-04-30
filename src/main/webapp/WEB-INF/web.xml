@@ -101,6 +101,10 @@
         <filter-name>ConcurAIAuthFilter</filter-name>
         <filter-class>edu.cornell.kfs.concur.web.filter.ConcurAIAuthFilter</filter-class>
     </filter>
+    <filter>
+        <filter-name>PurchasOrderAuthFilter</filter-name>
+        <filter-class>edu.cornell.kfs.module.purap.web.filter.PurchasOrderAuthFilter</filter-class>
+    </filter>
 
     <filter>
         <filter-name>CuEinvoiceServerAuthFilter</filter-name>
@@ -213,6 +217,11 @@
     <filter-mapping>
         <filter-name>ConcurAIAuthFilter</filter-name>
         <url-pattern>/ws/concur/ai/api/*</url-pattern>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>PurchasOrderAuthFilter</filter-name>
+        <url-pattern>/ws/purapp/po/api/*</url-pattern>
     </filter-mapping>
 
     <!-- Listeners -->
