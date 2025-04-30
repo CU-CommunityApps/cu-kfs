@@ -41,7 +41,7 @@ public class ConcurAIAuthFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
-        httpServletResponse.setHeader(ConcurAIConstants.ACCESS_CONTROL_HEADER_NAME, HttpMethod.GET);
+        httpServletResponse.setHeader(CUKFSConstants.ACCESS_CONTROL_HEADER_NAME, HttpMethod.GET);
 
         checkAuthorization(httpServletRequest, httpServletResponse, chain);
 
@@ -55,12 +55,12 @@ public class ConcurAIAuthFilter implements Filter {
             } else {
                 LOG.warn("checkAuthorization unauthorized {} {}", request.getMethod(), request.getPathInfo());
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().println(gson.toJson(ConcurAIConstants.UNAUTHORIZED));
+                response.getWriter().println(gson.toJson(CUKFSConstants.UNAUTHORIZED));
             }
         } catch (Exception ex) {
             LOG.error("checkAuthorization", ex);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().println(gson.toJson(ConcurAIConstants.UNAUTHORIZED));
+            response.getWriter().println(gson.toJson(CUKFSConstants.UNAUTHORIZED));
         }
     }
 
@@ -77,7 +77,7 @@ public class ConcurAIAuthFilter implements Filter {
 
     private String getAllowableUserNamePassword() {
         return getWebServiceCredentialService().getWebServiceCredentialValue(
-                ConcurAIConstants.WEBSERVICE_CRED_GROUP_CODE, ConcurAIConstants.WEBSERVICE_CRED_KEY);
+                ConcurAIConstants.WEBSERVICE_CRED_GROUP_CODE, CUKFSConstants.WEBSERVICE_CREDENTIAL_KEY_USERNAMEPASSWORD);
     }
 
     public WebServiceCredentialService getWebServiceCredentialService() {

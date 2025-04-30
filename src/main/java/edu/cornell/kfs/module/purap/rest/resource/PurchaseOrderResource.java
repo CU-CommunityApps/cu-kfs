@@ -98,7 +98,6 @@ public class PurchaseOrderResource {
     public DataDictionaryService getDataDictionaryService() {
         if (dataDictionaryService == null) {
             dataDictionaryService = SpringContext.getBean(DataDictionaryService.class);
-            ;
         }
         return dataDictionaryService;
     }

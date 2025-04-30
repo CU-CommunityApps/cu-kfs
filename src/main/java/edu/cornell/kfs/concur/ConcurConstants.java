@@ -276,15 +276,11 @@ public class ConcurConstants {
     }
     
     public static final class ConcurAIConstants {
-        public static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
         public static final String CHART_AND_ACCOUNT_MUST_BE_PROVIDED = "A chart and account must be provided using the proper format.  The URL parameters are "
                 + KFSPropertyConstants.CHART_OF_ACCOUNTS + " and " + KFSPropertyConstants.ACCOUNT_NUMBER;
         public static final String ACCOUNT_NOT_FOUND_MESSAGE = "Could not find an account with a chart of {0} and account number {1}";
         public static final String RESOURCE_NAME = "Concur AI resouce.";
-        public static final String UNAUTHORIZED = "Unauthorized";
-        public static final String ACCESS_CONTROL_HEADER_NAME = "Access-Control-Allow-Methods";
         public static final String WEBSERVICE_CRED_GROUP_CODE = "CONCURAI";
-        public static final String WEBSERVICE_CRED_KEY = "usernamepassword";
     }
 
 }

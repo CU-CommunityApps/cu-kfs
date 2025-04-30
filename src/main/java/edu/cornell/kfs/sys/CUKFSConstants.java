@@ -238,4 +238,8 @@ public class CUKFSConstants {
     
     public static final String AUTHORIZATION_HEADER_KEY = "authorization";
     public static final String BASIC_AUTHENTICATION_STARTER = "Basic ";
+    public static final String UNAUTHORIZED = "Unauthorized";
+    public static final String WEBSERVICE_CREDENTIAL_KEY_USERNAMEPASSWORD = "usernamepassword";
+    public static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
+    public static final String ACCESS_CONTROL_HEADER_NAME = "Access-Control-Allow-Methods";
 }

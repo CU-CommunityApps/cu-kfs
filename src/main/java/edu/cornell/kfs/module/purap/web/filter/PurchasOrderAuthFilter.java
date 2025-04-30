@@ -19,12 +19,10 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import java.nio.charset.StandardCharsets;
 
-import edu.cornell.kfs.concur.ConcurConstants.ConcurAIConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 
 import com.google.gson.Gson;
 
-import edu.cornell.kfs.concur.ConcurConstants.ConcurAIConstants;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 
@@ -44,8 +42,7 @@ public class PurchasOrderAuthFilter implements Filter {
         LOG.debug("doFilter, entering");
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-
-        httpServletResponse.setHeader(ConcurAIConstants.UNAUTHORIZED, HttpMethod.GET);
+        httpServletResponse.setHeader(CUKFSConstants.ACCESS_CONTROL_HEADER_NAME, HttpMethod.GET);
 
         checkAuthorization(httpServletRequest, httpServletResponse, chain);
     }
@@ -58,12 +55,12 @@ public class PurchasOrderAuthFilter implements Filter {
             } else {
                 LOG.warn("checkAuthorization unauthorized {} {}", request.getMethod(), request.getPathInfo());
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().println(gson.toJson(ConcurAIConstants.UNAUTHORIZED));
+                response.getWriter().println(gson.toJson(CUKFSConstants.UNAUTHORIZED));
             }
         } catch (Exception ex) {
             LOG.error("checkAuthorization", ex);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().println(gson.toJson(ConcurAIConstants.UNAUTHORIZED));
+            response.getWriter().println(gson.toJson(CUKFSConstants.UNAUTHORIZED));
         }
     }
     
@@ -80,7 +77,7 @@ public class PurchasOrderAuthFilter implements Filter {
     
     private String getAllowableUserNamePassword() {
         return getWebServiceCredentialService().getWebServiceCredentialValue(
-                CUPurapConstants.PAYFLOW_CREDENTIAL_GROUP_CODE, ConcurAIConstants.WEBSERVICE_CRED_KEY);
+                CUPurapConstants.PAYFLOW_CREDENTIAL_GROUP_CODE, CUKFSConstants.WEBSERVICE_CREDENTIAL_KEY_USERNAMEPASSWORD);
     }
 
     public WebServiceCredentialService getWebServiceCredentialService() {
