@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.vnd.VendorConstants;
 
+
 /**
  * Cornell University specific constants class for holding and defining constants necessary for Cornell's implementation of the Kuali Financial System.
  *
@@ -570,4 +571,6 @@ public class CUPurapConstants {
     }
 
     public static final String IWNT_NO_ATTACHMENTS_QUESTION_ID = "IWantDocumentNoAttachments";
+    
+    public static final String PAYFLOW_CREDENTIAL_GROUP_CODE = "PAYFLOW";
 }
