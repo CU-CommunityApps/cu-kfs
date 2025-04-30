@@ -26,7 +26,9 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 
 import com.google.gson.Gson;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.rest.jsonOnjects.PurchaseOrderDetailDto;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 @Path("api")
 @Produces(MediaType.APPLICATION_JSON)
@@ -46,33 +48,31 @@ public class PurchaseOrderResource {
 
     @GET
     public Response describePurchaseOrderResource() {
-        return Response.ok("Purchase Order Resource").build();
+        return Response.ok(CUPurapConstants.PURCHASE_ORDER_ENDPOINT_DESCRIPTION).build();
     }
 
     @GET
     @Path("/getPurchaseOrderDetails")
     public Response getPurchaseOrderDetails() {
         try {
-            final String poNumberString = servletRequest.getParameter("poNumber");
+            final String poNumberString = servletRequest.getParameter(CUPurapConstants.PURCHASE_ORDER_NUMBER_URL_PARAMETER_NAME);
             LOG.debug("getPurchaseOrderDetails, entering with poNumber {}", poNumberString);
 
             if (!validatePoNumber(poNumberString)) {
                 LOG.debug("getPurchaseOrderDetails, poNumber invalid");
                 return Response.status(Status.BAD_REQUEST)
-                        .entity("the purchase order number was not formatted correctly").build();
+                        .entity(CUPurapConstants.PURCHASE_ORDER_NUMBER_FORMAT_ERROR_RESPONSE_MESSAGE).build();
             }
 
             final PurchaseOrderDocument purchaseOrder = getPurchaseOrderService().getCurrentPurchaseOrder(Integer.valueOf(poNumberString));
             if (purchaseOrder == null) {
-                String notFoundMessage = "Purchase order not found";
-                return Response.status(Status.NOT_FOUND).entity(notFoundMessage).build();
+                return Response.status(Status.NOT_FOUND).entity(CUPurapConstants.PURCHASE_ORDER_NOT_FOUND_MESSAGE).build();
             }
             
             final VendorDetail vendorDetail = getVendorService().getByVendorNumber(purchaseOrder.getVendorNumber());
             if (vendorDetail == null) {
                 LOG.error("getPurchaseOrderDetails, for purchase order {} with a vendor number of {}, the vendor detail could not be found, this should not happen", poNumberString, purchaseOrder.getVendorNumber());
-                String notFoundMessage = "Vendor detail not found";
-                return Response.status(Status.NOT_FOUND).entity(notFoundMessage).build();
+                return Response.status(Status.NOT_FOUND).entity(CUPurapConstants.VENDOR_NOT_FOUND_MESSAGE).build();
             }
             
             PurchaseOrderDetailDto dto = new PurchaseOrderDetailDto(purchaseOrder, vendorDetail);
@@ -80,7 +80,7 @@ public class PurchaseOrderResource {
 
         } catch (Exception e) {
             LOG.error("getPurchaseOrderDetails, had an error getting account details", e);
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Unexepected Error").build();
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(CUKFSConstants.INTERNAL_SERVER_ERROR).build();
         }
 
     }
