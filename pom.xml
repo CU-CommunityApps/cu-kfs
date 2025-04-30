@@ -40,6 +40,7 @@
         <jsp-api.version>2.3.1</jsp-api.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
         <junit.version>5.9.3</junit.version>
+        <lettuce.version>6.2.4.RELEASE</lettuce.version>
         <ojdbc.version>19.18.0.0</ojdbc.version>
         <opencsv.version>5.7.1</opencsv.version>
         <plexus-utils.version>3.0.24</plexus-utils.version>
@@ -49,6 +50,7 @@
         <squiggly-filter-jackson.version>1.3.18</squiggly-filter-jackson.version>
         <jackson.version>2.14.1</jackson.version>
         <spring.version>5.3.34</spring.version>
+        <spring-data-redis.version>2.7.11</spring-data-redis.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <xapool.version>1.5.0-patch7</xapool.version>
         <maven.compiler.version>3.10.1</maven.compiler.version>
@@ -1217,6 +1219,27 @@
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+            <version>${spring-data-redis.version}</version>
+            <exclusions>
+                <!--
+                  - As of 2.7.11, this transitive dependency results in KFS using SLF4J 1.7.32. Excluding so a newer
+                  - SLF4J version (2.0.x) will be used.
+                 -->
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
+            <version>${lettuce.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.github.bohnman</groupId>
