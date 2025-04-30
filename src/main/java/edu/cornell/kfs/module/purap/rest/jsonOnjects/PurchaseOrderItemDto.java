@@ -4,87 +4,88 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 
 public class PurchaseOrderItemDto {
-    
-    private String poLineNumber;
-    private String quantity;
-    private String unitOfMeasure;
-    private String catalogNumber;
-    private String description;
-    private String lineItemCost;
-    private String tax;
+
+    private String itemLineNumber;
+    private String itemQuantity;
+    private String itemUnitOfMeasureCode;
+    private String itemCatalogNumber;
+    private String itemDescription;
+    private String itemUnitPrice;
+    private String itemTaxAmount;
     private String itemTypeCode;
-    private String totalLineItemCost;
-    
+    private String itemTotalAmount;
+
     public PurchaseOrderItemDto() {
-        
+
     }
-    
+
     public PurchaseOrderItemDto(PurApItem item) {
-        this.poLineNumber = item.getItemLineNumber() != null ? item.getItemLineNumber().toString() : StringUtils.EMPTY;
-        this.quantity = item.getItemQuantity() != null ? item.getItemQuantity().toString() : StringUtils.EMPTY;
-        this.unitOfMeasure = item.getItemUnitOfMeasureCode();
-        this.catalogNumber = item.getItemCatalogNumber();
-        this.description = item.getItemDescription();
-        this.lineItemCost = item.getItemUnitPrice() != null ? item.getItemUnitPrice().toPlainString() : StringUtils.EMPTY;
-        this.tax = item.getItemTaxAmount() != null ?  item.getItemTaxAmount().toString() : StringUtils.EMPTY;
+        this.itemLineNumber = item.getItemLineNumber() != null ? item.getItemLineNumber().toString() : StringUtils.EMPTY;
+        this.itemQuantity = item.getItemQuantity() != null ? item.getItemQuantity().toString() : StringUtils.EMPTY;
+        this.itemUnitOfMeasureCode = item.getItemUnitOfMeasureCode();
+        this.itemCatalogNumber = item.getItemCatalogNumber();
+        this.itemDescription = item.getItemDescription();
+        this.itemUnitPrice = item.getItemUnitPrice() != null ? item.getItemUnitPrice().toPlainString()
+                : StringUtils.EMPTY;
+        this.itemTaxAmount = item.getItemTaxAmount() != null ? item.getItemTaxAmount().toString() : StringUtils.EMPTY;
         this.itemTypeCode = item.getItemTypeCode();
-        this.totalLineItemCost = item.getTotalAmount() != null ? item.getTotalAmount().toString() : StringUtils.EMPTY;
+        this.itemTotalAmount = item.getTotalAmount() != null ? item.getTotalAmount().toString() : StringUtils.EMPTY;
     }
 
-    public String getPoLineNumber() {
-        return poLineNumber;
+    public String getItemLineNumber() {
+        return itemLineNumber;
     }
 
-    public void setPoLineNumber(String poLineNumber) {
-        this.poLineNumber = poLineNumber;
+    public void setItemLineNumber(String itemLineNumber) {
+        this.itemLineNumber = itemLineNumber;
     }
 
-    public String getQuantity() {
-        return quantity;
+    public String getItemQuantity() {
+        return itemQuantity;
     }
 
-    public void setQuantity(String quantity) {
-        this.quantity = quantity;
+    public void setItemQuantity(String itemQuantity) {
+        this.itemQuantity = itemQuantity;
     }
 
-    public String getUnitOfMeasure() {
-        return unitOfMeasure;
+    public String getItemUnitOfMeasureCode() {
+        return itemUnitOfMeasureCode;
     }
 
-    public void setUnitOfMeasure(String unitOfMeasure) {
-        this.unitOfMeasure = unitOfMeasure;
+    public void setItemUnitOfMeasureCode(String itemUnitOfMeasureCode) {
+        this.itemUnitOfMeasureCode = itemUnitOfMeasureCode;
     }
 
-    public String getCatalogNumber() {
-        return catalogNumber;
+    public String getItemCatalogNumber() {
+        return itemCatalogNumber;
     }
 
-    public void setCatalogNumber(String catalogNumber) {
-        this.catalogNumber = catalogNumber;
+    public void setItemCatalogNumber(String itemCatalogNumber) {
+        this.itemCatalogNumber = itemCatalogNumber;
     }
 
-    public String getDescription() {
-        return description;
+    public String getItemDescription() {
+        return itemDescription;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setItemDescription(String itemDescription) {
+        this.itemDescription = itemDescription;
     }
 
-    public String getLineItemCost() {
-        return lineItemCost;
+    public String getItemUnitPrice() {
+        return itemUnitPrice;
     }
 
-    public void setLineItemCost(String lineItemCost) {
-        this.lineItemCost = lineItemCost;
+    public void setItemUnitPrice(String itemUnitPrice) {
+        this.itemUnitPrice = itemUnitPrice;
     }
 
-    public String getTax() {
-        return tax;
+    public String getItemTaxAmount() {
+        return itemTaxAmount;
     }
 
-    public void setTax(String tax) {
-        this.tax = tax;
+    public void setItemTaxAmount(String itemTaxAmount) {
+        this.itemTaxAmount = itemTaxAmount;
     }
 
     public String getItemTypeCode() {
@@ -95,12 +96,12 @@ public class PurchaseOrderItemDto {
         this.itemTypeCode = itemTypeCode;
     }
 
-    public String getTotalLineItemCost() {
-        return totalLineItemCost;
+    public String getItemTotalAmount() {
+        return itemTotalAmount;
     }
 
-    public void setTotalLineItemCost(String totalLineItemCost) {
-        this.totalLineItemCost = totalLineItemCost;
+    public void setItemTotalAmount(String itemTotalAmount) {
+        this.itemTotalAmount = itemTotalAmount;
     }
 
 }

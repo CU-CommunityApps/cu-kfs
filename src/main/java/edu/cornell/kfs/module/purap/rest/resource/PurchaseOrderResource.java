@@ -21,6 +21,8 @@ import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.kfs.vnd.document.service.VendorService;
 
 import com.google.gson.Gson;
 
@@ -34,6 +36,7 @@ public class PurchaseOrderResource {
 
     private DataDictionaryService dataDictionaryService;
     private PurchaseOrderService purchaseOrderService;
+    private VendorService vendorService;
 
     @Context
     protected HttpServletRequest servletRequest;
@@ -59,17 +62,21 @@ public class PurchaseOrderResource {
                         .entity("the purchase order number was not formatted correctly").build();
             }
 
-            final Integer poNumberInt = Integer.valueOf(poNumberString);
-
-            final PurchaseOrderDocument purchaseOrder = getPurchaseOrderService().getCurrentPurchaseOrder(poNumberInt);
-
-            if (purchaseOrder != null) {
-                PurchaseOrderDetailDto dto = new PurchaseOrderDetailDto(purchaseOrder);
-                return Response.ok(gson.toJson(dto)).build();
-            } else {
+            final PurchaseOrderDocument purchaseOrder = getPurchaseOrderService().getCurrentPurchaseOrder(Integer.valueOf(poNumberString));
+            if (purchaseOrder == null) {
                 String notFoundMessage = "Purchase order not found";
                 return Response.status(Status.NOT_FOUND).entity(notFoundMessage).build();
             }
+            
+            final VendorDetail vendorDetail = getVendorService().getByVendorNumber(purchaseOrder.getVendorNumber());
+            if (vendorDetail == null) {
+                LOG.error("getPurchaseOrderDetails, for purchase order {} with a vendor number of {}, the vendor detail could not be found, this should not happen", poNumberString, purchaseOrder.getVendorNumber());
+                String notFoundMessage = "Vendor detail not found";
+                return Response.status(Status.NOT_FOUND).entity(notFoundMessage).build();
+            }
+            
+            PurchaseOrderDetailDto dto = new PurchaseOrderDetailDto(purchaseOrder, vendorDetail);
+            return Response.ok(gson.toJson(dto)).build();
 
         } catch (Exception e) {
             LOG.error("getPurchaseOrderDetails, had an error getting account details", e);
@@ -99,9 +106,15 @@ public class PurchaseOrderResource {
     public PurchaseOrderService getPurchaseOrderService() {
         if (purchaseOrderService == null) {
             purchaseOrderService = SpringContext.getBean(PurchaseOrderService.class);
-            ;
         }
         return purchaseOrderService;
+    }
+
+    public VendorService getVendorService() {
+        if (vendorService == null) {
+            vendorService = SpringContext.getBean(VendorService.class);
+        }
+        return vendorService;
     }
 
 }

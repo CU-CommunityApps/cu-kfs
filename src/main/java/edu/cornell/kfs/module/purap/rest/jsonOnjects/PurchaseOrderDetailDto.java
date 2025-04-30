@@ -5,102 +5,99 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.module.purap.businessobject.PaymentRequestView;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
+import org.kuali.kfs.vnd.businessobject.VendorAddress;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
 public class PurchaseOrderDetailDto {
-    
-    private String documentNumber;
-    private String purchasOrderNumber;
-    private String purchasOrderStatus;
-    private String invoiceNumber;
-    private String invoiceDate;
+
+    private String kfsDocumentNumber;
+    private String purchaseOrderNumber;
+    private String purchaseOrderStatus;
+    private List<PurchaseOrderInvoiceDto> purchaseOrderInvoices;
     private String vendorNumber;
     private String vendorName;
-    private boolean foreign;
-    private String paymentType;
-    private String vendorAddressLine1;
-    private String vendorAddressLine2;
-    private String vendorCity;
-    private String vendorState;
-    private String vendorPostalCode;
-    private String vendorEmail;
+    private boolean foreignIndicator;
+    private String recurringPaymentTypeCode;
+    private List<PurchaseOrderVendorAddressDto> vendorAddresses;
     private List<PurchaseOrderItemDto> purchaseOrderItems;
-    private String shipping;
-    private String miscellaneous;
-    private String grandTotal;
-    
+    private String totalDollarAmount;
+
     public PurchaseOrderDetailDto() {
+        purchaseOrderInvoices = new ArrayList<PurchaseOrderInvoiceDto>();
+        vendorAddresses = new ArrayList<PurchaseOrderVendorAddressDto>();
         purchaseOrderItems = new ArrayList<PurchaseOrderItemDto>();
     }
-    
-    public PurchaseOrderDetailDto(final PurchaseOrderDocument po) {
+
+    public PurchaseOrderDetailDto(final PurchaseOrderDocument po, VendorDetail vendorDetail) {
         this();
-        this.documentNumber = po.getDocumentNumber();
-        this.purchasOrderNumber = po.getPurapDocumentIdentifier() != null ? po.getPurapDocumentIdentifier().toString() : StringUtils.EMPTY;
-        this.purchasOrderStatus = po.getApplicationDocumentStatus();
-        //this.invoiceNumber = po.get
-        //this.invoiceDate
+        this.kfsDocumentNumber = po.getDocumentNumber();
+        this.purchaseOrderNumber = po.getPurapDocumentIdentifier() != null ? po.getPurapDocumentIdentifier().toString()
+                : StringUtils.EMPTY;
+        this.purchaseOrderStatus = po.getApplicationDocumentStatus();
         this.vendorNumber = po.getVendorNumber();
         this.vendorName = po.getVendorName();
-        //this.foreign = 
-        this.paymentType = po.getRecurringPaymentTypeCode();
-        this.vendorAddressLine1 = po.getVendorLine1Address();
-        this.vendorAddressLine2 = po.getVendorLine2Address();
-        this.vendorCity = po.getVendorCityName();
-        this.vendorPostalCode = po.getVendorPostalCode();
-        this.vendorEmail = po.getVendorEmailAddress();
+        this.foreignIndicator = vendorDetail.getVendorHeader().getVendorForeignIndicator();
+        this.recurringPaymentTypeCode = po.getRecurringPaymentTypeCode();
+        this.totalDollarAmount = po.getTotalDollarAmount() != null ? po.getTotalDollarAmount().toString()
+                : StringUtils.EMPTY;
+
+        if (CollectionUtils.isNotEmpty(po.getRelatedViews().getRelatedPaymentRequestViews())) {
+            for (PaymentRequestView reqView : po.getRelatedViews().getRelatedPaymentRequestViews()) {
+                PurchaseOrderInvoiceDto dto = new PurchaseOrderInvoiceDto(reqView);
+                this.purchaseOrderInvoices.add(dto);
+            }
+        }
+
+        if (CollectionUtils.isNotEmpty(vendorDetail.getVendorAddresses())) {
+            for (VendorAddress address : vendorDetail.getVendorAddresses()) {
+                if (address.isActive()) {
+                    PurchaseOrderVendorAddressDto dto = new PurchaseOrderVendorAddressDto(address);
+                    this.vendorAddresses.add(dto);
+                }
+            }
+        }
+        
         if (CollectionUtils.isNotEmpty(po.getItems())) {
             for (Object itemObject : po.getItems()) {
-                PurApItem purApItem = (PurApItem)itemObject;
+                PurApItem purApItem = (PurApItem) itemObject;
                 this.purchaseOrderItems.add(new PurchaseOrderItemDto(purApItem));
             }
         }
-        //this.shipping =
-        //this.miscellaneous       
-        this.grandTotal = po.getTotalDollarAmount().toString();
-        
-        
     }
 
-    public String getDocumentNumber() {
-        return documentNumber;
+    public String getKfsDocumentNumber() {
+        return kfsDocumentNumber;
     }
 
-    public void setDocumentNumber(String documentNumber) {
-        this.documentNumber = documentNumber;
+    public void setKfsDocumentNumber(String kfsDocumentNumber) {
+        this.kfsDocumentNumber = kfsDocumentNumber;
     }
 
-    public String getPurchasOrderNumber() {
-        return purchasOrderNumber;
+    public String getPurchaseOrderNumber() {
+        return purchaseOrderNumber;
     }
 
-    public void setPurchasOrderNumber(String purchasOrderNumber) {
-        this.purchasOrderNumber = purchasOrderNumber;
+    public void setPurchaseOrderNumber(String purchaseOrderNumber) {
+        this.purchaseOrderNumber = purchaseOrderNumber;
     }
 
-    public String getPurchasOrderStatus() {
-        return purchasOrderStatus;
+    public String getPurchaseOrderStatus() {
+        return purchaseOrderStatus;
     }
 
-    public void setPurchasOrderStatus(String purchasOrderStatus) {
-        this.purchasOrderStatus = purchasOrderStatus;
+    public void setPurchaseOrderStatus(String purchaseOrderStatus) {
+        this.purchaseOrderStatus = purchaseOrderStatus;
     }
 
-    public String getInvoiceNumber() {
-        return invoiceNumber;
+    public List<PurchaseOrderInvoiceDto> getPurchaseOrderInvoices() {
+        return purchaseOrderInvoices;
     }
 
-    public void setInvoiceNumber(String invoiceNumber) {
-        this.invoiceNumber = invoiceNumber;
-    }
-
-    public String getInvoiceDate() {
-        return invoiceDate;
-    }
-
-    public void setInvoiceDate(String invoiceDate) {
-        this.invoiceDate = invoiceDate;
+    public void setPurchaseOrderInvoices(List<PurchaseOrderInvoiceDto> purchaseOrderInvoices) {
+        this.purchaseOrderInvoices = purchaseOrderInvoices;
     }
 
     public String getVendorNumber() {
@@ -119,68 +116,28 @@ public class PurchaseOrderDetailDto {
         this.vendorName = vendorName;
     }
 
-    public boolean isForeign() {
-        return foreign;
+    public boolean isForeignIndicator() {
+        return foreignIndicator;
     }
 
-    public void setForeign(boolean foreign) {
-        this.foreign = foreign;
+    public void setForeignIndicator(boolean foreignIndicator) {
+        this.foreignIndicator = foreignIndicator;
     }
 
-    public String getPaymentType() {
-        return paymentType;
+    public String getRecurringPaymentTypeCode() {
+        return recurringPaymentTypeCode;
     }
 
-    public void setPaymentType(String paymentType) {
-        this.paymentType = paymentType;
+    public void setRecurringPaymentTypeCode(String recurringPaymentTypeCode) {
+        this.recurringPaymentTypeCode = recurringPaymentTypeCode;
     }
 
-    public String getVendorAddressLine1() {
-        return vendorAddressLine1;
+    public List<PurchaseOrderVendorAddressDto> getVendorAddresses() {
+        return vendorAddresses;
     }
 
-    public void setVendorAddressLine1(String vendorAddressLine1) {
-        this.vendorAddressLine1 = vendorAddressLine1;
-    }
-
-    public String getVendorAddressLine2() {
-        return vendorAddressLine2;
-    }
-
-    public void setVendorAddressLine2(String vendorAddressLine2) {
-        this.vendorAddressLine2 = vendorAddressLine2;
-    }
-
-    public String getVendorCity() {
-        return vendorCity;
-    }
-
-    public void setVendorCity(String vendorCity) {
-        this.vendorCity = vendorCity;
-    }
-
-    public String getVendorState() {
-        return vendorState;
-    }
-
-    public void setVendorState(String vendorState) {
-        this.vendorState = vendorState;
-    }
-
-    public String getVendorPostalCode() {
-        return vendorPostalCode;
-    }
-
-    public void setVendorPostalCode(String vendorPostalCode) {
-        this.vendorPostalCode = vendorPostalCode;
-    }
-
-    public String getVendorEmail() {
-        return vendorEmail;
-    }
-
-    public void setVendorEmail(String vendorEmail) {
-        this.vendorEmail = vendorEmail;
+    public void setVendorAddresses(List<PurchaseOrderVendorAddressDto> vendorAddresses) {
+        this.vendorAddresses = vendorAddresses;
     }
 
     public List<PurchaseOrderItemDto> getPurchaseOrderItems() {
@@ -191,28 +148,12 @@ public class PurchaseOrderDetailDto {
         this.purchaseOrderItems = purchaseOrderItems;
     }
 
-    public String getShipping() {
-        return shipping;
+    public String getTotalDollarAmount() {
+        return totalDollarAmount;
     }
 
-    public void setShipping(String shipping) {
-        this.shipping = shipping;
-    }
-
-    public String getMiscellaneous() {
-        return miscellaneous;
-    }
-
-    public void setMiscellaneous(String miscellaneous) {
-        this.miscellaneous = miscellaneous;
-    }
-
-    public String getGrandTotal() {
-        return grandTotal;
-    }
-
-    public void setGrandTotal(String grandTotal) {
-        this.grandTotal = grandTotal;
+    public void setTotalDollarAmount(String totalDollarAmount) {
+        this.totalDollarAmount = totalDollarAmount;
     }
 
 }
