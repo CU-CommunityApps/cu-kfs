@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.vnd.VendorConstants;
 
-
 /**
  * Cornell University specific constants class for holding and defining constants necessary for Cornell's implementation of the Kuali Financial System.
  *
