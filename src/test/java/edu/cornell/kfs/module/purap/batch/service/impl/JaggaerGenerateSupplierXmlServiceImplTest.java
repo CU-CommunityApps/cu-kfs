@@ -4,6 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.sql.Date;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -11,6 +15,8 @@ import java.util.stream.Stream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +52,7 @@ import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 
 @Execution(ExecutionMode.SAME_THREAD)
 public class JaggaerGenerateSupplierXmlServiceImplTest {
+    private static final Logger LOG = LogManager.getLogger();
     
     private JaggaerGenerateSupplierXmlServiceImpl jaggaerGenerateSupplierXmlServiceImpl;
     
@@ -60,7 +67,6 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
         jaggaerGenerateSupplierXmlServiceImpl = new JaggaerGenerateSupplierXmlServiceImpl();
         jaggaerGenerateSupplierXmlServiceImpl.setWebServiceCredentialService(buildMockWebServiceCredentialService());
         dateTimeService = new TestDateTimeServiceImpl();
-        jaggaerGenerateSupplierXmlServiceImpl.setDateTimeService(dateTimeService);
         dateTimeService.afterPropertiesSet();
         outputFileDirectory = new File(OUTPUT_FILE_PATH);
         outputFileDirectory.mkdir();
@@ -110,13 +116,66 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
         return suppliers;
     }
     
+    private Instant getCurrentDateTimeAsUtcInstant() {
+        return Instant.now();
+    }
+    
+    private ZonedDateTime convertInstantToSystemDefaultZone(Instant pointInTime) {
+        return pointInTime.atZone(ZoneId.systemDefault());
+    }
+    
+    private ZonedDateTime convertInstantToUtcZone(Instant pointInTime) {
+        return pointInTime.atZone(ZoneOffset.UTC);
+    }
+    
     @Test
-    void testDateFormatters() {
-        long dateTime = Long.parseLong("1684345725727");
-        String actualFileNameDateString = JaggaerGenerateSupplierXmlServiceImpl.DATE_FORMATTER_FOR_FILE_NAME.print(dateTime);
-        String actualHeaderDateString = JaggaerGenerateSupplierXmlServiceImpl.DATE_FORMATTER_FOR_HEADER_DATE.print(dateTime);
-        assertEquals("20230517_134845727", actualFileNameDateString);
-        assertEquals("2023-05-17T17:48:45.727Z", actualHeaderDateString);
+    void testDateFormatterFileName() {
+        Instant currentDateTimeUtcInstant = getCurrentDateTimeAsUtcInstant();
+        String manuallyFormattedFileNameDateTimeString = buildExpectedFileNameLocaleDateTimeString(convertInstantToSystemDefaultZone(currentDateTimeUtcInstant));
+        String formattedFileNameDateTimeString = convertInstantToSystemDefaultZone(currentDateTimeUtcInstant).format(JaggaerGenerateSupplierXmlServiceImpl.DATE_TIME_ZONE_DEFAULT_FORMATTER_yyyyMMdd_HHmmssSSS);
+        LOG.info("");
+        LOG.info("testDateFormatterLocaleFileName::: File Name should have local time zone (NOT UTC): currentDateTimeUtcInstant={}  manuallyFormattedFileNameDateTimeString={}  formattedFileNameDateTimeString={}", currentDateTimeUtcInstant, manuallyFormattedFileNameDateTimeString, formattedFileNameDateTimeString);
+        LOG.info("");
+        assertEquals(manuallyFormattedFileNameDateTimeString, formattedFileNameDateTimeString);
+    }
+    
+    @Test
+    void testDateFormatterFileHeader() {
+        Instant currentDateTimeAsUtcInstant = getCurrentDateTimeAsUtcInstant();
+        String manuallyFormattedHeaderDateTimeString = buildExpectedHeaderUtcDateTimeString(convertInstantToUtcZone(currentDateTimeAsUtcInstant));
+        String formattedHeaderDateTimeString = convertInstantToUtcZone(currentDateTimeAsUtcInstant).format(JaggaerGenerateSupplierXmlServiceImpl.DATE_TIME_ZONE_UTC_FORMATTER_yyyy_MM_dd_T_HH_mm_ss_SSS_Z);
+        LOG.info("");
+        LOG.info("testDateFormatterUtcFileHeader: File Header should have UTC time zone:  currentDateTimeAsInstant={}  manuallyFormattedHeaderDateTimeString={}  formattedHeaderDateTimeString={}", currentDateTimeAsUtcInstant, manuallyFormattedHeaderDateTimeString, formattedHeaderDateTimeString);
+        LOG.info("");
+        assertEquals(manuallyFormattedHeaderDateTimeString, formattedHeaderDateTimeString);
+    }
+    
+    private String buildExpectedFileNameLocaleDateTimeString(ZonedDateTime preZonedDateTime) {
+        String manualFileNameDateString = new String();
+        int myNanoSeconds = preZonedDateTime.getNano() / 1000000;
+        manualFileNameDateString = manualFileNameDateString + preZonedDateTime.getYear() 
+            + (preZonedDateTime.getMonthValue() < 10 ? "0" + preZonedDateTime.getMonthValue() : preZonedDateTime.getMonthValue())
+            + (preZonedDateTime.getDayOfMonth() < 10 ? "0" + preZonedDateTime.getDayOfMonth() : preZonedDateTime.getDayOfMonth())
+            + "_"
+            + (preZonedDateTime.getHour() < 10 ? "0" + preZonedDateTime.getHour() : preZonedDateTime.getHour())
+            + (preZonedDateTime.getMinute() < 10 ? "0" + preZonedDateTime.getMinute() : preZonedDateTime.getMinute())
+            + (preZonedDateTime.getSecond() < 10 ? "0" + preZonedDateTime.getSecond() : preZonedDateTime.getSecond())
+            + (myNanoSeconds < 10 ? "00" + myNanoSeconds : (myNanoSeconds < 100 ? "0" + myNanoSeconds : myNanoSeconds));
+        return manualFileNameDateString;
+    }
+    
+    private String buildExpectedHeaderUtcDateTimeString(ZonedDateTime utcZonedDateTime) {
+        String manualHeaderDateString = new String();
+        int myNanoSeconds = utcZonedDateTime.getNano() / 1000000;
+        manualHeaderDateString = manualHeaderDateString + utcZonedDateTime.getYear() + "-"
+                + (utcZonedDateTime.getMonthValue() < 10 ? "0" + utcZonedDateTime.getMonthValue() : utcZonedDateTime.getMonthValue()) + "-"
+                + (utcZonedDateTime.getDayOfMonth() < 10 ? "0" + utcZonedDateTime.getDayOfMonth() : utcZonedDateTime.getDayOfMonth())
+                + "T"
+                + (utcZonedDateTime.getHour() < 10 ? "0" + utcZonedDateTime.getHour() : utcZonedDateTime.getHour()) + ":"
+                + (utcZonedDateTime.getMinute() < 10 ? "0" + utcZonedDateTime.getMinute() : utcZonedDateTime.getMinute()) + ":"
+                + (utcZonedDateTime.getSecond() < 10 ? "0" + utcZonedDateTime.getSecond() : utcZonedDateTime.getSecond()) + "."
+                + (myNanoSeconds < 10 ? "00" + myNanoSeconds : (myNanoSeconds < 100 ? "0" + myNanoSeconds : myNanoSeconds)) + "Z";
+        return manualHeaderDateString;
     }
     
     @ParameterizedTest
