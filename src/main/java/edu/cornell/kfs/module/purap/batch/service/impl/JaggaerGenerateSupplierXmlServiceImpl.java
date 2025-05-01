@@ -8,6 +8,11 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.sql.Date;
 import java.text.MessageFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -19,10 +24,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.service.FileStorageService;
@@ -67,16 +69,19 @@ import jakarta.xml.bind.JAXBException;
 
 public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSupplierXmlService {
     private static final Logger LOG = LogManager.getLogger();
-    protected static final DateTimeFormatter DATE_FORMATTER_FOR_HEADER_DATE = DateTimeFormat
-            .forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_Z).withLocale(Locale.US).withZoneUTC();
-    protected static final DateTimeFormatter DATE_FORMATTER_FOR_FILE_NAME = DateTimeFormat
-            .forPattern(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmssSSS).withLocale(Locale.US);
-    
+
+    //Jaggaer header formatter, date and time placed in file header should represent UTC for US eastern.
+    protected static final DateTimeFormatter DATE_TIME_ZONE_UTC_FORMATTER_yyyy_MM_dd_T_HH_mm_ss_SSS_Z = 
+            DateTimeFormatter.ofPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_Z).localizedBy(Locale.US).withZone(ZoneOffset.UTC);
+
+    //Jaggaer filename formatter, date and time in file name should represent US eastern.
+    protected static final DateTimeFormatter DATE_TIME_ZONE_DEFAULT_FORMATTER_yyyyMMdd_HHmmssSSS = 
+            DateTimeFormatter.ofPattern(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmssSSS).withZone(ZoneOffset.systemDefault()).localizedBy(Locale.US);
+
     private Pattern numberPattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
     private String jaggaerXmlDirectory;
 
-    protected DateTimeService dateTimeService;
     protected CUMarshalService cuMarshalService;
     protected FileStorageService fileStorageService;
     protected JaggaerUploadDao jaggaerUploadDao;
@@ -323,10 +328,22 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         return messages;
     }
 
+    private Instant getCurrentDateTimeAsUtcInstant() {
+        return Instant.now();
+    }
+    
+    private ZonedDateTime convertInstantToSystemDefaultZone(Instant pointInTime) {
+        return pointInTime.atZone(ZoneId.systemDefault());
+    }
+    
+    private ZonedDateTime convertInstantToUtcZone(Instant pointInTime) {
+        return pointInTime.atZone(ZoneOffset.UTC);
+    }
+    
     private Header buildHeader() {
         Header header = new Header();
         header.setMessageId(UUID.randomUUID().toString());
-        header.setTimestamp(DATE_FORMATTER_FOR_HEADER_DATE.print(dateTimeService.getCurrentDate().getTime()));
+        header.setTimestamp(convertInstantToUtcZone(getCurrentDateTimeAsUtcInstant()).format(DATE_TIME_ZONE_UTC_FORMATTER_yyyy_MM_dd_T_HH_mm_ss_SSS_Z));
         header.setAuthentication(buildAuthentication());
         return header;
     }
@@ -347,7 +364,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         List<JaggaerUploadSupplierXmlFileDetailsDto> xmlFileDtos = new ArrayList<JaggaerUploadSupplierXmlFileDetailsDto>();
         for (SupplierSyncMessage message : messages) {
             String outputFileName = jaggaerXmlDirectory + findOutputFileNameStarter()
-                    + DATE_FORMATTER_FOR_FILE_NAME.print(dateTimeService.getCurrentDate().getTime())
+                    + convertInstantToSystemDefaultZone(getCurrentDateTimeAsUtcInstant()).format(DATE_TIME_ZONE_DEFAULT_FORMATTER_yyyyMMdd_HHmmssSSS)
                     + CUKFSConstants.XML_FILE_EXTENSION;
             xmlFileDtos.add(buildJaggaerUploadSupplierXmlFileDetailsDto(message,outputFileName));
             
@@ -362,7 +379,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         }
         jaggaerGenerateSupplierXmlReportService.generateAndEmailResultsReport(xmlFileDtos);
     }
-
+    
     private String findOutputFileNameStarter() {
         return getParameterValueString(CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_OUTPUT_FILE_NAME_STARTER);
     }
@@ -390,10 +407,6 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
 
     public void setJaggaerXmlDirectory(String jaggaerXmlDirectory) {
         this.jaggaerXmlDirectory = jaggaerXmlDirectory;
-    }
-
-    public void setDateTimeService(DateTimeService dateTimeService) {
-        this.dateTimeService = dateTimeService;
     }
 
     public void setCuMarshalService(CUMarshalService cuMarshalService) {
