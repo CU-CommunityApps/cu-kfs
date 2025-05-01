@@ -667,6 +667,10 @@
                 <match>organizationManagerUniversal</match>
                 <replacement/>
             </pattern>
+            <pattern>
+                <match>organizationInFinancialProcessingIndicator</match>
+                <replacement/>
+            </pattern>
         </pattern>
         <pattern>
             <class>edu.cornell.kfs.coa.businessobject.OrganizationGlobal</class>

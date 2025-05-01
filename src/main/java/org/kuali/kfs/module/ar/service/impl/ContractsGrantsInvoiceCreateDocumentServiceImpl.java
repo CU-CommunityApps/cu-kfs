@@ -639,7 +639,8 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                 document.getInvoiceAddressDetails().addAll(invoiceAddressDetails);
             }
 
-            if (ArConstants.BillingFrequencyValues.isMilestone(document.getInvoiceGeneralDetail())) {
+            final InvoiceGeneralDetail docInvoiceGeneralDetail = document.getInvoiceGeneralDetail();
+            if (ArConstants.BillingFrequencyValues.isMilestone(docInvoiceGeneralDetail)) {
                 final ContractsAndGrantsBillingAwardAccount awardAccount = awardAccounts.get(0);
                 final List<Milestone> milestones = getContractsGrantsBillingUtilityService()
                         .getActiveMilestonesForProposalNumber(award.getProposalNumber(),
@@ -648,7 +649,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                     document.getInvoiceMilestones().clear();
                     document.getInvoiceMilestones().addAll(buildInvoiceMilestones(milestones));
                 }
-            } else if (ArConstants.BillingFrequencyValues.isPredeterminedBilling(document.getInvoiceGeneralDetail())) {
+            } else if (ArConstants.BillingFrequencyValues.isPredeterminedBilling(docInvoiceGeneralDetail)) {
                 final ContractsAndGrantsBillingAwardAccount awardAccount = awardAccounts.get(0);
                 final List<Bill> bills = getContractsGrantsBillingUtilityService()
                         .getActiveBillsForAwardAccount(award.getProposalNumber(), awardAccount.getChartOfAccountsCode(),
@@ -666,8 +667,11 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
 
             final Integer currentYear = getUniversityDateService().getCurrentFiscalYear();
             final boolean firstFiscalPeriod = contractsGrantsInvoiceDocumentService.isFirstFiscalPeriod();
-            final Integer fiscalYear = firstFiscalPeriod && ArConstants.BillingFrequencyValues
-                    .isTimeBased(document.getInvoiceGeneralDetail()) ? currentYear - 1 : currentYear;
+            final Integer fiscalYear =
+                    firstFiscalPeriod && (ArConstants.BillingFrequencyValues.isLetterOfCredit(docInvoiceGeneralDetail)
+                                          || ArConstants.BillingFrequencyValues.isTimeBased(docInvoiceGeneralDetail))
+                            ? currentYear - 1
+                            : currentYear;
 
             final SystemOptions systemOptions = optionsService.getOptions(fiscalYear);
 
@@ -714,8 +718,8 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                 }
             }
             document.getAccountDetails().addAll(invoiceAccountDetails);
-            if (!ArConstants.BillingFrequencyValues.isMilestone(document.getInvoiceGeneralDetail())
-                    && !ArConstants.BillingFrequencyValues.isPredeterminedBilling(document.getInvoiceGeneralDetail())) {
+            if (!ArConstants.BillingFrequencyValues.isMilestone(docInvoiceGeneralDetail)
+                    && !ArConstants.BillingFrequencyValues.isPredeterminedBilling(docInvoiceGeneralDetail)) {
                 document.getInvoiceDetailAccountObjectCodes().addAll(invoiceDetailAccountObjectsCodes);
                 final List<AwardAccountObjectCodeTotalBilled> awardAccountObjectCodeTotalBilleds =
                         getAwardAccountObjectCodeTotalBilledDao()
@@ -2084,7 +2088,9 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                     new ContractsGrantsInvoiceDocumentErrorMessage();
             contractsGrantsInvoiceDocumentErrorCategory.setErrorMessageText(MessageFormat.format(
                     configurationService.getPropertyValueAsString(errorMessage.getErrorKey()),
-                    errorMessage.getMessageParameters()));
+                            (Object) errorMessage.getMessageParameters()
+                    )
+            );
             contractsGrantsInvoiceDocumentErrorLog.getErrorMessages().add(contractsGrantsInvoiceDocumentErrorCategory);
 
             contractsGrantsInvoiceDocumentErrorLog.setErrorDate(dateTimeService.getCurrentTimestamp());

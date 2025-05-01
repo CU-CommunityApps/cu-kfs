@@ -18,6 +18,14 @@
  */
 package org.kuali.kfs.sys.cache;
 
+import static java.util.Map.entry;
+
+import java.time.Duration;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.BalanceType;
@@ -56,6 +64,7 @@ import org.kuali.kfs.sys.businessobject.HomeOrigination;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.businessobject.UniversityDate;
 import org.kuali.kfs.sys.service.MenuService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -68,13 +77,6 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 
-import java.time.Duration;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static java.util.Map.entry;
-
 @Configuration
 @EnableCaching
 @Profile("cache-redis")
@@ -85,52 +87,63 @@ public class CacheConfiguration {
      * -- add more cache names 
      */
     @Bean
-    public Set<String> cacheNames() {
+    public Set<String> cacheNamesWithDefaultTtl() {
+        final Set<String> cornellCacheNamesWithDefaultTtl = Set.of(
+                MaintenanceUtils.LOCKING_ID_CACHE_NAME
+        );
+        return Stream.of(staticCacheNamesWithDefaultTtl(), cornellCacheNamesWithDefaultTtl)
+                .flatMap(Set::stream)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    /**
+     * Used in CSU overlay
+     *
+     * @return Set of cache names for caches that use the default TTL
+     * <p>
+     * Note: Both the collection of cache names using the default TTL and the collection of cache names with custom
+     * TTL values are used when setting up the RedisCacheManager and the resulting set of caches is a superset, so an
+     * individual cache name only needs to be included in one (staticCacheNamesWithDefaultTtl) or the other
+     * (staticCacheNamesWithCustomTtl) but not both.
+     */
+    public static Set<String> staticCacheNamesWithDefaultTtl() {
         return Set.of(
-                Account.CACHE_NAME,
-                AccountingPeriod.CACHE_NAME,
-                BalanceType.CACHE_NAME,
-                Bank.CACHE_NAME,
-                BatchFile.CACHE_NAME,
-                Chart.CACHE_NAME,
                 CodedAttribute.CACHE_NAME,
                 DelegateMember.CACHE_NAME,
                 DelegateType.CACHE_NAME,
-                DocumentType.CACHE_NAME,
                 Group.CACHE_NAME,
                 GroupMember.CACHE_NAME,
-                HomeOrigination.CACHE_NAME,
                 KimAttribute.CACHE_NAME,
                 KimType.CACHE_NAME,
-                MenuService.MENU_LINKS_CACHE_NAME,
-                Namespace.CACHE_NAME,
-                ObjectCode.CACHE_NAME,
-                ObjectType.CACHE_NAME,
-                Organization.CACHE_NAME,
-                OrgReviewRole.CACHE_NAME,
-                Parameter.CACHE_NAME,
                 Permission.CACHE_NAME,
                 PermissionTemplate.CACHE_NAME,
                 Person.CACHE_NAME,
-                ProjectCode.CACHE_NAME,
                 Responsibility.CACHE_NAME,
                 ResponsibilityTemplate.CACHE_NAME,
                 Role.CACHE_NAME,
                 RoleMember.CACHE_NAME,
                 RoleMembership.CACHE_NAME,
-                RoleResponsibility.CACHE_NAME,
-                RoutePath.CACHE_NAME,
-                RuleAttribute.CACHE_NAME,
-                SubAccount.CACHE_NAME,
-                SystemOptions.CACHE_NAME,
-                UniversityDate.CACHE_NAME,
-                MaintenanceUtils.LOCKING_ID_CACHE_NAME
+                RoleResponsibility.CACHE_NAME
         );
     }
 
     @Bean
-    public Map<String, Duration> cacheExpires() {
-        // These caches have a TTL value different from the default specified in the redis.default.ttl property
+    public Map<String, Duration> cacheNamesWithCustomTtl() {
+        return staticCacheNamesWithCustomTtl();
+    }
+
+    /**
+     * Used in CSU overlay
+     *
+     * @return Map of cache names and custom TTL Duration for caches that have a TTL value different from the default
+     * specified in the redis.default.ttl property
+     * <p>
+     * Note: Both the collection of cache names using the default TTL and the collection of cache names with custom
+     * TTL values are used when setting up the RedisCacheManager and the resulting set of caches is a superset, so an
+     * individual cache name only needs to be included in one (staticCacheNamesWithDefaultTtl) or the other
+     * (staticCacheNamesWithCustomTtl) but not both.
+     */
+    public static Map<String, Duration> staticCacheNamesWithCustomTtl() {
         return Map.ofEntries(
                 entry(Account.CACHE_NAME, Duration.ZERO),
                 entry(AccountingPeriod.CACHE_NAME, Duration.ZERO),
@@ -180,6 +193,8 @@ public class CacheConfiguration {
         return lettuceConnectionFactory;
     }
 
+    // Note: Not sure exactly why, but Qualifier annotation is required in order for cacheNamesWithDefaultTtl to be
+    // setup before this method is called.
     /*
      * CU Customization:
      * 
@@ -191,23 +206,23 @@ public class CacheConfiguration {
     public RedisCacheManager cacheManager(
             @Value("${redis.default.ttl}") final Long redisDefaultTtl,
             @Value("${cu.redis.cache.environment.prefix}") final String environmentPrefix,
-            final Set<String> cacheNames,
-            final Map<String, Duration> cacheExpires,
+            @Qualifier("cacheNamesWithDefaultTtl") final Set<String> cacheNamesWithDefaultTtl,
+            final Map<String, Duration> cacheNamesWithCustomTtl,
             final RedisConnectionFactory connectionFactory
     ) {
         final RedisCacheConfiguration cacheDefaults = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofSeconds(redisDefaultTtl))
                 .prefixCacheNameWith(environmentPrefix);
 
-        final Map<String, RedisCacheConfiguration> cacheConfigurations = cacheExpires.keySet()
+        final Map<String, RedisCacheConfiguration> cacheConfigurations = cacheNamesWithCustomTtl.keySet()
                 .stream()
                 .collect(Collectors.toMap(key -> key,
-                        key -> cacheDefaults.entryTtl(cacheExpires.get(key)),
+                        key -> cacheDefaults.entryTtl(cacheNamesWithCustomTtl.get(key)),
                         (configuration, cacheConfiguration) -> cacheConfiguration));
 
         final RedisCacheManager redisCacheManager = RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(cacheDefaults)
-                .initialCacheNames(cacheNames)
+                .initialCacheNames(cacheNamesWithDefaultTtl)
                 .withInitialCacheConfigurations(cacheConfigurations)
                 .build();
 

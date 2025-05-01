@@ -225,6 +225,7 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
      * @deprecated
      */
     @Override
+    @Deprecated
     public void setPurapItem(final PurApItem item) {
         purapItem = item;
     }

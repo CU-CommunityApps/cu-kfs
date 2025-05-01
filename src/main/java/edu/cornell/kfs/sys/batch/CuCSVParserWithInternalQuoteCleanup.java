@@ -97,6 +97,11 @@ public class CuCSVParserWithInternalQuoteCleanup implements ICSVParser {
     }
 
     @Override
+    public void parseToLine(String[] values, boolean applyQuotesToAll, Appendable appendable) throws IOException {
+        actualParser.parseToLine(values, applyQuotesToAll, appendable);
+    }
+
+    @Override
     public void setErrorLocale(Locale errorLocale) {
         actualParser.setErrorLocale(errorLocale);
     }

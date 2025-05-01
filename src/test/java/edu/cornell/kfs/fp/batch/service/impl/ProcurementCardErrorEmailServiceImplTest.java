@@ -1,12 +1,14 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
-import edu.cornell.kfs.sys.service.mock.MockParameterServiceImpl;
+import java.util.ArrayList;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.service.impl.EmailServiceImpl;
 
-import java.util.ArrayList;
+import edu.cornell.kfs.sys.service.mock.MockParameterServiceImpl;
 
 public class ProcurementCardErrorEmailServiceImplTest {
     private ProcurementCardErrorEmailServiceImpl procurementCardErrorEmailService;
@@ -15,7 +17,8 @@ public class ProcurementCardErrorEmailServiceImplTest {
     public void setUp() throws Exception {
         procurementCardErrorEmailService = new ProcurementCardErrorEmailServiceImpl();
 
-        EmailServiceImpl emailService = new EmailServiceImpl();
+        Environment environment = new Environment("unittest", "prd");
+        EmailServiceImpl emailService = new EmailServiceImpl(environment);
         ParameterService parameterService = new MockParameterServiceImpl();
 
         emailService.setParameterService(parameterService);

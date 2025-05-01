@@ -27,6 +27,7 @@
 
 <c:set var="payeeAttributes" value="${DataDictionary.CuDisbursementVoucherPayeeDetail.attributes}" />
 <c:set var="payeeAttributesEx" value="${DataDictionary.CuDisbursementVoucherPayeeDetailExtension.attributes}" />
+<c:set var="campusNodeEditMode" value="${(not empty KualiForm.editingMode['campusNodeEditMode'])}" />
 <c:set var="achAccountInfoDisplayed" value="${(not empty KualiForm.editingMode['achAccountInfoDisplayed'])}" />
 <c:set var="travelEntryMode" value="${(not empty KualiForm.editingMode['travelEntry'])}" />
 <c:set var="travelSystemGeneratedEntryMode" value="${(not empty KualiForm.editingMode['travelSystemGeneratedEntry'])}" />
@@ -357,6 +358,14 @@
 	                                              attributeEntry="${dvAttributes.invoiceDate}"
 	                                              readOnly="${!fullEntryMode && !paymentHandlingEntryMode}" /></td>
 	            		</tr>
+                        <tr>
+                             <th align=right valign=middle class="bord-l-b"><div align="right">
+                                 <kul:htmlAttributeLabel attributeEntry="${dvAttributes.invoiceReceivedDate}" /></div></th>
+                             <td align=left valign=middle class="datacell">
+                                 <kul:htmlControlAttribute property="document.invoiceReceivedDate"
+                                                           attributeEntry="${dvAttributes.invoiceReceivedDate}"
+                                                           readOnly="${!fullEntryMode && !campusNodeEditMode}" /></td>
+                        </tr>
 	            		 <tr>
             		</c:when>
             		<c:otherwise>

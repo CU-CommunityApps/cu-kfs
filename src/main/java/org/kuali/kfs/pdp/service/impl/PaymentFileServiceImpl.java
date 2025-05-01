@@ -249,7 +249,7 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
             final List<ErrorMessage> errorMessages = status.getMessageMap().getMessages(KFSConstants.GLOBAL_ERRORS);
             for (final ErrorMessage errorMessage : errorMessages) {
                 String resourceMessage = kualiConfigurationService.getPropertyValueAsString(errorMessage.getErrorKey());
-                resourceMessage = MessageFormat.format(resourceMessage, errorMessage.getMessageParameters());
+                resourceMessage = MessageFormat.format(resourceMessage, (Object) errorMessage.getMessageParameters());
                 message += resourceMessage + ", ";
             }
         }

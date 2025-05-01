@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd">
@@ -93,6 +94,7 @@
 
     <bean id="actionListEmailService"
           class="edu.cornell.kfs.kew.mail.service.impl.CuActionListEmailServiceImpl"
+          c:environment-ref="environment"
           p:emailContentGenerator-ref="emailContentService"
           p:emailService-ref="emailService"
           p:parameterService-ref="parameterService"
@@ -106,19 +108,6 @@
           p:routeNodeService-ref="routeNodeService"
           p:workflowDocumentActionsService-ref="workflowDocumentActionsService"
           p:documentMaintenanceService-ref="documentMaintenanceService"
-    />
-
-    <!--
-        Override processing queue service to fix an issue that can cause the workflow engine
-        to process a stale copy of the route header and/or its downstream data.
-     -->
-    <bean id="documentProcessingQueue" class="org.kuali.kfs.kew.impl.document.DocumentProcessingQueueImpl"
-          p:workflowEngineFactory-ref="workflowEngineFactory"
-          p:actionRequestService-ref="actionRequestService"
-          p:documentAttributeIndexingQueue-ref="documentAttributeIndexingQueue"
-          p:routeHeaderService-ref="documentRouteHeaderService"
-          p:routeNodeService-ref="routeNodeService"
-          p:ksbMessageDeliveryMode="${message.delivery}"
     />
 
 </beans>
