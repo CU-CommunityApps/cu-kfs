@@ -11,7 +11,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
+import org.kuali.kfs.sys.document.AccountingDocumentIntegTestUtils;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 
 import edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService;
@@ -30,7 +30,7 @@ public class CuFinancialSystemDocumentServiceImplIntegTest extends KualiIntegTes
         super.setUp();
         cUFinancialSystemDocumentService = SpringContext.getBean(CUFinancialSystemDocumentService.class);
         icaDocument = IndirectCostAdjustmentDocumentFixture.ICA_GOOD.createIndirectCostAdjustmentDocument();
-        AccountingDocumentTestUtils.routeDocument(icaDocument, SpringContext.getBean(DocumentService.class));
+        AccountingDocumentIntegTestUtils.routeDocument(icaDocument, SpringContext.getBean(DocumentService.class));
         // switch user to FO
         changeCurrentUser(UserNameFixture.kan2);
         // icaDocument, and the 'saveDoc' in cUFinancialSystemDocumentService are the same instance.

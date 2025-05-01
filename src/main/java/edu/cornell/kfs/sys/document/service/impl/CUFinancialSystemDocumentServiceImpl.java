@@ -330,25 +330,10 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         return maxResults;
     }
 
+    // TODO: Can we remove this method and move the default-fetch-limit setting into the calling code?
+    @Override
     public int getFetchMoreIterationLimit() {
-        int fetchMoreLimit = DEFAULT_FETCH_MORE_ITERATION_LIMIT;
-        final String fetchMoreLimitValue = CoreFrameworkServiceLocator.getParameterService().getParameterValueAsString(
-                KFSConstants.CoreModuleNamespaces.WORKFLOW, KRADConstants.DetailTypes.DOCUMENT_SEARCH_DETAIL_TYPE,
-                KewApiConstants.DOC_SEARCH_FETCH_MORE_ITERATION_LIMIT);
-        if (StringUtils.isNotBlank(fetchMoreLimitValue)) {
-            try {
-                fetchMoreLimit = Integer.parseInt(fetchMoreLimitValue);
-                if (fetchMoreLimit < 0) {
-                    LOG.warn(KewApiConstants.DOC_SEARCH_FETCH_MORE_ITERATION_LIMIT + " was less than zero.  " +
-                            "Please use a value greater than or equal to zero.");
-                    fetchMoreLimit = DEFAULT_FETCH_MORE_ITERATION_LIMIT;
-                }
-            } catch (final NumberFormatException e) {
-                LOG.warn(KewApiConstants.DOC_SEARCH_FETCH_MORE_ITERATION_LIMIT + " is not a valid number.  " +
-                        "Value was " + fetchMoreLimitValue);
-            }
-        }
-        return fetchMoreLimit;
+        return DEFAULT_FETCH_MORE_ITERATION_LIMIT;
     }
     
     public ParameterService getParameterService() {

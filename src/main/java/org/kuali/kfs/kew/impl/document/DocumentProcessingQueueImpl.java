@@ -19,6 +19,7 @@
 package org.kuali.kfs.kew.impl.document;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.kew.actionrequest.service.ActionRequestService;
 import org.kuali.kfs.kew.api.document.DocumentProcessingOptions;
 import org.kuali.kfs.kew.api.document.DocumentProcessingQueue;
@@ -49,12 +50,6 @@ public class DocumentProcessingQueueImpl implements DocumentProcessingQueue {
     private DocumentAttributeIndexingQueue documentAttributeIndexingQueue;
     private RouteHeaderService routeHeaderService;
     private RouteNodeService routeNodeService;
-    /*
-     * CU Customization: Added a placeholder for the KSB "message.delivery" config property.
-     * The DB transaction workaround should NOT be used when asynchronous services have been configured
-     * to run synchronously instead.
-     */
-    private String ksbMessageDeliveryMode;
 
     private final DocumentProcessingHelper helper;
 
@@ -108,11 +103,22 @@ public class DocumentProcessingQueueImpl implements DocumentProcessingQueue {
      */
 
     private boolean shouldUseSeparateTransactionToCheckIfDocumentProcessingShouldProceed() {
-        return !StringUtils.equalsIgnoreCase(ksbMessageDeliveryMode, KSBConstants.MESSAGING_SYNCHRONOUS);
+        return !StringUtils.equalsIgnoreCase(getMessageDeliverySetting(), KSBConstants.MESSAGING_SYNCHRONOUS);
     }
 
     private DocumentProcessingQueue getDocumentProcessingQueueAsBean() {
         return SpringContext.getBean(DocumentProcessingQueue.class);
+    }
+
+    /*
+     * NOTE: We should not inject "message.delivery" as a bean property placeholder nor read it
+     *       from the ConfigurationService. Newer financials versions adjusted the property
+     *       resolution process in a way that no longer respects certain programmatic ConfigContext
+     *       property changes, especially the override of "message.delivery" by integration tests.
+     *       That's why this code still needs to read it from the current ConfigContext for now.
+     */
+    private String getMessageDeliverySetting() {
+        return ConfigContext.getCurrentContextConfig().getProperty(KSBConstants.Config.MESSAGE_DELIVERY);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -123,10 +129,6 @@ public class DocumentProcessingQueueImpl implements DocumentProcessingQueue {
                 actionRequestService,
                 routeHeaderService,
                 routeNodeService);
-    }
-
-    public void setKsbMessageDeliveryMode(String ksbMessageDeliveryMode) {
-        this.ksbMessageDeliveryMode = ksbMessageDeliveryMode;
     }
 
     /*

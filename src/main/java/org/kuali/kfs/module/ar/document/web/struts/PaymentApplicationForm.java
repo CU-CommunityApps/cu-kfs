@@ -453,7 +453,14 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
     }
 
     public PaymentApplicationInvoiceApply getSelectedInvoiceApplication() {
-        final String docNumber = getSelectedInvoiceDocumentNumber();
+        // It seems like this should be selectedInvoiceDocumentNumber instead of enteredInvoiceDocumentNumber, however,
+        // in the case where an invoice with multiple details has been loaded and then the user selects another invoice
+        // with fewer details, the form is populated from the request and if it loads the new invoice document, there
+        // are fewer details, and we get an ArrayIndexOutOfBoundsException which clears the request and cascades into
+        // a missing CSRF token and a 403 Unauthorized response. This works around that issue, and then the
+        // enteredInvoiceDocumentNumber is changed to the same value as selectedInvoiceDocumentNumber before the
+        // invoice is loaded and the form is displayed and life is good.
+        final String docNumber = enteredInvoiceDocumentNumber;
         if (ObjectUtils.isNotNull(docNumber)) {
             return getInvoiceApplicationsByDocumentNumber().get(docNumber);
         } else {

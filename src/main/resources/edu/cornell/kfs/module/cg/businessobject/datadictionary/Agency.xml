@@ -16,23 +16,18 @@
     </bean>
 
   <bean id="Agency-agencyNumber" parent="Agency-agencyNumber-parentBean" p:maxLength="6">
-
     <property name="validationPattern">
       <bean parent="AlphaNumericValidationPattern" />
     </property>
-    
     <property name="control">
       <bean parent="TextControlDefinition" p:size="6"/>
     </property>
-    
   </bean>
-  
+
   <bean id="Agency-fullName" parent="Agency-fullName-parentBean">
-  	<property name="maxLength" value="150"/>
   	<property name="control">
   		<bean parent="TextControlDefinition" p:size="152"/>
   	</property>
-    
   </bean>
 
     <bean id="Agency-extension-agencyCommonName" parent="Agency-extension-agencyCommonName-parentBean"/>

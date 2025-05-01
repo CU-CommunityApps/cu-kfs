@@ -103,7 +103,12 @@
                               auto-retrieve="true"
                               auto-update="none" auto-delete="none" proxy="true">
             <foreignkey field-ref="instrumentTypeCode"/>
-		</reference-descriptor>
+        </reference-descriptor>
+        <reference-descriptor name="billingFrequency" class-ref="org.kuali.kfs.module.ar.businessobject.BillingFrequency"
+                              auto-retrieve="true"
+                              auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="billingFrequencyCode"/>
+        </reference-descriptor>
         <reference-descriptor name="customerAddress"
                               class-ref="org.kuali.kfs.module.ar.businessobject.CustomerAddress"
                               auto-retrieve="true"

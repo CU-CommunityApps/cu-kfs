@@ -7,10 +7,12 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.config.Environment;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.permission.PermissionService;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kns.inquiry.InquiryRestrictions;
 import org.kuali.kfs.kns.service.impl.BusinessObjectAuthorizationServiceImpl;
 import org.kuali.kfs.krad.bo.BusinessObject;
@@ -28,6 +30,11 @@ public class CuBusinessObjectAuthorizationServiceImpl extends BusinessObjectAuth
     private static final String COLLECTION_ITEM_PROPERTY_PATH_FORMAT = "{0}[{1}].{2}";
 
     private PermissionService permissionService;
+
+    public CuBusinessObjectAuthorizationServiceImpl(final Environment environment,
+            final ConfigurationService configurationService) {
+        super(environment, configurationService);
+    }
 
     @Override
     public InquiryRestrictions getInquiryRestrictions(final BusinessObject businessObject, final Person user) {
