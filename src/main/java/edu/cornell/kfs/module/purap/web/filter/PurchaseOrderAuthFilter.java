@@ -14,7 +14,7 @@ import javax.ws.rs.HttpMethod;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.sys.context.SpringContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import java.nio.charset.StandardCharsets;
@@ -30,7 +30,12 @@ public class PurchaseOrderAuthFilter implements Filter {
     private static final Logger LOG = LogManager.getLogger();
     private static final Gson gson = new Gson();
     
-    private WebServiceCredentialService webServiceCredentialService;
+    private final WebServiceCredentialService webServiceCredentialService;
+    
+    @Autowired
+    public PurchaseOrderAuthFilter(WebServiceCredentialService webServiceCredentialService) {
+        this.webServiceCredentialService = webServiceCredentialService;
+    }
     
     @Override
     public void init(FilterConfig filterConfig) {
@@ -81,9 +86,6 @@ public class PurchaseOrderAuthFilter implements Filter {
     }
 
     public WebServiceCredentialService getWebServiceCredentialService() {
-        if (webServiceCredentialService == null) {
-            webServiceCredentialService = SpringContext.getBean(WebServiceCredentialService.class);
-        }
         return webServiceCredentialService;
     }
 
