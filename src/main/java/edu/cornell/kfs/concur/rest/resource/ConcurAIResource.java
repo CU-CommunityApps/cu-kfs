@@ -27,6 +27,7 @@ import com.google.gson.Gson;
 
 import edu.cornell.kfs.concur.ConcurConstants.ConcurAIConstants;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurAccountDetailDto;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 @Path("api")
 @Produces(MediaType.APPLICATION_JSON)
@@ -74,7 +75,7 @@ public class ConcurAIResource {
             
         } catch (Exception e) {
             LOG.error("getAccountDetails, had an error getting account details", e);
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(ConcurAIConstants.INTERNAL_SERVER_ERROR).build();
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(CUKFSConstants.INTERNAL_SERVER_ERROR).build();
         }
     }
     
