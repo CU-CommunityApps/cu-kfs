@@ -26,14 +26,14 @@ public class PurchaseOrderServiceConfig {
     public VendorService vendorService() {
         return SpringContext.getBean(VendorService.class);
     }
-
+    
     @Bean
     public WebServiceCredentialService webServiceCredentialService() {
         return SpringContext.getBean(WebServiceCredentialService.class);
     }
-
+    
     @Bean
     public PurchaseOrderAuthFilter purchaseOrderAuthFilter() {
-        return new PurchaseOrderAuthFilter();
+        return new PurchaseOrderAuthFilter(webServiceCredentialService());
     }
 }

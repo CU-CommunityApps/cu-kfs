@@ -29,9 +29,14 @@ import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 public class PurchaseOrderAuthFilter implements Filter {
     private static final Logger LOG = LogManager.getLogger();
     private static final Gson gson = new Gson();
-
-    private WebServiceCredentialService webServiceCredentialService;
-
+    
+    private final WebServiceCredentialService webServiceCredentialService;
+    
+    @Autowired
+    public PurchaseOrderAuthFilter(WebServiceCredentialService webServiceCredentialService) {
+        this.webServiceCredentialService = webServiceCredentialService;
+    }
+    
     @Override
     public void init(FilterConfig filterConfig) {
     }
@@ -46,7 +51,7 @@ public class PurchaseOrderAuthFilter implements Filter {
 
         checkAuthorization(httpServletRequest, httpServletResponse, chain);
     }
-
+    
     private void checkAuthorization(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException {
         try {
@@ -63,7 +68,7 @@ public class PurchaseOrderAuthFilter implements Filter {
             response.getWriter().println(gson.toJson(CUKFSConstants.UNAUTHORIZED));
         }
     }
-
+    
     private boolean isAuthorized(HttpServletRequest request) {
         byte[] byteArrayEncodedAllowableUserNamePassword = Base64
                 .encodeBase64(getAllowableUserNamePassword().getBytes());
@@ -74,7 +79,7 @@ public class PurchaseOrderAuthFilter implements Filter {
                 CUKFSConstants.BASIC_AUTHENTICATION_STARTER + encodedAllowableUserNamePassword);
 
     }
-
+    
     private String getAllowableUserNamePassword() {
         return getWebServiceCredentialService().getWebServiceCredentialValue(
                 CUPurapConstants.PAYFLOW_CREDENTIAL_GROUP_CODE, CUKFSConstants.WEBSERVICE_CREDENTIAL_KEY_USERNAMEPASSWORD);
@@ -84,8 +89,4 @@ public class PurchaseOrderAuthFilter implements Filter {
         return webServiceCredentialService;
     }
 
-    @Autowired
-    public void setWebServiceCredentialService(WebServiceCredentialService webServiceCredentialService) {
-        this.webServiceCredentialService = webServiceCredentialService;
-    }
 }
