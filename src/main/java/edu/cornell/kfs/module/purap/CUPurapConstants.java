@@ -570,4 +570,12 @@ public class CUPurapConstants {
     }
 
     public static final String IWNT_NO_ATTACHMENTS_QUESTION_ID = "IWantDocumentNoAttachments";
+    
+    public static final String PAYFLOW_CREDENTIAL_GROUP_CODE = "PAYFLOW";
+    public static final String PURCHASE_ORDER_ENDPOINT_DESCRIPTION = "Purchase Order Resource";
+    public static final String PURCHASE_ORDER_NUMBER_URL_PARAMETER_NAME = "poNumber";
+    public static final String PURCHASE_ORDER_NUMBER_FORMAT_ERROR_RESPONSE_MESSAGE = "The " + PURCHASE_ORDER_NUMBER_URL_PARAMETER_NAME + " was not formatted correctly";
+    public static final String PURCHASE_ORDER_NOT_FOUND_MESSAGE = "Purchase Order not found";
+    public static final String VENDOR_NOT_FOUND_MESSAGE = "Vendor detail not found";
+    
 }
