@@ -26,7 +26,7 @@ import com.google.gson.Gson;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 
-public class PurchasOrderAuthFilter implements Filter {
+public class PurchaseOrderAuthFilter implements Filter {
     private static final Logger LOG = LogManager.getLogger();
     private static final Gson gson = new Gson();
     

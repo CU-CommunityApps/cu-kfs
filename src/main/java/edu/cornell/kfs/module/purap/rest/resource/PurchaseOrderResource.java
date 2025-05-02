@@ -79,7 +79,7 @@ public class PurchaseOrderResource {
             return Response.ok(gson.toJson(dto)).build();
 
         } catch (Exception e) {
-            LOG.error("getPurchaseOrderDetails, had an error getting account details", e);
+            LOG.error("getPurchaseOrderDetails, had an error getting purchase order details", e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(CUKFSConstants.INTERNAL_SERVER_ERROR).build();
         }
 

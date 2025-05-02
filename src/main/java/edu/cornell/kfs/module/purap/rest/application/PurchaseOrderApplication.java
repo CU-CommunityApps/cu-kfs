@@ -8,12 +8,12 @@ import javax.ws.rs.core.Application;
 
 import edu.cornell.kfs.module.purap.rest.resource.PurchaseOrderResource;
 
-@ApplicationPath("ws/purapp/po")
-public class PurchasOrderApplication extends Application {
+@ApplicationPath("ws/purap/po")
+public class PurchaseOrderApplication extends Application {
     
     private Set<Object> singletons = new HashSet<>();
     
-    public PurchasOrderApplication() {
+    public PurchaseOrderApplication() {
         singletons.add(new PurchaseOrderResource());
     }
     

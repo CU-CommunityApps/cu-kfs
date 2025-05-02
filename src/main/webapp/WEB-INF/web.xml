@@ -102,8 +102,8 @@
         <filter-class>edu.cornell.kfs.concur.web.filter.ConcurAIAuthFilter</filter-class>
     </filter>
     <filter>
-        <filter-name>PurchasOrderAuthFilter</filter-name>
-        <filter-class>edu.cornell.kfs.module.purap.web.filter.PurchasOrderAuthFilter</filter-class>
+        <filter-name>PurchaseOrderAuthFilter</filter-name>
+        <filter-class>edu.cornell.kfs.module.purap.web.filter.PurchaseOrderAuthFilter</filter-class>
     </filter>
 
     <filter>
@@ -220,8 +220,8 @@
     </filter-mapping>
     
     <filter-mapping>
-        <filter-name>PurchasOrderAuthFilter</filter-name>
-        <url-pattern>/ws/purapp/po/api/*</url-pattern>
+        <filter-name>PurchaseOrderAuthFilter</filter-name>
+        <url-pattern>/ws/purap/po/api/*</url-pattern>
     </filter-mapping>
 
     <!-- Listeners -->

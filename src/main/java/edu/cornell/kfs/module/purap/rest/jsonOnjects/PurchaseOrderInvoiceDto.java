@@ -1,6 +1,6 @@
 package edu.cornell.kfs.module.purap.rest.jsonOnjects;
 
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
@@ -8,8 +8,7 @@ import org.kuali.kfs.module.purap.businessobject.PaymentRequestView;
 import org.kuali.kfs.sys.KFSConstants;
 
 public class PurchaseOrderInvoiceDto {
-    private static final SimpleDateFormat SDF = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT,
-            Locale.US);
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
 
     private String invoiceDate;
     private String invoiceNumber;
@@ -19,7 +18,7 @@ public class PurchaseOrderInvoiceDto {
     }
 
     public PurchaseOrderInvoiceDto(PaymentRequestView reqView) {
-        this.invoiceDate = reqView.getInvoiceDate() != null ? SDF.format(reqView.getInvoiceDate()) : StringUtils.EMPTY;
+        this.invoiceDate = reqView.getInvoiceDate() != null ? DATE_FORMATTER.format(reqView.getInvoiceDate().toLocalDate()) : StringUtils.EMPTY;
         this.invoiceNumber = reqView.getInvoiceNumber();
         this.invoiceAmount = reqView.getTotalAmount() != null ? reqView.getTotalAmount().toString() : StringUtils.EMPTY;
     }

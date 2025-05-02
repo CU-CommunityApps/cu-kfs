@@ -26,12 +26,12 @@ public class PurchaseOrderDetailDto {
     private String totalDollarAmount;
 
     public PurchaseOrderDetailDto() {
-        purchaseOrderInvoices = new ArrayList<PurchaseOrderInvoiceDto>();
-        vendorAddresses = new ArrayList<PurchaseOrderVendorAddressDto>();
-        purchaseOrderItems = new ArrayList<PurchaseOrderItemDto>();
+        purchaseOrderInvoices = new ArrayList<>();
+        vendorAddresses = new ArrayList<>();
+        purchaseOrderItems = new ArrayList<>();
     }
 
-    public PurchaseOrderDetailDto(final PurchaseOrderDocument po, VendorDetail vendorDetail) {
+    public PurchaseOrderDetailDto(final PurchaseOrderDocument po, final VendorDetail vendorDetail) {
         this();
         this.kfsDocumentNumber = po.getDocumentNumber();
         this.purchaseOrderNumber = po.getPurapDocumentIdentifier() != null ? po.getPurapDocumentIdentifier().toString()
