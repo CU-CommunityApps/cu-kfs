@@ -1,37 +1,25 @@
 package edu.cornell.kfs.module.purap.rest.application;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.GsonHttpMessageConverter;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import edu.cornell.kfs.module.purap.rest.resource.PurchaseOrderResource;
 
-@Configuration
-@EnableWebMvc
-@ComponentScan(basePackages = {"edu.cornell.kfs.module.purap.rest.controller", "edu.cornell.kfs.module.purap.rest.config"})
-public class PurchaseOrderApplication implements WebMvcConfigurer {
+@ApplicationPath("ws/purap/po")
+public class PurchaseOrderApplication extends Application {
+    
+    private Set<Object> singletons = new HashSet<>();
+    
+    public PurchaseOrderApplication() {
+        singletons.add(new PurchaseOrderResource());
+    }
     
     @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(gsonHttpMessageConverter());
+    public Set<Object> getSingletons() {
+        return singletons;
     }
-    
-    @Bean
-    public GsonHttpMessageConverter gsonHttpMessageConverter() {
-        GsonHttpMessageConverter converter = new GsonHttpMessageConverter();
-        converter.setGson(gson());
-        return converter;
-    }
-    
-    @Bean
-    public Gson gson() {
-        return new GsonBuilder().create();
-    }
+
 }
