@@ -727,13 +727,23 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
      * @return the System Information object, or null if nothing is found
      */
     protected SystemInformation retrieveSystemInformationForAward(final Award award, final String year) {
+        ChartOrgHolder chartOrgHolder = financialSystemUserService.getPrimaryOrganization(
+                award.getAwardPrimaryFundManager().getFundManager().getPrincipalId(),
+                KFSConstants.OptionalModuleNamespaces.ACCOUNTS_RECEIVABLE);
+
+        final List<String> processingCodes = getContractsGrantsInvoiceDocumentService().getProcessingFromBillingCodes(
+                chartOrgHolder.getChartOfAccountsCode(), chartOrgHolder.getOrganizationCode());
+        if (!CollectionUtils.isEmpty(processingCodes) && processingCodes.size() > 1) {
+            chartOrgHolder = new ChartOrgHolderImpl(processingCodes.get(0), processingCodes.get(1));
+        }
+        
         final Map<String, String> primaryKeys = new HashMap<>();
         primaryKeys.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
         primaryKeys.put(KFSPropertyConstants.PROCESSING_CHART_OF_ACCT_CD,
-                award.getPrimaryAwardOrganization().getChartOfAccountsCode()
+                chartOrgHolder.getChartOfAccountsCode()
         );
         primaryKeys.put(KFSPropertyConstants.PROCESSING_ORGANIZATION_CODE,
-                award.getPrimaryAwardOrganization().getOrganizationCode()
+                chartOrgHolder.getOrganizationCode()
         );
         return businessObjectService.findByPrimaryKey(SystemInformation.class, primaryKeys);
     }
