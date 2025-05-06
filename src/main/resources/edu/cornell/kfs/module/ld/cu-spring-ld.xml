@@ -98,13 +98,10 @@
    
    <!-- CU Customization KFSPTS-34828 
    partial backport of FINP-10395 to fix opening general ledger from salary expense transfer document -->
-   <bean id="laborLedgerEntryForExpenseTransferLookupableHelperService"
-          parent="laborLedgerEntryForExpenseTransferLookupableHelperService-parentBean"
-          scope="prototype"/>
     <bean abstract="true"
           class="org.kuali.kfs.module.ld.businessobject.lookup.LedgerEntryForExpenseTransferLookupableHelperServiceImpl"
           id="laborLedgerEntryForExpenseTransferLookupableHelperService-parentBean"
-          parent="laborLedgerEntryLookupableHelperService"
+          parent="laborLedgerEntryLookupableHelperService-parentBean"
           scope="prototype"/>
     
 </beans>
