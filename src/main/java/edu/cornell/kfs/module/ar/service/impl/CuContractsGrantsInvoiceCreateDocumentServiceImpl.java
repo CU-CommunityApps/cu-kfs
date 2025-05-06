@@ -7,8 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
-import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
-import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
+import org.kuali.kfs.module.cg.businessobject.Award;
+import org.kuali.kfs.module.cg.businessobject.AwardAccount;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsLetterOfCreditReviewDetail;
@@ -69,8 +69,8 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
 
     @Override
     public ContractsGrantsInvoiceDocument createCGInvoiceDocumentByAwardInfo(
-            final ContractsAndGrantsBillingAward awd,
-            final List<ContractsAndGrantsBillingAwardAccount> accounts, final String chartOfAccountsCode, final String organizationCode,
+            final Award awd,
+            final List<AwardAccount> accounts, final String chartOfAccountsCode, final String organizationCode,
             final List<ErrorMessage> errorMessages, final List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails,
             final String locCreationType) {
         final ContractsGrantsInvoiceDocument cgInvoiceDocument = super.createCGInvoiceDocumentByAwardInfo(awd, accounts, chartOfAccountsCode, 

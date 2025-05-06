@@ -49,8 +49,7 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 
 import org.kuali.kfs.gl.service.BalanceService;
 import org.kuali.kfs.gl.service.EncumbranceService;
-import org.kuali.kfs.integration.cg.ContractsAndGrantsCfda;
-import org.kuali.kfs.integration.cg.ContractsAndGrantsModuleService;
+import org.kuali.kfs.module.cg.service.ContractsAndGrantsService;
 import org.kuali.kfs.integration.ld.LaborModuleService;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
@@ -63,6 +62,8 @@ import org.kuali.kfs.krad.service.KualiModuleService;
 import org.kuali.kfs.krad.service.ModuleService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.cg.CGConstants;
+import org.kuali.kfs.module.cg.businessobject.CFDA;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -107,13 +108,14 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	protected BalanceService balanceService;
 	protected AccountService accountService;
 	protected static SubFundGroupService subFundGroupService;
-	protected ContractsAndGrantsModuleService contractsAndGrantsModuleService;
+	protected static ParameterService parameterService;
+	protected ContractsAndGrantsService contractsAndGrantsService;
 
 	public AccountGlobalRule() {
 		this.setGeneralLedgerPendingEntryService(SpringContext.getBean(GeneralLedgerPendingEntryService.class));
 		this.setBalanceService(SpringContext.getBean(BalanceService.class));
 		this.setAccountService(SpringContext.getBean(AccountService.class));
-		this.setContractsAndGrantsModuleService(SpringContext.getBean(ContractsAndGrantsModuleService.class));
+		this.setContractsAndGrantsService(SpringContext.getBean(ContractsAndGrantsService.class));
 	}
 
 	/**
@@ -355,26 +357,18 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
         return false;
     }
 
-	private boolean checkCfda(final String accountCfdaNumber) {
-		boolean success = true;
-		final ContractsAndGrantsCfda cfda;
-		if (! StringUtils.isEmpty(accountCfdaNumber)) {
-			final ModuleService moduleService = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(ContractsAndGrantsCfda.class);
-			if ( moduleService != null ) {
-				final Map<String, Object> keys = new HashMap<>(1);
-				keys.put(KFSPropertyConstants.CFDA_NUMBER, accountCfdaNumber);
-				cfda = moduleService.getExternalizableBusinessObject(ContractsAndGrantsCfda.class, keys);
-			} else {
-				throw new RuntimeException( "CONFIGURATION ERROR: No responsible module found for EBO class.  Unable to proceed." );
-			}
-
-			success = ObjectUtils.isNotNull(cfda);
-			if (!success) {
-				putFieldError(KFSPropertyConstants.CATALOG_OF_DOMESTIC_ASSISTANCE_NUMBER, COAKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_CFDA_NUMBER_INVALID);
-			}
-		}
-		return success;
-	}
+    private boolean checkCfda(final String accountCfdaNumber) {
+        boolean success = true;
+        final CFDA cfda;
+        if (StringUtils.isNotEmpty(accountCfdaNumber)) {
+            cfda = getBoService().findBySinglePrimaryKey(CFDA.class, accountCfdaNumber);
+            success = ObjectUtils.isNotNull(cfda);
+            if (!success) {
+                putFieldError("accountCfdaNumber", COAKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_CFDA_NUMBER_INVALID);
+            }
+        }
+        return success;
+    }
 
 	/**
 	 * This method checks to make sure that if the users are filled out (fiscal officer, supervisor, manager) that they are not the
@@ -473,124 +467,124 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
                         "AccountGlobalDetail object has null account object:{}-{}",
                         detail::getChartOfAccountsCode,
                         detail::getAccountNumber
-                        );
+                );
             }
         }
-		
-		return success;
-	}
 
-	/**
-	 * This method is a helper method for checking if the supervisor user is the same as the fiscal officer Calls
-	 * {@link AccountGlobalRule#areTwoUsersTheSame(Person, Person)}
-	 *
-	 * @param accountGlobals
-	 * @return true if the two users are the same
-	 */
-	protected boolean isSupervisorSameAsFiscalOfficer(final AccountGlobal accountGlobals) {
-		return areTwoUsersTheSame(accountGlobals.getAccountSupervisoryUser(), accountGlobals.getAccountFiscalOfficerUser());
-	}
+        return success;
+    }
 
-	/**
-	 * This method is a helper method for checking if the supervisor user is the same as the manager Calls
-	 * {@link AccountGlobalRule#areTwoUsersTheSame(Person, Person)}
-	 *
-	 * @param accountGlobals
-	 * @return true if the two users are the same
-	 */
-	protected boolean isSupervisorSameAsManager(final AccountGlobal accountGlobals) {
-		return areTwoUsersTheSame(accountGlobals.getAccountSupervisoryUser(), accountGlobals.getAccountManagerUser());
-	}
+    /**
+     * This method is a helper method for checking if the supervisor user is the same as the fiscal officer Calls
+     * {@link AccountGlobalRule#areTwoUsersTheSame(Person, Person)}
+     *
+     * @param accountGlobals
+     * @return true if the two users are the same
+     */
+    protected boolean isSupervisorSameAsFiscalOfficer(final AccountGlobal accountGlobals) {
+        return areTwoUsersTheSame(accountGlobals.getAccountSupervisoryUser(), accountGlobals.getAccountFiscalOfficerUser());
+    }
 
-	/**
-	 * This method checks to see if two users are the same Person using their identifiers
-	 *
-	 * @param user1
-	 * @param user2
-	 * @return true if these two users are the same
-	 */
-	protected boolean areTwoUsersTheSame(final Person user1, final Person user2) {
-		if (ObjectUtils.isNull(user1) || user1.getPrincipalId() == null ) {
-			return false;
-		}
-		if (ObjectUtils.isNull(user2) || user2.getPrincipalId() == null ) {
-			return false;
-		}
-		return user1.getPrincipalId().equals(user2.getPrincipalId());
-	}
+    /**
+     * This method is a helper method for checking if the supervisor user is the same as the manager Calls
+     * {@link AccountGlobalRule#areTwoUsersTheSame(Person, Person)}
+     *
+     * @param accountGlobals
+     * @return true if the two users are the same
+     */
+    protected boolean isSupervisorSameAsManager(final AccountGlobal accountGlobals) {
+        return areTwoUsersTheSame(accountGlobals.getAccountSupervisoryUser(), accountGlobals.getAccountManagerUser());
+    }
 
-	/**
-	 * This method checks to see if any expiration date field rules were violated Loops through each detail object and calls
-	 * {@link AccountGlobalRule#checkExpirationDate(MaintenanceDocument, AccountGlobalDetail)}
-	 *
-	 * @param maintenanceDocument
-	 * @return false on rules violation
-	 */
-	protected boolean checkExpirationDate(final MaintenanceDocument maintenanceDocument) {
-		LOG.info("checkExpirationDate called");
+    /**
+     * This method checks to see if two users are the same Person using their identifiers
+     *
+     * @param user1
+     * @param user2
+     * @return true if these two users are the same
+     */
+    protected boolean areTwoUsersTheSame(final Person user1, final Person user2) {
+        if (ObjectUtils.isNull(user1) || user1.getPrincipalId() == null) {
+            return false;
+        }
+        if (ObjectUtils.isNull(user2) || user2.getPrincipalId() == null) {
+            return false;
+        }
+        return user1.getPrincipalId().equals(user2.getPrincipalId());
+    }
 
-		boolean success = true;
-		final LocalDate newExpDate = getDateTimeService().getLocalDate(newAccountGlobal.getAccountExpirationDate());
+    /**
+     * This method checks to see if any expiration date field rules were violated Loops through each detail object and calls
+     * {@link AccountGlobalRule#checkExpirationDate(MaintenanceDocument, AccountGlobalDetail)}
+     *
+     * @param maintenanceDocument
+     * @return false on rules violation
+     */
+    protected boolean checkExpirationDate(final MaintenanceDocument maintenanceDocument) {
+        LOG.info("checkExpirationDate called");
 
-		// If creating a new account if acct_expiration_dt is set then
-		// the acct_expiration_dt must be changed to a date that is today or later
-		// unless the date was valid upon submission, this is an approval action
-		// and the approver hasn't changed the value
-		if (maintenanceDocument.isNew() && ObjectUtils.isNotNull(newExpDate)) {
-		    LocalDate oldExpDate = null;
+        boolean success = true;
+        final LocalDate newExpDate = getDateTimeService().getLocalDate(newAccountGlobal.getAccountExpirationDate());
 
-			if (maintenanceDocument.getDocumentHeader().getWorkflowDocument().isApprovalRequested()) {
-				final MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class)
+        // If creating a new account if acct_expiration_dt is set then
+        // the acct_expiration_dt must be changed to a date that is today or later
+        // unless the date was valid upon submission, this is an approval action
+        // and the approver hasn't changed the value
+        if (maintenanceDocument.isNew() && ObjectUtils.isNotNull(newExpDate)) {
+            LocalDate oldExpDate = null;
+
+            if (maintenanceDocument.getDocumentHeader().getWorkflowDocument().isApprovalRequested()) {
+                final MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class)
                         .getByDocumentHeaderId(maintenanceDocument.getDocumentNumber());
-				final AccountGlobal oldAccountGlobal = (AccountGlobal)oldMaintDoc.getDocumentBusinessObject();
-				if (ObjectUtils.isNotNull(oldAccountGlobal)) {
-				    oldExpDate = getDateTimeService().getLocalDate(oldAccountGlobal.getAccountExpirationDate());
-				}
-			}
+                final AccountGlobal oldAccountGlobal = (AccountGlobal) oldMaintDoc.getDocumentBusinessObject();
+                if (ObjectUtils.isNotNull(oldAccountGlobal)) {
+                    oldExpDate = getDateTimeService().getLocalDate(oldAccountGlobal.getAccountExpirationDate());
+                }
+            }
 
             if (ObjectUtils.isNull(oldExpDate) || !oldExpDate.equals(newExpDate)) {
-            	// KFSUPGRADE-925 check parameter to see if back date is allowed
-            	Collection<String> fundGroups = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(COAConstants.COA_NAMESPACE_CODE, COAParameterConstants.Components.ACCOUNT_CMPNT, COAParameterConstants.EXPIRATION_BACKDATING_FUNDS);
+                // KFSUPGRADE-925 check parameter to see if back date is allowed
+                Collection<String> fundGroups = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(COAConstants.COA_NAMESPACE_CODE, COAParameterConstants.Components.ACCOUNT_CMPNT, COAParameterConstants.EXPIRATION_BACKDATING_FUNDS);
                 if (fundGroups == null || (ObjectUtils.isNotNull(newAccountGlobal.getSubFundGroup()) && !fundGroups.contains(newAccountGlobal.getSubFundGroup().getFundGroupCode()))) {
                     if (newExpDate.isBefore(today)) {
-                		putFieldError("accountExpirationDate", COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_TODAY_LATER);
-                		success = false;
-                	}
+                        putFieldError("accountExpirationDate", COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_TODAY_LATER);
+                        success = false;
+                    }
                 }
             }
         }
 
-		// a continuation account is required if the expiration date is completed.
-		success &= checkContinuationAccount(maintenanceDocument, getDateTimeService().getSqlDate(newExpDate));
+        // a continuation account is required if the expiration date is completed.
+        success &= checkContinuationAccount(maintenanceDocument, getDateTimeService().getSqlDate(newExpDate));
 
-		for (final AccountGlobalDetail detail : newAccountGlobal.getAccountGlobalDetails()) {
-			success &= checkExpirationDate(maintenanceDocument, detail);
-		}
-		return success;
-	}
+        for (final AccountGlobalDetail detail : newAccountGlobal.getAccountGlobalDetails()) {
+            success &= checkExpirationDate(maintenanceDocument, detail);
+        }
+        return success;
+    }
 
-	/**
-	 * This method checks to see if any expiration date field rules were violated in relation to the given detail record
-	 *
-	 * @param maintenanceDocument
-	 * @param detail              the account detail we are investigating
-	 * @return false on rules violation
-	 */
-	protected boolean checkExpirationDate(final MaintenanceDocument maintenanceDocument, final AccountGlobalDetail detail) {
-		boolean success = true;
-		final LocalDate newExpDate = getDateTimeService().getLocalDate(newAccountGlobal.getAccountExpirationDate());
+    /**
+     * This method checks to see if any expiration date field rules were violated in relation to the given detail record
+     *
+     * @param maintenanceDocument
+     * @param detail              the account detail we are investigating
+     * @return false on rules violation
+     */
+    protected boolean checkExpirationDate(final MaintenanceDocument maintenanceDocument, final AccountGlobalDetail detail) {
+        boolean success = true;
+        final LocalDate newExpDate = getDateTimeService().getLocalDate(newAccountGlobal.getAccountExpirationDate());
 
-		LocalDate prevExpDate = null;
+        LocalDate prevExpDate = null;
 
-		// get previous expiration date for possible check later
-		if (maintenanceDocument.getDocumentHeader().getWorkflowDocument().isApprovalRequested()) {
-			final MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class)
+        // get previous expiration date for possible check later
+        if (maintenanceDocument.getDocumentHeader().getWorkflowDocument().isApprovalRequested()) {
+            final MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class)
                     .getByDocumentHeaderId(maintenanceDocument.getDocumentNumber());
-			final AccountGlobal oldAccountGlobal = (AccountGlobal)oldMaintDoc.getDocumentBusinessObject();
-			if (ObjectUtils.isNotNull(oldAccountGlobal)) {
-			    prevExpDate = getDateTimeService().getLocalDate(oldAccountGlobal.getAccountExpirationDate());
-			}
-		}
+            final AccountGlobal oldAccountGlobal = (AccountGlobal) oldMaintDoc.getDocumentBusinessObject();
+            if (ObjectUtils.isNotNull(oldAccountGlobal)) {
+                prevExpDate = getDateTimeService().getLocalDate(oldAccountGlobal.getAccountExpirationDate());
+            }
+        }
 
 
 		// load the object by keys
@@ -743,7 +737,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		if (ObjectUtils.isNotNull(newAccountGlobal.getContractsAndGrantsAccountResponsibilityId())) {
 			Account tmpAcct = new Account();
 			tmpAcct.setContractsAndGrantsAccountResponsibilityId(newAccountGlobal.getContractsAndGrantsAccountResponsibilityId());
-			final boolean hasValidAccountResponsibility = contractsAndGrantsModuleService.hasValidAccountReponsiblityIdIfNotNull(tmpAcct);
+			final boolean hasValidAccountResponsibility = hasValidAccountResponsibilityIdIfNotNull(tmpAcct);
 			if (!hasValidAccountResponsibility) {
 				success &= hasValidAccountResponsibility;
 				putFieldError(CUKFSPropertyConstants.CONTRACTS_AND_GRANTS_ACCOUNT_RESPOSIBILITY_ID, CUKFSKeyConstants.ERROR_DOCUMENT_ACCT_GLB_MAINT_INVALID_CG_RESPONSIBILITY , new String[] { newAccountGlobal.getContractsAndGrantsAccountResponsibilityId().toString() });
@@ -752,6 +746,24 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 		return success;
 	}
+	
+    private boolean hasValidAccountResponsibilityIdIfNotNull(final Account account) {
+        final Integer accountResponsibilityId = account.getContractsAndGrantsAccountResponsibilityId();
+
+        if (accountResponsibilityId == null) {
+            return true;
+        }
+
+        return accountResponsibilityId >= 1 && accountResponsibilityId <= getMaximumAccountResponsibilityId();
+    }
+    
+    private int getMaximumAccountResponsibilityId() {
+        final String maxResponsibilityId = getParameterService().getParameterValueAsString(
+                COAConstants.COA_NAMESPACE_CODE,
+                CGConstants.Components.ACCOUNT_CMPNT,
+                CGConstants.CG_RESPONSIBILITY_ID);
+        return Integer.parseInt(maxResponsibilityId);
+    }
 
 	/**
 	 * This method checks to see if the contracts and grants income stream account is required
@@ -1777,8 +1789,8 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		 return subFundGroupService;
 	 }
 
-	 public void setContractsAndGrantsModuleService(ContractsAndGrantsModuleService contractsAndGrantsModuleService) {
-		 this.contractsAndGrantsModuleService = contractsAndGrantsModuleService;
+	 public void setContractsAndGrantsService(ContractsAndGrantsService contractsAndGrantsService) {
+		 this.contractsAndGrantsService = contractsAndGrantsService;
 	 }
 	 
 	@Override
@@ -1788,6 +1800,13 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	    }
 	    return dateTimeService;
 	}
+	
+    public ParameterService getParameterService() {
+        if (parameterService == null) {
+            parameterService = SpringContext.getBean(ParameterService.class);
+        }
+        return parameterService;
+    }
 
 }
 

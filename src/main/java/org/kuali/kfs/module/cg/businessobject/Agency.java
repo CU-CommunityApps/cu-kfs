@@ -21,7 +21,6 @@ package org.kuali.kfs.module.cg.businessobject;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAgency;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -41,7 +40,7 @@ import java.util.Objects;
  * This class defines an agency as it is used and referenced within the Contracts & Grants portion of a college or university
  * financial system.
  */
-public class Agency extends PersistableBusinessObjectBase implements ContractsAndGrantsBillingAgency, MutableInactivatable {
+public class Agency extends PersistableBusinessObjectBase implements MutableInactivatable {
 
     private String agencyNumber;
     private String reportingName;
@@ -94,7 +93,6 @@ public class Agency extends PersistableBusinessObjectBase implements ContractsAn
         this.reportsToAgencyNumber = reportsToAgencyNumber;
     }
 
-    @Override
     public String getAgencyNumber() {
         return agencyNumber;
     }
@@ -103,7 +101,6 @@ public class Agency extends PersistableBusinessObjectBase implements ContractsAn
         this.agencyNumber = agencyNumber;
     }
 
-    @Override
     public String getReportingName() {
         return reportingName;
     }
@@ -112,7 +109,6 @@ public class Agency extends PersistableBusinessObjectBase implements ContractsAn
         this.reportingName = reportingName;
     }
 
-    @Override
     public String getFullName() {
         return fullName;
     }
@@ -197,7 +193,6 @@ public class Agency extends PersistableBusinessObjectBase implements ContractsAn
         this.dunAndBradstreetNumber = dunAndBradstreetNumber;
     }
 
-    @Override
     public String getDunsPlusFourNumber() {
         return dunsPlusFourNumber;
     }
@@ -206,7 +201,6 @@ public class Agency extends PersistableBusinessObjectBase implements ContractsAn
         this.dunsPlusFourNumber = dunsPlusFourNumber;
     }
 
-    @Override
     public List<AgencyAddress> getAgencyAddresses() {
         return agencyAddresses;
     }
@@ -215,7 +209,6 @@ public class Agency extends PersistableBusinessObjectBase implements ContractsAn
         this.agencyAddresses = agencyAddresses;
     }
 
-    @Override
     public String getCustomerNumber() {
         return customerNumber;
     }
@@ -224,7 +217,6 @@ public class Agency extends PersistableBusinessObjectBase implements ContractsAn
         this.customerNumber = customerNumber;
     }
 
-    @Override
     public Customer getCustomer() {
         /*
          * CU Customization back-port FINP-11685
@@ -248,7 +240,6 @@ public class Agency extends PersistableBusinessObjectBase implements ContractsAn
         this.customerCreationOptionCode = customerCreationOptionCode;
     }
 
-    @Override
     public String getCustomerTypeCode() {
         return customerTypeCode;
     }
@@ -265,7 +256,6 @@ public class Agency extends PersistableBusinessObjectBase implements ContractsAn
         this.dunningCampaign = dunningCampaign;
     }
 
-    @Override
     public boolean isStateAgencyIndicator() {
         return stateAgencyIndicator;
     }
