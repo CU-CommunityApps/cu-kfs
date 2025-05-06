@@ -95,5 +95,13 @@
    <import resource="document/validation/configuration/SalaryExpenseTransferValidations.xml" />
    <import resource="document/validation/configuration/CuYearEndBenefitExpenseTransferValidations.xml" />
    <import resource="document/validation/configuration/CuYearEndSalaryExpenseTransferValidations.xml" />
+   
+   <!-- CU Customization KFSPTS-34828 
+   partial backport of FINP-10395 to fix opening general ledger from salary expense transfer document -->
+    <bean abstract="true"
+          class="org.kuali.kfs.module.ld.businessobject.lookup.LedgerEntryForExpenseTransferLookupableHelperServiceImpl"
+          id="laborLedgerEntryForExpenseTransferLookupableHelperService-parentBean"
+          parent="laborLedgerEntryLookupableHelperService-parentBean"
+          scope="prototype"/>
     
 </beans>
