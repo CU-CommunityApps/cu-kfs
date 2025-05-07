@@ -151,8 +151,7 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
             paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
 
             final CustomerProfile customer = paymentGroup.getBatch().getCustomerProfile();
-            final PayeeACHAccount payeeAchAccount = SpringContext.getBean(AchService.class)
-                    .getAchInformation(paymentGroup.getPayeeIdTypeCd(), paymentGroup.getPayeeId(), customer.getAchTransactionType());
+            final PayeeACHAccount payeeAchAccount = achService.getAchInformation(paymentGroup.getPayeeIdTypeCd(), paymentGroup.getPayeeId(), customer.getAchTransactionType());
             
             paymentGroup.setAchBankRoutingNbr(payeeAchAccount.getBankRoutingNumber());
             paymentGroup.setAdviceEmailAddress(payeeAchAccount.getPayeeEmailAddress());
