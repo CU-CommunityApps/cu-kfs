@@ -9,7 +9,6 @@ import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
-import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.ArPropertyConstants;
@@ -17,6 +16,7 @@ import org.kuali.kfs.module.ar.businessobject.InvoiceAccountDetail;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.document.dataaccess.ContractsGrantsInvoiceDocumentDao;
 import org.kuali.kfs.module.ar.document.validation.SuspensionCategoryBase;
+import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
@@ -38,7 +38,7 @@ public class FirstInvoiceForAwardSuspensionCategory extends SuspensionCategoryBa
         Map<String, String> criteria = new HashMap<>();
         String proposalNumber = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getProposalNumber();
         String documentNumber = contractsGrantsInvoiceDocument.getDocumentNumber();
-        ContractsAndGrantsBillingAward award = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAward();
+        Award award = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAward();
         
         criteria.put(ArPropertyConstants.ContractsGrantsInvoiceDocumentFields.PROPOSAL_NUMBER, proposalNumber);
         criteria.put(KFSPropertyConstants.DOCUMENT_HEADER + KFSConstants.DELIMITER + KFSPropertyConstants.WORKFLOW_DOCUMENT_STATUS_CODE,

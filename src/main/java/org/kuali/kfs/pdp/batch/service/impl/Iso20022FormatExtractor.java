@@ -543,6 +543,9 @@ public class Iso20022FormatExtractor {
                     final PaymentGroup paymentGroup = paymentDetail.getPaymentGroup();
 
                     final Date disbursementDate = extractTypeContext.getDisbursementDate();
+                    if (ObjectUtils.isNull(paymentGroup.getOriginalDisbursementDate())) {
+                        paymentGroup.setOriginalDisbursementDate(new java.sql.Date(disbursementDate.getTime()));
+                    }
                     paymentGroup.setDisbursementDate(new java.sql.Date(disbursementDate.getTime()));
 
                     paymentGroup.setPaymentStatus(extractTypeContext.getExtractedStatus());

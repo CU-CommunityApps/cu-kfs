@@ -11,12 +11,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.kuali.kfs.module.cg.businessobject.AwardInvoicingOptionTypes;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.SubFundGroup;
-import org.kuali.kfs.integration.cg.CGIntegrationConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.ArPropertyConstants;
@@ -107,12 +107,12 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         String invoiceOptionCode = award.getInvoicingOptionCode();
         String purchaseOrderNumber = StringUtils.EMPTY;
 
-        if (StringUtils.equals(invoiceOptionCode, CGIntegrationConstants.AwardInvoicingOption.Types.AWARD.getCode())) {
+        if (StringUtils.equals(invoiceOptionCode, AwardInvoicingOptionTypes.AWARD.getCode())) {
             purchaseOrderNumber = findPurchaseOrderNumberForInvoiceOptionAward(award);
-        } else if (StringUtils.equals(invoiceOptionCode, CGIntegrationConstants.AwardInvoicingOption.Types.ACCOUNT.getCode())) {
+        } else if (StringUtils.equals(invoiceOptionCode, AwardInvoicingOptionTypes.ACCOUNT.getCode())) {
             purchaseOrderNumber = findPurchaseOrderNumberForInvoiceOptionAccount(document);
-        } else if (StringUtils.equals(invoiceOptionCode, CGIntegrationConstants.AwardInvoicingOption.Types.CONTRACT_CONTROL.getCode())
-                || StringUtils.equals(invoiceOptionCode, CGIntegrationConstants.AwardInvoicingOption.Types.SCHEDULE.getCode())) {
+        } else if (StringUtils.equals(invoiceOptionCode, AwardInvoicingOptionTypes.CONTRACT_CONTROL.getCode())
+                || StringUtils.equals(invoiceOptionCode, AwardInvoicingOptionTypes.SCHEDULE.getCode())) {
             purchaseOrderNumber = findPurchaseOrderNumberForInvoiceOptionContractControlAndScheduled(document);
         }
         
