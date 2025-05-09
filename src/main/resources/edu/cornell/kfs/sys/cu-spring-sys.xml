@@ -363,7 +363,8 @@
     <bean id="tablePurgeRecordsDao-parentBean" parent="platformAwareDao"
           class="edu.cornell.kfs.sys.dataaccess.impl.TablePurgeRecordsDaoOjb" abstract="true"
           p:businessObjectService-ref="businessObjectService"
-          p:parameterService-ref="parameterService"> 
+          p:parameterService-ref="parameterService"
+          p:dateTimeService-ref="dateTimeService"> 
     </bean>
     
     <bean id="excludeInitiatorAndSubmitterSeparationOfDutiesRoleTypeService"
