@@ -4,6 +4,7 @@ import java.sql.Types;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -34,6 +35,10 @@ public final class CuSqlChunk implements CharSequence {
 
     public CuSqlChunk appendAsParameter(String value) {
         return append(new SqlParameterValue(Types.VARCHAR, value));
+    }
+
+    public CuSqlChunk appendAsParameter(final int sqlType, final Supplier<?> value) {
+        return appendAsParameter(sqlType, (Object) value);
     }
 
     public CuSqlChunk appendAsParameter(int sqlType, Object value) {
@@ -133,6 +138,10 @@ public final class CuSqlChunk implements CharSequence {
 
     public static CuSqlChunk forParameter(String value) {
         return forParameter(Types.VARCHAR, value);
+    }
+
+    public static CuSqlChunk forParameter(final int sqlType, final Supplier<?> derivedValue) {
+        return forParameter(sqlType, (Object) derivedValue);
     }
 
     public static CuSqlChunk forParameter(int sqlType, Object value) {

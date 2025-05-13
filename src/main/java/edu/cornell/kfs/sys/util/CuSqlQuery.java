@@ -2,6 +2,7 @@ package edu.cornell.kfs.sys.util;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -12,6 +13,7 @@ public final class CuSqlQuery {
 
     private final String queryString;
     private final List<SqlParameterValue> parameters;
+    private final boolean hasDerivedParameters;
 
     public CuSqlQuery(String queryString, Stream<SqlParameterValue> parameters) {
         if (StringUtils.isBlank(queryString)) {
@@ -20,6 +22,8 @@ public final class CuSqlQuery {
         Objects.requireNonNull(parameters, "parameters cannot be null");
         this.queryString = queryString;
         this.parameters = parameters.collect(Collectors.toUnmodifiableList());
+        this.hasDerivedParameters = this.parameters.stream()
+                .anyMatch(parameter -> parameter.getValue() instanceof Supplier);
     }
 
     public String getQueryString() {
@@ -27,15 +31,21 @@ public final class CuSqlQuery {
     }
 
     public List<SqlParameterValue> getParameters() {
-        return parameters;
+        if (!hasDerivedParameters) {
+            return parameters;
+        }
+        return parameters.stream()
+                .map(parameter -> new SqlParameterValue(
+                        parameter.getSqlType(), ((Supplier<?>) parameter.getValue()).get()))
+                .collect(Collectors.toUnmodifiableList());
     }
 
     public Object[] getParametersArray() {
-        return parameters.toArray();
+        return getParameters().toArray();
     }
 
     public Object[] getParameterValuesArray() {
-        return parameters.stream()
+        return getParameters().stream()
                 .map(SqlParameterValue::getValue)
                 .toArray();
     }

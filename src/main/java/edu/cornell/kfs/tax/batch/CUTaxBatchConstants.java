@@ -21,6 +21,8 @@ public final class CUTaxBatchConstants {
     public static final String VENDOR_EMAIL_ADDRESS = "vendorEmailAddress";
 
     public static final String KFS_SCHEMA = "KFS";
+    public static final String DUAL_TABLE_NAME = "DUAL";
+    public static final String DUAL_QUERY_ALIAS = "DQY1";
 
     /**
      * Helper enum identifying the various sources/types of the tax data/output fields

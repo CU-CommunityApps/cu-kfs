@@ -119,6 +119,16 @@ public class TaxQueryBuilder {
         return this;
     }
 
+    public TaxQueryBuilder update(final Class<? extends BusinessObject> businessObjectClass) {
+        final String tableReference = getTableReferenceDeclaration(businessObjectClass);
+        sqlChunk.append("UPDATE ").append(tableReference);
+        return this;
+    }
+
+    public TaxQueryBuilder set() {
+        return this;
+    }
+
     public CuSqlQuery build() {
         return sqlChunk.toQuery();
     }
