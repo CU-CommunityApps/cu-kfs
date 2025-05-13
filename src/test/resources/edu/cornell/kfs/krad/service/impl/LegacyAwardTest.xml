@@ -587,7 +587,7 @@
         <organizationStateCode>NY</organizationStateCode>
         <organizationZipCode>14850</organizationZipCode>
         <organizationBeginDate>2010-05-05</organizationBeginDate>
-        <organizationInFinancialProcessingIndicator>false</organizationInFinancialProcessingIndicator>
+        
         <organizationManagerUniversalId>1231231</organizationManagerUniversalId>
         <responsibilityCenterCode>NA</responsibilityCenterCode>
         <organizationPhysicalCampusCode>IT</organizationPhysicalCampusCode>
@@ -783,7 +783,7 @@
         <organizationStateCode>NY</organizationStateCode>
         <organizationZipCode>14850</organizationZipCode>
         <organizationBeginDate>2010-05-05</organizationBeginDate>
-        <organizationInFinancialProcessingIndicator>false</organizationInFinancialProcessingIndicator>
+        
         <organizationManagerUniversalId>1231231</organizationManagerUniversalId>
         <responsibilityCenterCode>NA</responsibilityCenterCode>
         <organizationPhysicalCampusCode>IT</organizationPhysicalCampusCode>
