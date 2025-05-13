@@ -11,7 +11,7 @@ public class PurgeTablesStep extends AbstractStep {
     private TablesPurgeService tablesPurgeService;
     
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        getTablesPurgeService().purgeRecords(jobRunDate);
+        getTablesPurgeService().purgeRecords(getDateTimeService().getLocalDate(jobRunDate));
         return true;
     }
 

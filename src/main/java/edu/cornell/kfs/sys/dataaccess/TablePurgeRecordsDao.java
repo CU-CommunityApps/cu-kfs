@@ -1,12 +1,12 @@
 package edu.cornell.kfs.sys.dataaccess;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import edu.cornell.kfs.sys.businessobject.TableDetailsForPurge;
 
 public interface TablePurgeRecordsDao {
     
-    void purgeRecords(Date jobRunDate, List<TableDetailsForPurge> tableDetails);
+    void purgeRecords(LocalDate jobRunLocalDate, List<TableDetailsForPurge> tableDetails);
     
 }
