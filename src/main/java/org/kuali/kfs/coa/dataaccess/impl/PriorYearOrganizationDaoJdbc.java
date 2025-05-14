@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2024 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -38,13 +38,9 @@ public class PriorYearOrganizationDaoJdbc extends PlatformAwareDaoBaseJdbc imple
     public int purgePriorYearOrganizations() {
         LOG.debug("purgePriorYearOrganizations() started");
 
-        final String priorYrOrgTableName = MetadataManager.getInstance()
-                .getGlobalRepository()
-                .getDescriptorFor(PriorYearOrganization.class)
-                .getFullTableName();
+        final String priorYrOrgTableName = MetadataManager.getInstance().getGlobalRepository().getDescriptorFor(PriorYearOrganization.class).getFullTableName();
 
-        final int count =
-                getJdbcTemplate().queryForObject("SELECT COUNT(*) from " + priorYrOrgTableName, Integer.class);
+        final int count = getJdbcTemplate().queryForObject("SELECT COUNT(*) from " + priorYrOrgTableName, Integer.class);
 
         getJdbcTemplate().update("DELETE from " + priorYrOrgTableName);
 
@@ -60,14 +56,8 @@ public class PriorYearOrganizationDaoJdbc extends PlatformAwareDaoBaseJdbc imple
     public int copyCurrentOrganizationsToPriorYearTable() {
         LOG.debug("copyCurrentOrganizationsToPriorYearTable() started");
 
-        final String priorYrOrgTableName = MetadataManager.getInstance()
-                .getGlobalRepository()
-                .getDescriptorFor(PriorYearOrganization.class)
-                .getFullTableName();
-        final String orgTableName = MetadataManager.getInstance()
-                .getGlobalRepository()
-                .getDescriptorFor(Organization.class)
-                .getFullTableName();
+        final String priorYrOrgTableName = MetadataManager.getInstance().getGlobalRepository().getDescriptorFor(PriorYearOrganization.class).getFullTableName();
+        final String orgTableName = MetadataManager.getInstance().getGlobalRepository().getDescriptorFor(Organization.class).getFullTableName();
 
         getJdbcTemplate().update("INSERT into " + priorYrOrgTableName + " (" +
                 "FIN_COA_CD,ORG_CD,OBJ_ID,VER_NBR,ORG_MGR_UNVL_ID,ORG_NM,RC_CD,ORG_PHYS_CMP_CD,ORG_TYP_CD," +
