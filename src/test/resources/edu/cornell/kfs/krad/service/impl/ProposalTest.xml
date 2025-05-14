@@ -340,7 +340,7 @@
         <organizationStateCode>NY</organizationStateCode>
         <organizationZipCode>14850</organizationZipCode>
         <organizationBeginDate>2010-03-17</organizationBeginDate>
-        <organizationInFinancialProcessingIndicator>false</organizationInFinancialProcessingIndicator>
+        
         <organizationManagerUniversalId>1020304</organizationManagerUniversalId>
         <responsibilityCenterCode>NA</responsibilityCenterCode>
         <organizationPhysicalCampusCode>IT</organizationPhysicalCampusCode>
