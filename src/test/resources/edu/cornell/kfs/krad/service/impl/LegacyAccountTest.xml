@@ -1,0 +1,619 @@
+<xmlConversionTestCase>
+
+<oldData>
+  <maintainableDocumentContents maintainableImplClass='edu.cornell.kfs.coa.document.CUAccountMaintainableImpl'><oldMaintainableObject><org.kuali.kfs.coa.businessobject.Account>
+    <chartOfAccountsCode>IT</chartOfAccountsCode>
+    <accountNumber>C278324</accountNumber>
+    <accountName>NSF 59991 Atkinsons fungi curation</accountName>
+    <accountsFringesBnftIndicator>true</accountsFringesBnftIndicator>
+    <accountCityName>ITHACA</accountCityName>
+    <accountStateCode>NY</accountStateCode>
+    <accountStreetAddress>Plant Sciences</accountStreetAddress>
+    <accountZipCode>14853</accountZipCode>
+    <accountCreateDate>2014-03-06</accountCreateDate>
+    <accountEffectiveDate>2014-03-06</accountEffectiveDate>
+    <accountExpirationDate>2014-05-31</accountExpirationDate>
+    <acctIndirectCostRcvyTypeCd>22</acctIndirectCostRcvyTypeCd>
+    <financialIcrSeriesIdentifier>540</financialIcrSeriesIdentifier>
+    <accountInFinancialProcessingIndicator>false</accountInFinancialProcessingIndicator>
+    <budgetRecordingLevelCode>O</budgetRecordingLevelCode>
+    <accountSufficientFundsCode>N</accountSufficientFundsCode>
+    <pendingAcctSufficientFundsIndicator>false</pendingAcctSufficientFundsIndicator>
+    <extrnlFinEncumSufficntFndIndicator>false</extrnlFinEncumSufficntFndIndicator>
+    <intrnlFinEncumSufficntFndIndicator>false</intrnlFinEncumSufficntFndIndicator>
+    <finPreencumSufficientFundIndicator>false</finPreencumSufficientFundIndicator>
+    <financialObjectivePrsctrlIndicator>false</financialObjectivePrsctrlIndicator>
+    <accountCfdaNumber>47.074</accountCfdaNumber>
+    <accountOffCampusIndicator>false</accountOffCampusIndicator>
+    <active>true</active>
+    <accountFiscalOfficerSystemIdentifier>247248</accountFiscalOfficerSystemIdentifier>
+    <accountsSupervisorySystemsIdentifier>1013858</accountsSupervisorySystemsIdentifier>
+    <accountManagerSystemIdentifier>69201</accountManagerSystemIdentifier>
+    <organizationCode>01G2</organizationCode>
+    <accountTypeCode>EN</accountTypeCode>
+    <accountPhysicalCampusCode>IT</accountPhysicalCampusCode>
+    <subFundGroupCode>CGFEDL</subFundGroupCode>
+    <financialHigherEdFunctionCd>4300</financialHigherEdFunctionCd>
+    <accountRestrictedStatusCode>U</accountRestrictedStatusCode>
+    <continuationFinChrtOfAcctCd>IT</continuationFinChrtOfAcctCd>
+    <continuationAccountNumber>1533102</continuationAccountNumber>
+    <contractControlFinCoaCode>IT</contractControlFinCoaCode>
+    <contractControlAccountNumber>1538324</contractControlAccountNumber>
+    <indirectCostRcvyFinCoaCode>IT</indirectCostRcvyFinCoaCode>
+    <indirectCostRecoveryAcctNbr>1003053</indirectCostRecoveryAcctNbr>
+    <contractsAndGrantsAccountResponsibilityId>6</contractsAndGrantsAccountResponsibilityId>
+    <accountFiscalOfficerUser class='org.kuali.rice.kim.bo.impl.PersonImpl'>
+      <principalId>247248</principalId>
+      <principalName>jaf54</principalName>
+      <entityId>247248</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>Jennifer</firstName>
+      <middleName> </middleName>
+      <lastName>Austin</lastName>
+      <name>Austin, Jennifer  </name>
+      <addressLine1>559 Davis Rd.</addressLine1>
+      <addressLine2> </addressLine2>
+      <addressLine3> </addressLine3>
+      <addressCityName>Lansing</addressCityName>
+      <addressStateCode>NY</addressStateCode>
+      <addressPostalCode>14882-8826</addressPostalCode>
+      <addressCountryCode> </addressCountryCode>
+      <emailAddress>jaf54@cornell.edu</emailAddress>
+      <phoneNumber>607-255-8411</phoneNumber>
+      <suppressName>false</suppressName>
+      <suppressAddress>true</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode>IT</campusCode>
+      <externalIdentifiers>
+        <entry>
+          <string>TAX</string>
+          <string>1291696</string>
+        </entry>
+        <entry>
+          <string>EMPLID</string>
+          <string>1291696</string>
+        </entry>
+      </externalIdentifiers>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-0341</primaryDepartmentCode>
+      <employeeId>1291696</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </accountFiscalOfficerUser>
+    <accountSupervisoryUser class='org.kuali.rice.kim.bo.impl.PersonImpl'>
+      <principalId>1013858</principalId>
+      <principalName>tlk2</principalName>
+      <entityId>1013858</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>Tracy</firstName>
+      <middleName>Lou</middleName>
+      <lastName>Holdridge</lastName>
+      <name>Holdridge, Tracy Lou</name>
+      <addressLine1>335 Vanbuskirk Gulf Rd.</addressLine1>
+      <addressLine2> </addressLine2>
+      <addressLine3> </addressLine3>
+      <addressCityName>Newfield</addressCityName>
+      <addressStateCode>NY</addressStateCode>
+      <addressPostalCode>14867-9714</addressPostalCode>
+      <addressCountryCode> </addressCountryCode>
+      <emailAddress>tlk2@cornell.edu</emailAddress>
+      <phoneNumber>607-255-5474</phoneNumber>
+      <suppressName>false</suppressName>
+      <suppressAddress>true</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode>IT</campusCode>
+      <externalIdentifiers>
+        <entry>
+          <string>TAX</string>
+          <string>1012578</string>
+        </entry>
+        <entry>
+          <string>EMPLID</string>
+          <string>1012578</string>
+        </entry>
+      </externalIdentifiers>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-0152</primaryDepartmentCode>
+      <employeeId>1012578</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </accountSupervisoryUser>
+    <accountManagerUser class='org.kuali.rice.kim.bo.impl.PersonImpl'>
+      <principalId>69201</principalId>
+      <principalName>kh11</principalName>
+      <entityId>69201</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>Kathie</firstName>
+      <middleName>Therese</middleName>
+      <lastName>Hodge</lastName>
+      <name>Hodge, Kathie Therese</name>
+      <addressLine1>108 Hickory Cir</addressLine1>
+      <addressLine2> </addressLine2>
+      <addressLine3> </addressLine3>
+      <addressCityName>Ithaca</addressCityName>
+      <addressStateCode>NY</addressStateCode>
+      <addressPostalCode>14850-9610</addressPostalCode>
+      <addressCountryCode> </addressCountryCode>
+      <emailAddress>kh11@cornell.edu</emailAddress>
+      <phoneNumber>607-255-5356</phoneNumber>
+      <suppressName>false</suppressName>
+      <suppressAddress>true</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode>IT</campusCode>
+      <externalIdentifiers>
+        <entry>
+          <string>TAX</string>
+          <string>1023717</string>
+        </entry>
+        <entry>
+          <string>EMPLID</string>
+          <string>1023717</string>
+        </entry>
+      </externalIdentifiers>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-0152</primaryDepartmentCode>
+      <employeeId>1023717</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </accountManagerUser>
+    <accountGuideline>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>C278324</accountNumber>
+      <accountExpenseGuidelineText>To cover salaries, wages and fringe benefits for temporary employees</accountExpenseGuidelineText>
+      <accountIncomeGuidelineText>153-8324 OSP #59991</accountIncomeGuidelineText>
+      <accountPurposeText>To cover salaries, wages and fringe benefits for temporary employees
+        Continu Acct 1533102</accountPurposeText>
+      <objectId>72556937-AC3B-41D6-FADB-FA42E329D4EA</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </accountGuideline>
+    <accountDescription>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>C278324</accountNumber>
+      <versionNumber>4</versionNumber>
+      <objectId>68A1E42B-AED8-3ED7-A6A2-62C821A16275</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </accountDescription>
+    <versionNumber>6</versionNumber>
+    <objectId>03AA068C-C2AB-48E6-5416-034EDAB43C60</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <extension class='edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute'>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>C278324</accountNumber>
+      <subFundGroupCode>CGFEDL</subFundGroupCode>
+      <invoiceTypeCode>LOC</invoiceTypeCode>
+      <everify>false</everify>
+      <laborBenefitRateCategoryCode>ZZ</laborBenefitRateCategoryCode>
+      <versionNumber>6</versionNumber>
+      <objectId>358A7339-7FA1-2DA9-999D-6385B99408A5</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </extension>
+    <autoIncrementSet>false</autoIncrementSet>
+    <laborBenefitRateCategoryCode>EN</laborBenefitRateCategoryCode>
+    <indirectCostRecoveryAccounts class='org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl'>
+      <org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <accountNumber>C278324</accountNumber>
+        <indirectCostRecoveryAccountNumber>1003053</indirectCostRecoveryAccountNumber>
+        <indirectCostRecoveryFinCoaCode>IT</indirectCostRecoveryFinCoaCode>
+        <accountLinePercent>100</accountLinePercent>
+        <active>true</active>
+        <newCollectionRecord>false</newCollectionRecord>
+      </org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount>
+    </indirectCostRecoveryAccounts>
+  </org.kuali.kfs.coa.businessobject.Account><maintenanceAction>Edit</maintenanceAction>
+  </oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.Account>
+    <chartOfAccountsCode>IT</chartOfAccountsCode>
+    <accountNumber>C278324</accountNumber>
+    <accountName>NSF 59991 Atkinsons fungi curation</accountName>
+    <accountsFringesBnftIndicator>true</accountsFringesBnftIndicator>
+    <accountCityName>ITHACA</accountCityName>
+    <accountStateCode>NY</accountStateCode>
+    <accountStreetAddress>Plant Sciences</accountStreetAddress>
+    <accountZipCode>14853</accountZipCode>
+    <accountCreateDate>2014-03-06</accountCreateDate>
+    <accountEffectiveDate>2014-03-06</accountEffectiveDate>
+    <accountExpirationDate>2014-05-31</accountExpirationDate>
+    <acctIndirectCostRcvyTypeCd>22</acctIndirectCostRcvyTypeCd>
+    <financialIcrSeriesIdentifier>540</financialIcrSeriesIdentifier>
+    <accountInFinancialProcessingIndicator>false</accountInFinancialProcessingIndicator>
+    <budgetRecordingLevelCode>O</budgetRecordingLevelCode>
+    <accountSufficientFundsCode>N</accountSufficientFundsCode>
+    <pendingAcctSufficientFundsIndicator>false</pendingAcctSufficientFundsIndicator>
+    <extrnlFinEncumSufficntFndIndicator>false</extrnlFinEncumSufficntFndIndicator>
+    <intrnlFinEncumSufficntFndIndicator>false</intrnlFinEncumSufficntFndIndicator>
+    <finPreencumSufficientFundIndicator>false</finPreencumSufficientFundIndicator>
+    <financialObjectivePrsctrlIndicator>false</financialObjectivePrsctrlIndicator>
+    <accountCfdaNumber>47.074</accountCfdaNumber>
+    <accountOffCampusIndicator>false</accountOffCampusIndicator>
+    <active>false</active>
+    <accountFiscalOfficerSystemIdentifier>247248</accountFiscalOfficerSystemIdentifier>
+    <accountsSupervisorySystemsIdentifier>1013858</accountsSupervisorySystemsIdentifier>
+    <accountManagerSystemIdentifier>69201</accountManagerSystemIdentifier>
+    <organizationCode>01G2</organizationCode>
+    <accountTypeCode>EN</accountTypeCode>
+    <accountPhysicalCampusCode>IT</accountPhysicalCampusCode>
+    <subFundGroupCode>CGFEDL</subFundGroupCode>
+    <financialHigherEdFunctionCd>4300</financialHigherEdFunctionCd>
+    <accountRestrictedStatusCode>U</accountRestrictedStatusCode>
+    <continuationFinChrtOfAcctCd>IT</continuationFinChrtOfAcctCd>
+    <continuationAccountNumber>C271000</continuationAccountNumber>
+    <contractControlFinCoaCode>IT</contractControlFinCoaCode>
+    <contractControlAccountNumber>1538324</contractControlAccountNumber>
+    <indirectCostRcvyFinCoaCode>IT</indirectCostRcvyFinCoaCode>
+    <indirectCostRecoveryAcctNbr>1003053</indirectCostRecoveryAcctNbr>
+    <contractsAndGrantsAccountResponsibilityId>6</contractsAndGrantsAccountResponsibilityId>
+    <accountFiscalOfficerUser class='org.kuali.rice.kim.bo.impl.PersonImpl'>
+      <principalId>247248</principalId>
+      <principalName>jaf54</principalName>
+      <entityId>247248</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>Jennifer</firstName>
+      <middleName> </middleName>
+      <lastName>Austin</lastName>
+      <name>Austin, Jennifer  </name>
+      <addressLine1>559 Davis Rd.</addressLine1>
+      <addressLine2> </addressLine2>
+      <addressLine3> </addressLine3>
+      <addressCityName>Lansing</addressCityName>
+      <addressStateCode>NY</addressStateCode>
+      <addressPostalCode>14882-8826</addressPostalCode>
+      <addressCountryCode> </addressCountryCode>
+      <emailAddress>jaf54@cornell.edu</emailAddress>
+      <phoneNumber>607-255-8411</phoneNumber>
+      <suppressName>false</suppressName>
+      <suppressAddress>true</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode>IT</campusCode>
+      <externalIdentifiers>
+        <entry>
+          <string>TAX</string>
+          <string>1291696</string>
+        </entry>
+        <entry>
+          <string>EMPLID</string>
+          <string>1291696</string>
+        </entry>
+      </externalIdentifiers>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-0341</primaryDepartmentCode>
+      <employeeId>1291696</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </accountFiscalOfficerUser>
+    <accountSupervisoryUser class='org.kuali.rice.kim.bo.impl.PersonImpl'>
+      <principalId>1013858</principalId>
+      <principalName>tlk2</principalName>
+      <entityId>1013858</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>Tracy</firstName>
+      <middleName>Lou</middleName>
+      <lastName>Holdridge</lastName>
+      <name>Holdridge, Tracy Lou</name>
+      <addressLine1>335 Vanbuskirk Gulf Rd.</addressLine1>
+      <addressLine2> </addressLine2>
+      <addressLine3> </addressLine3>
+      <addressCityName>Newfield</addressCityName>
+      <addressStateCode>NY</addressStateCode>
+      <addressPostalCode>14867-9714</addressPostalCode>
+      <addressCountryCode> </addressCountryCode>
+      <emailAddress>tlk2@cornell.edu</emailAddress>
+      <phoneNumber>607-255-5474</phoneNumber>
+      <suppressName>false</suppressName>
+      <suppressAddress>true</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode>IT</campusCode>
+      <externalIdentifiers>
+        <entry>
+          <string>TAX</string>
+          <string>1012578</string>
+        </entry>
+        <entry>
+          <string>EMPLID</string>
+          <string>1012578</string>
+        </entry>
+      </externalIdentifiers>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-0152</primaryDepartmentCode>
+      <employeeId>1012578</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </accountSupervisoryUser>
+    <accountManagerUser class='org.kuali.rice.kim.bo.impl.PersonImpl'>
+      <principalId>69201</principalId>
+      <principalName>kh11</principalName>
+      <entityId>69201</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>Kathie</firstName>
+      <middleName>Therese</middleName>
+      <lastName>Hodge</lastName>
+      <name>Hodge, Kathie Therese</name>
+      <addressLine1>108 Hickory Cir</addressLine1>
+      <addressLine2> </addressLine2>
+      <addressLine3> </addressLine3>
+      <addressCityName>Ithaca</addressCityName>
+      <addressStateCode>NY</addressStateCode>
+      <addressPostalCode>14850-9610</addressPostalCode>
+      <addressCountryCode> </addressCountryCode>
+      <emailAddress>kh11@cornell.edu</emailAddress>
+      <phoneNumber>607-255-5356</phoneNumber>
+      <suppressName>false</suppressName>
+      <suppressAddress>true</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode>IT</campusCode>
+      <externalIdentifiers>
+        <entry>
+          <string>TAX</string>
+          <string>1023717</string>
+        </entry>
+        <entry>
+          <string>EMPLID</string>
+          <string>1023717</string>
+        </entry>
+      </externalIdentifiers>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-0152</primaryDepartmentCode>
+      <employeeId>1023717</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </accountManagerUser>
+    <accountGuideline>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>C278324</accountNumber>
+      <accountExpenseGuidelineText>To cover salaries, wages and fringe benefits for temporary employees</accountExpenseGuidelineText>
+      <accountIncomeGuidelineText>153-8324 OSP #59991</accountIncomeGuidelineText>
+      <accountPurposeText>To cover salaries, wages and fringe benefits for temporary employees
+        Continu Acct 1533102</accountPurposeText>
+      <objectId>72556937-AC3B-41D6-FADB-FA42E329D4EA</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+      <versionNumber>1</versionNumber></accountGuideline>
+    <accountDescription>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>C278324</accountNumber>
+      <versionNumber>4</versionNumber>
+      <objectId>68A1E42B-AED8-3ED7-A6A2-62C821A16275</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </accountDescription>
+    <versionNumber>6</versionNumber>
+    <objectId>03AA068C-C2AB-48E6-5416-034EDAB43C60</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <extension class='edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute'>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>C278324</accountNumber>
+      <subFundGroupCode>CGFEDL</subFundGroupCode>
+      <invoiceTypeCode>LOC</invoiceTypeCode>
+      <everify>false</everify>
+      <laborBenefitRateCategoryCode>ZZ</laborBenefitRateCategoryCode>
+      <versionNumber>6</versionNumber>
+      <objectId>358A7339-7FA1-2DA9-999D-6385B99408A5</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </extension>
+    <autoIncrementSet>false</autoIncrementSet>
+    <laborBenefitRateCategoryCode>EN</laborBenefitRateCategoryCode>
+    <indirectCostRecoveryAccounts class='org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl'>
+      <org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <accountNumber>C278324</accountNumber>
+        <indirectCostRecoveryAccountNumber>1003053</indirectCostRecoveryAccountNumber>
+        <indirectCostRecoveryFinCoaCode>IT</indirectCostRecoveryFinCoaCode>
+        <accountLinePercent>100</accountLinePercent>
+        <active>true</active>
+        <newCollectionRecord>false</newCollectionRecord>
+      </org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount>
+    </indirectCostRecoveryAccounts>
+  </org.kuali.kfs.coa.businessobject.Account><maintenanceAction>Edit</maintenanceAction>
+  </newMaintainableObject><notes><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl><org.kuali.rice.krad.bo.Note><noteIdentifier>5264705</noteIdentifier><remoteObjectIdentifier>F2B21AAF-0AB1-B444-8334-F95BAEFED5BA</remoteObjectIdentifier><authorUniversalIdentifier>1464999</authorUniversalIdentifier><notePostedTimestamp>2014-10-01 14:47:11</notePostedTimestamp><noteTypeCode>BO</noteTypeCode><noteText>Edit account document ID 5986278 NSF 59991 award termed close account</noteText><noteType><noteTypeCode>BO</noteTypeCode><noteTypeDescription>DOCUMENT BUSINESS OBJECT</noteTypeDescription><noteTypeActiveIndicator>true</noteTypeActiveIndicator><versionNumber>1</versionNumber><objectId>2DED956F99923788E0534D73100A6FDB</objectId><newCollectionRecord>false</newCollectionRecord></noteType><adHocRouteRecipient class='org.kuali.rice.krad.bo.AdHocRoutePerson'><type>0</type><actionRequested>A</actionRequested><versionNumber>1</versionNumber><newCollectionRecord>false</newCollectionRecord></adHocRouteRecipient><newCollectionRecord>false</newCollectionRecord></org.kuali.rice.krad.bo.Note></org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl></notes></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+  <maintainableDocumentContents maintainableImplClass="edu.cornell.kfs.coa.document.CUAccountMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coa.businessobject.Account>
+    <chartOfAccountsCode>IT</chartOfAccountsCode>
+    <accountNumber>C278324</accountNumber>
+    <accountName>NSF 59991 Atkinsons fungi curation</accountName>
+    <accountsFringesBnftIndicator>true</accountsFringesBnftIndicator>
+    <accountCityName>ITHACA</accountCityName>
+    <accountStateCode>NY</accountStateCode>
+    <accountStreetAddress>Plant Sciences</accountStreetAddress>
+    <accountZipCode>14853</accountZipCode>
+    <accountCreateDate>2014-03-06</accountCreateDate>
+    <accountEffectiveDate>2014-03-06</accountEffectiveDate>
+    <accountExpirationDate>2014-05-31</accountExpirationDate>
+    <acctIndirectCostRcvyTypeCd>22</acctIndirectCostRcvyTypeCd>
+    <financialIcrSeriesIdentifier>540</financialIcrSeriesIdentifier>
+    <accountInFinancialProcessingIndicator>false</accountInFinancialProcessingIndicator>
+    <budgetRecordingLevelCode>O</budgetRecordingLevelCode>
+    <accountSufficientFundsCode>N</accountSufficientFundsCode>
+    <pendingAcctSufficientFundsIndicator>false</pendingAcctSufficientFundsIndicator>
+    <financialObjectivePrsctrlIndicator>false</financialObjectivePrsctrlIndicator>
+    <accountCfdaNumber>47.074</accountCfdaNumber>
+    <accountOffCampusIndicator>false</accountOffCampusIndicator>
+    <active>true</active>
+    <accountFiscalOfficerSystemIdentifier>247248</accountFiscalOfficerSystemIdentifier>
+    <accountsSupervisorySystemsIdentifier>1013858</accountsSupervisorySystemsIdentifier>
+    <accountManagerSystemIdentifier>69201</accountManagerSystemIdentifier>
+    <organizationCode>01G2</organizationCode>
+    <accountTypeCode>EN</accountTypeCode>
+    <accountPhysicalCampusCode>IT</accountPhysicalCampusCode>
+    <subFundGroupCode>CGFEDL</subFundGroupCode>
+    <financialHigherEdFunctionCd>4300</financialHigherEdFunctionCd>
+    <accountRestrictedStatusCode>U</accountRestrictedStatusCode>
+    <continuationFinChrtOfAcctCd>IT</continuationFinChrtOfAcctCd>
+    <continuationAccountNumber>1533102</continuationAccountNumber>
+    <contractControlFinCoaCode>IT</contractControlFinCoaCode>
+    <contractControlAccountNumber>1538324</contractControlAccountNumber>
+
+
+    <contractsAndGrantsAccountResponsibilityId>6</contractsAndGrantsAccountResponsibilityId>
+    <accountGuideline>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>C278324</accountNumber>
+      <accountExpenseGuidelineText>To cover salaries, wages and fringe benefits for temporary employees</accountExpenseGuidelineText>
+      <accountIncomeGuidelineText>153-8324 OSP #59991</accountIncomeGuidelineText>
+      <accountPurposeText>To cover salaries, wages and fringe benefits for temporary employees
+        Continu Acct 1533102</accountPurposeText>
+      <objectId>72556937-AC3B-41D6-FADB-FA42E329D4EA</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+
+    </accountGuideline>
+    <accountDescription>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>C278324</accountNumber>
+      <versionNumber>4</versionNumber>
+      <objectId>68A1E42B-AED8-3ED7-A6A2-62C821A16275</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+
+    </accountDescription>
+    <versionNumber>6</versionNumber>
+    <objectId>03AA068C-C2AB-48E6-5416-034EDAB43C60</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <extension class="edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute">
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>C278324</accountNumber>
+      <subFundGroupCode>CGFEDL</subFundGroupCode>
+      <invoiceTypeCode>LOC</invoiceTypeCode>
+      <everify>false</everify>
+      ZZ
+      <versionNumber>6</versionNumber>
+      <objectId>358A7339-7FA1-2DA9-999D-6385B99408A5</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+
+    </extension>
+
+    <laborBenefitRateCategoryCode>EN</laborBenefitRateCategoryCode>
+    <indirectCostRecoveryAccounts class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+      <org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <accountNumber>C278324</accountNumber>
+        <indirectCostRecoveryAccountNumber>1003053</indirectCostRecoveryAccountNumber>
+        <indirectCostRecoveryFinCoaCode>IT</indirectCostRecoveryFinCoaCode>
+        <accountLinePercent>100</accountLinePercent>
+        <active>true</active>
+        <newCollectionRecord>false</newCollectionRecord>
+      </org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount>
+    </indirectCostRecoveryAccounts>
+  </org.kuali.kfs.coa.businessobject.Account><maintenanceAction>Edit</maintenanceAction>
+  </oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.Account>
+    <chartOfAccountsCode>IT</chartOfAccountsCode>
+    <accountNumber>C278324</accountNumber>
+    <accountName>NSF 59991 Atkinsons fungi curation</accountName>
+    <accountsFringesBnftIndicator>true</accountsFringesBnftIndicator>
+    <accountCityName>ITHACA</accountCityName>
+    <accountStateCode>NY</accountStateCode>
+    <accountStreetAddress>Plant Sciences</accountStreetAddress>
+    <accountZipCode>14853</accountZipCode>
+    <accountCreateDate>2014-03-06</accountCreateDate>
+    <accountEffectiveDate>2014-03-06</accountEffectiveDate>
+    <accountExpirationDate>2014-05-31</accountExpirationDate>
+    <acctIndirectCostRcvyTypeCd>22</acctIndirectCostRcvyTypeCd>
+    <financialIcrSeriesIdentifier>540</financialIcrSeriesIdentifier>
+    <accountInFinancialProcessingIndicator>false</accountInFinancialProcessingIndicator>
+    <budgetRecordingLevelCode>O</budgetRecordingLevelCode>
+    <accountSufficientFundsCode>N</accountSufficientFundsCode>
+    <pendingAcctSufficientFundsIndicator>false</pendingAcctSufficientFundsIndicator>
+    <financialObjectivePrsctrlIndicator>false</financialObjectivePrsctrlIndicator>
+    <accountCfdaNumber>47.074</accountCfdaNumber>
+    <accountOffCampusIndicator>false</accountOffCampusIndicator>
+    <active>false</active>
+    <accountFiscalOfficerSystemIdentifier>247248</accountFiscalOfficerSystemIdentifier>
+    <accountsSupervisorySystemsIdentifier>1013858</accountsSupervisorySystemsIdentifier>
+    <accountManagerSystemIdentifier>69201</accountManagerSystemIdentifier>
+    <organizationCode>01G2</organizationCode>
+    <accountTypeCode>EN</accountTypeCode>
+    <accountPhysicalCampusCode>IT</accountPhysicalCampusCode>
+    <subFundGroupCode>CGFEDL</subFundGroupCode>
+    <financialHigherEdFunctionCd>4300</financialHigherEdFunctionCd>
+    <accountRestrictedStatusCode>U</accountRestrictedStatusCode>
+    <continuationFinChrtOfAcctCd>IT</continuationFinChrtOfAcctCd>
+    <continuationAccountNumber>C271000</continuationAccountNumber>
+    <contractControlFinCoaCode>IT</contractControlFinCoaCode>
+    <contractControlAccountNumber>1538324</contractControlAccountNumber>
+
+
+    <contractsAndGrantsAccountResponsibilityId>6</contractsAndGrantsAccountResponsibilityId>
+    <accountGuideline>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>C278324</accountNumber>
+      <accountExpenseGuidelineText>To cover salaries, wages and fringe benefits for temporary employees</accountExpenseGuidelineText>
+      <accountIncomeGuidelineText>153-8324 OSP #59991</accountIncomeGuidelineText>
+      <accountPurposeText>To cover salaries, wages and fringe benefits for temporary employees
+        Continu Acct 1533102</accountPurposeText>
+      <objectId>72556937-AC3B-41D6-FADB-FA42E329D4EA</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+
+      <versionNumber>1</versionNumber></accountGuideline>
+    <accountDescription>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>C278324</accountNumber>
+      <versionNumber>4</versionNumber>
+      <objectId>68A1E42B-AED8-3ED7-A6A2-62C821A16275</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+
+    </accountDescription>
+    <versionNumber>6</versionNumber>
+    <objectId>03AA068C-C2AB-48E6-5416-034EDAB43C60</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <extension class="edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute">
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>C278324</accountNumber>
+      <subFundGroupCode>CGFEDL</subFundGroupCode>
+      <invoiceTypeCode>LOC</invoiceTypeCode>
+      <everify>false</everify>
+      ZZ
+      <versionNumber>6</versionNumber>
+      <objectId>358A7339-7FA1-2DA9-999D-6385B99408A5</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+
+    </extension>
+
+    <laborBenefitRateCategoryCode>EN</laborBenefitRateCategoryCode>
+    <indirectCostRecoveryAccounts class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+      <org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <accountNumber>C278324</accountNumber>
+        <indirectCostRecoveryAccountNumber>1003053</indirectCostRecoveryAccountNumber>
+        <indirectCostRecoveryFinCoaCode>IT</indirectCostRecoveryFinCoaCode>
+        <accountLinePercent>100</accountLinePercent>
+        <active>true</active>
+        <newCollectionRecord>false</newCollectionRecord>
+      </org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount>
+    </indirectCostRecoveryAccounts>
+  </org.kuali.kfs.coa.businessobject.Account><maintenanceAction>Edit</maintenanceAction>
+  </newMaintainableObject><notes><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl><org.kuali.kfs.krad.bo.Note><noteIdentifier>5264705</noteIdentifier><remoteObjectIdentifier>F2B21AAF-0AB1-B444-8334-F95BAEFED5BA</remoteObjectIdentifier><authorUniversalIdentifier>1464999</authorUniversalIdentifier><notePostedTimestamp>2014-10-01 14:47:11.0</notePostedTimestamp><noteTypeCode>BO</noteTypeCode><noteText>Edit account document ID 5986278 NSF 59991 award termed close account</noteText><noteType><noteTypeCode>BO</noteTypeCode><noteTypeDescription>DOCUMENT BUSINESS OBJECT</noteTypeDescription><noteTypeActiveIndicator>true</noteTypeActiveIndicator><versionNumber>1</versionNumber><objectId>2DED956F99923788E0534D73100A6FDB</objectId><newCollectionRecord>false</newCollectionRecord></noteType><adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson"><type>0</type><actionRequested>A</actionRequested><versionNumber>1</versionNumber><newCollectionRecord>false</newCollectionRecord></adHocRouteRecipient><newCollectionRecord>false</newCollectionRecord></org.kuali.kfs.krad.bo.Note></org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl></notes></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>

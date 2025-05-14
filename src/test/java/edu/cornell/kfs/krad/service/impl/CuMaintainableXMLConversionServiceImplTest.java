@@ -154,14 +154,14 @@ public class CuMaintainableXMLConversionServiceImplTest {
         assertXMLFromTestFileConvertsAsExpected("DateFieldTest.xml");
     }
 
-    @Test
-    void testConversionOfAccount() throws Exception {
-        assertXMLFromTestFileConvertsAsExpected("AccountTest.xml");
-    }
-
-    @Test
-    void testConversionOfAccountCustomAddress() throws Exception {
-        assertXMLFromTestFileConvertsAsExpected("AccountCustomAddressTest.xml");
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "LegacyAccountTest.xml",
+        "AccountTest.xml",
+        "AccountCustomAddressTest.xml"
+    })
+    void testConversionOfAccounts(final String accountTestFile) throws Exception {
+        assertXMLFromTestFileConvertsAsExpected(accountTestFile);
     }
 
     @Test

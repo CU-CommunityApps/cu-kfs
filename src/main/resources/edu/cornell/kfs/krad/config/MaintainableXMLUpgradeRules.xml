@@ -673,6 +673,17 @@
             </pattern>
         </pattern>
         <pattern>
+            <class>organization</class>
+            <pattern>
+                <match>organizationManagerUniversal</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>organizationInFinancialProcessingIndicator</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
             <class>edu.cornell.kfs.coa.businessobject.OrganizationGlobal</class>
             <pattern>
                 <match>organizationManagerUniversal</match>
