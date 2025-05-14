@@ -26,6 +26,11 @@ import org.kuali.kfs.coa.businessobject.PriorYearOrganization;
 import org.kuali.kfs.coa.dataaccess.PriorYearOrganizationDao;
 import org.kuali.kfs.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 
+/*
+ * CU customization to backport FINP-10855 on top of 08/30/2023 version of this file.
+ * This can be removed when we upgrade to the 04/10/2024 version of financials.
+ */
+
 public class PriorYearOrganizationDaoJdbc extends PlatformAwareDaoBaseJdbc implements PriorYearOrganizationDao {
     private static final Logger LOG = LogManager.getLogger();
 
