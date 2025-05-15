@@ -177,6 +177,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
         success &= checkEmptyValues();
         success &= checkGeneralRules(document);
+        success &= checkCloseAccounts();
         success &= checkContractsAndGrants();
 
         success &= checkExpirationDate(document);
