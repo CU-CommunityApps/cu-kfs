@@ -22,20 +22,22 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import edu.cornell.kfs.coa.service.CuAccountService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.service.SubFundGroupService;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.gl.businessobject.SufficientFundRebuild;
-import org.kuali.kfs.integration.cg.ContractsAndGrantsAccountAwardInformation;
-import org.kuali.kfs.integration.cg.ContractsAndGrantsCfda;
-import org.kuali.kfs.integration.cg.ContractsAndGrantsModuleService;
+import org.kuali.kfs.module.cg.service.ContractsAndGrantsService;
 import org.kuali.kfs.integration.ld.LaborBenefitRateCategory;
 import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.KualiModuleService;
+import org.kuali.kfs.module.cg.businessobject.AwardAccount;
+import org.kuali.kfs.module.cg.businessobject.CFDA;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.Campus;
@@ -43,15 +45,10 @@ import org.kuali.kfs.sys.businessobject.PostalCode;
 import org.kuali.kfs.sys.businessobject.State;
 import org.kuali.kfs.sys.businessobject.serialization.PersistableBusinessObjectSerializer;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.util.KfsDateUtils;
-import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
-import org.kuali.kfs.kim.api.identity.PersonService;
-import org.kuali.kfs.kim.impl.identity.Person;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -134,7 +131,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     protected PostalCode postalZipCode;
     protected BudgetRecordingLevel budgetRecordingLevel;
     protected SufficientFundsCode sufficientFundsCode;
-    protected ContractsAndGrantsCfda cfda;
+    protected CFDA cfda;
     protected SourceOfFunds sourceOfFunds;
 
     protected Chart fringeBenefitsChartOfAccount;
@@ -158,7 +155,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     protected AccountDescription accountDescription;
 
     protected List subAccounts;
-    protected List<ContractsAndGrantsAccountAwardInformation> awards;
+    protected List<AwardAccount> awards;
     protected List<IndirectCostRecoveryAccount> indirectCostRecoveryAccounts;
     //added for the employee labor benefit calculation
     protected String laborBenefitRateCategoryCode;
@@ -465,22 +462,19 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         this.accountCfdaNumber = accountCfdaNumber;
     }
 
-    public ContractsAndGrantsCfda getCfda() {
-        cfda = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(
-                ContractsAndGrantsCfda.class).retrieveExternalizableBusinessObjectIfNecessary(this, cfda, "cfda");
+    public CFDA getCfda() {
         return cfda;
     }
 
-    public List<ContractsAndGrantsAccountAwardInformation> getAwards() {
-        // TODO this code totally breaks modularization but can't be fixed until data dictionary modularization plans
-        // come down the pike
-        awards = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(
-                ContractsAndGrantsAccountAwardInformation.class).retrieveExternalizableBusinessObjectsList(this,
-                "awards", ContractsAndGrantsAccountAwardInformation.class);
+    public void setCfda(final CFDA cfda) {
+        this.cfda = cfda;
+    }
+
+    public List<AwardAccount> getAwards() {
         return awards;
     }
 
-    public void setAwards(final List awards) {
+    public void setAwards(final List<AwardAccount> awards) {
         this.awards = awards;
     }
 
@@ -1186,7 +1180,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
      *         otherwise false
      */
     public boolean isAwardedByFederalAgency(final Collection<String> federalAgencyTypeCodes) {
-        return SpringContext.getBean(ContractsAndGrantsModuleService.class).isAwardedByFederalAgency(
+        return SpringContext.getBean(ContractsAndGrantsService.class).isAwardedByFederalAgency(
                 getChartOfAccountsCode(), getAccountNumber(), federalAgencyTypeCodes);
     }
 

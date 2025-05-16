@@ -1,15 +1,15 @@
 package edu.cornell.kfs.module.ar.service;
 
-import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.module.ar.ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType;
+import org.kuali.kfs.module.cg.businessobject.Award;
 
 /*
  * CU Customization: KFSPTS-26393
  */
 public interface CuCustomerAddressHelperService {
-    boolean agencyCustomerMatchesAwardCustomer(ContractsAndGrantsBillingAward award,
+    boolean agencyCustomerMatchesAwardCustomer(Award award,
                 ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType);
     
-    boolean invoicingCustomerAddressExists(ContractsAndGrantsBillingAward award,
+    boolean invoicingCustomerAddressExists(Award award,
             ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType);
 }

@@ -243,6 +243,8 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     @XmlTransient
     private Date disbursementDate;
     @XmlTransient
+    private Date originalDisbursementDate;
+    @XmlTransient
     private String physCampusProcessCd;
     @XmlTransient
     private String sortValue;
@@ -780,6 +782,14 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
      */
     public void setPaymentDate(final String paymentDate) throws ParseException {
         this.paymentDate = SpringContext.getBean(DateTimeService.class).convertToSqlDate(paymentDate);
+    }
+
+    public Date getOriginalDisbursementDate() {
+        return originalDisbursementDate;
+    }
+
+    public void setOriginalDisbursementDate(final Date originalDisbursementDate) {
+        this.originalDisbursementDate = originalDisbursementDate;
     }
 
     public void setPaymentStatus(final PaymentStatus paymentStatus) {

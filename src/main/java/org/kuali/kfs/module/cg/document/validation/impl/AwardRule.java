@@ -23,8 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
-import org.kuali.kfs.integration.cg.CGIntegrationConstants;
-import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
@@ -42,6 +40,7 @@ import org.kuali.kfs.module.cg.CGPropertyConstants;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.AwardAccount;
 import org.kuali.kfs.module.cg.businessobject.AwardFundManager;
+import org.kuali.kfs.module.cg.businessobject.AwardInvoicingOptionTypes;
 import org.kuali.kfs.module.cg.businessobject.AwardOrganization;
 import org.kuali.kfs.module.cg.businessobject.AwardProjectDirector;
 import org.kuali.kfs.module.cg.businessobject.AwardSubcontractor;
@@ -561,7 +560,7 @@ public class AwardRule extends CGMaintenanceDocumentRuleBase {
         );
 
         final boolean isScheduledInvoicingOptionCode = StringUtils.equals(
-                CGIntegrationConstants.AwardInvoicingOption.Types.SCHEDULE.getCode(),
+                AwardInvoicingOptionTypes.SCHEDULE.getCode(),
                 newAwardCopy.getInvoicingOptionCode());
 
         return isScheduledBilling && !isScheduledInvoicingOptionCode
@@ -599,7 +598,7 @@ public class AwardRule extends CGMaintenanceDocumentRuleBase {
 
         if (!StringUtils.equals(newBillingFrequencyCode, oldBillingFrequencyCode)) {
             final String proposalNumber = newAwardCopy.getProposalNumber();
-            for (final ContractsAndGrantsBillingAwardAccount awardAccount: newAwardCopy.getActiveAwardAccounts()) {
+            for (final AwardAccount awardAccount: newAwardCopy.getActiveAwardAccounts()) {
                 if (StringUtils.equals(oldBillingFrequencyCode, ArConstants.BillingFrequencyValues.MILESTONE.getCode())
                     && hasActiveUnbilledMilestones(proposalNumber,
                         awardAccount.getChartOfAccountsCode(),

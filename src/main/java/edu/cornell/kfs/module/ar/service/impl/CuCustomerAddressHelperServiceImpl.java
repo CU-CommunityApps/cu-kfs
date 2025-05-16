@@ -3,11 +3,11 @@ package edu.cornell.kfs.module.ar.service.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType;
 import org.kuali.kfs.module.ar.businessobject.CustomerAddress;
 import org.kuali.kfs.module.ar.document.service.CustomerAddressService;
+import org.kuali.kfs.module.cg.businessobject.Award;
 
 import edu.cornell.kfs.module.ar.service.CuCustomerAddressHelperService;
 
@@ -22,7 +22,7 @@ public class CuCustomerAddressHelperServiceImpl implements CuCustomerAddressHelp
      * When creationProcessType is BATCH, validate that the customer number on the award as part if the customer
      * address composite key matches the customer number associated to the agency associated to the award.
      */
-    public boolean agencyCustomerMatchesAwardCustomer(ContractsAndGrantsBillingAward award,
+    public boolean agencyCustomerMatchesAwardCustomer(Award award,
             ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
         
         if (ContractsAndGrantsInvoiceDocumentCreationProcessType.BATCH == creationProcessType) {
@@ -50,7 +50,7 @@ public class CuCustomerAddressHelperServiceImpl implements CuCustomerAddressHelp
      * When creationProcessType is BATCH, validate that a customer address exists in the same manner that it is
      * obtained by downstream processing in ContractsGrantsInvoiceCreateDocumentServiceImpl.buildInvoiceAddressDetails.
      */
-    public boolean invoicingCustomerAddressExists(ContractsAndGrantsBillingAward award,
+    public boolean invoicingCustomerAddressExists(Award award,
             ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
         
         CustomerAddress customerAddress = null;
@@ -85,7 +85,7 @@ public class CuCustomerAddressHelperServiceImpl implements CuCustomerAddressHelp
     /*
      * CU Customization: KFSPTS-26393
      */
-    private String obtainCustomerNumberFromAwardAgencyCustomer(ContractsAndGrantsBillingAward award) {
+    private String obtainCustomerNumberFromAwardAgencyCustomer(Award award) {
         if (ObjectUtils.isNull(award)) {
            return null;
         }

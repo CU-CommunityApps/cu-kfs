@@ -2787,6 +2787,7 @@
         <field-descriptor name="postingYear" column="PO_ENCUM_FSCL_YR" jdbc-type="INTEGER"/>
         <field-descriptor name="recurringPaymentTypeCode" column="PO_CLSIF_TYP_DESC" jdbc-type="VARCHAR"/>
         <field-descriptor name="invoiceDate" column="INV_DT" jdbc-type="DATE"/>
+        <field-descriptor name="invoiceReceivedDate" column="INV_RCV_DT" jdbc-type="DATE"/>
         <field-descriptor name="invoiceNumber" column="INV_NBR" jdbc-type="VARCHAR"/>
         <field-descriptor name="vendorInvoiceAmount" column="VNDR_INV_AMT" jdbc-type="DECIMAL"
                           conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
