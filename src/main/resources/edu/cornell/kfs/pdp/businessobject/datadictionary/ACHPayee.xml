@@ -5,9 +5,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-  
-  <bean id="CuACHPayee" parent="CuACHPayee-parentBean"/>
-  <bean id="CuACHPayee-parentBean" abstract="true" parent="ACHPayee-parentBean"
+  <bean id="ACHPayee"
           p:businessObjectClass="edu.cornell.kfs.pdp.businessobject.CuACHPayee"
           p:searchService-ref="CuACHPayeeSearchService">
       <property name="attributes">
