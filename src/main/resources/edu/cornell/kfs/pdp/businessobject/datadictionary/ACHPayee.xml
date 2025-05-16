@@ -1,17 +1,21 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-  <bean id="ACHPayee" parent="ACHPayee-parentBean">
-    <property name="businessObjectClass" value="edu.cornell.kfs.pdp.businessobject.CuACHPayee" />
-    <property name="attributes">
-      <list merge="true">
-        <ref bean="ACHPayee-principalName" />
-      </list>
-    </property>
-    <property name="relationships">
+  
+  <bean id="CuACHPayee" parent="CuACHPayee-parentBean"/>
+  <bean id="CuACHPayee-parentBean" abstract="true" parent="ACHPayee-parentBean"
+          p:businessObjectClass="edu.cornell.kfs.pdp.businessobject.CuACHPayee"
+          p:searchService-ref="CuACHPayeeSearchService">
+      <property name="attributes">
+          <list merge="true">
+              <ref bean="ACHPayee-principalName"/>
+          </list>
+      </property>
+      <property name="relationships">
       <list merge="true">
         <bean parent="RelationshipDefinition">
           <property name="objectAttributeName" value="achPerson"/>
@@ -21,9 +25,30 @@
             </list>
           </property>
         </bean>
+          <bean parent="RelationshipDefinition"
+                      p:objectAttributeName="achPerson">
+                    <property name="primitiveAttributes">
+                        <list>
+                            <bean parent="PrimitiveAttributeDefinition"
+                                  p:sourceName="entityId"
+                                  p:targetName="entityId"/>
+                        </list>
+                    </property>
+                    <property name="supportAttributes">
+                        <list>
+                            <bean parent="SupportAttributeDefinition"
+                                  p:identifier="true"
+                                  p:sourceName="achPerson.principalName"
+                                  p:targetName="principalName"/>
+                            <bean parent="SupportAttributeDefinition"
+                                  p:sourceName="achPerson.name"
+                                  p:targetName="name"/>
+                        </list>
+                    </property>
+                </bean>
       </list>
     </property>
-  </bean>
+    </bean>
 
   <bean id="ACHPayee-principalName" parent="ACHPayee-principalName-parentBean" />
   <bean id="ACHPayee-principalName-parentBean" parent="Person-principalName" abstract="true" />
@@ -33,6 +58,20 @@
     <property name="fieldOverrides">
       <list>
         <!-- Add "principalName" to the ACHPayee lookup input fields. -->
+
+        <bean parent="FieldOverrideForListElementInsert">
+          <property name="propertyName" value="displayAttributeDefinitions" />
+          <property name="propertyNameForElementCompare" value="name" />
+          <property name="element">
+            <ref bean="ACHPayee-entityId"/>
+          </property>
+          <property name="insertAfter">
+            <list>
+              <ref bean="ACHPayee-principalName"/>
+            </list>
+          </property>
+        </bean>
+
         <bean parent="FieldOverrideForListElementInsert">
           <property name="propertyName" value="lookupFields" />
           <property name="propertyNameForElementCompare" value="attributeName" />
@@ -46,6 +85,18 @@
           </property>
         </bean>
         <!-- Add "principalName" to the ACHPayee lookup results. -->
+        <bean parent="FieldOverrideForListElementInsert">
+          <property name="propertyName" value="formAttributeDefinitions" />
+          <property name="propertyNameForElementCompare" value="name" />
+          <property name="element">
+            <ref bean="DisbursementPayee-payeeIdNumber"/>
+          </property>
+          <property name="insertAfter">
+            <list>
+              <ref bean="ACHPayee-principalName"/>
+            </list>
+          </property>
+        </bean>
         <bean parent="FieldOverrideForListElementInsert">
           <property name="propertyName" value="resultFields" />
           <property name="propertyNameForElementCompare" value="attributeName" />
@@ -61,5 +112,13 @@
       </list>
     </property>
   </bean>
+
+   <bean id="CuACHPayeeSearchService"
+          parent="defaultSearchService"
+          class="edu.cornell.kfs.pdp.businessobject.service.CuACHPayeeSearchService"
+          c:dataDictionaryService-ref="dataDictionaryService"
+          c:disbursementVoucherPayeeService-ref="disbursementVoucherPayeeService"
+          c:personService-ref="personService"
+          c:vendorLookupable-ref="vendorLookupable"/>
 
 </beans>
