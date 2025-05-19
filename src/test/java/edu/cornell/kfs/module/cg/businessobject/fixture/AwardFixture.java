@@ -1,7 +1,7 @@
 package edu.cornell.kfs.module.cg.businessobject.fixture;
 
-import org.kuali.kfs.integration.cg.businessobject.Award;
 import org.kuali.kfs.module.ar.ArConstants;
+import org.kuali.kfs.module.cg.businessobject.Award;
 
 import edu.cornell.kfs.module.ar.CuArTestConstants;
 

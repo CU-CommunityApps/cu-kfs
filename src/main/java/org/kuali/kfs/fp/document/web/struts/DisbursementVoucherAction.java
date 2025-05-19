@@ -631,7 +631,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
 
         final DisbursementVoucherDocument document = (DisbursementVoucherDocument) dvForm.getDocument();
 
-        final boolean isPayeeLookupable = KFSConstants.KUALI_DISBURSEMENT_PAYEE_LOOKUPABLE_IMPL.equals(refreshCaller);
+        final boolean isPayeeLookupable = getIsPayeeLookupable(refreshCaller);
         final boolean isAddressLookupable = KFSConstants.KUALI_VENDOR_ADDRESS_LOOKUPABLE_IMPL.equals(refreshCaller);
         final boolean isKualiLookupable = KFSConstants.KUALI_LOOKUPABLE_IMPL.equals(refreshCaller);
 
@@ -737,6 +737,10 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         addPaymentCodeWarningMessage(dvForm, paymentReasonCode);
 
         return null;
+    }
+
+    protected boolean getIsPayeeLookupable(final String refreshCaller) {
+        return KFSConstants.KUALI_DISBURSEMENT_PAYEE_LOOKUPABLE_IMPL.equals(refreshCaller);
     }
 
     /**

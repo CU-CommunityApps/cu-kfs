@@ -44,10 +44,6 @@ import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
-import org.kuali.kfs.integration.cg.ContractAndGrantsProposal;
-import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAgency;
-import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
-import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.KIMPropertyConstants;
 import org.kuali.kfs.kim.impl.identity.Person;
@@ -74,6 +70,10 @@ import org.kuali.kfs.module.ar.document.service.ContractsGrantsBillingAwardVerif
 import org.kuali.kfs.module.ar.document.service.ContractsGrantsInvoiceDocumentService;
 import org.kuali.kfs.module.ar.report.service.ContractsGrantsInvoiceReportService;
 import org.kuali.kfs.module.ar.service.ContractsGrantsBillingUtilityService;
+import org.kuali.kfs.module.cg.businessobject.Agency;
+import org.kuali.kfs.module.cg.businessobject.Award;
+import org.kuali.kfs.module.cg.businessobject.AwardAccount;
+import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.PdfFormFillerUtil;
@@ -356,11 +356,11 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
 
     @Override
     public File generateFederalFinancialForm(
-            final ContractsAndGrantsBillingAward award,
+            final Award award,
             final String period,
             final String year,
             final String formType,
-            final ContractsAndGrantsBillingAgency agency
+            final Agency agency
     ) {
         final Map<String, String> replacementList = new HashMap<>();
         final Date runDate = new Date(new java.util.Date().getTime());
@@ -398,7 +398,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
      * @param award
      * @return
      */
-    protected KualiDecimal getCashReceipts(final ContractsAndGrantsBillingAward award) {
+    protected KualiDecimal getCashReceipts(final Award award) {
         KualiDecimal cashReceipt = KualiDecimal.ZERO;
         final Map<String, String> fieldValues = new HashMap<>();
         if (ObjectUtils.isNotNull(award) && ObjectUtils.isNotNull(award.getProposalNumber())) {
@@ -438,7 +438,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
      * @param year
      */
     protected void populateListByAward(
-            final ContractsAndGrantsBillingAward award,
+            final Award award,
             final String reportingPeriod,
             final String year,
             final Map<String, String> replacementList
@@ -446,7 +446,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
         KualiDecimal cashDisbursement = KualiDecimal.ZERO;
         final SystemOptions systemOption = optionsService.getCurrentYearOptions();
 
-        for (final ContractsAndGrantsBillingAwardAccount awardAccount : award.getActiveAwardAccounts()) {
+        for (final AwardAccount awardAccount : award.getActiveAwardAccounts()) {
             int index = 0;
             KualiDecimal baseSum = KualiDecimal.ZERO;
             KualiDecimal amountSum = KualiDecimal.ZERO;
@@ -726,7 +726,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
      * @param year  the year of the System Information object to retrieve
      * @return the System Information object, or null if nothing is found
      */
-    protected SystemInformation retrieveSystemInformationForAward(final ContractsAndGrantsBillingAward award, final String year) {
+    protected SystemInformation retrieveSystemInformationForAward(final Award award, final String year) {
         ChartOrgHolder chartOrgHolder = financialSystemUserService.getPrimaryOrganization(
                 award.getAwardPrimaryFundManager().getFundManager().getPrincipalId(),
                 KFSConstants.OptionalModuleNamespaces.ACCOUNTS_RECEIVABLE);
@@ -736,7 +736,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
         if (!CollectionUtils.isEmpty(processingCodes) && processingCodes.size() > 1) {
             chartOrgHolder = new ChartOrgHolderImpl(processingCodes.get(0), processingCodes.get(1));
         }
-
+        
         final Map<String, String> primaryKeys = new HashMap<>();
         primaryKeys.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
         primaryKeys.put(KFSPropertyConstants.PROCESSING_CHART_OF_ACCT_CD,
@@ -759,10 +759,10 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
      * @return total amount
      */
     protected List<KualiDecimal> populateListByAgency(
-            final List<ContractsAndGrantsBillingAward> awards,
+            final List<Award> awards,
             final String reportingPeriod,
             final String year,
-            final ContractsAndGrantsBillingAgency agency
+            final Agency agency
     ) {
         final Map<String, String> replacementList = new HashMap<>();
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
@@ -864,7 +864,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                 );
                 totalCashControl = totalCashControl.add(getCashReceipts(awards.get(i)));
 
-                for (final ContractsAndGrantsBillingAwardAccount awardAccount : awards.get(i).getActiveAwardAccounts()) {
+                for (final AwardAccount awardAccount : awards.get(i).getActiveAwardAccounts()) {
                     totalCashDisbursement =
                             totalCashDisbursement.add(contractsGrantsInvoiceDocumentService.getBudgetAndActualsForAwardAccount(
                                     awardAccount,
@@ -908,7 +908,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
      * @param returnStream    The output stream the federal form will be written to.
      */
     protected void stampPdfFormValues425(
-            final ContractsAndGrantsBillingAward award,
+            final Award award,
             final String reportingPeriod,
             final String year,
             final OutputStream returnStream,
@@ -933,7 +933,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
      * @param returnStream    The output stream the federal form will be written to.
      */
     protected void stampPdfFormValues425A(
-            final ContractsAndGrantsBillingAgency agency,
+            final Agency agency,
             final String reportingPeriod,
             final String year,
             final OutputStream returnStream,
@@ -946,9 +946,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
             final Map<String, Object> fieldValues = new HashMap<>();
             fieldValues.put(KFSPropertyConstants.AGENCY_NUMBER, agency.getAgencyNumber());
             fieldValues.put(KFSPropertyConstants.ACTIVE, Boolean.TRUE);
-            final List<ContractsAndGrantsBillingAward> awards =
-                    kualiModuleService.getResponsibleModuleService(ContractsAndGrantsBillingAward.class)
-                            .getExternalizableBusinessObjectsList(ContractsAndGrantsBillingAward.class, fieldValues);
+            final List<Award> awards = (List<Award>) businessObjectService.findMatching(Award.class, fieldValues);
             Integer pageNumber = 1;
             final Integer totalPages;
             totalPages = awards.size() / ArConstants.Federal425APdf.NUMBER_OF_SUMMARIES_PER_PAGE + 1;
@@ -963,7 +961,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
             KualiDecimal sumCashControl = KualiDecimal.ZERO;
             KualiDecimal sumCumExp = KualiDecimal.ZERO;
             while (pageNumber <= totalPages) {
-                final List<ContractsAndGrantsBillingAward> awardsList = new ArrayList<>();
+                final List<Award> awardsList = new ArrayList<>();
                 for (int i = (pageNumber - 1) * ArConstants.Federal425APdf.NUMBER_OF_SUMMARIES_PER_PAGE;
                         i < pageNumber * ArConstants.Federal425APdf.NUMBER_OF_SUMMARIES_PER_PAGE; i++) {
                     if (i < awards.size()) {
@@ -1232,7 +1230,8 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                     KFSPropertyConstants.PROPOSAL_NUMBER
             ), getDataDictionaryService().getAttributeLabel(ContractsGrantsLetterOfCreditReviewDetail.class,
                     KFSPropertyConstants.AWARD_DOCUMENT_NUMBER
-            ), getDataDictionaryService().getAttributeLabel(ContractAndGrantsProposal.class,
+            ), getDataDictionaryService().getAttributeLabel(
+                    Proposal.class,
                     ArPropertyConstants.ContractsAndGrantsBillingAwardFields.GRANT_NUMBER
             ), getDataDictionaryService().getAttributeLabel(ContractsGrantsLetterOfCreditReviewDetail.class,
                     KFSPropertyConstants.ACCOUNT_DESCRIPTION
@@ -1293,7 +1292,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
 
     @Override
     public Collection<ContractsGrantsInvoiceLookupResult> getPopulatedContractsGrantsInvoiceLookupResults(
-            final Collection<ContractsAndGrantsBillingAward> awards
+            final Collection<Award> awards
     ) {
         final Collection<ContractsGrantsInvoiceLookupResult> populatedContractsGrantsInvoiceLookupResults = new ArrayList<>();
 
@@ -1301,22 +1300,22 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
             return populatedContractsGrantsInvoiceLookupResults;
         }
 
-        final Map<String, List<ContractsAndGrantsBillingAward>> awardsByAgency = getAwardByAgency(awards);
-        for (final List<ContractsAndGrantsBillingAward> contractsAndGrantsBillingAwards : awardsByAgency.values()) {
-            if (CollectionUtils.isNotEmpty(contractsAndGrantsBillingAwards)) {
+        final Map<String, List<Award>> awardsByAgency = getAwardByAgency(awards);
+        for (final List<Award> agencyAwards : awardsByAgency.values()) {
+            if (CollectionUtils.isNotEmpty(agencyAwards)) {
                 final ContractsGrantsInvoiceLookupResult contractsGrantsInvoiceLookupResult =
                         new ContractsGrantsInvoiceLookupResult();
 
-                final ContractsAndGrantsBillingAgency agency = contractsAndGrantsBillingAwards.get(0).getAgency();
+                final Agency agency = agencyAwards.get(0).getAgency();
                 populateAgencyFields(contractsGrantsInvoiceLookupResult, agency);
 
-                contractsGrantsInvoiceLookupResult.setAwards(contractsAndGrantsBillingAwards);
+                contractsGrantsInvoiceLookupResult.setAwards(agencyAwards);
 
                 final Collection<ContractsGrantsInvoiceLookupResultAward> contractsGrantsInvoiceLookupResultAwards =
                         new ArrayList<>();
 
-                for (final ContractsAndGrantsBillingAward award : contractsAndGrantsBillingAwards) {
-                    for (final ContractsAndGrantsBillingAwardAccount awardAccount : award.getActiveAwardAccounts()) {
+                for (final Award award : agencyAwards) {
+                    for (final AwardAccount awardAccount : award.getActiveAwardAccounts()) {
                         if (contractsGrantsBillingAwardVerificationService.isAwardAccountValidToInvoiceBasedOnSchedule(
                                 awardAccount)) {
                             contractsGrantsInvoiceLookupResultAwards.add(new ContractsGrantsInvoiceLookupResultAward(award,
@@ -1336,7 +1335,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
 
     private static void populateAgencyFields(
             final ContractsGrantsInvoiceLookupResult contractsGrantsInvoiceLookupResult,
-            final ContractsAndGrantsBillingAgency agency
+            final Agency agency
     ) {
         if (ObjectUtils.isNotNull(agency)) {
             contractsGrantsInvoiceLookupResult.setAgencyNumber(agency.getAgencyNumber());
@@ -1348,7 +1347,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
 
     @Override
     public Collection<ContractsGrantsInvoiceLookupResult> getPopulatedContractsGrantsInvoiceLookupResultsFromAwardAccounts(
-            final Collection<ContractsAndGrantsBillingAwardAccount> awardAccounts
+            final Collection<AwardAccount> awardAccounts
     ) {
         final Collection<ContractsGrantsInvoiceLookupResult> populatedContractsGrantsInvoiceLookupResults = new ArrayList<>();
 
@@ -1359,12 +1358,12 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
         final ContractsGrantsInvoiceLookupResult contractsGrantsInvoiceLookupResult =
                 new ContractsGrantsInvoiceLookupResult();
 
-        final Set<ContractsAndGrantsBillingAward> contractsAndGrantsBillingAwards = new HashSet<>();
+        final Set<Award> awards = new HashSet<>();
         final Collection<ContractsGrantsInvoiceLookupResultAward> contractsGrantsInvoiceLookupResultAwards =
                 new ArrayList<>();
 
-        for (final ContractsAndGrantsBillingAwardAccount awardAccount : awardAccounts) {
-            final ContractsAndGrantsBillingAward award = awardAccount.getAward();
+        for (final AwardAccount awardAccount : awardAccounts) {
+            final Award award = awardAccount.getAward();
             if (StringUtils.isBlank(contractsGrantsInvoiceLookupResult.getAgencyNumber())) {
                 populateAgencyFields(contractsGrantsInvoiceLookupResult, award.getAgency());
             }
@@ -1373,11 +1372,11 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                     new ContractsGrantsInvoiceLookupResultAward(award, awardAccount);
 
             contractsGrantsInvoiceLookupResultAwards.add(contractsGrantsInvoiceLookupResultAward);
-            contractsAndGrantsBillingAwards.add(award);
+            awards.add(award);
         }
 
         contractsGrantsInvoiceLookupResult.setLookupResultAwards(contractsGrantsInvoiceLookupResultAwards);
-        contractsGrantsInvoiceLookupResult.setAwards(contractsAndGrantsBillingAwards);
+        contractsGrantsInvoiceLookupResult.setAwards(awards);
         populatedContractsGrantsInvoiceLookupResults.add(contractsGrantsInvoiceLookupResult);
 
         return populatedContractsGrantsInvoiceLookupResults;
@@ -1387,12 +1386,12 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
      * @param awards
      * @return a Map of the given CGB Awards, keyed by the agency number
      */
-    protected static Map<String, List<ContractsAndGrantsBillingAward>> getAwardByAgency(
-            final Collection<ContractsAndGrantsBillingAward> awards
+    protected static Map<String, List<Award>> getAwardByAgency(
+            final Collection<? extends Award> awards
     ) {
         // use a map to sort awards by agency
-        final Map<String, List<ContractsAndGrantsBillingAward>> awardsByAgency = new HashMap<>();
-        for (final ContractsAndGrantsBillingAward award : awards) {
+        final Map<String, List<Award>> awardsByAgency = new HashMap<>();
+        for (final Award award : awards) {
             // To display awards only if their Billing frequency is not LOC Billing
             if (StringUtils.isNotBlank(award.getBillingFrequencyCode())
                 && !ArConstants.BillingFrequencyValues.isLetterOfCredit(award)) {
@@ -1400,7 +1399,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
                 if (awardsByAgency.containsKey(agencyNumber)) {
                     awardsByAgency.get(agencyNumber).add(award);
                 } else {
-                    final List<ContractsAndGrantsBillingAward> awardsByAgencyNumber = new ArrayList<>();
+                    final List<Award> awardsByAgencyNumber = new ArrayList<>();
                     awardsByAgencyNumber.add(award);
                     awardsByAgency.put(agencyNumber, awardsByAgencyNumber);
                 }

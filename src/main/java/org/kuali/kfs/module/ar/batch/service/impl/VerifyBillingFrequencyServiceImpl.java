@@ -22,14 +22,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
-import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.batch.service.VerifyBillingFrequencyService;
 import org.kuali.kfs.module.ar.businessobject.BillingFrequency;
 import org.kuali.kfs.module.ar.businessobject.BillingPeriod;
+import org.kuali.kfs.module.cg.businessobject.Award;
+import org.kuali.kfs.module.cg.businessobject.AwardAccount;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.sys.util.KfsDateUtils;
@@ -55,16 +55,16 @@ public class VerifyBillingFrequencyServiceImpl implements VerifyBillingFrequency
     }
 
     @Override
-    public boolean validateBillingFrequency(final ContractsAndGrantsBillingAward award, final boolean checkBillingPeriodEnd) {
+    public boolean validateBillingFrequency(final Award award, final boolean checkBillingPeriodEnd) {
         return validateBillingFrequency(award, award.getLastBilledDate(), checkBillingPeriodEnd);
     }
 
     @Override
-    public boolean validateBillingFrequency(final ContractsAndGrantsBillingAward award, final ContractsAndGrantsBillingAwardAccount awardAccount, final boolean checkBillingPeriodEnd) {
+    public boolean validateBillingFrequency(final Award award, final AwardAccount awardAccount, final boolean checkBillingPeriodEnd) {
         return validateBillingFrequency(award, awardAccount.getCurrentLastBilledDate(), checkBillingPeriodEnd);
     }
 
-    private boolean validateBillingFrequency(final ContractsAndGrantsBillingAward award, final Date lastBilledDate, final boolean checkBillingPeriodEnd) {
+    private boolean validateBillingFrequency(final Award award, final Date lastBilledDate, final boolean checkBillingPeriodEnd) {
         final Date today = dateTimeService.getCurrentSqlDate();
         final AccountingPeriod currPeriod = accountingPeriodService.getByDate(today);
 
@@ -80,7 +80,8 @@ public class VerifyBillingFrequencyServiceImpl implements VerifyBillingFrequency
         if (beforeBillingPeriodStart(billingPeriod)) {
             return false;
         }
-        return validateBillingFrequencyWithGracePeriod(today, billingPeriod, lastBilledDate, (BillingFrequency) award.getBillingFrequency(), checkBillingPeriodEnd);
+        return validateBillingFrequencyWithGracePeriod(today, billingPeriod, lastBilledDate,
+                award.getBillingFrequency(), checkBillingPeriodEnd);
     }
 
     /**
@@ -110,7 +111,7 @@ public class VerifyBillingFrequencyServiceImpl implements VerifyBillingFrequency
      * otherwise, execute base code version of the method for viewing and editing CINV.
      */
     @Override
-    public BillingPeriod getStartDateAndEndDateOfPreviousBillingPeriod(final ContractsAndGrantsBillingAward award, final AccountingPeriod currPeriod) {
+    public BillingPeriod getStartDateAndEndDateOfPreviousBillingPeriod(final Award award, final AccountingPeriod currPeriod) {
         /* KFSPTS-23690 */
         if (ObjectUtils.isNotNull(award.getCreationProcessType())) {
             return BillingPeriod.determineBillingPeriodPriorTo(award.getAwardBeginningDate(), dateTimeService.getCurrentSqlDate(), award.getLastBilledDate(), ArConstants.BillingFrequencyValues.fromCode(award.getBillingFrequencyCode()), accountingPeriodService, award.getCreationProcessType());
