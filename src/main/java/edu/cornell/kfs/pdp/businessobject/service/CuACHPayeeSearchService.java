@@ -1,12 +1,8 @@
 package edu.cornell.kfs.pdp.businessobject.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
+
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService;
@@ -14,15 +10,10 @@ import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.KIMPropertyConstants;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kns.lookup.Lookupable;
-import org.kuali.kfs.krad.bo.BusinessObjectBase;
-import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.pdp.PdpConstants;
-import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.businessobject.ACHPayee;
 import org.kuali.kfs.pdp.businessobject.service.ACHPayeeSearchService;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.springframework.util.MultiValueMap;
 
 public class CuACHPayeeSearchService extends ACHPayeeSearchService {
     
@@ -52,6 +43,7 @@ public class CuACHPayeeSearchService extends ACHPayeeSearchService {
         return personFieldValues;
     }
     
+    @Override
     protected DisbursementPayee getPayeeFromPerson(final Person personDetail, final Map<String,String> fieldValues) {
         final ACHPayee payee = (ACHPayee) super.getPayeeFromPerson(personDetail, fieldValues);
         payee.setPrincipalName(personDetail.getPrincipalName());
