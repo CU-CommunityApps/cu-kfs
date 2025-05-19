@@ -25,11 +25,11 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 
-// CU Cornell customization: this was overlayed to add the principalName.
+//Cornell customization: this was overlayed to add the principalName.
 public class ACHPayee extends DisbursementPayee implements MutableInactivatable {
 
     private String entityId;
-    // CU Cornell customization
+    //Cornell customization
     private String principalName;
 
     public ACHPayee() {
@@ -51,7 +51,7 @@ public class ACHPayee extends DisbursementPayee implements MutableInactivatable 
         return payeeType.getName();
     }
     
-    // CU Cornell customization
+    //Cornell customization
     public String getPrincipalName() {
         return principalName;
     }
@@ -79,6 +79,6 @@ public class ACHPayee extends DisbursementPayee implements MutableInactivatable 
     public void setAchPerson(Person achPerson) {
         // Do nothing.
     }
-    // end CU Cornell customization
+    // end Cornell customization
 
 }
