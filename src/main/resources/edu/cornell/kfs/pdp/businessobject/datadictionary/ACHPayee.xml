@@ -22,27 +22,6 @@
             </list>
           </property>
         </bean>
-          <bean parent="RelationshipDefinition"
-                      p:objectAttributeName="achPerson">
-                    <property name="primitiveAttributes">
-                        <list>
-                            <bean parent="PrimitiveAttributeDefinition"
-                                  p:sourceName="entityId"
-                                  p:targetName="entityId"/>
-                        </list>
-                    </property>
-                    <property name="supportAttributes">
-                        <list>
-                            <bean parent="SupportAttributeDefinition"
-                                  p:identifier="true"
-                                  p:sourceName="achPerson.principalName"
-                                  p:targetName="principalName"/>
-                            <bean parent="SupportAttributeDefinition"
-                                  p:sourceName="achPerson.name"
-                                  p:targetName="name"/>
-                        </list>
-                    </property>
-                </bean>
       </list>
     </property>
     </bean>
@@ -55,20 +34,6 @@
     <property name="fieldOverrides">
       <list>
         <!-- Add "principalName" to the ACHPayee lookup input fields. -->
-
-        <bean parent="FieldOverrideForListElementInsert">
-          <property name="propertyName" value="displayAttributeDefinitions" />
-          <property name="propertyNameForElementCompare" value="name" />
-          <property name="element">
-            <ref bean="ACHPayee-entityId"/>
-          </property>
-          <property name="insertAfter">
-            <list>
-              <ref bean="ACHPayee-principalName"/>
-            </list>
-          </property>
-        </bean>
-
         <bean parent="FieldOverrideForListElementInsert">
           <property name="propertyName" value="lookupFields" />
           <property name="propertyNameForElementCompare" value="attributeName" />
@@ -81,6 +46,19 @@
             </list>
           </property>
         </bean>
+        <bean parent="FieldOverrideForListElementInsert">
+          <property name="propertyName" value="resultFields" />
+          <property name="propertyNameForElementCompare" value="attributeName" />
+          <property name="element">
+            <bean parent="FieldDefinition" p:attributeName="payeeIdNumber" />
+          </property>
+          <property name="insertAfter">
+            <list>
+              <bean parent="FieldDefinition" p:attributeName="principalName" />
+            </list>
+          </property>
+        </bean>
+        
         <!-- Add "principalName" to the ACHPayee lookup results. -->
         <bean parent="FieldOverrideForListElementInsert">
           <property name="propertyName" value="formAttributeDefinitions" />
@@ -94,15 +72,16 @@
             </list>
           </property>
         </bean>
+        
         <bean parent="FieldOverrideForListElementInsert">
-          <property name="propertyName" value="resultFields" />
-          <property name="propertyNameForElementCompare" value="attributeName" />
+          <property name="propertyName" value="displayAttributeDefinitions" />
+          <property name="propertyNameForElementCompare" value="name" />
           <property name="element">
-            <bean parent="FieldDefinition" p:attributeName="payeeIdNumber" />
+            <ref bean="ACHPayee-entityId"/>
           </property>
           <property name="insertAfter">
             <list>
-              <bean parent="FieldDefinition" p:attributeName="principalName" />
+              <ref bean="ACHPayee-principalName"/>
             </list>
           </property>
         </bean>

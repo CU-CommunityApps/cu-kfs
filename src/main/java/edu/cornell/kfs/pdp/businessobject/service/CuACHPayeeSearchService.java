@@ -24,7 +24,7 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.springframework.util.MultiValueMap;
 
-public class CuACHPayeeSearchService extends ACHPayeeSearchService{
+public class CuACHPayeeSearchService extends ACHPayeeSearchService {
     
     public CuACHPayeeSearchService(DataDictionaryService dataDictionaryService,
             DisbursementVoucherPayeeService disbursementVoucherPayeeService, Lookupable vendorLookupable,
@@ -32,6 +32,7 @@ public class CuACHPayeeSearchService extends ACHPayeeSearchService{
         super(dataDictionaryService, disbursementVoucherPayeeService, vendorLookupable, personService);
     }
 
+    @Override
     protected Map<String, String> getPersonFieldValues(final Map<String, String> fieldValues) {
         final Map<String, String> personFieldValues = super.getPersonFieldValues(fieldValues);
         String payeeTypeCode = fieldValues.get(KFSPropertyConstants.PAYEE_TYPE_CODE);

@@ -223,8 +223,7 @@ public class ACHPayeeSearchService extends DefaultSearchService {
         return payeeList;
     }
 
-    //CU customization change from private to protected
-    protected ACHPayee getPayeeFromVendor(final VendorDetail vendorDetail) {
+    private ACHPayee getPayeeFromVendor(final VendorDetail vendorDetail) {
         final String addressPattern = "{0}, {1}, {2} {3}";
 
         final VendorAddress vendorAddress = vendorDetail.getVendorAddresses().get(0);
