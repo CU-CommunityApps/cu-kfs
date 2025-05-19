@@ -1,26 +1,22 @@
 package edu.cornell.kfs.pdp.businessobject.lookup;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
+import org.kuali.kfs.kim.impl.KIMPropertyConstants;
+import org.kuali.kfs.kim.impl.identity.Person;
+import org.kuali.kfs.kns.lookup.CollectionIncomplete;
+import org.kuali.kfs.krad.bo.BusinessObject;
+import org.kuali.kfs.krad.util.BeanPropertyComparator;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.businessobject.ACHPayee;
 import org.kuali.kfs.pdp.businessobject.lookup.ACHPayeeLookupableHelperServiceImpl;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.kim.impl.KIMPropertyConstants;
-import org.kuali.kfs.krad.bo.BusinessObject;
-import org.kuali.kfs.kns.lookup.CollectionIncomplete;
-import org.kuali.kfs.krad.util.BeanPropertyComparator;
-import org.kuali.kfs.krad.util.GlobalVariables;
-
-import edu.cornell.kfs.pdp.businessobject.CuACHPayee;
 
 public class CuACHPayeeLookupableHelperServiceImpl extends ACHPayeeLookupableHelperServiceImpl {
 	
@@ -103,46 +99,17 @@ public class CuACHPayeeLookupableHelperServiceImpl extends ACHPayeeLookupableHel
     }
 
     /**
-     * Overridden to return an instance of CuACHPayee instead of ACHPayee, and to populate the "principalName" property.
+     * Overridden to populate the "principalName" property.
      * 
      * @see org.kuali.kfs.pdp.businessobject.lookup.ACHPayeeLookupableHelperServiceImpl#getPayeeFromPerson(Person, Map)
      */
     @Override
     protected DisbursementPayee getPayeeFromPerson(final Person personDetail, final Map<String,String> fieldValues) {
         final ACHPayee payee = (ACHPayee) super.getPayeeFromPerson(personDetail, fieldValues);
-        
-        final CuACHPayee cuPayee = new CuACHPayee();
-        cuPayee.setPayeeIdNumber(payee.getPayeeIdNumber());
-        cuPayee.setPayeeTypeCode(payee.getPayeeTypeCode());
-        cuPayee.setPayeeName(payee.getPayeeName());
-        cuPayee.setPrincipalId(payee.getPrincipalId());
-        cuPayee.setTaxNumber(payee.getTaxNumber());
-        cuPayee.setAddress(payee.getAddress());
-        cuPayee.setActive(payee.isActive());
-        cuPayee.setPrincipalName(personDetail.getPrincipalName());
-        
-        return cuPayee;
-    }
 
-    /**
-     * Overridden to return an instance of CuACHPayee instead of ACHPayee, for consistency with other overrides in this service.
-     * 
-     * @see org.kuali.kfs.pdp.businessobject.lookup.ACHPayeeLookupableHelperServiceImpl#getPayeeFromVendor(VendorDetail, Map)
-     */
-    @Override
-    protected DisbursementPayee getPayeeFromVendor(final VendorDetail vendorDetail, final Map<String,String> fieldValues) {
-        final ACHPayee payee = (ACHPayee) super.getPayeeFromVendor(vendorDetail, fieldValues);
+        payee.setPrincipalName(personDetail.getPrincipalName());
         
-        final CuACHPayee cuPayee = new CuACHPayee();
-        cuPayee.setPayeeIdNumber(payee.getPayeeIdNumber());
-        cuPayee.setPayeeTypeCode(payee.getPayeeTypeCode());
-        cuPayee.setPayeeName(payee.getPayeeName());
-        cuPayee.setPrincipalId(payee.getPrincipalId());
-        cuPayee.setTaxNumber(payee.getTaxNumber());
-        cuPayee.setAddress(payee.getAddress());
-        cuPayee.setActive(payee.isActive());
-        
-        return cuPayee;
+        return payee;
     }
 
 }

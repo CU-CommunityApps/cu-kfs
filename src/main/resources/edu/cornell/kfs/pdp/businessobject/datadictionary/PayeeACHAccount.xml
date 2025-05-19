@@ -16,7 +16,7 @@
       <list merge="true">
         <bean parent="RelationshipDefinition">
           <property name="objectAttributeName" value="achPayee"/>
-          <property name="targetClass" value="edu.cornell.kfs.pdp.businessobject.CuACHPayee" /><!-- CU Customization: Changed target class. -->
+          <property name="targetClass" value="org.kuali.kfs.pdp.businessobject.ACHPayee" />
           <property name="primitiveAttributes">
             <list>
               <bean parent="PrimitiveAttributeDefinition" p:sourceName="payeeIdNumber" p:targetName="payeeIdNumber"/>

@@ -24,8 +24,6 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.springframework.util.MultiValueMap;
 
-import edu.cornell.kfs.pdp.businessobject.CuACHPayee;
-
 public class CuACHPayeeSearchService extends ACHPayeeSearchService{
     
     public CuACHPayeeSearchService(DataDictionaryService dataDictionaryService,
@@ -55,32 +53,9 @@ public class CuACHPayeeSearchService extends ACHPayeeSearchService{
     
     protected DisbursementPayee getPayeeFromPerson(final Person personDetail, final Map<String,String> fieldValues) {
         final ACHPayee payee = (ACHPayee) super.getPayeeFromPerson(personDetail, fieldValues);
+        payee.setPrincipalName(personDetail.getPrincipalName());
         
-        final CuACHPayee cuPayee = new CuACHPayee();
-        cuPayee.setPayeeIdNumber(payee.getPayeeIdNumber());
-        cuPayee.setPayeeTypeCode(payee.getPayeeTypeCode());
-        cuPayee.setPayeeName(payee.getPayeeName());
-        cuPayee.setPrincipalId(payee.getPrincipalId());
-        cuPayee.setTaxNumber(payee.getTaxNumber());
-        cuPayee.setAddress(payee.getAddress());
-        cuPayee.setActive(payee.isActive());
-        cuPayee.setPrincipalName(personDetail.getPrincipalName());
-        
-        return cuPayee;
+        return payee;
     }
     
-    protected ACHPayee getPayeeFromVendor(final VendorDetail vendorDetail) {
-        final ACHPayee payee = (ACHPayee) super.getPayeeFromVendor(vendorDetail);
-        
-        final CuACHPayee cuPayee = new CuACHPayee();
-        cuPayee.setPayeeIdNumber(payee.getPayeeIdNumber());
-        cuPayee.setPayeeTypeCode(payee.getPayeeTypeCode());
-        cuPayee.setPayeeName(payee.getPayeeName());
-        cuPayee.setPrincipalId(payee.getPrincipalId());
-        cuPayee.setTaxNumber(payee.getTaxNumber());
-        cuPayee.setAddress(payee.getAddress());
-        cuPayee.setActive(payee.isActive());
-        
-        return cuPayee;
-    }
 }
