@@ -100,11 +100,13 @@
 
             <tr>
                 <th align=right valign=middle class="bord-l-b">
-                   <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.purchaseOrderEndDate}" /></div>
+                    <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceReceivedDate}" /></div>
                 </th>
                 <td align=left valign=middle class="datacell">
-                   <kul:htmlControlAttribute  attributeEntry="${documentAttributes.purchaseOrderEndDate}" property="document.purchaseOrderDocument.purchaseOrderEndDate" readOnly="true" />
-               </td>
+                    <kul:htmlControlAttribute
+                            attributeEntry="${documentAttributes.invoiceReceivedDate}" property="document.invoiceReceivedDate" datePicker="true"
+                            readOnly="${not displayInitTab}" tabindexOverride="${tabindexOverrideBase + 0}"/>
+                </td>
                 <th align=right valign=middle class="bord-l-b">
                    <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.recurringPaymentTypeCode}" /></div>
                 </th>
@@ -192,6 +194,18 @@
 	                <sys:bankLabel align="right"/>
                     <sys:bankControl property="document.bankCode" objectProperty="document.bank" readOnly="${(not canEditBank)}"/>
             <%-- KITT-592 / MOD-PA2000-01: Baseline Modification End --%>
+            </tr>
+
+            <tr>
+                <th align=right valign=middle class="bord-l-b">
+                    <div align="right"><kul:htmlAttributeLabel
+                            attributeEntry="${documentAttributes.purchaseOrderEndDate}"/></div>
+                </th>
+                <td align=left valign=middle class="datacell">
+                    <kul:htmlControlAttribute attributeEntry="${documentAttributes.purchaseOrderEndDate}"
+                                              property="document.purchaseOrderDocument.purchaseOrderEndDate"
+                                              readOnly="true"/>
+                </td>
             </tr>
 
             <%-- KITT-592 / MOD-PA2000-01: Baseline Modification Start --%>
