@@ -161,6 +161,7 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
     
     public void setDataDictionaryService(final DataDictionaryService dataDictionaryService) {
         this.dataDictionaryService = dataDictionaryService;
+        super.setDataDictionaryService(dataDictionaryService);
     }
 
 }

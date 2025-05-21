@@ -68,6 +68,7 @@ public class CuCreditMemoDaoOjb extends CreditMemoDaoOjb {
 
     public void setDataDictionaryService(final DataDictionaryService dataDictionaryService) {
         this.dataDictionaryService = dataDictionaryService;
+        super.setDataDictionaryService(dataDictionaryService);
     }
 
 }
