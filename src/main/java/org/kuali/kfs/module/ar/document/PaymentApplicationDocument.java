@@ -602,7 +602,7 @@ public class PaymentApplicationDocument extends GeneralLedgerPostingDocumentBase
             //CU Customization set Customer Invoice Detail Posting Year if null
             if (ObjectUtils.isNull(ipa.getInvoiceDetail().getPostingYear())) {
                 ipa.getInvoiceDetail().setPostingYear(getPostingYear());
-                getBusinessObjectService().save(ipa.getInvoiceDetail()); //is this needed
+                getBusinessObjectService().save(ipa.getInvoiceDetail());
             }
         }
 
@@ -946,11 +946,6 @@ public class PaymentApplicationDocument extends GeneralLedgerPostingDocumentBase
         // Generate GLPEs for applied payments
         final List<InvoicePaidApplied> appliedPayments = getInvoicePaidApplieds();
         for (final InvoicePaidApplied ipa : appliedPayments) {
-
-            //CU Customization set Customer Invoice Detail Posting Year if null is this too late tho?
-//            if (ObjectUtils.isNull(ipa.getInvoiceDetail().getPostingYear())) {
-//                ipa.getInvoiceDetail().setPostingYear(getPostingYear());
-//            }
 
             // Skip payments for 0 dollar amount
             if (KualiDecimal.ZERO.equals(ipa.getInvoiceItemAppliedAmount())) {
