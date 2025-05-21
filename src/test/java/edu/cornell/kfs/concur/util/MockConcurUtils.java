@@ -1,6 +1,5 @@
 package edu.cornell.kfs.concur.util;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -67,7 +66,7 @@ public final class MockConcurUtils {
 
     @SafeVarargs
     public static Map<String, String> createMutableStringMapFromObjectValues(Map.Entry<String, Object>... entries) {
-        return Arrays.stream(entries)
+        return Stream.of(entries)
                 .filter(entry -> entry.getValue() instanceof String)
                 .collect(Collectors.toMap(
                         Map.Entry::getKey, entry -> (String) entry.getValue(), 
@@ -78,7 +77,7 @@ public final class MockConcurUtils {
     
     @SafeVarargs
     public static Map<String, Boolean> createMutableBooleanMapFromObjectValues(Map.Entry<String, Object>... entries) {
-        return Arrays.stream(entries)
+        return Stream.of(entries)
                 .filter(entry -> entry.getValue() instanceof Boolean)
                 .collect(Collectors.toMap(
                         Map.Entry::getKey, entry -> (Boolean) entry.getValue(), 
