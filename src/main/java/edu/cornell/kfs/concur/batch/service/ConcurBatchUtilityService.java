@@ -81,6 +81,14 @@ public interface ConcurBatchUtilityService {
     String getConcurParameterValue(String parameterName);
     
     /**
+     * Use the KFS ParameterService to lookup the KFS system parameter specified
+     * in the KFS Concur name space by parameterName.
+     * @param parameterName
+     * @return
+     */
+    boolean getConcurParameterBooleanValue(String parameterName);
+    
+    /**
      * Sets the value of the given Concur-namespaced parameter.
      * 
      * @param parameterName The name of the Concur-namespaced parameter to update
