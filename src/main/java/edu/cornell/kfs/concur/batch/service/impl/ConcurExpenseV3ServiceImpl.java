@@ -175,7 +175,6 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
                 workflowAction, reportId, resultsDTO);
         
         concurEventNotificationWebApiService.callConcurEndpoint(accessToken, webRequest, logMessageDetail);
-        
     }
     
     protected boolean shouldUpdateStatusInConcur() {
