@@ -1,10 +1,12 @@
 package edu.cornell.kfs.concur.util;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections.MapUtils;
 import org.mockito.Mockito;
 
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
@@ -14,25 +16,34 @@ public final class MockConcurUtils {
 
     @SafeVarargs
     public static ConcurBatchUtilityService createMockConcurBatchUtilityServiceBackedByParameters(
-            Map.Entry<String, String>... parameters) {
-        Map<String, String> parameterMap = createMutableMap(parameters);
-        return createMockConcurBatchUtilityServiceBackedByParameterMap(parameterMap);
+            Map.Entry<String, Object>... parameters) {
+        Map<String, String> stringParameterMap = createMutableStringMapFromObjectValues(parameters);
+        Map<String, Boolean> booleanParameterMap = createMutableBooleanMapFromObjectValues(parameters);
+        return createMockConcurBatchUtilityServiceBackedByParameterMap(stringParameterMap, booleanParameterMap);
     }
 
     public static ConcurBatchUtilityService createMockConcurBatchUtilityServiceBackedByParameterMap(
-            Map<String, String> parameterMap) {
+            Map<String, String> stringParameterMap, Map<String, Boolean> booleanParameterMap) {
         ConcurBatchUtilityService mockService = Mockito.mock(ConcurBatchUtilityService.class);
-        Mockito.when(mockService.getConcurParameterValue(Mockito.any()))
-                .then(invocation -> parameterMap.get(invocation.getArgument(0)));
-        Mockito.doAnswer(invocation -> parameterMap.put(invocation.getArgument(0), invocation.getArgument(1)))
-                .when(mockService).setConcurParameterValue(Mockito.any(), Mockito.any());
+
+        if (MapUtils.isNotEmpty(stringParameterMap)) {
+            Mockito.when(mockService.getConcurParameterValue(Mockito.any()))
+                    .then(invocation -> stringParameterMap.get(invocation.getArgument(0)));
+            Mockito.doAnswer(invocation -> stringParameterMap.put(invocation.getArgument(0), invocation.getArgument(1)))
+                    .when(mockService).setConcurParameterValue(Mockito.any(), Mockito.any());
+        }
+
+        if (MapUtils.isNotEmpty(booleanParameterMap)) {
+            Mockito.when(mockService.getConcurParameterBooleanValue(Mockito.any()))
+                    .then(invocation -> booleanParameterMap.get(invocation.getArgument(0)));
+        }
         return mockService;
     }
 
     @SafeVarargs
     public static WebServiceCredentialService createMockWebServiceCredentialServiceBackedByCredentials(
             String groupCode, Map.Entry<String, String>... credentials) {
-        Map<String, String> credentialMap = createMutableMap(credentials);
+        Map<String, String> credentialMap = createMutableStringMapFromStringValues(credentials);
         return createMockWebServiceCredentialServiceBackedByCredentialMap(groupCode, credentialMap);
     }
 
@@ -48,10 +59,33 @@ public final class MockConcurUtils {
     }
 
     @SafeVarargs
-    private static Map<String, String> createMutableMap(Map.Entry<String, String>... entries) {
+    private static Map<String, String> createMutableStringMapFromStringValues(Map.Entry<String, String>... entries) {
         return Stream.of(entries)
                 .collect(Collectors.toMap(
                         Map.Entry::getKey, Map.Entry::getValue, (val1, val2) -> val2, HashMap::new));
     }
+
+    @SafeVarargs
+    public static Map<String, String> createMutableStringMapFromObjectValues(Map.Entry<String, Object>... entries) {
+        return Arrays.stream(entries)
+                .filter(entry -> entry.getValue() instanceof String)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, entry -> (String) entry.getValue(), 
+                        (val1, val2) -> val2, 
+                        HashMap::new)
+                        );
+    }
+    
+    @SafeVarargs
+    public static Map<String, Boolean> createMutableBooleanMapFromObjectValues(Map.Entry<String, Object>... entries) {
+        return Arrays.stream(entries)
+                .filter(entry -> entry.getValue() instanceof Boolean)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, entry -> (Boolean) entry.getValue(), 
+                        (val1, val2) -> val2, 
+                        HashMap::new)
+                        );
+    }
+
 
 }
