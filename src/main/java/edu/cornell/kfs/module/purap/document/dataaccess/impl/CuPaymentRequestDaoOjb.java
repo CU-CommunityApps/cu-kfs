@@ -12,6 +12,9 @@ import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
 import org.apache.ojb.broker.query.ReportQueryByCriteria;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.dataaccess.impl.PaymentRequestDaoOjb;
@@ -25,6 +28,8 @@ import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPaymentRequestDao {
 	private static final Logger LOG = LogManager.getLogger();
 
+    private DataDictionaryService dataDictionaryService;
+    
     @Override
     public List<PaymentRequestDocument> getPaymentRequestsToExtract(
             final boolean onlySpecialPayments, 
@@ -35,9 +40,9 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
         if (campusCode != null) {
             criteria.addEqualTo("processingCampusCode", campusCode);
         }
-        //criteria.addIn(PurapPropertyConstants.STATUS_CODE, Arrays.asList(PaymentRequestStatuses.STATUSES_ALLOWED_FOR_EXTRACTION));
         criteria.addIsNull("extractedTimestamp");
         criteria.addEqualTo("holdIndicator", Boolean.FALSE);
+        //Cornell customization
         criteria.addEqualTo("paymentMethodCode", "P");
         
         if (onlySpecialPayments) {
@@ -76,7 +81,7 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
         }
 
         return (List<PaymentRequestDocument>) getPersistenceBrokerTemplate()
-                .getCollectionByQuery(new QueryByCriteria(CuPaymentRequestDocument.class, criteria));
+                .getCollectionByQuery(new QueryByCriteria(paymentRequestDocumentClass(), criteria));
     }
     
     public Collection<PaymentRequestDocument> getPaymentRequestsToExtractForVendor(
@@ -109,7 +114,7 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
         }
 
         return (List<PaymentRequestDocument>) getPersistenceBrokerTemplate()
-        		.getCollectionByQuery(new QueryByCriteria(CuPaymentRequestDocument.class, criteria));
+        		.getCollectionByQuery(new QueryByCriteria(paymentRequestDocumentClass(), criteria));
     }
     
     @Override
@@ -146,6 +151,16 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
         }
         
         return null;
+    }
+    
+    private Class<? extends Document> paymentRequestDocumentClass() {
+        final Class<? extends Document> paymentRequestDocumentClass = dataDictionaryService.getDocumentClassByTypeName(
+                PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT);
+        return paymentRequestDocumentClass != null ? paymentRequestDocumentClass : CuPaymentRequestDocument.class;
+    }
+    
+    public void setDataDictionaryService(final DataDictionaryService dataDictionaryService) {
+        this.dataDictionaryService = dataDictionaryService;
     }
 
 }

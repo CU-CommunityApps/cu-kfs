@@ -50,11 +50,19 @@
           </property>
           <property name="quitOnFail" value="true" />
         </bean>
-				<bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
-					<property name="accountingDocumentParameterPropertyName" value="document" />
-					<property name="accountingLineParameterPropertyName" value="accountingLine" />
-				</bean>
-			</list>
+        <bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
+            <property name="accountingDocumentParameterPropertyName" value="document" />
+            <property name="accountingLineParameterPropertyName" value="accountingLine" />
+        </bean>
+        <bean parent="DisbursementVoucher-accountingLineValidation" scope="prototype" p:quitOnFail="true">
+            <property name="parameterProperties">
+                <list>
+                    <bean parent="accountingDocumentFieldConversion"/>
+                    <bean parent="accountingLineFieldConversion"/>
+                </list>
+            </property>
+        </bean>
+	</list>
 		</property>
 	</bean>
 
@@ -78,6 +86,14 @@
 					<property name="accountingDocumentParameterPropertyName" value="document" />
 					<property name="accountingLineParameterPropertyName" value="updatedAccountingLine" />
 				</bean>
+                <bean parent="DisbursementVoucher-accountingLineValidation" scope="prototype" p:quitOnFail="true">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion"/>
+                            <bean parent="updatedAccountingLineFieldConversion"/>
+                        </list>
+                    </property>
+                </bean>
 			</list>
 		</property>
 	</bean>

@@ -42,22 +42,6 @@ public class CuProcessIndividualPdpCancelPaidServiceImpl extends ProcessIndividu
         } else {
             final PaymentSourceToExtractService<PaymentSource> extractService = getPaymentSourceToExtractService(paymentDetail);
             if (extractService != null) {
-                final PaymentSource dv = (PaymentSource) documentService.getByDocumentHeaderId(documentNumber);
-                if (dv != null) {
-                    if (disbursedPayment || primaryCancel || crCancel) {
-                        if (!crCancel) {
-                            extractService.cancelPayment(dv, processDate);
-                        }
-                    } else {
-                        extractService.resetFromExtraction(dv);
-                    }
-                }
-            } else {
-                LOG.warn(
-                        "processPdpCancels() Unknown document type ({}) for document ID: {}",
-                        documentTypeCode,
-                        documentNumber
-                );
                 return;
             }
         }
