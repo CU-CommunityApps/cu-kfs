@@ -133,8 +133,6 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
      * End CUMod: KFSPTS-34685 Backport FINP-10379
      */
 
-
-
     /**
      * Add institution specific parameters to the template parameters
      */
