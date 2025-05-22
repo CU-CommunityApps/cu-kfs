@@ -17,10 +17,11 @@ import edu.cornell.kfs.sys.util.CuSqlQuery;
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 import edu.cornell.kfs.tax.batch.metadata.TaxDtoDbMetadata;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.Criteria;
+import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.FieldUpdate;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.QuerySort;
 
 /**
- * Convenience class for building SELECT queries against tax-related data, using metadata helper objects
+ * Convenience class for building SELECT or UPDATE queries against tax-related data, using metadata helper objects
  * to handle converting BO classes and BO fields into table names and column names, respectively.
  * To ensure that the resulting SQL is valid, The calling code MUST build the clauses in the proper order
  * (SELECT, FROM, JOIN, WHERE, etc.).
@@ -31,6 +32,9 @@ import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.QuerySort;
  * 
  * If an ORDER BY clause is needed, create instances of TaxQueryUtils.QuerySort using one of the appropriate
  * static factory methods, then pass them into the builder's orderBy() method.
+ * 
+ * When building an UPDATE query, create instances of TaxQueryUtils.FieldUpdate using one of the appropriate
+ * static factory methods, then pass them into the builder's set() method to construct the SET clause.
  * 
  * Note that many of the non-public methods in this class are declared as protected, so that they can be called
  * by the helper methods in TaxQueryUtils.
@@ -125,7 +129,18 @@ public class TaxQueryBuilder {
         return this;
     }
 
-    public TaxQueryBuilder set() {
+    public TaxQueryBuilder set(final FieldUpdate... fieldUpdates) {
+        sqlChunk.append(" SET ");
+        int i = 0;
+        for (final FieldUpdate fieldUpdate : fieldUpdates) {
+            if (i > 0) {
+                sqlChunk.append(CUKFSConstants.COMMA_AND_SPACE);
+            }
+            final String columnLabel = getColumnLabel(fieldUpdate.getField());
+            sqlChunk.append(columnLabel).append(" = ")
+                    .appendAsParameter(fieldUpdate.getSqlType(), fieldUpdate.getValue());
+            i++;
+        }
         return this;
     }
 

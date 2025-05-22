@@ -3,6 +3,7 @@ package edu.cornell.kfs.tax.batch.service.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
@@ -39,7 +41,6 @@ import edu.cornell.kfs.tax.batch.service.TaxFileGenerationService;
 import edu.cornell.kfs.tax.batch.service.TaxPayeeHelperService;
 import edu.cornell.kfs.tax.batch.xml.TaxOutputDefinitionV2;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail;
-import edu.cornell.kfs.tax.businessobject.TransactionDetail.TransactionDetailField;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxStatType;
 import edu.cornell.kfs.tax.service.TaxParameterService;
 import edu.cornell.kfs.tax.service.TransactionOverrideService;
@@ -48,6 +49,8 @@ import edu.cornell.kfs.tax.util.TaxUtils;
 public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationService, TransactionDetailHandler {
 
     private static final Logger LOG = LogManager.getLogger();
+
+    private static final int MAX_BATCH_UPDATE_SIZE = 30;
 
     private TransactionDetailProcessorDao transactionDetailProcessorDao;
     private TaxOutputDefinitionV2FileType taxOutputDefinitionV2FileType;
@@ -92,7 +95,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
                         new TaxFileRowWriterImpl(paymentsFileDefinition, SprintaxField.class, paymentsFilePath,
                                 scrubOutput);
         ) {
-            final SprintaxHelper helper = new SprintaxHelper(rowMapper, demographicFileWriter,
+            final SprintaxHelper helper = new SprintaxHelper(config, rowMapper, demographicFileWriter,
                     paymentsFileWriter, transactionOverrides);
             return readAndProcessTransactions(helper);
         }
@@ -129,6 +132,12 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
             processCurrentRow(currentPayee, currentRow, helper);
         }
 
+        if (helper.pendingBatchUpdates.size() > 0) {
+            transactionDetailProcessorDao.updateVendorInfoAndTaxBoxesOnTransactionDetails(
+                    helper.pendingBatchUpdates, helper.config);
+            helper.pendingBatchUpdates.clear();
+        }
+
         if (currentPayee != null && shouldPrintTaxFileRow(currentPayee.getCurrentPayment())) {
             printTaxFileRow(currentPayee, helper);
         }
@@ -146,7 +155,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         payee.setCurrentPayment(createNewPayment(currentRow, helper));
         initializeChapter4ExemptionCode(payee);
         if (StringUtils.isBlank(payee.getVendorEmailAddress())) {
-            payee.setVendorEmailAddress(generatePlaceholderEmailAddress(payee.getPayeeId()));
+            payee.setPlaceholderEmailAddress(generatePlaceholderEmailAddress(payee.getPayeeId()));
         }
         return payee;
     }
@@ -253,7 +262,14 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
             helper.increment(TaxStatType.NUM_NO_BOX_DETERMINED_ROWS);
         }
 
-        updateCurrentTransactionRowInDatabase(currentPayee, helper);
+        final TransactionDetail updatedRow = createTransactionDetailCopyContainingFieldUpdates(
+            currentRow, currentPayee, helper);
+        helper.pendingBatchUpdates.add(updatedRow);
+        if (helper.pendingBatchUpdates.size() >= MAX_BATCH_UPDATE_SIZE) {
+            transactionDetailProcessorDao.updateVendorInfoAndTaxBoxesOnTransactionDetails(
+                    helper.pendingBatchUpdates, helper.config);
+            helper.pendingBatchUpdates.clear();
+        }
     }
 
     private TaxBoxType1042S determineTaxBoxType(final TransactionDetail currentRow, final SprintaxHelper helper) {
@@ -374,27 +390,28 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         }
     }
 
-    private void updateCurrentTransactionRowInDatabase(final SprintaxPayee currentPayee, final SprintaxHelper helper)
-            throws SQLException {
-        helper.rowMapper.updateStringFieldsOnCurrentRow(currentPayee,
-                TransactionDetailField.vendorName,
-                TransactionDetailField.parentVendorName,
-                TransactionDetailField.vendorEmailAddress,
-                TransactionDetailField.vendorChapter4StatusCode,
-                TransactionDetailField.vendorGIIN,
-                TransactionDetailField.vendorLine1Address,
-                TransactionDetailField.vendorLine2Address,
-                TransactionDetailField.vendorCityName,
-                TransactionDetailField.vendorStateCode,
-                TransactionDetailField.vendorZipCode,
-                TransactionDetailField.vendorForeignLine1Address,
-                TransactionDetailField.vendorForeignLine2Address,
-                TransactionDetailField.vendorForeignCityName,
-                TransactionDetailField.vendorForeignZipCode,
-                TransactionDetailField.vendorForeignProvinceName,
-                TransactionDetailField.vendorForeignCountryCode,
-                TransactionDetailField.form1042SBox,
-                TransactionDetailField.form1042SOverriddenBox);
+    private TransactionDetail createTransactionDetailCopyContainingFieldUpdates(final TransactionDetail currentRow,
+            final SprintaxPayee currentPayee, final SprintaxHelper helper) {
+        final TransactionDetail updatedRow = (TransactionDetail) ObjectUtils.deepCopy(currentRow);
+        updatedRow.setVendorName(currentPayee.getVendorName());
+        updatedRow.setParentVendorName(currentPayee.getParentVendorName());
+        updatedRow.setVendorEmailAddress(currentPayee.getNonPlaceholderVendorEmailAddress());
+        updatedRow.setVendorChapter4StatusCode(currentPayee.getVendorChapter4StatusCode());
+        updatedRow.setVendorGIIN(currentPayee.getVendorGIIN());
+        updatedRow.setVendorLine1Address(currentPayee.getVendorLine1Address());
+        updatedRow.setVendorLine2Address(currentPayee.getVendorLine2Address());
+        updatedRow.setVendorCityName(currentPayee.getVendorCityName());
+        updatedRow.setVendorStateCode(currentPayee.getVendorStateCode());
+        updatedRow.setVendorZipCode(currentPayee.getVendorZipCode());
+        updatedRow.setVendorForeignLine1Address(currentPayee.getVendorForeignLine1Address());
+        updatedRow.setVendorForeignLine2Address(currentPayee.getVendorForeignLine2Address());
+        updatedRow.setVendorForeignCityName(currentPayee.getVendorForeignCityName());
+        updatedRow.setVendorForeignZipCode(currentPayee.getVendorForeignZipCode());
+        updatedRow.setVendorForeignProvinceName(currentPayee.getVendorForeignProvinceName());
+        updatedRow.setVendorForeignCountryCode(currentPayee.getVendorForeignCountryCode());
+        updatedRow.setForm1042SBox(currentPayee.getForm1042SBox());
+        updatedRow.setForm1042SOverriddenBox(currentPayee.getForm1042SOverriddenBox());
+        return updatedRow;
     }
 
 
@@ -599,20 +616,24 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
 
 
     private static final class SprintaxHelper implements TaxStatisticsHandler {
+        private final TaxBatchConfig config;
         private final TaxDtoRowMapper<TransactionDetail> rowMapper;
         private final TaxFileRowWriterImpl demographicFileWriter;
         private final TaxFileRowWriterImpl paymentsFileWriter;
         private final Map<String, String> transactionOverrides;
         private final TaxStatistics statistics;
+        private final List<TransactionDetail> pendingBatchUpdates;
 
-        private SprintaxHelper(final TaxDtoRowMapper<TransactionDetail> rowMapper,
+        private SprintaxHelper(final TaxBatchConfig config, final TaxDtoRowMapper<TransactionDetail> rowMapper,
                 final TaxFileRowWriterImpl demographicFileWriter, final TaxFileRowWriterImpl paymentsFileWriter,
                 final Map<String, String> transactionOverrides) {
+            this.config = config;
             this.rowMapper = rowMapper;
             this.demographicFileWriter = demographicFileWriter;
             this.paymentsFileWriter = paymentsFileWriter;
             this.transactionOverrides = transactionOverrides;
             this.statistics = TaxUtils.generateBaseStatisticsFor1042S();
+            this.pendingBatchUpdates = new ArrayList<>(MAX_BATCH_UPDATE_SIZE);
         }
 
         @Override

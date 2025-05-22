@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,6 +43,7 @@ import edu.cornell.kfs.tax.batch.metadata.TaxDtoDbMetadata;
 import edu.cornell.kfs.tax.batch.service.TaxTableMetadataLookupService;
 import edu.cornell.kfs.tax.batch.util.TaxQueryBuilder;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.Criteria;
+import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.FieldUpdate;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.QuerySort;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail.TransactionDetailField;
@@ -62,7 +64,7 @@ public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwa
                 .getDatabaseMappingMetadataForDto(TransactionDetailField.class);
         final CuSqlQuery query = createTransactionDetailQuery(config, transactionDetailMetadata);
 
-        return queryForUpdatableResults(query, resultSet -> {
+        return queryForResults(query, resultSet -> {
             try {
                 final TaxDtoRowMapper<TransactionDetail> rowMapper = new TaxDtoRowMapperImpl<>(
                         TransactionDetail::new, encryptionService, transactionDetailMetadata, resultSet);
@@ -114,7 +116,57 @@ public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwa
         }
     }
 
+    @Override
+    public void updateVendorInfoAndTaxBoxesOnTransactionDetails(List<TransactionDetail> transactionDetails,
+            TaxBatchConfig config) {
+        if (!StringUtils.equals(config.getTaxType(), CUTaxConstants.TAX_TYPE_1042S)) {
+            throw new RuntimeException("This implementation currently does not support 1099 processing");
+        }
+        final CuSqlQuery query = createQueryForBatchUpdatesToTransactionDetails();
+        final int[] updateCounts = executeBatchUpdate(query, transactionDetails);
 
+        for (int i = 0; i < updateCounts.length; i++) {
+            if (updateCounts[i] != 1) {
+                final TransactionDetail transactionDetail = transactionDetails.get(i);
+                LOG.warn("updateVendorInfoAndTaxBoxesOnTransactionDetails, Batch update for Transaction Detail {} "
+                        + "at batch index {} should have updated 1 row, but it actually updated {} rows instead!",
+                        transactionDetail.getTransactionDetailId(), i, updateCounts[i]);
+            }
+        }
+    }
+
+    private CuSqlQuery createQueryForBatchUpdatesToTransactionDetails() {
+        final TaxDtoDbMetadata transactionDetailMetadata = taxTableMetadataLookupService
+                .getDatabaseMappingMetadataForDto(TransactionDetailField.class);
+
+        final FieldUpdate[] fieldUpdates = {
+                FieldUpdate.of(TransactionDetailField.vendorName, TransactionDetail::getVendorName),
+                FieldUpdate.of(TransactionDetailField.parentVendorName, TransactionDetail::getParentVendorName),
+                FieldUpdate.of(TransactionDetailField.vendorEmailAddress, TransactionDetail::getVendorEmailAddress),
+                FieldUpdate.of(TransactionDetailField.vendorChapter4StatusCode, TransactionDetail::getVendorChapter4StatusCode),
+                FieldUpdate.of(TransactionDetailField.vendorGIIN, TransactionDetail::getVendorGIIN),
+                FieldUpdate.of(TransactionDetailField.vendorLine1Address, TransactionDetail::getVendorLine1Address),
+                FieldUpdate.of(TransactionDetailField.vendorLine2Address, TransactionDetail::getVendorLine2Address),
+                FieldUpdate.of(TransactionDetailField.vendorCityName, TransactionDetail::getVendorCityName),
+                FieldUpdate.of(TransactionDetailField.vendorStateCode, TransactionDetail::getVendorStateCode),
+                FieldUpdate.of(TransactionDetailField.vendorZipCode, TransactionDetail::getVendorZipCode),
+                FieldUpdate.of(TransactionDetailField.vendorForeignLine1Address, TransactionDetail::getVendorForeignLine1Address),
+                FieldUpdate.of(TransactionDetailField.vendorForeignLine2Address, TransactionDetail::getVendorForeignLine2Address),
+                FieldUpdate.of(TransactionDetailField.vendorForeignCityName, TransactionDetail::getVendorForeignCityName),
+                FieldUpdate.of(TransactionDetailField.vendorForeignZipCode, TransactionDetail::getVendorForeignZipCode),
+                FieldUpdate.of(TransactionDetailField.vendorForeignProvinceName, TransactionDetail::getVendorForeignProvinceName),
+                FieldUpdate.of(TransactionDetailField.vendorForeignCountryCode, TransactionDetail::getVendorForeignCountryCode),
+                FieldUpdate.of(TransactionDetailField.form1042SBox, TransactionDetail::getForm1042SBox),
+                FieldUpdate.of(TransactionDetailField.form1042SOverriddenBox, TransactionDetail::getForm1042SOverriddenBox)
+        };
+
+        return new TaxQueryBuilder(transactionDetailMetadata)
+                .update(TransactionDetail.class)
+                .set(fieldUpdates)
+                .where(Criteria.equal(
+                        TransactionDetailField.transactionDetailId, TransactionDetail::getTransactionDetailId))
+                .build();
+    }
 
     @Override
     public VendorQueryResults getVendor(final Integer vendorHeaderId, final Integer vendorDetailId) {

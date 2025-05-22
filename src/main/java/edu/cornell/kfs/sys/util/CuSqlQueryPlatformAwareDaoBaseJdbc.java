@@ -51,6 +51,25 @@ public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDa
         }
     }
     
+    protected <T> int[] executeBatchUpdate(final CuSqlQuery sqlQuery, final List<T> batchItems) {
+        return executeBatchUpdate(sqlQuery, batchItems, true);
+    }
+    
+    protected <T> int[] executeBatchUpdate(final CuSqlQuery sqlQuery, final List<T> batchItems,
+            final boolean logSQLOnError) {
+        try {
+            final CuSqlQueryBatchPreparedStatementSetter<T> statementSetter
+                    = new CuSqlQueryBatchPreparedStatementSetter<>(sqlQuery, batchItems);
+            return getJdbcTemplate().batchUpdate(sqlQuery.getQueryString(), statementSetter);
+        } catch (final RuntimeException e) {
+            if (logSQLOnError || LOG.isDebugEnabled()) {
+                logSQL(sqlQuery);
+            }
+            LOG.error("executeBatchUpdate, Unexpected error encountered while running query!", e);
+            throw e;
+        }
+    }
+
     protected <T> T queryForResults(final CuSqlQuery sqlQuery, ResultSetExtractor<T> resultSetExtractor) {
         return queryForResults(sqlQuery, resultSetExtractor, true);
     }
@@ -59,16 +78,6 @@ public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDa
             boolean logSQLOnError) {
         return queryForResults(sqlQuery, resultSetExtractor,
                 CuSqlQueryPreparedStatementCreatorAndSetter::forReadOnlyResults, logSQLOnError);
-    }
-    
-    protected <T> T queryForUpdatableResults(final CuSqlQuery sqlQuery, ResultSetExtractor<T> resultSetExtractor) {
-        return queryForUpdatableResults(sqlQuery, resultSetExtractor, true);
-    }
-    
-    protected <T> T queryForUpdatableResults(final CuSqlQuery sqlQuery, ResultSetExtractor<T> resultSetExtractor,
-            boolean logSQLOnError) {
-        return queryForResults(sqlQuery, resultSetExtractor,
-                CuSqlQueryPreparedStatementCreatorAndSetter::forUpdatableResults, logSQLOnError);
     }
     
     protected <T> T queryForResults(final CuSqlQuery sqlQuery, final ResultSetExtractor<T> resultSetExtractor,

@@ -7,11 +7,15 @@ import edu.cornell.kfs.tax.batch.TaxStatistics;
 import edu.cornell.kfs.tax.batch.dto.NoteLite;
 import edu.cornell.kfs.tax.batch.dto.VendorAddressLite;
 import edu.cornell.kfs.tax.batch.dto.VendorQueryResults;
+import edu.cornell.kfs.tax.businessobject.TransactionDetail;
 
 public interface TransactionDetailProcessorDao {
 
     TaxStatistics processTransactionDetails(final TaxBatchConfig config,
             final TransactionDetailHandler handler);
+
+    void updateVendorInfoAndTaxBoxesOnTransactionDetails(final List<TransactionDetail> transactionDetails,
+            final TaxBatchConfig config);
 
     VendorQueryResults getVendor(final Integer vendorHeaderId, final Integer vendorDetailId);
 
