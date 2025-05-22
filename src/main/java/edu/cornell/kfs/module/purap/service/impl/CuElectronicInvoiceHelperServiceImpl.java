@@ -740,6 +740,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         preqDoc.updateAndSaveAppDocStatus(PaymentRequestStatuses.APPDOC_IN_PROCESS);
 
         preqDoc.setInvoiceDate(orderHolder.getInvoiceDate());
+        preqDoc.setInvoiceReceivedDate(orderHolder.getInvoiceDate());
         preqDoc.setInvoiceNumber(orderHolder.getInvoiceNumber());
         preqDoc.setVendorInvoiceAmount(new KualiDecimal(orderHolder.getInvoiceNetAmount()));
         preqDoc.setAccountsPayableProcessorIdentifier("E-Invoice");

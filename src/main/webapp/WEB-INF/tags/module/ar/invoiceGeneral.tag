@@ -41,7 +41,7 @@
             <td class="datacell" style="width: 25%;">
                 <div id="document.proposalNumber.div">
                     <kul:inquiry
-                            boClassName="org.kuali.kfs.integration.cg.ContractsAndGrantsAward"
+                            boClassName="org.kuali.kfs.module.cg.businessobject.Award"
                             keyValues="proposalNumber=${KualiForm.document.invoiceGeneralDetail.proposalNumber}"
                             render="true">
                         <kul:htmlControlAttribute

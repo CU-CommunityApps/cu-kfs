@@ -74,7 +74,7 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
         
         CuDisbursementVoucherDocument document = (CuDisbursementVoucherDocument) dvForm.getDocument();
 
-        boolean isPayeeLookupable = KFSConstants.KUALI_DISBURSEMENT_PAYEE_LOOKUPABLE_IMPL.equals(refreshCaller);
+        final boolean isPayeeLookupable = getIsPayeeLookupable(refreshCaller);
         boolean isAddressLookupable = KFSConstants.KUALI_VENDOR_ADDRESS_LOOKUPABLE_IMPL.equals(refreshCaller);
         boolean isKualiLookupable = KFSConstants.KUALI_LOOKUPABLE_IMPL.equals(refreshCaller);
         

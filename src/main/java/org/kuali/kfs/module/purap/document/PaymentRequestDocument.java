@@ -97,6 +97,7 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
     private static final Logger LOG = LogManager.getLogger();
 
     protected Date invoiceDate;
+    protected Date invoiceReceivedDate;
     protected String invoiceNumber;
     protected KualiDecimal vendorInvoiceAmount;
     protected String vendorPaymentTermsCode;
@@ -253,6 +254,14 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
 
     public void setInvoiceDate(final Date invoiceDate) {
         this.invoiceDate = invoiceDate;
+    }
+
+    public Date getInvoiceReceivedDate() {
+        return invoiceReceivedDate;
+    }
+
+    public void setInvoiceReceivedDate(final Date invoiceReceivedDate) {
+        this.invoiceReceivedDate = invoiceReceivedDate;
     }
 
     public String getInvoiceNumber() {
@@ -1293,17 +1302,23 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
 
             if (preqItem.getItemType().isQuantityBasedGeneralLedgerIndicator()) {
                 final PurchaseOrderItem poItem = preqItem.getPurchaseOrderItem();
+                if (ObjectUtils.isNull(poItem)) {
+                    return false;
+                }
+
                 final KualiDecimal preqQuantityInvoiced =
                         preqItem.getItemQuantity() == null ? KualiDecimal.ZERO : preqItem.getItemQuantity();
-                final KualiDecimal poQuantityReceived = poItem.getItemReceivedTotalQuantity() == null ? KualiDecimal.ZERO :
-                        poItem.getItemReceivedTotalQuantity();
-                final KualiDecimal poQuantityInvoiced = poItem.getItemInvoicedTotalQuantity() == null ? KualiDecimal.ZERO :
-                        poItem.getItemInvoicedTotalQuantity();
+                final KualiDecimal poQuantityReceived = poItem.getItemReceivedTotalQuantity() == null
+                        ? KualiDecimal.ZERO
+                        : poItem.getItemReceivedTotalQuantity();
+                final KualiDecimal poQuantityInvoiced = poItem.getItemInvoicedTotalQuantity() == null
+                        ? KualiDecimal.ZERO
+                        : poItem.getItemInvoicedTotalQuantity();
 
                 // receiving has NOT been met if preqQtyInvoiced is greater than
                 // (poQtyReceived & (poQtyInvoiced & preqQtyInvoiced))
-                if (preqQuantityInvoiced.compareTo(poQuantityReceived.subtract(
-                        poQuantityInvoiced.subtract(preqQuantityInvoiced))) > 0) {
+                if (preqQuantityInvoiced.compareTo(poQuantityReceived.subtract(poQuantityInvoiced.subtract(
+                        preqQuantityInvoiced))) > 0) {
                     return false;
                 }
             }
