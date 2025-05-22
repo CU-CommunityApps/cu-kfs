@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
+import org.kuali.kfs.sys.dataaccess.IntegTestSqlDao;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -36,7 +36,7 @@ public abstract class CommonPcardCbcpLoadFlatFileTransactionsIntegTestBase exten
     protected static final String BAD_DATA_INTEGRATION_TEST_FULLY_QUALIFIED_PATH_FILE_EXTENSION = INTEGRATION_TEST_DATA_FILE_BASE_PATH_LOCATION + BAD_DATA_FILE_NAME_WITH_DATA_EXTENSION;
     
     private ConfigurationService kualiConfigurationService;
-    private UnitTestSqlDao unitTestSqlDao;
+    private IntegTestSqlDao integTestSqlDao;
     private String stagingBatchDirectory;
     private String dataFileSubDirectory;
 
@@ -45,7 +45,7 @@ public abstract class CommonPcardCbcpLoadFlatFileTransactionsIntegTestBase exten
         super.setUp();
         kualiConfigurationService = SpringContext.getBean(ConfigurationService.class);
         stagingBatchDirectory = kualiConfigurationService.getPropertyValueAsString(KFSConstants.STAGING_DIRECTORY_KEY) + getDataFileSubDirectory();
-        unitTestSqlDao = SpringContext.getBean(UnitTestSqlDao.class);
+        integTestSqlDao = SpringContext.getBean(IntegTestSqlDao.class);
         
         //make sure we have a batch directory
         File batchDirectoryFile = new File(stagingBatchDirectory);
@@ -82,12 +82,12 @@ public abstract class CommonPcardCbcpLoadFlatFileTransactionsIntegTestBase exten
         this.kualiConfigurationService = kualiConfigurationService;
     }
 
-    public UnitTestSqlDao getUnitTestSqlDao() {
-        return unitTestSqlDao;
+    public IntegTestSqlDao getIntegTestSqlDao() {
+        return integTestSqlDao;
     }
 
-    public void setUnitTestSqlDao(UnitTestSqlDao unitTestSqlDao) {
-        this.unitTestSqlDao = unitTestSqlDao;
+    public void setIntegTestSqlDao(IntegTestSqlDao integTestSqlDao) {
+        this.integTestSqlDao = integTestSqlDao;
     }
 
     public String getStagingBatchDirectory() {

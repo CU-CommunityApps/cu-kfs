@@ -11,7 +11,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
+import org.kuali.kfs.sys.dataaccess.IntegTestSqlDao;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 
@@ -24,7 +24,7 @@ import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
 public class CuDisbursementVoucherPayeeServiceImplIntegTest extends KualiIntegTestBase {
 	private PersonService personService;
     private CuDisbursementVoucherPayeeService cuDisbursementVoucherPayeeService;
-    private UnitTestSqlDao unitTestSqlDao;
+    private IntegTestSqlDao integTestSqlDao;
     private String alumniSql = "SELECT dv_payee_id_nbr,fdoc_nbr FROM FP_DV_PAYEE_DTL_T where dv_payee_typ_cd = 'A'";
     private String studentSql = "SELECT dv_payee_id_nbr,fdoc_nbr FROM FP_DV_PAYEE_DTL_T where dv_payee_typ_cd = 'S'";
     private String employeeSql = "SELECT dv_payee_id_nbr,fdoc_nbr FROM FP_DV_PAYEE_DTL_T where dv_payee_typ_cd = 'E'";    
@@ -35,7 +35,7 @@ public class CuDisbursementVoucherPayeeServiceImplIntegTest extends KualiIntegTe
         super.setUp();
         personService = SpringContext.getBean(PersonService.class);
         cuDisbursementVoucherPayeeService = CuDisbursementVoucherPayeeServiceImpl.class.newInstance();
-        unitTestSqlDao = SpringContext.getBean(UnitTestSqlDao.class);
+        integTestSqlDao = SpringContext.getBean(IntegTestSqlDao.class);
         businessObjectService = SpringContext.getBean(BusinessObjectService.class);
         
 	}          
@@ -50,7 +50,7 @@ public class CuDisbursementVoucherPayeeServiceImplIntegTest extends KualiIntegTe
 		boolean isStudent = false;
 		boolean isEmployee = false;
 
-		List alumniResults =  unitTestSqlDao.sqlSelect(alumniSql);
+		List alumniResults =  integTestSqlDao.sqlSelect(alumniSql);
 		Object aresult = alumniResults.get(0);
 		String[] asplit = aresult.toString().split(",");
 		String aFdocSplit [] = asplit[0].split("=");
@@ -61,7 +61,7 @@ public class CuDisbursementVoucherPayeeServiceImplIntegTest extends KualiIntegTe
 		aentid = aentid.trim();
 		alumniResults.clear();
 		
-		List studentResults =  unitTestSqlDao.sqlSelect(studentSql);
+		List studentResults =  integTestSqlDao.sqlSelect(studentSql);
 		Object sresult = studentResults.get(0);
 		String[] stSplit = sresult.toString().split(",");
 		String sFdocSplit [] = stSplit[0].split("=");
@@ -72,7 +72,7 @@ public class CuDisbursementVoucherPayeeServiceImplIntegTest extends KualiIntegTe
 		sentid = sentid.trim();
 		studentResults.clear();
 		
-		List employeeResults =  unitTestSqlDao.sqlSelect(employeeSql);
+		List employeeResults =  integTestSqlDao.sqlSelect(employeeSql);
 		Object eresult = employeeResults.get(0);
 		String[] esplit = eresult.toString().split(",");
 		String eFdocSplit [] = esplit[0].split("=");

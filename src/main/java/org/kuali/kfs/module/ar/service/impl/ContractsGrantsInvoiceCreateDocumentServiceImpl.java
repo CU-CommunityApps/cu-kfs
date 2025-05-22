@@ -18,28 +18,6 @@
  */
 package org.kuali.kfs.module.ar.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.nio.charset.StandardCharsets;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.text.MessageFormat;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -114,11 +92,32 @@ import org.kuali.kfs.sys.service.UniversityDateService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.MessageFormat;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
 import edu.cornell.kfs.module.ar.CuArKeyConstants;
 import edu.cornell.kfs.module.ar.CuArParameterKeyConstants;
 import edu.cornell.kfs.module.ar.service.CuCustomerAddressHelperService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
-
 
 /**
  * This is the default implementation of the ContractsGrantsInvoiceDocumentCreateService interface.
@@ -1074,12 +1073,6 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                         invoiceDetailAccountObjectCodesForCategory) {
                     invDetail.setCumulativeExpenditures(invDetail.getCumulativeExpenditures()
                             .add(invoiceDetailAccountObjectCode.getCumulativeExpenditures()));
-                    /*
-                     * CU Customization back port FINP-10147
-                     * these two lines removed
-                     */
-//                    invDetail.setInvoiceAmount(invDetail.getInvoiceAmount()
-//                            .add(invoiceDetailAccountObjectCode.getCurrentExpenditures()));
                 }
             }
             final List<AwardAccountObjectCodeTotalBilled> billedForCategory = billedsMap.get(category.getCategoryCode());
@@ -1090,14 +1083,10 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                             .add(accountObjectCodeTotalBilled.getTotalBilled()));
                 }
             }
-            
-            /*
-             * CU Customization back port FINP-10147
-             * these two lines added
-             */
+
             invDetail.setInvoiceAmount(invDetail.getCumulativeExpenditures()
                     .subtract(invDetail.getTotalPreviouslyBilled()));
-            
+
             // calculate the rest using billed to date
             if (ObjectUtils.isNotNull(budgetAmountsByCostCategory.get(category.getCategoryCode()))) {
                 invDetail.setTotalBudget(budgetAmountsByCostCategory.get(category.getCategoryCode()));
@@ -1647,34 +1636,11 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
     protected KualiDecimal calculateTotalExpenditureAmount(
             final ContractsGrantsInvoiceDocument document,
             final List<ContractsGrantsLetterOfCreditReviewDetail> locReviewDetails) {
-        
-        /*
-         * CU Customization backport FINP-10147
-         */
-//        final Map<String, KualiDecimal> totalBilledByAccountNumberMap = new HashMap<>();
-//        for (final InvoiceDetailAccountObjectCode objectCode: document.getInvoiceDetailAccountObjectCodes()) {
-//            final String key = objectCode.getChartOfAccountsCode() + "-" + objectCode.getAccountNumber();
-//            KualiDecimal totalBilled = cleanAmount(totalBilledByAccountNumberMap.get(key));
-//            totalBilled = totalBilled.add(objectCode.getTotalBilled());
-//            totalBilledByAccountNumberMap.put(key, totalBilled);
-//        }
-//        
-
         KualiDecimal totalExpendituredAmount = KualiDecimal.ZERO;
         for (final InvoiceAccountDetail invAcctD : document.getAccountDetails()) {
             final String chartOfAccountsCode = invAcctD.getChartOfAccountsCode();
             final String accountNumber = invAcctD.getAccountNumber();
-            
-            /*
-             * CU Customization backport FINP-10147
-             */
-            
-//            final String key = chartOfAccountsCode + "-" + accountNumber;
-//            if (ObjectUtils.isNotNull(totalBilledByAccountNumberMap.get(key))) {
-//                invAcctD.setTotalPreviouslyBilled(totalBilledByAccountNumberMap.get(key));
-//            } else {
-//                invAcctD.setTotalPreviouslyBilled(KualiDecimal.ZERO);
-                
+
             final Map<String, Object> mapKey = new HashMap<>();
             mapKey.put(KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber);
             mapKey.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartOfAccountsCode);
@@ -1694,11 +1660,8 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                     totalBilled = totalBilled.add(accountObjectCodeTotalBilled.getTotalBilled());
                 }
             }
-            
+
             invAcctD.setTotalPreviouslyBilled(totalBilled);
-            /**
-             * end CU Customization backport FINP-10147
-             */
 
             if (invAcctD.getTotalPreviouslyBilled().isZero()) {
                 final String proposalNumber = document.getInvoiceGeneralDetail().getProposalNumber();

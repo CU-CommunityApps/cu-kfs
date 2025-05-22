@@ -22,14 +22,14 @@ public class ProcurementCardCreateDocumentServiceImplIntegTest extends CommonPro
     }
     
     public void testCreatePcardDocs() {
-        getUnitTestSqlDao().sqlCommand(PCARD_TRANSACTION_TABLE_SQL_DELETE_COMMAND);
-        getUnitTestSqlDao().sqlCommand(PCARD_TRANSACTION_DETAIL_SQL_DISABLE_VENDOR_FOREIGN_KEY_COMMAND);
-        getUnitTestSqlDao().sqlCommand(PCARD_TRANSACTION_DETAIL_SQL_DISABLE_PCARD_DOC_FOREIGN_KEY_COMMAND);
-        getUnitTestSqlDao().sqlCommand(PCARD_ACCT_LINES_SQL_DISABLE_PCARD_TRANSACTION_DETAIL_FOREIGN_KEY_COMMAND);
-        getUnitTestSqlDao().sqlCommand(PCARD_TRANSACTION_DETAIL_TABLE_SQL_DELETE_COMMAND);
+        getIntegTestSqlDao().sqlCommand(PCARD_TRANSACTION_TABLE_SQL_DELETE_COMMAND);
+        getIntegTestSqlDao().sqlCommand(PCARD_TRANSACTION_DETAIL_SQL_DISABLE_VENDOR_FOREIGN_KEY_COMMAND);
+        getIntegTestSqlDao().sqlCommand(PCARD_TRANSACTION_DETAIL_SQL_DISABLE_PCARD_DOC_FOREIGN_KEY_COMMAND);
+        getIntegTestSqlDao().sqlCommand(PCARD_ACCT_LINES_SQL_DISABLE_PCARD_TRANSACTION_DETAIL_FOREIGN_KEY_COMMAND);
+        getIntegTestSqlDao().sqlCommand(PCARD_TRANSACTION_DETAIL_TABLE_SQL_DELETE_COMMAND);
         assertTrue(getProcurementCardLoadFlatTransactionsService().loadProcurementCardFile(getStagingBatchDirectory() + GOOD_DATA_FILE_NAME_WITH_DATA_EXTENSION));
         assertTrue(procurementCardCreateDocumentService.createProcurementCardDocuments());
-        List summaryResults =  getUnitTestSqlDao().sqlSelect(PCARD_TRANSACTION_DETAIL_TABLE_SQL_SELECT_COMMAND);
+        List summaryResults =  getIntegTestSqlDao().sqlSelect(PCARD_TRANSACTION_DETAIL_TABLE_SQL_SELECT_COMMAND);
         assertEquals(1, summaryResults.size());
         LOG.info("testCreatePCardDocs, Good PCard file was successfully loaded with PCard documents successfully created.");
     }
