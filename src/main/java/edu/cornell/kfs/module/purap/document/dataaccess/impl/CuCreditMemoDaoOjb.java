@@ -60,6 +60,7 @@ public class CuCreditMemoDaoOjb extends CreditMemoDaoOjb {
         return (List<VendorCreditMemoDocument>)getPersistenceBrokerTemplate().getCollectionByQuery(new QueryByCriteria(creditMemoDocumentClass(), criteria));
     }
     
+    @Override
     protected Class<? extends Document> creditMemoDocumentClass() {
         final Class<? extends Document> creditMemoDocumentClass =
                 dataDictionaryService.getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT);
