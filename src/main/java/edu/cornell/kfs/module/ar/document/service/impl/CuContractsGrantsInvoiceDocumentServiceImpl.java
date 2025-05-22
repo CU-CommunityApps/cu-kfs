@@ -3,6 +3,7 @@ package edu.cornell.kfs.module.ar.document.service.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -94,6 +95,57 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
             }
         }
     }
+
+    @Override
+    protected List<CustomerInvoiceDetail> createSourceAccountingLinesByAward(
+            final ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
+        final List<CustomerInvoiceDetail> awardAccountingLines = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(contractsGrantsInvoiceDocument.getAccountDetails())) {
+            final Map<String, KualiDecimal> accountExpenditureAmounts = getCategoryExpenditureAmountsForInvoiceAccountDetail(
+                    contractsGrantsInvoiceDocument);
+            final Map<String, KualiDecimal> accountTotalBilledAmounts = getCategoryTotalBilledAmountsForInvoiceAccountDetail(
+                    contractsGrantsInvoiceDocument);
+            for (final InvoiceAccountDetail invAcctD : contractsGrantsInvoiceDocument.getAccountDetails()) {
+                final String proposalNumber = invAcctD.getProposalNumber();
+                final String chartOfAccountsCode = invAcctD.getChartOfAccountsCode();
+                final String accountNumber = invAcctD.getAccountNumber();
+                if (invAcctD.getAccount() == null) {
+                    invAcctD.refreshReferenceObject(KFSPropertyConstants.ACCOUNT);
+                }
+                final SubFundGroup subFundGroup = invAcctD.getAccount().getSubFundGroup();
+                final Integer sequenceNumber = contractsGrantsInvoiceDocument.getAccountDetails().indexOf(invAcctD) + 1;
+
+                final String accountKey = StringUtils.join(new String[]{chartOfAccountsCode, accountNumber}, "-");
+                KualiDecimal totalAmount = accountExpenditureAmounts.getOrDefault(accountKey, KualiDecimal.ZERO);
+
+                if (invAcctD.getTotalPreviouslyBilled().isZero()) {
+                    KualiDecimal previouslyBilledAmount = getPredeterminedBillingBilledToDateAmount(proposalNumber,
+                            chartOfAccountsCode, accountNumber);
+                    previouslyBilledAmount = previouslyBilledAmount.add(
+                            getMilestonesBilledToDateAmount(proposalNumber, chartOfAccountsCode, accountNumber));
+
+                    final KualiDecimal totalBilledAmount = accountTotalBilledAmounts.getOrDefault(accountKey,
+                            KualiDecimal.ZERO);
+
+                    previouslyBilledAmount = previouslyBilledAmount.subtract(totalBilledAmount);
+                    if (previouslyBilledAmount.isGreaterThan(KualiDecimal.ZERO)) {
+                        totalAmount = totalAmount.subtract(previouslyBilledAmount);
+                    }
+                }
+
+                final CustomerInvoiceDetail cide = createSourceAccountingLineBackported(contractsGrantsInvoiceDocument,
+                        chartOfAccountsCode,
+                        accountNumber,
+                        subFundGroup,
+                        totalAmount,
+                        sequenceNumber
+                );
+                awardAccountingLines.add(cide);
+            }
+        }
+        return awardAccountingLines;
+    }
+
 
     protected CustomerInvoiceDetail createSourceAccountingLineBackported(
             final ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument,
