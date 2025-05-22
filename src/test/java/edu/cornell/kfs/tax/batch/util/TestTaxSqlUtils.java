@@ -7,9 +7,7 @@ public final class TestTaxSqlUtils {
 
     public static final class TableNames {
         public static final String TX_TRANSACTION_DETAIL_T = "KFS.TX_TRANSACTION_DETAIL_T";
-        public static final String TX_TRANSACTION_DETAIL_T_CSV = "KFS.TX_TRANSACTION_DETAIL_T_CSV";
         public static final String PUR_VNDR_HDR_T = "KFS.PUR_VNDR_HDR_T";
-        public static final String PUR_VNDR_HDR_T_CSV = "KFS.PUR_VNDR_HDR_T_CSV";
         public static final String PUR_VNDR_DTL_T = "KFS.PUR_VNDR_DTL_T";
         public static final String PUR_VNDR_ADDR_T = "KFS.PUR_VNDR_ADDR_T";
         public static final String KRNS_NTE_T = "KFS.KRNS_NTE_T";
@@ -22,19 +20,8 @@ public final class TestTaxSqlUtils {
     }
 
     public static void createTransactionDetailTable(final TestDataHelperDao testDataHelperDao) {
-        createTransactionDetailTable(testDataHelperDao, false);
-    }
-
-    public static void createTransactionDetailTableForLoadingCsvData(final TestDataHelperDao testDataHelperDao) {
-        createTransactionDetailTable(testDataHelperDao, true);
-    }
-
-    private static void createTransactionDetailTable(final TestDataHelperDao testDataHelperDao,
-            final boolean forCsv) {
-        final String tableName = forCsv ? TableNames.TX_TRANSACTION_DETAIL_T_CSV : TableNames.TX_TRANSACTION_DETAIL_T;
-        final String tableType = forCsv ? "TEXT TABLE " : "TABLE ";
         final CuSqlQuery tableCreationQuery = CuSqlQuery.of(
-                "CREATE ", tableType, tableName, " (",
+                "CREATE TEXT TABLE ", TableNames.TX_TRANSACTION_DETAIL_T, " (",
                         "IRS_1099_1042S_DETAIL_ID VARCHAR2(40 BYTE) NOT NULL, ",
                         "REPORT_YEAR NUMBER(4, 0), ",
                         "FDOC_NBR VARCHAR2(14 BYTE), ",
@@ -95,29 +82,16 @@ public final class TestTaxSqlUtils {
                 ")"
         );
 
-        testDataHelperDao.execute(tableCreationQuery);
-
-        if (!forCsv) {
-            final CuSqlQuery primaryKeyQuery = CuSqlQuery.of("ALTER TABLE ", tableName,
+            final CuSqlQuery primaryKeyQuery = CuSqlQuery.of("ALTER TABLE ", TableNames.TX_TRANSACTION_DETAIL_T,
                     " ADD CONSTRAINT TX_TRANSACTION_DETAIL_TP1 PRIMARY KEY (IRS_1099_1042S_DETAIL_ID)");
-            testDataHelperDao.execute(primaryKeyQuery);
-        }
+
+        testDataHelperDao.execute(tableCreationQuery);
+        testDataHelperDao.execute(primaryKeyQuery);
     }
 
     public static void createAbridgedVendorHeaderTable(final TestDataHelperDao testDataHelperDao) {
-        createAbridgedVendorHeaderTable(testDataHelperDao, false);
-    }
-
-    public static void createAbridgedVendorHeaderTableForLoadingCsvData(final TestDataHelperDao testDataHelperDao) {
-        createAbridgedVendorHeaderTable(testDataHelperDao, true);
-    }
-
-    public static void createAbridgedVendorHeaderTable(final TestDataHelperDao testDataHelperDao,
-            final boolean forCsv) {
-        final String tableName = forCsv ? TableNames.PUR_VNDR_HDR_T_CSV : TableNames.PUR_VNDR_HDR_T;
-        final String tableType = forCsv ? "TEXT TABLE " : "TABLE ";
         final CuSqlQuery tableCreationQuery = CuSqlQuery.of(
-                "CREATE ", tableType, tableName, " (",
+                "CREATE TEXT TABLE ", TableNames.PUR_VNDR_HDR_T, " (",
                         "VNDR_HDR_GNRTD_ID NUMBER(10,0) NOT NULL, ",
                         "VNDR_TYP_CD VARCHAR2(4 BYTE) NOT NULL, ",
                         "VNDR_US_TAX_NBR VARCHAR2(255 BYTE), ",
@@ -129,13 +103,11 @@ public final class TestTaxSqlUtils {
                 ")"
         );
 
-        testDataHelperDao.execute(tableCreationQuery);
-
-        if (!forCsv) {
-            final CuSqlQuery primaryKeyQuery = CuSqlQuery.of("ALTER TABLE ", TableNames.PUR_VNDR_HDR_T,
+        final CuSqlQuery primaryKeyQuery = CuSqlQuery.of("ALTER TABLE ", TableNames.PUR_VNDR_HDR_T,
                     " ADD CONSTRAINT PUR_VNDR_HDR_TP1 PRIMARY KEY (VNDR_HDR_GNRTD_ID)");
-            testDataHelperDao.execute(primaryKeyQuery);
-        }
+
+        testDataHelperDao.execute(tableCreationQuery);
+        testDataHelperDao.execute(primaryKeyQuery);
     }
 
     public static void createAbridgedVendorDetailTable(final TestDataHelperDao testDataHelperDao) {

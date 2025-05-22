@@ -44,7 +44,6 @@ public class TaxDtoRowMapperImpl<T> implements TaxDtoRowMapper<T> {
     private final EncryptionService encryptionService;
     private final TaxDtoDbMetadata metadata;
     private final ResultSet resultSet;
-    private final boolean allowsUpdates;
 
     public TaxDtoRowMapperImpl(final Supplier<T> dtoConstructor, final EncryptionService encryptionService,
             final TaxDtoDbMetadata metadata, final ResultSet resultSet) throws SQLException {
@@ -56,7 +55,6 @@ public class TaxDtoRowMapperImpl<T> implements TaxDtoRowMapper<T> {
         this.encryptionService = encryptionService;
         this.metadata = metadata;
         this.resultSet = resultSet;
-        this.allowsUpdates = resultSet.getConcurrency() == ResultSet.CONCUR_UPDATABLE;
     }
 
     @Override
@@ -81,26 +79,6 @@ public class TaxDtoRowMapperImpl<T> implements TaxDtoRowMapper<T> {
         }
 
         return dto;
-    }
-
-    @Override
-    public void updateStringFieldsOnCurrentRow(final Object dtoContainingUpdates,
-            final TaxDtoFieldEnum... fieldsToUpdate) throws SQLException {
-        if (!allowsUpdates) {
-            throw new UnsupportedOperationException("This mapper does not support updates");
-        }
-
-        final BeanWrapper wrappedDto = PropertyAccessorFactory.forBeanPropertyAccess(dtoContainingUpdates);
-        final Class<? extends TaxDtoFieldEnum> fieldEnumClass = metadata.getFieldEnumClass();
-
-        for (final TaxDtoFieldEnum fieldToUpdate : fieldsToUpdate) {
-            Validate.isTrue(fieldEnumClass.isAssignableFrom(fieldToUpdate.getClass()),
-                    "%s is not a constant from the enum %s", fieldToUpdate, fieldEnumClass);
-            final Object value = wrappedDto.getPropertyValue(fieldToUpdate.getFieldName());
-            updateString(fieldToUpdate, (String) value);
-        }
-
-        resultSet.updateRow();
     }
 
     private String getColumnAlias(final TaxDtoFieldEnum fieldDefinition) {
@@ -152,10 +130,6 @@ public class TaxDtoRowMapperImpl<T> implements TaxDtoRowMapper<T> {
     private KualiInteger getKualiInteger(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
         final Long value = getLong(fieldDefinition);
         return (value != null) ? new KualiInteger(value) : null;
-    }
-
-    private void updateString(final TaxDtoFieldEnum fieldDefinition, final String value) throws SQLException {
-        resultSet.updateString(getColumnAlias(fieldDefinition), value);
     }
 
 }

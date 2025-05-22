@@ -30,7 +30,6 @@ import edu.cornell.kfs.tax.batch.TaxBatchConfig.Mode;
 import edu.cornell.kfs.tax.batch.TaxStatistics;
 import edu.cornell.kfs.tax.batch.service.TaxFileGenerationService;
 import edu.cornell.kfs.tax.batch.util.TestTaxSqlUtils;
-import edu.cornell.kfs.tax.batch.util.TestTaxSqlUtils.ColumnNames;
 import edu.cornell.kfs.tax.batch.util.TestTaxSqlUtils.TableNames;
 import edu.cornell.kfs.tax.service.TransactionOverrideService;
 import edu.cornell.kfs.tax.util.TaxParameterUtils;
@@ -65,9 +64,7 @@ public class TaxFileGenerationServiceSprintaxImplTest {
     static void performFirstTimeInitialization() throws Exception {
         final TestDataHelperDao helperDao = getTestDataHelperDao();
         TestTaxSqlUtils.createTransactionDetailTable(helperDao);
-        TestTaxSqlUtils.createTransactionDetailTableForLoadingCsvData(helperDao);
         TestTaxSqlUtils.createAbridgedVendorHeaderTable(helperDao);
-        TestTaxSqlUtils.createAbridgedVendorHeaderTableForLoadingCsvData(helperDao);
         TestTaxSqlUtils.createAbridgedVendorDetailTable(helperDao);
         TestTaxSqlUtils.createAbridgedVendorAddressTable(helperDao);
         TestTaxSqlUtils.createAbridgedNoteTable(helperDao);
@@ -110,16 +107,12 @@ public class TaxFileGenerationServiceSprintaxImplTest {
 
     private void resetDatabaseTables() throws Exception {
         testDataHelperDao.disconnectTablesFromCsvFiles(List.of(
-                TableNames.TX_TRANSACTION_DETAIL_T_CSV,
-                TableNames.PUR_VNDR_HDR_T_CSV,
+                TableNames.TX_TRANSACTION_DETAIL_T,
+                TableNames.PUR_VNDR_HDR_T,
                 TableNames.PUR_VNDR_DTL_T,
                 TableNames.PUR_VNDR_ADDR_T,
                 TableNames.KRNS_NTE_T,
                 TableNames.FS_DOC_HEADER_T
-        ));
-        testDataHelperDao.truncateTables(List.of(
-                TableNames.TX_TRANSACTION_DETAIL_T,
-                TableNames.PUR_VNDR_HDR_T
         ));
     }
 
@@ -182,10 +175,6 @@ public class TaxFileGenerationServiceSprintaxImplTest {
         final String fullSourceFilePath = TEST_CASE_BASE_DIRECTORY + testCase.sourceFileName;
         testDataHelperDao.splitAndConnectCsvFileToDatabase(fullSourceFilePath);
         testDataHelperDao.forciblyCommitTransaction();
-        testDataHelperDao.forciblyEncryptColumns(
-                TableNames.TX_TRANSACTION_DETAIL_T, List.of(ColumnNames.VENDOR_TAX_NBR));
-        testDataHelperDao.forciblyEncryptColumns(
-                TableNames.PUR_VNDR_HDR_T, List.of(ColumnNames.VNDR_US_TAX_NBR));
     }
 
     private TaxBatchConfig buildTaxBatchConfigFor1042S() {

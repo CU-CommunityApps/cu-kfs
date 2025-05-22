@@ -7,21 +7,29 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.sql.Types;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.kuali.kfs.core.api.encryption.EncryptionService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.jdbc.core.ColumnMapRowMapper;
 
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSConstants.FileExtensions;
 import edu.cornell.kfs.sys.batch.CuBatchFileUtils;
 import edu.cornell.kfs.sys.dataaccess.TestDataHelperDao;
+import edu.cornell.kfs.sys.util.CuSqlChunk;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
 import edu.cornell.kfs.sys.util.CuSqlQueryPlatformAwareDaoBaseJdbc;
 import edu.cornell.kfs.sys.util.FileBasedDatabaseHelper;
@@ -32,8 +40,8 @@ public class TestDataHelperDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdb
     private static final String TEMP_FILES_SUB_FOLDER = "tempfiles/";
     private static final String CSV_CHUNK_START_MARKER_PREFIX = "<<<<START ";
     private static final String CSV_CHUNK_START_MARKER_SUFFIX = ">>>>";
-    private static final String CSV_CHUNK_COPY_MARKER_PREFIX = "[[[[COPY TO ";
-    private static final String CSV_CHUNK_COPY_MARKER_SUFFIX = "]]]]";
+    private static final String CSV_CHUNK_ENCRYPT_MARKER_PREFIX = "[[[[ENCRYPT ";
+    private static final String CSV_CHUNK_ENCRYPT_MARKER_SUFFIX = "]]]]";
     private static final String CSV_CHUNK_END_MARKER = "<<<<END>>>>";
     private static final Pattern FILENAME_CHARS_TO_REPLACE = Pattern.compile("[\\.\\-]");
     private static final Pattern DISALLOWED_NAME_CHARS = Pattern.compile("[^\\w\\.]");
@@ -111,8 +119,8 @@ public class TestDataHelperDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdb
                     }
                 } else if (StringUtils.equals(fileLine, CSV_CHUNK_END_MARKER)) {
                     copyAndConnectCsvFileChunkToDatabase(fileName, csvChunk.tableName, csvChunk.csvContent);
-                    if (StringUtils.isNotBlank(csvChunk.copyTableName)) {
-                        copyTableContents(csvChunk.tableName, csvChunk.copyTableName);
+                    if (!csvChunk.columnsToEncrypt.isEmpty()) {
+                        forciblyEncryptColumns(csvChunk.tableName, csvChunk.columnsToEncrypt);
                     }
                     csvChunk = null;
                 } else {
@@ -128,14 +136,14 @@ public class TestDataHelperDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdb
     private CsvChunk initializeCsvChunkTracker(final String csvMarkerLine) {
         final String tableName = StringUtils.substringBetween(csvMarkerLine, CSV_CHUNK_START_MARKER_PREFIX,
                 CSV_CHUNK_START_MARKER_SUFFIX);
-        final String copyTableName;
-        if (StringUtils.contains(csvMarkerLine, CSV_CHUNK_COPY_MARKER_PREFIX)) {
-            copyTableName = StringUtils.substringBetween(csvMarkerLine,
-                    CSV_CHUNK_COPY_MARKER_PREFIX, CSV_CHUNK_COPY_MARKER_SUFFIX);
+        if (StringUtils.contains(csvMarkerLine, CSV_CHUNK_ENCRYPT_MARKER_PREFIX)) {
+            final String commaSeparatedColumnsToEncrypt = StringUtils.substringBetween(csvMarkerLine,
+                    CSV_CHUNK_ENCRYPT_MARKER_PREFIX, CSV_CHUNK_ENCRYPT_MARKER_SUFFIX);
+            final String[] columnsToEncrypt = StringUtils.split(commaSeparatedColumnsToEncrypt, KFSConstants.COMMA);
+            return new CsvChunk(tableName, columnsToEncrypt);
         } else {
-            copyTableName = KFSConstants.EMPTY_STRING;
+            return new CsvChunk(tableName);
         }
-        return new CsvChunk(tableName, copyTableName);
     }
 
     private void copyAndConnectCsvFileChunkToDatabase(final String fileName, final String tableName,
@@ -201,32 +209,78 @@ public class TestDataHelperDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdb
 
     @Override
     public void forciblyEncryptColumns(final String tableName, final List<String> columnNames) {
+        Validate.notBlank(tableName, "tableName cannot be blank");
+        Validate.isTrue(CollectionUtils.isNotEmpty(columnNames), "columnNames cannot be null or empty");
+
         final String cleanedTableName = cleanName(tableName);
-        final String[] cleanedColumnNames = columnNames.stream()
+        final List<String> keyColumnNames = getPrimaryKeyColumns(cleanedTableName);
+        final List<String> columnsToEncrypt = columnNames.stream()
                 .map(this::cleanName)
-                .toArray(String[]::new);
+                .collect(Collectors.toUnmodifiableList());
 
-        /*executeUpdate(CuSqlQuery.of(
-            "MERGE INTO KFS.TX_TRANSACTION_DETAIL_T TBL1 USING (",
-                    "SELECT IRS_1099_1042S_DETAIL_ID, 'AA' \"DOC_TYPE\" FROM KFS.TX_TRANSACTION_DETAIL_T",
-            ") TBL2 ",
-            "ON (TBL1.IRS_1099_1042S_DETAIL_ID = TBL2.IRS_1099_1042S_DETAIL_ID) ",
-            "WHEN MATCHED THEN UPDATE SET TBL1.DOC_TYPE = TBL2.DOC_TYPE"
-        ));*/
+        Validate.validState(!keyColumnNames.isEmpty(), "Could not find primary key columns for %s", tableName);
 
-        final CuSqlQuery query = CuSqlQuery.of("SELECT TBL1.* FROM ", cleanedTableName, " TBL1");
+        final String columnsToSelect = Stream.of(keyColumnNames, columnsToEncrypt)
+                .flatMap(List::stream)
+                .collect(Collectors.joining(CUKFSConstants.COMMA_AND_SPACE));
 
-        queryForUpdatableResults(query, resultSet -> {
-            while (resultSet.next()) {
-                for (final String columnName : cleanedColumnNames) {
-                    final String oldValue = resultSet.getString(columnName);
-                    final String newValue = encrypt(oldValue);
-                    resultSet.updateString(columnName, newValue);
-                }
-                resultSet.updateRow();
+        final CuSqlQuery dataSelectionQuery = CuSqlQuery.of(
+                "SELECT ", columnsToSelect, " FROM ", cleanedTableName);
+        final List<Map<String, Object>> results = queryForValues(dataSelectionQuery, new ColumnMapRowMapper());
+
+        final CuSqlQuery dataUpdateQuery = createBatchUpdateQueryForEncryptingColumns(
+                cleanedTableName, keyColumnNames, columnsToEncrypt);
+        executeBatchUpdate(dataUpdateQuery, results);
+    }
+
+    private List<String> getPrimaryKeyColumns(final String cleanedTableName) {
+        final String schemaName = StringUtils.substringBefore(cleanedTableName, KFSConstants.DELIMITER);
+        final String simpleTableName = StringUtils.substringAfter(cleanedTableName, KFSConstants.DELIMITER);
+        final CuSqlQuery query = new CuSqlChunk()
+                .append("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ")
+                .append("WHERE TABLE_SCHEMA = ").appendAsParameter(schemaName)
+                .append(" AND TABLE_NAME = ").appendAsParameter(simpleTableName)
+                .append(" AND CONSTRAINT_NAME LIKE ").appendAsParameter("%TP1")
+                .toQuery();
+
+        return queryForValues(query, (rs, rowNum) -> rs.getString(1));
+    }
+
+    private CuSqlQuery createBatchUpdateQueryForEncryptingColumns(final String cleanedTableName,
+            final List<String> keyColumnNames, final List<String> columnsToEncrypt) {
+        final CuSqlChunk dataUpdateQuery = new CuSqlChunk()
+                .append("UPDATE ").append(cleanedTableName).append(" SET ");
+
+        int i = 0;
+        for (final String columnToEncrypt : columnsToEncrypt) {
+            if (i > 0) {
+                dataUpdateQuery.append(CUKFSConstants.COMMA_AND_SPACE);
             }
-            return null;
-        });
+            dataUpdateQuery.append(columnToEncrypt).append(" = ")
+                    .appendAsParameter(Types.VARCHAR, createColumnEncrypterFunction(columnToEncrypt));
+            i++;
+        }
+
+        dataUpdateQuery.append(" WHERE ");
+        i = 0;
+        for (final String keyColumnName : keyColumnNames) {
+            if (i > 0) {
+                dataUpdateQuery.append(" AND ");
+            }
+            dataUpdateQuery.append(keyColumnName).append(" = ")
+                    .appendAsParameter(Types.VARCHAR, createColumnRetrieverFunction(keyColumnName));
+            i++;
+        }
+
+        return dataUpdateQuery.toQuery();
+    }
+
+    private Function<Map<String, Object>, Object> createColumnRetrieverFunction(final String columnName) {
+        return resultRow -> resultRow.get(columnName);
+    }
+
+    private Function<Map<String, Object>, Object> createColumnEncrypterFunction(final String columnName) {
+        return resultRow -> encrypt((String) resultRow.get(columnName));
     }
 
     private String encrypt(final String value) {
@@ -263,12 +317,12 @@ public class TestDataHelperDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdb
     private static final class CsvChunk {
         public final StringBuilder csvContent;
         public final String tableName;
-        public final String copyTableName;
+        public final List<String> columnsToEncrypt;
 
-        public CsvChunk(final String tableName, final String copyTableName) {
+        public CsvChunk(final String tableName, final String... columnsToEncrypt) {
             this.csvContent = new StringBuilder(1000);
             this.tableName = tableName;
-            this.copyTableName = copyTableName;
+            this.columnsToEncrypt = List.of(columnsToEncrypt);
         }
     }
 
