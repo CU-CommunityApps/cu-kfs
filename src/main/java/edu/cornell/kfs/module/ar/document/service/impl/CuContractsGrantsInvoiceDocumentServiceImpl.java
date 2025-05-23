@@ -3,6 +3,7 @@ package edu.cornell.kfs.module.ar.document.service.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceObjectCode;
+import org.kuali.kfs.module.cg.businessobject.AwardAccount;
 import org.kuali.kfs.module.cg.businessobject.AwardInvoicingOptionTypes;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -42,6 +45,145 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrantsInvoiceDocumentServiceImpl implements CuContractsGrantsInvoiceDocumentService {
     private static final Logger LOG = LogManager.getLogger();
+
+    /*
+     * CUMod: KFSPTS-34685 Partial Backport of FINP-10379 set CustomerInvoiceDetail.PostingYear
+     * These changes should be able to be removed after upgrading to the 2023-11-15 version of financials
+     * ALSO see the already customized createSourceAccountingLinesByContractControlAccount method
+     */
+    @Override
+    public void createSourceAccountingLines(
+            final ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument,
+            final List<AwardAccount> awardAccounts) {
+        // To check if the Source accounting lines are existing. If they are do nothing
+        if (CollectionUtils.isEmpty(contractsGrantsInvoiceDocument.getSourceAccountingLines())) {
+            final Award award = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAward();
+
+            if (ObjectUtils.isNotNull(award)) {
+                if (StringUtils.equalsIgnoreCase(award.getInvoicingOptionCode(), ArConstants.INV_ACCOUNT)
+                        || StringUtils.equalsIgnoreCase(award.getInvoicingOptionCode(), ArConstants.INV_SCHEDULE)) {
+                    // If its bill by Account or Schedule, irrespective of it is by contract control account,
+                    // there would be a single source accounting line with award account specified by the user.
+                    final CustomerInvoiceDetail cide = createSourceAccountingLineBackport(
+                            contractsGrantsInvoiceDocument,
+                            awardAccounts.get(0).getChartOfAccountsCode(),
+                            awardAccounts.get(0).getAccountNumber(),
+                            awardAccounts.get(0).getAccount().getSubFundGroup(),
+                            getTotalAmountForInvoice(contractsGrantsInvoiceDocument),
+                            1
+                    );
+                    contractsGrantsInvoiceDocument.getSourceAccountingLines().add(cide);
+                } else if (StringUtils.equalsIgnoreCase(award.getInvoicingOptionCode(),
+                        ArConstants.INV_CONTRACT_CONTROL_ACCOUNT)) {
+                    final List<InvoiceAccountDetail> accountDetails =
+                            contractsGrantsInvoiceDocument.getAccountDetails();
+                    // If there are no account details, that means there weren't any billable accounts, and we shouldn't
+                    // try to create an accounting line as that would throw an exception and lead to trouble.
+                    if (CollectionUtils.isNotEmpty(accountDetails)) {
+                        // If its bill by Contract Control Account there would be a single source accounting line.
+                        final CustomerInvoiceDetail cide =
+                                createSourceAccountingLinesByContractControlAccount(contractsGrantsInvoiceDocument);
+                        contractsGrantsInvoiceDocument.getSourceAccountingLines().add(cide);
+                    }
+                } else {
+                    // by award
+                    final List<CustomerInvoiceDetail> awardAccountingLines = createSourceAccountingLinesByAward(
+                            contractsGrantsInvoiceDocument);
+                    contractsGrantsInvoiceDocument.getSourceAccountingLines().addAll(awardAccountingLines);
+                }
+            }
+        }
+    }
+
+    @Override
+    protected List<CustomerInvoiceDetail> createSourceAccountingLinesByAward(
+            final ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
+        final List<CustomerInvoiceDetail> awardAccountingLines = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(contractsGrantsInvoiceDocument.getAccountDetails())) {
+            final Map<String, KualiDecimal> accountExpenditureAmounts = getCategoryExpenditureAmountsForInvoiceAccountDetail(
+                    contractsGrantsInvoiceDocument);
+            final Map<String, KualiDecimal> accountTotalBilledAmounts = getCategoryTotalBilledAmountsForInvoiceAccountDetail(
+                    contractsGrantsInvoiceDocument);
+            for (final InvoiceAccountDetail invAcctD : contractsGrantsInvoiceDocument.getAccountDetails()) {
+                final String proposalNumber = invAcctD.getProposalNumber();
+                final String chartOfAccountsCode = invAcctD.getChartOfAccountsCode();
+                final String accountNumber = invAcctD.getAccountNumber();
+                if (invAcctD.getAccount() == null) {
+                    invAcctD.refreshReferenceObject(KFSPropertyConstants.ACCOUNT);
+                }
+                final SubFundGroup subFundGroup = invAcctD.getAccount().getSubFundGroup();
+                final Integer sequenceNumber = contractsGrantsInvoiceDocument.getAccountDetails().indexOf(invAcctD) + 1;
+
+                final String accountKey = StringUtils.join(new String[]{chartOfAccountsCode, accountNumber}, "-");
+                KualiDecimal totalAmount = accountExpenditureAmounts.getOrDefault(accountKey, KualiDecimal.ZERO);
+
+                if (invAcctD.getTotalPreviouslyBilled().isZero()) {
+                    KualiDecimal previouslyBilledAmount = getPredeterminedBillingBilledToDateAmount(proposalNumber,
+                            chartOfAccountsCode, accountNumber);
+                    previouslyBilledAmount = previouslyBilledAmount.add(
+                            getMilestonesBilledToDateAmount(proposalNumber, chartOfAccountsCode, accountNumber));
+
+                    final KualiDecimal totalBilledAmount = accountTotalBilledAmounts.getOrDefault(accountKey,
+                            KualiDecimal.ZERO);
+
+                    previouslyBilledAmount = previouslyBilledAmount.subtract(totalBilledAmount);
+                    if (previouslyBilledAmount.isGreaterThan(KualiDecimal.ZERO)) {
+                        totalAmount = totalAmount.subtract(previouslyBilledAmount);
+                    }
+                }
+
+                final CustomerInvoiceDetail cide = createSourceAccountingLineBackport(contractsGrantsInvoiceDocument,
+                        chartOfAccountsCode,
+                        accountNumber,
+                        subFundGroup,
+                        totalAmount,
+                        sequenceNumber
+                );
+                awardAccountingLines.add(cide);
+            }
+        }
+        return awardAccountingLines;
+    }
+
+    // This method should be able to be removed when upgrading to the 2023-11-15 version of financials
+    protected CustomerInvoiceDetail createSourceAccountingLineBackport(
+            final ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument,
+            final String coaCode,
+            final String acctNum,
+            final SubFundGroup subFundGroup,
+            final KualiDecimal totalAmount,
+            final Integer seqNum
+    ) {
+        final CustomerInvoiceDetail cid = new CustomerInvoiceDetail();
+        cid.setPostingYear(contractsGrantsInvoiceDocument.getPostingYear());
+        cid.setDocumentNumber(contractsGrantsInvoiceDocument.getDocumentNumber());
+
+        cid.setAccountNumber(acctNum);
+        cid.setChartOfAccountsCode(coaCode);
+
+        final ContractsGrantsInvoiceObjectCode cgbiObjectCode = contractGrantsInvoiceObjectCodeForSubFundGroup(subFundGroup,
+                coaCode);
+        if (cgbiObjectCode != null) {
+            cid.setFinancialObjectCode(cgbiObjectCode.getIncomeFinancialObjectCode());
+            // To get AR Object codes for the GLPEs .... as it is not being called implicitly.
+            cid.setAccountsReceivableObjectCode(cgbiObjectCode.getReceivableFinancialObjectCode());
+        }
+
+        cid.setSequenceNumber(seqNum);
+        cid.setInvoiceItemQuantity(BigDecimal.ONE);
+        cid.setInvoiceItemUnitOfMeasureCode(ArConstants.CUSTOMER_INVOICE_DETAIL_UOM_DEFAULT);
+
+        cid.setInvoiceItemUnitPrice(totalAmount);
+        cid.setAmount(totalAmount);
+        if (totalAmount.isNegative()) {
+            cid.setInvoiceItemDiscountLineNumber(seqNum);
+        }
+        return cid;
+    }
+
+    /*
+     * End CUMod: KFSPTS-34685 Backport FINP-10379
+     */
 
     /**
      * Add institution specific parameters to the template parameters
@@ -308,8 +450,16 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
             }
         }
 
-        return createSourceAccountingLine(contractsGrantsInvoiceDocument.getDocumentNumber(),
-                coaCode, accountNumber, subFundGroup, getTotalAmountForInvoice(contractsGrantsInvoiceDocument), 1);
+        // CUMod: KFSPTS-34685 modified to use createSourceAccountingLineBackport instead of createSourceAccountingLine
+        // This should be fixed with the 2023-11-15 KualiCo upgrade
+        return createSourceAccountingLineBackport(
+                contractsGrantsInvoiceDocument,
+                coaCode,
+                accountNumber,
+                subFundGroup,
+                getTotalAmountForInvoice(contractsGrantsInvoiceDocument),
+                1
+        );
     }
 
     /*
