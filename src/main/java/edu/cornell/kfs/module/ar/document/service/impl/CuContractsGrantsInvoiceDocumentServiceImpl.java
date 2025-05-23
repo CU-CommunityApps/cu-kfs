@@ -49,8 +49,8 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
     /*
      * CUMod: KFSPTS-34685 Partial Backport of FINP-10379 set CustomerInvoiceDetail.PostingYear
      * These changes should be able to be removed after upgrading to the 2023-11-15 version of financials
+     * ALSO see the already customized createSourceAccountingLinesByContractControlAccount method
      */
-
     @Override
     public void createSourceAccountingLines(
             final ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument,
@@ -145,7 +145,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         return awardAccountingLines;
     }
 
-
+    // This method should be able to be removed when upgrading to the 2023-11-15 version of financials
     protected CustomerInvoiceDetail createSourceAccountingLineBackport(
             final ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument,
             final String coaCode,
@@ -450,8 +450,16 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
             }
         }
 
-        return createSourceAccountingLine(contractsGrantsInvoiceDocument.getDocumentNumber(),
-                coaCode, accountNumber, subFundGroup, getTotalAmountForInvoice(contractsGrantsInvoiceDocument), 1);
+        // CUMod: KFSPTS-34685 modified to use createSourceAccountingLineBackport instead of createSourceAccountingLine
+        // This should be fixed with the 2023-11-15 KualiCo upgrade
+        return createSourceAccountingLineBackport(
+                contractsGrantsInvoiceDocument,
+                coaCode,
+                accountNumber,
+                subFundGroup,
+                getTotalAmountForInvoice(contractsGrantsInvoiceDocument),
+                1
+        );
     }
 
     /*
