@@ -33,7 +33,7 @@ public final class MockConcurUtils {
         }
 
         if (MapUtils.isNotEmpty(booleanParameterMap)) {
-            Mockito.when(mockService.getConcurParameterBooleanValue(Mockito.any()))
+            Mockito.when(mockService.isConcurParameterEnabled(Mockito.any()))
                     .then(invocation -> booleanParameterMap.get(invocation.getArgument(0)));
         }
         return mockService;

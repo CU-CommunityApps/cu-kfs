@@ -8,7 +8,6 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.Environment;
-import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.util.UrlFactory;
@@ -221,9 +220,8 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
     
     private boolean isAccountDetailMessagesEnabled() {
-        boolean isDetailsEnabled = concurBatchUtilityService
-                .getConcurParameterBooleanValue(ConcurParameterConstants.ENABLE_ACCOUNT_DETAIL_MESSAGES_TO_CONCUR);
-        return isDetailsEnabled;
+        return concurBatchUtilityService
+                .isConcurParameterEnabled(ConcurParameterConstants.ENABLE_ACCOUNT_DETAIL_MESSAGES_TO_CONCUR);
     }
     
     protected String buildFullUrlForExpenseWorkflowAction(String reportId, String workflowAction) {
