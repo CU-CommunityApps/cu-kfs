@@ -8,7 +8,6 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.Environment;
-import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.util.UrlFactory;
@@ -174,8 +173,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         ConcurWebRequest<Void> webRequest = buildWebRequestForExpenseWorkflowAction(
                 workflowAction, reportId, resultsDTO);
         
-        concurEventNotificationWebApiService.callConcurEndpoint(accessToken, webRequest, logMessageDetail);  
-
+        concurEventNotificationWebApiService.callConcurEndpoint(accessToken, webRequest, logMessageDetail);
     }
     
     protected boolean shouldUpdateStatusInConcur() {
@@ -198,7 +196,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
             ConcurEventNotificationResponse resultsDTO) {
         
         String workflowComment = StringUtils.equals(workflowAction, ConcurWorkflowActions.APPROVE)
-                ? ConcurUtils.buildDetailMessageForWorkflowAction(resultsDTO)
+                ? buildAccountDetailMessage(resultsDTO)
                 : ConcurUtils.buildValidationErrorMessageForWorkflowAction(resultsDTO);
         LOG.debug("buildWebRequestForExpenseWorkflowAction, for reportId {}, the workflowComment is {}", reportId, workflowComment);
         ConcurV4WorkflowDTO workflowDTO = new ConcurV4WorkflowDTO(workflowComment);
@@ -209,6 +207,21 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
                 .withHttpMethod(HttpMethod.PATCH)
                 .withJsonBody(workflowDTO)
                 .build();
+    }
+
+    private String buildAccountDetailMessage(ConcurEventNotificationResponse resultsDTO) {
+        if (isAccountDetailMessagesEnabled()) {
+            LOG.debug("buildAccountDetailMessage, account details messages are enabled");
+            return ConcurUtils.buildDetailMessageForWorkflowAction(resultsDTO);
+        } else {
+            LOG.debug("buildAccountDetailMessage, account details messages are disabled, returning empty string");
+            return StringUtils.EMPTY;
+        }
+    }
+    
+    private boolean isAccountDetailMessagesEnabled() {
+        return concurBatchUtilityService
+                .isConcurParameterEnabled(ConcurParameterConstants.ENABLE_ACCOUNT_DETAIL_MESSAGES_TO_CONCUR);
     }
     
     protected String buildFullUrlForExpenseWorkflowAction(String reportId, String workflowAction) {
