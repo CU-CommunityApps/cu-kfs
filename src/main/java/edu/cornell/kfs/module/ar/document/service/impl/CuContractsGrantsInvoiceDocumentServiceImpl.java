@@ -50,6 +50,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
      * CUMod: KFSPTS-34685 Partial Backport of FINP-10379 set CustomerInvoiceDetail.PostingYear
      * These changes should be able to be removed after upgrading to the 2023-11-15 version of financials
      */
+
     @Override
     public void createSourceAccountingLines(
             final ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument,
@@ -63,7 +64,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                         || StringUtils.equalsIgnoreCase(award.getInvoicingOptionCode(), ArConstants.INV_SCHEDULE)) {
                     // If its bill by Account or Schedule, irrespective of it is by contract control account,
                     // there would be a single source accounting line with award account specified by the user.
-                    final CustomerInvoiceDetail cide = createSourceAccountingLineBackported(
+                    final CustomerInvoiceDetail cide = createSourceAccountingLineBackport(
                             contractsGrantsInvoiceDocument,
                             awardAccounts.get(0).getChartOfAccountsCode(),
                             awardAccounts.get(0).getAccountNumber(),
@@ -71,8 +72,6 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                             getTotalAmountForInvoice(contractsGrantsInvoiceDocument),
                             1
                     );
-
-
                     contractsGrantsInvoiceDocument.getSourceAccountingLines().add(cide);
                 } else if (StringUtils.equalsIgnoreCase(award.getInvoicingOptionCode(),
                         ArConstants.INV_CONTRACT_CONTROL_ACCOUNT)) {
@@ -133,7 +132,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                     }
                 }
 
-                final CustomerInvoiceDetail cide = createSourceAccountingLineBackported(contractsGrantsInvoiceDocument,
+                final CustomerInvoiceDetail cide = createSourceAccountingLineBackport(contractsGrantsInvoiceDocument,
                         chartOfAccountsCode,
                         accountNumber,
                         subFundGroup,
@@ -147,7 +146,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
     }
 
 
-    protected CustomerInvoiceDetail createSourceAccountingLineBackported(
+    protected CustomerInvoiceDetail createSourceAccountingLineBackport(
             final ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument,
             final String coaCode,
             final String acctNum,
@@ -181,6 +180,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         }
         return cid;
     }
+
     /*
      * End CUMod: KFSPTS-34685 Backport FINP-10379
      */
