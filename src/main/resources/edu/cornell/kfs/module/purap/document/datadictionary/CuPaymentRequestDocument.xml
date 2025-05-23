@@ -10,15 +10,6 @@
           p:documentClass="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument"
           p:documentPresentationControllerClass="edu.cornell.kfs.module.purap.document.authorization.CuPaymentRequestDocumentPresentationController"
           p:promptBeforeValidationClass="edu.cornell.kfs.module.purap.document.validation.impl.CuPaymentRequestDocumentPreRules">
-        <property name="webScriptFiles">
-            <bean parent="commonWebScriptFiles">
-                <property name="sourceList">
-                    <list merge="true">
-                        <value>scripts/module/purap/preqInitUtils.js</value>
-                    </list>
-                </property>
-            </bean>
-        </property>
     </bean>
 
     <bean id="PaymentRequestDocument-bankCode" parent="PaymentRequestDocument-bankCode-parentBean"
