@@ -111,13 +111,15 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
     }
 
     private ConcurBatchUtilityService createMockConcurBatchUtilityService(String serverUrl) {
-        return MockConcurUtils.createMockConcurBatchUtilityServiceBackedByParameters(
+        ConcurBatchUtilityService utilService = MockConcurUtils.createMockConcurBatchUtilityServiceBackedByParameters(
                 Map.entry(ConcurParameterConstants.CONCUR_GEOLOCATION_URL, serverUrl),
                 Map.entry(ConcurParameterConstants.EXPENSE_V4_WORKFLOW_ENDPOINT,
                         ParameterTestValues.EXPENSE_V4_WORKFLOW_ENDPOINT),
                 Map.entry(ConcurParameterConstants.CONCUR_TEST_WORKFLOW_ACTIONS_ENABLED_IND,
                         KFSConstants.ACTIVE_INDICATOR),
-                Map.entry(ConcurParameterConstants.WEBSERVICE_MAX_RETRIES, String.valueOf(1)));
+                Map.entry(ConcurParameterConstants.WEBSERVICE_MAX_RETRIES, String.valueOf(1)),
+                Map.entry(ConcurParameterConstants.ENABLE_ACCOUNT_DETAIL_MESSAGES_TO_CONCUR, true));
+        return utilService;
     }
 
     private ConcurEventNotificationWebApiService createConcurEventNotificationWebApiService(

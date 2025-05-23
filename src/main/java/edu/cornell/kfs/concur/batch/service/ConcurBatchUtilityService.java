@@ -80,6 +80,8 @@ public interface ConcurBatchUtilityService {
      */
     String getConcurParameterValue(String parameterName);
     
+    boolean isConcurParameterEnabled(String parameterName);
+    
     /**
      * Sets the value of the given Concur-namespaced parameter.
      * 

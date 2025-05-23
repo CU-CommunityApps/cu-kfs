@@ -48,6 +48,13 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
     }
     
     @Override
+    public boolean isConcurParameterEnabled(String parameterName) {
+        boolean parameterValue = getParameterService().getParameterValueAsBoolean(
+                CUKFSConstants.ParameterNamespaces.CONCUR, CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
+        return parameterValue;
+    }
+    
+    @Override
     public void setConcurParameterValue(String parameterName, String parameterValue) {
         if (StringUtils.isBlank(parameterName)) {
             throw new IllegalArgumentException("parameterName cannot be blank");
