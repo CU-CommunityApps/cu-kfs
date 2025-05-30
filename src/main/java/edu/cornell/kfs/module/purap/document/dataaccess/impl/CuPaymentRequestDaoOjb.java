@@ -21,7 +21,6 @@ import org.kuali.kfs.module.purap.document.dataaccess.impl.PaymentRequestDaoOjb;
 import org.kuali.kfs.module.purap.util.VendorGroupingHelper;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
-import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 
 @SuppressWarnings("unchecked")
@@ -127,7 +126,7 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
             criteria.addEqualTo(KFSPropertyConstants.DOCUMENT_HEADER + "." + KFSPropertyConstants.APPLICATION_DOCUMENT_STATUS, applicationDocumentStatus);
         }
 
-        final QueryByCriteria query = QueryFactory.newQuery(PaymentRequestDocument.class, criteria);
+        final QueryByCriteria query = QueryFactory.newQuery(paymentRequestDocumentClass(), criteria);
 
         final int numOfPreqs = getPersistenceBrokerTemplate().getCount(query);
         return numOfPreqs;
@@ -140,7 +139,7 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
         crit.addEqualTo("documentNumber", documentNumber);
         
         // Prepare report query that only retrieves object ID.
-        final ReportQueryByCriteria reportQuery = QueryFactory.newReportQuery(PaymentRequestDocument.class, crit);
+        final ReportQueryByCriteria reportQuery = QueryFactory.newReportQuery(paymentRequestDocumentClass(), crit);
         reportQuery.setAttributes(new String[] {"objectId"});
         reportQuery.setJdbcTypes(new int[] {java.sql.Types.VARCHAR});
         
@@ -156,7 +155,7 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
     private Class<? extends Document> paymentRequestDocumentClass() {
         final Class<? extends Document> paymentRequestDocumentClass = dataDictionaryService.getDocumentClassByTypeName(
                 PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT);
-        return paymentRequestDocumentClass != null ? paymentRequestDocumentClass : CuPaymentRequestDocument.class;
+        return paymentRequestDocumentClass != null ? paymentRequestDocumentClass : PaymentRequestDocument.class;
     }
     
     public void setDataDictionaryService(final DataDictionaryService dataDictionaryService) {
