@@ -33,15 +33,15 @@ public class CorporateBilledCorporatePaidLoadFlatTransactionsServiceImplIntegTes
     
     public void testGoodAndBadDataLoadFileProcessing() {
         //Good Data Test
-        getUnitTestSqlDao().sqlCommand(CBCP_TRANSACTION_TABLE_SQL_DELETE_COMMAND);
+        getIntegTestSqlDao().sqlCommand(CBCP_TRANSACTION_TABLE_SQL_DELETE_COMMAND);
         assertTrue(procurementCardLoadFlatTransactionsService.loadProcurementCardFile(getStagingBatchDirectory() + GOOD_DATA_FILE_NAME_WITH_DATA_EXTENSION));
-        List summaryResults = getUnitTestSqlDao().sqlSelect(CBCP_TRANSACTION_TABLE_SQL_SELECT_COMMAND);
+        List summaryResults = getIntegTestSqlDao().sqlSelect(CBCP_TRANSACTION_TABLE_SQL_SELECT_COMMAND);
         assertEquals(1, summaryResults.size());
         LOG.info("testGoodAndBadDataLoadFileProcessing, Good CBCP file was successfully loaded.");
         
         //Bad Data Test
         try {
-            getUnitTestSqlDao().sqlCommand(CBCP_TRANSACTION_TABLE_SQL_DELETE_COMMAND);
+            getIntegTestSqlDao().sqlCommand(CBCP_TRANSACTION_TABLE_SQL_DELETE_COMMAND);
             assertFalse(procurementCardLoadFlatTransactionsService.loadProcurementCardFile(getStagingBatchDirectory() + BAD_DATA_FILE_NAME_WITH_DATA_EXTENSION));
         } catch (RuntimeException re) {
             LOG.info("testGoodAndBadDataLoadFileProcessing, Exception caught for CBCP bad data file: " + re.getMessage());

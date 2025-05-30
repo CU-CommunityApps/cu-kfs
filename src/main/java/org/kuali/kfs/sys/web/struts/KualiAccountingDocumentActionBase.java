@@ -1102,9 +1102,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
             final HttpServletResponse response) throws Exception {
         // parse out the business object name from our methodToCall parameter
-        final String fullParameter = (String) request.getAttribute(KFSConstants.METHOD_TO_CALL_ATTRIBUTE);
-        final String boClassName = StringUtils.substringBetween(fullParameter, KFSConstants.METHOD_TO_CALL_BOPARM_LEFT_DEL,
-                KFSConstants.METHOD_TO_CALL_BOPARM_RIGHT_DEL);
+        final String boClassName = extractLookupBusinessObjectClassName(request);
 
         if (!StringUtils.equals(boClassName, GeneralLedgerPendingEntry.class.getName())) {
             return super.performLookup(mapping, form, request, response);
@@ -1114,6 +1112,14 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         path = path.replaceFirst(KFSConstants.LOOKUP_ACTION, KFSConstants.GL_MODIFIED_INQUIRY_ACTION);
 
         return new ActionForward(path, true);
+    }
+
+    protected static String extractLookupBusinessObjectClassName(final HttpServletRequest request) {
+        final String fullParameter = (String) request.getAttribute(KFSConstants.METHOD_TO_CALL_ATTRIBUTE);
+        return StringUtils.substringBetween(
+                fullParameter,
+                KFSConstants.METHOD_TO_CALL_BOPARM_LEFT_DEL,
+                KFSConstants.METHOD_TO_CALL_BOPARM_RIGHT_DEL);
     }
 
 }

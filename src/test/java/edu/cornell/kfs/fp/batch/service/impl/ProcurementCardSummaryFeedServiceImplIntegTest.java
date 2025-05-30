@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
+import org.kuali.kfs.sys.dataaccess.IntegTestSqlDao;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.fp.batch.service.ProcurementCardSummaryFeedService;
@@ -27,7 +27,7 @@ public class ProcurementCardSummaryFeedServiceImplIntegTest extends KualiIntegTe
     private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/fp/batch/service/fixture/fp_pcard_summary_20140924.data";
     private String batchDirectory;  
 
-    private UnitTestSqlDao unitTestSqlDao;
+    private IntegTestSqlDao integTestSqlDao;
 	
 	private static String newTrans1 = "select * from CU_FP_PCARD_SUMMARY_T where CARD_ACCOUNT_NBR = '0001'";
 	private static String newTrans2 = "select * from CU_FP_PCARD_SUMMARY_T where CARD_ACCOUNT_NBR = '9898'";
@@ -40,7 +40,7 @@ public class ProcurementCardSummaryFeedServiceImplIntegTest extends KualiIntegTe
         procurementCardSummaryFeedService = SpringContext.getBean(ProcurementCardSummaryFeedService.class);
         kualiConfigurationService = SpringContext.getBean(ConfigurationService.class);
         batchDirectory = kualiConfigurationService.getPropertyValueAsString(com.rsmart.kuali.kfs.sys.KFSConstants.STAGING_DIRECTORY_KEY) + "/fp/pcardSummary";
-        unitTestSqlDao = SpringContext.getBean(UnitTestSqlDao.class);
+        integTestSqlDao = SpringContext.getBean(IntegTestSqlDao.class);
         
         
         //make sure we have a batch directory
@@ -66,11 +66,11 @@ public class ProcurementCardSummaryFeedServiceImplIntegTest extends KualiIntegTe
     
     public void testCanLoadFiles() {        
        assertTrue(procurementCardSummaryFeedService.loadPCardDataFromBatchFile(batchDirectory + "/fp_pcard_summary_20140924.data"));                                                       
-       	List summaryResults1 =  unitTestSqlDao.sqlSelect(newTrans1);
+       	List summaryResults1 =  integTestSqlDao.sqlSelect(newTrans1);
 		assertEquals(1, summaryResults1.size());
-		List summaryResults2 =  unitTestSqlDao.sqlSelect(newTrans2);
+		List summaryResults2 =  integTestSqlDao.sqlSelect(newTrans2);
 		assertEquals(1, summaryResults2.size());
-		List summaryResults3 =  unitTestSqlDao.sqlSelect(newTrans3);
+		List summaryResults3 =  integTestSqlDao.sqlSelect(newTrans3);
 		assertEquals(1, summaryResults3.size());
        
     }
