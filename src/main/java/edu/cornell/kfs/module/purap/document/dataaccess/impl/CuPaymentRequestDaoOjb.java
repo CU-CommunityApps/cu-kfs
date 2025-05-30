@@ -152,6 +152,7 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
         return null;
     }
     
+    // Copied this private method from the superclass.
     private Class<? extends Document> paymentRequestDocumentClass() {
         final Class<? extends Document> paymentRequestDocumentClass = dataDictionaryService.getDocumentClassByTypeName(
                 PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT);
