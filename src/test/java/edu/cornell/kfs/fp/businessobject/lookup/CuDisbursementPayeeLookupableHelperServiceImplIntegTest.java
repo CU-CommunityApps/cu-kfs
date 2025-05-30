@@ -17,7 +17,7 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
 import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
+import org.kuali.kfs.sys.dataaccess.IntegTestSqlDao;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.krad.bo.BusinessObject;
@@ -28,7 +28,7 @@ import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
 public class CuDisbursementPayeeLookupableHelperServiceImplIntegTest extends KualiIntegTestBase {
 
 	private PersonService personService;
-	private UnitTestSqlDao unitTestSqlDao;
+	private IntegTestSqlDao integTestSqlDao;
 	private String alumniSql = "SELECT f.dv_payee_id_nbr " +
 			"FROM kfs.FP_DV_PAYEE_DTL_T f, kfs.krim_person_t k, kfs.krim_person_cu_afltn_t a " +
 			"where f.dv_payee_typ_cd = 'A' " +
@@ -51,11 +51,11 @@ public class CuDisbursementPayeeLookupableHelperServiceImplIntegTest extends Kua
 		cuDisbursementPayeeLookupableHelperService.setBusinessObjectClass(CuDisbursementPayee.class);
 
 		personService = SpringContext.getBean(PersonService.class);
-		unitTestSqlDao = SpringContext.getBean(UnitTestSqlDao.class);
+		integTestSqlDao = SpringContext.getBean(IntegTestSqlDao.class);
 	}
 
 	public void testLookupAlumni() {
-		List alumniResults = unitTestSqlDao.sqlSelect(alumniSql);
+		List alumniResults = integTestSqlDao.sqlSelect(alumniSql);
 		assertFalse("alumni query didn't return any results, which is just wrong", alumniResults.isEmpty());
 		HashMap alumniResult = (HashMap)alumniResults.get(0);
 		String entityId = (String)alumniResult.get("DV_PAYEE_ID_NBR");
@@ -72,7 +72,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImplIntegTest extends Kua
 	}
 
 	public void testLookupVendor() {
-		List vendorResults = unitTestSqlDao.sqlSelect(vendorSql);
+		List vendorResults = integTestSqlDao.sqlSelect(vendorSql);
 		assertFalse("vendor query didn't return any results, which is just wrong", vendorResults.isEmpty());
 		HashMap vendorResult = (HashMap)vendorResults.get(0);
 		String vendorName = (String)vendorResult.get("VNDR_NM");

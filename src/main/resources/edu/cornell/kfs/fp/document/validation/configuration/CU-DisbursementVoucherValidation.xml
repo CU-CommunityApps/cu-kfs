@@ -50,37 +50,53 @@
           </property>
           <property name="quitOnFail" value="true" />
         </bean>
-				<bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
-					<property name="accountingDocumentParameterPropertyName" value="document" />
-					<property name="accountingLineParameterPropertyName" value="accountingLine" />
-				</bean>
-			</list>
-		</property>
-	</bean>
+        <bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
+            <property name="accountingDocumentParameterPropertyName" value="document" />
+            <property name="accountingLineParameterPropertyName" value="accountingLine" />
+        </bean>
+        <bean parent="DisbursementVoucher-accountingLineValidation" scope="prototype" p:quitOnFail="true">
+            <property name="parameterProperties">
+                <list>
+                    <bean parent="accountingDocumentFieldConversion"/>
+                    <bean parent="accountingLineFieldConversion"/>
+                </list>
+            </property>
+        </bean>
+    </list>
+        </property>
+    </bean>
 
-	<bean id="DisbursementVoucher-checkUpdatedAccountingLine" parent="CompositeValidation" scope="prototype" abstract="true">
-		<property name="validations">
-			<list>
-				<bean parent="AccountingDocument-accountingLineDataDictionaryValidation" scope="prototype">
-					<property name="parameterProperties">
-						<list>
-							<bean parent="updatedAccountingLineFieldConversion" />
-						</list>
-					</property>
-				</bean>
-				<bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
-					<property name="parameterProperties">
-						<bean parent="updatedAccountingLineToBusinessObjectFieldConversion" />
-					</property>
-					<property name="quitOnFail" value="true" />
-				</bean>
-				<bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
-					<property name="accountingDocumentParameterPropertyName" value="document" />
-					<property name="accountingLineParameterPropertyName" value="updatedAccountingLine" />
-				</bean>
-			</list>
-		</property>
-	</bean>
+    <bean id="DisbursementVoucher-checkUpdatedAccountingLine" parent="CompositeValidation" scope="prototype" abstract="true">
+        <property name="validations">
+            <list>
+                <bean parent="AccountingDocument-accountingLineDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="updatedAccountingLineFieldConversion" />
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <bean parent="updatedAccountingLineToBusinessObjectFieldConversion" />
+                    </property>
+                    <property name="quitOnFail" value="true" />
+                </bean>
+                <bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
+                    <property name="accountingDocumentParameterPropertyName" value="document" />
+                    <property name="accountingLineParameterPropertyName" value="updatedAccountingLine" />
+                </bean>
+                <bean parent="DisbursementVoucher-accountingLineValidation" scope="prototype" p:quitOnFail="true">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion"/>
+                            <bean parent="updatedAccountingLineFieldConversion"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
 	
 	  <bean id="DisbursementVoucher-routeDocumentValidation" parent="DisbursementVoucher-routeDocumentValidation-parentBean" >
 	<property name="validations">

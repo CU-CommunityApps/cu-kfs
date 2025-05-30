@@ -233,9 +233,13 @@
           class="edu.cornell.kfs.module.purap.service.impl.CuPdpExtractService"
     />
 
-	<bean id="creditMemoDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuCreditMemoDaoOjb" />
+	<bean id="creditMemoDao"
+          parent="creditMemoDao-parentBean"
+          class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuCreditMemoDaoOjb" 
+    />
     <bean id="paymentRequestDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuPaymentRequestDaoOjb"
-          p:parameterService-ref="parameterService"/>
+          p:parameterService-ref="parameterService"
+          p:dataDictionaryService-ref="dataDictionaryService"/>
     <bean id="PurchaseOrderActionListAttribute" class="edu.cornell.kfs.module.purap.document.workflow.CuPurchaseOrderActionListAttribute" />
     <bean id="purapGeneralLedgerService" parent="purapGeneralLedgerService-parentBean" 
           class="edu.cornell.kfs.module.purap.service.impl.CuPurapGeneralLedgerServiceImpl" 

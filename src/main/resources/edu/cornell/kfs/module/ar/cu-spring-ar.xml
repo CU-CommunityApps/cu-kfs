@@ -74,12 +74,4 @@
     <bean id="arEmailService" parent="arEmailService-parentBean"
         class="edu.cornell.kfs.module.ar.service.impl.CuAREmailServiceImpl" />
 
-    <!--
-        CU Customization: Overrode this bean to implement the FINP-9927 backport.
-        This override can be removed when we upgrade to the 2023-10-11 financials patch.
-     -->
-    <bean id="contractsGrantsInvoiceReportService"
-          parent="contractsGrantsInvoiceReportService-parentBean"
-          p:financialSystemUserService-ref="financialSystemUserService"/>
-
 </beans>
