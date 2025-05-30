@@ -19,6 +19,9 @@ import edu.cornell.kfs.pdp.businessobject.PaymentDetailExtendedAttribute;
 public class CuProcessIndividualPdpCancelPaidServiceImpl extends ProcessIndividualPdpCancelPaidServiceImpl {
     private static final Logger LOG = LogManager.getLogger();
 
+    /**
+     * Overridden to include the KFSPTS-2719 Check-Recon-related logic regarding cancelled payments.
+     */
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void processPdpCancel(final Date processDate, final PaymentDetail paymentDetail) {
@@ -29,7 +32,7 @@ public class CuProcessIndividualPdpCancelPaidServiceImpl extends ProcessIndividu
         final boolean disbursedPayment = PdpConstants.PaymentStatusCodes.CANCEL_PAYMENT.equals(
                 paymentDetail.getPaymentGroup().getPaymentStatusCode());
 
-        //KFSPTS-2719
+        // CU Customization: Retrieve custom property indicating whether the payment was cancelled in Check Recon.
         boolean crCancel = false;
         final PaymentDetailExtendedAttribute paymentDetailExtendedAttribute = (PaymentDetailExtendedAttribute) paymentDetail.getExtension();
         if (ObjectUtils.isNotNull(paymentDetailExtendedAttribute)) {
@@ -37,12 +40,22 @@ public class CuProcessIndividualPdpCancelPaidServiceImpl extends ProcessIndividu
         }
 
         if (purchasingAccountsPayableModuleService.isPurchasingBatchDocument(documentTypeCode)) {
+            // CU Customization: Invoke CU-specific method variant that also accepts the CR-cancelled flag as input.
             ((CuPurchasingAccountsPayableModuleService) purchasingAccountsPayableModuleService).handlePurchasingBatchCancels(
                     documentNumber, documentTypeCode, primaryCancel, disbursedPayment, crCancel);
         } else {
             final PaymentSourceToExtractService<PaymentSource> extractService = getPaymentSourceToExtractService(paymentDetail);
-            if (extractService != null) {
+            if (extractService == null) {
                 return;
+            }
+            final PaymentSource dv = (PaymentSource) documentService.getByDocumentHeaderId(documentNumber);
+            // CU Customization: Skip the cancel/reset operations for CR-cancelled payments.
+            if (dv != null && !crCancel) {
+                if (disbursedPayment || primaryCancel) {
+                    extractService.cancelPayment(dv, processDate);
+                } else {
+                    extractService.resetFromExtraction(dv);
+                }
             }
         }
 

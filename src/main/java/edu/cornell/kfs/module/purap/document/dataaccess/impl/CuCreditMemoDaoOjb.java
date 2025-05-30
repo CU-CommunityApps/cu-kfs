@@ -20,9 +20,6 @@ import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 public class CuCreditMemoDaoOjb extends CreditMemoDaoOjb {
     private static final Logger LOG = LogManager.getLogger();
 
-
-    private DataDictionaryService dataDictionaryService;
-    
     @Override
     public List<VendorCreditMemoDocument> getCreditMemosToExtract(final String campusCode) {
         LOG.debug("getCreditMemosToExtract() started");
@@ -58,18 +55,6 @@ public class CuCreditMemoDaoOjb extends CreditMemoDaoOjb {
         }
 
         return (List<VendorCreditMemoDocument>)getPersistenceBrokerTemplate().getCollectionByQuery(new QueryByCriteria(creditMemoDocumentClass(), criteria));
-    }
-    
-    @Override
-    protected Class<? extends Document> creditMemoDocumentClass() {
-        final Class<? extends Document> creditMemoDocumentClass =
-                dataDictionaryService.getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT);
-        return creditMemoDocumentClass != null ? creditMemoDocumentClass : CuVendorCreditMemoDocument.class;
-    }
-
-    public void setDataDictionaryService(final DataDictionaryService dataDictionaryService) {
-        this.dataDictionaryService = dataDictionaryService;
-        super.setDataDictionaryService(dataDictionaryService);
     }
 
 }
