@@ -30,4 +30,8 @@ public interface TestDataHelperDao {
     void forciblyEncryptColumns(final String tableName, final List<String> columnNames);
 
     void truncateTables(final List<String> tableNames);
+
+    String encrypt(final String value);
+
+    String decrypt(final String value);
 }

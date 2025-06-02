@@ -14,6 +14,8 @@ public final class CuTaxTestConstants {
         public static final String TAX_FILE_GENERATION_SERVICE_FOR_TRANSACTION_LIST_PRINTING =
                 "taxFileGenerationServiceForTransactionListPrinting";
         public static final String TEST_CASE_HOLDER = "testCaseHolder";
+        public static final String TEST_TRANSACTION_DETAIL_CSV_INPUT_FILE_TYPE =
+                "testTransactionDetailCsvInputFileType";
     }
 
 }

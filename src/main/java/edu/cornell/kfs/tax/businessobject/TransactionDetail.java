@@ -1,5 +1,8 @@
 package edu.cornell.kfs.tax.businessobject;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.krad.bo.BusinessObject;
@@ -534,6 +537,20 @@ public class TransactionDetail extends TransientBusinessObjectBase {
         this.ledgerDocumentTypeCode = ledgerDocumentTypeCode;
     }
 
+    @Override
+    public boolean equals(final Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+    
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 
 
     public enum TransactionDetailField implements TaxDtoFieldEnum {

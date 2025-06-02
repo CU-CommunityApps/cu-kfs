@@ -283,7 +283,17 @@ public class TestDataHelperDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdb
         return resultRow -> encrypt((String) resultRow.get(columnName));
     }
 
-    private String encrypt(final String value) {
+    @Override
+    public void truncateTables(final List<String> tableNames) {
+        for (final String tableName : tableNames) {
+            final String cleanedTableName = cleanName(tableName);
+            final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE ", cleanedTableName);
+            execute(query);
+        }
+    }
+
+    @Override
+    public String encrypt(final String value) {
         try {
             return encryptionService.encrypt(value);
         } catch (final GeneralSecurityException e) {
@@ -292,11 +302,11 @@ public class TestDataHelperDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdb
     }
 
     @Override
-    public void truncateTables(final List<String> tableNames) {
-        for (final String tableName : tableNames) {
-            final String cleanedTableName = cleanName(tableName);
-            final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE ", cleanedTableName);
-            execute(query);
+    public String decrypt(final String value) {
+        try {
+            return encryptionService.decrypt(value);
+        } catch (final GeneralSecurityException e) {
+            throw new RuntimeException(e);
         }
     }
 
