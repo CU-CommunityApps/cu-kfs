@@ -52,7 +52,7 @@
         <powermock.version>2.0.7</powermock.version>
         <pw-iso20022.version>SRU2022-10.0.3</pw-iso20022.version>
         <squiggly-filter-jackson.version>1.3.18</squiggly-filter-jackson.version>
-        <spring.version>5.3.34</spring.version>
+        <spring.version>5.3.39</spring.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <xapool.version>1.5.0-patch7</xapool.version>
         <maven.compiler.version>3.10.1</maven.compiler.version>
