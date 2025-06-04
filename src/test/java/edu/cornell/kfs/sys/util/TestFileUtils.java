@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
@@ -43,6 +44,14 @@ public final class TestFileUtils {
         final String expectedContent = getFileContents(expectedFileName);
         final String actualContent = getFileContents(actualFileName);
         assertEquals(expectedContent, actualContent, "Wrong file contents");
+    }
+
+    public static void assertFileContentsMatch(final String expectedFileName, final String actualFileName,
+            final Function<String, String> expectedFileContentConverter) throws IOException {
+        final String expectedUnconvertedContent = getFileContents(expectedFileName);
+        final String expectedConvertedContent = expectedFileContentConverter.apply(expectedUnconvertedContent);
+        final String actualContent = getFileContents(actualFileName);
+        assertEquals(expectedConvertedContent, actualContent, "Wrong file contents");
     }
 
 }

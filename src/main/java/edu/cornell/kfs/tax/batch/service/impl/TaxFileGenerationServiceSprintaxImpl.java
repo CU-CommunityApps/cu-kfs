@@ -326,7 +326,12 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
             final boolean isRoyaltyAmount = isRoyaltyAmount(currentRow, taxBoxType);
             final List<NoteLite> documentNotes = transactionDetailProcessorDao.getNotesByDocumentNumber(
                     currentRow.getDocumentNumber());
+
+            if (StringUtils.isNotBlank(currentRow.getPaymentLine1Address())) {
+                clusionBuilder.appendCheckForPaymentLine1Address(currentRow.getPaymentLine1Address());
+            }
             clusionBuilder.appendCheckForDocumentNotes(documentNotes);
+
             if (isRoyaltyAmount) {
                 clusionBuilder.appendCheckForAccountOnRoyalties(objectCode, chartAndAccountPair);
                 if (isDVDocumentTransaction(currentRow)) {

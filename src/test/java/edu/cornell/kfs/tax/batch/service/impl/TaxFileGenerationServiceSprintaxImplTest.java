@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -13,9 +14,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
+import java.util.regex.MatchResult;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,7 +27,8 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.kuali.kfs.coreservice.api.parameter.EvaluationOperator;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.coreservice.impl.parameter.Parameter;
@@ -34,6 +38,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.dataaccess.TestDataHelperDao;
 import edu.cornell.kfs.sys.util.CreateTestDirectories;
 import edu.cornell.kfs.sys.util.CuMockBuilder;
+import edu.cornell.kfs.sys.util.FixtureUtils;
 import edu.cornell.kfs.sys.util.GlobalResourceLoaderUtils;
 import edu.cornell.kfs.sys.util.SpringXmlTestBeanFactoryMethod;
 import edu.cornell.kfs.sys.util.TestDateUtils;
@@ -52,6 +57,8 @@ import edu.cornell.kfs.tax.batch.util.TestTaxSqlUtils;
 import edu.cornell.kfs.tax.batch.util.TestTaxSqlUtils.TableNames;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail.TransactionDetailField;
+import edu.cornell.kfs.tax.businessobject.TransactionOverride;
+import edu.cornell.kfs.tax.fixture.TransactionOverrideFixture;
 import edu.cornell.kfs.tax.service.TransactionOverrideService;
 import edu.cornell.kfs.tax.util.TaxParameterUtils;
 
@@ -71,6 +78,8 @@ public class TaxFileGenerationServiceSprintaxImplTest {
 
     private static final String TEST_CASE_BASE_DIRECTORY = "classpath:edu/cornell/kfs/tax/batch/sprintax-file-test/";
 
+    private static final Pattern PARTIALLY_MASKED_TAX_ID_PATTERN = Pattern.compile("[x~0-9]xx-?[x0-9]x-?[x0-9]{4}");
+
     @RegisterExtension
     static TestSpringContextExtension springContextExtension = TestSpringContextExtension.forClassPathSpringXmlFile(
             "edu/cornell/kfs/tax/batch/cu-spring-tax-sprintax-file-printing-test.xml");
@@ -79,8 +88,6 @@ public class TaxFileGenerationServiceSprintaxImplTest {
     private TestDataHelperDao testDataHelperDao;
     private TestTransactionDetailCsvInputFileType testTransactionDetailCsvInputFileType;
     private AtomicReference<LocalTestCase> testCaseHolder;
-    // private PlatformTransactionManager transactionManager;
-    // private TransactionStatus transactionStatus;
 
     @BeforeAll
     static void performFirstTimeInitialization() throws Exception {
@@ -107,11 +114,8 @@ public class TaxFileGenerationServiceSprintaxImplTest {
         testCaseHolder = (AtomicReference<LocalTestCase>) springContextExtension.getBean(
                 TaxSpringBeans.TEST_CASE_HOLDER, AtomicReference.class);
         testDataHelperDao = getTestDataHelperDao();
-        // transactionManager = springContextExtension.getBean("transactionManager", PlatformTransactionManager.class);
 
-        // final DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
-        // transactionDefinition.setTimeout(3600);
-        // transactionStatus = transactionManager.getTransaction(transactionDefinition);
+        taxFileGenerationService.setScrubOutput(false);
     }
 
     @AfterEach
@@ -119,11 +123,6 @@ public class TaxFileGenerationServiceSprintaxImplTest {
         if (testDataHelperDao != null) {
             resetDatabaseTables();
         }
-        // if (transactionStatus != null && transactionManager != null) {
-        //     transactionManager.rollback(transactionStatus);
-        // }
-        // transactionStatus = null;
-        // transactionManager = null;
         testDataHelperDao = null;
         testCaseHolder = null;
         testTransactionDetailCsvInputFileType = null;
@@ -149,8 +148,30 @@ public class TaxFileGenerationServiceSprintaxImplTest {
     @SpringXmlTestBeanFactoryMethod
     public static TransactionOverrideService buildMockTransactionOverrideService(
             final AtomicReference<LocalTestCase> testCaseHolder) {
+        final List<TransactionOverride> transactionOverrides = Arrays.stream(LocalTransactionOverrides.values())
+                .map(fixture -> FixtureUtils.getAnnotationBasedFixture(fixture, TransactionOverrideFixture.class))
+                .map(TransactionOverrideFixture.Utils::toTransactionOverride)
+                .collect(Collectors.toUnmodifiableList());
+        final java.sql.Date startDate = java.sql.Date.valueOf(LocalDate.of(2024, 1, 1));
+        final java.sql.Date endDate = java.sql.Date.valueOf(LocalDate.of(2024, 12, 31));
+
         return new CuMockBuilder<>(TransactionOverrideService.class)
+                .withReturn(
+                        service -> service.getTransactionOverrides(CUTaxConstants.TAX_TYPE_1042S, startDate, endDate),
+                        transactionOverrides)
                 .build();
+    }
+
+    public enum LocalTransactionOverrides {
+        @TransactionOverrideFixture(universityDate = "2024-02-13", taxType = CUTaxConstants.TAX_TYPE_1042S,
+                documentNumber = "51627384", financialDocumentLineNumber = 14151621,
+                boxNumber = CUTaxConstants.FORM_1042S_GROSS_BOX)
+        OVERRIDE_51627384_14151621,
+
+        @TransactionOverrideFixture(universityDate = "2024-02-13", taxType = CUTaxConstants.TAX_TYPE_1042S,
+                documentNumber = "51627384", financialDocumentLineNumber = 14151623,
+                boxNumber = CUTaxConstants.TAX_1042S_UNKNOWN_BOX_KEY)
+        OVERRIDE_51627384_14151623;
     }
 
     @SpringXmlTestBeanFactoryMethod
@@ -189,10 +210,10 @@ public class TaxFileGenerationServiceSprintaxImplTest {
                 Map.entry(Tax1042SParameterNames.INCOME_CLASS_CODE_DENOTING_ROYALTIES, ""),
                 Map.entry(Tax1042SParameterNames.INCOME_CLASS_CODE_TO_IRS_INCOME_CODE, "A=23;F=16;I=17;R=12;T=19;Z=42"),
                 Map.entry(Tax1042SParameterNames.INCOME_CLASS_CODE_TO_IRS_INCOME_CODE_SUB_TYPE, "A=N;F=L;I=N;N=N;R=C;T=N;Z=N"),
-                Map.entry(Tax1042SParameterNames.INCOME_CLASS_CODE_VALID_OBJECT_CODES, "A=6730;F=2;I=6730;R=4;T=;Z="),
+                Map.entry(Tax1042SParameterNames.INCOME_CLASS_CODE_VALID_OBJECT_CODES, "A=6730,8123,6622;F=8123;I=6730,6622;R=3699;T=;Z="),
                 Map.entry(Tax1042SParameterNames.NON_REPORTABLE_INCOME_CODE, "XX"),
                 Map.entry(Tax1042SParameterNames.OTHER_INCOME_EXCLUDED_PMT_LN1_ADDR, "Petty Cash"),
-                Map.entry(Tax1042SParameterNames.PDP_EXCLUDED_DOC_TYPES, "APPP;APQQ"),
+                Map.entry(Tax1042SParameterNames.PDP_EXCLUDED_DOC_TYPES, "APLB"),
                 Map.entry(Tax1042SParameterNames.ROYALTIES_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT, ""),
                 Map.entry(Tax1042SParameterNames.ROYALTIES_INCLUDED_OBJECT_CODE_CHART_ACCOUNT, ""),
                 Map.entry(get1042SParameterName(TaxCommonParameterNames.SOLE_PROPRIETOR_OWNER_CODE_PARAMETER_SUFFIX), "ID"),
@@ -214,13 +235,11 @@ public class TaxFileGenerationServiceSprintaxImplTest {
     enum LocalTestCase {
 
         BASIC_SINGLE_ROW_TEST("single-row-case-source-data.csv", "single-row-case-expected-transactions.csv",
-                "single-row-case-expected-demographic-file.csv", "single-row-case-expected-payment-file.csv")
-        /*BASIC_SINGLE_ROW_TEST2("single-row-case-source-data.csv", "single-row-case-expected-transactions.csv",
                 "single-row-case-expected-demographic-file.csv", "single-row-case-expected-payment-file.csv"),
-        BASIC_SINGLE_ROW_TEST3("single-row-case-source-data.csv", "single-row-case-expected-transactions.csv",
-                "single-row-case-expected-demographic-file.csv", "single-row-case-expected-payment-file.csv"),
-        BASIC_SINGLE_ROW_TEST4("single-row-case-source-data.csv", "single-row-case-expected-transactions.csv",
-                "single-row-case-expected-demographic-file.csv", "single-row-case-expected-payment-file.csv")*/
+        CONSOLIDATED_ROW_TEST("consolidated-row-case-source-data.csv", "consolidated-row-case-expected-transactions.csv",
+                "consolidated-row-case-expected-demographic-file.csv", "consolidated-row-case-expected-payment-file.csv"),
+        OVERRIDDEN_ROW_TEST("overridden-row-case-source-data.csv", "overridden-row-case-expected-transactions.csv",
+                "overridden-row-case-expected-demographic-file.csv", "overridden-row-case-expected-payment-file.csv")
         ;
 
         private final String sourceFileName;
@@ -238,10 +257,17 @@ public class TaxFileGenerationServiceSprintaxImplTest {
 
     }
 
+    static Stream<Arguments> successTestCases() {
+        return Arrays.stream(LocalTestCase.values())
+                .flatMap(testCase -> Stream.of(Arguments.of(testCase, false), Arguments.of(testCase, true)));
+    }
+
     @ParameterizedTest
-    @EnumSource
-    void testSuccessfulGenerationOfSprintaxFiles(final LocalTestCase testCase) throws Exception {
+    @MethodSource("successTestCases")
+    void testSuccessfulGenerationOfSprintaxFiles(final LocalTestCase testCase, final boolean scrubOutput)
+            throws Exception {
         populateDatabaseTables(testCase);
+        taxFileGenerationService.setScrubOutput(scrubOutput);
         final TaxBatchConfig batchConfig = buildTaxBatchConfigFor1042S();
         final TaxStatistics statistics = GlobalResourceLoaderUtils
                 .doWithResourceRetrievalDelegatedToKradResourceLoaderUtil(
@@ -250,8 +276,8 @@ public class TaxFileGenerationServiceSprintaxImplTest {
 
         assertNotNull(statistics, "statistics object from 1042-S generation process should not have been null");
         assertTransactionDetailsWereUpdatedAsExpected(testCase);
-        assertDemographicFileDataIsCorrect(testCase);
-        assertPaymentFileDataIsCorrect(testCase);
+        assertDemographicFileDataIsCorrect(testCase, scrubOutput);
+        assertPaymentFileDataIsCorrect(testCase, scrubOutput);
     }
 
     private void populateDatabaseTables(final LocalTestCase testCase) throws Exception {
@@ -321,20 +347,31 @@ public class TaxFileGenerationServiceSprintaxImplTest {
         }
     }
 
-    private void assertDemographicFileDataIsCorrect(final LocalTestCase testCase) throws Exception {
+    private void assertDemographicFileDataIsCorrect(final LocalTestCase testCase, final boolean expectScrubbedOutput)
+            throws Exception {
         final String expectedDemographicFilePath = TEST_CASE_BASE_DIRECTORY + testCase.expectedDemographicFileName;
         final String actualDemographicFileName = findSprintaxStagingFileNameWithPrefix(
                 CUTaxConstants.Sprintax.DEMOGRAPHIC_OUTPUT_FILE_PREFIX);
         final String actualDemographicFilePath = TEST_TAX_SPRINTAX_DIRECTORY + actualDemographicFileName;
-        TestFileUtils.assertFileContentsMatch(expectedDemographicFilePath, actualDemographicFilePath);
+        assertFileDataIsCorrect(expectedDemographicFilePath, actualDemographicFilePath, expectScrubbedOutput);
     }
 
-    private void assertPaymentFileDataIsCorrect(final LocalTestCase testCase) throws Exception {
+    private void assertPaymentFileDataIsCorrect(final LocalTestCase testCase, final boolean expectScrubbedOutput)
+            throws Exception {
         final String expectedPaymentFilePath = TEST_CASE_BASE_DIRECTORY + testCase.expectedPaymentFileName;
         final String actualPaymentFileName = findSprintaxStagingFileNameWithPrefix(
                 CUTaxConstants.Sprintax.PAYMENTS_OUTPUT_FILE_PREFIX);
         final String actualPaymentFilePath = TEST_TAX_SPRINTAX_DIRECTORY + actualPaymentFileName;
-        TestFileUtils.assertFileContentsMatch(expectedPaymentFilePath, actualPaymentFilePath);
+        assertFileDataIsCorrect(expectedPaymentFilePath, actualPaymentFilePath, expectScrubbedOutput);
+    }
+
+    private void assertFileDataIsCorrect(final String expectedFile, final String actualFile,
+            final boolean expectScrubbedOutput) throws Exception {
+        if (expectScrubbedOutput) {
+            TestFileUtils.assertFileContentsMatch(expectedFile, actualFile, this::scrubExpectedFileOutput);
+        } else {
+            TestFileUtils.assertFileContentsMatch(expectedFile, actualFile);
+        }
     }
 
     private String findSprintaxStagingFileNameWithPrefix(final String fileNamePrefix) {
@@ -342,8 +379,20 @@ public class TaxFileGenerationServiceSprintaxImplTest {
         final String[] filesWithPrefix = sprintaxStagingDirectory.list(
                 (directory, name) -> StringUtils.startsWith(name, fileNamePrefix));
         assertEquals(1, filesWithPrefix.length, "Wrong number of files with prefix " + fileNamePrefix);
-        System.out.println(filesWithPrefix[0]);
         return filesWithPrefix[0];
+    }
+
+    private String scrubExpectedFileOutput(final String originalExpectedOutput) {
+        return PARTIALLY_MASKED_TAX_ID_PATTERN.matcher(originalExpectedOutput).replaceAll(this::scrubTaxId);
+    }
+
+    private String scrubTaxId(final MatchResult matchResult) {
+        final int matchedSubstringLength = matchResult.end() - matchResult.start();
+        switch (matchedSubstringLength) {
+            case 9: return CUTaxConstants.MASKED_VALUE_9_CHARS;
+            case 11: return CUTaxConstants.MASKED_VALUE_11_CHARS;
+            default: return KFSConstants.EMPTY_STRING;
+        }
     }
 
 }
