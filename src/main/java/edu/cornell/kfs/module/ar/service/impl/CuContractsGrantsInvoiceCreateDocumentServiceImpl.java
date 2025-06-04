@@ -88,25 +88,25 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
 
     public ContractsGrantsInvoiceDocument createCINVForReport(final Award awd) {
         final List<ErrorMessage> errorMessages = new ArrayList<>();
-        return generateContractsAndGrantsInvoiceDocumentForReport(awd, awd.getActiveAwardAccounts(),errorMessages, ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL, null, null);
+        return generateContractsAndGrantsInvoiceDocumentForReport(awd, awd.getActiveAwardAccounts(), errorMessages,
+                ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL, null, null);
 
     }
 
-    protected ContractsGrantsInvoiceDocument generateContractsAndGrantsInvoiceDocumentForReport(
-        final Award awd,
-        final List<AwardAccount> validAwardAccounts, final List<ErrorMessage> errorMessages,
-        final ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType,
-        final List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, final String locCreationType) {
-    final ChartOrgHolder chartOrgHolder = financialSystemUserService.getPrimaryOrganization(
-            awd.getAwardPrimaryFundManager().getFundManager().getPrincipalId(),
-            KFSConstants.OptionalModuleNamespaces.ACCOUNTS_RECEIVABLE);
+    protected ContractsGrantsInvoiceDocument generateContractsAndGrantsInvoiceDocumentForReport(final Award awd,
+            final List<AwardAccount> validAwardAccounts, final List<ErrorMessage> errorMessages,
+            final ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType,
+            final List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, final String locCreationType) {
+        final ChartOrgHolder chartOrgHolder = financialSystemUserService.getPrimaryOrganization(
+                awd.getAwardPrimaryFundManager().getFundManager().getPrincipalId(),
+                KFSConstants.OptionalModuleNamespaces.ACCOUNTS_RECEIVABLE);
 
-    awd.setCreationProcessType(creationProcessType);
+        awd.setCreationProcessType(creationProcessType);
 
-    final ContractsGrantsInvoiceDocument cgInvoiceDocument = createCGInvoiceDocumentByAwardInfo(awd, validAwardAccounts,
-            chartOrgHolder.getChartOfAccountsCode(), chartOrgHolder.getOrganizationCode(), errorMessages,
-            accountDetails, locCreationType);
-    return cgInvoiceDocument;
+        final ContractsGrantsInvoiceDocument cgInvoiceDocument = createCGInvoiceDocumentByAwardInfo(awd,
+                validAwardAccounts, chartOrgHolder.getChartOfAccountsCode(), chartOrgHolder.getOrganizationCode(),
+                errorMessages, accountDetails, locCreationType);
+        return cgInvoiceDocument;
     }
 
     /*
