@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.ar.service.impl;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -9,8 +10,12 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.AwardAccount;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.ar.ArConstants;
+import org.kuali.kfs.module.ar.ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsLetterOfCreditReviewDetail;
 import org.kuali.kfs.module.ar.businessobject.InvoiceAccountDetail;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
@@ -78,6 +83,30 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         //CUMod: KFSPTS-12866
         populateDocumentDescription(cgInvoiceDocument);
         return cgInvoiceDocument;
+    }
+    
+
+    public ContractsGrantsInvoiceDocument createCINVForReport(final Award awd) {
+        final List<ErrorMessage> errorMessages = new ArrayList<>();
+        return generateContractsAndGrantsInvoiceDocumentForReport(awd, awd.getActiveAwardAccounts(),errorMessages, ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL, null, null);
+
+    }
+
+    protected ContractsGrantsInvoiceDocument generateContractsAndGrantsInvoiceDocumentForReport(
+        final Award awd,
+        final List<AwardAccount> validAwardAccounts, final List<ErrorMessage> errorMessages,
+        final ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType,
+        final List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, final String locCreationType) {
+    final ChartOrgHolder chartOrgHolder = financialSystemUserService.getPrimaryOrganization(
+            awd.getAwardPrimaryFundManager().getFundManager().getPrincipalId(),
+            KFSConstants.OptionalModuleNamespaces.ACCOUNTS_RECEIVABLE);
+
+    awd.setCreationProcessType(creationProcessType);
+
+    final ContractsGrantsInvoiceDocument cgInvoiceDocument = createCGInvoiceDocumentByAwardInfo(awd, validAwardAccounts,
+            chartOrgHolder.getChartOfAccountsCode(), chartOrgHolder.getOrganizationCode(), errorMessages,
+            accountDetails, locCreationType);
+    return cgInvoiceDocument;
     }
 
     /*
