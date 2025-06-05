@@ -139,7 +139,7 @@ public class TestDataHelperDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdb
         if (StringUtils.contains(csvMarkerLine, CSV_CHUNK_ENCRYPT_MARKER_PREFIX)) {
             final String commaSeparatedColumnsToEncrypt = StringUtils.substringBetween(csvMarkerLine,
                     CSV_CHUNK_ENCRYPT_MARKER_PREFIX, CSV_CHUNK_ENCRYPT_MARKER_SUFFIX);
-            final String[] columnsToEncrypt = StringUtils.split(commaSeparatedColumnsToEncrypt, KFSConstants.COMMA);
+            final String[] columnsToEncrypt = StringUtils.split(commaSeparatedColumnsToEncrypt, CUKFSConstants.SEMICOLON);
             return new CsvChunk(tableName, columnsToEncrypt);
         } else {
             return new CsvChunk(tableName);

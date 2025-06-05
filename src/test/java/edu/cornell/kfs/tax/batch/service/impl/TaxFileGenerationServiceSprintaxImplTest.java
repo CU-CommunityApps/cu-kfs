@@ -78,7 +78,8 @@ public class TaxFileGenerationServiceSprintaxImplTest {
 
     private static final String TEST_CASE_BASE_DIRECTORY = "classpath:edu/cornell/kfs/tax/batch/sprintax-file-test/";
 
-    private static final Pattern PARTIALLY_MASKED_TAX_ID_PATTERN = Pattern.compile("[x~0-9]xx-?[x0-9]x-?[x0-9]{4}");
+    private static final Pattern PARTIALLY_MASKED_TAX_ID_OR_GIIN_PATTERN = Pattern.compile(
+            "([x~0-9]xx-?[x0-9]x-?[x0-9]{4})|(x{6}\\.x{5}\\.x{2}\\.\\w{3})");
 
     @RegisterExtension
     static TestSpringContextExtension springContextExtension = TestSpringContextExtension.forClassPathSpringXmlFile(
@@ -171,7 +172,12 @@ public class TaxFileGenerationServiceSprintaxImplTest {
         @TransactionOverrideFixture(universityDate = "2024-02-13", taxType = CUTaxConstants.TAX_TYPE_1042S,
                 documentNumber = "51627384", financialDocumentLineNumber = 14151623,
                 boxNumber = CUTaxConstants.TAX_1042S_UNKNOWN_BOX_KEY)
-        OVERRIDE_51627384_14151623;
+        OVERRIDE_51627384_14151623,
+
+        @TransactionOverrideFixture(universityDate = "2024-02-06", taxType = CUTaxConstants.TAX_TYPE_1042S,
+                documentNumber = "51252525", financialDocumentLineNumber = 10465558,
+                boxNumber = CUTaxConstants.FORM_1042S_STATE_INC_TAX_WITHHELD_BOX)
+        OVERRIDE_51252525_10465558;
     }
 
     @SpringXmlTestBeanFactoryMethod
@@ -239,8 +245,9 @@ public class TaxFileGenerationServiceSprintaxImplTest {
         CONSOLIDATED_ROW_TEST("consolidated-row-case-source-data.csv", "consolidated-row-case-expected-transactions.csv",
                 "consolidated-row-case-expected-demographic-file.csv", "consolidated-row-case-expected-payment-file.csv"),
         OVERRIDDEN_ROW_TEST("overridden-row-case-source-data.csv", "overridden-row-case-expected-transactions.csv",
-                "overridden-row-case-expected-demographic-file.csv", "overridden-row-case-expected-payment-file.csv")
-        ;
+                "overridden-row-case-expected-demographic-file.csv", "overridden-row-case-expected-payment-file.csv"),
+        MULTI_ROW_TEST("multi-row-case-source-data.csv", "multi-row-case-expected-transactions.csv",
+                "multi-row-case-expected-demographic-file.csv", "multi-row-case-expected-payment-file.csv");
 
         private final String sourceFileName;
         private final String expectedTransactionDataFileName;
@@ -383,7 +390,7 @@ public class TaxFileGenerationServiceSprintaxImplTest {
     }
 
     private String scrubExpectedFileOutput(final String originalExpectedOutput) {
-        return PARTIALLY_MASKED_TAX_ID_PATTERN.matcher(originalExpectedOutput).replaceAll(this::scrubTaxId);
+        return PARTIALLY_MASKED_TAX_ID_OR_GIIN_PATTERN.matcher(originalExpectedOutput).replaceAll(this::scrubTaxId);
     }
 
     private String scrubTaxId(final MatchResult matchResult) {
@@ -391,6 +398,7 @@ public class TaxFileGenerationServiceSprintaxImplTest {
         switch (matchedSubstringLength) {
             case 9: return CUTaxConstants.MASKED_VALUE_9_CHARS;
             case 11: return CUTaxConstants.MASKED_VALUE_11_CHARS;
+            case 19: return CUTaxConstants.MASKED_VALUE_19_CHARS;
             default: return KFSConstants.EMPTY_STRING;
         }
     }
