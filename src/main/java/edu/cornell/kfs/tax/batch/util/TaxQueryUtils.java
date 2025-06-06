@@ -3,19 +3,22 @@ package edu.cornell.kfs.tax.batch.util;
 import java.sql.Types;
 import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.function.Function;
 
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 
 /**
- * Utility class containing two static nested classes and interfaces that work in conjunction with TaxQueryBuilder:
+ * Utility class containing three static nested classes and interfaces that work in conjunction with TaxQueryBuilder:
  * 
  * - QuerySort: Builds helper objects for controlling what fields to sort the query on and in which direction.
+ * 
+ * - FieldUpdate: Builds helper objects for constructing the SET clause of an UPDATE query.
  * 
  * - Criteria: Builds helper objects for preparing the query criteria in the JOIN and WHERE clauses. (Note that
  *             the static factory methods create lambda expressions that perform the actual work; the lambdas
  *             will get invoked by the TaxQueryBuilder when it appends the JOIN and WHERE clauses to the main query.)
  * 
- * Both of these classes and interfaces are meant to be instantiated using one of the provided static factory methods.
+ * All of these classes and interfaces are meant to be instantiated using one of the provided static factory methods.
  */
 public final class TaxQueryUtils {
 
@@ -51,6 +54,44 @@ public final class TaxQueryUtils {
 
     }
 
+    public static final class FieldUpdate extends AbstractMap.SimpleImmutableEntry<TaxDtoFieldEnum, Object> {
+
+        private static final long serialVersionUID = 1L;
+
+        private final int sqlType;
+
+        private FieldUpdate(final TaxDtoFieldEnum field, final int sqlType, final Object value) {
+            super(field, value);
+            this.sqlType = sqlType;
+        }
+
+        public TaxDtoFieldEnum getField() {
+            return getKey();
+        }
+
+        public int getSqlType() {
+            return sqlType;
+        }
+
+        public static FieldUpdate of(final TaxDtoFieldEnum field, final String value) {
+            return of(field, Types.VARCHAR, value);
+        }
+
+        public static FieldUpdate of(final TaxDtoFieldEnum field, final int sqlType, final Object value) {
+            return new FieldUpdate(field, sqlType, value);
+        }
+
+        public static <T> FieldUpdate of(final TaxDtoFieldEnum field, final Function<? super T, String> valueGetter) {
+            return of(field, Types.VARCHAR, valueGetter);
+        }
+
+        public static <T> FieldUpdate of(final TaxDtoFieldEnum field, final int sqlType,
+                final Function<? super T, ?> valueGetter) {
+            return new FieldUpdate(field, sqlType, valueGetter);
+        }
+
+    }
+
     @FunctionalInterface
     public static interface Criteria {
 
@@ -75,6 +116,15 @@ public final class TaxQueryUtils {
         public static Criteria equal(final TaxDtoFieldEnum firstField, final TaxDtoFieldEnum secondField) {
             return builder -> builder.appendLeftHalfOfEqualityCondition(firstField)
                     .appendColumnLabelForField(secondField);
+        }
+
+        public static <T> Criteria equal(final TaxDtoFieldEnum field, final Function<? super T, String> valueGetter) {
+            return equal(field, Types.VARCHAR, valueGetter);
+        }
+
+        public static <T> Criteria equal(final TaxDtoFieldEnum field, final int sqlType,
+                final Function<? super T, ?> valueGetter) {
+            return equal(field, sqlType, (Object) valueGetter);
         }
 
         public static Criteria notEqual(final TaxDtoFieldEnum field, final String value) {

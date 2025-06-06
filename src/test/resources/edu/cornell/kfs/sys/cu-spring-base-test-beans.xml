@@ -21,7 +21,9 @@
 
     <bean id="propertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer-parentBean"/>
 
-    <bean id="propertyPlaceholderConfigurer-parentBean" abstract="true" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <bean id="propertyPlaceholderConfigurer-parentBean" abstract="true" parent="propertyPlaceholderConfigurer-base-parentBean"/>
+
+    <bean id="propertyPlaceholderConfigurer-base-parentBean" abstract="true" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties">
             <props/>
         </property>
@@ -29,13 +31,17 @@
 
     <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean"/>
 
-    <bean id="beanFilterPostProcessor-parentBean" abstract="true" class="edu.cornell.kfs.sys.util.BeanFilterPostProcessor">
+    <bean id="beanFilterPostProcessor-parentBean" abstract="true" parent="beanFilterPostProcessor-base-parentBean"/>
+
+    <bean id="beanFilterPostProcessor-base-parentBean" abstract="true" class="edu.cornell.kfs.sys.util.BeanFilterPostProcessor">
         <property name="beanWhitelist">
             <set>
                 <idref bean="beanFilterPostProcessor"/>
                 <idref bean="beanFilterPostProcessor-parentBean"/>
+                <idref bean="beanFilterPostProcessor-base-parentBean"/>
                 <idref bean="propertyPlaceholderConfigurer"/>
                 <idref bean="propertyPlaceholderConfigurer-parentBean"/>
+                <idref bean="propertyPlaceholderConfigurer-base-parentBean"/>
             </set>
         </property>
     </bean>

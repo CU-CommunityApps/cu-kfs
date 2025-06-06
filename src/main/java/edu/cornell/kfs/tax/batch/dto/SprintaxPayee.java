@@ -13,6 +13,7 @@ import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 public class SprintaxPayee extends TaxPayeeBase {
 
     private String rowId;
+    private String placeholderEmailAddress;
     private String paymentAddressLine1;
     private String formattedSSNValue;
     private String formattedITINValue;
@@ -32,6 +33,23 @@ public class SprintaxPayee extends TaxPayeeBase {
 
     public void setRowId(final String rowId) {
         this.rowId = rowId;
+    }
+
+    public String getPlaceholderEmailAddress() {
+        return placeholderEmailAddress;
+    }
+
+    public void setPlaceholderEmailAddress(String placeholderEmailAddress) {
+        this.placeholderEmailAddress = placeholderEmailAddress;
+    }
+
+    @Override
+    public String getVendorEmailAddress() {
+        return StringUtils.defaultIfBlank(getPlaceholderEmailAddress(), super.getVendorEmailAddress());
+    }
+
+    public String getNonPlaceholderVendorEmailAddress() {
+        return super.getVendorEmailAddress();
     }
 
     public String getPaymentAddressLine1() {
