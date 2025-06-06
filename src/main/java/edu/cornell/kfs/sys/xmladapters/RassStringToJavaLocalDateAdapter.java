@@ -21,15 +21,12 @@ public class RassStringToJavaLocalDateAdapter extends XmlAdapter<String, LocalDa
     }
 
     @Override
-    public String marshal(LocalDate dateAsLocalDate) throws Exception {
-        return (dateAsLocalDate != null) ? dateAsLocalDate.format(DATE_LOCAL_DATE_FORMATTER_yyyy_MM_dd) : null;
+    public String marshal(LocalDate localDate) throws Exception {
+        return (localDate != null) ? localDate.format(DATE_LOCAL_DATE_FORMATTER_yyyy_MM_dd) : null;
     }
 
     public static LocalDate parseToLocalDate(String dateAsString) {
         return LocalDate.parse(dateAsString, DATE_LOCAL_DATE_FORMATTER_yyyy_MM_dd);
     }
 
-//    public static Date convertLocalDateToSqlDate(final LocalDate localDate) {
-//        return localDate == null ? null : Date.valueOf(localDate);
-//    }
 }
