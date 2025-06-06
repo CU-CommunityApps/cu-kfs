@@ -25,11 +25,8 @@
           p:fileExtension="csv"
           p:csvEnumClass="edu.cornell.kfs.tax.businessobject.TransactionDetail$TransactionDetailField"/>
 
-    <bean id="testCaseHolder" class="${unit.test.classname}" factory-method="buildTestCaseHolder"/>
-
     <bean id="transactionOverrideService" class="${unit.test.classname}"
-          factory-method="buildMockTransactionOverrideService"
-          c:testCaseHolder-ref="testCaseHolder"/>
+          factory-method="buildMockTransactionOverrideService"/>
 
     <bean id="parameterService" class="${unit.test.classname}" factory-method="buildMockParameterService"/>
 
@@ -62,7 +59,6 @@
                 <idref bean="taxParameterService-parentBean"/>
                 <idref bean="parameterService"/>
                 <idref bean="testTransactionDetailCsvInputFileType"/>
-                <idref bean="testCaseHolder"/>
                 <idref bean="dateTimeService"/>
                 <idref bean="encryptionService"/>
                 <idref bean="cuTaxResources"/>

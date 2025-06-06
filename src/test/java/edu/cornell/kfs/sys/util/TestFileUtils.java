@@ -18,14 +18,19 @@ import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 
 public final class TestFileUtils {
 
-    private static final Pattern FIRST_LINE_AND_SUBSEQUENT_BLANK_LINES_PATTERN = Pattern.compile(
-            "^.*?\\r?\\n(\\s*?\\r?\\n)*", Pattern.MULTILINE);
+    private static final Pattern LINE_SEPARATOR_PATTERN = Pattern.compile("\\r?\\n");
 
-    public static String getFileContentsWithoutFirstLineAndSubsequentBlankLines(
+    public static String getFileContentsWithoutFirstLineAndBlankLines(
             final String fileName) throws IOException {
         final String fileContents = getFileContents(fileName);
-        return FIRST_LINE_AND_SUBSEQUENT_BLANK_LINES_PATTERN.matcher(fileContents)
-                .replaceFirst(KFSConstants.EMPTY_STRING);
+        final String[] fileLines = LINE_SEPARATOR_PATTERN.split(fileContents);
+        final StringBuilder cleanedContents = new StringBuilder(fileContents.length());
+        for (int i = 1; i < fileLines.length; i++) {
+            if (StringUtils.isNotBlank(fileLines[i])) {
+                cleanedContents.append(fileLines[i]).append(KFSConstants.NEWLINE);
+            }
+        }
+        return cleanedContents.toString();
     }
 
     public static String getFileContents(final String fileName) throws IOException {

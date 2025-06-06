@@ -1,14 +1,20 @@
-// Expected Transaction Detail Inclusions/Exclusions:
-// 3159631: Excluded due to a doc note with 'void' text.
-// 3159632: Included normally.
-// 3159633: Excluded due to an unmapped object code.
-// 3159634: Excluded due to a 'Petty Cash' payment address.
-// 3159635: Has a 'Petty Cash' address but is included due to an override.
-// 3159636: Excluded due to an address that starts with 'Petty Cash'.
-// 3159637: Excluded due to an override that marks it as such.
-// 3159638: Excluded due to an unknown/unmapped income code.
-// 3159639: Excluded due to an unknown/unmapped income code sub-type.
-// 3159640: Excluded due to a doc note that starts with 'void'.
+/*
+ * Expected Transaction Detail Inclusions/Exclusions:
+ *
+ * 3159631: Excluded due to a doc note with 'void' text.
+ * 3159632: Included normally.
+ * 3159633: Excluded due to an unmapped object code.
+ * 3159634: Excluded due to a 'Petty Cash' payment address.
+ * 3159635: Has a 'Petty Cash' address but is included due to an override.
+ * 3159636: Excluded due to an address that starts with 'Petty Cash'.
+ * 3159637: Excluded due to an override that marks it as such.
+ * 3159638: Excluded due to an unknown/unmapped income code.
+ * 3159639: Excluded due to an unknown/unmapped income code sub-type.
+ * 3159640: Excluded due to a doc note that starts with 'void'.
+ *
+ * The inclusion rows above will be consolidated into a single payment
+ * in the relevant Sprintax output file.
+ */
 
 <<<<START KFS.TX_TRANSACTION_DETAIL_T>>>>[[[[ENCRYPT VENDOR_TAX_NBR]]]]
 IRS_1099_1042S_DETAIL_ID,REPORT_YEAR,FDOC_NBR,DOC_TYPE,FDOC_LINE_NBR,FIN_OBJECT_CD,NET_PMT_AMT,DOC_TITLE,VENDOR_TAX_NBR,INCOME_CODE,INCOME_CODE_SUB_TYPE,DV_CHK_STUB_TXT,PAYEE_ID,VENDOR_NAME,PARENT_VENDOR_NAME,VNDR_TYP_CD,VNDR_OWNR_CD,VNDR_OWNR_CTGRY_CD,VNDR_FRGN_IND,VNDR_EMAIL_ADDR,VNDR_CHAP_4_STAT_CD,VNDR_GIIN,VNDR_LN1_ADDR,VNDR_LN2_ADDR,VNDR_CTY_NM,VNDR_ST_CD,VNDR_ZIP_CD,VNDR_FRGN_LN1_ADDR,VNDR_FRGN_LN2_ADDR,VNDR_FRGN_CTY_NM,VNDR_FRGN_ZIP_CD,VNDR_FRGN_PROV_NM,VNDR_FRGN_CNTRY_CD,NRA_PAYMENT_IND,PMT_DT,PMT_PAYEE_NM,INC_CLS_CD,INC_TAX_TRTY_EXMPT_IND,FRGN_SRC_INC_IND,FED_INC_TAX_PCT,PMT_DESC,PMT_LN1_ADDR,PMT_CNTRY_NM,KFS_CHART,KFS_ACCOUNT,INITIATOR_NETID,FORM_1099_TYPE,FORM_1099_BOX,FORM_1099_OVERRIDDEN_TYPE,FORM_1099_OVERRIDDEN_BOX,FORM_1042S_BOX,FORM_1042S_OVERRIDDEN_BOX,PMT_REASON_CD,DISB_NBR,PMT_STAT_CD,DISB_TYP_CD,LEDGER_DOC_TYP_CD
