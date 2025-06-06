@@ -194,18 +194,16 @@ public class CuCapAssetInventoryApiResource {
         try {
             List<Map<String, String>> campusCodes = new ArrayList<>();
             
-            // Use BusinessObjectService to get all active campuses
             Map<String, Object> fieldValues = new HashMap<>();
             fieldValues.put(CuCamsConstants.CapAssetApi.ACTIVE, true);
             Collection<org.kuali.kfs.sys.businessobject.Campus> campuses = 
                 SpringContext.getBean(BusinessObjectService.class).findMatching(
                     org.kuali.kfs.sys.businessobject.Campus.class, fieldValues);
             
-            // Convert to a list of maps with code and name
             for (org.kuali.kfs.sys.businessobject.Campus campus : campuses) {
                 Map<String, String> campusMap = new HashMap<>();
-                campusMap.put("code", campus.getCode());
-                campusMap.put("name", campus.getName());
+                campusMap.put("value", campus.getCode());
+                campusMap.put("label", campus.getCode());
                 campusCodes.add(campusMap);
             }
             
