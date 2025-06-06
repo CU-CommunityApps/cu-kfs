@@ -70,7 +70,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         Validate.isTrue(config.getMode() == TaxBatchConfig.Mode.CREATE_TAX_FILES,
                 "config should have specified CREATE_TAX_FILES mode");
         Validate.isTrue(StringUtils.equals(config.getTaxType(), CUTaxConstants.TAX_TYPE_1042S),
-                "config kshould have specified the 1042S tax type");
+                "config should have specified the 1042S tax type");
 
         return transactionDetailProcessorDao.processTransactionDetails(config, this);
     }
