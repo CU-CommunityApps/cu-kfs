@@ -5,6 +5,10 @@ import java.util.List;
 
 import edu.cornell.kfs.sys.util.CuSqlQuery;
 
+/**
+ * Unit/Integration-test-only utility service for running SQL, managing CSV-based text tables
+ * in HyperSQL databases, and performing test-grade encryption/decryption of data values.
+ */
 public interface TestDataHelperDao {
 
     void execute(final CuSqlQuery sqlQuery);

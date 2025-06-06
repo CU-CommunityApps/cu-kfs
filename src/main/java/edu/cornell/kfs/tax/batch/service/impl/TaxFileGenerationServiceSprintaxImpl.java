@@ -265,7 +265,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         }
 
         final TransactionDetail updatedRow = createTransactionDetailCopyContainingFieldUpdates(
-            currentRow, currentPayee, helper);
+                currentRow, currentPayee, helper);
         helper.pendingBatchUpdates.add(updatedRow);
         if (helper.pendingBatchUpdates.size() >= MAX_BATCH_UPDATE_SIZE) {
             transactionDetailProcessorDao.updateVendorInfoAndTaxBoxesOnTransactionDetails(
