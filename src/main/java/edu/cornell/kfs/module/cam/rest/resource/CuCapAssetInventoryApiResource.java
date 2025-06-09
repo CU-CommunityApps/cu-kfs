@@ -43,6 +43,7 @@ import org.kuali.kfs.module.cam.businessobject.BarcodeInventoryErrorDetail;
 import org.kuali.kfs.module.cam.document.BarcodeInventoryErrorDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Building;
+import org.kuali.kfs.sys.businessobject.Campus;
 import org.kuali.kfs.sys.businessobject.Room;
 import org.kuali.kfs.sys.context.SpringContext;
 
@@ -69,6 +70,7 @@ public class CuCapAssetInventoryApiResource {
     private CuAssetService cuAssetService;
     private DocumentService documentService;
     private DateTimeService dateTimeService;
+    private BusinessObjectService businessObjectService;
     private Environment environment;
 
     protected ConfigurationService configurationService;
@@ -196,11 +198,9 @@ public class CuCapAssetInventoryApiResource {
             
             Map<String, Object> fieldValues = new HashMap<>();
             fieldValues.put(CuCamsConstants.CapAssetApi.ACTIVE, true);
-            Collection<org.kuali.kfs.sys.businessobject.Campus> campuses = 
-                SpringContext.getBean(BusinessObjectService.class).findMatching(
-                    org.kuali.kfs.sys.businessobject.Campus.class, fieldValues);
+            Collection<Campus> campuses = getBusinessObjectService().findMatching(Campus.class, fieldValues);
             
-            for (org.kuali.kfs.sys.businessobject.Campus campus : campuses) {
+            for (Campus campus : campuses) {
                 Map<String, String> campusMap = new HashMap<>();
                 campusMap.put("value", campus.getCode());
                 campusMap.put("label", campus.getCode());
@@ -409,6 +409,13 @@ public class CuCapAssetInventoryApiResource {
             configurationService = SpringContext.getBean(ConfigurationService.class);
         }
         return configurationService;
+    }
+
+    private BusinessObjectService getBusinessObjectService() {
+        if (ObjectUtils.isNull(businessObjectService)) {
+            businessObjectService = SpringContext.getBean(BusinessObjectService.class);
+        }
+        return businessObjectService;
     }
 
     private Environment getEnvironment() {
