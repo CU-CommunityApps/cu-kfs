@@ -335,10 +335,12 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
 
     private boolean validateSetupForEmptyAffiliationsList(final IdentityManagementPersonDocument personDoc,
             final List<PersonDocumentAffiliation> affiliations) {
-        final EntityAffiliationType noneAffil = getCuPersonService().getAffiliationType(KfsAffiliations.NONE);
-        if (!StringUtils.equals(personDoc.getAffiliationTypeCode(), KfsAffiliations.NONE)) {
+        if (!StringUtils.equalsAny(personDoc.getAffiliationTypeCode(), KfsAffiliations.NONE, KfsAffiliations.MACHINE)) {
+            final EntityAffiliationType noneAffil = getCuPersonService().getAffiliationType(KfsAffiliations.NONE);
+            final EntityAffiliationType machineAffil = getCuPersonService().getAffiliationType(KfsAffiliations.MACHINE);
             GlobalVariables.getMessageMap().putError(CuKimPropertyConstants.AFFILIATION_TYPE_CODE,
-                    CuKimKeyConstants.ERROR_PERSON_AFFILIATIONS_INVALID_EMPTY_STATE, noneAffil.getName());
+                    CuKimKeyConstants.ERROR_PERSON_AFFILIATIONS_INVALID_EMPTY_STATE,
+                    noneAffil.getName(), machineAffil.getName());
             return false;
         } else {
             return true;

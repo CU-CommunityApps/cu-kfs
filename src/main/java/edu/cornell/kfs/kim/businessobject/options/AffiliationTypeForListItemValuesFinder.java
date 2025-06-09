@@ -27,7 +27,8 @@ public class AffiliationTypeForListItemValuesFinder extends KeyValuesBase {
         Stream<KeyValue> emptyKeyValue = Stream.of(
                 new ConcreteKeyValue(KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING));
         Stream<KeyValue> affilKeyValues = affiliationTypes.stream()
-                .filter(affilType -> !StringUtils.equals(affilType.getCode(), KfsAffiliations.NONE))
+                .filter(affilType -> !StringUtils.equalsAny(affilType.getCode(),
+                        KfsAffiliations.NONE, KfsAffiliations.MACHINE))
                 .map(affilType -> new ConcreteKeyValue(affilType.getCode(), affilType.getName()));
         return Stream.concat(emptyKeyValue, affilKeyValues)
                 .collect(Collectors.toUnmodifiableList());
