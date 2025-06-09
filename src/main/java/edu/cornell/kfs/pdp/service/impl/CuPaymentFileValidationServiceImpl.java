@@ -1,5 +1,6 @@
 package edu.cornell.kfs.pdp.service.impl;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Set;
 
@@ -7,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ErrorMessage;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpKeyConstants;
@@ -241,6 +243,19 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
         if (LOG.isDebugEnabled()) {
             LOG.debug("After checkPaymentDetailPropertyMaxLength: " + printErrorMap(errorMap));
         }
+    }
+    
+    @Override
+    protected void addWarningMessage(final List<String> warnings, final String messageKey, final String... arguments) {
+        // Add to global warnings so they will show up on the Payment File Batch Upload screen if
+        // the payment file was loaded via that screen
+        GlobalVariables.getMessageMap().putWarning(KFSConstants.GLOBAL_MESSAGES, messageKey, arguments);
+
+        final String message = kualiConfigurationService.getPropertyValueAsString(messageKey);
+        /*
+         * KFSPTS-35165 partial backport of FINP-10357
+         */
+        warnings.add(MessageFormat.format(message, (Object[]) arguments));
     }
 
     public void setPersonService(final PersonService personService) {
