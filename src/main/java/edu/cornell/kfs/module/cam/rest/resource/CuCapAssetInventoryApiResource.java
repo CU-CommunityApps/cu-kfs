@@ -203,7 +203,10 @@ public class CuCapAssetInventoryApiResource {
             for (Campus campus : campuses) {
                 Map<String, String> campusMap = new HashMap<>();
                 campusMap.put("value", campus.getCode());
-                campusMap.put("label", campus.getCode());
+
+                String campusLabel = String.format("%s - %s", campus.getCode(), campus.getName());
+                campusMap.put("label", campusLabel);
+
                 campusCodes.add(campusMap);
             }
             
