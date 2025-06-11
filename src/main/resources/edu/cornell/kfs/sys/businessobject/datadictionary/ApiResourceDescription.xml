@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="ApiResourceDescription" parent="ApiResourceDescription-parentBean"/>
+
+    <bean id="ApiResourceDescription-parentBean" abstract="true" parent="BusinessObjectEntry">
+        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiResourceDescription"/>
+        <property name="objectLabel" value="API Resource Description"/>
+        <property name="titleAttribute" value="resourceCode"/>
+
+        <property name="inquiryDefinition">
+            <ref bean="ApiResourceDescription-inquiryDefinition"/>
+        </property>
+        <property name="lookupDefinition">
+            <ref bean="ApiResourceDescription-lookupDefinition"/>
+        </property>
+        <property name="attributes">
+            <list>
+                <ref bean="ApiResourceDescription-resourceCode"/>
+                <ref bean="ApiResourceDescription-resourceDescription"/>
+                <ref bean="ApiResourceDescription-active"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ApiResourceDescription-resourceCode" parent="ApiResourceDescription-resourceCode-parentBean"/>
+
+    <bean id="ApiResourceDescription-resourceCode-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="resourceCode"/>
+        <property name="forceUppercase" value="true"/>
+        <property name="label" value="Resource Code"/>
+        <property name="shortLabel" value="Code"/>
+        <property name="maxLength" value="25"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="27"/>
+        </property>
+        <property name="validationPattern" >
+            <bean parent="AlphaNumericValidationPattern" />
+        </property>
+        <property name="attributeSecurity">
+            <bean parent="AttributeSecurity" p:readOnly="false"/>
+        </property>
+    </bean>
+
+    <bean id="ApiResourceDescription-resourceDescription" parent="ApiResourceDescription-resourceDescription-parentBean"/>
+
+    <bean id="ApiResourceDescription-resourceDescription-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="resourceDescription"/>
+        <property name="forceUppercase" value="false"/>
+        <property name="label" value="Resource Description"/>
+        <property name="shortLabel" value="Description"/>
+        <property name="maxLength" value="100"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="50"/>
+        </property>
+        <property name="validationPattern" >
+            <bean parent="AnyCharacterValidationPattern" />
+        </property>
+        <property name="attributeSecurity">
+            <bean parent="AttributeSecurity" p:readOnly="false"/>
+        </property>
+    </bean>
+
+    <bean id="ApiResourceDescription-active" parent="ApiResourceDescription-active-parentBean"/>
+    <bean id="ApiResourceDescription-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
+        <property name="name" value="active"/>
+    </bean>
+
+    <bean id="ApiResourceDescription-inquiryDefinition" parent="ApiResourceDescription-inquiryDefinition-parentBean"/>
+
+    <bean id="ApiResourceDescription-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+        <property name="title" value="API Resource Description Inquiry"/>
+        <property name="inquirySections">
+            <list>
+                <bean parent="InquirySectionDefinition">
+                    <property name="title" value="API Resource Description Inquiry"/>
+                    <property name="numberOfColumns" value="1"/>
+                    <property name="inquiryFields">
+                        <list>
+                            <bean parent="FieldDefinition" p:attributeName="resourceCode"/>
+                            <bean parent="FieldDefinition" p:attributeName="resourceDescription"/>
+                            <bean parent="FieldDefinition" p:attributeName="active"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ApiResourceDescription-lookupDefinition" parent="ApiResourceDescription-lookupDefinition-parentBean"/>
+
+    <bean id="ApiResourceDescription-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+        <property name="title" value="API Resource Description Lookup"/>
+
+        <property name="defaultSort" >
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>resourceCode</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="lookupFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="resourceCode"/>
+                <bean parent="FieldDefinition" p:attributeName="resourceDescription"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+        <property name="resultFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="resourceCode"/>
+                <bean parent="FieldDefinition" p:attributeName="resourceDescription"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>
