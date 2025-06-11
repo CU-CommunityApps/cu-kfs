@@ -49,10 +49,10 @@
         <property name="name" value="authenticatorDescription"/>
         <property name="forceUppercase" value="false"/>
         <property name="label" value="Authenticator Description"/>
-        <property name="shortLabel" value="Description"/>
+        <property name="shortLabel" value="Authenticator Description"/>
         <property name="maxLength" value="100"/>
         <property name="control">
-            <bean parent="TextControlDefinition" p:size="50"/>
+            <bean parent="TextControlDefinition" p:size="105"/>
         </property>
         <property name="validationPattern" >
             <bean parent="AnyCharacterValidationPattern" />
@@ -69,9 +69,9 @@
         <property name="forceUppercase" value="false"/>
         <property name="label" value="Username Password"/>
         <property name="shortLabel" value="Username Password"/>
-        <property name="maxLength" value="350"/>
+        <property name="maxLength" value="100"/>
         <property name="control">
-            <bean parent="TextControlDefinition" p:size="150"/>
+            <bean parent="TextControlDefinition" p:size="105"/>
         </property>
         <property name="validationPattern" >
             <bean parent="AnyCharacterValidationPattern" />
