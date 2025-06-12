@@ -44,6 +44,9 @@ public class CuCamsConstants {
         public static final long UPLOAD_ROW_NUMBER = 1L;
         public static final String KFS_SYSTEM_USER = "KFS";
         public static final String COLON_SPACE = ": ";
+        public static final String VALUE = "value";
+        public static final String LABEL = "label";
+        public static final String LABEL_FORMAT = "%s - %s";
 
         public static final class ConfigurationProperties {
             public static final String COGNITO_USER_POOL_ISSUER_URL = "cu.kfs.cams.api.cognito.user.pool.url";
