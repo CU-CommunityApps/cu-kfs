@@ -47,10 +47,11 @@ public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetServi
         return activeMatches;
     }
 
-    public Asset updateAssetInventory(Asset asset, final String conditionCode, final String buildingCode, final String roomNumber, final String netid) {
+    public Asset updateAssetInventory(Asset asset, final String conditionCode, final String buildingCode, final String roomNumber, final String netid, final String campusCode) {
         asset.setConditionCode(conditionCode);
         asset.setBuildingCode(buildingCode);
         asset.setBuildingRoomNumber(roomNumber);
+        asset.setCampusCode(campusCode);
         final Timestamp currentTimestamp = dateTimeService.getCurrentTimestamp();
         asset.setLastInventoryDate(currentTimestamp);
         asset.setLastUpdatedTimestamp(currentTimestamp);

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.UserSession;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -41,6 +43,7 @@ import org.kuali.kfs.module.cam.businessobject.BarcodeInventoryErrorDetail;
 import org.kuali.kfs.module.cam.document.BarcodeInventoryErrorDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Building;
+import org.kuali.kfs.sys.businessobject.Campus;
 import org.kuali.kfs.sys.businessobject.Room;
 import org.kuali.kfs.sys.context.SpringContext;
 
@@ -67,6 +70,7 @@ public class CuCapAssetInventoryApiResource {
     private CuAssetService cuAssetService;
     private DocumentService documentService;
     private DateTimeService dateTimeService;
+    private BusinessObjectService businessObjectService;
     private Environment environment;
 
     protected ConfigurationService configurationService;
@@ -153,15 +157,16 @@ public class CuCapAssetInventoryApiResource {
             String buildingCode = jsonFields.get(CuCamsConstants.CapAssetApi.BUILDING_CODE);
             String roomNumber = jsonFields.get(CuCamsConstants.CapAssetApi.ROOM_NUMBER);
             String netid = jsonFields.get(CuCamsConstants.CapAssetApi.NETID);
+            String campusCode = jsonFields.get(CuCamsConstants.CapAssetApi.CAMPUS_CODE);
 
-            if(!validateBuildingCode(buildingCode)) {
+            if(!validateBuildingCode(campusCode, buildingCode)) {
                 String errorMessageFormat = getConfigurationService().getPropertyValueAsString(CuCamsPropertyConstants.Asset.ERROR_INVALID_BUILDING_CODE);
                 String errorMessage = String.format(errorMessageFormat, buildingCode);
                 LOG.error("updateAsset: " + errorMessage);
                 return respondBadRequest(errorMessage);
             }
 
-            if(!validateBuildingRoomCombination(buildingCode, roomNumber)) {
+            if(!validateBuildingRoomCombination(campusCode, buildingCode, roomNumber)) {
                 String errorMessageFormat = getConfigurationService().getPropertyValueAsString(CuCamsPropertyConstants.Asset.ERROR_INVALID_BUILDING_ROOM);
                 String errorMessage = String.format(errorMessageFormat, roomNumber, buildingCode);
                 LOG.error("updateAsset: " + errorMessage);
@@ -171,11 +176,11 @@ public class CuCapAssetInventoryApiResource {
             Asset asset = getCuCapAssetInventoryDao().getAssetByTagNumber(assetTagUpper);
             if (ObjectUtils.isNull(asset)) {
                 LOG.error("updateAsset: Asset Inventory Tag #" + assetTagUpper + " Not Found");
-                createCapitalAssetErrorDocument(netid, assetTagUpper, conditionCode, buildingCode, roomNumber);
+                createCapitalAssetErrorDocument(netid, assetTagUpper, conditionCode, buildingCode, roomNumber, campusCode);
                 return respondAssetNotFound();
             }
 
-            asset = getCuAssetService().updateAssetInventory(asset, conditionCode, buildingCode, roomNumber, netid);
+            asset = getCuAssetService().updateAssetInventory(asset, conditionCode, buildingCode, roomNumber, netid, campusCode);
             LOG.info("updateAsset: Updated Capital Asset Inventory Tag #" + assetTagUpper + " " + asset.getLastInventoryDate().toString());
             Properties properties = getAssetProperties(asset);
             return Response.ok(gson.toJson(properties)).build();
@@ -184,18 +189,45 @@ public class CuCapAssetInventoryApiResource {
             return ex instanceof BadRequestException ? respondBadRequest() : respondInternalServerError(ex);
         }
     }
+    
+    @GET
+    @Path("/campusCodes")
+    public Response getCampusCodes(@Context HttpHeaders headers) {
+        try {
+            List<Map<String, String>> campusCodes = new ArrayList<>();
+            
+            Map<String, Object> fieldValues = new HashMap<>();
+            fieldValues.put(CuCamsConstants.CapAssetApi.ACTIVE, true);
+            Collection<Campus> campuses = getBusinessObjectService().findMatching(Campus.class, fieldValues);
+            
+            for (Campus campus : campuses) {
+                Map<String, String> campusMap = new HashMap<>();
+                campusMap.put(CuCamsConstants.CapAssetApi.VALUE, campus.getCode());
 
-    private boolean validateBuildingRoomCombination(String buildingCode, String roomNumber) {
-        List<Room> roomsInBuilding = getCuCapAssetInventoryDao().getBuildingRooms(CuCamsConstants.CapAssetApi.CAMPUS_CODE_VALUE, buildingCode);
+                String campusLabel = String.format(CuCamsConstants.CapAssetApi.LABEL_FORMAT, campus.getCode(), campus.getName());
+                campusMap.put(CuCamsConstants.CapAssetApi.LABEL, campusLabel);
+
+                campusCodes.add(campusMap);
+            }
+            
+            return Response.ok(gson.toJson(campusCodes)).build();
+        } catch (Exception ex) {
+            LOG.error("getCampusCodes", ex);
+            return respondInternalServerError(ex);
+        }
+    }
+
+    private boolean validateBuildingRoomCombination(String campusCode, String buildingCode, String roomNumber) {
+        List<Room> roomsInBuilding = getCuCapAssetInventoryDao().getBuildingRooms(campusCode, buildingCode);
         return roomsInBuilding.stream().anyMatch(room -> StringUtils.equalsIgnoreCase(room.getBuildingRoomNumber(), roomNumber));
     }
 
-    private boolean validateBuildingCode(String buildingCode) {
-        List<Building> buildings = getCuCapAssetInventoryDao().getBuildings(CuCamsConstants.CapAssetApi.CAMPUS_CODE_VALUE, buildingCode, StringUtils.EMPTY);
+    private boolean validateBuildingCode(String campusCode, String buildingCode) {
+        List<Building> buildings = getCuCapAssetInventoryDao().getBuildings(campusCode, buildingCode, StringUtils.EMPTY);
         return !buildings.isEmpty();
     }
 
-    private void createCapitalAssetErrorDocument(String netid, String assetTag, String condition, String buildingCode, String roomNumber) {
+    private void createCapitalAssetErrorDocument(String netid, String assetTag, String condition, String buildingCode, String roomNumber, String campusCode) {
         try {
             GlobalVariables.doInNewGlobalVariables(new UserSession(CuCamsConstants.CapAssetApi.KFS_SYSTEM_USER),
                 () -> {
@@ -207,7 +239,7 @@ public class CuCapAssetInventoryApiResource {
                         document.getDocumentHeader().setDocumentDescription(errorDescription);
                         document.setUploaderUniversalIdentifier(netid);
                         List<BarcodeInventoryErrorDetail> barcodeInventoryErrorDetails = new ArrayList<>();
-                        barcodeInventoryErrorDetails.add(getErrorDetail(netid, assetTag, condition, buildingCode, roomNumber));
+                        barcodeInventoryErrorDetails.add(getErrorDetail(netid, assetTag, condition, buildingCode, roomNumber, campusCode));
                         document.setBarcodeInventoryErrorDetail(barcodeInventoryErrorDetails);
                         getDocumentService().saveDocument(document);
 
@@ -224,10 +256,10 @@ public class CuCapAssetInventoryApiResource {
         }
     }
 
-    private BarcodeInventoryErrorDetail getErrorDetail(String netid, String assetTag, String condition, String buildingCode, String roomNumber) {
+    private BarcodeInventoryErrorDetail getErrorDetail(String netid, String assetTag, String condition, String buildingCode, String roomNumber, String campusCode) {
         BarcodeInventoryErrorDetail barcodeInventoryErrorDetail = new BarcodeInventoryErrorDetail();
         barcodeInventoryErrorDetail.setUploadRowNumber(CuCamsConstants.CapAssetApi.UPLOAD_ROW_NUMBER);
-        barcodeInventoryErrorDetail.setCampusCode(CuCamsConstants.CapAssetApi.CAMPUS_CODE_VALUE);
+        barcodeInventoryErrorDetail.setCampusCode(campusCode);
         barcodeInventoryErrorDetail.setAssetTagNumber(assetTag);
         barcodeInventoryErrorDetail.setUploadScanIndicator(true);
         barcodeInventoryErrorDetail.setUploadScanTimestamp(getDateTimeService().getCurrentTimestamp());
@@ -263,6 +295,7 @@ public class CuCapAssetInventoryApiResource {
 
     private Properties getAssetProperties(Asset asset) {
         Properties assetProperties = new Properties();
+        safelyAddProperty(assetProperties, CuCamsConstants.CapAssetApi.CAMPUS_CODE, asset.getCampusCode());
         safelyAddProperty(assetProperties, CuCamsConstants.CapAssetApi.CAPITAL_ASSET_NUMBER, asset.getCapitalAssetNumber());
         safelyAddProperty(assetProperties, CuCamsConstants.CapAssetApi.CAMPUS_TAG_NUMBER_ATTRIBUTE, asset.getCampusTagNumber());
         safelyAddProperty(assetProperties, CuCamsConstants.CapAssetApi.BUILDING_CODE, asset.getBuildingCode());
@@ -379,6 +412,13 @@ public class CuCapAssetInventoryApiResource {
             configurationService = SpringContext.getBean(ConfigurationService.class);
         }
         return configurationService;
+    }
+
+    private BusinessObjectService getBusinessObjectService() {
+        if (ObjectUtils.isNull(businessObjectService)) {
+            businessObjectService = SpringContext.getBean(BusinessObjectService.class);
+        }
+        return businessObjectService;
     }
 
     private Environment getEnvironment() {
