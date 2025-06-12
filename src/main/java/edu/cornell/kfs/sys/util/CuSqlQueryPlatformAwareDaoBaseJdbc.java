@@ -3,6 +3,7 @@ package edu.cornell.kfs.sys.util;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -24,31 +25,17 @@ public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDa
     }
     
     protected <T> List<T> queryForValues(CuSqlQuery sqlQuery, RowMapper<T> rowMapper, boolean logSQLOnError) {
-        try {
-            return getJdbcTemplate().query(sqlQuery.getQueryString(), rowMapper, sqlQuery.getParametersArray());
-        } catch (RuntimeException e) {
-            if (logSQLOnError || LOG.isDebugEnabled()) {
-                logSQL(sqlQuery);
-            }
-            LOG.error("queryForValues, Unexpected error encountered while running query!", e);
-            throw e;
-        }
+        return runQuery(sqlQuery, logSQLOnError,
+                () -> getJdbcTemplate().query(sqlQuery.getQueryString(), rowMapper, sqlQuery.getParametersArray()));
     }
-    
+
     protected int executeUpdate(final CuSqlQuery sqlQuery) {
         return executeUpdate(sqlQuery, true);
     }
     
     protected int executeUpdate(final CuSqlQuery sqlQuery, boolean logSQLOnError) {
-        try {
-            return getJdbcTemplate().update(sqlQuery.getQueryString(), sqlQuery.getParametersArray());
-        } catch (RuntimeException e) {
-            if (logSQLOnError || LOG.isDebugEnabled()) {
-                logSQL(sqlQuery);
-            }
-            LOG.error("update, Unexpected error encountered while running query!", e);
-            throw e;
-        }
+        return runQuery(sqlQuery, logSQLOnError,
+                () -> getJdbcTemplate().update(sqlQuery.getQueryString(), sqlQuery.getParametersArray()));
     }
     
     protected <T> int[] executeBatchUpdate(final CuSqlQuery sqlQuery, final List<T> batchItems) {
@@ -57,17 +44,11 @@ public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDa
     
     protected <T> int[] executeBatchUpdate(final CuSqlQuery sqlQuery, final List<T> batchItems,
             final boolean logSQLOnError) {
-        try {
+        return runQuery(sqlQuery, logSQLOnError, () -> {
             final CuSqlQueryBatchPreparedStatementSetter<T> statementSetter
                     = new CuSqlQueryBatchPreparedStatementSetter<>(sqlQuery, batchItems);
             return getJdbcTemplate().batchUpdate(sqlQuery.getQueryString(), statementSetter);
-        } catch (final RuntimeException e) {
-            if (logSQLOnError || LOG.isDebugEnabled()) {
-                logSQL(sqlQuery);
-            }
-            LOG.error("executeBatchUpdate, Unexpected error encountered while running query!", e);
-            throw e;
-        }
+        });
     }
 
     protected <T> T queryForResults(final CuSqlQuery sqlQuery, ResultSetExtractor<T> resultSetExtractor) {
@@ -83,17 +64,11 @@ public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDa
     protected <T> T queryForResults(final CuSqlQuery sqlQuery, final ResultSetExtractor<T> resultSetExtractor,
             final Function<CuSqlQuery, CuSqlQueryPreparedStatementCreatorAndSetter> statementHandlerFactory,
             final boolean logSQLOnError) {
-        try {
+        return runQuery(sqlQuery, logSQLOnError, () -> {
             final CuSqlQueryPreparedStatementCreatorAndSetter statementHandler =
                     statementHandlerFactory.apply(sqlQuery);
             return getJdbcTemplate().query(statementHandler, statementHandler, resultSetExtractor);
-        } catch (RuntimeException e) {
-            if (logSQLOnError || LOG.isDebugEnabled()) {
-                logSQL(sqlQuery);
-            }
-            LOG.error("queryForResults, Unexpected error encountered while running query!", e);
-            throw e;
-        }
+        });
     }
 
     protected <T> T execute(final CuSqlQuery sqlQuery, final PreparedStatementCallback<T> action) {
@@ -102,7 +77,7 @@ public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDa
 
     protected <T> T execute(final CuSqlQuery sqlQuery, final PreparedStatementCallback<T> action,
             final boolean logSQLOnError) {
-        try {
+        return runQuery(sqlQuery, logSQLOnError, () -> {
             final CuSqlQueryPreparedStatementCreatorAndSetter statementHandler =
                     CuSqlQueryPreparedStatementCreatorAndSetter.forReadOnlyResults(sqlQuery);
             return getJdbcTemplate().execute(statementHandler, preparedStatement -> {
@@ -111,11 +86,18 @@ public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDa
                 }
                 return action.doInPreparedStatement(preparedStatement);
             });
-        } catch (RuntimeException e) {
+        });
+    }
+
+    protected <T> T runQuery(final CuSqlQuery sqlQueryForLog, final boolean logSQLOnError,
+            final Supplier<T> queryRunner) {
+        try {
+            return queryRunner.get();
+        } catch (final RuntimeException e) {
             if (logSQLOnError || LOG.isDebugEnabled()) {
-                logSQL(sqlQuery);
+                logSQL(sqlQueryForLog);
             }
-            LOG.error("execute, Unexpected error encountered while running query!", e);
+            LOG.error("runQuery, Unexpected error encountered while running query!", e);
             throw e;
         }
     }
@@ -126,7 +108,7 @@ public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDa
     }
 
     private String buildParametersMessage(CuSqlQuery sqlQuery) {
-        return sqlQuery.getParameters().stream()
+        return sqlQuery.getParametersForLogging().stream()
                 .map(this::buildMessageForSingleParameter)
                 .collect(Collectors.joining(CUKFSConstants.COMMA_AND_SPACE));
     }

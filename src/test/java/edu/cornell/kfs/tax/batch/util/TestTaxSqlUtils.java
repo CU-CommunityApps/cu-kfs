@@ -3,6 +3,11 @@ package edu.cornell.kfs.tax.batch.util;
 import edu.cornell.kfs.sys.dataaccess.TestDataHelperDao;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
 
+/**
+ * Convenience class for encapsulating various table/column names used by the Tax unit tests;
+ * also provides helper methods for creating Tax-related tables as HyperSQL "text" tables
+ * (which are tied to CSV files).
+ */
 public final class TestTaxSqlUtils {
 
     public static final class TableNames {

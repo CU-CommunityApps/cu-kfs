@@ -11,6 +11,8 @@ import org.springframework.jdbc.core.SqlParameterValue;
 
 public final class CuSqlQuery {
 
+    private static final String DERIVED_PARAMETER_LOG_PLACEHOLDER = "[ Derived Value ]";
+
     private final String queryString;
     private final List<SqlParameterValue> parameters;
     private final boolean forBatchExecution;
@@ -64,6 +66,26 @@ public final class CuSqlQuery {
         return (scale != null)
                 ? new SqlParameterValue(parameter.getSqlType(), scale, value)
                 : new SqlParameterValue(parameter.getSqlType(), value);
+    }
+
+    public <T> List<SqlParameterValue> getParametersForLogging() {
+        if (forBatchExecution) {
+            return parameters.stream()
+                    .map(this::convertParameterForLogging)
+                    .collect(Collectors.toUnmodifiableList());
+        } else {
+            return parameters;
+        }
+    }
+
+    private SqlParameterValue convertParameterForLogging(final SqlParameterValue parameter) {
+        if (!(parameter.getValue() instanceof Function)) {
+            return parameter;
+        }
+        final Integer scale = parameter.getScale();
+        return (scale != null)
+                ? new SqlParameterValue(parameter.getSqlType(), scale, DERIVED_PARAMETER_LOG_PLACEHOLDER)
+                : new SqlParameterValue(parameter.getSqlType(), DERIVED_PARAMETER_LOG_PLACEHOLDER);
     }
 
     public Object[] getParametersArray() {
