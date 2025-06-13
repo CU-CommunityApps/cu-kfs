@@ -1797,7 +1797,9 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                              * CU Customization KFSPTS-23690 (portion for billing frequency handling)
                              */
                             award.setCreationProcessType(creationProcessType);
-                            if (verifyBillingFrequencyService.validateBillingFrequency(award, checkGracePeriod)) {
+                            if (verifyBillingFrequencyService.validateBillingFrequency(award, checkGracePeriod)
+                                || ArConstants.BillingFrequencyValues.isMilestone(award)
+                                || ArConstants.BillingFrequencyValues.isPredeterminedBilling(award)) {
                                 validateAward(errorList, award, creationProcessType);
                             } else {
                                 errorList.add(configurationService.getPropertyValueAsString(
@@ -2046,7 +2048,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                     new ContractsGrantsInvoiceDocumentErrorMessage();
             contractsGrantsInvoiceDocumentErrorCategory.setErrorMessageText(MessageFormat.format(
                     configurationService.getPropertyValueAsString(errorMessage.getErrorKey()),
-                            (Object) errorMessage.getMessageParameters()
+                            (Object[]) errorMessage.getMessageParameters()
                     )
             );
             contractsGrantsInvoiceDocumentErrorLog.getErrorMessages().add(contractsGrantsInvoiceDocumentErrorCategory);

@@ -486,12 +486,12 @@ public class CuVendorRule extends CuVendorRuleBase {
 	private void verifyPOTransmissionTypeAllowedForVendorType(final String vendorTypeCode, final List <VendorAddress> addresses) {
 		
         //Check that there is at least one PO Address Type specified when the Vendor Type is PO               
-        if ( (!StringUtils.isBlank(vendorTypeCode)) && StringUtils.equals(vendorTypeCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) {        
+        if ( (!StringUtils.isBlank(vendorTypeCode)) && StringUtils.equals(vendorTypeCode, PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT)) {        
         	boolean poAddressExistsForPOVendor = false;
         	int i = 0;
         	while ( (i < addresses.size()) && !poAddressExistsForPOVendor) {        		
         	    final VendorAddress address = addresses.get(i);
-            	if ( (!StringUtils.isBlank(address.getVendorAddressTypeCode())) && (StringUtils.equals(address.getVendorAddressTypeCode(), KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) ){
+            	if ( (!StringUtils.isBlank(address.getVendorAddressTypeCode())) && (StringUtils.equals(address.getVendorAddressTypeCode(), PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT)) ){
             		poAddressExistsForPOVendor = true;
             	}
             	i++;
@@ -503,12 +503,12 @@ public class CuVendorRule extends CuVendorRuleBase {
         }
         
         //Check that there are no PO Transmission Method values set when the Vendor Type is not PO               
-        if ( (!StringUtils.isBlank(vendorTypeCode)) && (!StringUtils.equals(vendorTypeCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER))) {        
+        if ( (!StringUtils.isBlank(vendorTypeCode)) && (!StringUtils.equals(vendorTypeCode, PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT))) {        
         	boolean poTransmissionMethodExistsForVendor = false;
         	int i = 0;
         	while ( (i < addresses.size()) && !poTransmissionMethodExistsForVendor) {        		
         	    final VendorAddress address = addresses.get(i);           	
-            	if ( (!StringUtils.isBlank(((CuVendorAddressExtension)address.getExtension()).getPurchaseOrderTransmissionMethodCode())) && (!StringUtils.equals(((CuVendorAddressExtension)address.getExtension()).getPurchaseOrderTransmissionMethodCode(), KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) ){
+            	if ( (!StringUtils.isBlank(((CuVendorAddressExtension)address.getExtension()).getPurchaseOrderTransmissionMethodCode())) && (!StringUtils.equals(((CuVendorAddressExtension)address.getExtension()).getPurchaseOrderTransmissionMethodCode(), PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT)) ){
             		poTransmissionMethodExistsForVendor = true;
             	}
             	i++;
@@ -549,9 +549,9 @@ public class CuVendorRule extends CuVendorRuleBase {
 	private boolean validateVendorTypeToAddressType(final String methodOfPOTransmission, final String vendorTypeCode, final String vendorAddressTypeRequiredCode, final String addressTypeCode, final String propertyScope){
 		 boolean valid = true;		
 	     //(vendorTypeCode = PO) && (vendorAddressTypeRequiredCode = PO) && (addressTypeCode = PO) && (methodOfPOTransmission is blank ) == error
-		 if ( (StringUtils.equals(vendorTypeCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) && 
-		      (StringUtils.equals(vendorAddressTypeRequiredCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) && 
-		      (StringUtils.equals(addressTypeCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) && 
+		 if ( (StringUtils.equals(vendorTypeCode, PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT)) && 
+		      (StringUtils.equals(vendorAddressTypeRequiredCode, PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT)) && 
+		      (StringUtils.equals(addressTypeCode, PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT)) && 
 		      ((methodOfPOTransmission == null) || (StringUtils.isBlank(methodOfPOTransmission))) ) {
 			 
 				 //User selected address type of PO but left method of PO transmission blank
@@ -560,7 +560,7 @@ public class CuVendorRule extends CuVendorRuleBase {
 		         putFieldError(propertyName, CUVendorKeyConstants.ERROR_PO_TRANSMISSION_REQUIRES_PO_ADDRESS, parameters);
 				 valid &= false;
 		 }
-		 else if ( (!StringUtils.equals(addressTypeCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) && 
+		 else if ( (!StringUtils.equals(addressTypeCode, PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT)) && 
 				   (StringUtils.isNotBlank(methodOfPOTransmission)) ) {
 			     //User selected address type of not PO and a Method of PO transmission value is selected
 				 final String propertyName = propertyScope + CUVendorPropertyConstants.VENDOR_ADDRESS_METHOD_OF_PO_TRANSMISSION;         
@@ -583,7 +583,7 @@ public class CuVendorRule extends CuVendorRuleBase {
          final String vendorTypeCode = vendorDetail.getVendorHeader().getVendorTypeCode();
 
 	     //(vendorTypeCode = PO) && (payment terms is blank ) == error
-		 if ( StringUtils.equalsIgnoreCase(vendorTypeCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER) &&
+		 if ( StringUtils.equalsIgnoreCase(vendorTypeCode, PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT) &&
 		      StringUtils.isBlank(paymentTermsCode) ) {
              putFieldError(CUVendorPropertyConstants.VENDOR_PAYMENT_TERMS, CUVendorKeyConstants.ERROR_PO_VENDOR_REQUIRES_PAYMENT_TERMS);
 			 valid = false;
