@@ -6,6 +6,7 @@ import java.security.GeneralSecurityException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -540,7 +541,7 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
 
 
     @Override
-    String[] getFilePathsForWriters(Transaction1042SSummary summary, java.util.Date processingStartDate) {
+    String[] getFilePathsForWriters(Transaction1042SSummary summary, LocalDateTime processingStartDate) {
         String[] filePaths = super.getFilePathsForWriters(summary, processingStartDate);
         DateFormat tempFormat = buildDateFormatForFileSuffixes();
         // Output file for 1042S biographic records.

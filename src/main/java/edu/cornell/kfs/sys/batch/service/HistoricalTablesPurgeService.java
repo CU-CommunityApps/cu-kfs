@@ -1,6 +1,6 @@
 package edu.cornell.kfs.sys.batch.service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * CU Customization: Historical Purge Table Job : short lived batch job to clear backlog of Initiated documents.
@@ -9,6 +9,6 @@ import java.util.Date;
 
 public interface HistoricalTablesPurgeService {
     
-    void purgeRecords(Date jobRunDate);
+    void purgeRecords(LocalDateTime jobRunDate);
     
 }

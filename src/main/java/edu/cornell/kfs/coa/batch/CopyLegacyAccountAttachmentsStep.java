@@ -1,6 +1,6 @@
 package edu.cornell.kfs.coa.batch;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
 
@@ -11,7 +11,7 @@ public class CopyLegacyAccountAttachmentsStep extends AbstractStep {
     private CopyLegacyAccountAttachmentsService copyLegacyAccountAttachmentsService;
 
     @Override
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         return copyLegacyAccountAttachmentsService.copyLegacyAccountAttachmentsToKfs();
     }
 

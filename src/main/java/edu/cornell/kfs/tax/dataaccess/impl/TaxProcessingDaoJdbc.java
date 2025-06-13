@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -45,7 +46,7 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
 
     @Override
     public void doTaxProcessing(String taxType, int reportYear, java.sql.Date startDate, java.sql.Date endDate, boolean vendorForeign,
-            java.util.Date processingStartDate) {
+            LocalDateTime processingStartDate) {
         List<EnumMap<TaxStatType,Integer>> stats;
         TaxProcessingService taxProcessingService = SpringContext.getBean(TaxProcessingService.class);
         TaxOutputDefinition tempDefinition;
@@ -353,7 +354,7 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
      * TX_TRANSACTION_DETAIL_T and uses them to print tax rows to the output file(s) accordingly. 
      * Returns an EnumMap containing numeric statistics pertaining to the transaction row processing.
      */
-    private <T extends TransactionDetailSummary> EnumMap<TaxStatType,Integer> processTransactionRows(final java.util.Date processingStartDate,
+    private <T extends TransactionDetailSummary> EnumMap<TaxStatType,Integer> processTransactionRows(final LocalDateTime processingStartDate,
             final T summary, final Class<? extends TransactionRowProcessor<T>> processorClazz, final TaxOutputDefinition outputDefinition) {
         // Create the object that will handle the processing of the transaction row data.
         final TransactionRowProcessor<T> processor = TransactionRowProcessorBuilder.createBuilder().buildNewProcessor(

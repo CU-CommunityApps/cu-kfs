@@ -27,6 +27,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -153,7 +154,7 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
      * @param jobRunDate Job Date
      * @see org.kuali.kfs.kns.bo.Step#execute(java.lang.String, java.util.Date)
      */
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         LOG.info("Started CheckReconciliationImportStep @ " + (new Date()).toString());
 
         List<Pair<String, String>> prefixMappings = getParameterPrefixMappings();

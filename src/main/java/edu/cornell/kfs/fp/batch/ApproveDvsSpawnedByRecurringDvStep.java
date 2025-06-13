@@ -1,6 +1,6 @@
 package edu.cornell.kfs.fp.batch;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
 
@@ -11,7 +11,7 @@ public class ApproveDvsSpawnedByRecurringDvStep extends AbstractStep {
     protected RecurringDisbursementVoucherDocumentService recurringDisbursementVoucherDocumentService;
 
     @Override
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         getRecurringDisbursementVoucherDocumentService().autoApproveDisbursementVouchersSpawnedByRecurringDvs();
         return true;
     }

@@ -26,7 +26,7 @@ import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.integration.purap.CapitalAssetSystem;
+import org.kuali.kfs.module.purap.businessobject.CapitalAssetSystem;
 import org.kuali.kfs.krad.rules.rule.event.ApproveDocumentEvent;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
 import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;

@@ -59,6 +59,7 @@ import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.kns.datadictionary.validation.fieldlevel.ZipcodeValidationPattern;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.businessobject.ACHBank;
@@ -1665,13 +1666,13 @@ public class Iso20022FormatExtractor {
         final String financialDocumentTypeCode = paymentDetail.getFinancialDocumentTypeCode();
 
         return disbursementVoucherTypes.contains(financialDocumentTypeCode)
-               || KFSConstants.FinancialDocumentTypeCodes.PAYMENT_REQUEST.equals(financialDocumentTypeCode);
+               || PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equals(financialDocumentTypeCode);
     }
 
     private static boolean isCreditNote(
             final PaymentDetail paymentDetail
     ) {
-        return KFSConstants.FinancialDocumentTypeCodes.VENDOR_CREDIT_MEMO
+        return PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT
                 .equals(paymentDetail.getFinancialDocumentTypeCode());
     }
 
