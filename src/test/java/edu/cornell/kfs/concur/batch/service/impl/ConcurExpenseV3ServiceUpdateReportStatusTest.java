@@ -365,7 +365,7 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
         private boolean simulateProduction;
         
         public TestConcurExpenseV3ServiceImpl() {
-            super(new Environment("unittest", "prd", ""));
+            super(new Environment("unittest", "prd", "Cornell"));
         }
         
         @Override
