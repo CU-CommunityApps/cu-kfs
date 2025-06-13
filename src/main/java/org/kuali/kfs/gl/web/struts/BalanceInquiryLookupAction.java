@@ -28,7 +28,7 @@ import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.gl.ObjectHelper;
 import org.kuali.kfs.gl.businessobject.AccountBalance;
 import org.kuali.kfs.gl.businessobject.lookup.AccountBalanceByConsolidationLookupableHelperServiceImpl;
-import org.kuali.kfs.integration.ld.SegmentedBusinessObject;
+import org.kuali.kfs.module.ld.businessobject.SegmentedBusinessObject;
 import org.kuali.kfs.kns.lookup.CollectionIncomplete;
 import org.kuali.kfs.kns.lookup.LookupResultsService;
 import org.kuali.kfs.kns.lookup.Lookupable;
@@ -427,4 +427,3 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
         return selectedObjectIds;
     }
 }
-

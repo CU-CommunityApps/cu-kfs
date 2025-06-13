@@ -1,6 +1,6 @@
 package edu.cornell.kfs.concur.batch;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.AbstractStep;
@@ -12,7 +12,7 @@ public class ConcurRequestExtractCreatePdpFeedStep extends AbstractStep {
     protected ConcurRequestExtractCreatePdpFeedService concurRequestExtractCreatePdpFeedService;
 
     @Override
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         getConcurRequestExtractCreatePdpFeedService().createPdpFeedsFromRequestExtracts();
         return true;
     }

@@ -1,5 +1,6 @@
 package edu.cornell.kfs.tax.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import edu.cornell.kfs.tax.batch.TaxDataDefinition;
@@ -20,7 +21,7 @@ public interface TaxProcessingService {
      * @param processingStartDate The date-time when the current tax processing started.
      * @throws IllegalArgumentException if taxType is blank or an unsupported value, or if processingStartDate is null.
      */
-    void doTaxProcessing(String taxType, java.util.Date processingStartDate);
+    void doTaxProcessing(String taxType, LocalDateTime processingStartDate);
 
     /**
      * Retrieves all active object-code-to-tax-bucket mappings for the given tax type.
