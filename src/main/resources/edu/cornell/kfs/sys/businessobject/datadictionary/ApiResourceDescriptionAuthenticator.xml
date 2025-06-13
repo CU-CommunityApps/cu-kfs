@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="ApiResourceDescriptionAuthenticator" parent="ApiResourceDescriptionAuthenticator-parentBean"/>
+
+    <bean id="ApiResourceDescriptionAuthenticator-parentBean" abstract="true" parent="BusinessObjectEntry">
+        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiResourceDescriptionAuthenticator"/>
+        <property name="objectLabel" value="API Resource Description Authenticator"/>
+        <property name="titleAttribute" value="id"/>
+
+        <property name="inquiryDefinition">
+            <ref bean="ApiResourceDescriptionAuthenticator-inquiryDefinition"/>
+        </property>
+        <property name="lookupDefinition">
+            <ref bean="ApiResourceDescriptionAuthenticator-lookupDefinition"/>
+        </property>
+        <property name="attributes">
+            <list>
+                <ref bean="ApiResourceDescriptionAuthenticator-id"/>
+                <ref bean="ApiResourceDescriptionAuthenticator-authenticatorId"/>
+                <ref bean="ApiResourceDescriptionAuthenticator-resourceCode"/>
+                <ref bean="ApiResourceDescriptionAuthenticator-active"/>
+            </list>
+        </property>
+        <property name="relationships">
+            <list>
+                <bean parent="RelationshipDefinition">
+                    <property name="objectAttributeName" value="apiResourceDescription"/>
+                    <property name="primitiveAttributes">
+                        <list>
+                            <bean parent="PrimitiveAttributeDefinition" p:sourceName="resourceCode" p:targetName="resourceCode"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="RelationshipDefinition">
+                    <property name="objectAttributeName" value="apiResourceAuthenticator"/>
+                    <property name="primitiveAttributes">
+                        <list>
+                            <bean parent="PrimitiveAttributeDefinition" p:sourceName="authenticatorId" p:targetName="authenticatorId"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ApiResourceDescriptionAuthenticator-id" parent="ApiResourceDescriptionAuthenticator-id-parentBean"/>
+
+    <bean id="ApiResourceDescriptionAuthenticator-id-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="id"/>
+        <property name="forceUppercase" value="false"/>
+        <property name="label" value="ID"/>
+        <property name="shortLabel" value="ID"/>
+        <property name="maxLength" value="10"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="12"/>
+        </property>
+        <property name="validationPattern" >
+            <bean parent="NumericValidationPattern" />
+        </property>
+        <property name="attributeSecurity">
+            <bean parent="AttributeSecurity" p:readOnly="false"/>
+        </property>
+    </bean>
+
+    <bean id="ApiResourceDescriptionAuthenticator-authenticatorId" parent="ApiResourceDescriptionAuthenticator-authenticatorId-parentBean"/>
+
+    <bean id="ApiResourceDescriptionAuthenticator-authenticatorId-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="authenticatorId"/>
+        <property name="forceUppercase" value="false"/>
+        <property name="label" value="Authenticator ID"/>
+        <property name="shortLabel" value="Auth ID"/>
+        <property name="maxLength" value="10"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="12"/>
+        </property>
+        <property name="validationPattern" >
+            <bean parent="NumericValidationPattern" />
+        </property>
+        <property name="attributeSecurity">
+            <bean parent="AttributeSecurity" p:readOnly="false"/>
+        </property>
+    </bean>
+
+    <bean id="ApiResourceDescriptionAuthenticator-resourceCode" parent="ApiResourceDescriptionAuthenticator-resourceCode-parentBean"/>
+
+    <bean id="ApiResourceDescriptionAuthenticator-resourceCode-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="resourceCode"/>
+        <property name="forceUppercase" value="true"/>
+        <property name="label" value="Resource Code"/>
+        <property name="shortLabel" value="Code"/>
+        <property name="maxLength" value="25"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="27"/>
+        </property>
+        <property name="validationPattern" >
+            <bean parent="AlphaNumericValidationPattern" />
+        </property>
+        <property name="attributeSecurity">
+            <bean parent="AttributeSecurity" p:readOnly="false"/>
+        </property>
+    </bean>
+
+    <bean id="ApiResourceDescriptionAuthenticator-active" parent="ApiResourceDescriptionAuthenticator-active-parentBean"/>
+    <bean id="ApiResourceDescriptionAuthenticator-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
+        <property name="name" value="active"/>
+    </bean>
+
+    <bean id="ApiResourceDescriptionAuthenticator-inquiryDefinition" parent="ApiResourceDescriptionAuthenticator-inquiryDefinition-parentBean"/>
+
+    <bean id="ApiResourceDescriptionAuthenticator-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+        <property name="title" value="API Resource Description Authenticator Inquiry"/>
+        <property name="inquirySections">
+            <list>
+                <bean parent="InquirySectionDefinition">
+                    <property name="title" value="API Resource Description Authenticator Inquiry"/>
+                    <property name="numberOfColumns" value="1"/>
+                    <property name="inquiryFields">
+                        <list>
+                            <bean parent="FieldDefinition" p:attributeName="id"/>
+                            <bean parent="FieldDefinition" p:attributeName="authenticatorId"/>
+                            <bean parent="FieldDefinition" p:attributeName="resourceCode"/>
+                            <bean parent="FieldDefinition" p:attributeName="active"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ApiResourceDescriptionAuthenticator-lookupDefinition" parent="ApiResourceDescriptionAuthenticator-lookupDefinition-parentBean"/>
+
+    <bean id="ApiResourceDescriptionAuthenticator-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+        <property name="title" value="API Resource Description Authenticator Lookup"/>
+
+        <property name="defaultSort" >
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>id</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="lookupFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="id"/>
+                <bean parent="FieldDefinition" p:attributeName="authenticatorId"/>
+                <bean parent="FieldDefinition" p:attributeName="resourceCode"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+        <property name="resultFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="id"/>
+                <bean parent="FieldDefinition" p:attributeName="authenticatorId"/>
+                <bean parent="FieldDefinition" p:attributeName="resourceCode"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

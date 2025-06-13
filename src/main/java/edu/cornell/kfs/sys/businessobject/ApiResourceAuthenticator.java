@@ -1,0 +1,63 @@
+package edu.cornell.kfs.sys.businessobject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+
+public class ApiResourceAuthenticator extends PersistableBusinessObjectBase implements MutableInactivatable {
+
+    private Integer authenticatorId;
+    private String authenticatorDescription;
+    private String usernamePassword;
+    private boolean active;
+
+    private List<ApiResourceDescriptionAuthenticator> descriptionAuthenticators;
+
+    @Override
+    public boolean isActive() {
+        return active;
+    }
+
+    @Override
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public Integer getAuthenticatorId() {
+        return authenticatorId;
+    }
+
+    public void setAuthenticatorId(Integer authenticatorId) {
+        this.authenticatorId = authenticatorId;
+    }
+
+    public String getAuthenticatorDescription() {
+        return authenticatorDescription;
+    }
+
+    public void setAuthenticatorDescription(String authenticatorDescription) {
+        this.authenticatorDescription = authenticatorDescription;
+    }
+
+    public String getUsernamePassword() {
+        return usernamePassword;
+    }
+
+    public void setUsernamePassword(String usernamePassword) {
+        this.usernamePassword = usernamePassword;
+    }
+
+    public List<ApiResourceDescriptionAuthenticator> getDescriptionAuthenticators() {
+        if (descriptionAuthenticators == null) {
+            descriptionAuthenticators = new ArrayList<>();
+        }
+        return descriptionAuthenticators;
+    }
+
+    public void setDescriptionAuthenticators(List<ApiResourceDescriptionAuthenticator> descriptionAuthenticators) {
+        this.descriptionAuthenticators = descriptionAuthenticators;
+    }
+
+}
