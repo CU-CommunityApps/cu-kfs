@@ -18,13 +18,14 @@
  */
 package org.kuali.kfs.module.ld.businessobject;
 
-import org.kuali.kfs.integration.ld.LaborModuleService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.AccountingLineOverride;
 import org.kuali.kfs.sys.businessobject.AccountingLineOverride.COMPONENT;
-import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -76,27 +77,12 @@ public final class LaborAccountingLineOverride {
         // KFSMI-9133 : updating system to automatically check expired account boxes on the source side of the
         // transaction, since those are read only.  Otherwise, amounts in expired accounts could never be transferred
         line.setAccountExpiredOverrideNeeded(needed.hasComponent(COMPONENT.EXPIRED_ACCOUNT));
-        if ( line.getAccountExpiredOverrideNeeded() ) {
-        	line.setAccountExpiredOverride(fromCurrentCode.hasComponent(COMPONENT.EXPIRED_ACCOUNT));
-        }
-        line.setObjectBudgetOverride(fromCurrentCode.hasComponent(COMPONENT.NON_BUDGETED_OBJECT));
-        line.setObjectBudgetOverrideNeeded(needed.hasComponent(COMPONENT.NON_BUDGETED_OBJECT));
-        line.setNonFringeAccountOverride(fromCurrentCode.hasComponent(COMPONENT.NON_FRINGE_ACCOUNT_USED));
-        line.setNonFringeAccountOverrideNeeded(needed.hasComponent(COMPONENT.NON_FRINGE_ACCOUNT_USED));
-    }
-
-    /**
-     * @deprecated use {@link #processForOutput(AccountingDocument, AccountingLine)} instead.
-     */
-    @Deprecated
-    public static void processForOutput(final AccountingLine line) {
-        final AccountingLineOverride fromCurrentCode = AccountingLineOverride.valueOf(line.getOverrideCode());
-        final AccountingLineOverride needed = determineNeededOverrides(line);
-        // KFSMI-9133 : updating system to automatically check expired account boxes on the source side of the
-        // transaction, since those are read only.  Otherwise, amounts in expired accounts could never be transferred
-        line.setAccountExpiredOverrideNeeded(needed.hasComponent(COMPONENT.EXPIRED_ACCOUNT));
-        if ( line.getAccountExpiredOverrideNeeded() ) {
-        	line.setAccountExpiredOverride(fromCurrentCode.hasComponent(COMPONENT.EXPIRED_ACCOUNT));
+        if (line.getAccountExpiredOverrideNeeded()) {
+            if (line instanceof SourceAccountingLine) {
+                line.setAccountExpiredOverride(true);
+            } else {
+                line.setAccountExpiredOverride(fromCurrentCode.hasComponent(COMPONENT.EXPIRED_ACCOUNT));
+            }
         }
         line.setObjectBudgetOverride(fromCurrentCode.hasComponent(COMPONENT.NON_BUDGETED_OBJECT));
         line.setObjectBudgetOverrideNeeded(needed.hasComponent(COMPONENT.NON_BUDGETED_OBJECT));
@@ -110,18 +96,27 @@ public final class LaborAccountingLineOverride {
      * @param line
      * @return what overrides the given line needs.
      */
-    public static AccountingLineOverride determineNeededOverrides(final AccountingDocument document, final AccountingLine line) {
-        final LaborModuleService laborModuleService = SpringContext.getBean(LaborModuleService.class);
-        return laborModuleService.determineNeededOverrides(document, line);
-    }
+    public static AccountingLineOverride determineNeededOverrides(
+            @Nullable final AccountingDocument document, final AccountingLine line
+    ) {
+        boolean isDocumentFinalOrProcessed = false;
+        if (ObjectUtils.isNotNull(document)) {
+            final AccountingDocument accountingDocument = document;
+            isDocumentFinalOrProcessed = accountingDocument.isDocumentFinalOrProcessed();
+        }
+        final Set<Integer> neededOverrideComponents = new HashSet<>();
+        if (AccountingLineOverride.needsExpiredAccountOverride(line, isDocumentFinalOrProcessed)) {
+            neededOverrideComponents.add(COMPONENT.EXPIRED_ACCOUNT);
+        }
+        if (AccountingLineOverride.needsObjectBudgetOverride(line.getAccount(), line.getObjectCode())) {
+            neededOverrideComponents.add(COMPONENT.NON_BUDGETED_OBJECT);
+        }
+        if (AccountingLineOverride.needsNonFringAccountOverride(line.getAccount())) {
+            neededOverrideComponents.add(COMPONENT.NON_FRINGE_ACCOUNT_USED);
+        }
+        final Integer[] inputComponentArray = neededOverrideComponents.toArray(new Integer[neededOverrideComponents.size()]);
 
-    /**
-     * @deprecated use {@link #determineNeededOverrides(AccountingDocument document, AccountingLine line)} instead.
-     */
-    @Deprecated
-    public static AccountingLineOverride determineNeededOverrides(final AccountingLine line) {
-        final LaborModuleService laborModuleService = SpringContext.getBean(LaborModuleService.class);
-        return laborModuleService.determineNeededOverrides(line);
+        return AccountingLineOverride.valueOf(inputComponentArray);
     }
 
 }

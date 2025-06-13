@@ -16,6 +16,7 @@
 package com.rsmart.kuali.kfs.cr.batch;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -63,11 +64,11 @@ public class GlTransactionStep extends AbstractStep {
      * Execute
      * 
      * @param jobName Job Name
-     * @param jobRunDate Job Date
-     * @see org.kuali.kfs.kns.bo.Step#execute(java.lang.String, java.util.Date)
+     * @param jobRunDate Job LocalDateTime
+     * @see org.kuali.kfs.kns.bo.Step#execute(java.lang.String, java.time.LocalDateTime)
      */
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        LOG.info("Started GlTransactionStep @ " + (new Date()).toString());
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
+        LOG.info("Started GlTransactionStep @ " + LocalDateTime.now().toString());
         
         LOG.info("Get Bank List");
         Collection<Bank> banks = businessObjectService.findAll(Bank.class);

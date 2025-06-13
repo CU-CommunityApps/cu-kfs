@@ -99,7 +99,6 @@ public class DocumentRouteHeaderValue extends PersistableBusinessObjectBase impl
     private Timestamp createDate;
     private Timestamp approvedDate;
     private Timestamp finalizedDate;
-    private DocumentRouteHeaderValueContent documentContent;
     private String docTitle;
     private String appDocId;
     private Integer docVersion = KewApiConstants.DocumentContentVersions.NODAL;
@@ -312,15 +311,6 @@ public class DocumentRouteHeaderValue extends PersistableBusinessObjectBase impl
 
     public void setCreateDate(final Timestamp createDate) {
         this.createDate = createDate;
-    }
-
-    public String getDocContent() {
-        return getDocumentContent().getDocumentContent();
-    }
-
-    public void setDocContent(final String docContent) {
-        final DocumentRouteHeaderValueContent content = getDocumentContent();
-        content.setDocumentContent(docContent);
     }
 
     public Integer getDocRouteLevel() {
@@ -778,17 +768,6 @@ public class DocumentRouteHeaderValue extends PersistableBusinessObjectBase impl
         this.initialRouteNodeInstances = initialRouteNodeInstances;
     }
 
-    public DocumentRouteHeaderValueContent getDocumentContent() {
-        if (documentContent == null) {
-            documentContent = KEWServiceLocator.getRouteHeaderService().getContent(documentId);
-        }
-        return documentContent;
-    }
-
-    public void setDocumentContent(final DocumentRouteHeaderValueContent documentContent) {
-        this.documentContent = documentContent;
-    }
-
     public List<DocumentStatusTransition> getAppDocStatusHistory() {
         return appDocStatusHistory;
     }
@@ -907,9 +886,6 @@ public class DocumentRouteHeaderValue extends PersistableBusinessObjectBase impl
         copy.routeStatusDate = copyTimestamp(routeStatusDate);
         copy.appDocStatus = appDocStatus;
         copy.appDocStatusDate = copyTimestamp(appDocStatusDate);
-        if (documentContent != null) {
-            copy.documentContent = documentContent.deepCopy(visited);
-        }
         if (initialRouteNodeInstances != null) {
             final List<RouteNodeInstance> copies = new ArrayList<>();
             for (final RouteNodeInstance routeNodeInstance : initialRouteNodeInstances) {

@@ -1,7 +1,7 @@
 package edu.cornell.kfs.sys.batch.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 
 import edu.cornell.kfs.sys.batch.service.HistoricalTablesPurgeService;
 import edu.cornell.kfs.sys.businessobject.HistoricalTableDetailsForPurge;
@@ -16,7 +16,7 @@ public class HistoricalTablesPurgeServiceImpl implements HistoricalTablesPurgeSe
     protected HistoricalTablePurgeRecordsDao historicalTablePurgeRecordsDao;
     protected ArrayList<HistoricalTableDetailsForPurge> historicalTablesDetailsForPurge;
     
-    public void purgeRecords(Date jobRunDate) {
+    public void purgeRecords(LocalDateTime jobRunDate) {
         getHistoricalTablePurgeRecordsDao().purgeRecords(jobRunDate, historicalTablesDetailsForPurge);
     }
 

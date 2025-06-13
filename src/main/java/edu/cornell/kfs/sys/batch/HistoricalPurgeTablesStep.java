@@ -1,6 +1,6 @@
 package edu.cornell.kfs.sys.batch;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
 
@@ -15,7 +15,7 @@ public class HistoricalPurgeTablesStep extends AbstractStep {
     
     private HistoricalTablesPurgeService historicalTablesPurgeService;
     
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         getHistoricalTablesPurgeService().purgeRecords(jobRunDate);
         return true;
     }

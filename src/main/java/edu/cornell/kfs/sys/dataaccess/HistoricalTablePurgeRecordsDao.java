@@ -1,6 +1,6 @@
 package edu.cornell.kfs.sys.dataaccess;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import edu.cornell.kfs.sys.businessobject.HistoricalTableDetailsForPurge;
@@ -12,6 +12,6 @@ import edu.cornell.kfs.sys.businessobject.HistoricalTableDetailsForPurge;
 
 public interface HistoricalTablePurgeRecordsDao {
     
-    void purgeRecords(Date jobRunDate, List<HistoricalTableDetailsForPurge> tableDetails);
+    void purgeRecords(LocalDateTime jobRunDate, List<HistoricalTableDetailsForPurge> tableDetails);
     
 }

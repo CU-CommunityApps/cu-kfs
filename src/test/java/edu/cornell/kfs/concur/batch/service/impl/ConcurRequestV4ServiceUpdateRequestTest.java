@@ -418,7 +418,7 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
         private boolean simulateProduction;
         
         public TestConcurRequestV4ServiceImpl() {
-            super(new Environment("unittest", "prd"));
+            super(new Environment("unittest", "prd", ""));
         }
         
         @Override

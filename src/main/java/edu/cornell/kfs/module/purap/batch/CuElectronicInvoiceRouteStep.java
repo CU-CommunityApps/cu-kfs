@@ -1,5 +1,5 @@
 package edu.cornell.kfs.module.purap.batch;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +14,7 @@ public class CuElectronicInvoiceRouteStep extends AbstractStep {
 
     private ElectronicInvoiceHelperService electronicInvoiceHelperService;
 
-    public boolean execute(String jobName, Date jobRunDate) {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) {
     	try {
     		Thread.sleep(60000);
     	} catch (Exception e) {}

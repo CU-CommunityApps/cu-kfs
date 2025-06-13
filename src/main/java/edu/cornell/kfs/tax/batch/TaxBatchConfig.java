@@ -1,5 +1,7 @@
 package edu.cornell.kfs.tax.batch;
 
+import java.time.LocalDateTime;
+
 import org.apache.commons.lang3.Validate;
 
 import edu.cornell.kfs.tax.util.TaxUtils;
@@ -14,17 +16,17 @@ public final class TaxBatchConfig {
     private final Mode mode;
     private final String taxType;
     private final int reportYear;
-    private final java.util.Date processingStartDate;
+    private final LocalDateTime processingStartDate;
     private final java.sql.Date startDate;
     private final java.sql.Date endDate;
 
     public TaxBatchConfig(final String taxType, final int reportYear,
-            final java.util.Date processingStartDate, final java.sql.Date startDate, final java.sql.Date endDate) {
+            final LocalDateTime processingStartDate, final java.sql.Date startDate, final java.sql.Date endDate) {
         this(Mode.CREATE_TAX_FILES, taxType, reportYear, processingStartDate, startDate, endDate);
     }
 
     public TaxBatchConfig(final Mode mode, final String taxType, final int reportYear,
-            final java.util.Date processingStartDate, final java.sql.Date startDate, final java.sql.Date endDate) {
+            final LocalDateTime processingStartDate, final java.sql.Date startDate, final java.sql.Date endDate) {
         Validate.notNull(mode, "mode cannot be null");
         Validate.notBlank(taxType, "taxType cannot be blank");
         Validate.notNull(processingStartDate, "processingStartDate cannot be null");
@@ -33,7 +35,7 @@ public final class TaxBatchConfig {
         this.mode = mode;
         this.taxType = taxType;
         this.reportYear = reportYear;
-        this.processingStartDate = TaxUtils.copyDate(processingStartDate);
+        this.processingStartDate = processingStartDate;
         this.startDate = TaxUtils.copyDate(startDate);
         this.endDate = TaxUtils.copyDate(endDate);
     }
@@ -54,8 +56,8 @@ public final class TaxBatchConfig {
         return reportYear;
     }
 
-    public java.util.Date getProcessingStartDate() {
-        return TaxUtils.copyDate(processingStartDate);
+    public LocalDateTime getProcessingStartDate() {
+        return processingStartDate;
     }
 
     public java.sql.Date getStartDate() {

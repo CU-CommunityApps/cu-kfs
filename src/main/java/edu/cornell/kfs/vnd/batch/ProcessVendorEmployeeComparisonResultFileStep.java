@@ -1,6 +1,6 @@
 package edu.cornell.kfs.vnd.batch;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +15,7 @@ public class ProcessVendorEmployeeComparisonResultFileStep extends AbstractStep 
     private VendorEmployeeComparisonService vendorEmployeeComparisonService;
 
     @Override
-    public boolean execute(final String jobName, final Date jobRunDate) throws InterruptedException {
+    public boolean execute(final String jobName, final LocalDateTime jobRunDate) throws InterruptedException {
         final boolean result = vendorEmployeeComparisonService.processResultsOfVendorEmployeeComparison();
         if (!result) {
             LOG.error("execute, Unexpected errors were encountered while processing one or more result files; "
