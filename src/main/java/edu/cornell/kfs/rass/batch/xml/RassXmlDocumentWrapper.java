@@ -1,7 +1,7 @@
 package edu.cornell.kfs.rass.batch.xml;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,15 +15,15 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import edu.cornell.kfs.sys.xmladapters.RassStringToJavaLocalDateTimeZoneDefaultAdapter;
+import edu.cornell.kfs.sys.xmladapters.RassStringToJavaLongDateTimeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Kfs", namespace = StringUtils.EMPTY)
 public class RassXmlDocumentWrapper {
     
     @XmlElement(name = "Extract_Begin_Timestamp", namespace = StringUtils.EMPTY)
-    @XmlJavaTypeAdapter(RassStringToJavaLocalDateTimeZoneDefaultAdapter.class)
-    private LocalDateTime extractDateTime;
+    @XmlJavaTypeAdapter(RassStringToJavaLongDateTimeAdapter.class)
+    private Date extractDate;
     
     @XmlElementWrapper(name = "Awards", namespace = StringUtils.EMPTY)
     @XmlElement(name = "Award", namespace = StringUtils.EMPTY)
@@ -38,12 +38,12 @@ public class RassXmlDocumentWrapper {
         agencies = new ArrayList<RassXmlAgencyEntry>();
     }
 
-    public LocalDateTime getExtractDateTime() {
-        return extractDateTime;
+    public Date getExtractDate() {
+        return extractDate;
     }
 
-    public void setExtractDateTime(LocalDateTime extractDateTime) {
-        this.extractDateTime = extractDateTime;
+    public void setExtractDate(Date extractDate) {
+        this.extractDate = extractDate;
     }
 
     public List<RassXmlAwardEntry> getAwards() {
@@ -66,7 +66,7 @@ public class RassXmlDocumentWrapper {
     public boolean equals(Object o) {
         if (o instanceof RassXmlDocumentWrapper) {
             RassXmlDocumentWrapper other = (RassXmlDocumentWrapper) o;
-            return Objects.equals(extractDateTime, other.getExtractDateTime()) &&
+            return Objects.equals(extractDate, other.getExtractDate()) &&
                     Objects.equals(awards, other.getAwards()) &&
                     Objects.equals(agencies, other.getAgencies());
 
@@ -77,7 +77,7 @@ public class RassXmlDocumentWrapper {
     
     @Override
     public int hashCode() {
-        return Objects.hash(extractDateTime, awards, agencies);
+        return Objects.hash(extractDate, awards, agencies);
     }
     
     @Override
