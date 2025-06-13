@@ -1,0 +1,3 @@
+"First_Name","Middle_Name","Last_Name","Email","Unique_ID_Student_Number","TIN","DOB","Foreign_Tax_ID","Country_of_Residence","US_Address_Line_1","US_Address_Line_2","US_City","US_State","US_zip","NOnUS_Address_Line_1","NonUS_Address_Province","NonUS_Address_City","NonUS_address_Country","NonUS-Address_postal_code","Mailing_Address","Canada_Province"
+"Jane","","Doe","jdoe333@somewhere.edu","127127-1","","","0xx-8x-xx55","CA","111 W Road St Apt 2","","Ithaca","NY","14850-4567","Some Business Park","ON","Kingston","CA","K7L 3N6","","ON"
+"","","TestingNano Business Inc","sprintax-placeholder-134134-1@cornell.edu","134134-1","~xx-xx-9754","","","HU","No US Address on File!","","","","","Zigzag uffda 7","","Budapest","HU","1031","",""

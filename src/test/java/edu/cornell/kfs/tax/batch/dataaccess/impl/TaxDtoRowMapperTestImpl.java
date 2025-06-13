@@ -3,7 +3,6 @@ package edu.cornell.kfs.tax.batch.dataaccess.impl;
 import java.sql.SQLException;
 import java.util.List;
 
-import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoRowMapper;
 
 public class TaxDtoRowMapperTestImpl<T> implements TaxDtoRowMapper<T> {
@@ -28,12 +27,6 @@ public class TaxDtoRowMapperTestImpl<T> implements TaxDtoRowMapper<T> {
     @Override
     public T readCurrentRow() throws SQLException {
         return dtos.get(currentIndex);
-    }
-
-    @Override
-    public void updateStringFieldsOnCurrentRow(final Object dtoContainingUpdates,
-            final TaxDtoFieldEnum... fieldsToUpdate) throws SQLException {
-        throw new UnsupportedOperationException("This implementation does not support updates");
     }
 
 }
