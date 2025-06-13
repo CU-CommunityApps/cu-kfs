@@ -1,7 +1,7 @@
 package edu.cornell.kfs.rass.batch.xml;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,7 +19,7 @@ import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.sys.xmladapters.BooleanNullPossibleXmlAdapter;
 import edu.cornell.kfs.sys.xmladapters.KualiDecimalNullPossibleXmlAdapter;
-import edu.cornell.kfs.sys.xmladapters.RassStringToJavaLocalDateAdapter;
+import edu.cornell.kfs.sys.xmladapters.RassStringToJavaShortDateTimeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Award", namespace = StringUtils.EMPTY)
@@ -42,12 +42,12 @@ public class RassXmlAwardEntry implements RassXmlObject {
     private String projectTitle;
     
     @XmlElement(name = "Start_Date", namespace = StringUtils.EMPTY)
-    @XmlJavaTypeAdapter(RassStringToJavaLocalDateAdapter.class)
-    private LocalDate startDate;
+    @XmlJavaTypeAdapter(RassStringToJavaShortDateTimeAdapter.class)
+    private Date startDate;
     
     @XmlElement(name = "Stop_Date", namespace = StringUtils.EMPTY)
-    @XmlJavaTypeAdapter(RassStringToJavaLocalDateAdapter.class)
-    private LocalDate stopDate;
+    @XmlJavaTypeAdapter(RassStringToJavaShortDateTimeAdapter.class)
+    private Date stopDate;
     
     @XmlElement(name = "Direct_Cost_Amount", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(KualiDecimalNullPossibleXmlAdapter.class)
@@ -90,16 +90,16 @@ public class RassXmlAwardEntry implements RassXmlObject {
     private Boolean costShareRequired;
     
     @XmlElement(name = "Final_Fiscal_Report_Due_Date", namespace = StringUtils.EMPTY)
-    @XmlJavaTypeAdapter(RassStringToJavaLocalDateAdapter.class)
-    private LocalDate finalReportDueDate;
+    @XmlJavaTypeAdapter(RassStringToJavaShortDateTimeAdapter.class)
+    private Date finalReportDueDate;
     
     @XmlElement(name = "Budget_Start", namespace = StringUtils.EMPTY)
-    @XmlJavaTypeAdapter(RassStringToJavaLocalDateAdapter.class)
-    private LocalDate budgetStartDate;
+    @XmlJavaTypeAdapter(RassStringToJavaShortDateTimeAdapter.class)
+    private Date budgetStartDate;
     
     @XmlElement(name = "Budget_Stop", namespace = StringUtils.EMPTY)
-    @XmlJavaTypeAdapter(RassStringToJavaLocalDateAdapter.class)
-    private LocalDate budgetStopDate;
+    @XmlJavaTypeAdapter(RassStringToJavaShortDateTimeAdapter.class)
+    private Date budgetStopDate;
     
     @XmlElement(name = "Budget_Total", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(KualiDecimalNullPossibleXmlAdapter.class)
@@ -161,19 +161,19 @@ public class RassXmlAwardEntry implements RassXmlObject {
         this.projectTitle = projectTitle;
     }
 
-    public LocalDate getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getStopDate() {
+    public Date getStopDate() {
         return stopDate;
     }
 
-    public void setStopDate(LocalDate stopDate) {
+    public void setStopDate(Date stopDate) {
         this.stopDate = stopDate;
     }
 
@@ -249,11 +249,11 @@ public class RassXmlAwardEntry implements RassXmlObject {
         this.costShareRequired = costShareRequired;
     }
 
-    public LocalDate getFinalReportDueDate() {
+    public Date getFinalReportDueDate() {
         return finalReportDueDate;
     }
 
-    public void setFinalReportDueDate(LocalDate finalReportDueDate) {
+    public void setFinalReportDueDate(Date finalReportDueDate) {
         this.finalReportDueDate = finalReportDueDate;
     }
 
@@ -296,7 +296,7 @@ public class RassXmlAwardEntry implements RassXmlObject {
                     
         } else {
             return false;
-        }
+        }    
     }
     
     @Override
@@ -318,19 +318,19 @@ public class RassXmlAwardEntry implements RassXmlObject {
 	    this.purpose = purpose;
 	}
 	
-    public LocalDate getBudgetStartDate() {
+    public Date getBudgetStartDate() {
         return budgetStartDate;
     }
 
-    public void setBudgetStartDate(LocalDate budgetStartDate) {
+    public void setBudgetStartDate(Date budgetStartDate) {
         this.budgetStartDate = budgetStartDate;
     }
 
-    public LocalDate getBudgetStopDate() {
+    public Date getBudgetStopDate() {
         return budgetStopDate;
     }
 
-    public void setBudgetStopDate(LocalDate budgetStopDate) {
+    public void setBudgetStopDate(Date budgetStopDate) {
         this.budgetStopDate = budgetStopDate;
     }
 
