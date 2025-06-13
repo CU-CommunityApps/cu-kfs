@@ -10,8 +10,8 @@ import edu.cornell.kfs.sys.exception.ManyFIPStoISOMappingException;
 import edu.cornell.kfs.sys.exception.NoFIPStoISOMappingException;
 import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 
 public class TestConvertingFIPStoISOStep extends AbstractStep {
 
@@ -21,7 +21,7 @@ public class TestConvertingFIPStoISOStep extends AbstractStep {
     private ISOFIPSConversionService isoFipsConversionService;
 
     @Override
-    public boolean execute(String jobName, Date jobRunDate) {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) {
         
         LOG.info("TestConvertingFIPStoISOStep: **** START TEST OF CONVERTING ALL FIPS COUNTRY CODES TO CORRESPONDING ISO COUNTRY CODE ****" + jobRunDate.toString());
         Collection<Country> allFipsCountriesFound = businessObjectService.findAll(Country.class);

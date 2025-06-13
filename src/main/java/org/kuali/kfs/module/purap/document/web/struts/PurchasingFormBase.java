@@ -20,7 +20,7 @@ package org.kuali.kfs.module.purap.document.web.struts;
 
 import org.apache.struts.upload.FormFile;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.integration.purap.CapitalAssetLocation;
+import org.kuali.kfs.module.purap.businessobject.CapitalAssetLocation;
 import org.kuali.kfs.kns.web.ui.ExtraButton;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.module.purap.PurapConstants;

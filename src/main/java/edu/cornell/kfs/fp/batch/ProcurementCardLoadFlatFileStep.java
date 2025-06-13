@@ -16,8 +16,8 @@
 package edu.cornell.kfs.fp.batch;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -47,7 +47,7 @@ public class ProcurementCardLoadFlatFileStep extends AbstractStep {
     /**
      * Controls the procurement card process.
      */
-    public boolean execute(String jobName, Date jobRunDate) {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) {
         procurementCardLoadTransactionsService.cleanTransactionsTable();
 
         List<String> fileNamesToLoad = batchInputFileService.listInputFileNamesWithDoneFile(procurementCardInputFileType);

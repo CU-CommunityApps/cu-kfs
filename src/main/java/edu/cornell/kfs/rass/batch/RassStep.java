@@ -1,7 +1,7 @@
 package edu.cornell.kfs.rass.batch;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,7 +23,7 @@ public class RassStep extends AbstractStep {
     private static final Logger LOG = LogManager.getLogger(RassStep.class);
 
     @Override
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         List<RassXmlFileParseResult> parseResults = rassService.readXML();
         if (CollectionUtils.isEmpty(parseResults)) {
             LOG.info("execute, Skipping XML processing because no pending RASS XML files were found");

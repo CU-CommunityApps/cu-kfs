@@ -137,7 +137,7 @@ public class AchBundlerFormatServiceImpl extends CuFormatServiceImpl {
         	//match this method call: disbursementNumbersAssigned = assignDisbursementNumbersAndCombineChecks(paymentProcess, postFormatProcessSummary);
         	//Added parameter "processCampus" so method signatures matched.
         	LOG.info("ACH BUNDLER MOD: NOT Active - ACH payments will NOT be bundled for processId {}", processId);
-            disbursementNumbersAssigned = assignDisbursementNumbersAndCombineChecks(paymentProcess, postFormatProcessSummary);
+            disbursementNumbersAssigned = assignDisbursementNumbersAndCombinePayments(paymentProcess, postFormatProcessSummary);
             
         }
         /** END MOD */

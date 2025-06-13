@@ -6,11 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDateTime;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -427,7 +428,7 @@ public class CheckReconciliationImportStepTest {
 
     private void assertCheckReconciliationImportHasExpectedResult(CrImportResult expectedResult,
             List<CheckReconciliationFixture> expectedCheckReconUpdates) throws Exception {
-        Date currentDate = new Date();
+        LocalDateTime currentDate = LocalDateTime.now();
         switch (expectedResult) {
             case SUCCESS :
                 assertTrue(crImportStep.execute(CrTestConstants.CR_IMPORT_JOB_NAME, currentDate),

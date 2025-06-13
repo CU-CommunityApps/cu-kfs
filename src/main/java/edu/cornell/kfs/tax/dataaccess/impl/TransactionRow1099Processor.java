@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.security.GeneralSecurityException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -641,7 +642,7 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
 
 
     @Override
-    String[] getFilePathsForWriters(Transaction1099Summary summary, java.util.Date processingStartDate) {
+    String[] getFilePathsForWriters(Transaction1099Summary summary, LocalDateTime processingStartDate) {
         String[] filePaths = super.getFilePathsForWriters(summary, processingStartDate);
         // Output file for 1099 tab records.
         filePaths[0] = new StringBuilder(MED_BUILDER_SIZE).append(getReportsDirectory()).append('/')

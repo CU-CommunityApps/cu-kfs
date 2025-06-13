@@ -190,7 +190,7 @@ public class TaxFileGenerationServiceTransactionListPrinterImplTest {
 
     private TaxBatchConfig buildTaxBatchConfigFor1042S() {
         return new TaxBatchConfig(Mode.CREATE_TRANSACTION_LIST_FILE, CUTaxConstants.TAX_TYPE_1042S, 2025,
-                TestDateUtils.toUtilDate("2025-03-01T14:30:45"),
+                TestDateUtils.toLocalDateTime("2025-03-01T14:30:45"),
                 TestDateUtils.toSqlDate("2024-01-01"), TestDateUtils.toSqlDate("2024-12-31"));
     }
 

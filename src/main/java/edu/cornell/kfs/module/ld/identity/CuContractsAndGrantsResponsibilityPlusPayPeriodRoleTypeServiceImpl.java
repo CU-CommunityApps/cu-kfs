@@ -10,7 +10,7 @@ import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.identity.ContractsAndGrantsResponsibilityRoleTypeServiceImpl;
-import org.kuali.kfs.integration.ld.LaborLedgerExpenseTransferAccountingLine;
+import org.kuali.kfs.module.ld.businessobject.ExpenseTransferAccountingLine;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
@@ -85,20 +85,20 @@ public class CuContractsAndGrantsResponsibilityPlusPayPeriodRoleTypeServiceImpl 
         // Make sure source/target lines containing the extra labor-ledger-related data actually exist on the document.
         boolean hasLLSourceLine = document.getSourceAccountingLineClass() != null
                 && CollectionUtils.isNotEmpty(document.getSourceAccountingLines()) 
-                && LaborLedgerExpenseTransferAccountingLine.class.isAssignableFrom(document.getSourceAccountingLineClass());
+                && ExpenseTransferAccountingLine.class.isAssignableFrom(document.getSourceAccountingLineClass());
         boolean hasLLTargetLine = document.getTargetAccountingLineClass() != null
                 && CollectionUtils.isNotEmpty(document.getTargetAccountingLines())
-                && LaborLedgerExpenseTransferAccountingLine.class.isAssignableFrom(document.getTargetAccountingLineClass());
+                && ExpenseTransferAccountingLine.class.isAssignableFrom(document.getTargetAccountingLineClass());
         
         if (hasLLSourceLine || hasLLTargetLine) {
             // Locate the earliest source/target line.
-            LaborLedgerExpenseTransferAccountingLine earliestLine = null;
+            ExpenseTransferAccountingLine earliestLine = null;
             if (hasLLSourceLine) {
                 earliestLine = findEarliestPayPeriodAccountingLine(document.getSourceAccountingLines());
             }
             if (hasLLTargetLine) {
                 if (earliestLine != null) {
-                    LaborLedgerExpenseTransferAccountingLine earliestTargetLine = findEarliestPayPeriodAccountingLine(document.getTargetAccountingLines());
+                    ExpenseTransferAccountingLine earliestTargetLine = findEarliestPayPeriodAccountingLine(document.getTargetAccountingLines());
                     earliestLine = (earliestTargetLine == null)
                             ? earliestLine : findEarliestPayPeriodAccountingLine(Arrays.asList(earliestLine, earliestTargetLine));
                 } else {
@@ -137,11 +137,11 @@ public class CuContractsAndGrantsResponsibilityPlusPayPeriodRoleTypeServiceImpl 
     /*
      * Helper method for finding the account with the earliest pay period. Ones with earlier years take precedence.
      */
-    private LaborLedgerExpenseTransferAccountingLine findEarliestPayPeriodAccountingLine(List<?> accountingLines) {
-        LaborLedgerExpenseTransferAccountingLine earliestLine = null;
+    private ExpenseTransferAccountingLine findEarliestPayPeriodAccountingLine(List<?> accountingLines) {
+        ExpenseTransferAccountingLine earliestLine = null;
         
         for (Object line : accountingLines) {
-            LaborLedgerExpenseTransferAccountingLine accountingLine = (LaborLedgerExpenseTransferAccountingLine) line;
+            ExpenseTransferAccountingLine accountingLine = (ExpenseTransferAccountingLine) line;
             if (earliestLine == null) {
                 // If the first line, set it as the earliest by default.
                 if (accountingLine.getPayrollEndDateFiscalYear() != null && StringUtils.isNotBlank(accountingLine.getPayrollEndDateFiscalPeriodCode())) {

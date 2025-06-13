@@ -2,6 +2,7 @@ package edu.cornell.kfs.tax.service.impl;
 
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
     private ConfigurationService configurationService;
 
     @Override
-    public void performTaxProcessingFor1042S(final java.util.Date processingStartDate) {
+    public void performTaxProcessingFor1042S(final LocalDateTime processingStartDate) {
         try {
             LOG.info("performTaxProcessingFor1042S, Starting 1042-S tax processing...");
 
@@ -70,12 +71,12 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
         return taxFileGenerationServiceForTransactionListPrinting.generateFiles(printConfig);
     }
 
-    private TaxBatchConfig buildTaxBatchConfigFor1042S(final java.util.Date processingStartDate) {
+    private TaxBatchConfig buildTaxBatchConfigFor1042S(final LocalDateTime processingStartDate) {
         return buildTaxBatchConfig(processingStartDate, CUTaxConstants.TAX_TYPE_1042S,
                 CUTaxConstants.TAX_1042S_PARM_DETAIL);
     }
 
-    private TaxBatchConfig buildTaxBatchConfig(final java.util.Date processingStartDate,
+    private TaxBatchConfig buildTaxBatchConfig(final LocalDateTime processingStartDate,
             final String taxType, final String taxParameterComponent) {
         final Collection<String> taxRangeSettings = taxParameterService.getParameterValuesAsString(
                 taxParameterComponent, taxType + TaxCommonParameterNames.DATES_TO_PROCESS_PARAMETER_SUFFIX);
@@ -99,7 +100,7 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
         return taxConfig;
     }
 
-    private TaxBatchConfig buildTaxBatchConfigForSingleRangeSetting(final java.util.Date processingStartDate,
+    private TaxBatchConfig buildTaxBatchConfigForSingleRangeSetting(final LocalDateTime processingStartDate,
             final String taxType, final String taxRangeSetting) {
         final int reportYear = getReportYear(taxRangeSetting);
         final LocalDate startDate = LocalDate.of(reportYear, 1, 1);
@@ -131,7 +132,7 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
         }
     }
 
-    private TaxBatchConfig buildTaxBatchConfigForExplicitStartAndEndDates(final java.util.Date processingStartDate,
+    private TaxBatchConfig buildTaxBatchConfigForExplicitStartAndEndDates(final LocalDateTime processingStartDate,
             final String taxType, final Collection<String> taxRangeSettings) {
         try {
             final Iterator<String> literalDateValuesIterator = taxRangeSettings.iterator();

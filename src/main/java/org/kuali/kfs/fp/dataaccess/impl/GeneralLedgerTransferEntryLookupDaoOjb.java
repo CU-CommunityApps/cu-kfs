@@ -25,6 +25,7 @@ import org.apache.ojb.broker.query.ReportQueryByCriteria;
 import org.kuali.kfs.fp.businessobject.GeneralLedgerTransferEntry;
 import org.kuali.kfs.fp.dataaccess.GeneralLedgerTransferEntryLookupDao;
 import org.kuali.kfs.gl.OJBUtility;
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
@@ -125,8 +126,8 @@ public class GeneralLedgerTransferEntryLookupDaoOjb extends PlatformAwareDaoBase
     private ReportQueryByCriteria buildDocumentExclusions() {
         final Criteria criteria = new Criteria();
         criteria.addIn(KFSPropertyConstants.WORKFLOW_DOCUMENT_TYPE_NAME,
-                Arrays.asList(KFSConstants.FinancialDocumentTypeCodes.PAYMENT_REQUEST,
-                    KFSConstants.FinancialDocumentTypeCodes.VENDOR_CREDIT_MEMO));
+                Arrays.asList(PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT,
+                        PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT));
         criteria.addNotIn(KFSPropertyConstants.WORKFLOW_DOCUMENT_STATUS_CODE,
                 Arrays.asList(KFSConstants.DocumentStatusCodes.PROCESSED, KFSConstants.DocumentStatusCodes.FINAL));
 

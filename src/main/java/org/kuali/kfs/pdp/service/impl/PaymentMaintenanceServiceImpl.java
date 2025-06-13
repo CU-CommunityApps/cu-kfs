@@ -27,13 +27,25 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
-import org.kuali.kfs.integration.purap.PurchasingAccountsPayableModuleService;
+import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.bo.KualiCode;
+import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.purap.CreditMemoStatuses;
+import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.document.AccountsPayableDocument;
+import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
+import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
+import org.kuali.kfs.module.purap.document.service.AccountsPayableService;
+import org.kuali.kfs.module.purap.document.service.CreditMemoService;
+import org.kuali.kfs.module.purap.document.service.PaymentRequestService;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
@@ -52,8 +64,8 @@ import org.kuali.kfs.pdp.service.PdpAuthorizationService;
 import org.kuali.kfs.pdp.service.PdpEmailService;
 import org.kuali.kfs.pdp.service.PendingTransactionService;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.batch.service.PaymentSourceExtractionService;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.batch.service.PaymentSourceExtractionService;
 import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,7 +99,12 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
     private PaymentSourceExtractionService disbursementVoucherExtractService;
     // CU customization to change access from private to protected
     protected GeneralLedgerPendingEntryService generalLedgerPendingEntryService;
-    private PurchasingAccountsPayableModuleService purchasingAccountsPayableModuleService;
+    private AccountsPayableService accountsPayableService;
+    private CreditMemoService creditMemoService;
+    private DocumentService documentService;
+    private NoteService noteService;
+    private PaymentRequestService paymentRequestService;
+    private PersonService personService;
 
     /**
      * This method changes status for a payment group.
@@ -627,14 +644,14 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
             final String documentTypeCode = paymentDetail.getFinancialDocumentTypeCode();
             final String documentNumber = paymentDetail.getCustPaymentDocNbr();
 
-            if (purchasingAccountsPayableModuleService.isPurchasingBatchDocument(documentTypeCode)) {
+            if (isPurchasingBatchDocument(documentTypeCode)) {
                 LOG.debug(
                         "processPdpReissue() - document type is a purchasing batch document; paymentDetailId={}, "
                             + "documentTypeCode={}",
                         paymentDetail::getId,
                         paymentDetail::getCustPaymentDocNbr
                 );
-                purchasingAccountsPayableModuleService.handlePurchasingBatchReissue(documentNumber, documentTypeCode);
+                handlePurchasingBatchReissue(documentNumber, documentTypeCode);
             } else if (DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH.equals(documentTypeCode)) {
                 LOG.debug(
                         "processPdpReissue() - document type is DVCA; paymentDetailId={}",
@@ -643,6 +660,69 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
                 disbursementVoucherExtractService.reextractForReissue(documentNumber);
                 paymentGroup.setEpicPaymentPaidExtractedDate(null);
             }
+        }
+    }
+
+    private static boolean isPurchasingBatchDocument(final String documentTypeCode) {
+        return PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equals(documentTypeCode)
+               || PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT.equals(documentTypeCode);
+    }
+
+    /**
+     * Create a note on the document and revert the app doc status code to the previous one. Used in support of
+     * documents that were reissued.
+     *
+     * @param documentNumber     that was reissued. Will do nothing if in cancelled status
+     * @param documentTypeCode   of the documentNumber that was reissued
+     */
+    void handlePurchasingBatchReissue(final String documentNumber, final String documentTypeCode) {
+        if (PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equals(documentTypeCode)) {
+            final AccountsPayableDocument accountsPayableDocument = paymentRequestService
+                    .getPaymentRequestByDocumentNumber(documentNumber);
+            if (ObjectUtils.isNotNull(accountsPayableDocument)
+                && PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE.equals(
+                    accountsPayableDocument.getApplicationDocumentStatus())) {
+                final String preqReissueNote = parameterService.getParameterValueAsString(
+                        PaymentRequestDocument.class, PurapParameterConstants.PURAP_PDP_REISSUE_NOTE);
+
+                createNoteAndRevertToPreviousAppDocStatus(documentNumber, documentTypeCode, preqReissueNote,
+                        accountsPayableDocument);
+            }
+        } else if (PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT.equals(documentTypeCode)) {
+            final AccountsPayableDocument accountsPayableDocument = creditMemoService.getCreditMemoByDocumentNumber(
+                    documentNumber);
+            if (ObjectUtils.isNotNull(accountsPayableDocument)
+                && CreditMemoStatuses.APPDOC_CANCELLED_POST_AP_APPROVE.equals(
+                    accountsPayableDocument.getApplicationDocumentStatus())) {
+                final String cmReissueNote = parameterService.getParameterValueAsString(
+                        VendorCreditMemoDocument.class,
+                        PurapParameterConstants.PURAP_PDP_REISSUE_NOTE);
+
+                createNoteAndRevertToPreviousAppDocStatus(documentNumber, documentTypeCode, cmReissueNote,
+                        accountsPayableDocument);
+            }
+        }
+    }
+
+    private void createNoteAndRevertToPreviousAppDocStatus(
+            final String documentNumber,
+            final String documentTypeCode,
+            final String preqReissueNote,
+            final AccountsPayableDocument accountsPayableDocument
+    ) {
+        if (ObjectUtils.isNotNull(accountsPayableDocument)) {
+            final Note cancelNote = documentService.createNoteFromDocument(accountsPayableDocument, preqReissueNote);
+            final String systemUser = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER).getPrincipalId();
+            cancelNote.setAuthorUniversalIdentifier(systemUser);
+            accountsPayableDocument.addNote(cancelNote);
+            noteService.save(cancelNote);
+            accountsPayableService.revertToPreviousAppDocStatus(accountsPayableDocument);
+        } else {
+            LOG.error(
+                    "DOCUMENT DOES NOT EXIST, CANNOT PROCESS - doc type of {} with id {}",
+                    documentTypeCode,
+                    documentNumber
+            );
         }
     }
 
@@ -817,8 +897,28 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
         this.generalLedgerPendingEntryService = generalLedgerPendingEntryService;
     }
 
-    public void setPurchasingAccountsPayableModuleService(
-            final PurchasingAccountsPayableModuleService purchasingAccountsPayableModuleService) {
-        this.purchasingAccountsPayableModuleService = purchasingAccountsPayableModuleService;
+    public void setAccountsPayableService(final AccountsPayableService accountsPayableService) {
+        this.accountsPayableService = accountsPayableService;
     }
+
+    public void setCreditMemoService(final CreditMemoService creditMemoService) {
+        this.creditMemoService = creditMemoService;
+    }
+
+    public void setDocumentService(final DocumentService documentService) {
+        this.documentService = documentService;
+    }
+
+    public void setNoteService(final NoteService noteService) {
+        this.noteService = noteService;
+    }
+
+    public void setPaymentRequestService(final PaymentRequestService paymentRequestService) {
+        this.paymentRequestService = paymentRequestService;
+    }
+
+    public void setPersonService(final PersonService personService) {
+        this.personService = personService;
+    }
+
 }

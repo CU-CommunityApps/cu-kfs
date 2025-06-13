@@ -2,6 +2,7 @@ package edu.cornell.kfs.fp.batch;
 
 import java.io.File;
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,10 +24,8 @@ public class ProcurementCardSummaryFeedStep extends AbstractStep {
 	    protected DateTimeService dateTimeService;
 	    protected ProcurementCardSummaryFeedService procurementCardSummaryFeedService;
 	    
-	    /**
-	     * @see org.kuali.kfs.kns.bo.Step#execute(java.lang.String, java.util.Date)
-	     */
-	public boolean execute(String arg0, Date arg1) throws InterruptedException {
+
+	public boolean execute(String arg0, LocalDateTime arg1) throws InterruptedException {
 
 		//get all done files
         List<String> fileNamesToLoad = batchInputFileService

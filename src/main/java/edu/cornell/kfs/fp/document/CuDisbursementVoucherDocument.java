@@ -749,10 +749,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             return true;
         }
 
-        if (getParameterEvaluatorService().getParameterEvaluator(DisbursementVoucherDocument.class, PAYMENT_REASONS_REQUIRING_TAX_REVIEW_PARAMETER_NAME, paymentReasonCode).evaluationSucceeds()) {
-            return true;
-        }
-
         return false;
     }
 

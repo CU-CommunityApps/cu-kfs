@@ -3,6 +3,7 @@ package edu.cornell.kfs.tax.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
@@ -54,7 +55,7 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
 
     @Override
     @Transactional
-    public void doTaxProcessing(String taxType, java.util.Date processingStartDate) {
+    public void doTaxProcessing(String taxType, LocalDateTime processingStartDate) {
         if (processingStartDate == null) {
             throw new IllegalArgumentException("processingStartDate cannot be null");
         }

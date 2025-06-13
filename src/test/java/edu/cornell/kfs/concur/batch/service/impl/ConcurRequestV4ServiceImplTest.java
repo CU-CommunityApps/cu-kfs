@@ -728,7 +728,7 @@ public class ConcurRequestV4ServiceImplTest {
         private boolean skipRequestListItemProcessing;
         
         public TestConcurRequestV4ServiceImpl() {
-            super(new Environment("unittest", "prd"));
+            super(new Environment("unittest", "prd", ""));
         }
         
         @Override
