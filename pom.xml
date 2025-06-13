@@ -33,6 +33,7 @@
         <gson.version>2.10.1</gson.version>
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <hibernate-validator-annotation-processor.version>6.2.5.Final</hibernate-validator-annotation-processor.version>
+        <hsqldb.version>2.7.4</hsqldb.version>
         <httpclient.version>5.2.1</httpclient.version>
         <httpcore.version>5.2.3</httpcore.version>
         <jackson.version>2.14.1</jackson.version>
@@ -1788,6 +1789,12 @@
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
             <version>2.10.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

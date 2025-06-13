@@ -34,11 +34,6 @@ public class CuSqlQueryPreparedStatementCreatorAndSetter extends ArgumentTypePre
                 query, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
     }
 
-    public static CuSqlQueryPreparedStatementCreatorAndSetter forUpdatableResults(final CuSqlQuery query) {
-        return new CuSqlQueryPreparedStatementCreatorAndSetter(
-                query, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
-    }
-
     @Override
     public String getSql() {
         return query.getQueryString();
