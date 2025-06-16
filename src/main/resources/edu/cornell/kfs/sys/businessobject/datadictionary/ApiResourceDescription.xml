@@ -27,7 +27,6 @@
 
     <bean id="ApiResourceDescription-resourceCode-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="resourceCode"/>
-        <property name="forceUppercase" value="true"/>
         <property name="label" value="Resource Code"/>
         <property name="shortLabel" value="Code"/>
         <property name="maxLength" value="30"/>
@@ -46,7 +45,6 @@
 
     <bean id="ApiResourceDescription-resourceDescription-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="resourceDescription"/>
-        <property name="forceUppercase" value="false"/>
         <property name="label" value="Resource Description"/>
         <property name="shortLabel" value="Description"/>
         <property name="maxLength" value="100"/>

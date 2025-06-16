@@ -22,13 +22,17 @@
                 <ref bean="ApiResourceAuthenticator-active"/>
             </list>
         </property>
+        <property name="collections">
+            <list>
+                <bean parent="CollectionDefinition" p:name="descriptionAuthenticators" p:label="Description Authenticators" p:shortLabel="Description Authenticators" p:elementLabel="Description Authenticator"/>
+            </list>
+        </property>
     </bean>
 
     <bean id="ApiResourceAuthenticator-authenticatorId" parent="ApiResourceAuthenticator-authenticatorId-parentBean"/>
 
     <bean id="ApiResourceAuthenticator-authenticatorId-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="authenticatorId"/>
-        <property name="forceUppercase" value="false"/>
         <property name="label" value="Authenticator ID"/>
         <property name="shortLabel" value="ID"/>
         <property name="maxLength" value="10"/>
@@ -47,7 +51,6 @@
 
     <bean id="ApiResourceAuthenticator-authenticatorDescription-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="authenticatorDescription"/>
-        <property name="forceUppercase" value="false"/>
         <property name="label" value="Authenticator Description"/>
         <property name="shortLabel" value="Authenticator Description"/>
         <property name="maxLength" value="100"/>
@@ -66,7 +69,6 @@
 
     <bean id="ApiResourceAuthenticator-usernamePassword-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="usernamePassword"/>
-        <property name="forceUppercase" value="false"/>
         <property name="label" value="Username Password"/>
         <property name="shortLabel" value="Username Password"/>
         <property name="maxLength" value="100"/>

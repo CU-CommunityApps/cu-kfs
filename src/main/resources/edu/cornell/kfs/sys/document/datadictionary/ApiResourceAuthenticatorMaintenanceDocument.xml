@@ -10,6 +10,7 @@
         <property name="maintainableSections">
             <list>
                 <ref bean="ApiResourceAuthenticatorMaintenanceDocument-ApiResourceAuthenticator"/>
+                <ref bean="ApiResourceAuthenticatorMaintenanceDocument-ApiEndpoints"/>
             </list>
         </property>
         <property name="documentTypeName" value="APIRA"/>
@@ -29,13 +30,42 @@
         <property name="title" value="API Resource Authenticator"/>
         <property name="maintainableItems">
             <list>
-                <bean parent="MaintainableFieldDefinition" p:name="authenticatorId" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="authenticatorId" p:required="true" p:unconditionallyReadOnly="true"/>
                 <bean parent="MaintainableFieldDefinition" p:name="authenticatorDescription" p:required="true"/>
                 <bean parent="MaintainableFieldDefinition" p:name="usernamePassword" p:required="true"/>
                 <bean parent="MaintainableFieldDefinition" p:name="active" p:required="true" p:defaultValue="true"/>
             </list>
         </property>
     </bean>
+
+    <bean id="ApiResourceAuthenticatorMaintenanceDocument-ApiEndpoints" parent="ApiResourceAuthenticatorMaintenanceDocument-ApiEndpoints-parentBean"/>
+    <bean id="ApiResourceAuthenticatorMaintenanceDocument-ApiEndpoints-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+        <property name="defaultOpen" value="true"/>
+        <property name="id" value="API Endpoints"/>
+        <property name="title" value="API Endpoints"/>
+        <property name="maintainableItems">
+            <list>
+                <bean parent="MaintainableCollectionDefinition">
+                    <property name="name" value="descriptionAuthenticators"/>
+                    <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiResourceDescriptionAuthenticator"/>
+                    <property name="sourceClassName" value="edu.cornell.kfs.sys.businessobject.ApiResourceAuthenticator"/>
+                    <property name="summaryTitle" value="Description Authenticators"/>
+                    <property name="summaryFields">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="resourceCode"/>
+                        </list>
+                    </property>
+                    <property name="maintainableFields">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="resourceCode" p:required="true" p:readOnlyAfterAdd="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="active" p:required="true" p:defaultValue="true"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
 
     <bean id="ApiResourceAuthenticatorMaintenanceDocument-workflowAttributes" parent="ApiResourceAuthenticatorMaintenanceDocument-workflowAttributes-parentBean"/>
     <bean id="ApiResourceAuthenticatorMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
