@@ -415,4 +415,58 @@
         <field-descriptor name="correspondentBankSwiftCode" column="CRSPNDT_BNK_SWIFT_CD" jdbc-type="VARCHAR"/>
     </class-descriptor>
     
+    <!-- API Resource Description -->
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ApiResourceDescription" table="KFS.CU_API_RESOURCE_DESC">
+        <field-descriptor name="resourceCode" column="RESOURCE_CODE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="resourceDescription" column="RESOURCE_DESC" jdbc-type="VARCHAR"/>
+        <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDATE_TS" jdbc-type="TIMESTAMP"/>
+        
+        <collection-descriptor name="descriptionAuthenticators" proxy="true" 
+                              element-class-ref="edu.cornell.kfs.sys.businessobject.ApiResourceDescriptionAuthenticator" 
+                              collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" 
+                              auto-retrieve="true" auto-update="object" auto-delete="object">
+            <inverse-foreignkey field-ref="resourceCode"/>
+        </collection-descriptor>
+    </class-descriptor>
+    
+    <!-- API Resource Authenticator -->
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ApiResourceAuthenticator" table="KFS.CU_API_RESOURCE_AUTH">
+        <field-descriptor name="authenticatorId" column="AUTHENTICATOR_ID" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="KFS.CU_API_RESOURCE_AUTH_SEQ"/>
+        <field-descriptor name="authenticatorDescription" column="AUTHENTICATOR_DESC" jdbc-type="VARCHAR"/>
+        <field-descriptor name="usernamePassword" column="USERNAME_PASSWORD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+        <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDATE_TS" jdbc-type="TIMESTAMP"/>
+        
+        <collection-descriptor name="descriptionAuthenticators" proxy="true" 
+                              element-class-ref="edu.cornell.kfs.sys.businessobject.ApiResourceDescriptionAuthenticator" 
+                              collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" 
+                              auto-retrieve="true" auto-update="object" auto-delete="object">
+            <inverse-foreignkey field-ref="authenticatorId"/>
+        </collection-descriptor>
+    </class-descriptor>
+    
+    <!-- API Resource Description Authenticator -->
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ApiResourceDescriptionAuthenticator" table="KFS.CU_API_RSRC_DESC_AUTH">
+        <field-descriptor name="id" column="ID" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="KFS.CU_API_RSRC_DESC_AUTH_SEQ"/>
+        <field-descriptor name="authenticatorId" column="AUTHENTICATOR_ID" jdbc-type="INTEGER"/>
+        <field-descriptor name="resourceCode" column="RESOURCE_CODE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDATE_TS" jdbc-type="TIMESTAMP"/>
+        
+        <reference-descriptor name="apiResourceDescription" class-ref="edu.cornell.kfs.sys.businessobject.ApiResourceDescription" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="resourceCode"/>
+        </reference-descriptor>
+        
+        <reference-descriptor name="apiResourceAuthenticator" class-ref="edu.cornell.kfs.sys.businessobject.ApiResourceAuthenticator" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="authenticatorId"/>
+        </reference-descriptor>
+    </class-descriptor>
+    
 </descriptor-repository>
