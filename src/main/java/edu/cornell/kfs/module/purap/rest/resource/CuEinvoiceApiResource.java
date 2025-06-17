@@ -85,6 +85,9 @@ public class CuEinvoiceApiResource {
     public Response getVendors(@Context HttpHeaders headers) {
         try {
             List<String> vendorNumbers = getVendorNumbers();
+            if (CollectionUtils.isEmpty(vendorNumbers)) {
+                return Response.ok("[]").build();
+            }
             List<VendorDetail> vendors = getCuEinvoiceDao().getVendors(vendorNumbers);
             List<Properties> vendorsSerialized = vendors.stream().map(vendor -> getVendorProperties(vendor)).collect(Collectors.toList());
             return Response.ok(gson.toJson(vendorsSerialized)).build();
