@@ -72,6 +72,7 @@ public class CuProcessIndividualPdpCancelPaidServiceImpl extends ProcessIndividu
         paymentGroupService.processCancelledGroup(paymentDetail.getPaymentGroup(), processDate);
     }
     
+    // locally customized method that also supports cr cancel
     public void handlePurchasingBatchCancels(
             final String documentNumber, final String documentTypeCode, 
             final boolean primaryCancel, final boolean disbursedPayment, final boolean crCancel) {
