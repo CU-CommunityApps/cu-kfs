@@ -36,6 +36,10 @@
               p:name="achTransactionType"
               p:noLookup="true"
               p:required="true"/>
+        <bean parent="MaintainableFieldDefinition"
+                      p:name="bypassFeedUpdateIndicator"
+                      p:required="true"
+                      p:defaultValue="false"/>
         <bean parent="MaintainableFieldDefinition" p:name="active" p:required="true" p:defaultValue="true"/>
       </list>
     </property>
