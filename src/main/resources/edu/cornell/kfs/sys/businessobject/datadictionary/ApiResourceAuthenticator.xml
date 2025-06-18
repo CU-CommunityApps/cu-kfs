@@ -58,7 +58,7 @@
             <bean parent="TextControlDefinition" p:size="105"/>
         </property>
         <property name="validationPattern" >
-            <bean parent="AnyCharacterValidationPattern" />
+            <bean parent="AnyCharacterWithWhitespaceValidation" />
         </property>
         <property name="attributeSecurity">
             <bean parent="AttributeSecurity" p:readOnly="false"/>
@@ -76,7 +76,7 @@
             <bean parent="TextControlDefinition" p:size="105"/>
         </property>
         <property name="validationPattern" >
-            <bean parent="AnyCharacterValidationPattern" />
+            <bean parent="AnyCharacterWithWhitespaceValidation" />
         </property>
         <property name="attributeSecurity">
             <bean parent="AttributeSecurity">

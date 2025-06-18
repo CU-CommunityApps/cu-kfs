@@ -21,6 +21,11 @@
                 <ref bean="ApiResourceDescription-active"/>
             </list>
         </property>
+        <property name="collections">
+            <list>
+                <bean parent="CollectionDefinition" p:name="descriptionAuthenticators" p:label="Description Authenticators" p:shortLabel="Description Authenticators" p:summary="Description Authenticators" p:elementLabel="Description Authenticator"/>
+            </list>
+        </property>
     </bean>
 
     <bean id="ApiResourceDescription-resourceCode" parent="ApiResourceDescription-resourceCode-parentBean"/>
@@ -34,7 +39,7 @@
             <bean parent="TextControlDefinition" p:size="35"/>
         </property>
         <property name="validationPattern" >
-            <bean parent="AnyCharacterValidationPattern" />
+            <bean parent="AnyCharacterWithWhitespaceValidation" />
         </property>
         <property name="attributeSecurity">
             <bean parent="AttributeSecurity" p:readOnly="false"/>
@@ -52,7 +57,7 @@
             <bean parent="TextControlDefinition" p:size="105"/>
         </property>
         <property name="validationPattern" >
-            <bean parent="AnyCharacterValidationPattern" />
+            <bean parent="AnyCharacterWithWhitespaceValidation" />
         </property>
         <property name="attributeSecurity">
             <bean parent="AttributeSecurity" p:readOnly="false"/>
@@ -78,6 +83,25 @@
                             <bean parent="FieldDefinition" p:attributeName="resourceCode"/>
                             <bean parent="FieldDefinition" p:attributeName="resourceDescription"/>
                             <bean parent="FieldDefinition" p:attributeName="active"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="InquirySectionDefinition">
+                    <property name="title" value="Description Authenticators"/>
+                    <property name="numberOfColumns" value="1"/>
+                    <property name="inquiryFields">
+                        <list>
+                            <bean parent="InquiryCollectionDefinition">
+                                <property name="attributeName" value="descriptionAuthenticators"/>
+                                <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiResourceDescriptionAuthenticator"/>
+                                <property name="numberOfColumns" value="1"/>
+                                <property name="inquiryFields">
+                                    <list>
+                                        <bean parent="FieldDefinition" p:attributeName="authenticatorId"/>
+                                        <bean parent="FieldDefinition" p:attributeName="active"/>
+                                    </list>
+                                </property>
+                            </bean>
                         </list>
                     </property>
                 </bean>
