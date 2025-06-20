@@ -330,7 +330,7 @@ public class TaxFileGenerationServiceSprintaxImplTest {
     }
 
     private static TaxBatchConfig buildTaxBatchConfig(final Mode mode, final String taxType) {
-        return new TaxBatchConfig(mode, taxType, 2024, TestDateUtils.toUtilDate("2025-03-01T14:30:45"),
+        return new TaxBatchConfig(mode, taxType, 2024, TestDateUtils.toLocalDateTime("2025-03-01T14:30:45"),
                 TestDateUtils.toSqlDate("2024-01-01"), TestDateUtils.toSqlDate("2024-12-31"));
     }
 
