@@ -14,6 +14,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -392,7 +393,7 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
 
     private DateTimeService buildMockDateTimeService() throws Exception {
         DateTimeService dateTimeService = Mockito.mock(DateTimeService.class);
-        Mockito.when(dateTimeService.toDateTimeStringForFilename(Mockito.any())).then(this::formatDate);
+        Mockito.when(dateTimeService.toDateTimeStringForFilename(Mockito.any(LocalDateTime.class))).then(this::formatDate);
         Mockito.when(dateTimeService.getCurrentDate()).then(this::buildNewDate);
         Mockito.when(dateTimeService.getCurrentSqlDate())
                 .then(this::buildStaticSqlDate);

@@ -1,6 +1,6 @@
 package edu.cornell.kfs.module.purap.batch;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
 
@@ -10,7 +10,7 @@ public class JaggaerUploadSupplierXmlStep extends AbstractStep {
     protected JaggaerUploadFileService jaggaerUploadFileService;
 
     @Override
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         jaggaerUploadFileService.uploadSupplierXMLFiles();
         return true;
     }

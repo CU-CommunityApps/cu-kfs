@@ -119,8 +119,8 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
 
             final ParameterEvaluator parameterEvaluator1 = /*REFACTORME*/parameterEvaluatorService.getParameterEvaluator(
                     DvToPdpExtractStep.class,
-                    FPParameterConstants.TAXABLE_PAYMENT_REASON_CODES_BY_OWNERSHIP_CODES,
-                    FPParameterConstants.NON_TAXABLE_PAYMENT_REASON_CODES_BY_OWNERSHIP_CODES,
+                    FPParameterConstants.TAX_OWNERSHIP_TYPES,
+                    FPParameterConstants.NONTAX_OWNERSHIP_TYPES,
                     vendorOwnerCode, payReasonCode);
             final ParameterEvaluator parameterEvaluator2 = /*REFACTORME*/parameterEvaluatorService.getParameterEvaluator(
                     DvToPdpExtractStep.class,

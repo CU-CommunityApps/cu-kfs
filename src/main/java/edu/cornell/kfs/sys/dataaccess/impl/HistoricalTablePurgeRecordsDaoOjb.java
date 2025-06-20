@@ -1,6 +1,8 @@
 package edu.cornell.kfs.sys.dataaccess.impl;
 
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.lang.String;
@@ -38,7 +40,7 @@ public class HistoricalTablePurgeRecordsDaoOjb extends PlatformAwareDaoBaseOjb i
     private HistoricalTablePurgeRecordIdentifiersDao historicalTablePurgeRecordIdentifiersDao;
     
     @Override
-    public void purgeRecords(java.util.Date jobRunDate, List<HistoricalTableDetailsForPurge> tableDetails) {
+    public void purgeRecords(LocalDateTime jobRunDate, List<HistoricalTableDetailsForPurge> tableDetails) {
         int defaultDaysOld = retrieveDefaultDaysBeforePurgeParameterValue();
         
         for (HistoricalTableDetailsForPurge details : tableDetails) {
@@ -103,17 +105,17 @@ public class HistoricalTablePurgeRecordsDaoOjb extends PlatformAwareDaoBaseOjb i
         return new Integer(parameterValue);
     }
     
-    protected Date getPurgeDate(java.util.Date jobRunDate, int daysOld) {
-        java.util.Date computedPurgeDate = computeDateAsDaysOldFromJobRunDate(jobRunDate, daysOld);
-        return KfsDateUtils.convertToSqlDate(computedPurgeDate);
+    protected Date getPurgeDate(LocalDateTime jobRunDate, int daysOld) {
+        LocalDateTime computedPurgeDate = computeDateAsDaysOldFromJobRunDate(jobRunDate, daysOld);
+        return KfsDateUtils.newDate(computedPurgeDate.getYear(), computedPurgeDate.getMonthValue(), computedPurgeDate.getDayOfMonth(), computedPurgeDate.getHour(), computedPurgeDate.getMinute(), computedPurgeDate.getSecond());
     }
     
-    protected java.util.Date computeDateAsDaysOldFromJobRunDate(java.util.Date jobRunDate, int daysOld) {
+    protected LocalDateTime computeDateAsDaysOldFromJobRunDate(LocalDateTime jobRunDate, int daysOld) {
         LOG.info("computeDateAsDaysOldFromJobRunDate: jobRunDate = {}   daysOld = {}", jobRunDate.toString(), daysOld);
-        DateTime jobRunDateAsDateTime = new DateTime(jobRunDate.getTime());
-        DateTime dateForPurgeAsDateTime = jobRunDateAsDateTime.minusDays(daysOld);
+       
+        LocalDateTime dateForPurgeAsDateTime = jobRunDate.minusDays(daysOld);
         LOG.info("computeDateAsDaysOldFromJobRunDate: dateForPurgeAsDateTime = {}", dateForPurgeAsDateTime.toLocalDate().toString());
-        return dateForPurgeAsDateTime.toDate();
+        return dateForPurgeAsDateTime;
     }
     
     public BusinessObjectService getBusinessObjectService() {

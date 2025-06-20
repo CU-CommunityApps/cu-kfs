@@ -18,19 +18,13 @@
  */
 package org.kuali.kfs.sys.rest.resource.businessobject;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.util.ConcreteKeyValue;
 import org.kuali.kfs.core.api.util.KeyValue;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.datadictionary.ActionsProvider;
 import org.kuali.kfs.datadictionary.BusinessObjectAdminService;
 import org.kuali.kfs.datadictionary.Control;
@@ -48,21 +42,30 @@ import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.bo.BusinessObjectBase;
 import org.kuali.kfs.krad.bo.DataObjectRelationship;
-import org.kuali.kfs.krad.datadictionary.RelationshipDefinition;
 import org.kuali.kfs.krad.exception.AuthorizationException;
 import org.kuali.kfs.krad.keyvalues.HierarchicalControlValuesFinder;
 import org.kuali.kfs.krad.keyvalues.HierarchicalData;
 import org.kuali.kfs.krad.keyvalues.KeyValuesFinder;
-import org.kuali.kfs.krad.service.PersistenceStructureService;
+import org.kuali.kfs.krad.service.KualiModuleService;
+import org.kuali.kfs.krad.service.ModuleService;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.KRADUtils;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.businessobject.service.SearchService;
 import org.kuali.kfs.sys.rest.resource.responses.LookupResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * ====
@@ -84,18 +87,20 @@ class BusinessObjectsControllersHelperService {
     private final BusinessObjectDictionaryService businessObjectDictionaryService;
     private final BusinessObjectMetaDataService businessObjectMetaDataService;
     private final DataDictionaryService dataDictionaryService;
+    private final KualiModuleService kualiModuleService;
     private final LookupDictionary lookupDictionary;
+    private final ParameterService parameterService;
     private final PermissionService permissionService;
-    private final PersistenceStructureService persistenceStructureService;
 
     @Autowired
     BusinessObjectsControllersHelperService(
             final BusinessObjectDictionaryService businessObjectDictionaryService,
             final BusinessObjectMetaDataService businessObjectMetaDataService,
             final DataDictionaryService dataDictionaryService,
+            final KualiModuleService kualiModuleService,
             final LookupDictionary lookupDictionary,
-            final PermissionService permissionService,
-            final PersistenceStructureService persistenceStructureService
+            final ParameterService parameterService,
+            final PermissionService permissionService
     ) {
         Validate.isTrue(businessObjectDictionaryService != null, "businessObjectDictionaryService must be provided");
         this.businessObjectDictionaryService = businessObjectDictionaryService;
@@ -103,17 +108,19 @@ class BusinessObjectsControllersHelperService {
         this.businessObjectMetaDataService = businessObjectMetaDataService;
         Validate.isTrue(dataDictionaryService != null, "dataDictionaryService must be provided");
         this.dataDictionaryService = dataDictionaryService;
+        Validate.isTrue(kualiModuleService != null, "kualiModuleService must be provided");
+        this.kualiModuleService = kualiModuleService;
         Validate.isTrue(lookupDictionary != null, "lookupDictionary must be provided");
         this.lookupDictionary = lookupDictionary;
+        Validate.isTrue(parameterService != null, "parameterService must be provided");
+        this.parameterService = parameterService;
         Validate.isTrue(permissionService != null, "permissionService must be provided");
         this.permissionService = permissionService;
-        Validate.isTrue(persistenceStructureService != null, "persistenceStructureService must be provided");
-        this.persistenceStructureService = persistenceStructureService;
     }
 
     LookupResponse getLookup(
             final UserSession userSession, final String businessObjectName
-    ) {
+    ) throws InstantiationException, IllegalAccessException {
         LOG.debug("getLookup(...) - Enter : businessObjectName={}", businessObjectName);
         final BusinessObjectEntry businessObjectEntry =
                 businessObjectDictionaryService.getBusinessObjectEntry(businessObjectName);
@@ -121,6 +128,26 @@ class BusinessObjectsControllersHelperService {
         final Class<? extends BusinessObject> businessObjectClass = businessObjectEntry.getBusinessObjectClass();
 
         final Person user = userSession.getPerson();
+        final ModuleService moduleService = kualiModuleService.getResponsibleModuleService(businessObjectClass);
+
+        if (isModuleLocked(businessObjectClass, user, moduleService)) {
+            final String messageParamNamespaceCode = moduleService.getModuleConfiguration().getNamespaceCode();
+            final String messageParamComponentCode = KRADConstants.DetailTypes.ALL_DETAIL_TYPE;
+            final String messageParamName = KRADConstants.SystemGroupParameterNames.OLTP_LOCKOUT_MESSAGE_PARM;
+            String lockoutMessage = parameterService.getParameterValueAsString(messageParamNamespaceCode,
+                    messageParamComponentCode,
+                    messageParamName
+            );
+
+            if (StringUtils.isBlank(lockoutMessage)) {
+                final String defaultMessageParamName = KRADConstants.SystemGroupParameterNames.MODULE_LOCKED_MESSAGE;
+                lockoutMessage = parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.KFS,
+                        messageParamComponentCode,
+                        defaultMessageParamName
+                );
+            }
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, lockoutMessage);
+        }
 
         if (notAuthorizedToView(businessObjectClass, user.getPrincipalId())) {
             // TODO: Of the 3 methods, this one creates this AuthorizationException. Keeping it like this for now for
@@ -140,8 +167,13 @@ class BusinessObjectsControllersHelperService {
         final SearchService searchService = getSearchService(businessObjectBaseClass);
 
         final List<FormAttribute> lookupAttributes = searchService.getFormAttributes(businessObjectBaseClass);
-        for (final FormAttribute lookupAttribute : lookupAttributes) {
-            setNestedLookupFields(lookupAttribute, businessObjectEntry, businessObjectClass);
+        // We are skipping nested lookup configuration for BatchFile, as it doesn't have any, and a BatchFile object
+        // cannot be instantiated without a file path or File object to determine the relationship.
+        // TODO: Move all of the BatchFile stuff into it's own thing at some point
+        if (!Objects.equals(businessObjectBaseClass, BatchFile.class)) {
+            for (final FormAttribute lookupAttribute : lookupAttributes) {
+                setNestedLookupFields(lookupAttribute, businessObjectClass);
+            }
         }
 
         String title = lookupDictionary.getLookupTitle(businessObjectBaseClass);
@@ -309,49 +341,22 @@ class BusinessObjectsControllersHelperService {
 
     private void setNestedLookupFields(
             final FormAttribute lookupAttribute,
-            final BusinessObjectEntry businessObjectEntry,
             final Class<? extends BusinessObject> businessObjectClass
-    ) {
+    ) throws InstantiationException, IllegalAccessException {
         final boolean disableLookup = lookupAttribute.getDisableLookup();
         if (disableLookup) {
             return;
         }
 
-        String attributeName = lookupAttribute.getName();
+        final String attributeName = lookupAttribute.getName();
 
-        DataObjectRelationship relationship = businessObjectMetaDataService.getBusinessObjectRelationship(
-                null,
+        final DataObjectRelationship relationship = businessObjectMetaDataService.getBusinessObjectRelationship(
+                businessObjectClass.newInstance(),
                 businessObjectClass,
                 attributeName,
                 "",
                 false
         );
-        if (relationship == null) {
-            final Class clazz = ObjectUtils.getPropertyType(
-                    businessObjectEntry,
-                    lookupAttribute.getName(),
-                    persistenceStructureService
-            );
-            if (clazz != null) {
-                if (lookupAttribute.getName().contains(".")) {
-                    attributeName = StringUtils.substringBeforeLast(attributeName, ".");
-                }
-
-                final RelationshipDefinition ddReference =
-                        businessObjectMetaDataService.getBusinessObjectRelationshipDefinition(
-                                businessObjectClass,
-                                attributeName
-                        );
-                relationship = businessObjectMetaDataService.getBusinessObjectRelationship(
-                        ddReference,
-                        null,
-                        businessObjectClass,
-                        attributeName,
-                        "",
-                        false
-                );
-            }
-        }
 
         if (relationship != null) {
             lookupAttribute.setCanLookup(true);
@@ -418,6 +423,20 @@ class BusinessObjectsControllersHelperService {
             );
         }
         return searchService;
+    }
+
+    private boolean isModuleLocked(final Class<?> boClass, final Person user, final ModuleService moduleService) {
+        if (moduleService != null && moduleService.isLocked()) {
+            final String principalId = user.getPrincipalId();
+            final String namespaceCode = KFSConstants.CoreModuleNamespaces.KFS;
+            final String permissionName = KimConstants.PermissionNames.ACCESS_LOCKED_MODULE;
+            final Map<String, String> qualification = KRADUtils.getNamespaceAndComponentSimpleName(boClass);
+
+            if (!permissionService.isAuthorized(principalId, namespaceCode, permissionName, qualification)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

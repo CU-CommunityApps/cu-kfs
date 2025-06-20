@@ -1,6 +1,6 @@
 package edu.cornell.kfs.sys.batch;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +18,7 @@ public class RunKimFeedV2Step extends AbstractStep {
     private KimFeedService kimFeedService;
 
     @Override
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         try {
             LOG.info("execute: Starting run of KFS KIM feed");
             kimFeedService.processPersonDataMarkedForDisabling();

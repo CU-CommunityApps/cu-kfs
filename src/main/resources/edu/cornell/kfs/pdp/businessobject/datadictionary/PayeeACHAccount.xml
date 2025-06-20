@@ -122,6 +122,34 @@
             </list>
           </property>
         </bean>
+        
+        <bean parent="FieldOverrideForListElementInsert">
+          <property name="propertyName" value="formAttributeDefinitions" />
+          <property name="propertyNameForElementCompare" value="name" />
+          <property name="element">
+            <ref bean="PayeeACHAccount-bankAccountTypeCode"/>
+          </property>
+          <property name="insertAfter">
+            <list>
+              <ref bean="PayeeACHAccount-payeeEmailAddress"/>
+              <ref bean="PayeeACHAccount-payeeName"/>
+              <ref bean="PayeeACHAccount-payeePrincipalName"/>
+            </list>
+          </property>
+        </bean>
+        
+        <bean parent="FieldOverrideForListElementInsert">
+          <property name="propertyName" value="displayAttributeDefinitions" />
+          <property name="propertyNameForElementCompare" value="name" />
+          <property name="element">
+            <ref bean="PayeeACHAccount-payeeIdentifierTypeCode"/>
+          </property>
+          <property name="insertAfter">
+            <list>
+              <ref bean="PayeeACHAccount-payeePrincipalName"/>
+            </list>
+          </property>
+        </bean>
       </list>
     </property>
   </bean>
