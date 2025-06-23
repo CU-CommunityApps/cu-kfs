@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-    <bean id="ApiResourceDescription" parent="ApiResourceDescription-parentBean"/>
+    <bean id="ApiEndpointDescription" parent="ApiEndpointDescription-parentBean"/>
 
-    <bean id="ApiResourceDescription-parentBean" abstract="true" parent="BusinessObjectEntry">
-        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiResourceDescription"/>
-        <property name="objectLabel" value="API Resource Description"/>
-        <property name="titleAttribute" value="resourceCode"/>
+    <bean id="ApiEndpointDescription-parentBean" abstract="true" parent="BusinessObjectEntry">
+        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiEndpointDescription"/>
+        <property name="objectLabel" value="API Endpoint Description"/>
+        <property name="titleAttribute" value="endpointCode"/>
 
         <property name="inquiryDefinition">
-            <ref bean="ApiResourceDescription-inquiryDefinition"/>
+            <ref bean="ApiEndpointDescription-inquiryDefinition"/>
         </property>
         <property name="lookupDefinition">
-            <ref bean="ApiResourceDescription-lookupDefinition"/>
+            <ref bean="ApiEndpointDescription-lookupDefinition"/>
         </property>
         <property name="attributes">
             <list>
-                <ref bean="ApiResourceDescription-resourceCode"/>
-                <ref bean="ApiResourceDescription-resourceDescription"/>
-                <ref bean="ApiResourceDescription-active"/>
+                <ref bean="ApiEndpointDescription-endpointCode"/>
+                <ref bean="ApiEndpointDescription-endpointDescription"/>
+                <ref bean="ApiEndpointDescription-active"/>
             </list>
         </property>
         <property name="collections">
@@ -28,11 +28,11 @@
         </property>
     </bean>
 
-    <bean id="ApiResourceDescription-resourceCode" parent="ApiResourceDescription-resourceCode-parentBean"/>
+    <bean id="ApiEndpointDescription-endpointCode" parent="ApiEndpointDescription-endpointCode-parentBean"/>
 
-    <bean id="ApiResourceDescription-resourceCode-parentBean" abstract="true" parent="AttributeDefinition">
-        <property name="name" value="resourceCode"/>
-        <property name="label" value="Resource Code"/>
+    <bean id="ApiEndpointDescription-endpointCode-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="endpointCode"/>
+        <property name="label" value="Endpoint Code"/>
         <property name="shortLabel" value="Code"/>
         <property name="maxLength" value="30"/>
         <property name="control">
@@ -46,11 +46,11 @@
         </property>
     </bean>
 
-    <bean id="ApiResourceDescription-resourceDescription" parent="ApiResourceDescription-resourceDescription-parentBean"/>
+    <bean id="ApiEndpointDescription-endpointDescription" parent="ApiEndpointDescription-endpointDescription-parentBean"/>
 
-    <bean id="ApiResourceDescription-resourceDescription-parentBean" abstract="true" parent="AttributeDefinition">
-        <property name="name" value="resourceDescription"/>
-        <property name="label" value="Resource Description"/>
+    <bean id="ApiEndpointDescription-endpointDescription-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="endpointDescription"/>
+        <property name="label" value="Endpoint Description"/>
         <property name="shortLabel" value="Description"/>
         <property name="maxLength" value="100"/>
         <property name="control">
@@ -64,24 +64,24 @@
         </property>
     </bean>
 
-    <bean id="ApiResourceDescription-active" parent="ApiResourceDescription-active-parentBean"/>
-    <bean id="ApiResourceDescription-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
+    <bean id="ApiEndpointDescription-active" parent="ApiEndpointDescription-active-parentBean"/>
+    <bean id="ApiEndpointDescription-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
         <property name="name" value="active"/>
     </bean>
 
-    <bean id="ApiResourceDescription-inquiryDefinition" parent="ApiResourceDescription-inquiryDefinition-parentBean"/>
+    <bean id="ApiEndpointDescription-inquiryDefinition" parent="ApiEndpointDescription-inquiryDefinition-parentBean"/>
 
-    <bean id="ApiResourceDescription-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
-        <property name="title" value="API Resource Description Inquiry"/>
+    <bean id="ApiEndpointDescription-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+        <property name="title" value="API Endpoint Description Inquiry"/>
         <property name="inquirySections">
             <list>
                 <bean parent="InquirySectionDefinition">
-                    <property name="title" value="API Resource Description Inquiry"/>
+                    <property name="title" value="API Endpoint Description Inquiry"/>
                     <property name="numberOfColumns" value="1"/>
                     <property name="inquiryFields">
                         <list>
-                            <bean parent="FieldDefinition" p:attributeName="resourceCode"/>
-                            <bean parent="FieldDefinition" p:attributeName="resourceDescription"/>
+                            <bean parent="FieldDefinition" p:attributeName="endpointCode"/>
+                            <bean parent="FieldDefinition" p:attributeName="endpointDescription"/>
                             <bean parent="FieldDefinition" p:attributeName="active"/>
                         </list>
                     </property>
@@ -93,7 +93,7 @@
                         <list>
                             <bean parent="InquiryCollectionDefinition">
                                 <property name="attributeName" value="descriptionAuthenticators"/>
-                                <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiResourceDescriptionAuthenticator"/>
+                                <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiEndpointAuthenticator"/>
                                 <property name="numberOfColumns" value="1"/>
                                 <property name="inquiryFields">
                                     <list>
@@ -109,31 +109,31 @@
         </property>
     </bean>
 
-    <bean id="ApiResourceDescription-lookupDefinition" parent="ApiResourceDescription-lookupDefinition-parentBean"/>
+    <bean id="ApiEndpointDescription-lookupDefinition" parent="ApiEndpointDescription-lookupDefinition-parentBean"/>
 
-    <bean id="ApiResourceDescription-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
-        <property name="title" value="API Resource Description Lookup"/>
+    <bean id="ApiEndpointDescription-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+        <property name="title" value="API Endpoint Description Lookup"/>
 
         <property name="defaultSort" >
             <bean parent="SortDefinition">
                 <property name="attributeNames">
                     <list>
-                        <value>resourceCode</value>
+                        <value>endpointCode</value>
                     </list>
                 </property>
             </bean>
         </property>
         <property name="lookupFields">
             <list>
-                <bean parent="FieldDefinition" p:attributeName="resourceCode"/>
-                <bean parent="FieldDefinition" p:attributeName="resourceDescription"/>
+                <bean parent="FieldDefinition" p:attributeName="endpointCode"/>
+                <bean parent="FieldDefinition" p:attributeName="endpointDescription"/>
                 <bean parent="FieldDefinition" p:attributeName="active"/>
             </list>
         </property>
         <property name="resultFields">
             <list>
-                <bean parent="FieldDefinition" p:attributeName="resourceCode"/>
-                <bean parent="FieldDefinition" p:attributeName="resourceDescription"/>
+                <bean parent="FieldDefinition" p:attributeName="endpointCode"/>
+                <bean parent="FieldDefinition" p:attributeName="endpointDescription"/>
                 <bean parent="FieldDefinition" p:attributeName="active"/>
             </list>
         </property>

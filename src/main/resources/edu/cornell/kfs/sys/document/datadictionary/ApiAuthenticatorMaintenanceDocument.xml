@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-    <bean id="ApiResourceAuthenticatorMaintenanceDocument" parent="ApiResourceAuthenticatorMaintenanceDocument-parentBean"/>
+    <bean id="ApiAuthenticatorMaintenanceDocument" parent="ApiAuthenticatorMaintenanceDocument-parentBean"/>
 
-    <bean id="ApiResourceAuthenticatorMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
-        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiResourceAuthenticator"/>
+    <bean id="ApiAuthenticatorMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
+        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiAuthenticator"/>
         <property name="maintainableClass" value="org.kuali.kfs.sys.document.FinancialSystemMaintainable"/>
         <property name="allowsNewOrCopy" value="true"/>
         <property name="maintainableSections">
             <list>
-                <ref bean="ApiResourceAuthenticatorMaintenanceDocument-ApiResourceAuthenticator"/>
-                <ref bean="ApiResourceAuthenticatorMaintenanceDocument-ApiEndpoints"/>
+                <ref bean="ApiAuthenticatorMaintenanceDocument-ApiAuthenticator"/>
+                <ref bean="ApiAuthenticatorMaintenanceDocument-ApiEndpoints"/>
             </list>
         </property>
-        <property name="documentTypeName" value="APIRA"/>
+        <property name="documentTypeName" value="APIA"/>
         <!--
         <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
         <property name="documentPresentationControllerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentPresentationControllerBase"/>
         -->
         <property name="workflowAttributes">
-            <ref bean="ApiResourceAuthenticatorMaintenanceDocument-workflowAttributes"/>
+            <ref bean="ApiAuthenticatorMaintenanceDocument-workflowAttributes"/>
         </property>
     </bean>
 
-    <bean id="ApiResourceAuthenticatorMaintenanceDocument-ApiResourceAuthenticator" parent="ApiResourceAuthenticatorMaintenanceDocument-ApiResourceAuthenticator-parentBean"/>
-    <bean id="ApiResourceAuthenticatorMaintenanceDocument-ApiResourceAuthenticator-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <bean id="ApiAuthenticatorMaintenanceDocument-ApiAuthenticator" parent="ApiAuthenticatorMaintenanceDocument-ApiAuthenticator-parentBean"/>
+    <bean id="ApiAuthenticatorMaintenanceDocument-ApiAuthenticator-parentBean" abstract="true" parent="MaintainableSectionDefinition">
         <property name="defaultOpen" value="true"/>
-        <property name="id" value="API Resource Authenticator"/>
-        <property name="title" value="API Resource Authenticator"/>
+        <property name="id" value="API Authenticator"/>
+        <property name="title" value="API Authenticator"/>
         <property name="maintainableItems">
             <list>
                 <bean parent="MaintainableFieldDefinition" p:name="authenticatorId" p:required="true" p:unconditionallyReadOnly="true"/>
@@ -38,8 +38,8 @@
         </property>
     </bean>
 
-    <bean id="ApiResourceAuthenticatorMaintenanceDocument-ApiEndpoints" parent="ApiResourceAuthenticatorMaintenanceDocument-ApiEndpoints-parentBean"/>
-    <bean id="ApiResourceAuthenticatorMaintenanceDocument-ApiEndpoints-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <bean id="ApiAuthenticatorMaintenanceDocument-ApiEndpoints" parent="ApiAuthenticatorMaintenanceDocument-ApiEndpoints-parentBean"/>
+    <bean id="ApiAuthenticatorMaintenanceDocument-ApiEndpoints-parentBean" abstract="true" parent="MaintainableSectionDefinition">
         <property name="defaultOpen" value="true"/>
         <property name="id" value="API Endpoints"/>
         <property name="title" value="API Endpoints"/>
@@ -47,17 +47,17 @@
             <list>
                 <bean parent="MaintainableCollectionDefinition">
                     <property name="name" value="descriptionAuthenticators"/>
-                    <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiResourceDescriptionAuthenticator"/>
-                    <property name="sourceClassName" value="edu.cornell.kfs.sys.businessobject.ApiResourceAuthenticator"/>
+                    <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiEndpointAuthenticator"/>
+                    <property name="sourceClassName" value="edu.cornell.kfs.sys.businessobject.ApiAuthenticator"/>
                     <property name="summaryTitle" value="Description Authenticators"/>
                     <property name="summaryFields">
                         <list>
-                            <bean parent="MaintainableFieldDefinition" p:name="resourceCode"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="endpointCode"/>
                         </list>
                     </property>
                     <property name="maintainableFields">
                         <list>
-                            <bean parent="MaintainableFieldDefinition" p:name="resourceCode" p:required="true" p:readOnlyAfterAdd="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="endpointCode" p:required="true" p:readOnlyAfterAdd="true"/>
                             <bean parent="MaintainableFieldDefinition" p:name="active" p:required="true" p:defaultValue="true"/>
                         </list>
                     </property>
@@ -67,7 +67,7 @@
     </bean>
     
 
-    <bean id="ApiResourceAuthenticatorMaintenanceDocument-workflowAttributes" parent="ApiResourceAuthenticatorMaintenanceDocument-workflowAttributes-parentBean"/>
-    <bean id="ApiResourceAuthenticatorMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+    <bean id="ApiAuthenticatorMaintenanceDocument-workflowAttributes" parent="ApiAuthenticatorMaintenanceDocument-workflowAttributes-parentBean"/>
+    <bean id="ApiAuthenticatorMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
 
 </beans>

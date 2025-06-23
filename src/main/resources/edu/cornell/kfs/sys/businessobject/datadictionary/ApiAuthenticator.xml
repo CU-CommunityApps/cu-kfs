@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-    <bean id="ApiResourceAuthenticator" parent="ApiResourceAuthenticator-parentBean"/>
+    <bean id="ApiAuthenticator" parent="ApiAuthenticator-parentBean"/>
 
-    <bean id="ApiResourceAuthenticator-parentBean" abstract="true" parent="BusinessObjectEntry">
-        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiResourceAuthenticator"/>
-        <property name="objectLabel" value="API Resource Authenticator"/>
+    <bean id="ApiAuthenticator-parentBean" abstract="true" parent="BusinessObjectEntry">
+        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiAuthenticator"/>
+        <property name="objectLabel" value="API Authenticator"/>
         <property name="titleAttribute" value="authenticatorId"/>
 
         <property name="inquiryDefinition">
-            <ref bean="ApiResourceAuthenticator-inquiryDefinition"/>
+            <ref bean="ApiAuthenticator-inquiryDefinition"/>
         </property>
         <property name="lookupDefinition">
-            <ref bean="ApiResourceAuthenticator-lookupDefinition"/>
+            <ref bean="ApiAuthenticator-lookupDefinition"/>
         </property>
         <property name="attributes">
             <list>
-                <ref bean="ApiResourceAuthenticator-authenticatorId"/>
-                <ref bean="ApiResourceAuthenticator-authenticatorDescription"/>
-                <ref bean="ApiResourceAuthenticator-usernamePassword"/>
-                <ref bean="ApiResourceAuthenticator-active"/>
+                <ref bean="ApiAuthenticator-authenticatorId"/>
+                <ref bean="ApiAuthenticator-authenticatorDescription"/>
+                <ref bean="ApiAuthenticator-usernamePassword"/>
+                <ref bean="ApiAuthenticator-active"/>
             </list>
         </property>
         <property name="collections">
@@ -29,9 +29,9 @@
         </property>
     </bean>
 
-    <bean id="ApiResourceAuthenticator-authenticatorId" parent="ApiResourceAuthenticator-authenticatorId-parentBean"/>
+    <bean id="ApiAuthenticator-authenticatorId" parent="ApiAuthenticator-authenticatorId-parentBean"/>
 
-    <bean id="ApiResourceAuthenticator-authenticatorId-parentBean" abstract="true" parent="AttributeDefinition">
+    <bean id="ApiAuthenticator-authenticatorId-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="authenticatorId"/>
         <property name="label" value="Authenticator ID"/>
         <property name="shortLabel" value="ID"/>
@@ -47,9 +47,9 @@
         </property>
     </bean>
 
-    <bean id="ApiResourceAuthenticator-authenticatorDescription" parent="ApiResourceAuthenticator-authenticatorDescription-parentBean"/>
+    <bean id="ApiAuthenticator-authenticatorDescription" parent="ApiAuthenticator-authenticatorDescription-parentBean"/>
 
-    <bean id="ApiResourceAuthenticator-authenticatorDescription-parentBean" abstract="true" parent="AttributeDefinition">
+    <bean id="ApiAuthenticator-authenticatorDescription-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="authenticatorDescription"/>
         <property name="label" value="Authenticator Description"/>
         <property name="shortLabel" value="Authenticator Description"/>
@@ -65,9 +65,9 @@
         </property>
     </bean>
 
-    <bean id="ApiResourceAuthenticator-usernamePassword" parent="ApiResourceAuthenticator-usernamePassword-parentBean"/>
+    <bean id="ApiAuthenticator-usernamePassword" parent="ApiAuthenticator-usernamePassword-parentBean"/>
 
-    <bean id="ApiResourceAuthenticator-usernamePassword-parentBean" abstract="true" parent="AttributeDefinition">
+    <bean id="ApiAuthenticator-usernamePassword-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="usernamePassword"/>
         <property name="label" value="Username Password"/>
         <property name="shortLabel" value="Username Password"/>
@@ -88,19 +88,19 @@
         </property>
     </bean>
 
-    <bean id="ApiResourceAuthenticator-active" parent="ApiResourceAuthenticator-active-parentBean"/>
-    <bean id="ApiResourceAuthenticator-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
+    <bean id="ApiAuthenticator-active" parent="ApiAuthenticator-active-parentBean"/>
+    <bean id="ApiAuthenticator-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
         <property name="name" value="active"/>
     </bean>
 
-    <bean id="ApiResourceAuthenticator-inquiryDefinition" parent="ApiResourceAuthenticator-inquiryDefinition-parentBean"/>
+    <bean id="ApiAuthenticator-inquiryDefinition" parent="ApiAuthenticator-inquiryDefinition-parentBean"/>
 
-    <bean id="ApiResourceAuthenticator-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
-        <property name="title" value="API Resource Authenticator Inquiry"/>
+    <bean id="ApiAuthenticator-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+        <property name="title" value="API Authenticator Inquiry"/>
         <property name="inquirySections">
             <list>
                 <bean parent="InquirySectionDefinition">
-                    <property name="title" value="API Resource Authenticator Inquiry"/>
+                    <property name="title" value="API Authenticator Inquiry"/>
                     <property name="numberOfColumns" value="1"/>
                     <property name="inquiryFields">
                         <list>
@@ -114,10 +114,10 @@
         </property>
     </bean>
 
-    <bean id="ApiResourceAuthenticator-lookupDefinition" parent="ApiResourceAuthenticator-lookupDefinition-parentBean"/>
+    <bean id="ApiAuthenticator-lookupDefinition" parent="ApiAuthenticator-lookupDefinition-parentBean"/>
 
-    <bean id="ApiResourceAuthenticator-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
-        <property name="title" value="API Resource Authenticator Lookup"/>
+    <bean id="ApiAuthenticator-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+        <property name="title" value="API Authenticator Lookup"/>
 
         <property name="defaultSort" >
             <bean parent="SortDefinition">

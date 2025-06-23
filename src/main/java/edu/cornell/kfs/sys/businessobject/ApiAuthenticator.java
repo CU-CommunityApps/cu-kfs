@@ -6,14 +6,14 @@ import java.util.List;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
-public class ApiResourceAuthenticator extends PersistableBusinessObjectBase implements MutableInactivatable {
+public class ApiAuthenticator extends PersistableBusinessObjectBase implements MutableInactivatable {
 
     private Integer authenticatorId;
     private String authenticatorDescription;
     private String usernamePassword;
     private boolean active;
 
-    private List<ApiResourceDescriptionAuthenticator> descriptionAuthenticators;
+    private List<ApiEndpointAuthenticator> descriptionAuthenticators;
 
     @Override
     public boolean isActive() {
@@ -49,14 +49,14 @@ public class ApiResourceAuthenticator extends PersistableBusinessObjectBase impl
         this.usernamePassword = usernamePassword;
     }
 
-    public List<ApiResourceDescriptionAuthenticator> getDescriptionAuthenticators() {
+    public List<ApiEndpointAuthenticator> getDescriptionAuthenticators() {
         if (descriptionAuthenticators == null) {
             descriptionAuthenticators = new ArrayList<>();
         }
         return descriptionAuthenticators;
     }
 
-    public void setDescriptionAuthenticators(List<ApiResourceDescriptionAuthenticator> descriptionAuthenticators) {
+    public void setDescriptionAuthenticators(List<ApiEndpointAuthenticator> descriptionAuthenticators) {
         this.descriptionAuthenticators = descriptionAuthenticators;
     }
 

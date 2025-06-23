@@ -19,13 +19,13 @@ import org.kuali.kfs.sys.context.SpringContext;
 import com.google.gson.Gson;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.service.ApiAuthentizationService;
+import edu.cornell.kfs.sys.service.ApiAuthenticationService;
 
 public class ConcurAIAuthFilter implements Filter {
     private static final Logger LOG = LogManager.getLogger();
     private static final Gson gson = new Gson();
 
-    private ApiAuthentizationService apiAuthentizationService;
+    private ApiAuthenticationService apiAuthenticationService;
 
     @Override
     public void init(FilterConfig filterConfig) {
@@ -61,14 +61,14 @@ public class ConcurAIAuthFilter implements Filter {
     }
 
     private boolean isAuthorized(HttpServletRequest request) {
-        return getApiAuthentizationService().isAuthorized("concAcctDetail", request);
+        return getApiAuthenticationService().isAuthorized("concurAccountDetails", request);
     }
     
-    public ApiAuthentizationService getApiAuthentizationService() {
-        if (apiAuthentizationService == null) {
-            apiAuthentizationService = SpringContext.getBean(ApiAuthentizationService.class);
+    public ApiAuthenticationService getApiAuthenticationService() {
+        if (apiAuthenticationService == null) {
+            apiAuthenticationService = SpringContext.getBean(ApiAuthenticationService.class);
         }
-        return apiAuthentizationService;
+        return apiAuthenticationService;
     }
 
 }
