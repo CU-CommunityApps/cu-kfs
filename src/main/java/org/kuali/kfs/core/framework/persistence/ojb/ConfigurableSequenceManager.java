@@ -42,7 +42,8 @@ import java.util.Properties;
  */
 @Deprecated
 
-//Cornell customization: KualiCo removed this class with FINP-10106 and is now using a MySql specific class. We copied this in our base code to continue using it.
+// Cornell customization: KualiCo removed this class with FINP-10106 and is now using a MySql specific class. 
+// We copied this in our cu base code to continue using it.
 public class ConfigurableSequenceManager implements SequenceManager {
 
     private static final String PROPERTY_PREFIX_ATTRIBUTE = "property.prefix";
