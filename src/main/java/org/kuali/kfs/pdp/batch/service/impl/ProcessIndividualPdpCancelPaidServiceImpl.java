@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-// CU customization to make methods protected
+// CU customization: make method protected
 public class ProcessIndividualPdpCancelPaidServiceImpl implements ProcessIndividualPdpCancelPaidService {
 
     private static final Logger LOG = LogManager.getLogger();

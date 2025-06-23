@@ -138,14 +138,17 @@ public class CuProcessIndividualPdpCancelPaidServiceImpl extends ProcessIndividu
     }
 
     public void setCreditMemoService(CreditMemoService creditMemoService) {
+        super.setCreditMemoService(creditMemoService);
         this.creditMemoService = creditMemoService;
     }
 
     public void setParameterService(ParameterService parameterService) {
+        super.setParameterService(parameterService);
         this.parameterService = parameterService;
     }
 
     public void setPaymentRequestService(PaymentRequestService paymentRequestService) {
+        super.setPaymentRequestService(paymentRequestService);
         this.paymentRequestService = paymentRequestService;
     }
 
