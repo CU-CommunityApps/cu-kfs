@@ -242,4 +242,17 @@ public class CUKFSConstants {
     public static final String WEBSERVICE_CREDENTIAL_KEY_USERNAMEPASSWORD = "usernamepassword";
     public static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
     public static final String ACCESS_CONTROL_HEADER_NAME = "Access-Control-Allow-Methods";
+
+    public enum EndpointCodes
+    {
+        CONCUR_ACCOUNT_DETAIL("concurAccountDetails"),
+        EINVOICE("eInvoice"),
+        PURCHASE_ORDER_DETAILS("poDetail");
+
+        public final String endpointCode;
+
+        private EndpointCodes(String endPointCode) {
+            this.endpointCode = endPointCode;
+        }
+    }
 }

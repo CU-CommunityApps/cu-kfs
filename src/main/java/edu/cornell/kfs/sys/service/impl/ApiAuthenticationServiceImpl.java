@@ -13,6 +13,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.CUKFSConstants.EndpointCodes;
 import edu.cornell.kfs.sys.businessobject.ApiAuthenticator;
 import edu.cornell.kfs.sys.businessobject.ApiEndpointDescription;
 import edu.cornell.kfs.sys.businessobject.ApiEndpointAuthenticator;
@@ -25,13 +26,8 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
     private BusinessObjectService businessObjectService;
 
     @Override
-    public boolean isAuthorized(String endpointCode, HttpServletRequest request) {
-        LOG.debug("isAuthorized: Checking authorization for endpoint code {} from request", endpointCode);
-        
-        if (StringUtils.isBlank(endpointCode) || request == null) {
-            LOG.warn("isAuthorized: Endpoint code is blank or request is null");
-            return false;
-        }
+    public boolean isAuthorized(EndpointCodes endpointCode, HttpServletRequest request) {
+        LOG.debug("isAuthorized: Checking authorization for endpoint code {} from request", endpointCode.endpointCode);
         
         String authorizationHeader = request.getHeader(CUKFSConstants.AUTHORIZATION_HEADER_KEY);
         if (StringUtils.isBlank(authorizationHeader) || 
@@ -48,15 +44,10 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
     }
 
     @Override
-    public boolean isAuthorized(String endpointCode, String usernamePassword) {
-        LOG.debug("isAuthorized: Checking authorization for endpoint code {} with credentials", endpointCode);
+    public boolean isAuthorized(EndpointCodes endpointCode, String usernamePassword) {
+        LOG.debug("isAuthorized: Checking authorization for endpoint code {} with credentials", endpointCode.endpointCode);
         
-        if (StringUtils.isBlank(endpointCode) || StringUtils.isBlank(usernamePassword)) {
-            LOG.warn("isAuthorized: Endpoint code or credentials are blank");
-            return false;
-        }
-        
-        ApiEndpointDescription endpointDescription = getEndpointDescription(endpointCode);
+        ApiEndpointDescription endpointDescription = getEndpointDescription(endpointCode.endpointCode);
         if (endpointDescription == null || !endpointDescription.isActive()) {
             LOG.warn("isAuthorized: Endpoint code {} not found or not active", endpointCode);
             return false;
@@ -74,7 +65,8 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
                 
                 ApiAuthenticator authenticator = descriptionAuthenticator.getApiAuthenticator();
                 if (StringUtils.equals(usernamePassword, authenticator.getUsernamePassword())) {
-                    LOG.info("isAuthorized: Successfully authenticated for endpoint code {}", endpointCode);
+                    LOG.debug("isAuthorized: Successfully authenticated for endpoint code {} with authenticator {}", 
+                        endpointCode, authenticator.getAuthenticatorDescription());
                     return true;
                 } else {
                     LOG.debug("isAuthorized, user name and password does not match authenticator {}", authenticator.getAuthenticatorDescription());
@@ -82,7 +74,7 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
             }
         }
         
-        LOG.debug("isAuthorized: No matching credentials found for endpoint code {}", endpointCode);
+        LOG.error("isAuthorized: No matching credentials found for endpoint code {}", endpointCode);
         return false;
     }
     
