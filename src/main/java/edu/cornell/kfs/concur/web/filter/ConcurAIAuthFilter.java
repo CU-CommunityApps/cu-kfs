@@ -64,6 +64,10 @@ public class ConcurAIAuthFilter implements Filter {
     private boolean isAuthorized(HttpServletRequest request) {
         return getApiAuthenticationService().isAuthorized(EndpointCodes.CONCUR_ACCOUNT_DETAIL, request);
     }
+
+    @Override
+    public void destroy() {
+    }
     
     public ApiAuthenticationService getApiAuthenticationService() {
         if (apiAuthenticationService == null) {
