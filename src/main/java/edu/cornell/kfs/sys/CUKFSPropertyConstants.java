@@ -79,6 +79,8 @@ public class CUKFSPropertyConstants {
     public static final String DOCUMENT_ID = "documentId";
     public static final String FINALIZED_DATE = "finalizedDate";
 
+    public static final String BUILDING_ROOM = "buildingRoom";
+
     //** CU Generic ISO-FIPS Country modification items **
     public static class Location {
         public static final String COUNTRY_CODE = "countryCode";
