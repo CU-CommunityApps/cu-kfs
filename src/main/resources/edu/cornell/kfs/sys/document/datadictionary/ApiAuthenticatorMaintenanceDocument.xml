@@ -14,10 +14,6 @@
             </list>
         </property>
         <property name="documentTypeName" value="APIA"/>
-        <!--
-        <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
-        <property name="documentPresentationControllerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentPresentationControllerBase"/>
-        -->
         <property name="workflowAttributes">
             <ref bean="ApiAuthenticatorMaintenanceDocument-workflowAttributes"/>
         </property>
@@ -65,7 +61,6 @@
             </list>
         </property>
     </bean>
-    
 
     <bean id="ApiAuthenticatorMaintenanceDocument-workflowAttributes" parent="ApiAuthenticatorMaintenanceDocument-workflowAttributes-parentBean"/>
     <bean id="ApiAuthenticatorMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
