@@ -22,7 +22,6 @@ import edu.cornell.kfs.sys.service.ApiAuthenticationService;
 public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
     private static final Logger LOG = LogManager.getLogger();
     
-    @Autowired
     private BusinessObjectService businessObjectService;
 
     @Override
