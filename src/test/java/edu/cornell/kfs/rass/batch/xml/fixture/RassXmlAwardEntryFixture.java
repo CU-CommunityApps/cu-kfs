@@ -465,13 +465,14 @@ public enum RassXmlAwardEntryFixture {
         return defaultToFalseIfNull(finalFinancialReportRequired);
     }
 
-    // Then section of this method must match the processing in RassValueConverterBase.cleanDataValue.
-    // Naming of the two methods pertains to the functionality each is perforning for the test case versus
-    // the actual data file processing but they fundamentally are performing the same logic.
+    // "Then" clause of the if-then-else statement in this method must
+    // match the processing in RassValueConverterBase.cleanDataValue.
+    // Naming of the two methods pertains to the functionality each is
+    // perforning for the test case versus the actual data file processing
+    // but they fundamentally are performing the same logic.
     private Date buildSqlDateFromLocalDate(LocalDate localDateToConvert) {
         if (localDateToConvert != null) {
-            LocalDate localDate = LocalDate.of(localDateToConvert.getYear(), localDateToConvert.getMonthValue(), localDateToConvert.getDayOfMonth());
-            return Date.valueOf(localDate);
+            return Date.valueOf(localDateToConvert);
         } else {
             return null;
         }

@@ -74,8 +74,7 @@ public class RassValueConverterBase implements RassValueConverter {
 
     protected Date cleanDateValue(
             Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, LocalDate propertyValue) {
-        LocalDate localDate = LocalDate.of(propertyValue.getYear(), propertyValue.getMonthValue(), propertyValue.getDayOfMonth());
-        return Date.valueOf(localDate);
+        return Date.valueOf(propertyValue);
     }
 
     protected Boolean cleanBooleanValue(
