@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.businessobject.ApiAuthenticator;
@@ -43,25 +44,21 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
     @Override
     public boolean isAuthorized(String endpointCode, String usernamePassword) {
         LOG.debug("isAuthorized: Checking authorization for endpoint code {} with credentials", endpointCode);
-
-        if (StringUtils.isEmpty(endpointCode)) {
-            throw new IllegalArgumentException("An endpoint code must be provided");
-        }
         
         ApiEndpointDescriptor endpointDescriptor = getEndpointDescriptor(endpointCode);
-        if (endpointDescriptor == null || !endpointDescriptor.isActive()) {
+        if (ObjectUtils.isNull(endpointDescriptor) || !endpointDescriptor.isActive()) {
             LOG.warn("isAuthorized: Endpoint code {} not found or not active", endpointCode);
             return false;
         }
         
         List<ApiAuthenticationMapping> authenticationMappings = endpointDescriptor.getAuthenticationMappings();
-        if (authenticationMappings == null || authenticationMappings.isEmpty()) {
+        if (ObjectUtils.isNull(authenticationMappings) || authenticationMappings.isEmpty()) {
             LOG.warn("isAuthorized: No authentication mappings found for endpoint code {}", endpointCode);
             return false;
         }
         
         for (ApiAuthenticationMapping descriptionAuthenticator : authenticationMappings) {
-            if (descriptionAuthenticator.isActive() && descriptionAuthenticator.getApiAuthenticator() != null && 
+            if (ObjectUtils.isNotNull(descriptionAuthenticator) && descriptionAuthenticator.isActive() && descriptionAuthenticator.getApiAuthenticator() != null && 
                     descriptionAuthenticator.getApiAuthenticator().isActive()) {
                 
                 ApiAuthenticator authenticator = descriptionAuthenticator.getApiAuthenticator();
