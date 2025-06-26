@@ -18,7 +18,7 @@ public class CUKFSConstants {
     public static final String DATE_FORMAT_yyyyMMdd = "yyyyMMdd";
     public static final String DATE_FORMAT_yyyy_MM_dd = "yyyy-MM-dd";
     public static final String DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am = "MM/dd/yyyy hh:mm:ss a";
-    public static final String DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+    public static final String DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSSSSSSSS = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS";
     public static final String DATE_FORMAT_dd_MMM_yy = "dd-MMM-yy";
     public static final String DATE_FORMAT_dd_MMM_yyyy = "dd-MMM-yyyy";
     public static final String DATE_FORMAT_yyyyMMddHHmmss = "yyyyMMddHHmmss";

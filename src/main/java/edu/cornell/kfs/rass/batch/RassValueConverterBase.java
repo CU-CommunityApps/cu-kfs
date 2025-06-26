@@ -1,6 +1,7 @@
 package edu.cornell.kfs.rass.batch;
 
-import java.util.Date;
+import java.sql.Date;
+import java.time.LocalDate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +14,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class RassValueConverterBase implements RassValueConverter {
 
-    private static final Logger LOG = LogManager.getLogger(RassValueConverterBase.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     private DataDictionaryService dataDictionaryService;
 
@@ -31,8 +32,8 @@ public class RassValueConverterBase implements RassValueConverter {
         Object cleanedValue = propertyValue;
         if (propertyValue instanceof String) {
             cleanedValue = cleanStringValue(businessObjectClass, propertyMapping, (String) propertyValue);
-        } else if (propertyValue instanceof Date) {
-            cleanedValue = cleanDateValue(businessObjectClass, propertyMapping.getBoPropertyName(), (Date) propertyValue);
+        } else if (propertyValue instanceof LocalDate) {
+            cleanedValue = cleanDateValue(businessObjectClass, propertyMapping.getBoPropertyName(), (LocalDate) propertyValue);
         } else if (propertyValue instanceof Boolean) {
             cleanedValue =  cleanBooleanValue(businessObjectClass, propertyMapping.getBoPropertyName(), (Boolean) propertyValue);
         } else if (LOG.isDebugEnabled()) {
@@ -71,9 +72,9 @@ public class RassValueConverterBase implements RassValueConverter {
         return cleanedValue;
     }
 
-    protected java.sql.Date cleanDateValue(
-            Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, Date propertyValue) {
-        return new java.sql.Date(propertyValue.getTime());
+    protected Date cleanDateValue(
+            Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, LocalDate propertyValue) {
+        return Date.valueOf(propertyValue);
     }
 
     protected Boolean cleanBooleanValue(
