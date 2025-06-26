@@ -181,7 +181,7 @@ public class AssetLocationGlobal extends PersistableBusinessObjectBase implement
     }
 
     /*
-     * CU Customization: Modified isPersistable() implementation to prevent the document from being saved
+     * CU Customization (KFSPTS-34457): Modified isPersistable() method to prevent the document from being saved
      * when any of the detail objects specify an invalid building or room. Also added related helper methods.
      * 
      * Some of the code and logic here has been duplicated from the AssetLocationGlobalRule class.
