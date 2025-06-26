@@ -42,9 +42,6 @@
         <property name="validationPattern" >
             <bean parent="NumericValidationPattern" />
         </property>
-        <property name="attributeSecurity">
-            <bean parent="AttributeSecurity" p:readOnly="false"/>
-        </property>
     </bean>
 
     <bean id="ApiAuthenticator-authenticatorDescription" parent="ApiAuthenticator-authenticatorDescription-parentBean"/>
@@ -59,9 +56,6 @@
         </property>
         <property name="validationPattern" >
             <bean parent="AnyCharacterWithWhitespaceValidation" />
-        </property>
-        <property name="attributeSecurity">
-            <bean parent="AttributeSecurity" p:readOnly="false"/>
         </property>
     </bean>
 

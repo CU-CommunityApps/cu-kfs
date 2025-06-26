@@ -57,9 +57,6 @@
         <property name="validationPattern" >
             <bean parent="NumericValidationPattern" />
         </property>
-        <property name="attributeSecurity">
-            <bean parent="AttributeSecurity" p:readOnly="false"/>
-        </property>
     </bean>
 
     <bean id="ApiAuthenticationMapping-authenticatorId" parent="ApiAuthenticationMapping-authenticatorId-parentBean"/>

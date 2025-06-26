@@ -41,9 +41,6 @@
         <property name="validationPattern" >
             <bean parent="AnyCharacterWithWhitespaceValidation" />
         </property>
-        <property name="attributeSecurity">
-            <bean parent="AttributeSecurity" p:readOnly="false"/>
-        </property>
     </bean>
 
     <bean id="ApiEndpointDescriptor-endpointDescription" parent="ApiEndpointDescriptor-endpointDescription-parentBean"/>
@@ -58,9 +55,6 @@
         </property>
         <property name="validationPattern" >
             <bean parent="AnyCharacterWithWhitespaceValidation" />
-        </property>
-        <property name="attributeSecurity">
-            <bean parent="AttributeSecurity" p:readOnly="false"/>
         </property>
     </bean>
 
