@@ -19,7 +19,6 @@ import org.kuali.kfs.sys.context.SpringContext;
 import com.google.gson.Gson;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.CUKFSConstants.EndpointCodes;
 import edu.cornell.kfs.sys.service.ApiAuthenticationService;
 
 public class ConcurAIAuthFilter implements Filter {
@@ -62,7 +61,7 @@ public class ConcurAIAuthFilter implements Filter {
     }
 
     private boolean isAuthorized(HttpServletRequest request) {
-        return getApiAuthenticationService().isAuthorized(EndpointCodes.CONCUR_ACCOUNT_DETAIL, request);
+        return getApiAuthenticationService().isAuthorized(CUKFSConstants.EndpointCodes.CONCUR_ACCOUNT_DETAIL, request);
     }
 
     @Override

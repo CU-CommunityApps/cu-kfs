@@ -243,16 +243,9 @@ public class CUKFSConstants {
     public static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
     public static final String ACCESS_CONTROL_HEADER_NAME = "Access-Control-Allow-Methods";
 
-    public enum EndpointCodes
-    {
-        CONCUR_ACCOUNT_DETAIL("concurAccountDetails"),
-        EINVOICE("eInvoice"),
-        PURCHASE_ORDER_DETAILS("poDetail");
-
-        public final String endpointCode;
-
-        private EndpointCodes(String endPointCode) {
-            this.endpointCode = endPointCode;
-        }
+    public static final class EndpointCodes {
+        public static final String CONCUR_ACCOUNT_DETAIL = "concurAccountDetails";
+        public static final String EINVOICE = "eInvoice";
+        public static final String PURCHASE_ORDER_DETAILS = "PURCHASE_ORDER_DETAILS";
     }
 }

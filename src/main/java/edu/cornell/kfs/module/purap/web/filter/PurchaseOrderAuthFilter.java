@@ -19,7 +19,6 @@ import org.kuali.kfs.sys.context.SpringContext;
 import com.google.gson.Gson;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.CUKFSConstants.EndpointCodes;
 import edu.cornell.kfs.sys.service.ApiAuthenticationService;
 
 public class PurchaseOrderAuthFilter implements Filter {
@@ -61,7 +60,7 @@ public class PurchaseOrderAuthFilter implements Filter {
     }
     
     private boolean isAuthorized(HttpServletRequest request) {
-        return getApiAuthenticationService().isAuthorized(EndpointCodes.PURCHASE_ORDER_DETAILS, request);
+        return getApiAuthenticationService().isAuthorized(CUKFSConstants.EndpointCodes.PURCHASE_ORDER_DETAILS, request);
     }
 
     @Override

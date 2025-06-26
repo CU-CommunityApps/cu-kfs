@@ -10,10 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.CUKFSConstants.EndpointCodes;
 import edu.cornell.kfs.sys.businessobject.ApiAuthenticator;
 import edu.cornell.kfs.sys.businessobject.ApiEndpointDescription;
 import edu.cornell.kfs.sys.businessobject.ApiEndpointAuthenticator;
@@ -25,8 +23,8 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
     private BusinessObjectService businessObjectService;
 
     @Override
-    public boolean isAuthorized(EndpointCodes endpointCode, HttpServletRequest request) {
-        LOG.debug("isAuthorized: Checking authorization for endpoint code {} from request", endpointCode.endpointCode);
+    public boolean isAuthorized(String endpointCode, HttpServletRequest request) {
+        LOG.debug("isAuthorized: Checking authorization for endpoint code {} from request", endpointCode);
         
         String authorizationHeader = request.getHeader(CUKFSConstants.AUTHORIZATION_HEADER_KEY);
         if (StringUtils.isBlank(authorizationHeader) || 
@@ -43,10 +41,14 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
     }
 
     @Override
-    public boolean isAuthorized(EndpointCodes endpointCode, String usernamePassword) {
-        LOG.debug("isAuthorized: Checking authorization for endpoint code {} with credentials", endpointCode.endpointCode);
+    public boolean isAuthorized(String endpointCode, String usernamePassword) {
+        LOG.debug("isAuthorized: Checking authorization for endpoint code {} with credentials", endpointCode);
+
+        if (StringUtils.isEmpty(endpointCode)) {
+            throw new IllegalArgumentException("An endpoint code must be provided");
+        }
         
-        ApiEndpointDescription endpointDescription = getEndpointDescription(endpointCode.endpointCode);
+        ApiEndpointDescription endpointDescription = getEndpointDescription(endpointCode);
         if (endpointDescription == null || !endpointDescription.isActive()) {
             LOG.warn("isAuthorized: Endpoint code {} not found or not active", endpointCode);
             return false;

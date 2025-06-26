@@ -16,7 +16,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import com.google.gson.Gson;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
-import edu.cornell.kfs.sys.CUKFSConstants.EndpointCodes;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.ApiAuthenticationService;
 
 public class CuEinvoiceServerAuthFilter implements Filter {
@@ -43,7 +43,7 @@ public class CuEinvoiceServerAuthFilter implements Filter {
 
     private boolean isAuthorized(HttpServletRequest request) {
         String submittedApiKey = request.getHeader(CUPurapConstants.Einvoice.EINVOICE_API_KEY_CREDENTIAL_NAME);
-        return getApiAuthenticationService().isAuthorized(EndpointCodes.EINVOICE, submittedApiKey);
+        return getApiAuthenticationService().isAuthorized(CUKFSConstants.EndpointCodes.EINVOICE, submittedApiKey);
     }
 
     @Override
