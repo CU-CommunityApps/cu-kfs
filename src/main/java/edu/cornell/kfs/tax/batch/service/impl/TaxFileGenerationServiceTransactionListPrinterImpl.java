@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
@@ -74,9 +75,9 @@ public class TaxFileGenerationServiceTransactionListPrinterImpl implements TaxFi
     }
 
     private String generateTransactionDetailFileName(final TaxBatchConfig config) {
-        final DateFormat dateFormat = new SimpleDateFormat(CUTaxConstants.FILENAME_SUFFIX_DATE_FORMAT, Locale.US);
         final String filePrefix = getFilePrefix(config);
-        final String dateSuffix = dateFormat.format(config.getProcessingStartDate());
+        final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(CUTaxConstants.FILENAME_SUFFIX_DATE_FORMAT, Locale.US);
+        final String dateSuffix = config.getProcessingStartDate().format(dateFormatter);
 
         return StringUtils.join(fileOutputDirectory, CUKFSConstants.SLASH,
                 filePrefix, config.getReportYear(), dateSuffix, CUKFSConstants.TEXT_FILE_EXTENSION);
