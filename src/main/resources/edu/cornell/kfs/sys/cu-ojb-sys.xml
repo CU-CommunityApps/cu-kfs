@@ -425,7 +425,7 @@
         <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDATE_TS" jdbc-type="TIMESTAMP"/>
         
         <collection-descriptor name="authenticationMappings" proxy="true" 
-                              element-class-ref="edu.cornell.kfs.sys.businessobject.ApiEndpointAuthenticator" 
+                              element-class-ref="edu.cornell.kfs.sys.businessobject.ApiAuthenticationMapping" 
                               collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" 
                               auto-retrieve="true" auto-update="object" auto-delete="object">
             <inverse-foreignkey field-ref="endpointCode"/>
@@ -443,15 +443,15 @@
         <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDATE_TS" jdbc-type="TIMESTAMP"/>
         
         <collection-descriptor name="authenticationMappings" proxy="true" 
-                              element-class-ref="edu.cornell.kfs.sys.businessobject.ApiEndpointAuthenticator" 
+                              element-class-ref="edu.cornell.kfs.sys.businessobject.ApiAuthenticationMapping" 
                               collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" 
                               auto-retrieve="true" auto-update="object" auto-delete="object">
             <inverse-foreignkey field-ref="authenticatorId"/>
         </collection-descriptor>
     </class-descriptor>
     
-    <!-- API Endpoint Authenticator -->
-    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ApiEndpointAuthenticator" table="KFS.CU_API_ENDPOINT_AUTH">
+    <!-- API Authentication Mapping -->
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ApiAuthenticationMapping" table="KFS.CU_API_ENDPOINT_AUTH">
         <field-descriptor name="id" column="ID" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="KFS.CU_API_ENDPOINT_AUTH_SEQ"/>
         <field-descriptor name="authenticatorId" column="AUTHENTICATOR_ID" jdbc-type="INTEGER"/>
         <field-descriptor name="endpointCode" column="ENDPOINT_CODE" jdbc-type="VARCHAR"/>

@@ -3,7 +3,7 @@ package edu.cornell.kfs.sys.businessobject;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
-public class ApiEndpointAuthenticator extends PersistableBusinessObjectBase implements MutableInactivatable {
+public class ApiAuthenticationMapping extends PersistableBusinessObjectBase implements MutableInactivatable {
 
     private Integer id;
     private Integer authenticatorId;

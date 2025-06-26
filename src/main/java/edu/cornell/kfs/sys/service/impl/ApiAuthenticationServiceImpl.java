@@ -14,7 +14,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.businessobject.ApiAuthenticator;
 import edu.cornell.kfs.sys.businessobject.ApiEndpointDescription;
-import edu.cornell.kfs.sys.businessobject.ApiEndpointAuthenticator;
+import edu.cornell.kfs.sys.businessobject.ApiAuthenticationMapping;
 import edu.cornell.kfs.sys.service.ApiAuthenticationService;
 
 public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
@@ -54,13 +54,13 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
             return false;
         }
         
-        List<ApiEndpointAuthenticator> authenticationMappings = endpointDescription.getAuthenticationMappings();
+        List<ApiAuthenticationMapping> authenticationMappings = endpointDescription.getAuthenticationMappings();
         if (authenticationMappings == null || authenticationMappings.isEmpty()) {
             LOG.warn("isAuthorized: No authentication mappings found for endpoint code {}", endpointCode);
             return false;
         }
         
-        for (ApiEndpointAuthenticator descriptionAuthenticator : authenticationMappings) {
+        for (ApiAuthenticationMapping descriptionAuthenticator : authenticationMappings) {
             if (descriptionAuthenticator.isActive() && descriptionAuthenticator.getApiAuthenticator() != null && 
                     descriptionAuthenticator.getApiAuthenticator().isActive()) {
                 

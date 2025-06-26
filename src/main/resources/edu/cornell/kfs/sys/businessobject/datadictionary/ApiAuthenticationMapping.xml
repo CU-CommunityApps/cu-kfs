@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-    <bean id="ApiEndpointAuthenticator" parent="ApiEndpointAuthenticator-parentBean"/>
+    <bean id="ApiAuthenticationMapping" parent="ApiAuthenticationMapping-parentBean"/>
 
-    <bean id="ApiEndpointAuthenticator-parentBean" abstract="true" parent="BusinessObjectEntry">
-        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiEndpointAuthenticator"/>
-        <property name="objectLabel" value="API Endpoint Authenticator"/>
+    <bean id="ApiAuthenticationMapping-parentBean" abstract="true" parent="BusinessObjectEntry">
+        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiAuthenticationMapping"/>
+        <property name="objectLabel" value="API Authentication Mapping"/>
         <property name="titleAttribute" value="id"/>
 
         <property name="inquiryDefinition">
-            <ref bean="ApiEndpointAuthenticator-inquiryDefinition"/>
+            <ref bean="ApiAuthenticationMapping-inquiryDefinition"/>
         </property>
         <property name="lookupDefinition">
-            <ref bean="ApiEndpointAuthenticator-lookupDefinition"/>
+            <ref bean="ApiAuthenticationMapping-lookupDefinition"/>
         </property>
         <property name="attributes">
             <list>
-                <ref bean="ApiEndpointAuthenticator-id"/>
-                <ref bean="ApiEndpointAuthenticator-authenticatorId"/>
-                <ref bean="ApiEndpointAuthenticator-endpointCode"/>
-                <ref bean="ApiEndpointAuthenticator-active"/>
+                <ref bean="ApiAuthenticationMapping-id"/>
+                <ref bean="ApiAuthenticationMapping-authenticatorId"/>
+                <ref bean="ApiAuthenticationMapping-endpointCode"/>
+                <ref bean="ApiAuthenticationMapping-active"/>
             </list>
         </property>
         <property name="relationships">
@@ -44,9 +44,9 @@
         </property>
     </bean>
 
-    <bean id="ApiEndpointAuthenticator-id" parent="ApiEndpointAuthenticator-id-parentBean"/>
+    <bean id="ApiAuthenticationMapping-id" parent="ApiAuthenticationMapping-id-parentBean"/>
 
-    <bean id="ApiEndpointAuthenticator-id-parentBean" abstract="true" parent="AttributeDefinition">
+    <bean id="ApiAuthenticationMapping-id-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="id"/>
         <property name="label" value="Description-Autenticator-ID"/>
         <property name="shortLabel" value="Description-Autenticator-ID"/>
@@ -62,27 +62,27 @@
         </property>
     </bean>
 
-    <bean id="ApiEndpointAuthenticator-authenticatorId" parent="ApiEndpointAuthenticator-authenticatorId-parentBean"/>
+    <bean id="ApiAuthenticationMapping-authenticatorId" parent="ApiAuthenticationMapping-authenticatorId-parentBean"/>
 
-    <bean id="ApiEndpointAuthenticator-authenticatorId-parentBean" abstract="true" parent="ApiAuthenticator-authenticatorId"/>
+    <bean id="ApiAuthenticationMapping-authenticatorId-parentBean" abstract="true" parent="ApiAuthenticator-authenticatorId"/>
 
-    <bean id="ApiEndpointAuthenticator-endpointCode" parent="ApiEndpointAuthenticator-endpointCode-parentBean"/>
+    <bean id="ApiAuthenticationMapping-endpointCode" parent="ApiAuthenticationMapping-endpointCode-parentBean"/>
 
-    <bean id="ApiEndpointAuthenticator-endpointCode-parentBean" abstract="true" parent="ApiEndpointDescription-endpointCode"/>
+    <bean id="ApiAuthenticationMapping-endpointCode-parentBean" abstract="true" parent="ApiEndpointDescription-endpointCode"/>
 
-    <bean id="ApiEndpointAuthenticator-active" parent="ApiEndpointAuthenticator-active-parentBean"/>
-    <bean id="ApiEndpointAuthenticator-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
+    <bean id="ApiAuthenticationMapping-active" parent="ApiAuthenticationMapping-active-parentBean"/>
+    <bean id="ApiAuthenticationMapping-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
         <property name="name" value="active"/>
     </bean>
 
-    <bean id="ApiEndpointAuthenticator-inquiryDefinition" parent="ApiEndpointAuthenticator-inquiryDefinition-parentBean"/>
+    <bean id="ApiAuthenticationMapping-inquiryDefinition" parent="ApiAuthenticationMapping-inquiryDefinition-parentBean"/>
 
-    <bean id="ApiEndpointAuthenticator-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
-        <property name="title" value="API Endpoint Authenticator Inquiry"/>
+    <bean id="ApiAuthenticationMapping-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+        <property name="title" value="API Authentication Mapping Inquiry"/>
         <property name="inquirySections">
             <list>
                 <bean parent="InquirySectionDefinition">
-                    <property name="title" value="API Endpoint Authenticator Inquiry"/>
+                    <property name="title" value="API Authentication Mapping Inquiry"/>
                     <property name="numberOfColumns" value="1"/>
                     <property name="inquiryFields">
                         <list>
@@ -97,10 +97,10 @@
         </property>
     </bean>
 
-    <bean id="ApiEndpointAuthenticator-lookupDefinition" parent="ApiEndpointAuthenticator-lookupDefinition-parentBean"/>
+    <bean id="ApiAuthenticationMapping-lookupDefinition" parent="ApiAuthenticationMapping-lookupDefinition-parentBean"/>
 
-    <bean id="ApiEndpointAuthenticator-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
-        <property name="title" value="API Endpoint Authenticator Lookup"/>
+    <bean id="ApiAuthenticationMapping-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+        <property name="title" value="API Authentication Mapping Lookup"/>
 
         <property name="defaultSort" >
             <bean parent="SortDefinition">

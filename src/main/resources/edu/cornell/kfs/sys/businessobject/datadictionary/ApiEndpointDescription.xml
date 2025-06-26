@@ -93,7 +93,7 @@
                         <list>
                             <bean parent="InquiryCollectionDefinition">
                                 <property name="attributeName" value="authenticationMappings"/>
-                                <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiEndpointAuthenticator"/>
+                                <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiAuthenticationMapping"/>
                                 <property name="numberOfColumns" value="1"/>
                                 <property name="inquiryFields">
                                     <list>
