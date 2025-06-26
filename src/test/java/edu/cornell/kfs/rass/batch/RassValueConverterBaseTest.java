@@ -1,7 +1,6 @@
 package edu.cornell.kfs.rass.batch;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.sql.Date;
 
@@ -85,7 +84,7 @@ public class RassValueConverterBaseTest {
     @Test
     public void testRassLocalDateToSqlDateConverter() {
         Date sqlDateResult = rassValueConverterBase.cleanDateValue(Award.class, "Budget Start Date", RassXmlAwardEntryFixture.SAMPLE_PROJECT.budgetStopDate);
-        assertTrue(RassXmlAwardEntryFixture.SAMPLE_PROJECT.budgetStopDate.toString().equalsIgnoreCase(sqlDateResult.toString()));
+        assertEquals(RassXmlAwardEntryFixture.SAMPLE_PROJECT.budgetStopDate.toString(), sqlDateResult.toString());
     }
 
     private DataDictionaryService buildMockDataDictionaryService(Integer maxSize) {
