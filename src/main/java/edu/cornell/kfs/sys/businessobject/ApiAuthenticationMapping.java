@@ -2,6 +2,7 @@ package edu.cornell.kfs.sys.businessobject;
 
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class ApiAuthenticationMapping extends PersistableBusinessObjectBase implements MutableInactivatable {
 
@@ -53,7 +54,9 @@ public class ApiAuthenticationMapping extends PersistableBusinessObjectBase impl
 
     public void setApiEndpointDescription(ApiEndpointDescription apiEndpointDescription) {
         this.apiEndpointDescription = apiEndpointDescription;
-        this.endpointCode = apiEndpointDescription.getEndpointCode();
+        if (ObjectUtils.isNotNull(apiEndpointDescription)) {
+            this.endpointCode = apiEndpointDescription.getEndpointCode();
+        }
     }
 
     public ApiAuthenticator getApiAuthenticator() {
@@ -62,7 +65,9 @@ public class ApiAuthenticationMapping extends PersistableBusinessObjectBase impl
 
     public void setApiAuthenticator(ApiAuthenticator apiAuthenticator) {
         this.apiAuthenticator = apiAuthenticator;
-        this.authenticatorId = apiAuthenticator.getAuthenticatorId();
+        if (ObjectUtils.isNotNull(apiAuthenticator)) {
+            this.authenticatorId = apiAuthenticator.getAuthenticatorId();
+        }
     }
 
 }
