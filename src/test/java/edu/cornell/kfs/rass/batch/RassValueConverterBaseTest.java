@@ -2,6 +2,8 @@ package edu.cornell.kfs.rass.batch;
 
 import static org.junit.Assert.assertEquals;
 
+import java.sql.Date;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.After;
@@ -9,7 +11,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.module.cg.businessobject.Agency;
+import org.kuali.kfs.module.cg.businessobject.Award;
 import org.mockito.Mockito;
+
+import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAwardEntryFixture;
 
 public class RassValueConverterBaseTest {
     private RassValueConverterBase rassValueConverterBase;
@@ -76,6 +81,12 @@ public class RassValueConverterBaseTest {
         
     }
     
+    @Test
+    public void testRassLocalDateToSqlDateConverter() {
+        Date sqlDateResult = rassValueConverterBase.cleanDateValue(Award.class, "Budget Start Date", RassXmlAwardEntryFixture.SAMPLE_PROJECT.budgetStopDate);
+        assertEquals(RassXmlAwardEntryFixture.SAMPLE_PROJECT.budgetStopDate.toString(), sqlDateResult.toString());
+    }
+
     private DataDictionaryService buildMockDataDictionaryService(Integer maxSize) {
         DataDictionaryService service = Mockito.mock(DataDictionaryService.class);
         Mockito.when(service.getAttributeMaxLength(Mockito.eq(Agency.class), Mockito.anyString())).thenReturn(maxSize);
