@@ -24,7 +24,7 @@
         </property>
         <property name="collections">
             <list>
-                <bean parent="CollectionDefinition" p:name="descriptionAuthenticators" p:label="Description Authenticators" p:shortLabel="Description Authenticators" p:elementLabel="Description Authenticator"/>
+                <bean parent="CollectionDefinition" p:name="authenticationMappings" p:label="Authentication Mappings" p:shortLabel="Authentication Mappings" p:elementLabel="Authentication Mapping"/>
             </list>
         </property>
     </bean>

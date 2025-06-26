@@ -54,13 +54,13 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
             return false;
         }
         
-        List<ApiEndpointAuthenticator> descriptionAuthenticators = endpointDescription.getDescriptionAuthenticators();
-        if (descriptionAuthenticators == null || descriptionAuthenticators.isEmpty()) {
-            LOG.warn("isAuthorized: No descritpion authenticators found for endpoint code {}", endpointCode);
+        List<ApiEndpointAuthenticator> authenticationMappings = endpointDescription.getAuthenticationMappings();
+        if (authenticationMappings == null || authenticationMappings.isEmpty()) {
+            LOG.warn("isAuthorized: No authentication mappings found for endpoint code {}", endpointCode);
             return false;
         }
         
-        for (ApiEndpointAuthenticator descriptionAuthenticator : descriptionAuthenticators) {
+        for (ApiEndpointAuthenticator descriptionAuthenticator : authenticationMappings) {
             if (descriptionAuthenticator.isActive() && descriptionAuthenticator.getApiAuthenticator() != null && 
                     descriptionAuthenticator.getApiAuthenticator().isActive()) {
                 

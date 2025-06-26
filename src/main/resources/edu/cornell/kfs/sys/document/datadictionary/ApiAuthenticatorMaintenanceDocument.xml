@@ -42,10 +42,10 @@
         <property name="maintainableItems">
             <list>
                 <bean parent="MaintainableCollectionDefinition">
-                    <property name="name" value="descriptionAuthenticators"/>
+                    <property name="name" value="authenticationMappings"/>
                     <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiEndpointAuthenticator"/>
                     <property name="sourceClassName" value="edu.cornell.kfs.sys.businessobject.ApiAuthenticator"/>
-                    <property name="summaryTitle" value="Description Authenticators"/>
+                    <property name="summaryTitle" value="Authentication Mappings"/>
                     <property name="summaryFields">
                         <list>
                             <bean parent="MaintainableFieldDefinition" p:name="endpointCode"/>

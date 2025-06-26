@@ -12,7 +12,7 @@ public class ApiEndpointDescription extends PersistableBusinessObjectBase implem
     private String endpointDescription;
     private boolean active;
 
-    private List<ApiEndpointAuthenticator> descriptionAuthenticators;
+    private List<ApiEndpointAuthenticator> authenticationMappings;
 
     @Override
     public boolean isActive() {
@@ -40,15 +40,15 @@ public class ApiEndpointDescription extends PersistableBusinessObjectBase implem
         this.endpointDescription = endpointDescription;
     }
 
-    public List<ApiEndpointAuthenticator> getDescriptionAuthenticators() {
-        if (descriptionAuthenticators == null) {
-            descriptionAuthenticators = new ArrayList<>();
+    public List<ApiEndpointAuthenticator> getAuthenticationMappings() {
+        if (authenticationMappings == null) {
+            authenticationMappings = new ArrayList<>();
         }
-        return descriptionAuthenticators;
+        return authenticationMappings;
     }
 
-    public void setDescriptionAuthenticators(List<ApiEndpointAuthenticator> descriptionAuthenticators) {
-        this.descriptionAuthenticators = descriptionAuthenticators;
+    public void setAuthenticationMappings(List<ApiEndpointAuthenticator> authenticationMappings) {
+        this.authenticationMappings = authenticationMappings;
     }
 
 }

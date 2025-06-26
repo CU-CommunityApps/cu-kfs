@@ -23,7 +23,7 @@
         </property>
         <property name="collections">
             <list>
-                <bean parent="CollectionDefinition" p:name="descriptionAuthenticators" p:label="Description Authenticators" p:shortLabel="Description Authenticators" p:summary="Description Authenticators" p:elementLabel="Description Authenticator"/>
+                <bean parent="CollectionDefinition" p:name="authenticationMappings" p:label="Authentication Mappings" p:shortLabel="Authentication Mappings" p:summary="Authentication Mappings" p:elementLabel="Authentication Mapping"/>
             </list>
         </property>
     </bean>
@@ -92,7 +92,7 @@
                     <property name="inquiryFields">
                         <list>
                             <bean parent="InquiryCollectionDefinition">
-                                <property name="attributeName" value="descriptionAuthenticators"/>
+                                <property name="attributeName" value="authenticationMappings"/>
                                 <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiEndpointAuthenticator"/>
                                 <property name="numberOfColumns" value="1"/>
                                 <property name="inquiryFields">
