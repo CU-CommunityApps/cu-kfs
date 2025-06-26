@@ -11,7 +11,7 @@ public class ApiAuthenticationMapping extends PersistableBusinessObjectBase impl
     private String endpointCode;
     private boolean active;
 
-    private ApiEndpointDescription apiEndpointDescription;
+    private ApiEndpointDescriptor apiEndpointDescriptor;
     private ApiAuthenticator apiAuthenticator;
 
     @Override
@@ -48,14 +48,14 @@ public class ApiAuthenticationMapping extends PersistableBusinessObjectBase impl
         this.endpointCode = endpointCode;
     }
 
-    public ApiEndpointDescription getApiEndpointDescription() {
-        return apiEndpointDescription;
+    public ApiEndpointDescriptor getApiEndpointDescriptor() {
+        return apiEndpointDescriptor;
     }
 
-    public void setApiEndpointDescription(ApiEndpointDescription apiEndpointDescription) {
-        this.apiEndpointDescription = apiEndpointDescription;
-        if (ObjectUtils.isNotNull(apiEndpointDescription)) {
-            this.endpointCode = apiEndpointDescription.getEndpointCode();
+    public void setApiEndpointDescriptor(ApiEndpointDescriptor apiEndpointDescriptor) {
+        this.apiEndpointDescriptor = apiEndpointDescriptor;
+        if (ObjectUtils.isNotNull(apiEndpointDescriptor)) {
+            this.endpointCode = apiEndpointDescriptor.getEndpointCode();
         }
     }
 

@@ -4,7 +4,7 @@
         <documentType>
             <name>APIED</name>
             <parent>FSSM</parent>
-            <label>API Endpoint Description</label>
+            <label>API Endpoint Descriptor</label>
         </documentType>
     </documentTypes>
 </data>

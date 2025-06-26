@@ -13,7 +13,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.businessobject.ApiAuthenticator;
-import edu.cornell.kfs.sys.businessobject.ApiEndpointDescription;
+import edu.cornell.kfs.sys.businessobject.ApiEndpointDescriptor;
 import edu.cornell.kfs.sys.businessobject.ApiAuthenticationMapping;
 import edu.cornell.kfs.sys.service.ApiAuthenticationService;
 
@@ -48,13 +48,13 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
             throw new IllegalArgumentException("An endpoint code must be provided");
         }
         
-        ApiEndpointDescription endpointDescription = getEndpointDescription(endpointCode);
-        if (endpointDescription == null || !endpointDescription.isActive()) {
+        ApiEndpointDescriptor endpointDescriptor = getEndpointDescriptor(endpointCode);
+        if (endpointDescriptor == null || !endpointDescriptor.isActive()) {
             LOG.warn("isAuthorized: Endpoint code {} not found or not active", endpointCode);
             return false;
         }
         
-        List<ApiAuthenticationMapping> authenticationMappings = endpointDescription.getAuthenticationMappings();
+        List<ApiAuthenticationMapping> authenticationMappings = endpointDescriptor.getAuthenticationMappings();
         if (authenticationMappings == null || authenticationMappings.isEmpty()) {
             LOG.warn("isAuthorized: No authentication mappings found for endpoint code {}", endpointCode);
             return false;
@@ -79,8 +79,8 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
         return false;
     }
     
-    private ApiEndpointDescription getEndpointDescription(String endpointCode) {
-        return businessObjectService.findBySinglePrimaryKey(ApiEndpointDescription.class, endpointCode);
+    private ApiEndpointDescriptor getEndpointDescriptor(String endpointCode) {
+        return businessObjectService.findBySinglePrimaryKey(ApiEndpointDescriptor.class, endpointCode);
     }
     
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {

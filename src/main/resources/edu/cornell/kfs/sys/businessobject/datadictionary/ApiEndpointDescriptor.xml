@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-    <bean id="ApiEndpointDescription" parent="ApiEndpointDescription-parentBean"/>
+    <bean id="ApiEndpointDescriptor" parent="ApiEndpointDescriptor-parentBean"/>
 
-    <bean id="ApiEndpointDescription-parentBean" abstract="true" parent="BusinessObjectEntry">
-        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiEndpointDescription"/>
-        <property name="objectLabel" value="API Endpoint Description"/>
+    <bean id="ApiEndpointDescriptor-parentBean" abstract="true" parent="BusinessObjectEntry">
+        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiEndpointDescriptor"/>
+        <property name="objectLabel" value="API Endpoint Descriptor"/>
         <property name="titleAttribute" value="endpointCode"/>
 
         <property name="inquiryDefinition">
-            <ref bean="ApiEndpointDescription-inquiryDefinition"/>
+            <ref bean="ApiEndpointDescriptor-inquiryDefinition"/>
         </property>
         <property name="lookupDefinition">
-            <ref bean="ApiEndpointDescription-lookupDefinition"/>
+            <ref bean="ApiEndpointDescriptor-lookupDefinition"/>
         </property>
         <property name="attributes">
             <list>
-                <ref bean="ApiEndpointDescription-endpointCode"/>
-                <ref bean="ApiEndpointDescription-endpointDescription"/>
-                <ref bean="ApiEndpointDescription-active"/>
+                <ref bean="ApiEndpointDescriptor-endpointCode"/>
+                <ref bean="ApiEndpointDescriptor-endpointDescription"/>
+                <ref bean="ApiEndpointDescriptor-active"/>
             </list>
         </property>
         <property name="collections">
@@ -28,9 +28,9 @@
         </property>
     </bean>
 
-    <bean id="ApiEndpointDescription-endpointCode" parent="ApiEndpointDescription-endpointCode-parentBean"/>
+    <bean id="ApiEndpointDescriptor-endpointCode" parent="ApiEndpointDescriptor-endpointCode-parentBean"/>
 
-    <bean id="ApiEndpointDescription-endpointCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <bean id="ApiEndpointDescriptor-endpointCode-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="endpointCode"/>
         <property name="label" value="Endpoint Code"/>
         <property name="shortLabel" value="Code"/>
@@ -46,9 +46,9 @@
         </property>
     </bean>
 
-    <bean id="ApiEndpointDescription-endpointDescription" parent="ApiEndpointDescription-endpointDescription-parentBean"/>
+    <bean id="ApiEndpointDescriptor-endpointDescription" parent="ApiEndpointDescriptor-endpointDescription-parentBean"/>
 
-    <bean id="ApiEndpointDescription-endpointDescription-parentBean" abstract="true" parent="AttributeDefinition">
+    <bean id="ApiEndpointDescriptor-endpointDescription-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="endpointDescription"/>
         <property name="label" value="Endpoint Description"/>
         <property name="shortLabel" value="Description"/>
@@ -64,19 +64,19 @@
         </property>
     </bean>
 
-    <bean id="ApiEndpointDescription-active" parent="ApiEndpointDescription-active-parentBean"/>
-    <bean id="ApiEndpointDescription-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
+    <bean id="ApiEndpointDescriptor-active" parent="ApiEndpointDescriptor-active-parentBean"/>
+    <bean id="ApiEndpointDescriptor-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
         <property name="name" value="active"/>
     </bean>
 
-    <bean id="ApiEndpointDescription-inquiryDefinition" parent="ApiEndpointDescription-inquiryDefinition-parentBean"/>
+    <bean id="ApiEndpointDescriptor-inquiryDefinition" parent="ApiEndpointDescriptor-inquiryDefinition-parentBean"/>
 
-    <bean id="ApiEndpointDescription-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
-        <property name="title" value="API Endpoint Description Inquiry"/>
+    <bean id="ApiEndpointDescriptor-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+        <property name="title" value="API Endpoint Descriptor Inquiry"/>
         <property name="inquirySections">
             <list>
                 <bean parent="InquirySectionDefinition">
-                    <property name="title" value="API Endpoint Description Inquiry"/>
+                    <property name="title" value="API Endpoint Descriptor Inquiry"/>
                     <property name="numberOfColumns" value="1"/>
                     <property name="inquiryFields">
                         <list>
@@ -87,7 +87,7 @@
                     </property>
                 </bean>
                 <bean parent="InquirySectionDefinition">
-                    <property name="title" value="Description Authenticators"/>
+                    <property name="title" value="Descriptor Authenticators"/>
                     <property name="numberOfColumns" value="1"/>
                     <property name="inquiryFields">
                         <list>
@@ -109,10 +109,10 @@
         </property>
     </bean>
 
-    <bean id="ApiEndpointDescription-lookupDefinition" parent="ApiEndpointDescription-lookupDefinition-parentBean"/>
+    <bean id="ApiEndpointDescriptor-lookupDefinition" parent="ApiEndpointDescriptor-lookupDefinition-parentBean"/>
 
-    <bean id="ApiEndpointDescription-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
-        <property name="title" value="API Endpoint Description Lookup"/>
+    <bean id="ApiEndpointDescriptor-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+        <property name="title" value="API Endpoint Descriptor Lookup"/>
 
         <property name="defaultSort" >
             <bean parent="SortDefinition">

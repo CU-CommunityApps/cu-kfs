@@ -6,7 +6,7 @@ import java.util.List;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
-public class ApiEndpointDescription extends PersistableBusinessObjectBase implements MutableInactivatable {
+public class ApiEndpointDescriptor extends PersistableBusinessObjectBase implements MutableInactivatable {
 
     private String endpointCode;
     private String endpointDescription;

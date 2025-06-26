@@ -25,7 +25,7 @@
         <property name="relationships">
             <list>
                 <bean parent="RelationshipDefinition">
-                    <property name="objectAttributeName" value="apiEndpointDescription"/>
+                    <property name="objectAttributeName" value="apiEndpointDescriptor"/>
                     <property name="primitiveAttributes">
                         <list>
                             <bean parent="PrimitiveAttributeDefinition" p:sourceName="endpointCode" p:targetName="endpointCode"/>
@@ -68,7 +68,7 @@
 
     <bean id="ApiAuthenticationMapping-endpointCode" parent="ApiAuthenticationMapping-endpointCode-parentBean"/>
 
-    <bean id="ApiAuthenticationMapping-endpointCode-parentBean" abstract="true" parent="ApiEndpointDescription-endpointCode"/>
+    <bean id="ApiAuthenticationMapping-endpointCode-parentBean" abstract="true" parent="ApiEndpointDescriptor-endpointCode"/>
 
     <bean id="ApiAuthenticationMapping-active" parent="ApiAuthenticationMapping-active-parentBean"/>
     <bean id="ApiAuthenticationMapping-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
