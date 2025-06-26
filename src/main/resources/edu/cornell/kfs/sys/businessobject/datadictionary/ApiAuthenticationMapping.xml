@@ -48,8 +48,8 @@
 
     <bean id="ApiAuthenticationMapping-id-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="id"/>
-        <property name="label" value="Description-Autenticator-ID"/>
-        <property name="shortLabel" value="Description-Autenticator-ID"/>
+        <property name="label" value="Authentication-Mapping-ID"/>
+        <property name="shortLabel" value="Authentication-Mapping-ID"/>
         <property name="maxLength" value="10"/>
         <property name="control">
             <bean parent="TextControlDefinition" p:size="12"/>
