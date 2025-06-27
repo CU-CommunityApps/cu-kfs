@@ -433,7 +433,7 @@
     </class-descriptor>
     
     <!-- API Authenticator -->
-    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ApiAuthenticator" table="KFS.CU_API_AUTHENTICATOR">
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ApiAuthenticator" table="KFS.CU_API_AUTHENTICATOR_T">
         <field-descriptor name="authenticatorId" column="AUTHENTICATOR_ID" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="KFS.CU_API_AUTHENTICATOR_SEQ"/>
         <field-descriptor name="authenticatorDescription" column="AUTHENTICATOR_DESC" jdbc-type="VARCHAR"/>
         <field-descriptor name="usernamePassword" column="USERNAME_PASSWORD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
