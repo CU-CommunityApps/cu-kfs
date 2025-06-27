@@ -291,7 +291,6 @@ public class CUPurapConstants {
         public static final String PART_NUMBER = "part_number";
         public static final String ITEMS = "items";
         public static final String UNAUTHORIZED = "Unauthorized";
-        public static final String EINVOICE = "EINVOICE";
         public static final String EINVOICE_API_KEY_CREDENTIAL_NAME = "einvoice_api_key";
         public static final String EINVOICE_KFS_API_DESCRIPTION = "The Cornell eInvoice web tool uses this resource to retrieve data from KFS.";
         public static final String EINVOICE_VENDOR_BAD_REQUEST = "Invalid VendorNumber";
@@ -571,7 +570,6 @@ public class CUPurapConstants {
 
     public static final String IWNT_NO_ATTACHMENTS_QUESTION_ID = "IWantDocumentNoAttachments";
     
-    public static final String PAYFLOW_CREDENTIAL_GROUP_CODE = "PAYFLOW";
     public static final String PURCHASE_ORDER_ENDPOINT_DESCRIPTION = "Purchase Order Resource";
     public static final String PURCHASE_ORDER_NUMBER_URL_PARAMETER_NAME = "poNumber";
     public static final String PURCHASE_ORDER_NUMBER_FORMAT_ERROR_RESPONSE_MESSAGE = "The " + PURCHASE_ORDER_NUMBER_URL_PARAMETER_NAME + " was not formatted correctly";

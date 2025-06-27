@@ -526,4 +526,10 @@
           
     <!-- CU Customization: Historical Purge Table Job beans : ending point -->
     
+    <!-- API Authentication Service -->
+    <bean id="apiAuthenticationService" parent="apiAuthenticationService-parentBean"/>
+    <bean id="apiAuthenticationService-parentBean" class="edu.cornell.kfs.sys.service.impl.ApiAuthenticationServiceImpl" abstract="true">
+        <property name="businessObjectService" ref="businessObjectService"/>
+    </bean>
+    
 </beans>

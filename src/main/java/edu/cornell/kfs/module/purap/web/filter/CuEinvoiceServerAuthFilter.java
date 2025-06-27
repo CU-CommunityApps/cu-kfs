@@ -1,10 +1,6 @@
 package edu.cornell.kfs.module.purap.web.filter;
 
-import com.google.gson.Gson;
-import edu.cornell.kfs.module.purap.CUPurapConstants;
-import edu.cornell.kfs.sys.service.WebServiceCredentialService;
-import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.sys.context.SpringContext;
+import java.io.IOException;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -14,11 +10,18 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import org.kuali.kfs.sys.context.SpringContext;
+
+import com.google.gson.Gson;
+
+import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.service.ApiAuthenticationService;
 
 public class CuEinvoiceServerAuthFilter implements Filter {
 
-    private WebServiceCredentialService webServiceCredentialService;
+    private ApiAuthenticationService apiAuthenticationService;
 
     @Override
     public void init(FilterConfig filterConfig) {
@@ -39,21 +42,19 @@ public class CuEinvoiceServerAuthFilter implements Filter {
     }
 
     private boolean isAuthorized(HttpServletRequest request) {
-        String correctApiKey = getWebServiceCredentialService().getWebServiceCredentialValue(CUPurapConstants.Einvoice.EINVOICE, CUPurapConstants.Einvoice.EINVOICE_API_KEY_CREDENTIAL_NAME);
         String submittedApiKey = request.getHeader(CUPurapConstants.Einvoice.EINVOICE_API_KEY_CREDENTIAL_NAME);
-        return !StringUtils.isEmpty(submittedApiKey) && submittedApiKey.equals(correctApiKey);
+        return getApiAuthenticationService().isAuthorized(CUKFSConstants.EndpointCodes.EINVOICE, submittedApiKey);
     }
 
     @Override
     public void destroy() {
     }
 
-    protected WebServiceCredentialService getWebServiceCredentialService() {
-        if (this.webServiceCredentialService == null) {
-            this.webServiceCredentialService = SpringContext.getBean(WebServiceCredentialService.class);
+    public ApiAuthenticationService getApiAuthenticationService() {
+        if (apiAuthenticationService == null) {
+            apiAuthenticationService = SpringContext.getBean(ApiAuthenticationService.class);
         }
-
-        return this.webServiceCredentialService;
+        return apiAuthenticationService;
     }
 
 }

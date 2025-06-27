@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="ApiAuthenticationMapping" parent="ApiAuthenticationMapping-parentBean"/>
+
+    <bean id="ApiAuthenticationMapping-parentBean" abstract="true" parent="BusinessObjectEntry">
+        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiAuthenticationMapping"/>
+        <property name="objectLabel" value="API Authentication Mapping"/>
+        <property name="titleAttribute" value="id"/>
+
+        <property name="inquiryDefinition">
+            <ref bean="ApiAuthenticationMapping-inquiryDefinition"/>
+        </property>
+        <property name="lookupDefinition">
+            <ref bean="ApiAuthenticationMapping-lookupDefinition"/>
+        </property>
+        <property name="attributes">
+            <list>
+                <ref bean="ApiAuthenticationMapping-id"/>
+                <ref bean="ApiAuthenticationMapping-authenticatorId"/>
+                <ref bean="ApiAuthenticationMapping-endpointCode"/>
+                <ref bean="ApiAuthenticationMapping-active"/>
+            </list>
+        </property>
+        <property name="relationships">
+            <list>
+                <bean parent="RelationshipDefinition">
+                    <property name="objectAttributeName" value="apiEndpointDescriptor"/>
+                    <property name="primitiveAttributes">
+                        <list>
+                            <bean parent="PrimitiveAttributeDefinition" p:sourceName="endpointCode" p:targetName="endpointCode"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="RelationshipDefinition">
+                    <property name="objectAttributeName" value="apiAuthenticator"/>
+                    <property name="primitiveAttributes">
+                        <list>
+                            <bean parent="PrimitiveAttributeDefinition" p:sourceName="authenticatorId" p:targetName="authenticatorId"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ApiAuthenticationMapping-id" parent="ApiAuthenticationMapping-id-parentBean"/>
+
+    <bean id="ApiAuthenticationMapping-id-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="id"/>
+        <property name="label" value="Authentication-Mapping-ID"/>
+        <property name="shortLabel" value="Authentication-Mapping-ID"/>
+        <property name="maxLength" value="10"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="12"/>
+        </property>
+        <property name="validationPattern" >
+            <bean parent="NumericValidationPattern" />
+        </property>
+    </bean>
+
+    <bean id="ApiAuthenticationMapping-authenticatorId" parent="ApiAuthenticationMapping-authenticatorId-parentBean"/>
+
+    <bean id="ApiAuthenticationMapping-authenticatorId-parentBean" abstract="true" parent="ApiAuthenticator-authenticatorId"/>
+
+    <bean id="ApiAuthenticationMapping-endpointCode" parent="ApiAuthenticationMapping-endpointCode-parentBean"/>
+
+    <bean id="ApiAuthenticationMapping-endpointCode-parentBean" abstract="true" parent="ApiEndpointDescriptor-endpointCode"/>
+
+    <bean id="ApiAuthenticationMapping-active" parent="ApiAuthenticationMapping-active-parentBean"/>
+    <bean id="ApiAuthenticationMapping-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
+        <property name="name" value="active"/>
+    </bean>
+
+    <bean id="ApiAuthenticationMapping-inquiryDefinition" parent="ApiAuthenticationMapping-inquiryDefinition-parentBean"/>
+
+    <bean id="ApiAuthenticationMapping-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+        <property name="title" value="API Authentication Mapping Inquiry"/>
+        <property name="inquirySections">
+            <list>
+                <bean parent="InquirySectionDefinition">
+                    <property name="title" value="API Authentication Mapping Inquiry"/>
+                    <property name="numberOfColumns" value="1"/>
+                    <property name="inquiryFields">
+                        <list>
+                            <bean parent="FieldDefinition" p:attributeName="id"/>
+                            <bean parent="FieldDefinition" p:attributeName="authenticatorId"/>
+                            <bean parent="FieldDefinition" p:attributeName="endpointCode"/>
+                            <bean parent="FieldDefinition" p:attributeName="active"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ApiAuthenticationMapping-lookupDefinition" parent="ApiAuthenticationMapping-lookupDefinition-parentBean"/>
+
+    <bean id="ApiAuthenticationMapping-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+        <property name="title" value="API Authentication Mapping Lookup"/>
+
+        <property name="defaultSort" >
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>id</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="lookupFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="id"/>
+                <bean parent="FieldDefinition" p:attributeName="authenticatorId"/>
+                <bean parent="FieldDefinition" p:attributeName="endpointCode"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+        <property name="resultFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="id"/>
+                <bean parent="FieldDefinition" p:attributeName="authenticatorId"/>
+                <bean parent="FieldDefinition" p:attributeName="endpointCode"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

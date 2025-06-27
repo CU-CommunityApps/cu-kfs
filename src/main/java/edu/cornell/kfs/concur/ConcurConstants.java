@@ -280,7 +280,6 @@ public class ConcurConstants {
                 + KFSPropertyConstants.CHART_OF_ACCOUNTS + " and " + KFSPropertyConstants.ACCOUNT_NUMBER;
         public static final String ACCOUNT_NOT_FOUND_MESSAGE = "Could not find an account with a chart of {0} and account number {1}";
         public static final String RESOURCE_NAME = "Concur AI resouce.";
-        public static final String WEBSERVICE_CRED_GROUP_CODE = "CONCURAI";
     }
 
 }
