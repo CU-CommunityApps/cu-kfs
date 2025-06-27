@@ -1,6 +1,6 @@
 package edu.cornell.kfs.tax.batch;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
 
@@ -11,7 +11,7 @@ public class SprintaxProcessingStep extends AbstractStep {
     private TaxProcessingV2Service taxProcessingV2Service;
 
     @Override
-    public boolean execute(final String jobName, final Date jobRunDate) throws InterruptedException {
+    public boolean execute(final String jobName, final LocalDateTime jobRunDate) throws InterruptedException {
         taxProcessingV2Service.performTaxProcessingFor1042S(jobRunDate);
         return true;
     }

@@ -16,7 +16,7 @@
 package edu.cornell.kfs.coa.batch;
 
 import java.io.File;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,7 +39,7 @@ public class AccountReversionImportStep extends CuAbstractStep {
     /**
      * @see org.kuali.kfs.sys.batch.AbstractWrappedBatchStep#getCustomBatchExecutor()
      */
-    public boolean execute(String str, Date date) {
+    public boolean execute(String str, LocalDateTime date) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start("AccountReversionImportStep");
         File f = new File(this.batchFileDirectoryName + System.getProperty("file.separator") + "AccountReversion.csv");

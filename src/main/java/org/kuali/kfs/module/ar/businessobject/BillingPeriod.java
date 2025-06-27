@@ -143,17 +143,21 @@ public class BillingPeriod {
     }
 
     private boolean canThisBeBilledByBillingFrequency() {
+        if (billingFrequency == ArConstants.BillingFrequencyValues.MILESTONE
+                || billingFrequency == ArConstants.BillingFrequencyValues.PREDETERMINED_BILLING) {
+            return true;
+        }
+
         if (billingFrequency == ArConstants.BillingFrequencyValues.ANNUALLY
             && accountingPeriodService.getByDate(lastBilledDate).getUniversityFiscalYear() >=
                     accountingPeriodService.getByDate(currentDate).getUniversityFiscalYear()) {
             return false;
-        } else {
-            return !StringUtils.equals(findPreviousAccountingPeriod(currentDate).getUniversityFiscalPeriodCode(),
-                        findPreviousAccountingPeriod(lastBilledDate).getUniversityFiscalPeriodCode())
-                    || !accountingPeriodService.getByDate(lastBilledDate).getUniversityFiscalYear()
-                        .equals(accountingPeriodService.getByDate(currentDate).getUniversityFiscalYear());
         }
 
+        return !StringUtils.equals(findPreviousAccountingPeriod(currentDate).getUniversityFiscalPeriodCode(),
+                findPreviousAccountingPeriod(lastBilledDate).getUniversityFiscalPeriodCode())
+                || !accountingPeriodService.getByDate(lastBilledDate).getUniversityFiscalYear()
+                        .equals(accountingPeriodService.getByDate(currentDate).getUniversityFiscalYear());
     }
 
     private Date determineStartDate() {
