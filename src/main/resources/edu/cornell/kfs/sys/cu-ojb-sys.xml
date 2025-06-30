@@ -415,4 +415,58 @@
         <field-descriptor name="correspondentBankSwiftCode" column="CRSPNDT_BNK_SWIFT_CD" jdbc-type="VARCHAR"/>
     </class-descriptor>
     
+    <!-- API Endpoint Descriptor -->
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ApiEndpointDescriptor" table="CU_API_ENDPOINT_DESC_T">
+        <field-descriptor name="endpointCode" column="ENDPOINT_CODE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="endpointDescription" column="ENDPOINT_DESC" jdbc-type="VARCHAR"/>
+        <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDATE_TS" jdbc-type="TIMESTAMP"/>
+        
+        <collection-descriptor name="authenticationMappings" proxy="true" 
+                              element-class-ref="edu.cornell.kfs.sys.businessobject.ApiAuthenticationMapping" 
+                              collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" 
+                              auto-retrieve="true" auto-update="none" auto-delete="none">
+            <inverse-foreignkey field-ref="endpointCode"/>
+        </collection-descriptor>
+    </class-descriptor>
+    
+    <!-- API Authenticator -->
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ApiAuthenticator" table="CU_API_AUTHENTICATOR_T">
+        <field-descriptor name="authenticatorId" column="AUTHENTICATOR_ID" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="CU_API_AUTHENTICATOR_SEQ"/>
+        <field-descriptor name="authenticatorDescription" column="AUTHENTICATOR_DESC" jdbc-type="VARCHAR"/>
+        <field-descriptor name="usernamePassword" column="USERNAME_PASSWORD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+        <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDATE_TS" jdbc-type="TIMESTAMP"/>
+        
+        <collection-descriptor name="authenticationMappings" proxy="true" 
+                              element-class-ref="edu.cornell.kfs.sys.businessobject.ApiAuthenticationMapping" 
+                              collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" 
+                              auto-retrieve="true" auto-update="object" auto-delete="object">
+            <inverse-foreignkey field-ref="authenticatorId"/>
+        </collection-descriptor>
+    </class-descriptor>
+    
+    <!-- API Authentication Mapping -->
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ApiAuthenticationMapping" table="CU_API_AUTH_MAP_T">
+        <field-descriptor name="id" column="ID" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="KFS.CU_API_AUTH_MAP_SEQ"/>
+        <field-descriptor name="authenticatorId" column="AUTHENTICATOR_ID" jdbc-type="INTEGER"/>
+        <field-descriptor name="endpointCode" column="ENDPOINT_CODE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDATE_TS" jdbc-type="TIMESTAMP"/>
+        
+        <reference-descriptor name="apiEndpointDescriptor" class-ref="edu.cornell.kfs.sys.businessobject.ApiEndpointDescriptor" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="endpointCode"/>
+        </reference-descriptor>
+        
+        <reference-descriptor name="apiAuthenticator" class-ref="edu.cornell.kfs.sys.businessobject.ApiAuthenticator" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="authenticatorId"/>
+        </reference-descriptor>
+    </class-descriptor>
+    
 </descriptor-repository>
