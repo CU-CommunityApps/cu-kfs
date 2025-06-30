@@ -73,7 +73,7 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
             }
         }
         
-        LOG.error("isAuthorized: No matching credentials found for endpoint code {}", endpointCode);
+        LOG.debug("isAuthorized: No matching credentials found for endpoint code {}", endpointCode);
         return false;
     }
     

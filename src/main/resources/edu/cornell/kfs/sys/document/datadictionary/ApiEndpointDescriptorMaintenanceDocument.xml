@@ -13,10 +13,6 @@
             </list>
         </property>
         <property name="documentTypeName" value="APIED"/>
-        <property name="documentAuthorizerClass" value="edu.cornell.kfs.sys.document.authorization.ApiEndpointDescriptorAuthorizer"/>
-        <!--
-        <property name="documentPresentationControllerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentPresentationControllerBase"/>
-        -->
         <property name="workflowAttributes">
             <ref bean="ApiEndpointDescriptorMaintenanceDocument-workflowAttributes"/>
         </property>

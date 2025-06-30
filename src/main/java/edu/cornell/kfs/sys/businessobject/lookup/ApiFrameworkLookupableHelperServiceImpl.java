@@ -15,7 +15,7 @@ public class ApiFrameworkLookupableHelperServiceImpl extends KualiLookupableHelp
 
     @Override
     public List<HtmlData> getCustomActionUrls(final BusinessObject businessObject, final List pkNames) {
-        LOG.info("getCustomActionUrls, entering");
+        LOG.debug("getCustomActionUrls, entering");
         List<HtmlData> htmlDataList = super.getCustomActionUrls(businessObject, pkNames);
 
         return htmlDataList.stream()
