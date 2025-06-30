@@ -52,7 +52,7 @@ public class GenericReversionCategory implements ReversionCategoryLogic {
      */
     public void setCategoryCode(String code) {
         categoryCode = code;
-        isExpense = parameterEvaluatorService.getParameterEvaluator(AccountReversionCurrentYearAccountStep.class, CUKFSConstants.Reversion.IS_EXPENSE_PARAM, categoryCode).evaluationSucceeds();
+        isExpense = parameterEvaluatorService.getParameterEvaluator("KFS-COA", "AccountReversionCurrentYearAccountStep", CUKFSConstants.Reversion.IS_EXPENSE_PARAM, categoryCode).evaluationSucceeds();
     }
 
     /**
