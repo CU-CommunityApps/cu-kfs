@@ -1,6 +1,7 @@
 package edu.cornell.kfs.sys.businessobject.lookup;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -10,7 +11,7 @@ import org.kuali.kfs.kns.lookup.KualiLookupableHelperServiceImpl;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.util.KRADConstants;
 
-public class ApiFrameworkLookupableHelperServiceImpl extends KualiLookupableHelperServiceImpl{
+public class ApiFrameworkLookupableHelperServiceImpl extends KualiLookupableHelperServiceImpl {
     private static final Logger LOG = LogManager.getLogger();
 
     @Override
@@ -20,7 +21,7 @@ public class ApiFrameworkLookupableHelperServiceImpl extends KualiLookupableHelp
 
         return htmlDataList.stream()
                 .filter(data -> !StringUtils.equalsIgnoreCase(data.getMethodToCall(), KRADConstants.MAINTENANCE_COPY_METHOD_TO_CALL))
-                .collect(java.util.stream.Collectors.toList());
+                .collect(Collectors.toList());
     }
 
 
