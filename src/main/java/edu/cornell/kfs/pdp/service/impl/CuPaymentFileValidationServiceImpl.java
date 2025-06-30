@@ -242,6 +242,16 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
             LOG.debug("After checkPaymentDetailPropertyMaxLength: " + printErrorMap(errorMap));
         }
     }
+    
+    // CU customization to change invoice number max length to 25
+    @Override
+    protected void checkInvoiceNumberLength(final PaymentDetail paymentDetail, final MessageMap errorMap) {
+        final int invoiceNumberMaxLength = 25;
+        if (paymentDetail.getInvoiceNbr().length() > invoiceNumberMaxLength) {
+            errorMap.putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.ERROR_PAYMENT_LOAD_INVOICE_NUMBER_TOO_LONG,
+                    paymentDetail.getInvoiceNbr(), Integer.toString(invoiceNumberMaxLength));
+        }
+    }
 
     public void setPersonService(final PersonService personService) {
         this.personService = personService;
