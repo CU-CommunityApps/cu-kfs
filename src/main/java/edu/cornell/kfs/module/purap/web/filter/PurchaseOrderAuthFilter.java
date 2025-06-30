@@ -15,22 +15,17 @@ import javax.ws.rs.HttpMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.StringUtils;
-import java.nio.charset.StandardCharsets;
-
-import edu.cornell.kfs.module.purap.CUPurapConstants;
 
 import com.google.gson.Gson;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.service.WebServiceCredentialService;
+import edu.cornell.kfs.sys.service.ApiAuthenticationService;
 
 public class PurchaseOrderAuthFilter implements Filter {
     private static final Logger LOG = LogManager.getLogger();
     private static final Gson gson = new Gson();
     
-    private WebServiceCredentialService webServiceCredentialService;
+    private ApiAuthenticationService apiAuthenticationService;
     
     @Override
     public void init(FilterConfig filterConfig) {
@@ -65,26 +60,18 @@ public class PurchaseOrderAuthFilter implements Filter {
     }
     
     private boolean isAuthorized(HttpServletRequest request) {
-        byte[] byteArrayEncodedAllowableUserNamePassword = Base64
-                .encodeBase64(getAllowableUserNamePassword().getBytes());
-        String encodedAllowableUserNamePassword = new String(byteArrayEncodedAllowableUserNamePassword,
-                StandardCharsets.UTF_8);
-        String authorizationFromRequest = request.getHeader(CUKFSConstants.AUTHORIZATION_HEADER_KEY);
-        return StringUtils.equals(authorizationFromRequest,
-                CUKFSConstants.BASIC_AUTHENTICATION_STARTER + encodedAllowableUserNamePassword);
+        return getApiAuthenticationService().isAuthorized(CUKFSConstants.EndpointCodes.PURCHASE_ORDER_DETAILS, request);
+    }
 
+    @Override
+    public void destroy() {
     }
     
-    private String getAllowableUserNamePassword() {
-        return getWebServiceCredentialService().getWebServiceCredentialValue(
-                CUPurapConstants.PAYFLOW_CREDENTIAL_GROUP_CODE, CUKFSConstants.WEBSERVICE_CREDENTIAL_KEY_USERNAMEPASSWORD);
-    }
-
-    public WebServiceCredentialService getWebServiceCredentialService() {
-        if (webServiceCredentialService == null) {
-            webServiceCredentialService = SpringContext.getBean(WebServiceCredentialService.class);
+    public ApiAuthenticationService getApiAuthenticationService() {
+        if (apiAuthenticationService == null) {
+            apiAuthenticationService = SpringContext.getBean(ApiAuthenticationService.class);
         }
-        return webServiceCredentialService;
+        return apiAuthenticationService;
     }
 
 }

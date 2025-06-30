@@ -27,7 +27,7 @@ public class ConcurAccountDetailDto {
     private String accountSupervisorName;
     private boolean closed;
     private String accountCreateDate;
-    private String accountExpirateDate;
+    private String accountExpirationDate;
     private String higherEdFunctionCode;
     
     
@@ -49,7 +49,7 @@ public class ConcurAccountDetailDto {
         this.accountSupervisorName = account.getAccountSupervisoryUser().getName();
         this.closed = account.isClosed();
         this.accountCreateDate = formatDate(account.getAccountCreateDate());
-        this.accountExpirateDate = formatDate(account.getAccountExpirationDate());
+        this.accountExpirationDate = formatDate(account.getAccountExpirationDate());
         this.higherEdFunctionCode = account.getFinancialHigherEdFunctionCd();
     }
     
@@ -173,12 +173,12 @@ public class ConcurAccountDetailDto {
         this.accountCreateDate = accountCreateDate;
     }
 
-    public String getAccountExpirateDate() {
-        return accountExpirateDate;
+    public String getAccountExpirationDate() {
+        return accountExpirationDate;
     }
 
-    public void setAccountExpirateDate(String accountExpirateDate) {
-        this.accountExpirateDate = accountExpirateDate;
+    public void setAccountExpirationDate(String accountExpirationDate) {
+        this.accountExpirationDate = accountExpirationDate;
     }
 
     public String getHigherEdFunctionCode() {

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="ApiAuthenticator" parent="ApiAuthenticator-parentBean"/>
+
+    <bean id="ApiAuthenticator-parentBean" abstract="true" parent="BusinessObjectEntry">
+        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.ApiAuthenticator"/>
+        <property name="objectLabel" value="API Authenticator"/>
+        <property name="titleAttribute" value="authenticatorId"/>
+
+        <property name="inquiryDefinition">
+            <ref bean="ApiAuthenticator-inquiryDefinition"/>
+        </property>
+        <property name="lookupDefinition">
+            <ref bean="ApiAuthenticator-lookupDefinition"/>
+        </property>
+        <property name="attributes">
+            <list>
+                <ref bean="ApiAuthenticator-authenticatorId"/>
+                <ref bean="ApiAuthenticator-authenticatorDescription"/>
+                <ref bean="ApiAuthenticator-usernamePassword"/>
+                <ref bean="ApiAuthenticator-active"/>
+            </list>
+        </property>
+        <property name="collections">
+            <list>
+                <bean parent="CollectionDefinition" p:name="authenticationMappings" p:label="Authentication Mappings" p:shortLabel="Authentication Mappings" p:elementLabel="Authentication Mapping"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ApiAuthenticator-authenticatorId" parent="ApiAuthenticator-authenticatorId-parentBean"/>
+
+    <bean id="ApiAuthenticator-authenticatorId-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="authenticatorId"/>
+        <property name="label" value="Authenticator ID"/>
+        <property name="shortLabel" value="ID"/>
+        <property name="maxLength" value="10"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="12"/>
+        </property>
+        <property name="validationPattern" >
+            <bean parent="NumericValidationPattern" />
+        </property>
+    </bean>
+
+    <bean id="ApiAuthenticator-authenticatorDescription" parent="ApiAuthenticator-authenticatorDescription-parentBean"/>
+
+    <bean id="ApiAuthenticator-authenticatorDescription-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="authenticatorDescription"/>
+        <property name="label" value="Authenticator Description"/>
+        <property name="shortLabel" value="Authenticator Description"/>
+        <property name="maxLength" value="100"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="105"/>
+        </property>
+        <property name="validationPattern" >
+            <bean parent="AnyCharacterWithWhitespaceValidation" />
+        </property>
+    </bean>
+
+    <bean id="ApiAuthenticator-usernamePassword" parent="ApiAuthenticator-usernamePassword-parentBean"/>
+
+    <bean id="ApiAuthenticator-usernamePassword-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="usernamePassword"/>
+        <property name="label" value="Username Password"/>
+        <property name="shortLabel" value="Username Password"/>
+        <property name="maxLength" value="100"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="105"/>
+        </property>
+        <property name="validationPattern" >
+            <bean parent="AnyCharacterWithWhitespaceValidation" />
+        </property>
+        <property name="attributeSecurity">
+            <bean parent="AttributeSecurity">
+                <property name="mask" value="true"/>
+                <property name="maskFormatter">
+                    <bean parent="MaskFormatterLiteral" p:literal="*****************"/>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="ApiAuthenticator-active" parent="ApiAuthenticator-active-parentBean"/>
+    <bean id="ApiAuthenticator-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
+        <property name="name" value="active"/>
+    </bean>
+
+    <bean id="ApiAuthenticator-inquiryDefinition" parent="ApiAuthenticator-inquiryDefinition-parentBean"/>
+
+    <bean id="ApiAuthenticator-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+        <property name="title" value="API Authenticator Inquiry"/>
+        <property name="inquirySections">
+            <list>
+                <bean parent="InquirySectionDefinition">
+                    <property name="title" value="API Authenticator Inquiry"/>
+                    <property name="numberOfColumns" value="1"/>
+                    <property name="inquiryFields">
+                        <list>
+                            <bean parent="FieldDefinition" p:attributeName="authenticatorId"/>
+                            <bean parent="FieldDefinition" p:attributeName="authenticatorDescription"/>
+                            <bean parent="FieldDefinition" p:attributeName="active"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ApiAuthenticator-lookupDefinition" parent="ApiAuthenticator-lookupDefinition-parentBean"/>
+
+    <bean id="ApiAuthenticator-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+        <property name="title" value="API Authenticator Lookup"/>
+        <property name="lookupableID" value="apiFrameworkLookupable"/>
+
+        <property name="defaultSort" >
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>authenticatorId</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="lookupFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="authenticatorId"/>
+                <bean parent="FieldDefinition" p:attributeName="authenticatorDescription"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+        <property name="resultFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="authenticatorId"/>
+                <bean parent="FieldDefinition" p:attributeName="authenticatorDescription"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>
