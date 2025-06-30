@@ -57,11 +57,12 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
             return false;
         }
         
-        for (ApiAuthenticationMapping descriptionAuthenticator : authenticationMappings) {
-            if (ObjectUtils.isNotNull(descriptionAuthenticator) && descriptionAuthenticator.isActive() && descriptionAuthenticator.getApiAuthenticator() != null && 
-                    descriptionAuthenticator.getApiAuthenticator().isActive()) {
+        for (ApiAuthenticationMapping authenticationMapping : authenticationMappings) {
+            if (ObjectUtils.isNotNull(authenticationMapping) && authenticationMapping.isActive() && 
+                authenticationMapping.getApiAuthenticator() != null && 
+                authenticationMapping.getApiAuthenticator().isActive()) {
                 
-                ApiAuthenticator authenticator = descriptionAuthenticator.getApiAuthenticator();
+                ApiAuthenticator authenticator = authenticationMapping.getApiAuthenticator();
                 if (StringUtils.equals(usernamePassword, authenticator.getUsernamePassword())) {
                     LOG.debug("isAuthorized: Successfully authenticated for endpoint code {} with authenticator {}", 
                         endpointCode, authenticator.getAuthenticatorDescription());

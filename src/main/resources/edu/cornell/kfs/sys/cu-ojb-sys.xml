@@ -416,7 +416,7 @@
     </class-descriptor>
     
     <!-- API Endpoint Descriptor -->
-    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ApiEndpointDescriptor" table="KFS.CU_API_ENDPOINT_DESC_T">
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ApiEndpointDescriptor" table="CU_API_ENDPOINT_DESC_T">
         <field-descriptor name="endpointCode" column="ENDPOINT_CODE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="endpointDescription" column="ENDPOINT_DESC" jdbc-type="VARCHAR"/>
         <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
@@ -427,14 +427,14 @@
         <collection-descriptor name="authenticationMappings" proxy="true" 
                               element-class-ref="edu.cornell.kfs.sys.businessobject.ApiAuthenticationMapping" 
                               collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" 
-                              auto-retrieve="true" auto-update="false" auto-delete="false">
+                              auto-retrieve="true" auto-update="none" auto-delete="none">
             <inverse-foreignkey field-ref="endpointCode"/>
         </collection-descriptor>
     </class-descriptor>
     
     <!-- API Authenticator -->
-    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ApiAuthenticator" table="KFS.CU_API_AUTHENTICATOR_T">
-        <field-descriptor name="authenticatorId" column="AUTHENTICATOR_ID" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="KFS.CU_API_AUTHENTICATOR_SEQ"/>
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ApiAuthenticator" table="CU_API_AUTHENTICATOR_T">
+        <field-descriptor name="authenticatorId" column="AUTHENTICATOR_ID" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="CU_API_AUTHENTICATOR_SEQ"/>
         <field-descriptor name="authenticatorDescription" column="AUTHENTICATOR_DESC" jdbc-type="VARCHAR"/>
         <field-descriptor name="usernamePassword" column="USERNAME_PASSWORD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
         <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
@@ -451,7 +451,7 @@
     </class-descriptor>
     
     <!-- API Authentication Mapping -->
-    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ApiAuthenticationMapping" table="KFS.CU_API_AUTH_MAP_T">
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ApiAuthenticationMapping" table="CU_API_AUTH_MAP_T">
         <field-descriptor name="id" column="ID" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="KFS.CU_API_AUTH_MAP_SEQ"/>
         <field-descriptor name="authenticatorId" column="AUTHENTICATOR_ID" jdbc-type="INTEGER"/>
         <field-descriptor name="endpointCode" column="ENDPOINT_CODE" jdbc-type="VARCHAR"/>

@@ -531,5 +531,13 @@
     <bean id="apiAuthenticationService-parentBean" class="edu.cornell.kfs.sys.service.impl.ApiAuthenticationServiceImpl" abstract="true">
         <property name="businessObjectService" ref="businessObjectService"/>
     </bean>
+
+    <bean id="apiFrameworkLookupableHelperService" class="edu.cornell.kfs.sys.businessobject.lookup.ApiFrameworkLookupableHelperServiceImpl" scope="prototype" />
+
+    <bean id="apiFrameworkLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="apiFrameworkLookupableHelperService" />
+        </property>
+    </bean>
     
 </beans>

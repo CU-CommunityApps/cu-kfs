@@ -112,6 +112,7 @@
 
     <bean id="ApiAuthenticator-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
         <property name="title" value="API Authenticator Lookup"/>
+        <property name="lookupableID" value="apiFrameworkLookupable"/>
 
         <property name="defaultSort" >
             <bean parent="SortDefinition">

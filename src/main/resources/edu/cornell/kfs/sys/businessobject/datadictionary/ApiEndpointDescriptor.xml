@@ -107,6 +107,7 @@
 
     <bean id="ApiEndpointDescriptor-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
         <property name="title" value="API Endpoint Descriptor Lookup"/>
+        <property name="lookupableID" value="apiFrameworkLookupable"/>
 
         <property name="defaultSort" >
             <bean parent="SortDefinition">
