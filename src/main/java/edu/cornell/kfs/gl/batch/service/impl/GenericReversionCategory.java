@@ -17,11 +17,11 @@ package edu.cornell.kfs.gl.batch.service.impl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.coa.COAConstants;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
 
 import edu.cornell.kfs.coa.businessobject.ReversionCategory;
-import edu.cornell.kfs.gl.batch.AccountReversionCurrentYearAccountStep;
 import edu.cornell.kfs.gl.batch.service.ReversionCategoryLogic;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -52,7 +52,7 @@ public class GenericReversionCategory implements ReversionCategoryLogic {
      */
     public void setCategoryCode(String code) {
         categoryCode = code;
-        isExpense = parameterEvaluatorService.getParameterEvaluator("KFS-COA", "AccountReversionCurrentYearAccountStep", CUKFSConstants.Reversion.IS_EXPENSE_PARAM, categoryCode).evaluationSucceeds();
+        isExpense = parameterEvaluatorService.getParameterEvaluator(COAConstants.COA_NAMESPACE_CODE, CUKFSConstants.Reversion.ACCOUNT_REVERSION_STEP, CUKFSConstants.Reversion.IS_EXPENSE_PARAM, categoryCode).evaluationSucceeds();
     }
 
     /**
