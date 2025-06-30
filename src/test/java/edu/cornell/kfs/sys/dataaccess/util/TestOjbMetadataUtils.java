@@ -101,6 +101,9 @@ public final class TestOjbMetadataUtils {
                 .withAnswer(
                         classDescriptor -> classDescriptor.getFieldDescriptorByName(Mockito.anyString()),
                         invocation -> fieldDescriptorsMap.get(invocation.getArgument(0)))
+                .withAnswer(
+                        classDescriptor -> classDescriptor.getFieldDescriptorByIndex(Mockito.anyInt()),
+                        invocation -> fieldDescriptors.get(invocation.getArgument(0)))
                 .build();
     }
 
@@ -112,7 +115,7 @@ public final class TestOjbMetadataUtils {
         return new CuMockBuilder<>(FieldDescriptor.class)
                 .withReturn(FieldDescriptor::getAttributeName, fieldName)
                 .withReturn(FieldDescriptor::getColumnName, columnName)
-                .withReturn(FieldDescriptor::getColumnType, javaJdbcType.name())
+                .withReturn(FieldDescriptor::getColumnType, javaJdbcType.getName())
                 .withReturn(FieldDescriptor::getJdbcType, ojbJdbcType)
                 .withReturn(FieldDescriptor::getFieldConversion, fieldConversion)
                 .build();

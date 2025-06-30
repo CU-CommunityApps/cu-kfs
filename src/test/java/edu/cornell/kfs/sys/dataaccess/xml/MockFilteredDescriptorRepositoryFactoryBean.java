@@ -7,17 +7,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.stream.StreamFilter;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.function.FailableFunction;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
-import edu.cornell.kfs.sys.util.CuMockBuilder;
 import edu.cornell.kfs.sys.util.CuXMLStreamUtils;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
@@ -72,13 +70,16 @@ public class MockFilteredDescriptorRepositoryFactoryBean extends AbstractFactory
         
         for (final String ojbRepositoryFile : ojbRepositoryFiles) {
             XMLStreamReader xmlReader = null;
+            XMLStreamReader filteredReader = null;
             try (final InputStream fileStream = CuCoreUtilities.getResourceAsStream(ojbRepositoryFile)) {
                 xmlReader = inputFactory.createXMLStreamReader(fileStream, StandardCharsets.UTF_8.name());
-                final XMLStreamReader wrappedReader = wrapXMLStreamReader(xmlReader);
+                filteredReader = inputFactory.createFilteredReader(xmlReader,
+                        new ClassDescriptorFilter(descriptorsToKeep));
                 final TestDescriptorRepositoryDto repository =
-                        (TestDescriptorRepositoryDto) unmarshaller.unmarshal(wrappedReader);
+                        (TestDescriptorRepositoryDto) unmarshaller.unmarshal(filteredReader);
                 repositories.add(repository);
             } finally {
+                CuXMLStreamUtils.closeQuietly(filteredReader);
                 CuXMLStreamUtils.closeQuietly(xmlReader);
             }
         }
@@ -86,56 +87,56 @@ public class MockFilteredDescriptorRepositoryFactoryBean extends AbstractFactory
         return repositories.build().collect(Collectors.toUnmodifiableList());
     }
 
-    private XMLStreamReader wrapXMLStreamReader(final XMLStreamReader xmlReader) throws XMLStreamException {
-        return new CuMockBuilder<>(xmlReader)
-                .withAnswer(XMLStreamReader::next,
-                        invocation -> advanceToNextEventAndSkipDescriptorIfNecessary(xmlReader))
-                .withAnswer(XMLStreamReader::nextTag,
-                        invocation -> advanceToNextTagAndSkipDescriptorIfNecessary(xmlReader))
-                .build();
-    }
+    private static final class ClassDescriptorFilter implements StreamFilter {
 
-    private int advanceToNextEventAndSkipDescriptorIfNecessary(final XMLStreamReader xmlReader)
-            throws XMLStreamException {
-        return doXMLStreamReaderActionAndSkipDescriptorIfNecessary(xmlReader, XMLStreamReader::next);
-    }
+        private final Set<String> descriptorsToKeep;
+        private boolean currentlySkippingClassDescriptor = false;
+        private int localDepth;
 
-    private int advanceToNextTagAndSkipDescriptorIfNecessary(final XMLStreamReader xmlReader)
-            throws XMLStreamException {
-        return doXMLStreamReaderActionAndSkipDescriptorIfNecessary(xmlReader, XMLStreamReader::nextTag);
-    }
-
-    private int doXMLStreamReaderActionAndSkipDescriptorIfNecessary(final XMLStreamReader xmlReader,
-            final FailableFunction<XMLStreamReader, Integer, XMLStreamException> xmlReaderAction)
-                    throws XMLStreamException {
-        int currentEventType = xmlReaderAction.apply(xmlReader);
-        while (readerIsAtStartOfSkippableClassDescriptor(xmlReader)) {
-            skipCurrentClassDescriptorElement(xmlReader);
-            currentEventType = xmlReaderAction.apply(xmlReader);
+        private ClassDescriptorFilter(final Set<String> descriptorsToKeep) {
+            this.descriptorsToKeep = descriptorsToKeep;
         }
-        return currentEventType;
-    }
 
-    private boolean readerIsAtStartOfSkippableClassDescriptor(final XMLStreamReader xmlReader) {
-        if (xmlReader.getEventType() == XMLStreamReader.START_ELEMENT
-                && StringUtils.equals(xmlReader.getLocalName(), CLASS_DESCRIPTOR_ELEMENT)) {
-            final String className = xmlReader.getAttributeValue(null, CLASS_ATTRIBUTE);
-            final String tableName = xmlReader.getAttributeValue(null, TABLE_ATTRIBUTE);
-            return !descriptorsToKeep.contains(className) && !descriptorsToKeep.contains(tableName);
-        } else {
-            return false;
+        @Override
+        public boolean accept(final XMLStreamReader reader) {
+            switch (reader.getEventType()) {
+                case XMLStreamReader.START_ELEMENT:
+                    return shouldAcceptElementStart(reader);
+                case XMLStreamReader.END_ELEMENT:
+                    return shouldAcceptElementEnd(reader);
+                default:
+                    return !currentlySkippingClassDescriptor;
+            }
         }
-    }
 
-    private void skipCurrentClassDescriptorElement(final XMLStreamReader xmlReader) throws XMLStreamException {
-        int currentEventType;
-        int localDepth = 1;
-        while (localDepth > 0) {
-            currentEventType = xmlReader.next();
-            if (currentEventType == XMLStreamReader.START_ELEMENT) {
+        private boolean shouldAcceptElementStart(final XMLStreamReader reader) {
+            if (currentlySkippingClassDescriptor) {
                 localDepth++;
-            } else if (currentEventType == XMLStreamReader.END_ELEMENT) {
+                return false;
+            } else if (StringUtils.equals(reader.getLocalName(), CLASS_DESCRIPTOR_ELEMENT)) {
+                final String className = reader.getAttributeValue(null, CLASS_ATTRIBUTE);
+                final String tableName = reader.getAttributeValue(null, TABLE_ATTRIBUTE);
+                if (descriptorsToKeep.contains(className) || descriptorsToKeep.contains(tableName)) {
+                    return true;
+                } else {
+                    currentlySkippingClassDescriptor = true;
+                    localDepth = 1;
+                    return false;
+                }
+            } else {
+                return true;
+            }
+        }
+
+        private boolean shouldAcceptElementEnd(final XMLStreamReader reader) {
+            if (currentlySkippingClassDescriptor) {
                 localDepth--;
+                if (localDepth <= 0) {
+                    currentlySkippingClassDescriptor = false;
+                }
+                return false;
+            } else {
+                return true;
             }
         }
     }
