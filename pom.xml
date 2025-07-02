@@ -255,9 +255,7 @@
                                 <exclude>WEB-INF/lib/spring-tx-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-web-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-webmvc-*.jar</exclude>
-                                <exclude>WEB-INF/lib/jackson-annotations-2.14.1.jar</exclude>
-                                <exclude>WEB-INF/lib/jackson-core-2.14.1.jar</exclude>
-                                <exclude>WEB-INF/lib/jackson-databind-2.14.1.jar</exclude>
+                                <exclude>WEB-INF/lib/jackson-*.jar</exclude>
                             </excludes>
                         </overlay>
                     </overlays>
@@ -872,6 +870,21 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-cbor</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-joda</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson.version}</version>
         </dependency>
         <dependency>
