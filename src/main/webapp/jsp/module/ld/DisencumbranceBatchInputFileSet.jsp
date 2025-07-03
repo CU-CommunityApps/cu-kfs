@@ -63,8 +63,9 @@
                                         attributeEntry="${batchUploadAttributes.fileUserIdentifer}"
                                         property="selectedDataFile" readOnly="true" tabindexOverride="0"/>
                                 <kul:lookup boClassName="edu.cornell.kfs.module.ld.businessobject.LaborLedgerBatchFile"
+                                            newLookup="true"
                                             fieldConversions="fileName:selectedDataFile"
-                                            lookupParameters="'*.data':fileName"
+                                            lookupParameters="'*.data':fileName:"
                                             autoSearch="yes"/>
                             </c:if>
                             <c:if test="${fileType eq 'RECON' }">
@@ -72,6 +73,7 @@
                                         attributeEntry="${batchUploadAttributes.fileUserIdentifer}"
                                         property="selectedReconFile" readOnly="true" tabindexOverride="0"/>
                                 <kul:lookup boClassName="edu.cornell.kfs.module.ld.businessobject.LaborLedgerBatchFile"
+                                            newLookup="true"
                                             fieldConversions="fileName:selectedReconFile"
                                             lookupParameters="'*.recon':fileName"
                                             autoSearch="yes"/>
@@ -100,4 +102,5 @@
             </table>
         </div>
     </kul:tabTop>
+    <kul:modernLookupSupport />
 </kul:page>
