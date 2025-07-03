@@ -84,8 +84,7 @@
           p:title="Labor Ledger Batch File Lookup">
         <property name="formAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition" parent="LaborLedgerBatchFile-path"
-                      p:defaultValueFinder-ref="laborLedgerBatchFileDirectoryPathFinder"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition" parent="LaborLedgerBatchFile-path"/>
                 <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="LaborLedgerBatchFile-fileName"/>
                 <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
