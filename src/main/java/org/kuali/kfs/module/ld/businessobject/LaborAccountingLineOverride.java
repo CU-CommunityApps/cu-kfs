@@ -78,11 +78,7 @@ public final class LaborAccountingLineOverride {
         // transaction, since those are read only.  Otherwise, amounts in expired accounts could never be transferred
         line.setAccountExpiredOverrideNeeded(needed.hasComponent(COMPONENT.EXPIRED_ACCOUNT));
         if (line.getAccountExpiredOverrideNeeded()) {
-            if (line instanceof SourceAccountingLine) {
-                line.setAccountExpiredOverride(true);
-            } else {
-                line.setAccountExpiredOverride(fromCurrentCode.hasComponent(COMPONENT.EXPIRED_ACCOUNT));
-            }
+            line.setAccountExpiredOverride(fromCurrentCode.hasComponent(COMPONENT.EXPIRED_ACCOUNT));
         }
         line.setObjectBudgetOverride(fromCurrentCode.hasComponent(COMPONENT.NON_BUDGETED_OBJECT));
         line.setObjectBudgetOverrideNeeded(needed.hasComponent(COMPONENT.NON_BUDGETED_OBJECT));

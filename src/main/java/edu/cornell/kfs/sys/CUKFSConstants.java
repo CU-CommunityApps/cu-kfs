@@ -71,7 +71,6 @@ public class CUKFSConstants {
         public static final String OBJECT_SUB_TYPE_PARAM_SUFFIX = "OBJECT_SUB_TYPES_BY_REVERSION_CATEGORY";
         public static final String SELECTION_1 = "SELECTION_1";
         public static final String SELECTION_4 = "SELECTION_4";
-        public static final String ACCOUNT_REVERSION_STEP= "AccountReversionCurrentYearAccountStep";
     }
     
     // Confidential-attachment-related constants.
