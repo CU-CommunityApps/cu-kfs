@@ -749,7 +749,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             return true;
         }
 
-        return false;
+        return SpringContext.getBean(ParameterEvaluatorService.class)
+                .getParameterEvaluator(getClass(), FPParameterConstants.PAYMENT_REASONS_TAX_REVIEW, paymentReasonCode)
+                .evaluationSucceeds();
     }
 
     public boolean isLegacyTrip() {

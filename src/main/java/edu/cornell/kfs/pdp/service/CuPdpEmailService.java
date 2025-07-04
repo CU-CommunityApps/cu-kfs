@@ -21,11 +21,10 @@ public interface CuPdpEmailService extends PdpEmailService {
      * multiples and singletons when creating and sending the advice emails.
      * 
      * @param paymentGroup ACH payment group to send notification for
-     * @param paymentDetail Payment Detail containing payment amounts
      * @param customer Pdp Customer profile for payment
      */
     @Deprecated
-    public void sendAchAdviceEmail(PaymentGroup paymentGroup, PaymentDetail paymentDetail, CustomerProfile customer);
+    public void sendAchAdviceEmail(final PaymentGroup paymentGroup, final CustomerProfile customer);
 
     /**
      * Send advice notification email to the payee receiving an ACH payment for both bundled and unbundled ACH payments.
