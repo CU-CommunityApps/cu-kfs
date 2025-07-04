@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap.batch;
 
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -25,7 +26,7 @@ public class JaggaerGenerateContractPartyCsvStep extends AbstractStep {
     protected DateTimeService dateTimeService;
     
     @Override
-    public boolean execute(String jobName, java.util.Date jobRunDate) {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) {
         JaggaerContractUploadProcessingMode processingMode = findJaggaerContractUploadProcessingMode();
         java.sql.Date processingDate = findProcessingDate(processingMode);
         String processDateForOutput = dateTimeService.toString(processingDate, CUKFSConstants.DATE_FORMAT_dd_MMM_yyyy);

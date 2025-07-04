@@ -60,7 +60,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
             Document document = findDocumentForAutoDisapproval(documentHeaderId);
 
            if (document != null) {
-               if (checkIfDocumentEligibleForAutoDispproval(document.getDocumentHeader(), childDocumentTypeIds)) {
+               if (checkIfDocumentEligibleForAutoDisapproval(document.getDocumentHeader(), childDocumentTypeIds)) {
                    try {
                        String successMessage = buildSuccessMessage(document);
                        autoDisapprovalYearEndDocument(document, annotation);

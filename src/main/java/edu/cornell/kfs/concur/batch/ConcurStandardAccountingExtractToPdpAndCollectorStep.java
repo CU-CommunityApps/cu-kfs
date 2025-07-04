@@ -2,8 +2,8 @@ package edu.cornell.kfs.concur.batch;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -27,7 +27,7 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
     protected FileStorageService fileStorageService;
 
     @Override
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         List<String> listOfSaeFullyQualifiedFileNames = getConcurStandardAccountingExtractService().buildListOfFullyQualifiedFileNamesToBeProcessed();
         if (CollectionUtils.isNotEmpty(listOfSaeFullyQualifiedFileNames)) {
             for (String saeFullyQualifiedFileName : listOfSaeFullyQualifiedFileNames) {

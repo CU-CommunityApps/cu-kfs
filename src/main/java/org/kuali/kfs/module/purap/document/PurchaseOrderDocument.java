@@ -29,7 +29,7 @@ import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.gl.service.SufficientFundsService;
-import org.kuali.kfs.integration.purap.CapitalAssetSystem;
+import org.kuali.kfs.module.purap.businessobject.CapitalAssetSystem;
 import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kew.api.action.ActionRequestType;

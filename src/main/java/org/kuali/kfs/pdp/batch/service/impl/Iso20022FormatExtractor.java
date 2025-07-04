@@ -18,72 +18,6 @@
  */
 package org.kuali.kfs.pdp.batch.service.impl;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.IteratorUtils;
-import org.apache.commons.collections4.MultiValuedMap;
-import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.fp.dataaccess.DisbursementVoucherDao;
-import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
-import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
-import org.kuali.kfs.kns.datadictionary.validation.fieldlevel.ZipcodeValidationPattern;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.pdp.PdpConstants;
-import org.kuali.kfs.pdp.PdpKeyConstants;
-import org.kuali.kfs.pdp.businessobject.ACHBank;
-import org.kuali.kfs.pdp.businessobject.Batch;
-import org.kuali.kfs.pdp.businessobject.CustomerProfile;
-import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
-import org.kuali.kfs.pdp.businessobject.PaymentDetail;
-import org.kuali.kfs.pdp.businessobject.PaymentGroup;
-import org.kuali.kfs.pdp.businessobject.PaymentNoteText;
-import org.kuali.kfs.pdp.businessobject.PaymentProcess;
-import org.kuali.kfs.pdp.businessobject.PaymentStatus;
-import org.kuali.kfs.pdp.businessobject.ProcessSummary;
-import org.kuali.kfs.pdp.businessobject.options.StandardEntryClassValuesFinder.StandardEntryClass;
-import org.kuali.kfs.pdp.dataaccess.ProcessDao;
-import org.kuali.kfs.pdp.service.AchBankService;
-import org.kuali.kfs.pdp.service.AchService;
-import org.kuali.kfs.pdp.service.PaymentDetailService;
-import org.kuali.kfs.pdp.service.PaymentGroupService;
-import org.kuali.kfs.pdp.service.PdpEmailService;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.businessobject.State;
-import org.kuali.kfs.sys.service.LocationService;
-import org.kuali.kfs.sys.service.XmlUtilService;
-import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-
 import com.prowidesoftware.swift.model.mx.MxPain00100103;
 import com.prowidesoftware.swift.model.mx.MxWriteConfiguration;
 import com.prowidesoftware.swift.model.mx.dic.AccountIdentification4Choice;
@@ -124,6 +58,78 @@ import com.prowidesoftware.swift.model.mx.dic.RemittanceAmount1;
 import com.prowidesoftware.swift.model.mx.dic.RemittanceInformation5;
 import com.prowidesoftware.swift.model.mx.dic.ServiceLevel8Choice;
 import com.prowidesoftware.swift.model.mx.dic.StructuredRemittanceInformation7;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IteratorUtils;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.fp.dataaccess.DisbursementVoucherDao;
+import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
+import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.impl.identity.Person;
+import org.kuali.kfs.kns.datadictionary.validation.fieldlevel.ZipcodeValidationPattern;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.pdp.PdpConstants;
+import org.kuali.kfs.pdp.PdpKeyConstants;
+import org.kuali.kfs.pdp.businessobject.ACHBank;
+import org.kuali.kfs.pdp.businessobject.Batch;
+import org.kuali.kfs.pdp.businessobject.CustomerProfile;
+import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
+import org.kuali.kfs.pdp.businessobject.PaymentDetail;
+import org.kuali.kfs.pdp.businessobject.PaymentGroup;
+import org.kuali.kfs.pdp.businessobject.PaymentNoteText;
+import org.kuali.kfs.pdp.businessobject.PaymentProcess;
+import org.kuali.kfs.pdp.businessobject.PaymentStatus;
+import org.kuali.kfs.pdp.businessobject.ProcessSummary;
+import org.kuali.kfs.pdp.businessobject.options.StandardEntryClassValuesFinder.StandardEntryClass;
+import org.kuali.kfs.pdp.dataaccess.ProcessDao;
+import org.kuali.kfs.pdp.service.AchBankService;
+import org.kuali.kfs.pdp.service.AchService;
+import org.kuali.kfs.pdp.service.PaymentDetailService;
+import org.kuali.kfs.pdp.service.PaymentGroupService;
+import org.kuali.kfs.pdp.service.PaymentMaintenanceService;
+import org.kuali.kfs.pdp.service.PdpEmailService;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.State;
+import org.kuali.kfs.sys.service.LocationService;
+import org.kuali.kfs.sys.service.XmlUtilService;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.regex.Pattern;
 
 import edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder.BankAccountTypes;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
@@ -179,6 +185,8 @@ public class Iso20022FormatExtractor {
     private final ParameterService parameterService;
     private final PaymentDetailService paymentDetailService;
     private final PaymentGroupService paymentGroupService;
+    private final PaymentMaintenanceService paymentMaintenanceService;
+    private final PersonService personService;
     private final PdpEmailService pdpEmailService;
     private final ProcessDao processDao;
     private final XmlUtilService xmlUtilService;
@@ -194,6 +202,9 @@ public class Iso20022FormatExtractor {
     private final ZipcodeValidationPattern zipcodeValidationPattern;
 
     private int addtlRmtInfMaxLength;
+
+
+    private String fileName;
 
     private enum CheckDeliveryPriority {
         // 00000: Mail via Post to creditor's address. (Default if 'prtry' is omitted.)
@@ -233,6 +244,8 @@ public class Iso20022FormatExtractor {
             final ParameterService parameterService,
             final PaymentDetailService paymentDetailService,
             final PaymentGroupService paymentGroupService,
+            final PaymentMaintenanceService paymentMaintenanceService,
+            final PersonService personService,
             final PdpEmailService pdpEmailService,
             final ProcessDao processDao,
             final XmlUtilService xmlUtilService,
@@ -250,6 +263,8 @@ public class Iso20022FormatExtractor {
         this.parameterService = parameterService;
         this.paymentDetailService = paymentDetailService;
         this.paymentGroupService = paymentGroupService;
+        this.paymentMaintenanceService = paymentMaintenanceService;
+        this.personService = personService;
         this.pdpEmailService = pdpEmailService;
         this.processDao = processDao;
         this.xmlUtilService = xmlUtilService;
@@ -526,21 +541,30 @@ public class Iso20022FormatExtractor {
                 if (paymentDetails.isEmpty()) {
                     continue;
                 }
-                disbursementPaymentDetails.putAll(disbursementNumber, paymentDetails);
+                final Collection<PaymentDetail> paymentsToBeSkipped = new ArrayList<>();
                 /*
                  * ==========
                  * End CU Customization Block
                  * ==========
                  */
 
-                paymentDetails.forEach(paymentDetail -> {
+                for (final PaymentDetail paymentDetail : paymentDetails) {
                     LOG.debug("constructPaymentInstructionInformationSet(...) - : paymentDetail={}", paymentDetail);
 
+                    final PaymentGroup paymentGroup = paymentDetail.getPaymentGroup();
+
                     if (extractTypeContext.isExtractionType(ExtractionType.ACH)) {
+                        final PayeeACHAccount payeeAchAccount = retrievePayeeACHAccount(paymentGroup);
+                        if (ObjectUtils.isNull(payeeAchAccount)) {
+                            LOG.error("Could not locate PayeeAchAccount associated with Payment Detail Payment Group. "
+                                      + "Performing Cancel/Reissue on Payment. - : paymentDetail={}", paymentDetail);
+                            paymentsToBeSkipped.add(paymentDetail);
+                            cancelReissuePaymentDetail(paymentDetail);
+                            continue;
+                        }
+
                         updateAchCountersForNotificationEmail(extractTypeContext, paymentDetail);
                     }
-
-                    final PaymentGroup paymentGroup = paymentDetail.getPaymentGroup();
 
                     final Date disbursementDate = extractTypeContext.getDisbursementDate();
                     if (ObjectUtils.isNull(paymentGroup.getOriginalDisbursementDate())) {
@@ -551,7 +575,10 @@ public class Iso20022FormatExtractor {
                     paymentGroup.setPaymentStatus(extractTypeContext.getExtractedStatus());
 
                     businessObjectService.save(paymentGroup);
-                });
+                }
+
+                paymentDetails.removeAll(paymentsToBeSkipped);
+                disbursementPaymentDetails.putAll(disbursementNumber, paymentDetails);
             }
 
             if (disbursementPaymentDetails.isEmpty()) {
@@ -574,6 +601,17 @@ public class Iso20022FormatExtractor {
                 paymentInstructionInformationSet
         );
         return paymentInstructionInformationSet;
+    }
+
+    private void cancelReissuePaymentDetail(final PaymentDetail paymentDetail) {
+        final Person kfsUser = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
+        final String noteText =
+                "Payment has been Cancelled/Reissued due to PayeeACH account being inactive at time of extraction";
+
+        paymentMaintenanceService.cancelReissueDisbursement(paymentDetail.getPaymentGroupId().intValue(),
+                noteText,
+                kfsUser
+        );
     }
 
     /*
@@ -1665,13 +1703,13 @@ public class Iso20022FormatExtractor {
         final String financialDocumentTypeCode = paymentDetail.getFinancialDocumentTypeCode();
 
         return disbursementVoucherTypes.contains(financialDocumentTypeCode)
-               || KFSConstants.FinancialDocumentTypeCodes.PAYMENT_REQUEST.equals(financialDocumentTypeCode);
+               || PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equals(financialDocumentTypeCode);
     }
 
     private static boolean isCreditNote(
             final PaymentDetail paymentDetail
     ) {
-        return KFSConstants.FinancialDocumentTypeCodes.VENDOR_CREDIT_MEMO
+        return PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT
                 .equals(paymentDetail.getFinancialDocumentTypeCode());
     }
 
