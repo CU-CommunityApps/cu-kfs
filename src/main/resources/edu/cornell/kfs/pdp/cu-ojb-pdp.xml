@@ -65,7 +65,5 @@
     <field-descriptor name="createDate" column="CRT_DT" jdbc-type="DATE"/>
     <field-descriptor name="completedDate" column="CMPLTD_DT" jdbc-type="VARCHAR"/>
     <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
-    <field-descriptor name="bypassFeedUpdateIndicator" column="BYPASS_FEED_UPDATE" jdbc-type="VARCHAR"
-                  conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
   </class-descriptor>
   </descriptor-repository>
