@@ -43,8 +43,11 @@ public class CuViewsIntegTest extends KualiIntegTestBase {
     
     @Test
     public void testPersonDepartmentInfoView() {
-        List dataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V.query);
-        assertTrue(actualResultsMatchExpectedResults(dataValuesReturned, ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V.expectedResults));
+        List incompleteDataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_INCOMPLETE_DATA.query);
+        assertTrue(actualResultsMatchExpectedResults(incompleteDataValuesReturned, ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_INCOMPLETE_DATA.expectedResults));
+
+        List dataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_COMPLETE_DATA.query);
+        assertTrue(actualResultsMatchExpectedResults(dataValuesReturned, ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_COMPLETE_DATA.expectedResults));
     }
     
     @Test
@@ -55,13 +58,13 @@ public class CuViewsIntegTest extends KualiIntegTestBase {
     
     private boolean actualResultsMatchExpectedResults(List rowOfActualResults, HashMap<String, String> expectedResults) {
         if (rowOfActualResults.size() != 1) {
-            LOG.info("actualResultsMatchExpectedResults: Query should have returned one row of multiple key-value pairs, instead rowOfActualResults.size() = {}", rowOfActualResults.size());
+            LOG.error("actualResultsMatchExpectedResults: Query should have returned one row of multiple key-value pairs, instead rowOfActualResults.size() = {}", rowOfActualResults.size());
             return false;
         }
         
         Map<String, String> actualElementsFromResult = obtainKeyValueMapFromValueList(rowOfActualResults);
         if (actualElementsFromResult.size() != expectedResults.size()) {
-            LOG.info("actualResultsMatchExpectedResults: Number of columns we expected were not returned by the query, instead actualElementsFromResult.size() = {}", actualElementsFromResult.size());
+            LOG.error("actualResultsMatchExpectedResults: Number of columns we expected were not returned by the query, instead actualElementsFromResult.size() = {}", actualElementsFromResult.size());
             return false;
         }
         
@@ -70,11 +73,11 @@ public class CuViewsIntegTest extends KualiIntegTestBase {
             Object dataValue = entry.getValue();
             if (expectedResults.containsKey(columnName)) {
                 if (!dataValuesMatch(dataValue, expectedResults.get(columnName))) {
-                    LOG.info("actualResultsMatchExpectedResults: Value return by view {} did not match what was expected {}.", dataValue, expectedResults.get(columnName));
+                    LOG.error("actualResultsMatchExpectedResults: Value return by view {} did not match what was expected {}.", dataValue, expectedResults.get(columnName));
                     return false;
                 }
             } else {
-                LOG.info("actualResultsMatchExpectedResults: View returned columnName = {} was not found in unit test expected values.", columnName);
+                LOG.error("actualResultsMatchExpectedResults: View returned columnName = {} was not found in unit test expected values.", columnName);
                 return false;
             }
         }
