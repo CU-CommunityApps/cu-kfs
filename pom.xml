@@ -36,7 +36,8 @@
         <hsqldb.version>2.7.4</hsqldb.version>
         <httpclient.version>5.2.1</httpclient.version>
         <httpcore.version>5.2.3</httpcore.version>
-        <jackson.version>2.14.1</jackson.version>
+        <!--Backport FINP-11623-->
+        <jackson.version>2.18.1</jackson.version>
         <jakarta.el.el-api.version>3.0.3</jakarta.el.el-api.version>
         <javassist.version>3.29.2-GA</javassist.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
@@ -254,6 +255,7 @@
                                 <exclude>WEB-INF/lib/spring-tx-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-web-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-webmvc-*.jar</exclude>
+                                <exclude>WEB-INF/lib/jackson-*.jar</exclude>
                             </excludes>
                         </overlay>
                     </overlays>
@@ -868,6 +870,21 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-cbor</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-joda</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson.version}</version>
         </dependency>
         <dependency>
