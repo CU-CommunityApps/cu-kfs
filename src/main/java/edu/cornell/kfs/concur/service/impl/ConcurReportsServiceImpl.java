@@ -45,6 +45,10 @@ public class ConcurReportsServiceImpl extends DisposableClientServiceImplBase im
 
     private static final String BEARER_AUTHENTICATION_SCHEME = "Bearer";
 
+    protected ConcurAccessTokenV2Service concurAccessTokenV2Service;
+    protected ParameterService parameterService;
+    private String concurExpenseWorkflowUpdateNamespace;
+    private String concurRequestWorkflowUpdateNamespace;
     private String concurFailedRequestQueueEndpoint;
     private String concurFailedRequestDeleteNotificationEndpoint;
     private AtomicReference<String> temporaryAccessToken;
@@ -53,12 +57,102 @@ public class ConcurReportsServiceImpl extends DisposableClientServiceImplBase im
         this.temporaryAccessToken = new AtomicReference<>(KFSConstants.EMPTY_STRING);
     }
 
+    @Override
+    public void initializeTemporaryAccessToken() {
+        String accessToken = concurAccessTokenV2Service.retrieveNewAccessBearerToken();
+        if (StringUtils.isBlank(accessToken)) {
+            throw new IllegalStateException("Unexpected blank token was returned from Concur");
+        }
+        String oldToken = temporaryAccessToken.getAndSet(accessToken);
+        if (StringUtils.isNotBlank(oldToken)) {
+            LOG.warn("initializeTemporaryAccessToken, An existing non-blank token was detected; "
+                    + "an error may have prevented the previous token from being cleared out properly. "
+                    + "A new access token will be used instead.");
+        }
+    }
+
+    @Override
+    public void clearTemporaryAccessToken() {
+        String oldToken = temporaryAccessToken.getAndSet(KFSConstants.EMPTY_STRING);
+        if (StringUtils.isBlank(oldToken)) {
+            LOG.warn("clearTemporaryAccessToken, The previous token was blank; "
+                    + "an error may have occurred during token initialization.");
+        }
+    }
+
     protected String getTemporaryAccessToken() {
         String accessToken = temporaryAccessToken.get();
         if (StringUtils.isBlank(accessToken)) {
             throw new IllegalStateException("The temporary access token has not been initialized");
         }
         return accessToken;
+    }
+
+    @Override
+    public ConcurReport extractConcurReport(String reportURI) {
+        LOG.info("Extract concur report with objectURI: " + reportURI);
+        
+        if (ConcurUtils.isExpenseReportURI(reportURI)) {
+            return extractConcurReportFromExpenseDetails(reportURI);
+        }
+        
+        if (ConcurUtils.isTravelRequestURI(reportURI)) {
+            return extractConcurReportFromTravelRequestDetails(reportURI);
+        }
+        
+        return null;
+    }
+    
+    protected ConcurReport extractConcurReportFromExpenseDetails(String reportURI){
+        ExpenseReportDetailsDTO expenseReportDetailsDTO = retrieveExpenseReportDetails(reportURI);
+        List<ConcurAccountInfo> concurAccountInfos = extractAccountInfoFromExpenseReportDetails(expenseReportDetailsDTO);
+        
+        return new ConcurReport(expenseReportDetailsDTO.getReportId(), expenseReportDetailsDTO.getConcurStatusCode(), expenseReportDetailsDTO.getWorkflowActionURL(), concurAccountInfos);
+    }
+    
+    protected ConcurReport extractConcurReportFromTravelRequestDetails(String reportURI){
+        TravelRequestDetailsDTO travelRequestDetailsDTO = retrieveTravelRequestDetails(reportURI);
+        List<ConcurAccountInfo> concurAccountInfos = extractAccountInfoFromTravelRequestDetails(travelRequestDetailsDTO);
+        return new ConcurReport(travelRequestDetailsDTO.getRequestID(), travelRequestDetailsDTO.getConcurStatucCode(), travelRequestDetailsDTO.getWorkflowActionURL(), concurAccountInfos);
+
+    }
+
+    protected TravelRequestDetailsDTO retrieveTravelRequestDetails(String reportURI) {
+        TravelRequestDetailsDTO travelRequestDetails = buildTravelRequestDetailsOutput(reportURI);
+        return travelRequestDetails;
+    }
+
+    protected ExpenseReportDetailsDTO retrieveExpenseReportDetails(String reportURI) {
+        ExpenseReportDetailsDTO reportDetails = buildReportDetailsOutput(reportURI);
+        return reportDetails;
+    }
+
+    protected TravelRequestDetailsDTO buildTravelRequestDetailsOutput(String reportURI) {
+        Response response = null;
+
+        try {
+            Invocation request = buildReportDetailsClientRequest(reportURI, HttpMethod.GET);
+            response = request.invoke();
+            TravelRequestDetailsDTO reportDetails = response.readEntity(TravelRequestDetailsDTO.class);
+
+            return reportDetails;
+        } finally {
+            CURestClientUtils.closeQuietly(response);
+        }
+    }
+
+    protected ExpenseReportDetailsDTO buildReportDetailsOutput(String reportURI) {
+        Response response = null;
+
+        try {
+            Invocation request = buildReportDetailsClientRequest(reportURI, HttpMethod.GET);
+            response = request.invoke();
+            ExpenseReportDetailsDTO reportDetails = response.readEntity(ExpenseReportDetailsDTO.class);
+
+            return reportDetails;
+        } finally {
+            CURestClientUtils.closeQuietly(response);
+        }
     }
 
     protected Invocation buildReportDetailsClientRequest(String reportURI, String httpMethod) {
@@ -147,6 +241,64 @@ public class ConcurReportsServiceImpl extends DisposableClientServiceImplBase im
         
         return concurAccountInfo;
     }
+
+    private List<ConcurAccountInfo> extractAccountInfoFromTravelRequestDetails(TravelRequestDetailsDTO travelRequestDetails) {
+        List<ConcurAccountInfo> accountInfoList = new ArrayList<ConcurAccountInfo>();
+        String chart = ConcurUtils.extractCodeFromCodeAndDescriptionValue(travelRequestDetails.getCustom1());
+        String accountNumber = ConcurUtils.extractCodeFromCodeAndDescriptionValue(travelRequestDetails.getCustom2());
+        String subAccountNumber = ConcurUtils.extractCodeFromCodeAndDescriptionValue(travelRequestDetails.getCustom3());
+        String objectCode = parameterService.getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.DEFAULT_TRAVEL_REQUEST_OBJECT_CODE);
+        String subObjectCode = travelRequestDetails.getCustom4();
+        String projectCode = ConcurUtils.extractCodeFromCodeAndDescriptionValue(travelRequestDetails.getCustom5());
+        ConcurAccountInfo concurAccountInfo = new ConcurAccountInfo(chart, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode);
+        accountInfoList.add(concurAccountInfo);
+        return accountInfoList;
+    }
+
+    @Override
+    public void updateExpenseReportStatusInConcur(String workflowURI, ValidationResult validationResult) {
+        LOG.info("updateExpenseReportStatusInConcur()");
+        
+        if(validationResult.isValid()){
+            String comment = addConcurMessageHeaderAndTruncate(ConcurConstants.APPROVE_ACTION + KFSConstants.NEWLINE + validationResult.getDetailMessagesAsOneFormattedString(), ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH); 
+            buildUpdateReportOutput(workflowURI, ConcurConstants.APPROVE_ACTION, comment);
+        }
+        else{
+            buildUpdateReportOutput(workflowURI, ConcurConstants.SEND_BACK_TO_EMPLOYEE_ACTION, addConcurMessageHeaderAndTruncate(validationResult.getErrorMessagesAsOneFormattedString(), ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH));  
+        }          
+    }
+    
+    protected void buildUpdateReportOutput(String workflowURI, String action, String comment) {
+        LOG.info("buildUpdateReportOutput()");
+        Response response = null;
+
+        try {
+            String accessToken = getTemporaryAccessToken();
+            String workflowUpdateXml = buildWorkflowUpdateXML(workflowURI, action, comment);
+            response = getClient().target(workflowURI)
+                    .request()
+                    .accept(MediaType.APPLICATION_XML)
+                    .header(ConcurConstants.AUTHORIZATION_PROPERTY,
+                            BEARER_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + accessToken)
+                    .post(Entity.xml(workflowUpdateXml));
+
+            response.bufferEntity();
+            String result = response.readEntity(String.class);
+            LOG.info("Update workflow response: " + result);
+        } finally {
+            CURestClientUtils.closeQuietly(response);
+        }
+
+    }
+
+    private String buildWorkflowUpdateXML(String workflowURI, String action, String comment) {
+        String xml = "<WorkflowAction xmlns=\"" + getNamespace(workflowURI)
+                + "\"><Action>" + action + "</Action><Comment>" + comment
+                + "</Comment></WorkflowAction>";
+        
+        LOG.info("buildWorkflowUpdateXML(): Update workflow xml: " + xml);
+        return xml;
+    }
     
     @Override
     public boolean deleteFailedEventQueueItemInConcur(String noticationId) {
@@ -195,6 +347,64 @@ public class ConcurReportsServiceImpl extends DisposableClientServiceImplBase im
         } finally {
             CURestClientUtils.closeQuietly(response);
         }
+    }
+
+    private String addConcurMessageHeaderAndTruncate(String message, int maxLength) {
+        String errorMessagesString = addMessageHeader(message);
+        errorMessagesString = truncateMessageLength(errorMessagesString, maxLength);
+        return errorMessagesString;
+    }
+
+    private String addMessageHeader(String message) {
+        if (message.length() > 0) {
+            message = ConcurConstants.ERROR_MESSAGE_HEADER + message;
+        }
+        return message;
+    }
+
+    private String truncateMessageLength(String message, int maxLength) {
+        if (message.length() > maxLength) {
+            message = message.substring(0, maxLength);
+        }
+        return message;
+    }
+    
+    private String getNamespace(String workflowURI){
+        return ConcurUtils.isExpenseReportURI(workflowURI)? concurExpenseWorkflowUpdateNamespace: concurRequestWorkflowUpdateNamespace;
+    }
+    
+    public ConcurAccessTokenV2Service getConcurAccessTokenV2Service() {
+        return concurAccessTokenV2Service;
+    }
+
+    public void setConcurAccessTokenV2Service(ConcurAccessTokenV2Service concurAccessTokenV2Service) {
+        this.concurAccessTokenV2Service = concurAccessTokenV2Service;
+    }
+
+    public ParameterService getParameterService() {
+        return parameterService;
+    }
+
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
+    }
+
+    public String getConcurExpenseWorkflowUpdateNamespace() {
+        return concurExpenseWorkflowUpdateNamespace;
+    }
+
+    public void setConcurExpenseWorkflowUpdateNamespace(
+            String concurExpenseWorkflowUpdateNamespace) {
+        this.concurExpenseWorkflowUpdateNamespace = concurExpenseWorkflowUpdateNamespace;
+    }
+
+    public String getConcurRequestWorkflowUpdateNamespace() {
+        return concurRequestWorkflowUpdateNamespace;
+    }
+
+    public void setConcurRequestWorkflowUpdateNamespace(
+            String concurRequestWorkflowUpdateNamespace) {
+        this.concurRequestWorkflowUpdateNamespace = concurRequestWorkflowUpdateNamespace;
     }
 
     public String getConcurFailedRequestQueueEndpoint() {
