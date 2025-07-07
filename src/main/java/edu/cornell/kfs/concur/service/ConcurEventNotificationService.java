@@ -8,10 +8,4 @@ public interface ConcurEventNotificationService {
     
     void saveConcurEventNotification(ConcurEventNotification concurEventNotification);
     
-    Collection<ConcurEventNotification> retrieveConcurEventNotificationsForProcessing();
-    
-    void updateConcurEventNotificationFlagsAndValidationMessage(ConcurEventNotification concurEventNotification, boolean inProcess, boolean processed, boolean validationResult, String validationResultMessages);
-    
-    void retrieveAndPersistFailedEventQueueReports();
-    
 }

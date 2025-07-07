@@ -282,9 +282,6 @@
 	<bean id="concurEventNotificationService" parent="concurEventNotificationService-parentBean" />
 	<bean id="concurEventNotificationService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurEventNotificationServiceImpl" abstract="true">
 		<property name="businessObjectService" ref="businessObjectService"/>
-		<property name="concurReportsService" ref="concurReportsService"/>
-		<property name="concurEventNotificationConversionService" ref="concurEventNotificationConversionService"/>
-		<property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
 	</bean>
 
 	<bean id="concurAccountValidationService" parent="concurAccountValidationService-parentBean" />
@@ -295,16 +292,6 @@
 		<property name="subObjectCodeService" ref="subObjectCodeService" />
 		<property name="projectCodeService" ref="projectCodeService" />
 		<property name="configurationService" ref="configurationService" />
-	</bean>
-
-	<bean id="concurReportsService" parent="concurReportsService-parentBean" />
-	<bean id="concurReportsService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurReportsServiceImpl" abstract="true">
-		<property name="concurFailedRequestQueueEndpoint">
-			<value>${concur.failed.request.queue}</value>
-		</property>
-		<property name="concurFailedRequestDeleteNotificationEndpoint">
-			<value>${concur.failed.request.queue.delete}</value>
-		</property>
 	</bean>
 
 	<bean id="concurEventNotificationConversionService" parent="concurEventNotificationConversionService-parentBean" />
