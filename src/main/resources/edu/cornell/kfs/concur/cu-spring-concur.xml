@@ -299,15 +299,6 @@
 		<property name="dateTimeService" ref="dateTimeService" />
 	</bean>
 
-	<bean id="concurAccessTokenService" parent="concurAccessTokenService-parentBean" />
-	<bean id="concurAccessTokenService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurAccessTokenServiceImpl" abstract="true">
-		<property name="concurRequestAccessTokenURL" value="${concur.request.access.token.url}"/>
-		<property name="concurRefreshAccessTokenURL" value="${concur.refresh.access.token.url}"/>
-		<property name="concurRevokeAccessTokenURL" value="${concur.revoke.access.token.url}"/>
-		<property name="webServiceCredentialService" ref="webServiceCredentialService"/>
-		<property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
-	</bean>
-
     <bean id="concurBatchUtilityService" parent="concurBatchUtilityService-parentBean" />
     <bean id="concurBatchUtilityService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurBatchUtilityServiceImpl" abstract="true">
         <property name="batchInputFileService" ref="batchInputFileService" />
