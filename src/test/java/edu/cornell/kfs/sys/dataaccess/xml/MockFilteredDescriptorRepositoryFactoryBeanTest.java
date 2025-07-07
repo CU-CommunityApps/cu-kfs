@@ -42,7 +42,9 @@ import edu.cornell.kfs.tax.businessobject.ObjectCodeBucketMapping;
 @Execution(ExecutionMode.SAME_THREAD)
 public class MockFilteredDescriptorRepositoryFactoryBeanTest {
 
-    static final String CU_OJB_SYS_XML_FILE = "classpath:edu/cornell/kfs/sys/cu-ojb-sys.xml";
+    private static final String CU_OJB_SYS_XML_FILE = "classpath:edu/cornell/kfs/sys/cu-ojb-sys.xml";
+    private static final String CU_OJB_TAX_XML_FILE = "classpath:edu/cornell/kfs/tax/cu-ojb-tax.xml";
+    private static final String CU_OJB_VND_XML_FILE = "classpath:edu/cornell/kfs/vnd/cu-ojb-vnd.xml";
 
     enum TestClassDescriptor {
         @ClassDescriptorFixture(mappedClass = NoteExtendedAttribute.class, table = "KRNS_NTE_TX", fieldDescriptors = {
@@ -128,7 +130,60 @@ public class MockFilteredDescriptorRepositoryFactoryBeanTest {
                 TestClassDescriptor.ISO_FIPS_COUNTRY_MAP
             }
         )
-        SINGLE_FILE_MULTIPLE_DESCRIPTORS;
+        SINGLE_FILE_MULTIPLE_DESCRIPTORS,
+
+        @TestCaseData(
+            fileNames = { CU_OJB_SYS_XML_FILE, CU_OJB_TAX_XML_FILE },
+            descriptorsToKeep = {
+                TestClassDescriptor.NOTE_EXTENDED_ATTRIBUTE,
+                TestClassDescriptor.WEB_SERVICE_CREDENTIAL,
+                TestClassDescriptor.ISO_FIPS_COUNTRY_MAP,
+                TestClassDescriptor.OBJECT_CODE_BUCKET_MAPPING,
+                TestClassDescriptor.DV_DISBURSEMENT_VIEW
+            }
+        )
+        MULTIPLE_FILES_MULTIPLE_DESCRIPTORS,
+
+        @TestCaseData(
+            fileNames = { CU_OJB_TAX_XML_FILE },
+            descriptorsToKeep = {
+                TestClassDescriptor.NOTE_EXTENDED_ATTRIBUTE,
+                TestClassDescriptor.WEB_SERVICE_CREDENTIAL,
+                TestClassDescriptor.ISO_FIPS_COUNTRY_MAP
+            },
+            expectEmptyResults = true
+        )
+        MISMATCHED_FILE_AND_DESCRIPTORS,
+
+        @TestCaseData(
+            fileNames = { CU_OJB_SYS_XML_FILE, CU_OJB_VND_XML_FILE },
+            descriptorsToKeep = {
+                TestClassDescriptor.WEB_SERVICE_CREDENTIAL,
+                TestClassDescriptor.ISO_FIPS_COUNTRY_MAP,
+                TestClassDescriptor.OBJECT_CODE_BUCKET_MAPPING,
+                TestClassDescriptor.DV_DISBURSEMENT_VIEW
+            },
+            expectedResultsOverride = {
+                TestClassDescriptor.WEB_SERVICE_CREDENTIAL,
+                TestClassDescriptor.ISO_FIPS_COUNTRY_MAP
+            }
+        )
+        PARTIAL_DESCRIPTOR_MATCH,
+
+        @TestCaseData(
+            fileNames = { CU_OJB_TAX_XML_FILE, CU_OJB_VND_XML_FILE },
+            descriptorsToKeep = {
+                TestClassDescriptor.WEB_SERVICE_CREDENTIAL,
+                TestClassDescriptor.ISO_FIPS_COUNTRY_MAP,
+                TestClassDescriptor.OBJECT_CODE_BUCKET_MAPPING,
+                TestClassDescriptor.DV_DISBURSEMENT_VIEW
+            },
+            expectedResultsOverride = {
+                TestClassDescriptor.OBJECT_CODE_BUCKET_MAPPING,
+                TestClassDescriptor.DV_DISBURSEMENT_VIEW
+            }
+        )
+        PARTIAL_DESCRIPTOR_MATCH_2ND_CASE;
     }
 
     static Stream<TestCaseData> testCases() {
@@ -197,6 +252,8 @@ public class MockFilteredDescriptorRepositoryFactoryBeanTest {
 
             index++;
         }
+
+        assertEquals(expectedDescriptors.size(), index, "Wrong number of class descriptors returned by filter");
     }
 
     private void assertBasicFieldsOnClassDescriptorAreCorrect(final ClassDescriptorFixture expectedDescriptor,
