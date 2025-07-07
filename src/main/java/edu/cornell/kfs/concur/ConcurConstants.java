@@ -5,9 +5,7 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 
 public class ConcurConstants {
     public static final String AUTHORIZATION_PROPERTY = "Authorization";
-    public static final String CONSUMER_KEY_PROPERTY = "X-ConsumerKey";
     public static final String BASIC_AUTHENTICATION_SCHEME = "Basic";
-    public static final String OAUTH_AUTHENTICATION_SCHEME = "OAuth";
     public static final String BEARER_AUTHENTICATION_SCHEME = "Bearer";
 
     public static final int VALIDATION_RESULT_MESSAGE_MAX_LENGTH = 2000;
@@ -21,41 +19,17 @@ public class ConcurConstants {
         public static final String PROJECT_CODE = "Project Code";
     }
 
-    public static final String REFRESH_TOKEN_URL_PARAM = "refresh_token";
-    public static final String CLIENT_ID_URL_PARAM = "client_id";
-    public static final String CLIENT_SECRET_URL_PARAM = "client_secret";
-    public static final String TOKEN_URL_PARAM = "token";
-
-    public static final String CONCUR_WEB_SERVICE_GROUP_CODE = "CNCR";
-    public static final String CONCUR_LOGIN_USERNAME = "concur.login.username";
-    public static final String CONCUR_LOGIN_PASSWORD = "concur.login.password";
-    public static final String CONCUR_ACCESS_TOKEN = "concur.access.token";
-    public static final String CONCUR_REFRESH_TOKEN = "concur.refresh.token";
-    public static final String CONCUR_CONSUMER_KEY = "concur.consumer.key";
-    public static final String CONCUR_SECRET_KEY = "concur.secret.key";
-    public static final String CONCUR_ACCESS_TOKEN_EXPIRATION_DATE = "concur.access.token.expiration.date";
-
-    public static final String USERNAME_PASSWORD_SEPARATOR = ":";
-    public static final String TLS_V1_2_PROTOCOL = "TLSv1.2";
-
     public static final String EXPENSE_REPORT_URI_INDICATOR = "/expense/expensereport/";
     public static final String TRAVEL_REQUEST_URI_INDICATOR = "/travelrequest/";
 
     public static final String EXPENSE_AWAITING_EXTERNAL_VALIDATION_STATUS_CODE = "A_EXTV";
     public static final String REQUEST_AWAITING_EXTERNAL_VALIDATION_STATUS_CODE = "Q_EXTV";
 
-    public static final String APPROVE_ACTION = "Approve";
-    public static final String SEND_BACK_TO_EMPLOYEE_ACTION = "Send Back To Employee";
     public static final String APPROVE_COMMENT = "Approved via Concur Connect";
 
     public static final String ERROR_MESSAGE_STARTER = "Please resubmit your Report.\n\nThe Report is being returned due to an error. Please make the necessary corrections";
     public static final String ERROR_MESSAGE_HEADER = ERROR_MESSAGE_STARTER + "\n\nError:\n";
     public static final String DETAIL_MESSAGE_HEADER = APPROVE_COMMENT + ".  Below are the account, sub fund code, and higher ed function codes used in this report:\n";
-    
-    public static final boolean EVENT_NOTIFICATION_IN_PROCESS = true;
-    public static final boolean EVENT_NOTIFICATION_NOT_IN_PROCESS = false;
-    public static final boolean EVENT_NOTIFICATION_PROCESSED = true;
-    public static final boolean EVENT_NOTIFICATION_NOT_PROCESSED = false;
 
     public static final String FORWARD_SLASH = "/";
 
@@ -75,7 +49,6 @@ public class ConcurConstants {
     public static final String EXPENSE_TYPE_ATM_FEE = "Corporate Card Fees";
     public static final String PENDING_CLIENT = "Pending Client";
     public static final String EMPLOYEE_PAYEE_STATUS_TYPE_CODE = "E";
-    public static final String NON_EMPLOYEE_PAYEE_STATUS_TYPE_CODE = "Y";
     public static final String COMBINED_GROUP_INDICATOR = "Y";
     public static final String BANK_CODE = "DISB";
     public static final String FEED_FILE_ENTRY_HEADER_VERSION = "1.0";
@@ -99,8 +72,6 @@ public class ConcurConstants {
     
     public static final String QUESTION_MARK_USER_EQUALS = "?user=";
 
-    public static final String REQUEST_QUERY_CURRENT_DATE_INDICATOR = "CURRENT";
-    public static final String REQUEST_QUERY_LAST_DATE_INDICATOR = "PREVIOUS";
     public static final String REQUEST_QUERY_START_DATE_FIELD = "startDate";
     public static final String REQUEST_QUERY_SORT_ORDER_DESC = "DESC";
 
@@ -152,8 +123,6 @@ public class ConcurConstants {
         public static final String NO_RECORDS_WITH_VALIDATION_ERRORS_MESSAGE = "No records with validation errors.";
         public static final String NO_VALIDATION_ERROR_MESSAGES_TO_OUTPUT = "No validation errors to output.";
         public static final String END_OF_REPORT_MESSAGE = "End of report.";
-        public static final String PREFIX_FIRST_PART_NOT_SET_IN_CONFIGURATION_FILE = "PREFIX_FIRST_PART_NOT_SET_IN_CONFIGURATION_FILE";
-        public static final String PREFIX_SECOND_PART_NOT_SET_IN_CONFIGURATION_FILE = "PREFIX_SECOND_PART_NOT_SET_IN_CONFIGURATION_FILE";
     }
     
     public static final String SAE_REQUEST_ID_PREFIX = "SAE";
