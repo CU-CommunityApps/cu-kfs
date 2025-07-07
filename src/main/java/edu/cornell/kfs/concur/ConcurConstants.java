@@ -1,6 +1,5 @@
 package edu.cornell.kfs.concur;
 
-import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
 public class ConcurConstants {
