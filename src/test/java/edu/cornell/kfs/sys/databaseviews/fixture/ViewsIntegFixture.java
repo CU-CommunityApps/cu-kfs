@@ -29,23 +29,23 @@ public enum ViewsIntegFixture {
                 put("FIRST_NAME", "Isabel");
             }}),
     
-    PERSON_DEPARTMENT_INFO_V_COMPLETE_DATA("SELECT NET_ID, FULL_NAME, LAST_NAME, FIRST_NAME, MIDDLE_NAME, PRIMARY_DEPARTMENT, DEPARTMENT_CHART, DEPARTMENT_ORG_CD, DEPARTMENT_ORG_NAME, COLLEGE_CHART, COLLEGE_ORG_CD, COLLEGE_ORG_NAME FROM KFS.PERSON_DEPARTMENT_INFO_V WHERE NET_ID = 'nms32'",
+    PERSON_DEPARTMENT_INFO_V_COMPLETE_DATA("SELECT NET_ID, FULL_NAME, LAST_NAME, FIRST_NAME, MIDDLE_NAME, PRIMARY_DEPARTMENT, DEPARTMENT_CHART, DEPARTMENT_ORG_CD, DEPARTMENT_ORG_NAME, COLLEGE_CHART, COLLEGE_ORG_CD, COLLEGE_ORG_NAME FROM KFS.PERSON_DEPARTMENT_INFO_V WHERE NET_ID = 'jdh34'",
             new HashMap<String, String>(){{
-                put("NET_ID" ,"nms32");
+                put("NET_ID" ,"jdh34");
                 put("DEPARTMENT_ORG_CD", "3807");
                 put("COLLEGE_CHART", "IT");
                 put("PRIMARY_DEPARTMENT", "IT-3807");
                 put("DEPARTMENT_CHART", "IT");
-                put("FULL_NAME", "Dockstader Nicole Meredith");
+                put("FULL_NAME", "Hulslander Jay D.");
                 put("DEPARTMENT_ORG_NAME", "CIT Infrastructure");
-                put("MIDDLE_NAME", "Meredith");
-                put("LAST_NAME", "Dockstader");
+                put("MIDDLE_NAME", "D.");
+                put("LAST_NAME", "Hulslander");
                 put("COLLEGE_ORG_CD", "3800");
                 put("COLLEGE_ORG_NAME", "Information Technologies");
-                put("FIRST_NAME", "Nicole");
+                put("FIRST_NAME", "Jay");
             }}),
     
-    PCDO_INFO_V("SELECT DOCUMENT_ID, TRANSACTION_DATE, TOTAL_AMOUNT, TOTAL_AMOUNT_FORMATTED, HOLDER_NAME, HOLDER_NET_ID, VENDOR_NAME FROM KFS.PCDO_INFO_V WHERE ROWNUM = 1",
+    PCDO_INFO_V("SELECT DOCUMENT_ID, TRANSACTION_DATE, TOTAL_AMOUNT, TOTAL_AMOUNT_FORMATTED, HOLDER_NAME, HOLDER_NET_ID, VENDOR_NAME FROM KFS.PCDO_INFO_V WHERE DOCUMENT_ID = '132868'",
             new HashMap<String, String>(){{
                 put("VENDOR_NAME", "UPS*00009R540606042011");
                 put("TRANSACTION_DATE", "2011-06-30T00:00");
