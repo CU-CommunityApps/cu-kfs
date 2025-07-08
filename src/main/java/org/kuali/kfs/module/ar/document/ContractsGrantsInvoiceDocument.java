@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2024 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -138,7 +138,6 @@ public class ContractsGrantsInvoiceDocument extends CustomerInvoiceDocument {
                         DocumentService.class).getByDocumentHeaderId(getDocumentHeader()
                         .getFinancialDocumentInErrorNumber());
                 if (ObjectUtils.isNotNull(invoice)) {
-                    //CU customization to get current time from date service
                     invoice.setInvoiceDueDate(getDateTimeService().getCurrentSqlDate());
                     invoice.getInvoiceGeneralDetail().setFinalBillIndicator(false);
                     SpringContext.getBean(DocumentService.class).updateDocument(invoice);

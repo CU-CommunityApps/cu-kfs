@@ -15,7 +15,7 @@
  */
 package edu.cornell.kfs.sys.batch;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,22 +46,22 @@ public class AutoCancelBatchStep extends AbstractStep {
      * @see org.kuali.kfs.kns.bo.Step#execute(java.lang.String, java.util.Date)
      */
     @Transactional
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        LOG.info("Started AutoCancelBatchStep @ " + (new Date()).toString());
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
+        LOG.info("Started AutoCancelBatchStep @ " + (LocalDateTime.now().toString()));
 
         try {
-            LOG.info("Started AutoCancelBatchStep : Canceling FYIs and Acknowledgements @ " + (new Date()).toString());
+            LOG.info("Started AutoCancelBatchStep : Canceling FYIs and Acknowledgements @ " + (LocalDateTime.now().toString()));
         	autoCancelBatchDao.cancelFYIsAndAcknowledgements();
-            LOG.info("Completed AutoCancelBatchStep : Canceling FYIs and Acknowledgements @ " + (new Date()).toString());
-            LOG.info("Started AutoCancelBatchStep : Canceling stale documents @ " + (new Date()).toString());
+            LOG.info("Completed AutoCancelBatchStep : Canceling FYIs and Acknowledgements @ " + (LocalDateTime.now().toString()));
+            LOG.info("Started AutoCancelBatchStep : Canceling stale documents @ " + (LocalDateTime.now().toString()));
         	autoCancelBatchDao.cancelDocuments();
-            LOG.info("Completed AutoCancelBatchStep : Canceling stale documents @ " + (new Date()).toString());
+            LOG.info("Completed AutoCancelBatchStep : Canceling stale documents @ " + (LocalDateTime.now().toString()));
         } catch (Exception e) {
 			LOG.error("Unable to cancel documents. Encountered the following error: ", e);
 			return false;
 		}
 
-        LOG.info("Completed AutoCancelBatchStep @ " + (new Date()).toString());
+        LOG.info("Completed AutoCancelBatchStep @ " + (LocalDateTime.now().toString()));
 
         return true;
     }

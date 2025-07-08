@@ -1,6 +1,6 @@
 package edu.cornell.kfs.fp.batch;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +15,7 @@ public class CreateAccountingDocumentsStep extends AbstractStep {
     private CreateAccountingDocumentService createAccountingDocumentService;
 
     @Override
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         boolean processResults;
         try {
             processResults = createAccountingDocumentService.createAccountingDocumentsFromXml();

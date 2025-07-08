@@ -1,7 +1,7 @@
 package edu.cornell.kfs.fp.batch;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -22,7 +22,7 @@ public class CorporateBilledCorporatePaidLoadFlatFileStep extends AbstractStep {
     private ReportWriterService reportWriterService;
     private FileStorageService fileStorageService;
     
-    public boolean execute(String jobName, Date jobRunDate) {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) {
         procurementCardLoadTransactionsService.cleanTransactionsTable();
         List<String> fileNamesToLoad = batchInputFileService.listInputFileNamesWithDoneFile(corporateBilledCorporatePaidInputFileType);
         ((WrappingBatchService) reportWriterService).initialize();

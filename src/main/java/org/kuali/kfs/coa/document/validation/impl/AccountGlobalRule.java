@@ -50,7 +50,7 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.service.BalanceService;
 import org.kuali.kfs.gl.service.EncumbranceService;
 import org.kuali.kfs.module.cg.service.ContractsAndGrantsService;
-import org.kuali.kfs.integration.ld.LaborModuleService;
+import org.kuali.kfs.module.ld.service.LaborLedgerPendingEntryService;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kns.service.DictionaryValidationService;
@@ -1598,7 +1598,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
         }
 
         // We must not have any pending labor ledger entries
-        if (SpringContext.getBean(LaborModuleService.class).hasPendingLaborLedgerEntry(
+        if (SpringContext.getBean(LaborLedgerPendingEntryService.class).hasPendingLaborLedgerEntry(
                 detail.getAccount().getChartOfAccountsCode(), detail.getAccount().getAccountNumber())) {
             putFieldError(errorPath,
                     CUKFSKeyConstants.ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CLOSED_PENDING_LABOR_LEDGER_ENTRIES,

@@ -37,7 +37,7 @@ public @interface TaxConfigTestCase {
                     mode,
                     testCase.taxType(),
                     testCase.reportYear(),
-                    TestDateUtils.toUtilDate(testCase.processingStartDate()),
+                    TestDateUtils.toLocalDateTime(testCase.processingStartDate()),
                     TestDateUtils.toSqlDate(testCase.taxDateRangeStart()),
                     TestDateUtils.toSqlDate(testCase.taxDateRangeEnd()));
         }

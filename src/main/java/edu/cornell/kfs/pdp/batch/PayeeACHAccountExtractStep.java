@@ -1,6 +1,6 @@
 package edu.cornell.kfs.pdp.batch;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
 
@@ -15,7 +15,7 @@ public class PayeeACHAccountExtractStep extends AbstractStep {
     private PayeeACHAccountExtractService payeeACHAccountExtractService;
 
     @Override
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         return payeeACHAccountExtractService.processACHBatchDetails();
     }
 
