@@ -2,7 +2,6 @@ package edu.cornell.kfs.kns.datadictionary.validation.fieldlevel;
 
 import org.junit.Test;
 import org.kuali.kfs.kns.datadictionary.validation.fieldlevel.EmailAddressValidationPattern;
-import org.powermock.api.mockito.PowerMockito;
 
 import edu.cornell.kfs.gl.service.impl.fixture.EmailAddressTestValue;
 
@@ -11,6 +10,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -18,7 +18,7 @@ import javax.mail.internet.InternetAddress;
 import org.junit.After;
 import org.junit.Before;
 
-@SuppressWarnings( "deprecation" )
+@SuppressWarnings("deprecation")
 public class CuEmailAddressValidationPatternTest {
     private EmailAddressValidationPattern pattern;
     
@@ -27,9 +27,18 @@ public class CuEmailAddressValidationPatternTest {
 
     @Before
     public void setUp() throws Exception {
-        pattern = PowerMockito.spy(new EmailAddressValidationPattern());
-        String emailRegEx = getProperty(PATTERN_CONSTRAINT);
-        PowerMockito.doReturn(emailRegEx).when(pattern, "getRegexString");
+        final String emailRegEx = getProperty(PATTERN_CONSTRAINT);
+        
+        // Create a custom implementation that uses our regex pattern
+        pattern = new EmailAddressValidationPattern() {
+            @Override
+            public boolean matches(String value) {
+                if (value == null) {
+                    return false;
+                }
+                return Pattern.compile(emailRegEx).matcher(value).matches();
+            }
+        };
     }
     
     private String getProperty(String key) {
