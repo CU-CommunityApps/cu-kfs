@@ -15,10 +15,8 @@ import java.util.stream.Stream;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.kuali.kfs.gl.businessobject.Entry;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
-import org.kuali.kfs.krad.document.DocumentBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.module.cam.CamsPropertyConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
@@ -27,10 +25,6 @@ import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import edu.cornell.kfs.module.cam.CuCamsTestConstants;
 import edu.cornell.kfs.module.cam.fixture.EntryFixture;
@@ -39,9 +33,6 @@ import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 import edu.cornell.kfs.module.purap.fixture.CuVendorCreditMemoDocumentFixture;
 
 @SuppressWarnings("deprecation")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({CuVendorCreditMemoDocument.class, CuPaymentRequestDocument.class})
-@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*"}) 
 public class CuBatchExtractServiceImplTest {
 
     private CuBatchExtractServiceImpl cuBatchExtractServiceImpl;
@@ -158,10 +149,13 @@ public class CuBatchExtractServiceImplTest {
     }
 
     private CuPaymentRequestDocument buildMinimalPaymentRequestDocument(String documentNumber) {
-        PowerMockito.suppress(PowerMockito.constructor(DocumentBase.class));
-        CuPaymentRequestDocument paymentRequestDocument = PowerMockito.spy(new CuPaymentRequestDocument());
+        CuPaymentRequestDocument paymentRequestDocument = Mockito.spy(new TestCuPaymentRequestDocument());
         paymentRequestDocument.setDocumentNumber(documentNumber);
         return paymentRequestDocument;
+    }
+    
+    private static class TestCuPaymentRequestDocument extends CuPaymentRequestDocument {
+        // Needed to avoid constructor issues with Mockito
     }
 
     private DataDictionaryService buildMockDataDictionaryService() {

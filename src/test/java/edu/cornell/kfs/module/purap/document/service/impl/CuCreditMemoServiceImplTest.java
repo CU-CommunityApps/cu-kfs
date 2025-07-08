@@ -8,7 +8,6 @@ import java.util.HashMap;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.Note;
@@ -19,7 +18,6 @@ import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.module.purap.CreditMemoStatuses;
-import org.kuali.kfs.module.purap.document.AccountsPayableDocumentBase;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.module.purap.document.service.AccountsPayableService;
 import org.kuali.kfs.module.purap.document.service.PurapService;
@@ -37,19 +35,11 @@ import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
 import edu.cornell.kfs.vnd.fixture.VendorDetailExtensionFixture;
 import edu.cornell.kfs.vnd.fixture.VendorHeaderFixture;
-
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({CuCreditMemoServiceImplTest.TestCuCreditMemoServiceImpl.class, AccountsPayableDocumentBase.class})
-@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*"}) 
 public class CuCreditMemoServiceImplTest {
 
     private AccountsPayableService accountsPayableService;
@@ -78,9 +68,10 @@ public class CuCreditMemoServiceImplTest {
         purapService = Mockito.mock(PurapService.class);
         vendorService = new MockVendorServiceImpl();
 
-        
-        creditMemoServiceImpl = PowerMockito.spy(new TestCuCreditMemoServiceImpl());
-        PowerMockito.doNothing().when(creditMemoServiceImpl, "reIndexDocument", Mockito.any());
+        // Create a spy of TestCuCreditMemoServiceImpl using standard Mockito
+        creditMemoServiceImpl = Mockito.spy(new TestCuCreditMemoServiceImpl());
+        // Use standard Mockito to stub the reIndexDocument method
+        Mockito.doNothing().when(creditMemoServiceImpl).reIndexDocument(Mockito.any());
 
         creditMemoServiceImpl.setDocumentService(documentService);
         creditMemoServiceImpl.setNoteService(noteService);
@@ -116,8 +107,7 @@ public class CuCreditMemoServiceImplTest {
     }
 
     private CuVendorCreditMemoDocument setupVendorCreditMemoDocument() {
-        PowerMockito.suppress(PowerMockito.constructor(AccountsPayableDocumentBase.class));
-        creditMemoDocument = PowerMockito.spy(new TestableCuVendorCreditMemoDocument());
+        creditMemoDocument = new TestableCuVendorCreditMemoDocument();
 
         creditMemoDocument.setDocumentHeader(new MockFinancialSystemDocumentHeader());
         creditMemoDocument.getDocumentHeader().setDocumentDescription("Description");
@@ -132,8 +122,10 @@ public class CuCreditMemoServiceImplTest {
 
     @Test
 	public void testAddHoldOnCreditMemo() throws Exception {
-        PowerMockito.doReturn(setupVendorCreditMemoDocument()).when(creditMemoServiceImpl, "getCreditMemoDocumentById", Mockito.any());
-        PowerMockito.doNothing().when(creditMemoServiceImpl, "reIndexDocument", creditMemoDocument);
+        // Use standard Mockito to stub the getCreditMemoDocumentById method
+        Mockito.doReturn(setupVendorCreditMemoDocument()).when(creditMemoServiceImpl).getCreditMemoDocumentById(Mockito.any());
+        // Use standard Mockito to stub the reIndexDocument method
+        Mockito.doNothing().when(creditMemoServiceImpl).reIndexDocument(creditMemoDocument);
         creditMemoServiceImpl.addHoldOnCreditMemo(creditMemoDocument, "unit test");
 
 		Assert.assertTrue(creditMemoDocument.isHoldIndicator());
@@ -142,8 +134,10 @@ public class CuCreditMemoServiceImplTest {
 
 	@Test
     public void testRemoveHoldOnCreditMemo() throws Exception {
-        PowerMockito.doReturn(setupVendorCreditMemoDocument()).when(creditMemoServiceImpl, "getCreditMemoDocumentById", Mockito.any());
-        PowerMockito.doNothing().when(creditMemoServiceImpl, "reIndexDocument", creditMemoDocument);
+        // Use standard Mockito to stub the getCreditMemoDocumentById method
+        Mockito.doReturn(setupVendorCreditMemoDocument()).when(creditMemoServiceImpl).getCreditMemoDocumentById(Mockito.any());
+        // Use standard Mockito to stub the reIndexDocument method
+        Mockito.doNothing().when(creditMemoServiceImpl).reIndexDocument(creditMemoDocument);
         creditMemoServiceImpl.removeHoldOnCreditMemo(creditMemoDocument, "unit test");
 
         Assert.assertFalse(creditMemoDocument.isHoldIndicator());
@@ -194,16 +188,20 @@ public class CuCreditMemoServiceImplTest {
         public VendorCreditMemoDocument getCreditMemoDocumentById(Integer purchasingDocumentIdentifier) {
             return setupVendorCreditMemoDocument();
         }
+        
+        protected void reIndexDocument(VendorCreditMemoDocument document) {
+            // Do nothing for testing
+        }
     }
 
-    private class MockVendorDetail extends VendorDetail {
+    static class MockVendorDetail extends VendorDetail {
         @Override
         public PersistableBusinessObjectExtension getExtension() {
             return VendorDetailExtensionFixture.EXTENSION.createVendorDetailExtension();
         }
     }
 
-    private class MockVendorServiceImpl extends VendorServiceImpl {
+    static class MockVendorServiceImpl extends VendorServiceImpl {
         @Override
         public VendorDetail getVendorDetail(Integer headerId, Integer detailId) {
             VendorDetail vendorDetail = new MockVendorDetail();
@@ -222,7 +220,7 @@ public class CuCreditMemoServiceImplTest {
         }
     }
 
-    private class MockFinancialSystemDocumentHeader extends DocumentHeader {
+    static class MockFinancialSystemDocumentHeader extends DocumentHeader {
         private static final long serialVersionUID = 1L;
         private String applicationDocumentStatus;
 
@@ -238,10 +236,11 @@ public class CuCreditMemoServiceImplTest {
 
     }
     
-    private class TestableCuVendorCreditMemoDocument extends CuVendorCreditMemoDocument {
+    static class TestableCuVendorCreditMemoDocument extends CuVendorCreditMemoDocument {
         private static final long serialVersionUID = 1L;
 
         public TestableCuVendorCreditMemoDocument() {
+            // Initialize without calling super() to avoid issues with AccountsPayableDocumentBase constructor
             setNotes(new ArrayList<Note>());
         }
     }
