@@ -279,11 +279,6 @@
 		</property>
 	</bean>
 
-	<bean id="concurEventNotificationService" parent="concurEventNotificationService-parentBean" />
-	<bean id="concurEventNotificationService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurEventNotificationServiceImpl" abstract="true">
-		<property name="businessObjectService" ref="businessObjectService"/>
-	</bean>
-
 	<bean id="concurAccountValidationService" parent="concurAccountValidationService-parentBean" />
 	<bean id="concurAccountValidationService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurAccountValidationServiceImpl" abstract="true">
 		<property name="accountService" ref="accountService" />

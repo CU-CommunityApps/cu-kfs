@@ -290,7 +290,6 @@
           abstract="true" p:tablePurgeRecordsDao-ref="tablePurgeRecordsDao">
           <property name="tablesDetailsForPurge">
               <list>
-                  <ref bean="concurEventNotificationTableDetailsForPurge"/>
                   <ref bean="positionDataWorkdayTableDetailsForPurge"/>
                   <ref bean="paymentWorksVendorTableDetailsForPurge"/>
                   <ref bean="payeeAchAccountExtractTableDetailsForPurge"/>
@@ -298,18 +297,6 @@
               </list>
           </property>
     </bean>
-    
-    <bean id="concurEventNotificationLookupCriteriaPurgeService"
-          class="edu.cornell.kfs.sys.batch.service.impl.ConcurEventNotificationLookupCriteriaPurgeServiceImpl"/>
-
-    <bean id="concurEventNotificationTableDetailsForPurge" class="edu.cornell.kfs.sys.businessobject.TableDetailsForPurge"
-          p:businessObjectForRecordsTablePurge="edu.cornell.kfs.concur.businessobjects.ConcurEventNotification"
-          p:tableToPurge="CU_CNCR_EVNT_NTFCTN_T"
-          p:useDefaultDaysBeforePurgeParameter="true"
-          p:nameSpaceCode="null"
-          p:component="null"
-          p:parameterName="null"
-          p:serviceImplForPurgeTableLookupCriteria-ref="concurEventNotificationLookupCriteriaPurgeService"/>
           
     <bean id="positionDataWorkdayLookupCriteriaPurgeService"
           class="edu.cornell.kfs.sys.batch.service.impl.PositionDataWorkdayLookupCriteriaPurgeServiceImpl"/>
