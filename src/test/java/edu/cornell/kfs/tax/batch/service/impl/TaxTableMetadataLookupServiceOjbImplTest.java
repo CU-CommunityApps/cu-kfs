@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,6 +16,8 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 
 import edu.cornell.kfs.sys.util.FixtureUtils;
+import edu.cornell.kfs.sys.util.TestSpringContextExtension;
+import edu.cornell.kfs.tax.CuTaxTestConstants.TaxSpringBeans;
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 import edu.cornell.kfs.tax.batch.dto.NoteLite.NoteField;
 import edu.cornell.kfs.tax.batch.dto.VendorDetailLite.VendorField;
@@ -23,26 +26,25 @@ import edu.cornell.kfs.tax.batch.metadata.fixture.TaxDtoDbMetadataFixture;
 import edu.cornell.kfs.tax.batch.metadata.fixture.TaxFieldFixture;
 import edu.cornell.kfs.tax.batch.metadata.fixture.TaxTableFixture;
 
-/*
- * NOTE: This test and the related test for the OJB implementation are nearly identical.
- * If we decide to remove the "DefaultImpl" variant, then this test should be removed.
- */
 @Execution(ExecutionMode.SAME_THREAD)
-public class TaxTableMetadataLookupServiceDefaultImplTest {
+public class TaxTableMetadataLookupServiceOjbImplTest {
 
-    private TaxTableMetadataLookupServiceDefaultImpl metadataService;
+    @RegisterExtension
+    static TestSpringContextExtension springContextExtension = TestSpringContextExtension.forClassPathSpringXmlFile(
+            "edu/cornell/kfs/tax/batch/cu-spring-tax-metadata-test.xml");
+
+    private TaxTableMetadataLookupServiceOjbImpl metadataService;
 
     @BeforeEach
     void setUp() throws Exception {
-        metadataService = new TaxTableMetadataLookupServiceDefaultImpl();
+        metadataService = springContextExtension.getBean(
+                TaxSpringBeans.TAX_TABLE_METADATA_LOOKUP_SERVICE, TaxTableMetadataLookupServiceOjbImpl.class);
     }
 
     @AfterEach
     void tearDown() throws Exception {
         metadataService = null;
     }
-
-
 
     enum LocalTestCase {
 
@@ -98,8 +100,6 @@ public class TaxTableMetadataLookupServiceDefaultImplTest {
         VENDOR_METADATA;
 
     }
-
-
 
     @ParameterizedTest
     @EnumSource(LocalTestCase.class)

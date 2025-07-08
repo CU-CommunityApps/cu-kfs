@@ -24,6 +24,8 @@ import edu.cornell.kfs.tax.businessobject.TransactionDetail.TransactionDetailFie
  * 
  * Because the table and column names are not ORM-tool-derived, THE DEVELOPER TEAM IS RESPONSIBLE FOR MANUALLY
  * UPDATING THESE MAPPINGS WHEN STRUCTURAL CHANGES ARE MADE TO THE MAPPED TABLES!
+ * 
+ * TODO: Remove this class if we are no longer going to use or maintain this hard-coded service implementation.
  */
 public class TaxTableMetadataLookupServiceDefaultImpl
         extends TaxTableMetadataLookupServiceBase<Class<? extends BusinessObject>> {

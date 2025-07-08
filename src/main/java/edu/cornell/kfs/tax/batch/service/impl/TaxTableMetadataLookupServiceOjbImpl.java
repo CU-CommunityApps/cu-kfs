@@ -7,9 +7,6 @@ import org.kuali.kfs.krad.service.impl.PersistenceServiceStructureImplBase;
 
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 
-/*
- * TODO: Remove this class if we intend to go with the "DefaultImpl" implementation instead.
- */
 public class TaxTableMetadataLookupServiceOjbImpl
         extends TaxTableMetadataLookupServiceBase<ClassDescriptor> {
 
@@ -34,8 +31,6 @@ public class TaxTableMetadataLookupServiceOjbImpl
         final FieldDescriptor fieldDescriptor = classDescriptor.getFieldDescriptorByName(fieldMapping.getFieldName());
         return fieldDescriptor.getColumnName();
     }
-
-
 
     /**
      * Declaring this as a nested class because the top-level service is already extending another class,
