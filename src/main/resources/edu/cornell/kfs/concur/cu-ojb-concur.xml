@@ -18,6 +18,21 @@
  -->
 <descriptor-repository version="1.0">
 
+<class-descriptor class="edu.cornell.kfs.concur.businessobjects.ConcurEventNotification" table="CU_CNCR_EVNT_NTFCTN_T">
+    <field-descriptor name="concurEventNotificationId" column="CNCR_EVNT_NTFCTN_ID" jdbc-type="INTEGER" primarykey="true" sequence-name="CU_CNCR_EVNT_NTFCTN_ID_SEQ" autoincrement="true"/>
+    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+    <field-descriptor name="context" column="CNTXT" jdbc-type="VARCHAR" />
+    <field-descriptor name="eventDateTime" column="EVNT_DT" jdbc-type="DATE" />
+    <field-descriptor name="eventType" column="EVNT_TYP" jdbc-type="VARCHAR" />
+    <field-descriptor name="objectURI" column="OBJ_URI" jdbc-type="VARCHAR" /> 
+    <field-descriptor name="notificationURI" column="NTFCTN_URI" jdbc-type="VARCHAR" /> 
+    <field-descriptor name="inProcess" column="IN_PRCSS" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" /> 
+    <field-descriptor name="processed" column="PRCSSD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" /> 
+    <field-descriptor name="validationResult" column="VLDTN_RSLT" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" /> 
+    <field-descriptor name="validationResultMessage" column="VLDTN_RSLT_MSG" jdbc-type="VARCHAR" /> 
+</class-descriptor>
+
 <class-descriptor class="edu.cornell.kfs.concur.batch.businessobject.ConcurRequestedCashAdvance" table="CU_CNCR_REQ_CASH_ADV_T">
     <field-descriptor name="concurRequestedCashAdvanceId" column="CNCR_REQ_CASH_ADV_ID" jdbc-type="INTEGER" primarykey="true" sequence-name="CNCR_REQ_CASH_ADV_ID_SEQ" autoincrement="true"/>
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />

@@ -1,5 +1,7 @@
 package edu.cornell.kfs.concur;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
@@ -75,6 +77,20 @@ public class ConcurUtils {
         }
 
         return formattedString;
+    }
+    
+    public static boolean isConcurReportStatusAwaitingExternalValidation(String statusCode){
+        return ConcurConstants.EXPENSE_AWAITING_EXTERNAL_VALIDATION_STATUS_CODE.equalsIgnoreCase(statusCode) || ConcurConstants.REQUEST_AWAITING_EXTERNAL_VALIDATION_STATUS_CODE.equalsIgnoreCase(statusCode);
+    }
+
+    public static String base64Encode(String value) {
+        if (StringUtils.isBlank(value)) {
+            throw new IllegalArgumentException("value cannot be blank");
+        }
+        byte[] valueAsBytes = value.getBytes(StandardCharsets.UTF_8);
+        byte[] encodedValueAsBytes = Base64.getEncoder().encode(valueAsBytes);
+        String encodedValue = new String(encodedValueAsBytes, StandardCharsets.UTF_8);
+        return encodedValue;
     }
 
     public static String formatAsUTCDate(Date value) {
