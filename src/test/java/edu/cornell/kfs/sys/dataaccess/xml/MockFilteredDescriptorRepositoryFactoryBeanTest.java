@@ -199,6 +199,14 @@ public class MockFilteredDescriptorRepositoryFactoryBeanTest {
         assertFactoryBeanFiltersDescriptorsProperly(testCase, descriptorsToKeep);
     }
 
+    @ParameterizedTest
+    @MethodSource("testCases")
+    void testFilterOjbDescriptorsByTableName(final TestCaseData testCase) throws Exception {
+        final Set<String> descriptorsToKeep = getDescriptorsToKeep(testCase,
+                descriptor -> descriptor.table());
+        assertFactoryBeanFiltersDescriptorsProperly(testCase, descriptorsToKeep);
+    }
+
     private Set<String> getDescriptorsToKeep(final TestCaseData testCase,
             final Function<ClassDescriptorFixture, String> classDescriptorKeyProperty) {
         return Arrays.stream(testCase.descriptorsToKeep())

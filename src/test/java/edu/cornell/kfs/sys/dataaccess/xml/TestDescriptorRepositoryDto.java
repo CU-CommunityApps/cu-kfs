@@ -2,7 +2,6 @@ package edu.cornell.kfs.sys.dataaccess.xml;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.ojb.broker.metadata.DescriptorRepository;
 
@@ -40,17 +39,6 @@ public class TestDescriptorRepositoryDto {
 
     public DescriptorRepository toOjbDescriptorRepository() {
         return TestOjbMetadataUtils.createMockDescriptorRepository(getClassDescriptors(),
-                TestClassDescriptorDto::toOjbClassDescriptor);
-    }
-
-    public static DescriptorRepository createCombinedOjbDescriptorRepository(
-            final List<TestDescriptorRepositoryDto> repositories) {
-        final List<TestClassDescriptorDto> xmlClassDescriptors = repositories.stream()
-                .map(TestDescriptorRepositoryDto::getClassDescriptors)
-                .flatMap(List::stream)
-                .collect(Collectors.toUnmodifiableList());
-
-        return TestOjbMetadataUtils.createMockDescriptorRepository(xmlClassDescriptors,
                 TestClassDescriptorDto::toOjbClassDescriptor);
     }
 

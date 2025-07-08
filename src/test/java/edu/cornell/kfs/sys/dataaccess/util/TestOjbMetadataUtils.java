@@ -4,8 +4,10 @@ import java.sql.JDBCType;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.function.FailableSupplier;
 import org.apache.ojb.broker.accesslayer.conversions.FieldConversion;
@@ -19,6 +21,8 @@ import org.apache.ojb.broker.metadata.MetadataManager;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import edu.cornell.kfs.sys.dataaccess.xml.TestClassDescriptorDto;
+import edu.cornell.kfs.sys.dataaccess.xml.TestDescriptorRepositoryDto;
 import edu.cornell.kfs.sys.util.CuMockBuilder;
 
 /**
@@ -37,7 +41,7 @@ public final class TestOjbMetadataUtils {
     public static <E, T extends Throwable> E doWithMockMetadataManagerInstance(
             final DescriptorRepository mockRepository, final FailableSupplier<E, T> task) throws T {
         try (
-                final MockedStatic<MetadataManager> mockedStaticManager = Mockito.mockStatic(MetadataManager.class)
+            final MockedStatic<MetadataManager> mockedStaticManager = Mockito.mockStatic(MetadataManager.class);
         ) {
             final MetadataManager mockManagerInstance = createMockMetadataManager(mockRepository);
             mockedStaticManager.when(() -> MetadataManager.getInstance())
@@ -50,6 +54,37 @@ public final class TestOjbMetadataUtils {
         return new CuMockBuilder<>(MetadataManager.class)
                 .withReturn(MetadataManager::getGlobalRepository, mockRepository)
                 .build();
+    }
+
+    /**
+     * Convenience method for creating a unified mock DescriptorRepository from a collection of JAXB-sourced
+     * TestDescriptorRepositoryDto instances. If multiple Class Descriptors exist for the same mapped class,
+     * the later entries will override the earlier ones; therefore, it is VERY important that the descriptor
+     * repository DTOs are ordered properly if two or more contain Class Descriptors for the same class.
+     */
+    public static DescriptorRepository createCombinedMockDescriptorRepositoryFromXmlDtos(
+            final Collection<TestDescriptorRepositoryDto> descriptorRepositoryFixtures) {
+        final List<TestClassDescriptorDto> classDescriptors = descriptorRepositoryFixtures.stream()
+                .map(TestDescriptorRepositoryDto::getClassDescriptors)
+                .flatMap(List::stream)
+                .collect(Collectors.toUnmodifiableList());
+
+        final Map<Class<?>, Integer> indexedClassDescriptorsToKeep = IntStream.range(0, classDescriptors.size())
+                .mapToObj(Integer::valueOf)
+                .collect(Collectors.toUnmodifiableMap(
+                        index -> classDescriptors.get(index).getMappedClass(),
+                        Function.identity(),
+                        Math::max));
+
+        final Set<Integer> indexesToKeep = indexedClassDescriptorsToKeep.values().stream()
+                .collect(Collectors.toUnmodifiableSet());
+
+        final List<TestClassDescriptorDto> filteredClassDescriptors = IntStream.range(0, classDescriptors.size())
+                .filter(indexesToKeep::contains)
+                .mapToObj(classDescriptors::get)
+                .collect(Collectors.toUnmodifiableList());
+
+        return createMockDescriptorRepository(filteredClassDescriptors, TestClassDescriptorDto::toOjbClassDescriptor);
     }
 
     public static <T> DescriptorRepository createMockDescriptorRepository(final Collection<T> classDescriptorFixtures,

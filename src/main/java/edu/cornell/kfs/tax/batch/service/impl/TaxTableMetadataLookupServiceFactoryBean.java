@@ -13,8 +13,6 @@ import edu.cornell.kfs.tax.batch.service.TaxTableMetadataLookupService;
  * 
  * The default implementation creates the service bean by calling the default constructor on the given
  * service class.
- * 
- * TODO: If we're not implementing the OJB variant of the lookup service at this time, then remove this class.
  */
 public class TaxTableMetadataLookupServiceFactoryBean
         extends AbstractFactoryBean<TaxTableMetadataLookupService> {

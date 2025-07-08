@@ -16,6 +16,7 @@ import org.apache.ojb.broker.metadata.DescriptorRepository;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
+import edu.cornell.kfs.sys.dataaccess.util.TestOjbMetadataUtils;
 import edu.cornell.kfs.sys.util.CuXMLStreamUtils;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
@@ -25,6 +26,9 @@ import jakarta.xml.bind.Unmarshaller;
  * Only the class descriptors specified in the "descriptorsToKeep" Set will be preserved; the rest
  * will be filtered out during the XML unmarshalling process. The "descriptorsToKeep" items can be
  * either classnames or table names.
+ * 
+ * NOTE: The ordering of the source files is VERY important, because if a preserved class descriptor
+ * exists in multiple files, the entries from the later files will override those from the earlier files.
  */
 public class MockFilteredDescriptorRepositoryFactoryBean extends AbstractFactoryBean<DescriptorRepository> {
 
@@ -54,7 +58,7 @@ public class MockFilteredDescriptorRepositoryFactoryBean extends AbstractFactory
     @Override
     protected DescriptorRepository createInstance() throws Exception {
         final List<TestDescriptorRepositoryDto> repositories = readOjbRepositories();
-        return TestDescriptorRepositoryDto.createCombinedOjbDescriptorRepository(repositories);
+        return TestOjbMetadataUtils.createCombinedMockDescriptorRepositoryFromXmlDtos(repositories);
     }
 
     @Override
@@ -71,7 +75,9 @@ public class MockFilteredDescriptorRepositoryFactoryBean extends AbstractFactory
         for (final String ojbRepositoryFile : ojbRepositoryFiles) {
             XMLStreamReader xmlReader = null;
             XMLStreamReader filteredReader = null;
-            try (final InputStream fileStream = CuCoreUtilities.getResourceAsStream(ojbRepositoryFile)) {
+            try (
+                final InputStream fileStream = CuCoreUtilities.getResourceAsStream(ojbRepositoryFile);
+            ) {
                 xmlReader = inputFactory.createXMLStreamReader(fileStream, StandardCharsets.UTF_8.name());
                 filteredReader = inputFactory.createFilteredReader(xmlReader,
                         new ClassDescriptorFilter(descriptorsToKeep));
@@ -87,14 +93,20 @@ public class MockFilteredDescriptorRepositoryFactoryBean extends AbstractFactory
         return repositories.build().collect(Collectors.toUnmodifiableList());
     }
 
+    /**
+     * StreamFilter implementation that will reject any "class-descriptor" elements
+     * whose classnames or table names do not exist in the "descriptorsToKeep" Set.
+     */
     private static final class ClassDescriptorFilter implements StreamFilter {
 
         private final Set<String> descriptorsToKeep;
-        private boolean currentlySkippingClassDescriptor = false;
+        private boolean currentlySkippingClassDescriptor;
         private int localDepth;
 
         private ClassDescriptorFilter(final Set<String> descriptorsToKeep) {
             this.descriptorsToKeep = descriptorsToKeep;
+            this.currentlySkippingClassDescriptor = false;
+            this.localDepth = 0;
         }
 
         @Override
