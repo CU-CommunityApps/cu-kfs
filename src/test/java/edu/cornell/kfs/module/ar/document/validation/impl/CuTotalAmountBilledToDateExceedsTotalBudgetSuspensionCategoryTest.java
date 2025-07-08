@@ -5,23 +5,14 @@ import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.kuali.kfs.krad.document.DocumentBase;
 import org.kuali.kfs.module.ar.businessobject.InvoiceGeneralDetail;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ContractsGrantsInvoiceDocument.class})
-@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*"}) 
 public class CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategoryTest {
     
     private CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory suspensionCategory;
@@ -65,8 +56,7 @@ public class CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategoryTest {
     }
     
     private void prepareContractsGrantsInvoiceDocument(KualiDecimal totalAmountBilledToDate, KualiDecimal budgetTotal) {
-        PowerMockito.suppress(PowerMockito.constructor(DocumentBase.class));
-        contractsGrantsInvoiceDocument = PowerMockito.spy(new ContractsGrantsInvoiceDocument());
+        contractsGrantsInvoiceDocument = Mockito.mock(ContractsGrantsInvoiceDocument.class);
         
         Award award = new Award();
         
@@ -79,7 +69,7 @@ public class CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategoryTest {
         Mockito.when(invoiceGeneralDetail.getTotalAmountBilledToDate()).thenReturn(totalAmountBilledToDate);
         Mockito.when(invoiceGeneralDetail.getAward()).thenReturn(award);
         
-        contractsGrantsInvoiceDocument.setInvoiceGeneralDetail(invoiceGeneralDetail);
+        Mockito.when(contractsGrantsInvoiceDocument.getInvoiceGeneralDetail()).thenReturn(invoiceGeneralDetail);
     }
 
 }
