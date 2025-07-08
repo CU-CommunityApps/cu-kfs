@@ -12,7 +12,7 @@ import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocumentIntegTestUtils;
-import org.powermock.api.mockito.PowerMockito;
+import org.mockito.Mockito;
 
 import edu.cornell.kfs.module.cam.CuCamsTestConstants;
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
@@ -78,8 +78,7 @@ public enum CuVendorCreditMemoDocumentFixture {
 	}
 
 	public CuVendorCreditMemoDocument createVendorCreditMemoDocumentForMicroTest() {
-	    PowerMockito.suppress(PowerMockito.constructor(DocumentBase.class));
-	    CuVendorCreditMemoDocument creditMemoDocument = PowerMockito.spy(new CuVendorCreditMemoDocument());
+	    CuVendorCreditMemoDocument creditMemoDocument = Mockito.spy(new TestCuVendorCreditMemoDocument());
 	    DocumentHeader documentHeader = new DocumentHeader();
 	    
 	    documentHeader.setDocumentNumber(this.documentNumber);
@@ -94,6 +93,10 @@ public enum CuVendorCreditMemoDocumentFixture {
 	    creditMemoDocument.setCreditMemoAmount(this.creditMemoAmount);
 	    
 	    return creditMemoDocument;
+	}
+	
+	private static class TestCuVendorCreditMemoDocument extends CuVendorCreditMemoDocument {
+	    // Empty subclass to avoid constructor issues with Mockito
 	}
 
 	public java.sql.Date getParsedCreditMemoDate() {

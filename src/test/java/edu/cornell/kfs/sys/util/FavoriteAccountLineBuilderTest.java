@@ -16,7 +16,6 @@ import edu.cornell.kfs.sys.service.impl.TestUserFavoriteAccountServiceImpl;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
@@ -29,10 +28,7 @@ import org.kuali.kfs.module.purap.document.PurchasingDocumentBase;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.document.LedgerPostingDocumentBase;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.Mockito;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.MessageMap;
 
@@ -48,10 +44,6 @@ import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
 import edu.cornell.kfs.sys.service.UserProcurementProfileValidationService;
 import edu.cornell.kfs.sys.service.impl.UserProcurementProfileValidationServiceImpl;
 
-
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({CuRequisitionDocument.class, PurchaseOrderDocument.class, IWantDocument.class})
-@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*"})
 public class FavoriteAccountLineBuilderTest {
     private static UserProcurementProfileValidationService userProcurementProfileValidationService;
     private static UserFavoriteAccountService userFavoriteAccountService;
@@ -82,9 +74,21 @@ public class FavoriteAccountLineBuilderTest {
     private static final String TEST_ALT_PROJECT_CODE = "D-USA";
     private static final String TEST_ALT_ORG_REF_ID = "601";
 
+    // Test subclasses to avoid constructor issues with Mockito
+    private static class TestCuRequisitionDocument extends CuRequisitionDocument {
+        // Empty subclass to avoid constructor issues
+    }
+    
+    private static class TestPurchaseOrderDocument extends PurchaseOrderDocument {
+        // Empty subclass to avoid constructor issues
+    }
+    
+    private static class TestIWantDocument extends IWantDocument {
+        // Empty subclass to avoid constructor issues
+    }
+
     @BeforeClass
     public static void setUp() throws Exception {
-        PowerMockito.suppress(PowerMockito.constructor(LedgerPostingDocumentBase.class));
         userProcurementProfileValidationService = new UserProcurementProfileValidationServiceImpl();
         userFavoriteAccountService = new ExtendedTestUserFavoriteAccountService();
         
@@ -122,17 +126,17 @@ public class FavoriteAccountLineBuilderTest {
     }
 
     private static CuRequisitionDocument buildMockCuRequisitionDocument() {
-        CuRequisitionDocument document = PowerMockito.spy(new CuRequisitionDocument());
+        CuRequisitionDocument document = Mockito.spy(new TestCuRequisitionDocument());
         return document;
     }
     
     private static PurchaseOrderDocument buildMockPurchaseOrderDocument() {
-        PurchaseOrderDocument document = PowerMockito.spy(new PurchaseOrderDocument());
+        PurchaseOrderDocument document = Mockito.spy(new TestPurchaseOrderDocument());
         return document;
     }
     
     private static IWantDocument buildMockIWantDocument() {
-        IWantDocument document = PowerMockito.spy(new IWantDocument());
+        IWantDocument document = Mockito.spy(new TestIWantDocument());
         return document; 
     }
 
