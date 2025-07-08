@@ -80,6 +80,7 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.quality.Strictness;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
@@ -113,7 +114,7 @@ import edu.cornell.kfs.sys.util.MockPersonUtil;
 import edu.cornell.kfs.sys.util.fixture.TestUserFixture;
 import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public abstract class CreateAccountingDocumentServiceImplTestBase {
 
     private static final String SOURCE_TEST_FILE_PATH = "src/test/resources/edu/cornell/kfs/fp/batch/xml";
