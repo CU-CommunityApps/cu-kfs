@@ -6,7 +6,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-  <bean id="PayeeACHAccount" parent="PayeeACHAccount-parentBean">
+  <bean id="PayeeACHAccount" parent="PayeeACHAccount-parentBean"
+  p:searchService-ref="payeeACHAccountSearchService"
+  >
     <property name="attributes">
       <list merge="true">
         <ref bean="PayeeACHAccount-payeePrincipalName" />
@@ -153,6 +155,11 @@
       </list>
     </property>
   </bean>
+  
+    <bean id="payeeACHAccountSearchService"
+        class="edu.cornell.kfs.pdp.businessobject.lookup.CuPayeeACHAccountSearchService"
+        parent="defaultSearchService"
+        p:personService-ref="personService"/>
   
   <bean id="cuCheckingSavingsValuesFinder"
         class="edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder"/>
