@@ -28,8 +28,6 @@ public class CuEmailAddressValidationPatternTest {
     @Before
     public void setUp() throws Exception {
         final String emailRegEx = getProperty(PATTERN_CONSTRAINT);
-        
-        // Create a custom implementation that uses our regex pattern
         pattern = new EmailAddressValidationPattern() {
             @Override
             public boolean matches(String value) {
@@ -44,12 +42,11 @@ public class CuEmailAddressValidationPatternTest {
     private String getProperty(String key) {
         String value = null;
         Properties properties = new Properties();
-        try {
-            InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(CU_APPLICATION_RESOURCES_PATH);
+        try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(CU_APPLICATION_RESOURCES_PATH);) {
             properties.load(in);
             value = properties.getProperty(key);
         } catch (IOException e) {
-            
+            e.printStackTrace();
         }
         return value;
     }
