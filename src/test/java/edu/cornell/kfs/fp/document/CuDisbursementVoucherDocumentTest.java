@@ -57,7 +57,6 @@ import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtensi
 import edu.cornell.kfs.fp.document.authorization.CuDisbursementVoucherDocumentPresentationController;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
 
-@SuppressWarnings("deprecation")
 public class CuDisbursementVoucherDocumentTest {
 
     private static final String VENDOR_PAYEE_TYPE_NAME = "Vendor";
@@ -79,9 +78,7 @@ public class CuDisbursementVoucherDocumentTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        cuDisbursementVoucherDocument = new CuDisbursementVoucherDocument();
-        
-        cuDisbursementVoucherDocument = Mockito.spy(cuDisbursementVoucherDocument);
+        cuDisbursementVoucherDocument = Mockito.spy(new CuDisbursementVoucherDocument());
         Mockito.doAnswer(invocation -> {
             return null;
         }).when(cuDisbursementVoucherDocument).clearDvPayeeIdType();
