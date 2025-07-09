@@ -1,8 +1,6 @@
 package edu.cornell.kfs.concur;
 
 public class ConcurKeyConstants {
-    public static final String CONCUR_ACCOUNT_INFO_IS_REQUIRED = "error.concur.account.info.required";
-    public static final String INCORRECT_CONCUR_STATUS_CODE = "error.concur.status.invalid";
 
     public static final String CONCUR_SAE_ORPHANED_CASH_ADVANCE = "validation.error.concur.sae.orphaned.cash.advance";
     public static final String CONCUR_SAE_GROUP_WITH_ORPHANED_CASH_ADVANCE = "validation.error.concur.sae.group.with.orphaned.cash.advance";
@@ -25,13 +23,6 @@ public class ConcurKeyConstants {
     public static final String CONCUR_SAE_NO_REPORT_EMAIL_SUBJECT = "message.concur.sae.no.report.email.subject";
     public static final String CONCUR_SAE_NO_REPORT_EMAIL_BODY = "message.concur.sae.no.report.email.body";
     public static final String CONCUR_INCOMPLETE_ADDRESS = "validation.error.concur.incomplete.address";
-    public static final String MESSAGE_CONCUR_TOKEN_REPLACE_SUCCESS = "message.concur.token.replace.success";
-    public static final String MESSAGE_CONCUR_TOKEN_REVOKE_AND_REPLACE_SUCCESS = "message.concur.token.revoke.and.replace.success";
-    public static final String MESSAGE_CONCUR_TOKEN_REFRESH_SUCCESS = "message.concur.token.refresh.success";
-    public static final String MESSAGE_CONCUR_TOKEN_REVOKE_SUCCESS = "message.concur.token.revoke.success";
-    public static final String ERROR_CONCUR_TOKEN_REVOKE_NO_TOKEN = "error.concur.token.revoke.no.token";
-    public static final String MESSAGE_CONCUR_TOKEN_RESET_SUCCESS = "message.concur.token.reset.success";
-    public static final String ERROR_CONCUR_TOKEN_RESET_IN_PRODUCTION = "error.concur.token.retet.production"; 
 
     public static final String CONCUR_REQUEST_EXTRACT_CASH_ADVANCE_INVALID_UNIQUE_IDENTIFIER = "validation.error.concur.request.extract.cash.advance.invalid.unique.identifier";
     public static final String CONCUR_SAE_NOT_REQUESTED_CASH_ADVANCE_DATA_LINE = "validation.error.concur.sae.not.requested.cash.advance";
