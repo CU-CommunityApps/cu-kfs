@@ -149,13 +149,9 @@ public class CuBatchExtractServiceImplTest {
     }
 
     private CuPaymentRequestDocument buildMinimalPaymentRequestDocument(String documentNumber) {
-        CuPaymentRequestDocument paymentRequestDocument = Mockito.spy(new TestCuPaymentRequestDocument());
+        CuPaymentRequestDocument paymentRequestDocument = Mockito.spy(new CuPaymentRequestDocument());
         paymentRequestDocument.setDocumentNumber(documentNumber);
         return paymentRequestDocument;
-    }
-    
-    private static class TestCuPaymentRequestDocument extends CuPaymentRequestDocument {
-        // Needed to avoid constructor issues with Mockito
     }
 
     private DataDictionaryService buildMockDataDictionaryService() {

@@ -68,9 +68,7 @@ public class CuCreditMemoServiceImplTest {
         purapService = Mockito.mock(PurapService.class);
         vendorService = new MockVendorServiceImpl();
 
-        // Create a spy of TestCuCreditMemoServiceImpl using standard Mockito
         creditMemoServiceImpl = Mockito.spy(new TestCuCreditMemoServiceImpl());
-        // Use standard Mockito to stub the reIndexDocument method
         Mockito.doNothing().when(creditMemoServiceImpl).reIndexDocument(Mockito.any());
 
         creditMemoServiceImpl.setDocumentService(documentService);
@@ -122,9 +120,7 @@ public class CuCreditMemoServiceImplTest {
 
     @Test
 	public void testAddHoldOnCreditMemo() throws Exception {
-        // Use standard Mockito to stub the getCreditMemoDocumentById method
         Mockito.doReturn(setupVendorCreditMemoDocument()).when(creditMemoServiceImpl).getCreditMemoDocumentById(Mockito.any());
-        // Use standard Mockito to stub the reIndexDocument method
         Mockito.doNothing().when(creditMemoServiceImpl).reIndexDocument(creditMemoDocument);
         creditMemoServiceImpl.addHoldOnCreditMemo(creditMemoDocument, "unit test");
 
@@ -134,9 +130,7 @@ public class CuCreditMemoServiceImplTest {
 
 	@Test
     public void testRemoveHoldOnCreditMemo() throws Exception {
-        // Use standard Mockito to stub the getCreditMemoDocumentById method
         Mockito.doReturn(setupVendorCreditMemoDocument()).when(creditMemoServiceImpl).getCreditMemoDocumentById(Mockito.any());
-        // Use standard Mockito to stub the reIndexDocument method
         Mockito.doNothing().when(creditMemoServiceImpl).reIndexDocument(creditMemoDocument);
         creditMemoServiceImpl.removeHoldOnCreditMemo(creditMemoDocument, "unit test");
 
@@ -194,14 +188,14 @@ public class CuCreditMemoServiceImplTest {
         }
     }
 
-    static class MockVendorDetail extends VendorDetail {
+    private class MockVendorDetail extends VendorDetail {
         @Override
         public PersistableBusinessObjectExtension getExtension() {
             return VendorDetailExtensionFixture.EXTENSION.createVendorDetailExtension();
         }
     }
 
-    static class MockVendorServiceImpl extends VendorServiceImpl {
+    private class MockVendorServiceImpl extends VendorServiceImpl {
         @Override
         public VendorDetail getVendorDetail(Integer headerId, Integer detailId) {
             VendorDetail vendorDetail = new MockVendorDetail();
@@ -220,7 +214,7 @@ public class CuCreditMemoServiceImplTest {
         }
     }
 
-    static class MockFinancialSystemDocumentHeader extends DocumentHeader {
+    private class MockFinancialSystemDocumentHeader extends DocumentHeader {
         private static final long serialVersionUID = 1L;
         private String applicationDocumentStatus;
 
@@ -236,7 +230,7 @@ public class CuCreditMemoServiceImplTest {
 
     }
     
-    static class TestableCuVendorCreditMemoDocument extends CuVendorCreditMemoDocument {
+    private class TestableCuVendorCreditMemoDocument extends CuVendorCreditMemoDocument {
         private static final long serialVersionUID = 1L;
 
         public TestableCuVendorCreditMemoDocument() {

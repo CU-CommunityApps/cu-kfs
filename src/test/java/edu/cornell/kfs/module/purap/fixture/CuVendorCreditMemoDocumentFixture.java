@@ -78,7 +78,7 @@ public enum CuVendorCreditMemoDocumentFixture {
 	}
 
 	public CuVendorCreditMemoDocument createVendorCreditMemoDocumentForMicroTest() {
-	    CuVendorCreditMemoDocument creditMemoDocument = Mockito.spy(new TestCuVendorCreditMemoDocument());
+	    CuVendorCreditMemoDocument creditMemoDocument = Mockito.spy(new CuVendorCreditMemoDocument());
 	    DocumentHeader documentHeader = new DocumentHeader();
 	    
 	    documentHeader.setDocumentNumber(this.documentNumber);
@@ -93,10 +93,6 @@ public enum CuVendorCreditMemoDocumentFixture {
 	    creditMemoDocument.setCreditMemoAmount(this.creditMemoAmount);
 	    
 	    return creditMemoDocument;
-	}
-	
-	private static class TestCuVendorCreditMemoDocument extends CuVendorCreditMemoDocument {
-	    // Empty subclass to avoid constructor issues with Mockito
 	}
 
 	public java.sql.Date getParsedCreditMemoDate() {

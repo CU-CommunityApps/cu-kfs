@@ -98,12 +98,8 @@ public class FirstInvoiceForAwardSuspensionCategoryTest {
     }
 
     protected ContractsGrantsInvoiceDocument buildMockContractsGrantsInvoiceDocument(ContractsGrantsInvoiceDocumentFixture fixture) {
-        Supplier<ContractsGrantsInvoiceDocument> mockDocumentGenerator = () -> Mockito.spy(new TestContractsGrantsInvoiceDocument());
+        Supplier<ContractsGrantsInvoiceDocument> mockDocumentGenerator = () -> Mockito.spy(new ContractsGrantsInvoiceDocument());
         return fixture.toMockContractsGrantsInvoiceDocument(mockDocumentGenerator);
-    }
-    
-    private static class TestContractsGrantsInvoiceDocument extends ContractsGrantsInvoiceDocument {
-        // Needed to avoid constructor issues with Mockito
     }
 
     protected void assertExpectedDocumentStatusCriteriaArePresent(Map<String, String> criteria) {
