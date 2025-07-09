@@ -234,7 +234,6 @@ public class CuCreditMemoServiceImplTest {
         private static final long serialVersionUID = 1L;
 
         public TestableCuVendorCreditMemoDocument() {
-            // Initialize without calling super() to avoid issues with AccountsPayableDocumentBase constructor
             setNotes(new ArrayList<Note>());
         }
     }
