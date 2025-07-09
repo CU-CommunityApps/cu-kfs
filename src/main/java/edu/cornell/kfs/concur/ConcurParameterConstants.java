@@ -38,10 +38,7 @@ public class ConcurParameterConstants {
     public static final String CONCUR_PROCESS_CASH_ADVANCES_FROM_SAE_DATA_IND = "CONCUR_PROCESS_CASH_ADVANCES_FROM_SAE_DATA_IND";
     public static final String CONCUR_CASH_ADVANCE_PDP_DOCUMENT_TYPE = "CONCUR_CASH_ADVANCE_PDP_DOCUMENT_TYPE";
     public static final String DEFAULT_CONCUR_VALID_TRAVELER_STATUS_FOR_PDP_EMPLOYEE_CASH_ADVANCE_PROCESSING = "DEFAULT_CONCUR_VALID_TRAVELER_STATUS_FOR_PDP_EMPLOYEE_CASH_ADVANCE_PROCESSING";
-    
-    public static final String CONCUR_PROCESS_FAILED_EVENT_QUEUE = "CONCUR_PROCESS_FAILED_EVENT_QUEUE";
-    public static final String CONCUR_REFRESH_ACCESS_TOKEN = "CONCUR_REFRESH_ACCESS_TOKEN";
-    
+
     public static final String CONCUR_REPORT_EMAIL_FROM_ADDRESS = "CONCUR_REPORT_EMAIL_FROM_ADDRESS";
     public static final String CONCUR_REPORT_EMAIL_TO_ADDRESS = "CONCUR_REPORT_EMAIL_TO_ADDRESS";
     
@@ -67,6 +64,5 @@ public class ConcurParameterConstants {
     public static final String CONCUR_EVENT_V2_PROCESSING_REPORT_DETAIL_ITEM = "concur.event.v2.processing.report.detail.item";
     public static final String CONCUR_EVENT_V2_PROCESSING_REPORT_TITLE = "concur.event.v2.processing.report.title";
     public static final String CONCUR_EVENT_V2_PROCESSING_REPORT_FILE_NAME = "concur.event.v2.processing.report.file.name";
-    public static final String CONCUR_EVENT_V2_PROCESSING_REPORT_EMAIL_SUBJECT = "concur.event.v2.processing.report.email.subject";
 
 }

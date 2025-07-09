@@ -36,7 +36,6 @@
 		</property>
 		<property name="jobNames">
 			<list>
-				<value>concurEventNotificationProcessingBatchJob</value>
 				<value>concurEventNotificationProcessingV2BatchJob</value>
 				<value>concurRequestExtractToPdpFeedJob</value>
 				<value>concurStandardAccountingExtractToPdpAndCollectorBatchJob</value>
@@ -272,27 +271,6 @@
 			<bean class="org.kuali.kfs.gl.batch.CollectorBatchTrailerRecordFieldUtil"/>
 		</property>
 	</bean>
-	
-	<bean id="concurEventNotificationProcessingBatchJob" parent="unscheduledJobDescriptor">
-		<property name="steps">
-			<list>
-				<ref bean="concurEventNotificationProcessingStep" />
-			</list>
-		</property>
-	</bean>
-
-	<bean id="concurEventNotificationProcessingStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurEventNotificationProcessingStep">
-		<property name="concurEventNotificationProcessingService" ref="concurEventNotificationProcessingService" />
-		<property name="concurReportsService" ref="concurReportsService" />
-	</bean>
-	
-	<bean id="concurEventNotificationProcessingService" parent="concurEventNotificationProcessingService-parentBean" />
-	<bean id="concurEventNotificationProcessingService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurEventNotificationProcessingServiceImpl" abstract="true">
-	    <property name="concurAccountValidationService" ref="concurAccountValidationService"/>
-	    <property name="concurEventNotificationService" ref="concurEventNotificationService"/>
-	    <property name="concurReportsService" ref="concurReportsService"/>
-	    <property name="configurationService" ref="configurationService" />
-	</bean>
 
 	<bean id="concurAuthenticationService" parent="concurAuthenticationService-parentBean" />
 	<bean id="concurAuthenticationService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurAuthenticationServiceImpl" abstract="true">
@@ -300,15 +278,7 @@
 			<value>${concur.authorization.token}</value>
 		</property>
 	</bean>
-	
-	<bean id="concurEventNotificationService" parent="concurEventNotificationService-parentBean" />
-	<bean id="concurEventNotificationService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurEventNotificationServiceImpl" abstract="true">
-		<property name="businessObjectService" ref="businessObjectService"/>
-		<property name="concurReportsService" ref="concurReportsService"/>
-		<property name="concurEventNotificationConversionService" ref="concurEventNotificationConversionService"/>
-		<property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
-	</bean>
-	
+
 	<bean id="concurAccountValidationService" parent="concurAccountValidationService-parentBean" />
 	<bean id="concurAccountValidationService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurAccountValidationServiceImpl" abstract="true">
 		<property name="accountService" ref="accountService" />
@@ -318,37 +288,10 @@
 		<property name="projectCodeService" ref="projectCodeService" />
 		<property name="configurationService" ref="configurationService" />
 	</bean>
-	
+
 	<bean id="concurEventNotificationConversionService" parent="concurEventNotificationConversionService-parentBean" />
 	<bean id="concurEventNotificationConversionService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurEventNotificationConversionServiceImpl" abstract="true">
 		<property name="dateTimeService" ref="dateTimeService" />
-	</bean>
-    
-    <bean id="concurReportsService" parent="concurReportsService-parentBean" />
-	<bean id="concurReportsService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurReportsServiceImpl" abstract="true">
-		<property name="concurAccessTokenV2Service" ref="concurAccessTokenV2Service" />
-		<property name="parameterService" ref="parameterService" />
-		<property name="concurExpenseWorkflowUpdateNamespace">
-			<value>${concur.expense.workflow.update.namespace}</value>
-		</property>
-		<property name="concurRequestWorkflowUpdateNamespace">
-			<value>${concur.request.workflow.update.namespace}</value>
-		</property>
-		<property name="concurFailedRequestQueueEndpoint">
-			<value>${concur.failed.request.queue}</value>
-		</property>
-		<property name="concurFailedRequestDeleteNotificationEndpoint">
-			<value>${concur.failed.request.queue.delete}</value>
-		</property>
-	</bean>
-	
-	<bean id="concurAccessTokenService" parent="concurAccessTokenService-parentBean" />
-	<bean id="concurAccessTokenService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurAccessTokenServiceImpl" abstract="true">
-		<property name="concurRequestAccessTokenURL" value="${concur.request.access.token.url}"/>
-		<property name="concurRefreshAccessTokenURL" value="${concur.refresh.access.token.url}"/>
-		<property name="concurRevokeAccessTokenURL" value="${concur.revoke.access.token.url}"/>
-		<property name="webServiceCredentialService" ref="webServiceCredentialService"/>
-		<property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
 	</bean>
 
     <bean id="concurBatchUtilityService" parent="concurBatchUtilityService-parentBean" />
