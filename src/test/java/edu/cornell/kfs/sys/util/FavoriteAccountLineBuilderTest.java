@@ -74,19 +74,6 @@ public class FavoriteAccountLineBuilderTest {
     private static final String TEST_ALT_PROJECT_CODE = "D-USA";
     private static final String TEST_ALT_ORG_REF_ID = "601";
 
-    // Test subclasses to avoid constructor issues with Mockito
-    private static class TestCuRequisitionDocument extends CuRequisitionDocument {
-        // Empty subclass to avoid constructor issues
-    }
-    
-    private static class TestPurchaseOrderDocument extends PurchaseOrderDocument {
-        // Empty subclass to avoid constructor issues
-    }
-    
-    private static class TestIWantDocument extends IWantDocument {
-        // Empty subclass to avoid constructor issues
-    }
-
     @BeforeClass
     public static void setUp() throws Exception {
         userProcurementProfileValidationService = new UserProcurementProfileValidationServiceImpl();
@@ -126,17 +113,17 @@ public class FavoriteAccountLineBuilderTest {
     }
 
     private static CuRequisitionDocument buildMockCuRequisitionDocument() {
-        CuRequisitionDocument document = Mockito.spy(new TestCuRequisitionDocument());
+        CuRequisitionDocument document = Mockito.spy(new CuRequisitionDocument());
         return document;
     }
     
     private static PurchaseOrderDocument buildMockPurchaseOrderDocument() {
-        PurchaseOrderDocument document = Mockito.spy(new TestPurchaseOrderDocument());
+        PurchaseOrderDocument document = Mockito.spy(new PurchaseOrderDocument());
         return document;
     }
     
     private static IWantDocument buildMockIWantDocument() {
-        IWantDocument document = Mockito.spy(new TestIWantDocument());
+        IWantDocument document = Mockito.spy(new IWantDocument());
         return document; 
     }
 
