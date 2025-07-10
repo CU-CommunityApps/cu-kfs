@@ -16,12 +16,12 @@ import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
 public class CuContractsGrantsInvoiceDocumentServiceImplTest {
     
-    private TestCuContractsGrantsInvoiceDocumentServiceImpl cuContractsGrantsInvoiceDocumentServiceImpl;
+    private CuContractsGrantsInvoiceDocumentServiceImpl cuContractsGrantsInvoiceDocumentServiceImpl;
     private TestContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument;
 
     @Before
     public void setUp() throws Exception {
-        cuContractsGrantsInvoiceDocumentServiceImpl = Mockito.spy(new TestCuContractsGrantsInvoiceDocumentServiceImpl());
+        cuContractsGrantsInvoiceDocumentServiceImpl = Mockito.spy(new CuContractsGrantsInvoiceDocumentServiceImpl());
         Mockito.doNothing().when(cuContractsGrantsInvoiceDocumentServiceImpl).recalculateObjectCodeByCategory(
             Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
     }
@@ -156,19 +156,6 @@ public class CuContractsGrantsInvoiceDocumentServiceImplTest {
         contractsGrantsInvoiceDocument.setInvoiceGeneralDetail(invoiceGeneralDetail);
         
         cuContractsGrantsInvoiceDocumentServiceImpl.prorateBill(contractsGrantsInvoiceDocument);
-    }
-    
-    private static class TestCuContractsGrantsInvoiceDocumentServiceImpl extends CuContractsGrantsInvoiceDocumentServiceImpl {
-        
-        public KualiDecimal getAwardBilledToDateAmount(Object award) {
-            // This method is overridden to be mockable
-            return KualiDecimal.ZERO;
-        }
-        
-        public KualiDecimal getOtherTotalBilledForAwardPeriod(Object award) {
-            // This method is overridden to be mockable
-            return KualiDecimal.ZERO;
-        }
     }
     
     private static class TestContractsGrantsInvoiceDocument extends ContractsGrantsInvoiceDocument {

@@ -56,7 +56,7 @@ public class CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategoryTest {
     }
     
     private void prepareContractsGrantsInvoiceDocument(KualiDecimal totalAmountBilledToDate, KualiDecimal budgetTotal) {
-        contractsGrantsInvoiceDocument = Mockito.mock(ContractsGrantsInvoiceDocument.class);
+        contractsGrantsInvoiceDocument = Mockito.spy(new ContractsGrantsInvoiceDocument());
         
         Award award = new Award();
         

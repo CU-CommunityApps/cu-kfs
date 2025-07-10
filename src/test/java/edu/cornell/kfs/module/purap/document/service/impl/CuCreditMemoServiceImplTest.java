@@ -18,7 +18,6 @@ import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.module.purap.CreditMemoStatuses;
-import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.module.purap.document.service.AccountsPayableService;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
@@ -68,7 +67,7 @@ public class CuCreditMemoServiceImplTest {
         purapService = Mockito.mock(PurapService.class);
         vendorService = new MockVendorServiceImpl();
 
-        creditMemoServiceImpl = Mockito.spy(new TestCuCreditMemoServiceImpl());
+        creditMemoServiceImpl = Mockito.spy(new CuCreditMemoServiceImpl());
         Mockito.doNothing().when(creditMemoServiceImpl).reIndexDocument(Mockito.any());
 
         creditMemoServiceImpl.setDocumentService(documentService);
@@ -176,17 +175,6 @@ public class CuCreditMemoServiceImplTest {
 		Assert.assertNotNull(creditMemoDocument.getPaymentMethodCode());
 		Assert.assertEquals("P", creditMemoDocument.getPaymentMethodCode());
 	}
-
-    class TestCuCreditMemoServiceImpl extends CuCreditMemoServiceImpl {
-        @Override
-        public VendorCreditMemoDocument getCreditMemoDocumentById(Integer purchasingDocumentIdentifier) {
-            return setupVendorCreditMemoDocument();
-        }
-        
-        protected void reIndexDocument(VendorCreditMemoDocument document) {
-            // Do nothing for testing
-        }
-    }
 
     private class MockVendorDetail extends VendorDetail {
         @Override
