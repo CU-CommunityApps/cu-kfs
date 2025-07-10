@@ -79,9 +79,7 @@ public class CuDisbursementVoucherDocumentTest {
     @BeforeClass
     public static void setUp() throws Exception {
         cuDisbursementVoucherDocument = Mockito.spy(new CuDisbursementVoucherDocument());
-        Mockito.doAnswer(invocation -> {
-            return null;
-        }).when(cuDisbursementVoucherDocument).clearDvPayeeIdType();
+        Mockito.doNothing().when(cuDisbursementVoucherDocument).clearDvPayeeIdType();
 
         ccs1Person = MockPersonUtil.createMockPerson(UserNameFixture.ccs1);
         mls398Person = MockPersonUtil.createMockPerson(UserNameFixture.mls398);
@@ -102,7 +100,9 @@ public class CuDisbursementVoucherDocumentTest {
     @AfterClass
     public static void tearDown() {
         DisbursementVoucherDocument.setVendorService(null);
+        DisbursementVoucherDocument.setDisbursementVoucherPayeeService(null);
         CuDisbursementVoucherDocument.setDocumentHelperService(null);
+        DisbursementVoucherDocument.setDisbursementVoucherPaymentReasonService(null);
         KNSGlobalVariables.getMessageList().clear();
     }
 
