@@ -17,7 +17,7 @@ import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 public class CuContractsGrantsInvoiceDocumentServiceImplTest {
     
     private CuContractsGrantsInvoiceDocumentServiceImpl cuContractsGrantsInvoiceDocumentServiceImpl;
-    private TestContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument;
+    private ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument;
 
     @Before
     public void setUp() throws Exception {
@@ -131,7 +131,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImplTest {
         Mockito.doReturn(totalAmountBilledToDate).when(cuContractsGrantsInvoiceDocumentServiceImpl).getAwardBilledToDateAmount(Mockito.any());
         Mockito.doReturn(totalAmountBilledToDate).when(cuContractsGrantsInvoiceDocumentServiceImpl).getOtherTotalBilledForAwardPeriod(Mockito.any());
         
-        contractsGrantsInvoiceDocument = Mockito.spy(new TestContractsGrantsInvoiceDocument());
+        contractsGrantsInvoiceDocument = Mockito.spy(new ContractsGrantsInvoiceDocument());
         Mockito.doReturn(true).when(contractsGrantsInvoiceDocument).isCorrectionDocument();
         
         Award award = new Award();
@@ -157,14 +157,5 @@ public class CuContractsGrantsInvoiceDocumentServiceImplTest {
         
         cuContractsGrantsInvoiceDocumentServiceImpl.prorateBill(contractsGrantsInvoiceDocument);
     }
-    
-    private static class TestContractsGrantsInvoiceDocument extends ContractsGrantsInvoiceDocument {
-        
-        public boolean isCorrectionDocument() {
-            // This method is overridden to be mockable
-            return false;
-        }
-    }
-
     
 }
