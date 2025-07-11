@@ -16,8 +16,7 @@ import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
-import org.kuali.kfs.sys.document.LedgerPostingDocumentBase;
-import org.powermock.api.mockito.PowerMockito;
+import org.mockito.Mockito;
 
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
@@ -31,10 +30,9 @@ public final class MockDocumentUtils {
     }
 
     public static <T extends Document> T buildMockDocument(Class<T> documentClass) {
-        PowerMockito.suppress(PowerMockito.constructor(LedgerPostingDocumentBase.class));
         T document = null;
         try {
-            document = PowerMockito.spy(documentClass.newInstance());
+            document = Mockito.spy(documentClass.newInstance());
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -50,13 +48,9 @@ public final class MockDocumentUtils {
         Class<? extends TargetAccountingLine> targetAccountingLineClass = AccountingDocumentClassMappingUtils
                 .getTargetAccountingLineClassByDocumentClass(documentClass);
         
-        try {
-            PowerMockito.doReturn(sourceAccountingLineClass).when(document, "getSourceAccountingLineClass");
-            PowerMockito.doReturn(targetAccountingLineClass).when(document, "getTargetAccountingLineClass");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-            
-        }
+        Mockito.doReturn(sourceAccountingLineClass).when(document).getSourceAccountingLineClass();
+        Mockito.doReturn(targetAccountingLineClass).when(document).getTargetAccountingLineClass();
+        
         return document;
     }
 
@@ -104,28 +98,15 @@ public final class MockDocumentUtils {
         }
     }
 
-    /*
-     * If you use this function you must add the following annotation to your unit test
-     * @PrepareForTest({MockDocumentUtils.TestNote.class})
-     */
     public static Note buildMockNote(String noteText) {
         Note note = buildMockNote();
         note.setNoteText(noteText);
         return note;
     }
     
-    /*
-     * If you use this function you must add the following annotation to your unit test
-     * @PrepareForTest({MockDocumentUtils.TestNote.class})
-     */
     public static Note buildMockNote() {
-        PowerMockito.suppress(PowerMockito.constructor(Note.class));
-        TestNote note = PowerMockito.spy(new TestNote());
-        try {
-            PowerMockito.doNothing().when(note, "setNotePostedTimestampToCurrent");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        TestNote note = Mockito.spy(new TestNote());
+        Mockito.doNothing().when(note).setNotePostedTimestampToCurrent();
         note.setNotePostedTimestampToCurrent();
         
         return note;
@@ -136,16 +117,11 @@ public final class MockDocumentUtils {
         
     }
     
-    /*
-     * If you use this function you must add the following annotation to your unit test
-     * @PrepareForTest({MockDocumentUtils.TestAdHocRoutePerson.class})
-     */
     public static AdHocRoutePerson buildMockAdHocRoutePerson() {
         Person person = new Person();
         person.setExtension(new PersonExtension());
 
-        PowerMockito.suppress(PowerMockito.constructor(AdHocRoutePerson.class));
-        TestAdHocRoutePerson adHocPerson = PowerMockito.spy(new TestAdHocRoutePerson());
+        TestAdHocRoutePerson adHocPerson = Mockito.spy(new TestAdHocRoutePerson());
         adHocPerson.setType(AdHocRouteRecipient.PERSON_TYPE);
         adHocPerson.setPerson(person);
         return adHocPerson;
