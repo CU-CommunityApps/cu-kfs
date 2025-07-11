@@ -42,7 +42,6 @@ import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.junit.After;
-import org.junit.runner.RunWith;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
@@ -78,10 +77,6 @@ import org.kuali.kfs.sys.service.impl.FileSystemFileStorageServiceImpl;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.quality.Strictness;
-
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
@@ -99,7 +94,6 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentEntryFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 import edu.cornell.kfs.fp.businessobject.CreateAccountingDocumentFileEntry;
-import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -108,13 +102,10 @@ import edu.cornell.kfs.sys.businessobject.fixture.WebServiceCredentialFixture;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.util.GlobalResourceLoaderUtils;
 import edu.cornell.kfs.sys.util.MockDocumentUtils;
-import edu.cornell.kfs.sys.util.MockDocumentUtils.TestAdHocRoutePerson;
-import edu.cornell.kfs.sys.util.MockDocumentUtils.TestNote;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
 import edu.cornell.kfs.sys.util.fixture.TestUserFixture;
 import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
-@RunWith(MockitoJUnitRunner.Silent.class)
 public abstract class CreateAccountingDocumentServiceImplTestBase {
 
     private static final String SOURCE_TEST_FILE_PATH = "src/test/resources/edu/cornell/kfs/fp/batch/xml";
