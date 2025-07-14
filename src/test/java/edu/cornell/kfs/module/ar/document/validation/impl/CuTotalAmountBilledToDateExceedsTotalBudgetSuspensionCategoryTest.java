@@ -69,7 +69,7 @@ public class CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategoryTest {
         Mockito.when(invoiceGeneralDetail.getTotalAmountBilledToDate()).thenReturn(totalAmountBilledToDate);
         Mockito.when(invoiceGeneralDetail.getAward()).thenReturn(award);
         
-        Mockito.when(contractsGrantsInvoiceDocument.getInvoiceGeneralDetail()).thenReturn(invoiceGeneralDetail);
+        Mockito.doReturn(invoiceGeneralDetail).when(contractsGrantsInvoiceDocument).getInvoiceGeneralDetail();
     }
 
 }
