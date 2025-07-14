@@ -5,24 +5,15 @@ import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.kuali.kfs.krad.document.DocumentBase;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDetail;
 import org.kuali.kfs.module.ar.businessobject.InvoiceGeneralDetail;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ContractsGrantsInvoiceDocument.class})
-@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*"}) 
 public class CuContractsGrantsInvoiceDocumentServiceImplTest {
     
     private CuContractsGrantsInvoiceDocumentServiceImpl cuContractsGrantsInvoiceDocumentServiceImpl;
@@ -30,8 +21,9 @@ public class CuContractsGrantsInvoiceDocumentServiceImplTest {
 
     @Before
     public void setUp() throws Exception {
-        cuContractsGrantsInvoiceDocumentServiceImpl   = PowerMockito.spy(new CuContractsGrantsInvoiceDocumentServiceImpl());
-        PowerMockito.doNothing().when(cuContractsGrantsInvoiceDocumentServiceImpl, "recalculateObjectCodeByCategory", Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+        cuContractsGrantsInvoiceDocumentServiceImpl = Mockito.spy(new CuContractsGrantsInvoiceDocumentServiceImpl());
+        Mockito.doNothing().when(cuContractsGrantsInvoiceDocumentServiceImpl).recalculateObjectCodeByCategory(
+                Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
     }
 
     @After
@@ -136,12 +128,11 @@ public class CuContractsGrantsInvoiceDocumentServiceImplTest {
     
     
     private void prepareCinvDocumentAndProrate(KualiDecimal totalAmountBilledToDate, KualiDecimal budgetTotal, double... invoiceAmounts) throws Exception {
-        PowerMockito.doReturn(totalAmountBilledToDate).when(cuContractsGrantsInvoiceDocumentServiceImpl, "getAwardBilledToDateAmount", Mockito.any());
-        PowerMockito.doReturn(totalAmountBilledToDate).when(cuContractsGrantsInvoiceDocumentServiceImpl, "getOtherTotalBilledForAwardPeriod", Mockito.any());
+        Mockito.doReturn(totalAmountBilledToDate).when(cuContractsGrantsInvoiceDocumentServiceImpl).getAwardBilledToDateAmount(Mockito.any());
+        Mockito.doReturn(totalAmountBilledToDate).when(cuContractsGrantsInvoiceDocumentServiceImpl).getOtherTotalBilledForAwardPeriod(Mockito.any());
         
-        PowerMockito.suppress(PowerMockito.constructor(DocumentBase.class));
-        contractsGrantsInvoiceDocument = PowerMockito.spy(new ContractsGrantsInvoiceDocument());
-        PowerMockito.doReturn(true).when(contractsGrantsInvoiceDocument, "isCorrectionDocument");
+        contractsGrantsInvoiceDocument = Mockito.spy(new ContractsGrantsInvoiceDocument());
+        Mockito.doReturn(true).when(contractsGrantsInvoiceDocument).isCorrectionDocument();
         
         Award award = new Award();
         
@@ -166,6 +157,5 @@ public class CuContractsGrantsInvoiceDocumentServiceImplTest {
         
         cuContractsGrantsInvoiceDocumentServiceImpl.prorateBill(contractsGrantsInvoiceDocument);
     }
-
     
 }
