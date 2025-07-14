@@ -23,7 +23,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImplTest {
     public void setUp() throws Exception {
         cuContractsGrantsInvoiceDocumentServiceImpl = Mockito.spy(new CuContractsGrantsInvoiceDocumentServiceImpl());
         Mockito.doNothing().when(cuContractsGrantsInvoiceDocumentServiceImpl).recalculateObjectCodeByCategory(
-            Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+                Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
     }
 
     @After
