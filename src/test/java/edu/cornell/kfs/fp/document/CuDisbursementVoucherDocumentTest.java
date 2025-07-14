@@ -17,7 +17,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.kuali.kfs.fp.FPKeyConstants;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
@@ -38,7 +37,6 @@ import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KfsAuthorizationConstants;
-import org.kuali.kfs.sys.document.LedgerPostingDocumentBase;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.kfs.sys.service.impl.DocumentHelperServiceImpl;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -52,10 +50,6 @@ import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
@@ -63,9 +57,6 @@ import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtensi
 import edu.cornell.kfs.fp.document.authorization.CuDisbursementVoucherDocumentPresentationController;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({CuDisbursementVoucherDocument.class})
-@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*"}) 
 public class CuDisbursementVoucherDocumentTest {
 
     private static final String VENDOR_PAYEE_TYPE_NAME = "Vendor";
@@ -87,9 +78,8 @@ public class CuDisbursementVoucherDocumentTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        PowerMockito.suppress(PowerMockito.constructor(LedgerPostingDocumentBase.class));
-        cuDisbursementVoucherDocument = PowerMockito.spy(new CuDisbursementVoucherDocument());
-        PowerMockito.doNothing().when(cuDisbursementVoucherDocument, "clearDvPayeeIdType");
+        cuDisbursementVoucherDocument = Mockito.spy(new CuDisbursementVoucherDocument());
+        Mockito.doNothing().when(cuDisbursementVoucherDocument).clearDvPayeeIdType();
 
         ccs1Person = MockPersonUtil.createMockPerson(UserNameFixture.ccs1);
         mls398Person = MockPersonUtil.createMockPerson(UserNameFixture.mls398);
@@ -101,16 +91,18 @@ public class CuDisbursementVoucherDocumentTest {
         documentHelperService = new TestDocumentHelperService();
         disbursementVoucherPaymentReasonService = new TestDisbursementVoucherPaymentReasonService();
 
-        cuDisbursementVoucherDocument.setVendorService(vendorService);
-        cuDisbursementVoucherDocument.setDisbursementVoucherPayeeService(disbursementVoucherPayeeService);
-        cuDisbursementVoucherDocument.setDocumentHelperService(documentHelperService);
-        cuDisbursementVoucherDocument.setDisbursementVoucherPaymentReasonService(disbursementVoucherPaymentReasonService);
+        DisbursementVoucherDocument.setVendorService(vendorService);
+        DisbursementVoucherDocument.setDisbursementVoucherPayeeService(disbursementVoucherPayeeService);
+        CuDisbursementVoucherDocument.setDocumentHelperService(documentHelperService);
+        DisbursementVoucherDocument.setDisbursementVoucherPaymentReasonService(disbursementVoucherPaymentReasonService);
     }
 
     @AfterClass
     public static void tearDown() {
-        cuDisbursementVoucherDocument.setVendorService(null);
-        cuDisbursementVoucherDocument.setDocumentHelperService(null);
+        DisbursementVoucherDocument.setVendorService(null);
+        DisbursementVoucherDocument.setDisbursementVoucherPayeeService(null);
+        CuDisbursementVoucherDocument.setDocumentHelperService(null);
+        DisbursementVoucherDocument.setDisbursementVoucherPaymentReasonService(null);
         KNSGlobalVariables.getMessageList().clear();
     }
 

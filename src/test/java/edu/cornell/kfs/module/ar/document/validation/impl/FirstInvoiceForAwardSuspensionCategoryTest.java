@@ -16,8 +16,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.kuali.kfs.krad.document.DocumentBase;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.ArPropertyConstants;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
@@ -29,17 +27,10 @@ import org.kuali.kfs.sys.document.service.impl.FinancialSystemDocumentServiceImp
 import org.kuali.kfs.core.api.search.SearchOperator;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import edu.cornell.kfs.module.ar.CuArPropertyConstants;
 import edu.cornell.kfs.module.ar.document.fixture.ContractsGrantsInvoiceDocumentFixture;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ContractsGrantsInvoiceDocument.class})
-@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*"}) 
 public class FirstInvoiceForAwardSuspensionCategoryTest {
 
     private FinancialSystemDocumentService financialSystemDocumentService;
@@ -47,7 +38,6 @@ public class FirstInvoiceForAwardSuspensionCategoryTest {
 
     @Before
     public void setUp() throws Exception {
-        PowerMockito.suppress(PowerMockito.constructor(DocumentBase.class));
         financialSystemDocumentService = new FinancialSystemDocumentServiceImpl();
         suspensionCategory = new FirstInvoiceForAwardSuspensionCategory();
         suspensionCategory.setFinancialSystemDocumentService(financialSystemDocumentService);
@@ -108,7 +98,7 @@ public class FirstInvoiceForAwardSuspensionCategoryTest {
     }
 
     protected ContractsGrantsInvoiceDocument buildMockContractsGrantsInvoiceDocument(ContractsGrantsInvoiceDocumentFixture fixture) {
-        Supplier<ContractsGrantsInvoiceDocument> mockDocumentGenerator = () -> PowerMockito.spy(new ContractsGrantsInvoiceDocument());
+        Supplier<ContractsGrantsInvoiceDocument> mockDocumentGenerator = () -> Mockito.spy(new ContractsGrantsInvoiceDocument());
         return fixture.toMockContractsGrantsInvoiceDocument(mockDocumentGenerator);
     }
 
