@@ -30,7 +30,7 @@
               p:unconditionallyReadOnly="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="bankAccountNumber" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="bankAccountTypeCode" p:required="true"/>
-        <bean parent="MaintainableFieldDefinition" p:name="standardEntryClass"/>
+        <bean parent="MaintainableFieldDefinition" p:name="standardEntryClass" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="payeeEmailAddress" p:required="false"/>
         <bean parent="MaintainableFieldDefinition"
               p:name="achTransactionType"
