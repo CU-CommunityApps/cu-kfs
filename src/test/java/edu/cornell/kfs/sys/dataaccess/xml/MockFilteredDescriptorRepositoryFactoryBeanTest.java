@@ -1,8 +1,8 @@
 package edu.cornell.kfs.sys.dataaccess.xml;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -202,8 +202,7 @@ public class MockFilteredDescriptorRepositoryFactoryBeanTest {
     @ParameterizedTest
     @MethodSource("testCases")
     void testFilterOjbDescriptorsByTableName(final TestCaseData testCase) throws Exception {
-        final Set<String> descriptorsToKeep = getDescriptorsToKeep(testCase,
-                descriptor -> descriptor.table());
+        final Set<String> descriptorsToKeep = getDescriptorsToKeep(testCase, ClassDescriptorFixture::table);
         assertFactoryBeanFiltersDescriptorsProperly(testCase, descriptorsToKeep);
     }
 
@@ -267,7 +266,7 @@ public class MockFilteredDescriptorRepositoryFactoryBeanTest {
     private void assertBasicFieldsOnClassDescriptorAreCorrect(final ClassDescriptorFixture expectedDescriptor,
             final Object classDescriptor, final int index) {
         assertNotNull(classDescriptor, "Found a null class descriptor at index " + index);
-        assertTrue(classDescriptor instanceof ClassDescriptor,
+        assertInstanceOf(ClassDescriptor.class, classDescriptor,
                 "Found a non-ClassDescriptor object at index " + index);
 
         final ClassDescriptor actualDescriptor = (ClassDescriptor) classDescriptor;

@@ -44,7 +44,7 @@ public final class TestOjbMetadataUtils {
             final MockedStatic<MetadataManager> mockedStaticManager = Mockito.mockStatic(MetadataManager.class);
         ) {
             final MetadataManager mockManagerInstance = createMockMetadataManager(mockRepository);
-            mockedStaticManager.when(() -> MetadataManager.getInstance())
+            mockedStaticManager.when(MetadataManager::getInstance)
                     .thenReturn(mockManagerInstance);
             return task.get();
         }
@@ -70,7 +70,7 @@ public final class TestOjbMetadataUtils {
                 .collect(Collectors.toUnmodifiableList());
 
         final Map<Class<?>, Integer> indexedClassDescriptorsToKeep = IntStream.range(0, classDescriptors.size())
-                .mapToObj(Integer::valueOf)
+                .boxed()
                 .collect(Collectors.toUnmodifiableMap(
                         index -> classDescriptors.get(index).getMappedClass(),
                         Function.identity(),
@@ -79,9 +79,9 @@ public final class TestOjbMetadataUtils {
         final Set<Integer> indexesToKeep = indexedClassDescriptorsToKeep.values().stream()
                 .collect(Collectors.toUnmodifiableSet());
 
-        final List<TestClassDescriptorDto> filteredClassDescriptors = IntStream.range(0, classDescriptors.size())
-                .filter(indexesToKeep::contains)
-                .mapToObj(classDescriptors::get)
+        final List<TestClassDescriptorDto> filteredClassDescriptors = indexesToKeep.stream()
+                .sorted()
+                .map(classDescriptors::get)
                 .collect(Collectors.toUnmodifiableList());
 
         return createMockDescriptorRepository(filteredClassDescriptors, TestClassDescriptorDto::toOjbClassDescriptor);
@@ -131,8 +131,9 @@ public final class TestOjbMetadataUtils {
                 .withReturn(ClassDescriptor::getClassOfObject, mappedClass)
                 .withReturn(ClassDescriptor::getClassNameOfObject, mappedClass.getName())
                 .withReturn(ClassDescriptor::getFullTableName, tableName)
-                .withAnswer(ClassDescriptor::getFieldDescriptions,
-                        invocation -> fieldDescriptors.stream().toArray(FieldDescriptor[]::new))
+                .withAnswer(
+                        ClassDescriptor::getFieldDescriptions,
+                        invocation -> fieldDescriptors.toArray(FieldDescriptor[]::new))
                 .withAnswer(
                         classDescriptor -> classDescriptor.getFieldDescriptorByName(Mockito.anyString()),
                         invocation -> fieldDescriptorsMap.get(invocation.getArgument(0)))
