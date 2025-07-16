@@ -5,7 +5,7 @@ package edu.cornell.kfs.module.receiptProcessing.batch;
 
 
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
@@ -17,7 +17,7 @@ public class ReceiptProcessingStep extends AbstractStep {
     private ReceiptProcessingService receiptProcessingService;
     private BatchInputFileType batchInputFileType;
     
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         return receiptProcessingService.loadFiles();
     }
 

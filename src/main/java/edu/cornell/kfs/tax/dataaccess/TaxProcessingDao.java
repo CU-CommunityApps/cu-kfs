@@ -1,5 +1,6 @@
 package edu.cornell.kfs.tax.dataaccess;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -28,7 +29,7 @@ public interface TaxProcessingDao {
      * @param processingStartDate The date-time when the current tax processing execution started.
      */
     void doTaxProcessing(String taxType, int reportYear, java.sql.Date startDate, java.sql.Date endDate, boolean vendorForeign,
-            java.util.Date processingStartDate);
+            LocalDateTime processingStartDate);
 
     /**
      * Helper method that takes a list of document IDs and returns a List containing only the ones

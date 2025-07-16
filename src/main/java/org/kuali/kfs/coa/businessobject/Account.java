@@ -27,17 +27,16 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.service.SubFundGroupService;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.gl.businessobject.SufficientFundRebuild;
-import org.kuali.kfs.module.cg.service.ContractsAndGrantsService;
-import org.kuali.kfs.integration.ld.LaborBenefitRateCategory;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.KualiModuleService;
 import org.kuali.kfs.module.cg.businessobject.AwardAccount;
 import org.kuali.kfs.module.cg.businessobject.CFDA;
+import org.kuali.kfs.module.cg.service.ContractsAndGrantsService;
+import org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.Campus;
@@ -1201,9 +1200,6 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     public LaborBenefitRateCategory getLaborBenefitRateCategory() {
-        laborBenefitRateCategory = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(
-                LaborBenefitRateCategory.class).retrieveExternalizableBusinessObjectIfNecessary(this,
-                laborBenefitRateCategory, "laborBenefitRateCategory");
         return laborBenefitRateCategory;
     }
 

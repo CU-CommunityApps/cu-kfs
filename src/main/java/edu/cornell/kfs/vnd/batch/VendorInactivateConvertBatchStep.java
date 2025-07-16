@@ -1,6 +1,6 @@
 package edu.cornell.kfs.vnd.batch;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
@@ -17,7 +17,7 @@ public class VendorInactivateConvertBatchStep  extends AbstractStep {
     private VendorInactivateConvertBatchService vendorInactivateConvertBatchService;
     private BatchInputFileType batchInputFileType;
     
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         return vendorInactivateConvertBatchService.processVendorUpdates();
     }
 

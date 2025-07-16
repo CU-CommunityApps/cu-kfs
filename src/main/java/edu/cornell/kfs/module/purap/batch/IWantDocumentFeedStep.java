@@ -1,6 +1,6 @@
 package edu.cornell.kfs.module.purap.batch;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +17,7 @@ public class IWantDocumentFeedStep extends AbstractStep {
 	/**
 	 * @see org.kuali.kfs.kns.bo.Step#execute(java.lang.String, java.util.Date)
 	 */
-	public boolean execute(String jobName, Date jobRunDate) {
+	public boolean execute(String jobName, LocalDateTime jobRunDate) {
 		return iWantDocumentFeedService.processIWantDocumentFiles();
 
 	}
