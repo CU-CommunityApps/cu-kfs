@@ -25,6 +25,35 @@
           p:fileExtension="csv"
           p:csvEnumClass="edu.cornell.kfs.tax.businessobject.TransactionDetail$TransactionDetailField"/>
 
+    <bean id="testDescriptorRepository"
+          class="edu.cornell.kfs.sys.dataaccess.xml.MockFilteredDescriptorRepositoryFactoryBean">
+        <property name="ojbRepositoryFiles">
+            <list>
+                <value>classpath:org/kuali/kfs/krad/config/OJB-repository-krad.xml</value>
+                <value>classpath:org/kuali/kfs/sys/ojb-sys.xml</value>
+                <value>classpath:org/kuali/kfs/vnd/ojb-vnd.xml</value>
+                <value>classpath:edu/cornell/kfs/sys/cu-ojb-sys.xml</value>
+                <value>classpath:edu/cornell/kfs/tax/cu-ojb-tax.xml</value>
+                <value>classpath:edu/cornell/kfs/vnd/cu-ojb-vnd.xml</value>
+            </list>
+        </property>
+        <property name="descriptorsToKeep">
+            <set>
+                <value>org.kuali.kfs.sys.businessobject.DocumentHeader</value>
+                <value>org.kuali.kfs.krad.bo.Note</value>
+                <value>org.kuali.kfs.vnd.businessobject.VendorHeader</value>
+                <value>org.kuali.kfs.vnd.businessobject.VendorDetail</value>
+                <value>org.kuali.kfs.vnd.businessobject.VendorAddress</value>
+                <value>edu.cornell.kfs.tax.businessobject.TransactionDetail</value>
+            </set>
+        </property>
+    </bean>
+
+    <bean id="taxTableMetadataLookupService"
+          parent="taxTableMetadataLookupService-parentBean"
+          class="edu.cornell.kfs.tax.batch.service.impl.TestTaxTableMetadataLookupServiceFactoryBean"
+          p:descriptorRepository-ref="testDescriptorRepository"/>
+
     <bean id="transactionOverrideService" class="${unit.test.classname}"
           factory-method="buildMockTransactionOverrideService"/>
 
@@ -59,6 +88,7 @@
                 <idref bean="taxParameterService-parentBean"/>
                 <idref bean="parameterService"/>
                 <idref bean="testTransactionDetailCsvInputFileType"/>
+                <idref bean="testDescriptorRepository"/>
                 <idref bean="dateTimeService"/>
                 <idref bean="encryptionService"/>
                 <idref bean="cuTaxResources"/>
