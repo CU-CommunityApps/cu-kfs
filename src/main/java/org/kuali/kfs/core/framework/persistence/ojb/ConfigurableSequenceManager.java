@@ -39,11 +39,11 @@ import java.util.Properties;
 /**
  * A sequence manager implementation which can be configured at runtime via the KEW
  * Configuration API.
+ * 
+ * Cornell customization: KualiCo removed this class with FINP-10106 and is now using a MySql specific class. 
+ * We copied this in our cu base code to continue using it.
  */
 @Deprecated
-
-// Cornell customization: KualiCo removed this class with FINP-10106 and is now using a MySql specific class. 
-// We copied this in our cu base code to continue using it.
 public class ConfigurableSequenceManager implements SequenceManager {
 
     private static final String PROPERTY_PREFIX_ATTRIBUTE = "property.prefix";
