@@ -159,7 +159,8 @@
     <bean id="payeeACHAccountSearchService"
         class="edu.cornell.kfs.pdp.businessobject.lookup.CuPayeeACHAccountSearchService"
         parent="defaultSearchService"
-        p:personService-ref="personService"/>
+        p:personService-ref="personService"
+        p:criteriaLookupService-ref="criteriaLookupService" />
   
   <bean id="cuCheckingSavingsValuesFinder"
         class="edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder"/>
