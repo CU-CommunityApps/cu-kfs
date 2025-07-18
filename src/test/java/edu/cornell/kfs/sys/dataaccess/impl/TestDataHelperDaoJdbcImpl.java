@@ -80,6 +80,11 @@ public class TestDataHelperDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdb
     }
 
     @Override
+    public <T> int[] executeBatchUpdate(CuSqlQuery sqlQuery, List<T> batchItems) {
+        return super.executeBatchUpdate(sqlQuery, batchItems);
+    }
+
+    @Override
     public void forciblyCommitTransaction() {
         execute(CuSqlQuery.of("COMMIT"));
     }

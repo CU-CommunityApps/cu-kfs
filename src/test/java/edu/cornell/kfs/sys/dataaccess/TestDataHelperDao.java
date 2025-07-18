@@ -15,6 +15,8 @@ public interface TestDataHelperDao {
 
     int executeUpdate(final CuSqlQuery sqlQuery);
 
+    <T> int[] executeBatchUpdate(final CuSqlQuery sqlQuery, final List<T> batchItems);
+
     void forciblyCommitTransaction();
 
     void copyCsvFilesFromClasspathToDatabaseFolder(final List<String> filesToCopy) throws IOException;
