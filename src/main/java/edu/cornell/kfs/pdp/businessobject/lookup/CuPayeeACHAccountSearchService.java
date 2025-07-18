@@ -39,7 +39,7 @@ public class CuPayeeACHAccountSearchService extends DefaultSearchService {
     protected Pair<Collection<? extends BusinessObjectBase>, Integer> executeSearch(
             final Class<? extends BusinessObjectBase> businessObjectClass, final int skip, final int limit,
             final String sortField, final boolean sortAscending, final Map<String, String> searchProps) {
-        
+
         if (StringUtils.isNotBlank(searchProps.get(CUPdpPropertyConstants.PAYEE_PRINCIPAL_NAME))) {
             List<PayeeACHAccount> results = null;
 
@@ -84,13 +84,14 @@ public class CuPayeeACHAccountSearchService extends DefaultSearchService {
                 // Build the criteria and run the search.
 
                 QueryByCriteria.Builder builder = QueryByCriteria.Builder.create();
-                
+
                 builder.setMaxResults(LookupUtils.getSearchResultsLimit(PayeeACHAccount.class));
                 if (!searchProps.isEmpty()) {
                     searchProps.remove(CUPdpPropertyConstants.PAYEE_PRINCIPAL_NAME);
-                    builder.setStartAtIndex(skip + 1);
+                    builder.setStartAtIndex(skip);
                     searchProps.remove(CUPdpPropertyConstants.PAYEE_PRINCIPAL_NAME);
                     searchProps.remove("skip");
+                    searchProps.remove("sort");
                     searchProps.remove("limit");
                     builder.setPredicates(PredicateUtils.convertMapToPredicate(searchProps),
                             principalNameEquivalentPredicate);
@@ -110,7 +111,13 @@ public class CuPayeeACHAccountSearchService extends DefaultSearchService {
                     Collections.sort(results, new BeanPropertyComparator(defaultSortColumns, true));
                 }
             }
-            return Pair.of(results.subList(skip + 1, skip + limit), results.size());
+            if (results == null) {
+                return Pair.of(new ArrayList<PayeeACHAccount>(), 0);
+            } else {
+                int start = 0;
+                int end = results.size() > limit ? limit : results.size();
+                return Pair.of(results.subList(start, end), results.size());
+            }
         }
 
         else
