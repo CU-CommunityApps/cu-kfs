@@ -426,7 +426,7 @@ public class KimFeedServiceImpl implements KimFeedService {
     @Override
     public void markPersonDataChangesAsRead() {
         int numRowsMarked = kimFeedEdwDao.markEdwDataAsRead();
-        LOG.info("markPersonDataChangesAsRead, Successfully marked {} EDW rows as read", numRowsMarked);
+        LOG.info("markPersonDataChangesAsRead, Successfully marked {} EDW.CU_PERSON_DATA_KFS_DELTA_MSTR rows as read", numRowsMarked);
     }
 
     @CacheEvict(value = { Person.CACHE_NAME }, allEntries = true)
