@@ -1,10 +1,8 @@
 package edu.cornell.kfs.sys.util;
 
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,13 +10,9 @@ import org.kuali.kfs.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdb
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.SqlParameterValue;
-
-import edu.cornell.kfs.sys.CUKFSConstants;
 
 public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDaoBaseJdbc {
     private static final Logger LOG = LogManager.getLogger();
-    private static final String PARAMETER_MESSAGE_FORMAT = "(Type: {0}, Value: {1})";
     
     protected <T> List<T> queryForValues(CuSqlQuery sqlQuery, RowMapper<T> rowMapper) {
         return queryForValues(sqlQuery, rowMapper, true);
@@ -103,18 +97,7 @@ public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDa
     }
 
     protected void logSQL(CuSqlQuery sqlQuery) {
-        LOG.info("logSQL, queryString: " + sqlQuery.getQueryString());
-        LOG.info("logSQL, parameters: " + buildParametersMessage(sqlQuery));
-    }
-
-    private String buildParametersMessage(CuSqlQuery sqlQuery) {
-        return sqlQuery.getParametersForLogging().stream()
-                .map(this::buildMessageForSingleParameter)
-                .collect(Collectors.joining(CUKFSConstants.COMMA_AND_SPACE));
-    }
-
-    private String buildMessageForSingleParameter(SqlParameterValue parameter) {
-        return MessageFormat.format(PARAMETER_MESSAGE_FORMAT, parameter.getSqlType(), parameter.getValue());
+        sqlQuery.logSQL();
     }
 
 }
