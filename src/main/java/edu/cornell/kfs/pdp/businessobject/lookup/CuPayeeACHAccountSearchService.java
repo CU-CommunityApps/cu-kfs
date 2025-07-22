@@ -30,7 +30,7 @@ import edu.cornell.kfs.pdp.CUPdpPropertyConstants;
 
 public class CuPayeeACHAccountSearchService extends DefaultSearchService {
     private static final Logger LOG = LogManager.getLogger(CuPayeeACHAccountSearchService.class);
-    
+
     // Constants for search parameter keys
     private static final String SKIP_PARAM = "skip";
     private static final String SORT_PARAM = "sort";
@@ -44,21 +44,18 @@ public class CuPayeeACHAccountSearchService extends DefaultSearchService {
             final Class<? extends BusinessObjectBase> businessObjectClass, final int skip, final int limit,
             final String sortField, final boolean sortAscending, final Map<String, String> searchProps) {
         final String principalName = searchProps.get(CUPdpPropertyConstants.PAYEE_PRINCIPAL_NAME);
-        
+
         if (StringUtils.isBlank(principalName)) {
             return super.executeSearch(businessObjectClass, skip, limit, sortField, sortAscending, searchProps);
         }
-        
+
         final List<PayeeACHAccount> results = searchByPrincipalName(principalName, searchProps, skip, sortField);
         return createSearchResult(results, limit);
     }
-    
-    private List<PayeeACHAccount> searchByPrincipalName(
-            final String principalName, 
-            final Map<String, String> searchProps, 
-            final int skip, 
-            final String sortField) {
-        
+
+    private List<PayeeACHAccount> searchByPrincipalName(final String principalName,
+            final Map<String, String> searchProps, final int skip, final String sortField) {
+
         final List<Person> people = findPeopleByPrincipalName(principalName);
         if (people.isEmpty()) {
             LOG.debug("searchByPrincipalName, No people found for principal name: {}", principalName);
@@ -79,17 +76,16 @@ public class CuPayeeACHAccountSearchService extends DefaultSearchService {
         // Sort results
         return sortResults(results, sortField);
     }
-    
+
     private List<Person> findPeopleByPrincipalName(final String principalName) {
-        final Map<String, String> searchCriteria = Collections.singletonMap(
-            KIMPropertyConstants.Principal.PRINCIPAL_NAME, principalName);
+        final Map<String, String> searchCriteria = Collections.singletonMap(KIMPropertyConstants.Principal.PRINCIPAL_NAME, principalName);
         return personService.findPeople(searchCriteria);
     }
-    
+
     private Pair<List<String>, List<String>> extractPersonIds(final List<Person> people) {
         final List<String> entityIds = new ArrayList<>();
         final List<String> employeeIds = new ArrayList<>();
-        
+
         for (final Person person : people) {
             if (StringUtils.isNotBlank(person.getEntityId())) {
                 entityIds.add(person.getEntityId());
@@ -98,10 +94,10 @@ public class CuPayeeACHAccountSearchService extends DefaultSearchService {
                 employeeIds.add(person.getEmployeeId());
             }
         }
-        
+
         return Pair.of(entityIds, employeeIds);
     }
-    
+
     private Predicate buildPrincipalNamePredicate(final List<String> entityIds, final List<String> employeeIds) {
         // Build the sub-predicate to limit by the entity or employee IDs for the given
         // principal names.
@@ -109,22 +105,19 @@ public class CuPayeeACHAccountSearchService extends DefaultSearchService {
         if (employeeIds.isEmpty()) {
             principalNameEquivalentPredicate = PredicateFactory.and(
                     PredicateFactory.equal(PdpPropertyConstants.PAYEE_IDENTIFIER_TYPE_CODE, PayeeIdTypeCodes.ENTITY),
-                    PredicateFactory.in(PdpPropertyConstants.PAYEE_ID_NUMBER,
-                            entityIds.toArray(new String[entityIds.size()])));
+                    PredicateFactory.in(PdpPropertyConstants.PAYEE_ID_NUMBER, entityIds.toArray(new String[entityIds.size()])));
         } else {
-            principalNameEquivalentPredicate = PredicateFactory.or(PredicateFactory.and(
-                    PredicateFactory.equal(PdpPropertyConstants.PAYEE_IDENTIFIER_TYPE_CODE, PayeeIdTypeCodes.ENTITY),
-                    PredicateFactory.in(PdpPropertyConstants.PAYEE_ID_NUMBER,
-                            entityIds.toArray(new String[entityIds.size()]))),
+            principalNameEquivalentPredicate = PredicateFactory.or(
                     PredicateFactory.and(
-                            PredicateFactory.equal(PdpPropertyConstants.PAYEE_IDENTIFIER_TYPE_CODE,
-                                    PayeeIdTypeCodes.EMPLOYEE),
-                            PredicateFactory.in(PdpPropertyConstants.PAYEE_ID_NUMBER,
-                                    employeeIds.toArray(new String[employeeIds.size()]))));
+                            PredicateFactory.equal(PdpPropertyConstants.PAYEE_IDENTIFIER_TYPE_CODE, PayeeIdTypeCodes.ENTITY),
+                            PredicateFactory.in(PdpPropertyConstants.PAYEE_ID_NUMBER, entityIds.toArray(new String[entityIds.size()]))),
+                    PredicateFactory.and(
+                            PredicateFactory.equal(PdpPropertyConstants.PAYEE_IDENTIFIER_TYPE_CODE, PayeeIdTypeCodes.EMPLOYEE),
+                            PredicateFactory.in(PdpPropertyConstants.PAYEE_ID_NUMBER, employeeIds.toArray(new String[employeeIds.size()]))));
         }
         return principalNameEquivalentPredicate;
     }
-    
+
     private List<PayeeACHAccount> executePayeeSearch(final Map<String, String> searchProps, final int skip,
             final Predicate principalNamePredicate) {
 
@@ -144,7 +137,7 @@ public class CuPayeeACHAccountSearchService extends DefaultSearchService {
                 .getResults();
         return new ArrayList<>(results);
     }
-    
+
     private Map<String, String> cleanSearchProperties(final Map<String, String> searchProps) {
         final Map<String, String> cleanedProps = new java.util.HashMap<>(searchProps);
         cleanedProps.remove(CUPdpPropertyConstants.PAYEE_PRINCIPAL_NAME);
@@ -153,7 +146,7 @@ public class CuPayeeACHAccountSearchService extends DefaultSearchService {
         cleanedProps.remove(LIMIT_PARAM);
         return cleanedProps;
     }
-    
+
     private List<PayeeACHAccount> sortResults(final List<PayeeACHAccount> results, final String sortField) {
         if (StringUtils.isNotBlank(sortField)) {
             final List<String> sortColumns = List.of(sortField);
@@ -161,10 +154,10 @@ public class CuPayeeACHAccountSearchService extends DefaultSearchService {
         }
         return results;
     }
-    
+
     private Pair<Collection<? extends BusinessObjectBase>, Integer> createSearchResult(
             final List<PayeeACHAccount> results, final int limit) {
-        
+
         if (results == null || results.isEmpty()) {
             return Pair.of(new ArrayList<PayeeACHAccount>(), 0);
         }
@@ -172,7 +165,7 @@ public class CuPayeeACHAccountSearchService extends DefaultSearchService {
         final int totalSize = results.size();
         final int endIndex = Math.min(results.size(), limit);
         final List<PayeeACHAccount> paginatedResults = results.subList(0, endIndex);
-        
+
         return Pair.of(paginatedResults, totalSize);
     }
 
