@@ -58,7 +58,10 @@
     
     
     <bean id="processIndividualPdpCancelPaidService" parent="processIndividualPdpCancelPaidService-parentBean"
-            class="edu.cornell.kfs.pdp.batch.service.impl.CuProcessIndividualPdpCancelPaidServiceImpl"/>
+            class="edu.cornell.kfs.pdp.batch.service.impl.CuProcessIndividualPdpCancelPaidServiceImpl"
+            p:creditMemoService-ref="creditMemoService"
+            p:parameterService-ref="parameterService"
+            p:paymentRequestService-ref="paymentRequestService"/>
     
     <bean id="pdpFormatService" parent="pdpFormatService-parentBean" 
           class="com.rsmart.kuali.kfs.pdp.service.impl.AchBundlerFormatServiceImpl"

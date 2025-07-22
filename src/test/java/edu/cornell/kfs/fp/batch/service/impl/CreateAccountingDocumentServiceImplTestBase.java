@@ -14,6 +14,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -112,7 +114,7 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
     private static final String TARGET_TEST_FILE_PATH = "test/fp/accountingXmlDocument";
     private static final String FULL_FILE_PATH_FORMAT = "%s/%s%s";
     private static final int DOCUMENT_NUMBER_START = 1000;
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HH_mm_ss_S, Locale.US);
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HH_mm_ss_S, Locale.US);
 
     protected TestCreateAccountingDocumentServiceImpl createAccountingDocumentService;
     private List<AccountingDocument> routedAccountingDocuments;
@@ -381,7 +383,7 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
 
     private DateTimeService buildMockDateTimeService() throws Exception {
         DateTimeService dateTimeService = Mockito.mock(DateTimeService.class);
-        Mockito.when(dateTimeService.toDateTimeStringForFilename(Mockito.any())).then(this::formatDate);
+        Mockito.when(dateTimeService.toDateTimeStringForFilename(Mockito.any(LocalDateTime.class))).then(this::formatDate);
         Mockito.when(dateTimeService.getCurrentDate()).then(this::buildNewDate);
         Mockito.when(dateTimeService.getCurrentSqlDate())
                 .then(this::buildStaticSqlDate);
@@ -391,8 +393,8 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
     }
     
     private String formatDate(InvocationOnMock invocation) {
-        Date date = invocation.getArgument(0);
-        return DATE_FORMAT.format(date);
+        LocalDateTime date = invocation.getArgument(0);
+        return date.format(DATE_FORMAT);
     }
     
     private Date buildNewDate(InvocationOnMock invocation) {

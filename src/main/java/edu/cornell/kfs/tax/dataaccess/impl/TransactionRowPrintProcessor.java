@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.security.GeneralSecurityException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -215,7 +216,7 @@ abstract class TransactionRowPrintProcessor<T extends TransactionDetailSummary> 
 
 
     @Override
-    String[] getFilePathsForWriters(T summary, java.util.Date processingStartDate) {
+    String[] getFilePathsForWriters(T summary, LocalDateTime processingStartDate) {
         String[] filePaths = super.getFilePathsForWriters(summary, processingStartDate);
         filePaths[0] = new StringBuilder(MED_BUILDER_SIZE).append(getReportsDirectory()).append('/')
                 .append(getPrintFilePrefix(summary)).append(summary.reportYear)

@@ -50,6 +50,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
     private String standardEntryClass;
     private boolean active;
     private boolean autoInactivationIndicator;
+    private boolean bypassFeedUpdateIndicator;
 
     private ACHBank bankRouting;
     private ACHTransactionType transactionType;
@@ -276,6 +277,14 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
 
     public void setAchPayee(final ACHPayee achPayee) {
         this.achPayee = achPayee;
+    }
+
+    public boolean isBypassFeedUpdateIndicator() {
+        return bypassFeedUpdateIndicator;
+    }
+
+    public void setBypassFeedUpdateIndicator(final boolean bypassFeedUpdateIndicator) {
+        this.bypassFeedUpdateIndicator = bypassFeedUpdateIndicator;
     }
 
     /**

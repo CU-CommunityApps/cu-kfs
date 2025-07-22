@@ -9,6 +9,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
@@ -321,7 +322,7 @@ abstract class TransactionRowProcessor<T extends TransactionDetailSummary> {
      * @param processingStartDate The date-time when the current tax processing execution started.
      * @return An array of file paths to create Writer instances for.
      */
-    String[] getFilePathsForWriters(T summary, java.util.Date processingStartDate) {
+    String[] getFilePathsForWriters(T summary, LocalDateTime processingStartDate) {
         return new String[writers.length];
     }
 

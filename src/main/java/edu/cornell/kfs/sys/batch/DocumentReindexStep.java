@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +22,7 @@ public class DocumentReindexStep extends CuAbstractStep {
     private DocumentAttributeIndexingQueue documentAttributeIndexingQueue;
     private String stagingDirectory;
 
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         try {
             File documentReindexFile = new File(stagingDirectory + File.separator + getDocumentReindexFilename());
             List<String> documentIds = getDocumentIdsToProcess(documentReindexFile);

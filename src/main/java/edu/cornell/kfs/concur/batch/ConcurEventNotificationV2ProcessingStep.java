@@ -1,7 +1,7 @@
 package edu.cornell.kfs.concur.batch;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -23,7 +23,7 @@ public class ConcurEventNotificationV2ProcessingStep extends AbstractStep {
     protected ConcurEventNotificationV2ReportService concurEventNotificationV2ReportService;
 
     @Override
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         String accessToken = concurAccessTokenV2Service.retrieveNewAccessBearerToken();
         List<ConcurEventNotificationResponse> processingResults = new ArrayList<>();
         validateExpenseReports(accessToken, processingResults);

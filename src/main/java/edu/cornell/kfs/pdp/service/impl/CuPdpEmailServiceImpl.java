@@ -56,7 +56,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
 	 * @param customer Pdp Customer profile for payment
 	 */
 	@Deprecated
-	public void sendAchAdviceEmail(final PaymentGroup paymentGroup, final PaymentDetail paymentDetail, final CustomerProfile customer) {
+	public void sendAchAdviceEmail(final PaymentGroup paymentGroup, final CustomerProfile customer) {
 		LOG.info("DEPRECATED method sendAchAdviceEmail() with payment details as a singleton was called.  NO ACH advices were sent.");
 		//throwing run time exception so caller does not update the database that the ACH advice was sent.
 		throw new RuntimeException("DEPRECATED method sendAchAdviceEmail() with payment details as a singleton was called.  NO ACH advices were sent.");
@@ -208,7 +208,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
             message.addCcAddress(emailService.getDefaultToAddress());
             message.addBccAddress(emailService.getDefaultToAddress());
             message.setFromAddress(fromAddress);
-            message.setSubject(environment.getName() + ": " + customer.getAdviceSubjectLine() + ":" + paymentGroup.getAdviceEmailAddress());
+            message.setSubject(environment.getLane() + ": " + customer.getAdviceSubjectLine() + ":" + paymentGroup.getAdviceEmailAddress());
         }        
         
         LOG.debug("sending email to " + paymentGroup.getAdviceEmailAddress() + " for disb # " + paymentGroup.getDisbursementNbr());        

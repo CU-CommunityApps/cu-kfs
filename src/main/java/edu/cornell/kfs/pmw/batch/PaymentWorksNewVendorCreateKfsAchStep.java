@@ -1,6 +1,6 @@
 package edu.cornell.kfs.pmw.batch;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +17,7 @@ public class PaymentWorksNewVendorCreateKfsAchStep extends AbstractStep {
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     
     @Override
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         try {
             if (getPaymentWorksBatchUtilityService().isPaymentWorksIntegrationProcessingEnabled()) {
                 getPaymentWorksNewVendorPayeeAchService().processKfsPayeeAchAccountsForApprovedAndDisapprovedPmwNewVendors();

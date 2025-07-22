@@ -31,8 +31,6 @@ import org.kuali.kfs.core.api.uif.AttributeError;
 import org.kuali.kfs.core.api.util.ConcreteKeyValue;
 import org.kuali.kfs.core.api.util.KeyValue;
 import org.kuali.kfs.datadictionary.legacy.DocumentDictionaryService;
-import org.kuali.kfs.integration.ld.LaborLedgerPendingEntryForSearching;
-import org.kuali.kfs.integration.ld.LaborLedgerPostingDocumentForSearching;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttribute;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeDecimal;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeString;
@@ -51,6 +49,8 @@ import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.workflow.attribute.DataDictionarySearchableAttribute;
+import org.kuali.kfs.module.ld.businessobject.LaborLedgerPendingEntry;
+import org.kuali.kfs.module.ld.document.LaborLedgerPostingDocument;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
@@ -166,7 +166,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
             }
 
             boolean displayedLedgerPostingDoc = false;
-            if (LaborLedgerPostingDocumentForSearching.class.isAssignableFrom(docClass)) {
+            if (LaborLedgerPostingDocument.class.isAssignableFrom(docClass)) {
                 final Field searchField = FieldUtils.getPropertyField(GeneralLedgerPendingEntry.class,
                         KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE, true);
                 searchField.setFieldDataType(CoreConstants.DATA_TYPE_STRING);
@@ -227,8 +227,8 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
             }
 
             boolean indexedLedgerDoc = false;
-            if (doc instanceof LaborLedgerPostingDocumentForSearching) {
-                final LaborLedgerPostingDocumentForSearching LLPostingDoc = (LaborLedgerPostingDocumentForSearching) doc;
+            if (doc instanceof LaborLedgerPostingDocument) {
+                final LaborLedgerPostingDocument LLPostingDoc = (LaborLedgerPostingDocument) doc;
                 searchAttrValues.addAll(harvestLLPDocumentSearchableAttributes(LLPostingDoc));
                 indexedLedgerDoc = true;
             }
@@ -324,12 +324,11 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
      * @param LLPDoc the LLP document to pull values from
      * @return a List of searchable values
      */
-    protected List<DocumentAttribute> harvestLLPDocumentSearchableAttributes(
-            final LaborLedgerPostingDocumentForSearching LLPDoc) {
+    protected List<DocumentAttribute> harvestLLPDocumentSearchableAttributes(final LaborLedgerPostingDocument LLPDoc) {
         final List<DocumentAttribute> searchAttrValues = new ArrayList<>();
 
         for (final Object llpeObj : LLPDoc.getLaborLedgerPendingEntriesForSearching()) {
-            final LaborLedgerPendingEntryForSearching llpe = (LaborLedgerPendingEntryForSearching) llpeObj;
+            final LaborLedgerPendingEntry llpe = (LaborLedgerPendingEntry) llpeObj;
             addSearchableAttributesForLLPE(searchAttrValues, llpe);
         }
         return searchAttrValues;
@@ -394,7 +393,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
      */
     protected void addSearchableAttributesForLLPE(
             final List<DocumentAttribute> searchAttrValues,
-            final LaborLedgerPendingEntryForSearching llpe) {
+            final LaborLedgerPendingEntry llpe) {
         if (llpe != null && StringUtils.isNotBlank(llpe.getFinancialDocumentTypeCode())) {
             final DocumentAttributeString searchableAttributeValue =
                     new DocumentAttributeString(KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE,
