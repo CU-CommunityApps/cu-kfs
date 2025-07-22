@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
@@ -58,10 +60,6 @@ public final class TaxUtils {
                 && CUTaxConstants.TAX_1099_BOX_MAPPING_KEY_PATTERN.matcher(boxNumberMappingKey).matches();
     }
 
-    public static java.util.Date copyDate(final java.util.Date value) {
-        return new java.util.Date(value.getTime());
-    }
-
     public static java.sql.Date copyDate(final java.sql.Date value) {
         return new java.sql.Date(value.getTime());
     }
@@ -77,8 +75,8 @@ public final class TaxUtils {
 
     public static String buildCsvTaxFilePath(final String fileNamePrefix, final String fileDirectory,
             final TaxBatchConfig config) {
-        final DateFormat dateFormat = new SimpleDateFormat(CUTaxConstants.FILENAME_SUFFIX_DATE_FORMAT, Locale.US);
-        final String dateSuffix = dateFormat.format(config.getProcessingStartDate());
+        final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(CUTaxConstants.FILENAME_SUFFIX_DATE_FORMAT, Locale.US);
+        final String dateSuffix = config.getProcessingStartDate().format(dateFormatter);
         return StringUtils.join(fileDirectory, CUKFSConstants.SLASH, fileNamePrefix, config.getReportYear(),
                 dateSuffix, FileExtensions.CSV);
     }

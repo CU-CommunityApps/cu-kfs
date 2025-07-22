@@ -1,6 +1,6 @@
 package edu.cornell.kfs.tax.batch;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
@@ -18,7 +18,7 @@ public class TaxProcessingStep extends AbstractStep {
     private TaxProcessingService taxProcessingService;
 
     @Override
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         String taxType = CoreFrameworkServiceLocator.getParameterService().getParameterValueAsString(
                 CUTaxConstants.TAX_NAMESPACE, CUTaxConstants.TAX_PARM_DETAIL, TaxCommonParameterNames.TAX_TYPE);
         taxProcessingService.doTaxProcessing(taxType, jobRunDate);

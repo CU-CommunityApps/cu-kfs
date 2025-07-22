@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
@@ -197,7 +198,7 @@ public class TaxProcessingV2ServiceImplTest {
         assertTaxConfigHoldersAreInDefaultState();
         update1042SDatesToProcessParameter(testCase.datesToProcessSetting());
 
-        final java.util.Date testStartDate = TestDateUtils.toUtilDate(testCase.processingStartDate());
+        final LocalDateTime testStartDate = TestDateUtils.toLocalDateTime(testCase.processingStartDate());
         final TaxBatchConfig expectedConfig = TaxConfigTestCase.Utils.toTaxBatchConfig(testCase);
         final TaxBatchConfig expectedPrintingConfig = TaxConfigTestCase.Utils.toTaxBatchConfig(
                 testCase, TaxBatchConfig.Mode.CREATE_TRANSACTION_LIST_FILE);
@@ -257,7 +258,7 @@ public class TaxProcessingV2ServiceImplTest {
             "98765"
     })
     void testInvalidDatesToProcessSettingsFor1042S(final String datesToProcessSetting) throws Exception {
-        final java.util.Date testStartDate = TestDateUtils.toUtilDate("2025-01-12T10:55:34");
+        final LocalDateTime testStartDate = TestDateUtils.toLocalDateTime("2025-01-12T10:55:34");
         assertTaxConfigHoldersAreInDefaultState();
         update1042SDatesToProcessParameter(datesToProcessSetting);
 

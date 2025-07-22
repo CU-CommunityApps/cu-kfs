@@ -1,7 +1,7 @@
 package edu.cornell.kfs.coa.batch;
 
 import java.io.IOException;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +14,7 @@ public class CreateWorkdayOpenAccountsCsvStep extends AbstractStep {
     protected CreateWorkdayOpenAccountsCsvService createWorkdayOpenAccountsCsvService;
 
     @Override
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         LOG.info("execute, starting create Workday Open Account - Sub Account - Sub Object batch job");
         try {
             createWorkdayOpenAccountsCsvService.createWorkdayOpenAccountsCsv();

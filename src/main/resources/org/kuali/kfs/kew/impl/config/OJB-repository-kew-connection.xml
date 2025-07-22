@@ -21,6 +21,7 @@
 -->
 <!--
     CU Customization: Explicitly change the database platform attribute from "MySQL" to "Oracle9i" instead.
+    KualiCo removed the ConfigurableSequenceManager class and is now using a MySql specific class. We copied this in our CU base code to continue using it as we are running an Oracle database.
  -->
 <descriptor-repository version="1.0">
     <jdbc-connection-descriptor

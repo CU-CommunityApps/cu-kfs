@@ -126,8 +126,6 @@
 		</property>
 	</bean>
 	
-	<bean id="purchasingAccountsPayableModuleService" parent="purchasingAccountsPayableModuleService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurchasingAccountsPayableModuleServiceImpl"/>
-	
 	<!-- Lookupables -->
    <bean id="unitOfMeasureLookupHelperService" class="edu.cornell.kfs.module.purap.businessobject.lookup.UnitOfMeasureLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService" />
 	

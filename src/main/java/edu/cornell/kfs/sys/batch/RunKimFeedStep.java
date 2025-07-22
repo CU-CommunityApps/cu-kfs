@@ -1,6 +1,6 @@
 package edu.cornell.kfs.sys.batch;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +23,7 @@ public class RunKimFeedStep extends AbstractStep {
     private Properties kimFeedBaseProperties;
 
     @Override
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         try {
             LOG.info("execute: Starting run of KIM feed");
             Properties kimFeedProperties = buildKimFeedProperties();

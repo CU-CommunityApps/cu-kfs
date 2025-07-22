@@ -34,7 +34,6 @@ import org.kuali.kfs.sys.document.FinancialSystemTransactionalDocument;
 import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Set;
 
 /**
@@ -91,11 +90,8 @@ public class ContractsGrantsInvoiceDocumentPresentationController extends
     }
 
     protected LocalDateTime getStartOfCurrentFiscalYear() {
-        final Date today = getDateTimeService().getCurrentDate();
-        final Integer fiscalYear = getUniversityDateService().getFiscalYear(today);
-        final Date firstDateOfFiscalYear = getUniversityDateService().getFirstDateOfFiscalYear(fiscalYear);
-
-        return getDateTimeService().getLocalDateTime(firstDateOfFiscalYear);
+        final Integer fiscalYear = getUniversityDateService().getFiscalYear(getDateTimeService().getCurrentDate());
+        return getDateTimeService().getLocalDateTime(getUniversityDateService().getFirstDateOfFiscalYear(fiscalYear));
     }
 
     /**

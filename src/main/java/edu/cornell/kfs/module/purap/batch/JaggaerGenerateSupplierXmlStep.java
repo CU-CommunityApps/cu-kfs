@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap.batch;
 
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -22,7 +23,7 @@ public class JaggaerGenerateSupplierXmlStep extends AbstractStep {
     protected ParameterService parameterService;
     
     @Override
-    public boolean execute(String jobName, java.util.Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         JaggaerUploadSuppliersProcessingMode processingMode = findJaggaerUploadSuppliersProcessingMode();
         java.sql.Date processingDate = findProcessingDate(processingMode);
         int maximumNumberOfSuppliersPerListItem = findMaximumNumberOfSuppliersPerListItem();

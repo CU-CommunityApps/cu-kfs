@@ -1,8 +1,8 @@
 package edu.cornell.kfs.vnd.batch;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -23,7 +23,7 @@ public class CommodityCodeUpdateStep extends AbstractStep {
     /**
      * @see org.kuali.kfs.kns.bo.Step#execute(java.lang.String, java.util.Date)
      */
-    public boolean execute(String jobName, Date jobRunDate) {
+    public boolean execute(String jobName, LocalDateTime jobRunDate) {
         List<String> fileNamesToLoad = batchInputFileService.listInputFileNamesWithDoneFile(commodityCodeInputFileType);
 
         boolean processSuccess = true;
