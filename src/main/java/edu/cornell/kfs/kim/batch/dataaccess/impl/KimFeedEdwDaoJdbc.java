@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
@@ -25,9 +26,8 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.util.CuSqlChunk;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
-import edu.cornell.kfs.sys.util.CuSqlQueryPlatformAwareDaoBaseJdbc;
 
-public class KimFeedEdwDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc implements KimFeedEdwDao {
+public class KimFeedEdwDaoJdbc extends PlatformAwareDaoBaseJdbc implements KimFeedEdwDao {
 
     private static final Logger LOG = LogManager.getLogger();
     private static final DateTimeFormatter DATE_ZONE_DEFAULT_FORMATTER_MM_dd_yyyy = 
@@ -146,7 +146,7 @@ public class KimFeedEdwDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc implem
         }
 
         CuSqlQuery fullQuery = query.toQuery();
-        logSQL(fullQuery);
+        fullQuery.logSQL();
         return fullQuery;
     }
 
