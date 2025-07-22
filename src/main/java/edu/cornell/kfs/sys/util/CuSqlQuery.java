@@ -1,5 +1,6 @@
 package edu.cornell.kfs.sys.util;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -7,10 +8,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.SqlParameterValue;
 
-public final class CuSqlQuery {
+import edu.cornell.kfs.sys.CUKFSConstants;
 
+public final class CuSqlQuery {
+    private static final Logger LOG = LogManager.getLogger();
+    private static final String PARAMETER_MESSAGE_FORMAT = "(Type: {0}, Value: {1})";
     private static final String DERIVED_PARAMETER_LOG_PLACEHOLDER = "[ Derived Value ]";
 
     private final String queryString;
@@ -106,6 +112,27 @@ public final class CuSqlQuery {
 
     public static CuSqlQuery of(CharSequence... sqlChunks) {
         return CuSqlChunk.of(sqlChunks).toQuery();
+    }
+
+    public void logSQL() {
+        logSQL(true);
+    }
+
+    public void logSQL(boolean logParameters) {
+        LOG.info("logSQL, queryString: " + getQueryString());
+        if (logParameters) {
+            LOG.info("logSQL, parameters: " + buildParametersMessage());
+        }
+    }
+
+    private String buildParametersMessage() {
+        return getParametersForLogging().stream()
+                .map(this::buildMessageForSingleParameter)
+                .collect(Collectors.joining(CUKFSConstants.COMMA_AND_SPACE));
+    }
+
+    private String buildMessageForSingleParameter(SqlParameterValue parameter) {
+        return MessageFormat.format(PARAMETER_MESSAGE_FORMAT, parameter.getSqlType(), parameter.getValue());
     }
 
 }

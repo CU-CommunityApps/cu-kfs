@@ -146,8 +146,7 @@ public class KimFeedEdwDaoJdbc extends PlatformAwareDaoBaseJdbc implements KimFe
         }
 
         CuSqlQuery fullQuery = query.toQuery();
-        LOG.info("buildEdwDeltaLoadQuery, Query string: {}", fullQuery.getQueryString());
-        LOG.info("buildEdwDeltaLoadQuery, Query parameters: {}", fullQuery.getParameters());
+        fullQuery.logSQL();
         return fullQuery;
     }
 
