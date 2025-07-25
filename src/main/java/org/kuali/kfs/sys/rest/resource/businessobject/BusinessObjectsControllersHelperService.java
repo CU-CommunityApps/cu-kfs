@@ -18,6 +18,8 @@
  */
 package org.kuali.kfs.sys.rest.resource.businessobject;
 
+import edu.cornell.kfs.module.ld.businessobject.LaborLedgerBatchFile;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -170,7 +172,9 @@ class BusinessObjectsControllersHelperService {
         // We are skipping nested lookup configuration for BatchFile, as it doesn't have any, and a BatchFile object
         // cannot be instantiated without a file path or File object to determine the relationship.
         // TODO: Move all of the BatchFile stuff into it's own thing at some point
-        if (!Objects.equals(businessObjectBaseClass, BatchFile.class)) {
+        // CU Customization: Also skip nested lookup configuration for LaborLedgerBatchFile.
+        if (!Objects.equals(businessObjectBaseClass, BatchFile.class)
+                && !Objects.equals(businessObjectBaseClass, LaborLedgerBatchFile.class)) {
             for (final FormAttribute lookupAttribute : lookupAttributes) {
                 setNestedLookupFields(lookupAttribute, businessObjectClass);
             }
