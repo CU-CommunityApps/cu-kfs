@@ -175,7 +175,8 @@
         lookupUrl += '?' + lookupQueryString;
       }
       if (staticQueryString && staticQueryString !== '') {
-        lookupUrl += (lookupUrl.contains('?') ? '&' : '?') + staticQueryString;
+        // CU Customization: Partial backport of FINP-10710 to fix handling of static query strings.
+        lookupUrl += (lookupUrl.includes('?') ? '&' : '?') + staticQueryString;
       }
 
       location.assign(lookupUrl);
@@ -242,6 +243,9 @@
         window.ReduxShim.store.getState()['pageHistory'].history[window.ReduxShim.store.getState()['pageHistory'].history.length - 1].parentId;
     }
     // CU Customization: Backport FINP-12199 change that adds 'formKey' to the param map.
+    // CU Customization: If this is a batch upload page, add the input type name to the param map.
+    const extraParams = (formData['batchUpload.batchInputTypeName']
+            ? { 'batchUpload.batchInputTypeName': 'batchUpload.batchInputTypeName' } : {});
     await window.ReduxShim.store.dispatch(window.ReduxShim.pageHistory.actions.pushHistory({
       parentId,
       title: document.getElementsByTagName('h1')[0].innerText.trim(),
@@ -254,7 +258,8 @@
           docFormKey: 'docFormKey',
           docNum: 'docNum',
           formKey: 'formKey',
-          methodToCall: 'refresh'
+          methodToCall: 'refresh',
+          ...extraParams
         },
         multipleReturn
       }
@@ -272,7 +277,8 @@
 
     // Some elements come from the backend on render, and we need them to persist that value
     // CU Customization: Backport FINP-12199 change that adds 'formKey' to the ignoreElements array.
-    const ignoreElements = ['docFormKey', 'formKey'];
+    // CU Customization: Add 'batchUpload.batchInputTypeName' to the ignoreElements array.
+    const ignoreElements = ['docFormKey', 'formKey', 'batchUpload.batchInputTypeName'];
     for (let i = 0; i < elements.length; i++) {
       const element = elements[i];
       const key = element.id !== '' ? element.id : element.name;

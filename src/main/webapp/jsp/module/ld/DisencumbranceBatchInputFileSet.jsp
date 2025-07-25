@@ -64,9 +64,10 @@
                                         property="selectedDataFile" readOnly="true" tabindexOverride="0"/>
                                 <kul:lookup boClassName="edu.cornell.kfs.module.ld.businessobject.LaborLedgerBatchFile"
                                             newLookup="true"
-                                            fieldConversions="selectedDataFile:fileName"
-                                            lookupParameters="fileName:'*.data'"
+                                            fieldConversions="fileName:selectedDataFile"
                                             fieldPropertyName="selectedDataFile"
+                                            readOnlyFields="path"
+                                            staticLookupFieldData="fileName:*.data,path:staging/ld/enterpriseFeed"
                                             autoSearch="yes"/>
                             </c:if>
                             <c:if test="${fileType eq 'RECON' }">
@@ -75,9 +76,10 @@
                                         property="selectedReconFile" readOnly="true" tabindexOverride="0"/>
                                 <kul:lookup boClassName="edu.cornell.kfs.module.ld.businessobject.LaborLedgerBatchFile"
                                             newLookup="true"
-                                            fieldConversions="selectedReconFile:fileName"
-                                            lookupParameters="fileName:'*.recon'"
+                                            fieldConversions="fileName:selectedReconFile"
                                             fieldPropertyName="selectedReconFile"
+                                            readOnlyFields="path"
+                                            staticLookupFieldData="fileName:*.recon,path:staging/ld/enterpriseFeed"
                                             autoSearch="yes"/>
                             </c:if>
                             <span class="fineprint"></span>
