@@ -166,7 +166,8 @@ public class BatchFileSearchService extends SearchService {
         return directories;
     }
 
-    private List<String> getPathsToSearch(final List<String> selectedPaths) {
+    // CU customization: change to protected
+    protected List<String> getPathsToSearch(final List<String> selectedPaths) {
         if (CollectionUtils.isEmpty(selectedPaths)) {
             return selectedPaths;
         }
