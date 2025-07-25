@@ -64,8 +64,8 @@
                                         property="selectedDataFile" readOnly="true" tabindexOverride="0"/>
                                 <kul:lookup boClassName="edu.cornell.kfs.module.ld.businessobject.LaborLedgerBatchFile"
                                             newLookup="true"
-                                            fieldConversions="fileName:'*.data'"
-                                            lookupParameters="selectedDataFile:fileName"
+                                            fieldConversions="selectedDataFile:fileName"
+                                            lookupParameters="fileName:'*.data'"
                                             fieldPropertyName="selectedDataFile"
                                             autoSearch="yes"/>
                             </c:if>
@@ -75,8 +75,8 @@
                                         property="selectedReconFile" readOnly="true" tabindexOverride="0"/>
                                 <kul:lookup boClassName="edu.cornell.kfs.module.ld.businessobject.LaborLedgerBatchFile"
                                             newLookup="true"
-                                            fieldConversions="fileName:'*.recon'"
-                                            lookupParameters="selectedReconFile:fileName"
+                                            fieldConversions="selectedReconFile:fileName"
+                                            lookupParameters="fileName:'*.recon'"
                                             fieldPropertyName="selectedReconFile"
                                             autoSearch="yes"/>
                             </c:if>
