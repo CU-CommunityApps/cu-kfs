@@ -2,54 +2,57 @@ package edu.cornell.kfs.module.ld.businessobject.lookup;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.bo.BusinessObjectBase;
 import org.kuali.kfs.sys.batch.BatchFile;
-import org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupableHelperServiceImpl;
+import org.kuali.kfs.sys.businessobject.service.impl.BatchFileSearchService;
+import org.springframework.util.MultiValueMap;
 
 import edu.cornell.kfs.module.ld.businessobject.LaborLedgerBatchFile;
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.businessobject.lookup.CuBatchFileLookupableHelperServiceImpl;
 
-public class LaborLedgerBatchFileLookupableHelperServiceImpl extends CuBatchFileLookupableHelperServiceImpl {
+public class LaborLedgerBatchFileLookupableHelperServiceImpl extends BatchFileSearchService {
 	private static final Logger LOG = LogManager.getLogger(LaborLedgerBatchFileLookupableHelperServiceImpl.class);
 
 	@Override
-	public List<LaborLedgerBatchFile> getSearchResults(Map<String, String> fieldValues) {
-		List results = super.getSearchResults(fieldValues);
-		List<LaborLedgerBatchFile> laborLedgerFiles = new ArrayList<LaborLedgerBatchFile>();
-		for (Object file : results) {
-			BatchFile batchFile = (BatchFile) file;
-			LaborLedgerBatchFile laborLedgerBatchFile;
-			try {
-				laborLedgerBatchFile = new LaborLedgerBatchFile(batchFile.getId());
-				laborLedgerFiles.add(laborLedgerBatchFile);
-			} catch (FileNotFoundException e) {
-				LOG.error(
-						"An error has occured while creating a LaborLedgerBatchFile from the BatchFile object in the search results: "
-								+ e.getMessage());
-				throw new RuntimeException(e);
-			}
-		}
-		return laborLedgerFiles;
+    public Pair<Collection<? extends BusinessObjectBase>, Integer> getSearchResults(
+            final Class<? extends BusinessObjectBase> businessObjectClass,
+            final MultiValueMap<String, String> fieldValues, final int skip, final int limit, final String sortField, final boolean sortAscending) {
+        Pair<Collection<? extends BusinessObjectBase>, Integer>  results = super.getSearchResults(businessObjectClass, fieldValues, skip, limit, sortField, sortAscending);
+        List<BusinessObjectBase> laborLedgerFiles = new ArrayList<BusinessObjectBase>();
+        for (Object file : results.getLeft()) {
+            BatchFile batchFile = (BatchFile) file;
+            LaborLedgerBatchFile laborLedgerFile;
+            try {
+                laborLedgerFile = new LaborLedgerBatchFile(batchFile.getId());
+                laborLedgerFiles.add(laborLedgerFile);
+            } catch (FileNotFoundException e) {
+                LOG.error(
+                        "getSearchResults(): An error has occured while creating a LaborLedgerBatchFile from the BatchFile object in the search results: "
+                                + e.getMessage());
+                throw new RuntimeException(e);
+            }
+        }
+        return Pair.of(laborLedgerFiles, laborLedgerFiles.size());
 	}
 
 	/**
 	 * Override method so that it only returns the /staging/ld/enterpriseFeed
 	 * directory as selected.
 	 * 
-	 * @see org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupableHelperServiceImpl#getSelectedPaths()
 	 */
 	@Override
-	protected String[] getSelectedPaths() {
-		String[] selectedPaths = new String[1];
+	protected List<String> getPathsToSearch(final List<String> selectedPaths) {
+	    final List<String> searchPaths = new ArrayList<>();
 		String path = CUKFSConstants.STAGING_DIR + System.getProperty(CUKFSConstants.FILE_SEPARATOR)
 				+ CUKFSConstants.LD_DIR + System.getProperty(CUKFSConstants.FILE_SEPARATOR)
 				+ CUKFSConstants.ENTERPRISE_FEED_DIR;
-		selectedPaths[0] = path;
-		return selectedPaths;
+		searchPaths.add(path);
+		return searchPaths;
 	}
 }

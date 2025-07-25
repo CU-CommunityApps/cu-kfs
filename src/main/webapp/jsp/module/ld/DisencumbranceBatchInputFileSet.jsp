@@ -63,8 +63,10 @@
                                         attributeEntry="${batchUploadAttributes.fileUserIdentifer}"
                                         property="selectedDataFile" readOnly="true" tabindexOverride="0"/>
                                 <kul:lookup boClassName="edu.cornell.kfs.module.ld.businessobject.LaborLedgerBatchFile"
-                                            fieldConversions="fileName:selectedDataFile"
-                                            lookupParameters="'*.data':fileName"
+                                            newLookup="true"
+                                            fieldConversions="selectedDataFile:fileName"
+                                            lookupParameters="fileName:'*.data'"
+                                            fieldPropertyName="selectedDataFile"
                                             autoSearch="yes"/>
                             </c:if>
                             <c:if test="${fileType eq 'RECON' }">
@@ -72,8 +74,10 @@
                                         attributeEntry="${batchUploadAttributes.fileUserIdentifer}"
                                         property="selectedReconFile" readOnly="true" tabindexOverride="0"/>
                                 <kul:lookup boClassName="edu.cornell.kfs.module.ld.businessobject.LaborLedgerBatchFile"
-                                            fieldConversions="fileName:selectedReconFile"
-                                            lookupParameters="'*.recon':fileName"
+                                            newLookup="true"
+                                            fieldConversions="selectedReconFile:fileName"
+                                            lookupParameters="fileName:'*.recon'"
+                                            fieldPropertyName="selectedReconFile"
                                             autoSearch="yes"/>
                             </c:if>
                             <span class="fineprint"></span>
@@ -100,4 +104,5 @@
             </table>
         </div>
     </kul:tabTop>
+    <kul:modernLookupSupport />
 </kul:page>

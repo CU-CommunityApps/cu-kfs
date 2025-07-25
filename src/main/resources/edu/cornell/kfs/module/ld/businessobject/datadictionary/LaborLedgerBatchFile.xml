@@ -14,37 +14,38 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-  <import resource="classpath:edu/cornell/kfs/module/ld/cu-ld-lookup-beans.xml"/>
+    <import resource="classpath:edu/cornell/kfs/module/ld/cu-ld-lookup-beans.xml"/>
 
-  <bean id="LaborLedgerBatchFile" parent="LaborLedgerBatchFile-parentBean"/>
+    <import resource="classpath:org/kuali/kfs/kns/datadictionary/kns-lookup-beans.xml"/>
 
-  <bean id="LaborLedgerBatchFile-parentBean" abstract="true" parent="BusinessObjectEntry">
-    <property name="businessObjectClass" value="edu.cornell.kfs.module.ld.businessobject.LaborLedgerBatchFile"/>
-    <property name="lookupDefinition">
-      <ref bean="LaborLedgerBatchFile-lookupDefinition"/>
-    </property>
-    <property name="titleAttribute" value="name"/>
-    <property name="objectLabel" value="Labor Ledger Batch File"/>
-    <property name="attributes">
-      <list>
-        <ref bean="LaborLedgerBatchFile-path"/>
-        <ref bean="LaborLedgerBatchFile-fileName"/>
-        <ref bean="LaborLedgerBatchFile-lastModifiedDate"/>
-        <ref bean="LaborLedgerBatchFile-fileSize"/>
-      </list>
-    </property>
-  </bean>
+    <bean id="LaborLedgerBatchFile" parent="LaborLedgerBatchFile-parentBean"/>
+    <bean id="LaborLedgerBatchFile-parentBean" abstract="true" parent="BusinessObjectEntry"
+          p:actionsProvider-ref="batchFileActionsProvider"
+          p:businessObjectAdminService-ref="batchFileAdminService"
+          p:businessObjectClass="edu.cornell.kfs.module.ld.businessobject.LaborLedgerBatchFile"
+          p:lookupDefinition-ref="LaborLedgerBatchFile-lookupDefinition"
+          p:name="LaborLedgerBatchFile"
+          p:objectLabel="Labor Ledger Batch File"
+          p:searchService-ref="laborLedgerFileLookupSearchService"
+          p:titleAttribute="name">
+        <property name="attributes">
+            <list>
+                <ref bean="LaborLedgerBatchFile-path"/>
+                <ref bean="LaborLedgerBatchFile-fileName"/>
+                <ref bean="LaborLedgerBatchFile-lastModifiedDate"/>
+                <ref bean="LaborLedgerBatchFile-fileSize"/>
+            </list>
+        </property>
+    </bean>
 
-<!-- Attribute Definitions -->
+    <bean id="batchFileDirectoryPathValuesFinder"
+          class="org.kuali.kfs.sys.businessobject.options.BatchFileDirectoryPathValuesFinder"/>
 
-  <bean id="LaborLedgerBatchFile-path" parent="LaborLedgerBatchFile-path-parentBean"/>
+    <!-- Attribute Definitions -->
 
-  <bean id="LaborLedgerBatchFile-path-parentBean" abstract="true" parent="AttributeDefinition">
-    <property name="name" value="path"/>
-    <property name="forceUppercase" value="false"/>
-    <property name="label" value="File Path"/>
-    <property name="shortLabel" value="Path"/>
-    <property name="maxLength" value="15"/>
+    <bean id="LaborLedgerBatchFile-path" parent="LaborLedgerBatchFile-path-parentBean"/>
+    <bean id="LaborLedgerBatchFile-path-parentBean" abstract="true" parent="AttributeDefinition" p:name="path"
+          p:forceUppercase="false" p:label="File Path" p:shortLabel="Path" p:type="OTHER">
     <property name="control">
       <bean parent="TextControlDefinition"/>
     </property>
@@ -53,71 +54,62 @@
           <property name="readOnly" value="true"/>
       </bean>
    </property>
-  </bean>
-  
-  <bean id="LaborLedgerBatchFile-fileName" parent="LaborLedgerBatchFile-fileName-parentBean"/>
+    </bean>
 
-  <bean id="LaborLedgerBatchFile-fileName-parentBean" abstract="true" parent="AttributeDefinition">
-    <property name="name" value="fileName"/>
-    <property name="forceUppercase" value="false"/>
-    <property name="label" value="File Name"/>
-    <property name="shortLabel" value="File Name"/>
-    <property name="maxLength" value="40"/>
-    <property name="control">
-      <bean parent="TextControlDefinition"/>
-    </property>
-  </bean>
+    <bean id="batchFileDirectoryPathHierarchicalControlValuesFinder"
+          class="org.kuali.kfs.sys.businessobject.options.BatchFileDirectoryPathHierarchicalControlValuesFinder"/>
 
-  <bean id="LaborLedgerBatchFile-lastModifiedDate" parent="LaborLedgerBatchFile-lastModifiedDate-parentBean"/>
+    <bean id="LaborLedgerBatchFile-fileName" parent="LaborLedgerBatchFile-fileName-parentBean"/>
+    <bean id="LaborLedgerBatchFile-fileName-parentBean" abstract="true" parent="AttributeDefinition" p:name="fileName"
+          p:forceUppercase="false" p:label="File Name" p:shortLabel="File Name" p:maxLength="40">
+        <property name="control">
+            <bean parent="TextControlDefinition"/>
+        </property>
+    </bean>
 
-  <bean id="LaborLedgerBatchFile-lastModifiedDate-parentBean" abstract="true" parent="GenericAttributes-genericTimestamp">
-    <property name="name" value="lastModifiedDate"/>
-    <property name="label" value="Last Modified Date"/>
-    <property name="shortLabel" value="Last Modified Date"/>
-    <property name="formatterClass" value="org.kuali.kfs.core.web.format.TimestampAMPMFormatter"/>
-  </bean>
-  
-  <bean id="LaborLedgerBatchFile-fileSize" parent="LaborLedgerBatchFile-fileSize-parentBean"/>
+    <bean id="LaborLedgerBatchFile-lastModifiedDate" parent="LaborLedgerBatchFile-lastModifiedDate-parentBean"/>
+    <bean id="LaborLedgerBatchFile-lastModifiedDate-parentBean" abstract="true" parent="GenericAttributes-genericTimestamp"
+          p:name="lastModifiedDate" p:label="Last Modified Date" p:shortLabel="Last Modified Date"
+          p:formatterClass="org.kuali.kfs.core.web.format.TimestampAMPMFormatter" p:type="DATE_RANGE"/>
 
-  <bean id="LaborLedgerBatchFile-fileSize-parentBean" abstract="true" parent="AttributeDefinition">
-    <property name="name" value="fileSize"/>
-    <property name="forceUppercase" value="false"/>
-    <property name="label" value="File Size"/>
-    <property name="shortLabel" value="File Size"/>
-    <property name="maxLength" value="40"/>
-    <property name="control">
-      <ref bean="StandardNameTextControl" />
-    </property>
+    <bean id="LaborLedgerBatchFile-fileSize" parent="LaborLedgerBatchFile-fileSize-parentBean"/>
+    <bean id="LaborLedgerBatchFile-fileSize-parentBean" abstract="true" parent="AttributeDefinition" p:name="fileSize"
+          p:forceUppercase="false" p:label="File Size" p:shortLabel="File Size" p:maxLength="40"
+          p:control-ref="StandardNameTextControl" p:type="INTEGER"/>
+
+    <!-- Business Object Lookup Definition -->
+
+    <bean id="LaborLedgerBatchFile-lookupDefinition" parent="LaborLedgerBatchFile-lookupDefinition-parentBean"/>
+    <bean id="LaborLedgerBatchFile-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
+          p:title="Labor Ledger Batch File Lookup">
+        <property name="formAttributeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition" parent="LaborLedgerBatchFile-path"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
+                      parent="LaborLedgerBatchFile-fileName"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
+                      parent="LaborLedgerBatchFile-lastModifiedDate"/>
+            </list>
+        </property>
+        <property name="displayAttributeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="LaborLedgerBatchFile-path"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="LaborLedgerBatchFile-fileName"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="LaborLedgerBatchFile-lastModifiedDate" p:type="DATE_TIME" />
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="LaborLedgerBatchFile-fileSize"/>
+            </list>
+        </property>
+    </bean>
     
-    
-  </bean>
-<!-- Business Object Lookup Definition -->
+    <bean id="laborLedgerFileLookupSearchService"
+          class="edu.cornell.kfs.module.ld.businessobject.lookup.LaborLedgerBatchFileLookupableHelperServiceImpl"
+          parent="searchService"/>
 
-
-  <bean id="LaborLedgerBatchFile-lookupDefinition" parent="LaborLedgerBatchFile-lookupDefinition-parentBean"/>
-
-  <bean id="LaborLedgerBatchFile-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
-    <property name="title" value="Labor Ledger Batch File Lookup"/>
-    <property name="lookupableID" value="laborLedgerBatchFileLookupable"/>
-    
-    <property name="defaultSort">
-      <bean parent="SortDefinition">
-      </bean>
-    </property>
-    <property name="lookupFields">
-      <list>
-        <bean parent="FieldDefinition" p:attributeName="path" p:readOnly="true" p:defaultValueFinder-ref="laborLedgerBatchFileDirectoryPathFinder"/>
-        <bean parent="FieldDefinition" p:attributeName="fileName"/>
-        <bean parent="FieldDefinition" p:attributeName="lastModifiedDate"/>
-      </list>
-    </property>
-    <property name="resultFields">
-      <list>
-        <bean parent="FieldDefinition" p:attributeName="path"/>
-        <bean parent="FieldDefinition" p:attributeName="fileName"/>
-        <bean parent="FieldDefinition" p:attributeName="lastModifiedDate"/>
-        <bean parent="FieldDefinition" p:attributeName="fileSize"/>
-      </list>
-    </property>
-  </bean>
+    <bean id="batchFileAdminService" class="org.kuali.kfs.sys.batch.service.BatchFileAdminService"/>
+    <bean id="batchFileActionsProvider"
+          class="org.kuali.kfs.sys.businessobject.actions.BatchFileActionsProvider"/>
 </beans>

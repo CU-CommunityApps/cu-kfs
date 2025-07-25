@@ -263,17 +263,6 @@
     <bean id="paymentSourcePreRulesService"
           parent="paymentSourcePreRulesService-parentBean"
           class="edu.cornell.kfs.sys.document.validation.impl.CuPaymentSourcePreRulesServiceImpl"/>
-
-    <bean id="batchFileLookupableHelperService" parent="batchFileLookupableHelperService-parentBean"
-          scope="prototype"/>
-    <bean id="batchFileLookupableHelperService-parentBean"
-          class="org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupableHelperServiceImpl" scope="prototype"
-          parent="lookupableHelperService" abstract="true" p:dateTimeService-ref="dateTimeService"
-          p:batchFileAdminAuthorizationService-ref="batchFileAdminAuthorizationService"/>
-          
-    <bean id="batchFileLookupable" parent="batchFileLookupable-parentBean" scope="prototype"/>
-    <bean id="batchFileLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true"
-          p:lookupableHelperService-ref="batchFileLookupableHelperService"/>
           
     <bean id="purgeJob" parent="purgeJob-parentBean">
         <property name="steps">
