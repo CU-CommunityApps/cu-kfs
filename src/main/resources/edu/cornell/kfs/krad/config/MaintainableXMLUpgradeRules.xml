@@ -1395,19 +1395,42 @@
             <class>org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity</class>
             <pattern>
                 <match>extension</match>
-                <replacement>()MOVE_MARKED_NODES_TO_PARENT)</replacement>
+                <replacement>(MOVE_CHILD_NODES_TO_PARENT)</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorSupplierDiversityExpirationDate</match>
+                <replacement>certificationExpirationDate</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension</class>
+            <pattern>
+                <match>vendorHeaderGeneratedIdentifier</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>vendorSupplierDiversityCode</match>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>vendorSupplierDiversityExpirationDate</match>
                 <replacement>certificationExpirationDate</replacement>
             </pattern>
             <pattern>
-                <match>vendorHeaderGeneratedIdentifier</match>
-                <replacement>vendorHeaderGeneratedIdentifier</replacement>
+                <match>versionNumber</match>
+                <replacement/>
             </pattern>
             <pattern>
-                <match>vendorSupplierDiversityCode</match>
-                <replacement>vendorSupplierDiversityCode</replacement>
+                <match>objectId</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>newCollectionRecord</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>autoIncrementSet</match>
+                <replacement/>
             </pattern>
         </pattern>
         <pattern>
