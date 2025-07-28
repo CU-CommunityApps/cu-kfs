@@ -25,7 +25,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <import resource="classpath:edu/cornell/kfs/sys/sys-lookup-beans.xml"/>
+    <import resource="classpath:org/kuali/kfs/sys/sys-lookup-beans.xml"/>
 
     <bean id="ObjectCode"
           parent="ObjectCode-parentBean"/>

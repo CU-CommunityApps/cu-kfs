@@ -25,7 +25,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <import resource="classpath:edu/cornell/kfs/kns/datadictionary/kns-lookup-beans.xml"/>
+    <import resource="classpath:org/kuali/kfs/kns/datadictionary/kns-lookup-beans.xml"/>
 
     <bean id="PositionData" parent="PositionData-parentBean"/>
     <bean abstract="true"
