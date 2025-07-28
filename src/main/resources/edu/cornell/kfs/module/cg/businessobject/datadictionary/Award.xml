@@ -23,7 +23,7 @@
 
 -->
     
-    <import resource="classpath:edu/cornell/kfs/module/ar/ar-lookup-beans.xml"/>
+    <import resource="classpath:org/kuali/kfs/module/ar/ar-lookup-beans.xml"/>
 
     <bean id="Award" parent="Award-parentBean">
         <property name="attributes">
