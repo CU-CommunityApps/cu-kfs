@@ -189,8 +189,10 @@ class BusinessObjectsControllersHelperService {
                 searchService.getSearchResultsAttributes(businessObjectClass);
         final List<String> lookupDefaultSortFieldNames =
                 businessObjectDictionaryService.getLookupDefaultSortFieldNames(businessObjectClass);
-        final LookupResponse.Results results =
-                new LookupResponse.Results(searchResultsAttributes, lookupDefaultSortFieldNames);
+        final LookupResponse.Results results = new LookupResponse.Results(searchResultsAttributes,
+                lookupDefaultSortFieldNames,
+                businessObjectEntry.supportsAnyActions()
+        );
 
         final LookupResponse response = new LookupResponse(title, lookupAttributes, create, results);
         LOG.debug("getLookup(...) - Exit : response={}", response);
