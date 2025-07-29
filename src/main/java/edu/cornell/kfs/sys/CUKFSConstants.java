@@ -1,6 +1,9 @@
 package edu.cornell.kfs.sys;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Set;
 
 public class CUKFSConstants {
@@ -248,4 +251,23 @@ public class CUKFSConstants {
         public static final String EINVOICE = "eInvoice";
         public static final String PURCHASE_ORDER_DETAILS = "poDetail";
     }
+
+    /*
+     * Temporary backport of FINP-11262 ticket's addition of the static nested
+     * KFSConstants.NoScientificNotationFormat class, adjusted for CUKFSConstants instead.
+     * 
+     * This nested class should be removed when we upgrade to the 2024-07-31 financials patch.
+     */
+    public static final class NoScientificNotationFormat {
+        public static final DecimalFormat DECIMAL_FORMAT =
+                new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.US));
+
+        // Maximum fraction digits is set to 340 to avoid scientific notation
+        private static final int DOUBLE_FRACTION_DIGITS = 340;
+
+        static {
+            DECIMAL_FORMAT.setMaximumFractionDigits(DOUBLE_FRACTION_DIGITS);
+        }
+    }
+
 }
