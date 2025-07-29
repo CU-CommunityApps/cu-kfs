@@ -253,20 +253,28 @@ public class CUKFSConstants {
     }
 
     /*
-     * Temporary backport of FINP-11262 ticket's addition of the static nested
-     * KFSConstants.NoScientificNotationFormat class, adjusted for CUKFSConstants instead.
+     * Modified backport of FINP-11262 ticket's addition of the static nested
+     * KFSConstants.NoScientificNotationFormat class, adjusted for Cornell use.
      * 
-     * This nested class should be removed when we upgrade to the 2024-07-31 financials patch.
+     * This variation has been modified to handle DecimalFormat instances in a thread-safe manner.
+     * Thus, we need to keep this nested class when we upgrade to the 2024-07-31 financials patch.
      */
     public static final class NoScientificNotationFormat {
-        public static final DecimalFormat DECIMAL_FORMAT =
-                new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.US));
-
         // Maximum fraction digits is set to 340 to avoid scientific notation
         private static final int DOUBLE_FRACTION_DIGITS = 340;
 
-        static {
-            DECIMAL_FORMAT.setMaximumFractionDigits(DOUBLE_FRACTION_DIGITS);
+        private static final ThreadLocal<DecimalFormat> DECIMAL_FORMAT =
+                ThreadLocal.withInitial(NoScientificNotationFormat::createDecimalFormat);
+
+        private static DecimalFormat createDecimalFormat() {
+            final DecimalFormat decimalFormat =
+                    new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.US));
+            decimalFormat.setMaximumFractionDigits(DOUBLE_FRACTION_DIGITS);
+            return decimalFormat;
+        }
+
+        public static DecimalFormat getDecimalFormat() {
+            return DECIMAL_FORMAT.get();
         }
     }
 

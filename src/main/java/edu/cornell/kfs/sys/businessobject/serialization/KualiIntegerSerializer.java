@@ -25,7 +25,7 @@ public class KualiIntegerSerializer extends JsonSerializer<KualiInteger> {
     public void serialize(final KualiInteger value, final JsonGenerator jsonGenerator,
             final SerializerProvider serializerProvider) throws IOException {
         if (ObjectUtils.isNotNull(value)) {
-            final String stringValue = CUKFSConstants.NoScientificNotationFormat.DECIMAL_FORMAT.format(value);
+            final String stringValue = CUKFSConstants.NoScientificNotationFormat.getDecimalFormat().format(value);
             jsonGenerator.writeString(stringValue);
         } else {
             jsonGenerator.writeNull();
