@@ -1,0 +1,903 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="edu.cornell.kfs.vnd.document.CuVendorMaintainableImpl"><notes><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+  <org.kuali.kfs.krad.bo.Note>
+    <versionNumber>11</versionNumber>
+    <objectId>631a9a9e-61bc-46d6-8174-9961f052f772</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <noteIdentifier>7888888</noteIdentifier>
+    <remoteObjectIdentifier>4b37ee8f-2822-439c-bcbb-6918fbfdeed9</remoteObjectIdentifier>
+    <authorUniversalIdentifier>2</authorUniversalIdentifier>
+    <notePostedTimestamp>2018-03-16 11:10:01</notePostedTimestamp>
+    <noteTypeCode>BO</noteTypeCode>
+    <noteText>Initiator : abc2</noteText>
+    <noteType>
+      <versionNumber>1</versionNumber>
+      <objectId>2D3C47C53BE6B016E043814FD881B016</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteTypeDescription>DOCUMENT BUSINESS OBJECT</noteTypeDescription>
+      <noteTypeActiveIndicator>true</noteTypeActiveIndicator>
+    </noteType>
+    <authorUniversal>
+      <extension class="edu.cornell.kfs.kim.impl.identity.PersonExtension">
+        <versionNumber>4</versionNumber>
+        <objectId>18CD15434C3A58B1E0630100007F44FE</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <principalId>2</principalId>
+        <altAddressTypeCode>HM</altAddressTypeCode>
+        <suppressName>false</suppressName>
+        <suppressEmail>false</suppressEmail>
+        <suppressPhone>false</suppressPhone>
+        <suppressPersonal>false</suppressPersonal>
+        <affiliations class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+          <unserializable-parents/>
+          <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+            <default>
+              <size>2</size>
+            </default>
+            <int>2</int>
+            <edu.cornell.kfs.kim.impl.identity.PersonAffiliation>
+              <versionNumber>4</versionNumber>
+              <objectId>18CD1549DF0258B1E0630100007F44FE</objectId>
+              <newCollectionRecord>false</newCollectionRecord>
+              <principalId>2</principalId>
+              <affiliationTypeCode>EXCPTN</affiliationTypeCode>
+              <affiliationStatus>I</affiliationStatus>
+              <primary>false</primary>
+            </edu.cornell.kfs.kim.impl.identity.PersonAffiliation>
+            <edu.cornell.kfs.kim.impl.identity.PersonAffiliation>
+              <versionNumber>4</versionNumber>
+              <objectId>18CD154F121458B1E0630100007F44FE</objectId>
+              <newCollectionRecord>false</newCollectionRecord>
+              <principalId>2</principalId>
+              <affiliationTypeCode>STAFF</affiliationTypeCode>
+              <affiliationStatus>A</affiliationStatus>
+              <primary>true</primary>
+            </edu.cornell.kfs.kim.impl.identity.PersonAffiliation>
+          </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+        </affiliations>
+      </extension>
+      <versionNumber>21</versionNumber>
+      <objectId>F5FD9621-C7B2-A11A-7AD8-3CFFC93D87EA</objectId>
+      <lastUpdatedTimestamp>2025-01-17 20:41:58.554702</lastUpdatedTimestamp>
+      <newCollectionRecord>false</newCollectionRecord>
+      <principalId>2</principalId>
+      <principalName>kfs</principalName>
+      <entityId>2</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>KFS</firstName>
+      <lastName>SYSTEMUSER</lastName>
+      <name></name>
+      <addressTypeCode>HM</addressTypeCode>
+      <emailAddress>kfs55555@cornell.edu</emailAddress>
+      <affiliationTypeCode>STAFF</affiliationTypeCode>
+      <campusCode>IT</campusCode>
+      <taxId></taxId>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-0001</primaryDepartmentCode>
+      <employeeId>1</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </authorUniversal>
+    <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+      <versionNumber>1</versionNumber>
+      <newCollectionRecord>false</newCollectionRecord>
+      <type>0</type>
+      <actionRequested>A</actionRequested>
+    </adHocRouteRecipient>
+  </org.kuali.kfs.krad.bo.Note>
+  <org.kuali.kfs.krad.bo.Note>
+    <versionNumber>12</versionNumber>
+    <objectId>0edbc00e-0c93-483e-80bd-d4ee0e6d8df3</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <noteIdentifier>7999999</noteIdentifier>
+    <remoteObjectIdentifier>4b37ee8f-2822-439c-bcbb-6918fbfdeed9</remoteObjectIdentifier>
+    <authorUniversalIdentifier>2</authorUniversalIdentifier>
+    <notePostedTimestamp>2018-03-16 11:10:01</notePostedTimestamp>
+    <noteTypeCode>BO</noteTypeCode>
+    <noteText>Procurement vendor batch process - add attachment</noteText>
+    <noteType reference="../../org.kuali.kfs.krad.bo.Note/noteType"/>
+    <authorUniversal>
+      <extension class="edu.cornell.kfs.kim.impl.identity.PersonExtension">
+        <versionNumber>4</versionNumber>
+        <objectId>18CD15434C3A58B1E0630100007F44FE</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <principalId>2</principalId>
+        <altAddressTypeCode>HM</altAddressTypeCode>
+        <suppressName>false</suppressName>
+        <suppressEmail>false</suppressEmail>
+        <suppressPhone>false</suppressPhone>
+        <suppressPersonal>false</suppressPersonal>
+        <affiliations class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+          <unserializable-parents/>
+          <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+            <default>
+              <size>2</size>
+            </default>
+            <int>2</int>
+            <edu.cornell.kfs.kim.impl.identity.PersonAffiliation>
+              <versionNumber>4</versionNumber>
+              <objectId>18CD1549DF0258B1E0630100007F44FE</objectId>
+              <newCollectionRecord>false</newCollectionRecord>
+              <principalId>2</principalId>
+              <affiliationTypeCode>EXCPTN</affiliationTypeCode>
+              <affiliationStatus>I</affiliationStatus>
+              <primary>false</primary>
+            </edu.cornell.kfs.kim.impl.identity.PersonAffiliation>
+            <edu.cornell.kfs.kim.impl.identity.PersonAffiliation>
+              <versionNumber>4</versionNumber>
+              <objectId>18CD154F121458B1E0630100007F44FE</objectId>
+              <newCollectionRecord>false</newCollectionRecord>
+              <principalId>2</principalId>
+              <affiliationTypeCode>STAFF</affiliationTypeCode>
+              <affiliationStatus>A</affiliationStatus>
+              <primary>true</primary>
+            </edu.cornell.kfs.kim.impl.identity.PersonAffiliation>
+          </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+        </affiliations>
+      </extension>
+      <versionNumber>21</versionNumber>
+      <objectId>F5FD9621-C7B2-A11A-7AD8-3CFFC93D87EA</objectId>
+      <lastUpdatedTimestamp>2025-01-17 20:41:58.554702</lastUpdatedTimestamp>
+      <newCollectionRecord>false</newCollectionRecord>
+      <principalId>2</principalId>
+      <principalName>kfs</principalName>
+      <entityId>2</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>KFS</firstName>
+      <lastName>SYSTEMUSER</lastName>
+      <name></name>
+      <addressTypeCode>HM</addressTypeCode>
+      <emailAddress>kfs55555@cornell.edu</emailAddress>
+      <affiliationTypeCode>STAFF</affiliationTypeCode>
+      <campusCode>IT</campusCode>
+      <taxId></taxId>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-0001</primaryDepartmentCode>
+      <employeeId>1</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </authorUniversal>
+    <attachment>
+      <versionNumber>11</versionNumber>
+      <objectId>a5c54aba-2aa6-4469-a081-a2bf15f6ade0</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <noteIdentifier>7999999</noteIdentifier>
+      <attachmentMimeTypeCode>application/pdf</attachmentMimeTypeCode>
+      <attachmentFileName>vnd_attachment_test_university.edu_ConflictOfInterest.pdf</attachmentFileName>
+      <attachmentIdentifier>d07cc52b-588b-42d4-8678-9687f8ee2dad</attachmentIdentifier>
+      <attachmentFileSize>1111</attachmentFileSize>
+      <note reference="../.."/>
+    </attachment>
+    <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+      <versionNumber>1</versionNumber>
+      <newCollectionRecord>false</newCollectionRecord>
+      <type>0</type>
+      <actionRequested>A</actionRequested>
+    </adHocRouteRecipient>
+  </org.kuali.kfs.krad.bo.Note>
+</org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl></notes><oldMaintainableObject><org.kuali.kfs.vnd.businessobject.VendorDetail>
+  <extension class="edu.cornell.kfs.vnd.businessobject.VendorDetailExtension">
+    <versionNumber>3</versionNumber>
+    <objectId>e4b813a7-e4a9-4f43-a7b1-ea6812b29396</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+    <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+    <einvoiceVendorIndicator>N</einvoiceVendorIndicator>
+    <insuranceRequiredIndicator>false</insuranceRequiredIndicator>
+    <vendorCreditCardMerchants/>
+    <paymentWorksOriginatingIndicator>false</paymentWorksOriginatingIndicator>
+  </extension>
+  <versionNumber>3</versionNumber>
+  <objectId>4b37ee8f-2822-439c-bcbb-6918fbfdeed9</objectId>
+  <lastUpdatedTimestamp>2023-08-28 19:57:19</lastUpdatedTimestamp>
+  <newCollectionRecord>false</newCollectionRecord>
+  <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+  <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+  <vendorParentIndicator>true</vendorParentIndicator>
+  <vendorFirstName>John</vendorFirstName>
+  <vendorLastName>Doe</vendorLastName>
+  <activeIndicator>false</activeIndicator>
+  <vendorInactiveReasonCode>NA</vendorInactiveReasonCode>
+  <vendorFirstLastNameIndicator>true</vendorFirstLastNameIndicator>
+  <taxableIndicator>false</taxableIndicator>
+  <defaultPaymentMethodCode>P</defaultPaymentMethodCode>
+  <vendorAddresses>
+    <org.kuali.kfs.vnd.businessobject.VendorAddress>
+      <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension">
+        <versionNumber>1</versionNumber>
+        <objectId>e258a111-eadf-444f-a1ba-8bb14296dbc5</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <vendorAddressGeneratedIdentifier>163163</vendorAddressGeneratedIdentifier>
+      </extension>
+      <versionNumber>1</versionNumber>
+      <objectId>9658aca1-2682-4604-8902-305045415204</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <vendorAddressGeneratedIdentifier>163163</vendorAddressGeneratedIdentifier>
+      <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+      <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+      <vendorAddressTypeCode>RM</vendorAddressTypeCode>
+      <vendorLine1Address>234 Test St</vendorLine1Address>
+      <vendorCityName>East Hampton</vendorCityName>
+      <vendorStateCode>MA</vendorStateCode>
+      <vendorZipCode>01027</vendorZipCode>
+      <vendorCountryCode>US</vendorCountryCode>
+      <vendorDefaultAddressIndicator>true</vendorDefaultAddressIndicator>
+      <active>true</active>
+      <vendorDefaultAddresses/>
+    </org.kuali.kfs.vnd.businessobject.VendorAddress>
+  </vendorAddresses>
+  <vendorAliases/>
+  <vendorContacts>
+    <org.kuali.kfs.vnd.businessobject.VendorContact>
+      <versionNumber>2</versionNumber>
+      <objectId>fbc312d4-d5a6-4dc3-972d-678f03677720</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <vendorContactGeneratedIdentifier>53333</vendorContactGeneratedIdentifier>
+      <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+      <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+      <vendorContactTypeCode>VI</vendorContactTypeCode>
+      <vendorContactName>John Doe</vendorContactName>
+      <vendorContactEmailAddress>jd98765@unknown.edu</vendorContactEmailAddress>
+      <active>true</active>
+      <vendorContactPhoneNumbers>
+        <org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+          <versionNumber>2</versionNumber>
+          <objectId>9012b972-9363-4d31-82ff-4bc6f1e01812</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+          <vendorContactPhoneGeneratedIdentifier>50505</vendorContactPhoneGeneratedIdentifier>
+          <vendorContactGeneratedIdentifier>53333</vendorContactGeneratedIdentifier>
+          <vendorPhoneTypeCode>VI</vendorPhoneTypeCode>
+          <vendorPhoneNumber>888-999-0000</vendorPhoneNumber>
+          <active>true</active>
+        </org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+      </vendorContactPhoneNumbers>
+    </org.kuali.kfs.vnd.businessobject.VendorContact>
+    <org.kuali.kfs.vnd.businessobject.VendorContact>
+      <newCollectionRecord>true</newCollectionRecord>
+      <active>false</active>
+      <vendorContactPhoneNumbers>
+        <org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+          <newCollectionRecord>true</newCollectionRecord>
+          <active>false</active>
+        </org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+      </vendorContactPhoneNumbers>
+    </org.kuali.kfs.vnd.businessobject.VendorContact>
+  </vendorContacts>
+  <vendorContracts/>
+  <vendorCustomerNumbers/>
+  <vendorPhoneNumbers/>
+  <vendorShippingSpecialConditions/>
+  <vendorCommodities/>
+  <vendorHeader>
+    <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension">
+      <versionNumber>4</versionNumber>
+      <objectId>bb86324e-9d47-44f7-930f-5b8cf6f36242</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+    </extension>
+    <versionNumber>4</versionNumber>
+    <objectId>ad723754-3f25-4398-a054-32038923b89d</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+    <vendorTypeCode>DV</vendorTypeCode>
+    <vendorTaxNumber>XXXXXXXXX</vendorTaxNumber>
+    <vendorTaxTypeCode>SSN</vendorTaxTypeCode>
+    <vendorOwnershipCode>ID</vendorOwnershipCode>
+    <vendorW9ReceivedIndicator>true</vendorW9ReceivedIndicator>
+    <vendorForeignIndicator>false</vendorForeignIndicator>
+    <vendorW9SignedDate>2019-04-30</vendorW9SignedDate>
+    <vendorForeignTaxId></vendorForeignTaxId>
+    <vendorSupplierDiversities>
+      <org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+        <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension">
+          <versionNumber>4</versionNumber>
+          <objectId>f2f8ad3a-cf13-4993-81c5-a1c092980034</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+          <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+          <vendorSupplierDiversityCode>DB</vendorSupplierDiversityCode>
+          <vendorSupplierDiversityExpirationDate>2019-03-15</vendorSupplierDiversityExpirationDate>
+        </extension>
+        <versionNumber>4</versionNumber>
+        <objectId>859e5e44-eb15-47f6-88bb-114a79bbdef9</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+        <vendorSupplierDiversityCode>DB</vendorSupplierDiversityCode>
+        <active>true</active>
+      </org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+      <org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+        <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension">
+          <versionNumber>4</versionNumber>
+          <objectId>e7d3b6c1-5276-4ff3-85a8-32e53d6f7c56</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+          <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+          <vendorSupplierDiversityCode>DV</vendorSupplierDiversityCode>
+          <vendorSupplierDiversityExpirationDate>2019-03-15</vendorSupplierDiversityExpirationDate>
+        </extension>
+        <versionNumber>4</versionNumber>
+        <objectId>8b5ff2a7-dd31-4e2c-a42c-a4d772666a1c</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+        <vendorSupplierDiversityCode>DV</vendorSupplierDiversityCode>
+        <active>true</active>
+      </org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+      <org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+        <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension">
+          <versionNumber>4</versionNumber>
+          <objectId>7893c7d6-74b8-43c4-b877-084ea07cfea8</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+          <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+          <vendorSupplierDiversityCode>HZ</vendorSupplierDiversityCode>
+          <vendorSupplierDiversityExpirationDate>2019-03-15</vendorSupplierDiversityExpirationDate>
+        </extension>
+        <versionNumber>4</versionNumber>
+        <objectId>db9f2a04-be7f-4f1b-a173-024d1b381c7b</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+        <vendorSupplierDiversityCode>HZ</vendorSupplierDiversityCode>
+        <active>false</active>
+      </org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+    </vendorSupplierDiversities>
+  </vendorHeader>
+</org.kuali.kfs.vnd.businessobject.VendorDetail><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.vnd.businessobject.VendorDetail>
+  <extension class="edu.cornell.kfs.vnd.businessobject.VendorDetailExtension">
+    <versionNumber>3</versionNumber>
+    <objectId>e4b813a7-e4a9-4f43-a7b1-ea6812b29396</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+    <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+    <einvoiceVendorIndicator>N</einvoiceVendorIndicator>
+    <insuranceRequiredIndicator>false</insuranceRequiredIndicator>
+    <vendorCreditCardMerchants/>
+    <paymentWorksOriginatingIndicator>false</paymentWorksOriginatingIndicator>
+  </extension>
+  <versionNumber>3</versionNumber>
+  <objectId>4b37ee8f-2822-439c-bcbb-6918fbfdeed9</objectId>
+  <lastUpdatedTimestamp>2023-08-28 19:57:19</lastUpdatedTimestamp>
+  <newCollectionRecord>false</newCollectionRecord>
+  <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+  <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+  <vendorParentIndicator>true</vendorParentIndicator>
+  <vendorFirstName>John</vendorFirstName>
+  <vendorLastName>Doe</vendorLastName>
+  <activeIndicator>true</activeIndicator>
+  <vendorFirstLastNameIndicator>true</vendorFirstLastNameIndicator>
+  <taxableIndicator>false</taxableIndicator>
+  <defaultPaymentMethodCode>P</defaultPaymentMethodCode>
+  <vendorAddresses>
+    <org.kuali.kfs.vnd.businessobject.VendorAddress>
+      <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension">
+        <versionNumber>1</versionNumber>
+        <objectId>e258a111-eadf-444f-a1ba-8bb14296dbc5</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <vendorAddressGeneratedIdentifier>163163</vendorAddressGeneratedIdentifier>
+      </extension>
+      <versionNumber>1</versionNumber>
+      <objectId>9658aca1-2682-4604-8902-305045415204</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <vendorAddressGeneratedIdentifier>163163</vendorAddressGeneratedIdentifier>
+      <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+      <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+      <vendorAddressTypeCode>RM</vendorAddressTypeCode>
+      <vendorLine1Address>234 Test St</vendorLine1Address>
+      <vendorCityName>East Hampton</vendorCityName>
+      <vendorStateCode>MA</vendorStateCode>
+      <vendorZipCode>01027-2107</vendorZipCode>
+      <vendorCountryCode>US</vendorCountryCode>
+      <vendorDefaultAddressIndicator>true</vendorDefaultAddressIndicator>
+      <active>true</active>
+      <vendorDefaultAddresses/>
+    </org.kuali.kfs.vnd.businessobject.VendorAddress>
+  </vendorAddresses>
+  <vendorAliases/>
+  <vendorContacts>
+    <org.kuali.kfs.vnd.businessobject.VendorContact>
+      <versionNumber>2</versionNumber>
+      <objectId>fbc312d4-d5a6-4dc3-972d-678f03677720</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <vendorContactGeneratedIdentifier>53333</vendorContactGeneratedIdentifier>
+      <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+      <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+      <vendorContactTypeCode>VI</vendorContactTypeCode>
+      <vendorContactName>John Doe</vendorContactName>
+      <vendorContactEmailAddress>jd98765@unknown.edu</vendorContactEmailAddress>
+      <active>false</active>
+      <vendorContactPhoneNumbers>
+        <org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+          <versionNumber>2</versionNumber>
+          <objectId>9012b972-9363-4d31-82ff-4bc6f1e01812</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+          <vendorContactPhoneGeneratedIdentifier>50505</vendorContactPhoneGeneratedIdentifier>
+          <vendorContactGeneratedIdentifier>53333</vendorContactGeneratedIdentifier>
+          <vendorPhoneTypeCode>VI</vendorPhoneTypeCode>
+          <vendorPhoneNumber>888-999-0000</vendorPhoneNumber>
+          <active>false</active>
+        </org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+      </vendorContactPhoneNumbers>
+    </org.kuali.kfs.vnd.businessobject.VendorContact>
+    <org.kuali.kfs.vnd.businessobject.VendorContact>
+      <newCollectionRecord>true</newCollectionRecord>
+      <vendorContactTypeCode>VI</vendorContactTypeCode>
+      <vendorContactName>John Doe</vendorContactName>
+      <vendorContactEmailAddress>johndoe@somewhere.com</vendorContactEmailAddress>
+      <active>true</active>
+      <vendorContactPhoneNumbers>
+        <org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+          <newCollectionRecord>true</newCollectionRecord>
+          <vendorPhoneTypeCode>VI</vendorPhoneTypeCode>
+          <vendorPhoneNumber>888-999-1111</vendorPhoneNumber>
+          <active>true</active>
+        </org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+      </vendorContactPhoneNumbers>
+    </org.kuali.kfs.vnd.businessobject.VendorContact>
+  </vendorContacts>
+  <vendorContracts/>
+  <vendorCustomerNumbers/>
+  <vendorPhoneNumbers/>
+  <vendorShippingSpecialConditions/>
+  <vendorCommodities/>
+  <vendorHeader>
+    <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension">
+      <versionNumber>4</versionNumber>
+      <objectId>bb86324e-9d47-44f7-930f-5b8cf6f36242</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+    </extension>
+    <versionNumber>4</versionNumber>
+    <objectId>ad723754-3f25-4398-a054-32038923b89d</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+    <vendorTypeCode>RV</vendorTypeCode>
+    <vendorTaxNumber>XXXXXXXXX</vendorTaxNumber>
+    <vendorTaxTypeCode>SSN</vendorTaxTypeCode>
+    <vendorOwnershipCode>ID</vendorOwnershipCode>
+    <vendorW9ReceivedIndicator>true</vendorW9ReceivedIndicator>
+    <vendorForeignIndicator>false</vendorForeignIndicator>
+    <vendorW9SignedDate>2019-04-30</vendorW9SignedDate>
+    <vendorSupplierDiversities>
+      <org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+        <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension">
+          <versionNumber>4</versionNumber>
+          <objectId>f2f8ad3a-cf13-4993-81c5-a1c092980034</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+          <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+          <vendorSupplierDiversityCode>DB</vendorSupplierDiversityCode>
+          <vendorSupplierDiversityExpirationDate>2019-03-15</vendorSupplierDiversityExpirationDate>
+        </extension>
+        <versionNumber>4</versionNumber>
+        <objectId>859e5e44-eb15-47f6-88bb-114a79bbdef9</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+        <vendorSupplierDiversityCode>DB</vendorSupplierDiversityCode>
+        <active>true</active>
+      </org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+      <org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+        <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension">
+          <versionNumber>4</versionNumber>
+          <objectId>e7d3b6c1-5276-4ff3-85a8-32e53d6f7c56</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+          <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+          <vendorSupplierDiversityCode>DV</vendorSupplierDiversityCode>
+          <vendorSupplierDiversityExpirationDate>2019-03-15</vendorSupplierDiversityExpirationDate>
+        </extension>
+        <versionNumber>4</versionNumber>
+        <objectId>8b5ff2a7-dd31-4e2c-a42c-a4d772666a1c</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+        <vendorSupplierDiversityCode>DV</vendorSupplierDiversityCode>
+        <active>true</active>
+      </org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+      <org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+        <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension">
+          <versionNumber>4</versionNumber>
+          <objectId>7893c7d6-74b8-43c4-b877-084ea07cfea8</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+          <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+          <vendorSupplierDiversityCode>HZ</vendorSupplierDiversityCode>
+          <vendorSupplierDiversityExpirationDate>2019-03-15</vendorSupplierDiversityExpirationDate>
+        </extension>
+        <versionNumber>4</versionNumber>
+        <objectId>db9f2a04-be7f-4f1b-a173-024d1b381c7b</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+        <vendorSupplierDiversityCode>HZ</vendorSupplierDiversityCode>
+        <active>false</active>
+      </org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+    </vendorSupplierDiversities>
+  </vendorHeader>
+  <vendorRestrictedPerson>
+    <newCollectionRecord>false</newCollectionRecord>
+    <firstName></firstName>
+    <middleName></middleName>
+    <lastName></lastName>
+    <name></name>
+    <emailAddress></emailAddress>
+    <phoneNumber></phoneNumber>
+    <affiliationTypeCode></affiliationTypeCode>
+    <campusCode></campusCode>
+    <employeeStatusCode></employeeStatusCode>
+    <employeeTypeCode></employeeTypeCode>
+    <primaryDepartmentCode></primaryDepartmentCode>
+    <employeeId></employeeId>
+    <baseSalaryAmount>
+      <value>0.00</value>
+    </baseSalaryAmount>
+    <active>true</active>
+  </vendorRestrictedPerson>
+</org.kuali.kfs.vnd.businessobject.VendorDetail><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="edu.cornell.kfs.vnd.document.CuVendorMaintainableImpl"><notes><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+  <org.kuali.kfs.krad.bo.Note>
+    <versionNumber>11</versionNumber>
+    <objectId>631a9a9e-61bc-46d6-8174-9961f052f772</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <noteIdentifier>7888888</noteIdentifier>
+    <remoteObjectIdentifier>4b37ee8f-2822-439c-bcbb-6918fbfdeed9</remoteObjectIdentifier>
+    <authorUniversalIdentifier>2</authorUniversalIdentifier>
+    <notePostedTimestamp>2018-03-16 11:10:01.0</notePostedTimestamp>
+    <noteTypeCode>BO</noteTypeCode>
+    <noteText>Initiator : abc2</noteText>
+    <noteType>
+      <versionNumber>1</versionNumber>
+      <objectId>2D3C47C53BE6B016E043814FD881B016</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteTypeDescription>DOCUMENT BUSINESS OBJECT</noteTypeDescription>
+      <noteTypeActiveIndicator>true</noteTypeActiveIndicator>
+    </noteType>
+    
+    <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+      <versionNumber>1</versionNumber>
+      <newCollectionRecord>false</newCollectionRecord>
+      <type>0</type>
+      <actionRequested>A</actionRequested>
+    </adHocRouteRecipient>
+  </org.kuali.kfs.krad.bo.Note>
+  <org.kuali.kfs.krad.bo.Note>
+    <versionNumber>12</versionNumber>
+    <objectId>0edbc00e-0c93-483e-80bd-d4ee0e6d8df3</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <noteIdentifier>7999999</noteIdentifier>
+    <remoteObjectIdentifier>4b37ee8f-2822-439c-bcbb-6918fbfdeed9</remoteObjectIdentifier>
+    <authorUniversalIdentifier>2</authorUniversalIdentifier>
+    <notePostedTimestamp>2018-03-16 11:10:01.0</notePostedTimestamp>
+    <noteTypeCode>BO</noteTypeCode>
+    <noteText>Procurement vendor batch process - add attachment</noteText>
+    <noteType/>
+    
+    <attachment>
+      <versionNumber>11</versionNumber>
+      <objectId>a5c54aba-2aa6-4469-a081-a2bf15f6ade0</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <noteIdentifier>7999999</noteIdentifier>
+      <attachmentMimeTypeCode>application/pdf</attachmentMimeTypeCode>
+      <attachmentFileName>vnd_attachment_test_university.edu_ConflictOfInterest.pdf</attachmentFileName>
+      <attachmentIdentifier>d07cc52b-588b-42d4-8678-9687f8ee2dad</attachmentIdentifier>
+      <attachmentFileSize>1111</attachmentFileSize>
+      <note reference="../.."/>
+    </attachment>
+    <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+      <versionNumber>1</versionNumber>
+      <newCollectionRecord>false</newCollectionRecord>
+      <type>0</type>
+      <actionRequested>A</actionRequested>
+    </adHocRouteRecipient>
+  </org.kuali.kfs.krad.bo.Note>
+</org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl></notes><oldMaintainableObject><org.kuali.kfs.vnd.businessobject.VendorDetail>
+  <extension class="edu.cornell.kfs.vnd.businessobject.VendorDetailExtension">
+    <versionNumber>3</versionNumber>
+    <objectId>e4b813a7-e4a9-4f43-a7b1-ea6812b29396</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+    <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+    <einvoiceVendorIndicator>N</einvoiceVendorIndicator>
+    <insuranceRequiredIndicator>false</insuranceRequiredIndicator>
+    <vendorCreditCardMerchants/>
+    <paymentWorksOriginatingIndicator>false</paymentWorksOriginatingIndicator>
+  </extension>
+  <versionNumber>3</versionNumber>
+  <objectId>4b37ee8f-2822-439c-bcbb-6918fbfdeed9</objectId>
+  <lastUpdatedTimestamp>2023-08-28 19:57:19</lastUpdatedTimestamp>
+  <newCollectionRecord>false</newCollectionRecord>
+  <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+  <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+  <vendorParentIndicator>true</vendorParentIndicator>
+  <vendorFirstName>John</vendorFirstName>
+  <vendorLastName>Doe</vendorLastName>
+  <activeIndicator>false</activeIndicator>
+  <vendorInactiveReasonCode>NA</vendorInactiveReasonCode>
+  <vendorFirstLastNameIndicator>true</vendorFirstLastNameIndicator>
+  <taxableIndicator>false</taxableIndicator>
+  <defaultPaymentMethodCode>P</defaultPaymentMethodCode>
+  <vendorAddresses>
+    <org.kuali.kfs.vnd.businessobject.VendorAddress>
+      <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension">
+        <versionNumber>1</versionNumber>
+        <objectId>e258a111-eadf-444f-a1ba-8bb14296dbc5</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <vendorAddressGeneratedIdentifier>163163</vendorAddressGeneratedIdentifier>
+      </extension>
+      <versionNumber>1</versionNumber>
+      <objectId>9658aca1-2682-4604-8902-305045415204</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <vendorAddressGeneratedIdentifier>163163</vendorAddressGeneratedIdentifier>
+      <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+      <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+      <vendorAddressTypeCode>RM</vendorAddressTypeCode>
+      <vendorLine1Address>234 Test St</vendorLine1Address>
+      <vendorCityName>East Hampton</vendorCityName>
+      <vendorStateCode>MA</vendorStateCode>
+      <vendorZipCode>01027</vendorZipCode>
+      <vendorCountryCode>US</vendorCountryCode>
+      <vendorDefaultAddressIndicator>true</vendorDefaultAddressIndicator>
+      <active>true</active>
+      <vendorDefaultAddresses/>
+    </org.kuali.kfs.vnd.businessobject.VendorAddress>
+  </vendorAddresses>
+  <vendorAliases/>
+  <vendorContacts>
+    <org.kuali.kfs.vnd.businessobject.VendorContact>
+      <versionNumber>2</versionNumber>
+      <objectId>fbc312d4-d5a6-4dc3-972d-678f03677720</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <vendorContactGeneratedIdentifier>53333</vendorContactGeneratedIdentifier>
+      <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+      <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+      <vendorContactTypeCode>VI</vendorContactTypeCode>
+      <vendorContactName>John Doe</vendorContactName>
+      <vendorContactEmailAddress>jd98765@unknown.edu</vendorContactEmailAddress>
+      <active>true</active>
+      <vendorContactPhoneNumbers>
+        <org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+          <versionNumber>2</versionNumber>
+          <objectId>9012b972-9363-4d31-82ff-4bc6f1e01812</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+          <vendorContactPhoneGeneratedIdentifier>50505</vendorContactPhoneGeneratedIdentifier>
+          <vendorContactGeneratedIdentifier>53333</vendorContactGeneratedIdentifier>
+          <vendorPhoneTypeCode>VI</vendorPhoneTypeCode>
+          <vendorPhoneNumber>888-999-0000</vendorPhoneNumber>
+          <active>true</active>
+        </org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+      </vendorContactPhoneNumbers>
+    </org.kuali.kfs.vnd.businessobject.VendorContact>
+    <org.kuali.kfs.vnd.businessobject.VendorContact>
+      <newCollectionRecord>true</newCollectionRecord>
+      <active>false</active>
+      <vendorContactPhoneNumbers>
+        <org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+          <newCollectionRecord>true</newCollectionRecord>
+          <active>false</active>
+        </org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+      </vendorContactPhoneNumbers>
+    </org.kuali.kfs.vnd.businessobject.VendorContact>
+  </vendorContacts>
+  <vendorContracts/>
+  <vendorCustomerNumbers/>
+  <vendorPhoneNumbers/>
+  <vendorShippingSpecialConditions/>
+  <vendorCommodities/>
+  <vendorHeader>
+    <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension">
+      <versionNumber>4</versionNumber>
+      <objectId>bb86324e-9d47-44f7-930f-5b8cf6f36242</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+    </extension>
+    <versionNumber>4</versionNumber>
+    <objectId>ad723754-3f25-4398-a054-32038923b89d</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+    <vendorTypeCode>DV</vendorTypeCode>
+    <vendorTaxNumber>XXXXXXXXX</vendorTaxNumber>
+    <vendorTaxTypeCode>SSN</vendorTaxTypeCode>
+    <vendorOwnershipCode>ID</vendorOwnershipCode>
+    <vendorW9ReceivedIndicator>true</vendorW9ReceivedIndicator>
+    <vendorForeignIndicator>false</vendorForeignIndicator>
+    <vendorW9SignedDate>2019-04-30</vendorW9SignedDate>
+    <vendorForeignTaxId/>
+    <vendorSupplierDiversities>
+      <org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+        
+          <certificationExpirationDate>2019-03-15</certificationExpirationDate>
+        
+        <versionNumber>4</versionNumber>
+        <objectId>859e5e44-eb15-47f6-88bb-114a79bbdef9</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+        <vendorSupplierDiversityCode>DB</vendorSupplierDiversityCode>
+        <active>true</active>
+      </org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+      <org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+        
+          <certificationExpirationDate>2019-03-15</certificationExpirationDate>
+        
+        <versionNumber>4</versionNumber>
+        <objectId>8b5ff2a7-dd31-4e2c-a42c-a4d772666a1c</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+        <vendorSupplierDiversityCode>DV</vendorSupplierDiversityCode>
+        <active>true</active>
+      </org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+      <org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+        
+          <certificationExpirationDate>2019-03-15</certificationExpirationDate>
+        
+        <versionNumber>4</versionNumber>
+        <objectId>db9f2a04-be7f-4f1b-a173-024d1b381c7b</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+        <vendorSupplierDiversityCode>HZ</vendorSupplierDiversityCode>
+        <active>false</active>
+      </org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+    </vendorSupplierDiversities>
+  </vendorHeader>
+</org.kuali.kfs.vnd.businessobject.VendorDetail><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.vnd.businessobject.VendorDetail>
+  <extension class="edu.cornell.kfs.vnd.businessobject.VendorDetailExtension">
+    <versionNumber>3</versionNumber>
+    <objectId>e4b813a7-e4a9-4f43-a7b1-ea6812b29396</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+    <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+    <einvoiceVendorIndicator>N</einvoiceVendorIndicator>
+    <insuranceRequiredIndicator>false</insuranceRequiredIndicator>
+    <vendorCreditCardMerchants/>
+    <paymentWorksOriginatingIndicator>false</paymentWorksOriginatingIndicator>
+  </extension>
+  <versionNumber>3</versionNumber>
+  <objectId>4b37ee8f-2822-439c-bcbb-6918fbfdeed9</objectId>
+  <lastUpdatedTimestamp>2023-08-28 19:57:19</lastUpdatedTimestamp>
+  <newCollectionRecord>false</newCollectionRecord>
+  <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+  <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+  <vendorParentIndicator>true</vendorParentIndicator>
+  <vendorFirstName>John</vendorFirstName>
+  <vendorLastName>Doe</vendorLastName>
+  <activeIndicator>true</activeIndicator>
+  <vendorFirstLastNameIndicator>true</vendorFirstLastNameIndicator>
+  <taxableIndicator>false</taxableIndicator>
+  <defaultPaymentMethodCode>P</defaultPaymentMethodCode>
+  <vendorAddresses>
+    <org.kuali.kfs.vnd.businessobject.VendorAddress>
+      <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension">
+        <versionNumber>1</versionNumber>
+        <objectId>e258a111-eadf-444f-a1ba-8bb14296dbc5</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <vendorAddressGeneratedIdentifier>163163</vendorAddressGeneratedIdentifier>
+      </extension>
+      <versionNumber>1</versionNumber>
+      <objectId>9658aca1-2682-4604-8902-305045415204</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <vendorAddressGeneratedIdentifier>163163</vendorAddressGeneratedIdentifier>
+      <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+      <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+      <vendorAddressTypeCode>RM</vendorAddressTypeCode>
+      <vendorLine1Address>234 Test St</vendorLine1Address>
+      <vendorCityName>East Hampton</vendorCityName>
+      <vendorStateCode>MA</vendorStateCode>
+      <vendorZipCode>01027-2107</vendorZipCode>
+      <vendorCountryCode>US</vendorCountryCode>
+      <vendorDefaultAddressIndicator>true</vendorDefaultAddressIndicator>
+      <active>true</active>
+      <vendorDefaultAddresses/>
+    </org.kuali.kfs.vnd.businessobject.VendorAddress>
+  </vendorAddresses>
+  <vendorAliases/>
+  <vendorContacts>
+    <org.kuali.kfs.vnd.businessobject.VendorContact>
+      <versionNumber>2</versionNumber>
+      <objectId>fbc312d4-d5a6-4dc3-972d-678f03677720</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <vendorContactGeneratedIdentifier>53333</vendorContactGeneratedIdentifier>
+      <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+      <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+      <vendorContactTypeCode>VI</vendorContactTypeCode>
+      <vendorContactName>John Doe</vendorContactName>
+      <vendorContactEmailAddress>jd98765@unknown.edu</vendorContactEmailAddress>
+      <active>false</active>
+      <vendorContactPhoneNumbers>
+        <org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+          <versionNumber>2</versionNumber>
+          <objectId>9012b972-9363-4d31-82ff-4bc6f1e01812</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+          <vendorContactPhoneGeneratedIdentifier>50505</vendorContactPhoneGeneratedIdentifier>
+          <vendorContactGeneratedIdentifier>53333</vendorContactGeneratedIdentifier>
+          <vendorPhoneTypeCode>VI</vendorPhoneTypeCode>
+          <vendorPhoneNumber>888-999-0000</vendorPhoneNumber>
+          <active>false</active>
+        </org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+      </vendorContactPhoneNumbers>
+    </org.kuali.kfs.vnd.businessobject.VendorContact>
+    <org.kuali.kfs.vnd.businessobject.VendorContact>
+      <newCollectionRecord>true</newCollectionRecord>
+      <vendorContactTypeCode>VI</vendorContactTypeCode>
+      <vendorContactName>John Doe</vendorContactName>
+      <vendorContactEmailAddress>johndoe@somewhere.com</vendorContactEmailAddress>
+      <active>true</active>
+      <vendorContactPhoneNumbers>
+        <org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+          <newCollectionRecord>true</newCollectionRecord>
+          <vendorPhoneTypeCode>VI</vendorPhoneTypeCode>
+          <vendorPhoneNumber>888-999-1111</vendorPhoneNumber>
+          <active>true</active>
+        </org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+      </vendorContactPhoneNumbers>
+    </org.kuali.kfs.vnd.businessobject.VendorContact>
+  </vendorContacts>
+  <vendorContracts/>
+  <vendorCustomerNumbers/>
+  <vendorPhoneNumbers/>
+  <vendorShippingSpecialConditions/>
+  <vendorCommodities/>
+  <vendorHeader>
+    <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension">
+      <versionNumber>4</versionNumber>
+      <objectId>bb86324e-9d47-44f7-930f-5b8cf6f36242</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+    </extension>
+    <versionNumber>4</versionNumber>
+    <objectId>ad723754-3f25-4398-a054-32038923b89d</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+    <vendorTypeCode>RV</vendorTypeCode>
+    <vendorTaxNumber>XXXXXXXXX</vendorTaxNumber>
+    <vendorTaxTypeCode>SSN</vendorTaxTypeCode>
+    <vendorOwnershipCode>ID</vendorOwnershipCode>
+    <vendorW9ReceivedIndicator>true</vendorW9ReceivedIndicator>
+    <vendorForeignIndicator>false</vendorForeignIndicator>
+    <vendorW9SignedDate>2019-04-30</vendorW9SignedDate>
+    <vendorSupplierDiversities>
+      <org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+        
+          <certificationExpirationDate>2019-03-15</certificationExpirationDate>
+        
+        <versionNumber>4</versionNumber>
+        <objectId>859e5e44-eb15-47f6-88bb-114a79bbdef9</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+        <vendorSupplierDiversityCode>DB</vendorSupplierDiversityCode>
+        <active>true</active>
+      </org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+      <org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+        
+          <certificationExpirationDate>2019-03-15</certificationExpirationDate>
+        
+        <versionNumber>4</versionNumber>
+        <objectId>8b5ff2a7-dd31-4e2c-a42c-a4d772666a1c</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+        <vendorSupplierDiversityCode>DV</vendorSupplierDiversityCode>
+        <active>true</active>
+      </org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+      <org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+        
+          <certificationExpirationDate>2019-03-15</certificationExpirationDate>
+        
+        <versionNumber>4</versionNumber>
+        <objectId>db9f2a04-be7f-4f1b-a173-024d1b381c7b</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+        <vendorSupplierDiversityCode>HZ</vendorSupplierDiversityCode>
+        <active>false</active>
+      </org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity>
+    </vendorSupplierDiversities>
+  </vendorHeader>
+  
+</org.kuali.kfs.vnd.businessobject.VendorDetail><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>

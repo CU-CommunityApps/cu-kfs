@@ -183,7 +183,8 @@ public class CuMaintainableXMLConversionServiceImplTest {
     @ValueSource(strings = {
         "VendorTest.xml",
         "VendorWithoutHeaderExtensionTest.xml",
-        "VendorLocaleTest.xml"
+        "VendorLocaleTest.xml",
+        "VendorSupplierDiversityTest.xml"
     })
     void testConversionOfVendors(String vendorTestFile) throws Exception {
         assertXMLFromTestFileConvertsAsExpected(vendorTestFile);
