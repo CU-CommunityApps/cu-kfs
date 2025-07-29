@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
@@ -181,10 +182,10 @@ abstract class TransactionRowProcessor<T extends TransactionDetailSummary> {
      * Builds and returns an object for formatting date-time values
      * to be used as the end of a filename.
      * 
-     * @return A new DateFormat for formatting date-times as filename suffixes.
+     * @return A new DateTimeFormatter for formatting date-times as filename suffixes.
      */
-    DateFormat buildDateFormatForFileSuffixes() {
-        return new SimpleDateFormat(CUTaxConstants.FILENAME_SUFFIX_DATE_FORMAT, Locale.US);
+    DateTimeFormatter buildDateFormatForFileSuffixes() {
+        return DateTimeFormatter.ofPattern(CUTaxConstants.FILENAME_SUFFIX_DATE_FORMAT, Locale.US);
     }
 
 
