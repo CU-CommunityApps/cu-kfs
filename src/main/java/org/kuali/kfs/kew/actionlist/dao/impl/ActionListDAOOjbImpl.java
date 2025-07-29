@@ -44,11 +44,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -65,20 +62,17 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
 
     private static final Logger LOG = LogManager.getLogger();
     private static final String ACTION_LIST_COUNT_QUERY =
-            "select count(distinct(ai.doc_hdr_id)) from krew_actn_itm_t ai where ai.PRNCPL_ID = ? and (ai.dlgn_typ is null or ai.dlgn_typ = 'P')";
-    private static final String MAX_ACTION_ITEM_DATE_ASSIGNED_AND_ACTION_LIST_COUNT_AND_QUERY =
-            "select max(ASND_DT) as max_date, count(distinct(doc_hdr_id)) as total_records"
-                    + "  from ("
-                    + "       select ASND_DT,doc_hdr_id  "
-                    + "         from KREW_ACTN_ITM_T   where    prncpl_id=? "
-                    + "         group by  ASND_DT,doc_hdr_id "
-                    + "       ) T";
+            "select count(distinct(ai.doc_hdr_id)) "
+            + "from krew_actn_itm_t ai where ai.PRNCPL_ID = ? and (ai.dlgn_typ is null or ai.dlgn_typ = 'P')";
 
     private GroupService groupService;
     private DateTimeService dateTimeService;
 
     @Override
-    public Collection<ActionItemActionListExtension> getActionList(final String principalId, final ActionListFilter filter) {
+    public Collection<ActionItemActionListExtension> getActionList(
+            final String principalId,
+            final ActionListFilter filter
+    ) {
         return getActionItemsInActionList(ActionItemActionListExtension.class, principalId, filter);
     }
 
@@ -107,7 +101,6 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             } else {
                 criteria.addEqualTo("actionRequestCd", filter.getActionRequestCd());
             }
-            filteredByItems += filteredByItems.length() > 0 ? ", " : "";
             filteredByItems += "Action Requested";
         }
 
@@ -115,11 +108,13 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             if (filter.isExcludeCreateDate()) {
                 if (filter.getCreateDateFrom() != null && filter.getCreateDateTo() != null) {
                     criteria.addNotBetween("routeHeader.createDate",
-                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom()).getTime()),
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom())
+                                    .getTime()),
                             new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getCreateDateTo()).getTime()));
                 } else if (filter.getCreateDateFrom() != null && filter.getCreateDateTo() == null) {
                     criteria.addLessOrEqualThan("routeHeader.createDate",
-                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom()).getTime())
+                    );
                 } else if (filter.getCreateDateFrom() == null && filter.getCreateDateTo() != null) {
                     criteria.addGreaterOrEqualThan("routeHeader.createDate",
                             new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getCreateDateTo()).getTime()));
@@ -127,17 +122,19 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             } else {
                 if (filter.getCreateDateFrom() != null && filter.getCreateDateTo() != null) {
                     criteria.addBetween("routeHeader.createDate",
-                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom()).getTime()),
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom())
+                                    .getTime()),
                             new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getCreateDateTo()).getTime()));
                 } else if (filter.getCreateDateFrom() != null && filter.getCreateDateTo() == null) {
                     criteria.addGreaterOrEqualThan("routeHeader.createDate",
-                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom()).getTime())
+                    );
                 } else if (filter.getCreateDateFrom() == null && filter.getCreateDateTo() != null) {
                     criteria.addLessOrEqualThan("routeHeader.createDate",
                             new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getCreateDateTo()).getTime()));
                 }
             }
-            filteredByItems += filteredByItems.length() > 0 ? ", " : "";
+            filteredByItems += filteredByItems.isEmpty() ? "" : ", ";
             filteredByItems += "Date Created";
         }
 
@@ -148,7 +145,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             } else {
                 criteria.addEqualTo("routeHeader.docRouteStatus", filter.getDocRouteStatus());
             }
-            filteredByItems += filteredByItems.length() > 0 ? ", " : "";
+            filteredByItems += filteredByItems.isEmpty() ? "" : ", ";
             filteredByItems += "Document Route Status";
         }
 
@@ -163,7 +160,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             } else {
                 criteria.addLike("docTitle", "%" + docTitle + "%");
             }
-            filteredByItems += filteredByItems.length() > 0 ? ", " : "";
+            filteredByItems += filteredByItems.isEmpty() ? "" : ", ";
             filteredByItems += "Document Title";
         }
 
@@ -172,7 +169,8 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
                 criteria.addNotLike("docName", "%" + filter.getDocumentType() + "%");
             } else {
                 final String documentTypeName = filter.getDocumentType();
-                final DocumentType documentType = KEWServiceLocator.getDocumentTypeService().findByName(documentTypeName);
+                final DocumentType documentType =
+                        KEWServiceLocator.getDocumentTypeService().findByName(documentTypeName);
                 if (documentType == null) {
                     criteria.addLike("docName", "%" + filter.getDocumentType() + "%");
                 } else {
@@ -182,7 +180,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
                     criteria.addAndCriteria(docTypeCrit);
                 }
             }
-            filteredByItems += filteredByItems.length() > 0 ? ", " : "";
+            filteredByItems += filteredByItems.isEmpty() ? "" : ", ";
             filteredByItems += "Document Type";
         }
 
@@ -190,29 +188,43 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             if (filter.isExcludeLastAssignedDate()) {
                 if (filter.getLastAssignedDateFrom() != null && filter.getLastAssignedDateTo() != null) {
                     criteria.addNotBetween("dateAssigned",
-                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getLastAssignedDateFrom()).getTime()),
-                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getLastAssignedDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getLastAssignedDateFrom())
+                                    .getTime()),
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getLastAssignedDateTo())
+                                    .getTime())
+                    );
                 } else if (filter.getLastAssignedDateFrom() != null && filter.getLastAssignedDateTo() == null) {
                     criteria.addLessOrEqualThan("dateAssigned",
-                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getLastAssignedDateFrom()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getLastAssignedDateFrom())
+                                    .getTime())
+                    );
                 } else if (filter.getLastAssignedDateFrom() == null && filter.getLastAssignedDateTo() != null) {
                     criteria.addGreaterOrEqualThan("dateAssigned",
-                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getLastAssignedDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getLastAssignedDateTo())
+                                    .getTime())
+                    );
                 }
             } else {
                 if (filter.getLastAssignedDateFrom() != null && filter.getLastAssignedDateTo() != null) {
                     criteria.addBetween("dateAssigned",
-                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getLastAssignedDateFrom()).getTime()),
-                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getLastAssignedDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getLastAssignedDateFrom())
+                                    .getTime()),
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getLastAssignedDateTo())
+                                    .getTime())
+                    );
                 } else if (filter.getLastAssignedDateFrom() != null && filter.getLastAssignedDateTo() == null) {
                     criteria.addGreaterOrEqualThan("dateAssigned",
-                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getLastAssignedDateFrom()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getLastAssignedDateFrom())
+                                    .getTime())
+                    );
                 } else if (filter.getLastAssignedDateFrom() == null && filter.getLastAssignedDateTo() != null) {
                     criteria.addLessOrEqualThan("dateAssigned",
-                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getLastAssignedDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getLastAssignedDateTo())
+                                    .getTime())
+                    );
                 }
             }
-            filteredByItems += filteredByItems.length() > 0 ? ", " : "";
+            filteredByItems += filteredByItems.isEmpty() ? "" : ", ";
             filteredByItems += "Date Last Assigned";
         }
         
@@ -262,11 +274,11 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             } else {
                 criteria.addEqualTo("groupId", filter.getGroupId());
             }
-            filteredByItems += filteredByItems.length() > 0 ? ", " : "";
+            filteredByItems += filteredByItems.isEmpty() ? "" : ", ";
             filteredByItems += "Action Request Workgroup";
         }
 
-        if (filteredByItems.length() > 0) {
+        if (!filteredByItems.isEmpty()) {
             filterOn = true;
         }
 
@@ -402,22 +414,21 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
         return criteria;
     }
 
-    private void constructDocumentTypeCriteria(final Criteria criteria, final DocumentType documentType) {
+    private static void constructDocumentTypeCriteria(final Criteria criteria, final DocumentType documentType) {
         // search this document type plus it's children
         final Criteria docTypeBaseCrit = new Criteria();
         docTypeBaseCrit.addEqualTo("docName", documentType.getName());
         criteria.addOrCriteria(docTypeBaseCrit);
-        final Collection children = documentType.getChildrenDocTypes();
+        final Collection<DocumentType> children = documentType.getChildrenDocTypes();
         if (children != null) {
-            for (final Iterator iterator = children.iterator(); iterator.hasNext(); ) {
-                final DocumentType childDocumentType = (DocumentType) iterator.next();
+            for (final DocumentType childDocumentType : children) {
                 constructDocumentTypeCriteria(criteria, childDocumentType);
             }
         }
     }
 
     private void addToFilterDescription(String filterDescription, final String labelToAdd) {
-        filterDescription += filterDescription.length() > 0 ? ", " : "";
+        filterDescription += filterDescription.isEmpty() ? "" : ", ";
         filterDescription += labelToAdd;
     }
 
@@ -426,34 +437,23 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
         return (Integer) getPersistenceBrokerTemplate().execute(new PersistenceBrokerCallback() {
             @Override
             public Object doInPersistenceBroker(final PersistenceBroker broker) {
-                PreparedStatement statement = null;
-                ResultSet resultSet = null;
                 try {
+                    // The documentation for the getConnection() method of ConnectionManagerImpl (the only
+                    // implementation of ConnectionManagerIF) documents that the caller should never call close() on the
+                    // returned Connection object. It'll be returned to the pool and re-used.
                     final Connection connection = broker.serviceConnectionManager().getConnection();
-                    statement = connection.prepareStatement(ACTION_LIST_COUNT_QUERY);
-                    statement.setString(1, workflowId);
-                    resultSet = statement.executeQuery();
-                    if (!resultSet.next()) {
-                        throw new WorkflowRuntimeException("Error determining Action List Count.");
+                    try (PreparedStatement statement = connection.prepareStatement(ACTION_LIST_COUNT_QUERY)) {
+                        statement.setString(1, workflowId);
+
+                        try (ResultSet resultSet = statement.executeQuery()) {
+                            if (!resultSet.next()) {
+                                throw new WorkflowRuntimeException("Error determining Action List Count.");
+                            }
+                            return resultSet.getInt(1);
+                        }
                     }
-                    return resultSet.getInt(1);
                 } catch (SQLException | LookupException e) {
                     throw new WorkflowRuntimeException("Error determining Action List Count.", e);
-                } finally {
-                    if (statement != null) {
-                        try {
-                            statement.close();
-                        } catch (final SQLException e) {
-                            // should we be logging something?
-                        }
-                    }
-                    if (resultSet != null) {
-                        try {
-                            resultSet.close();
-                        } catch (final SQLException e) {
-                            // should we be logging something?
-                        }
-                    }
                 }
             }
         });
@@ -466,7 +466,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
      *
      * @return the Action List as a Collection of ActionItems
      */
-    private <T extends ActionItemActionListExtension> Collection<T> createActionListForUser(
+    private static <T extends ActionItemActionListExtension> Collection<T> createActionListForUser(
             final Collection<T> actionItems) {
         final Map<String, T> actionItemMap = new HashMap<>();
         final ActionListPriorityComparator comparator = new ActionListPriorityComparator();
@@ -485,7 +485,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
      *
      * @return the Action List as a Collection of ActionItems
      */
-    private Collection<ActionItemActionListExtension> createActionListForRouteHeader(
+    private static Collection<ActionItemActionListExtension> createActionListForRouteHeader(
             final Collection<ActionItemActionListExtension> actionItems) {
         final Map<String, ActionItemActionListExtension> actionItemMap = new HashMap<>();
         final ActionListPriorityComparator comparator = new ActionListPriorityComparator();
@@ -517,7 +517,10 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
     }
 
     @Override
-    public Collection<OutboxItemActionListExtension> getOutbox(final String principalId, final ActionListFilter filter) {
+    public Collection<OutboxItemActionListExtension> getOutbox(
+            final String principalId,
+            final ActionListFilter filter
+    ) {
         return getActionItemsInActionList(OutboxItemActionListExtension.class, principalId, filter);
     }
 
@@ -528,7 +531,10 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
     public void removeOutboxItems(final String principalId, final List<String> outboxItems) {
         final Criteria criteria = new Criteria();
         criteria.addIn("id", outboxItems);
-        getPersistenceBrokerTemplate().deleteByQuery(new QueryByCriteria(OutboxItemActionListExtension.class, criteria));
+        getPersistenceBrokerTemplate().deleteByQuery(new QueryByCriteria(
+                OutboxItemActionListExtension.class,
+                criteria
+        ));
     }
 
     /**

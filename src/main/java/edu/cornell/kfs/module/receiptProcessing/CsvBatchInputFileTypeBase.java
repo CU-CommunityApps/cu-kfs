@@ -49,7 +49,7 @@ import com.opencsv.CSVReader;
  * Base class for BatchInputFileType implementations that validate using an Enum class (use as the CSV file header)
  * and parse using CSV comma delimited
  */
-public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> extends BatchInputFileTypeBase {
+public abstract class CsvBatchInputFileTypeBase<E extends Enum<E>> extends BatchInputFileTypeBase {
     private static final Logger LOG = LogManager.getLogger();
 
     private Class<?> csvEnumClass;
@@ -188,8 +188,8 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
     @SuppressWarnings("rawtypes")
     protected List<String> getCsvHeaderList() {
         List<String> headerList = new ArrayList<>();
-        EnumSet<CSVEnum> enums = EnumSet.allOf((Class) csvEnumClass);
-        for (Enum<CSVEnum> e : enums) {
+        final EnumSet<E> enums = EnumSet.allOf((Class) csvEnumClass);
+        for (final Enum<E> e : enums) {
             headerList.add(e.name());
         }
         return headerList;

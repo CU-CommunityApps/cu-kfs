@@ -60,7 +60,7 @@ public class ActionListFilterAction extends KualiAction {
     @Override
     public ActionForward execute(
             final ActionMapping mapping, final ActionForm form,
-            final HttpServletRequest request, HttpServletResponse response)
+            final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
         request.setAttribute("preferences", getUserSession().retrieveObject(KewApiConstants.PREFERENCES));
         initForm(request, form);
@@ -95,7 +95,7 @@ public class ActionListFilterAction extends KualiAction {
         final ActionListFilterForm filterForm = (ActionListFilterForm) form;
         //validate the filter through the actionitem/actionlist service (I'm thinking actionlistservice)
         final UserSession uSession = getUserSession();
-        ActionListFilter alFilter = filterForm.getLoadedFilter();
+        final ActionListFilter alFilter = filterForm.getLoadedFilter();
         if (StringUtils.isNotBlank(alFilter.getDelegatorId()) &&
                 !KewApiConstants.DELEGATION_DEFAULT.equals(alFilter.getDelegatorId()) &&
                 StringUtils.isNotBlank(alFilter.getPrimaryDelegateId()) &&
@@ -108,8 +108,7 @@ public class ActionListFilterAction extends KualiAction {
         if (GlobalVariables.getMessageMap().hasNoErrors()) {
             request.getSession().setAttribute(KewApiConstants.REQUERY_ACTION_LIST_KEY, "true");
             final ActionForward forward = mapping.findForward("viewActionList");
-            final ActionRedirect redirect = new ActionRedirect(forward);
-            return redirect;
+            return new ActionRedirect(forward);
         }
         return mapping.findForward("viewFilter");
     }
@@ -156,7 +155,7 @@ public class ActionListFilterAction extends KualiAction {
         }
     }
 
-    private List<? extends KeyValue> getUserWorkgroupsDropDownList(String principalId) {
+    private List<? extends KeyValue> getUserWorkgroupsDropDownList(final String principalId) {
         final List<String> userWorkgroups =
                 KimApiServiceLocator.getGroupService().getGroupIdsByPrincipalId(principalId);
 

@@ -71,8 +71,7 @@ public class AwardActionsProvider extends BusinessObjectActionsProvider {
         final String applicationUrl = configurationService.getPropertyValueAsString(KFSConstants.APPLICATION_URL_KEY);
         url = StringUtils.stripStart(url.replace(applicationUrl, ""), "/fin/");
 
-        final Action invoicesAction = new Action("Invoices", "GET", url, "_blank");
-        return invoicesAction;
+        return new Action("Invoices", "GET", url, "_blank");
     }
 
     public void setConfigurationService(final ConfigurationService configurationService) {

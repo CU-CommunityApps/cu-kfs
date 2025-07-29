@@ -43,8 +43,7 @@ public class CookieUtils {
     }
 
     public Cookie createFinancialsAuthCookie(final HttpServletRequest request, final String tokenValue, final String path) {
-        final Cookie financialsAuthCookie = createCookie(request, FIN_AUTH_TOKEN_COOKIE_NAME, tokenValue, path);
-        return financialsAuthCookie;
+        return createCookie(request, FIN_AUTH_TOKEN_COOKIE_NAME, tokenValue, path);
     }
 
     public Cookie createExpiringCookie(final HttpServletRequest request, final String name, final String path) {
@@ -54,9 +53,7 @@ public class CookieUtils {
     }
 
     public Cookie createExpiringFinanicialsAuthCookie(final HttpServletRequest httpRequest) {
-        final Cookie financialsAuthCookie =
-                createExpiringCookie(httpRequest, FIN_AUTH_TOKEN_COOKIE_NAME, httpRequest.getContextPath());
-        return financialsAuthCookie;
+        return createExpiringCookie(httpRequest, FIN_AUTH_TOKEN_COOKIE_NAME, httpRequest.getContextPath());
     }
 
     public Cookie createExpiringAuthCookie(final HttpServletRequest httpRequest) {
