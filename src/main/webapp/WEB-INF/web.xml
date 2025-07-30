@@ -185,7 +185,6 @@
         <url-pattern>/purap/api/*</url-pattern>
         <url-pattern>/vnd/api/*</url-pattern>
         <url-pattern>/app/sys/*</url-pattern>
-        <url-pattern>/tenant/api/*</url-pattern>
     </filter-mapping>
 
     <filter-mapping>

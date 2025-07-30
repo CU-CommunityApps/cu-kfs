@@ -290,7 +290,7 @@
                     </td>
                 </c:if>                                                 
                 <c:if test="${displayPaymentRequestFields or displayCreditMemoFields}">
-                    <th class="right" rowspan="3">
+                    <th class="right top" rowspan="3">
                         <kul:htmlAttributeLabel attributeEntry="${documentAttributes.noteLine1Text}" />
                     </th>
                     <td class="datacell">
@@ -410,7 +410,7 @@
 
             <c:if test="${displayPaymentRequestFields}">
                 <tr>
-                    <th class="right" rowspan="3">
+                    <th class="right top" rowspan="3">
                         <kul:htmlAttributeLabel attributeEntry="${documentAttributes.specialHandlingInstructionLine1Text}" />
                     </th>
                     <td class="datacell">

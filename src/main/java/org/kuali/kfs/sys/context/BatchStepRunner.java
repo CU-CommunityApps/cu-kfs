@@ -32,8 +32,6 @@ import org.kuali.kfs.krad.service.ModuleService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchSpringContext;
 import org.kuali.kfs.sys.batch.Job;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
 
 import java.io.File;
 import java.util.Arrays;
@@ -51,7 +49,7 @@ public final class BatchStepRunner {
 
     public static void main(final String[] args) {
         if (args.length < 1) {
-            System.err.println("ERROR: You must pass the name of the step to run on the command line.");
+            LOG.atError().log("ERROR: You must pass the name of the step to run on the command line.");
             System.exit(8);
         }
         try {
@@ -102,8 +100,7 @@ public final class BatchStepRunner {
             LOG.info("Finished executing job: {} steps: {}", () -> jobName, () -> Arrays.toString(stepNames));
             System.exit(0);
         } catch (final Throwable t) {
-            System.err.println("ERROR: Exception caught: ");
-            t.printStackTrace(System.err);
+            LOG.atError().withThrowable(t).log("ERROR: Exception caught: ");
             System.exit(8);
         }
     }

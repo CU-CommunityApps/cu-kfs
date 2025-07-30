@@ -383,6 +383,19 @@
                        </list>
                    </property>
                </bean>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="displayAttributeDefinitions" />
+                   <property name="propertyNameForElementCompare" value="attributeName" />
+                   <property name="element">
+                       <bean parent="VendorDetail-vendorHeader.vendorSupplierDiversitiesAsString"
+                             p:name="vendorSupplierDiversitiesForLookup"/>
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                           <ref bean="VendorDetail-defaultPaymentMethodCode"/>
+                       </list>
+                   </property>
+               </bean>
            </list>
        </property>
    </bean>

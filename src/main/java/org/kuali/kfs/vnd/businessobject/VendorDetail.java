@@ -65,6 +65,11 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     // not persisted in the db
     private String vendorStateForLookup;
 
+    // Custom fields for collections in new lookup
+    private String vendorAliasesForLookup;
+    private String vendorCommoditiesForLookup;
+    private String vendorSupplierDiversitiesForLookup;
+
     private boolean activeIndicator;
     private String vendorInactiveReasonCode;
     private String vendorDunsNumber;
@@ -192,8 +197,8 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         // make sure there's at least one char before and after '-'
         if (dashInd > 0 && dashInd < vendorNumber.length() - 1) {
             try {
-                vendorHeaderGeneratedIdentifier = new Integer(vendorNumber.substring(0, dashInd));
-                vendorDetailAssignedIdentifier = new Integer(vendorNumber.substring(dashInd + 1));
+                vendorHeaderGeneratedIdentifier = Integer.valueOf(vendorNumber.substring(0, dashInd));
+                vendorDetailAssignedIdentifier = Integer.valueOf(vendorNumber.substring(dashInd + 1));
             } catch (final NumberFormatException e) {
                 // in case of invalid number format
             }
@@ -262,8 +267,8 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         // make sure there's at least one char before and after '-'
         if (dashInd > 0 && dashInd < vendorSoldToNumber.length() - 1) {
             try {
-                vendorSoldToGeneratedIdentifier = new Integer(vendorSoldToNumber.substring(0, dashInd));
-                vendorSoldToAssignedIdentifier = new Integer(vendorSoldToNumber.substring(dashInd + 1));
+                vendorSoldToGeneratedIdentifier = Integer.valueOf(vendorSoldToNumber.substring(0, dashInd));
+                vendorSoldToAssignedIdentifier = Integer.valueOf(vendorSoldToNumber.substring(dashInd + 1));
             } catch (final NumberFormatException e) {
                 // in case of invalid number format
             }
@@ -553,8 +558,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
             } else {
                 first = false;
             }
-            // CU customization KFSPTS-3487
-            sb.append(vcc.getCommodityCode().getCommodityDescription());
+            sb.append(vcc.getCommodityCode().getPurchasingCommodityCode());
         }
         sb.append(']');
         return sb.toString();
@@ -825,4 +829,27 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         this.boNotes = boNotes;
     }
 
+    public String getVendorAliasesForLookup() {
+        return vendorAliasesForLookup;
+    }
+
+    public void setVendorAliasesForLookup(final String vendorAliasesForLookup) {
+        this.vendorAliasesForLookup = vendorAliasesForLookup;
+    }
+
+    public String getVendorCommoditiesForLookup() {
+        return vendorCommoditiesForLookup;
+    }
+
+    public void setVendorCommoditiesForLookup(final String vendorCommoditiesForLookup) {
+        this.vendorCommoditiesForLookup = vendorCommoditiesForLookup;
+    }
+
+    public String getVendorSupplierDiversitiesForLookup() {
+        return vendorSupplierDiversitiesForLookup;
+    }
+
+    public void setVendorSupplierDiversitiesForLookup(final String vendorSupplierDiversitiesForLookup) {
+        this.vendorSupplierDiversitiesForLookup = vendorSupplierDiversitiesForLookup;
+    }
 }

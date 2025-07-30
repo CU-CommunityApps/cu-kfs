@@ -187,10 +187,7 @@ public class CacheConfiguration {
         }
         final LettuceClientConfiguration lettuceClientConfiguration = lettuceClientConfigurationBuilder.build();
 
-        final LettuceConnectionFactory lettuceConnectionFactory =
-                new LettuceConnectionFactory(redisStandaloneConfiguration, lettuceClientConfiguration);
-
-        return lettuceConnectionFactory;
+        return new LettuceConnectionFactory(redisStandaloneConfiguration, lettuceClientConfiguration);
     }
 
     // Note: Not sure exactly why, but Qualifier annotation is required in order for cacheNamesWithDefaultTtl to be
@@ -220,12 +217,10 @@ public class CacheConfiguration {
                         key -> cacheDefaults.entryTtl(cacheNamesWithCustomTtl.get(key)),
                         (configuration, cacheConfiguration) -> cacheConfiguration));
 
-        final RedisCacheManager redisCacheManager = RedisCacheManager.builder(connectionFactory)
+        return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(cacheDefaults)
                 .initialCacheNames(cacheNamesWithDefaultTtl)
                 .withInitialCacheConfigurations(cacheConfigurations)
                 .build();
-
-        return redisCacheManager;
     }
 }

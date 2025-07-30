@@ -34,7 +34,7 @@
   <bean id="OrganizationGlobalDetail-organizationCode-parentBean" abstract="true" parent="Organization-organizationCode" />
 
   <bean id="OrganizationGlobalDetail-chartOfAccountsCode" parent="OrganizationGlobalDetail-chartOfAccountsCode-parentBean" />
-  <bean id="OrganizationGlobalDetail-chartOfAccountsCode-parentBean" abstract="true" parent="ChartAttribute-SelectControl" />
+  <bean id="OrganizationGlobalDetail-chartOfAccountsCode-parentBean" abstract="true" parent="ChartAttribute-SimpleDropdown" />
 
   <bean id="OrganizationGlobalDetail-organization.organizationName" parent="OrganizationGlobalDetail-organization.organizationName-parentBean" />
   <bean id="OrganizationGlobalDetail-organization.organizationName-parentBean" abstract="true" parent="Organization-organizationName">
