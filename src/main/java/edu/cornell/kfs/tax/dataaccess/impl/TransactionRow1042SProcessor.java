@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 import java.security.GeneralSecurityException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -19,11 +19,11 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.core.api.CoreApiServiceLocator;
 import org.kuali.kfs.core.api.encryption.EncryptionService;
+import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxFieldSource;
@@ -543,7 +543,7 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
     @Override
     String[] getFilePathsForWriters(Transaction1042SSummary summary, LocalDateTime processingStartDate) {
         String[] filePaths = super.getFilePathsForWriters(summary, processingStartDate);
-        DateFormat tempFormat = buildDateFormatForFileSuffixes();
+        DateTimeFormatter tempFormat = buildDateFormatForFileSuffixes();
         // Output file for 1042S biographic records.
         filePaths[BIO_WRITER_INDEX] =
                 new StringBuilder(MED_BUILDER_SIZE).append(getReportsDirectory()).append('/').append(CUTaxConstants.TAX_1042S_BIO_OUTPUT_FILE_PREFIX)
