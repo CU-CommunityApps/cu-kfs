@@ -78,7 +78,7 @@
    <bean id="laborOriginEntryEnterpriseFeederHelperService" parent="laborOriginEntryEnterpriseFeederHelperService-parentBean" class="edu.cornell.kfs.module.ld.batch.service.impl.CuFileEnterpriseFeederHelperServiceImpl" />
    <bean id="laborOriginEntryEnterpriseFeederService" parent="laborOriginEntryEnterpriseFeederService-parentBean" class="edu.cornell.kfs.module.ld.batch.service.impl.CuFileEnterpriseFeederServiceImpl"/>
    
-   <bean id="disencumbranceEnterpriseFeederFileSetType" class="edu.cornell.kfs.module.ld.batch.DisencumbranceEnterpriseFeederFileSetType" />
+   <bean id="disencumbranceEnterpriseFeederFileSetType" parent="enterpriseFeederFileSetType" class="edu.cornell.kfs.module.ld.batch.DisencumbranceEnterpriseFeederFileSetType"/>
    <bean id="laborPendingEntryConverterService" parent="laborPendingEntryConverterService-parentBean" class="edu.cornell.kfs.module.ld.document.service.impl.CuLaborPendingEntryConverterServiceImpl" />	
    
    <bean id="laborBenefitsCalculationService" parent="laborBenefitsCalculationService-parentBean" class="edu.cornell.kfs.module.ld.service.impl.CuLaborBenefitsCalculationServiceImpl" />
