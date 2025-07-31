@@ -14,8 +14,10 @@ public class CuPhoneNumberServiceImpl extends PhoneNumberServiceImpl {
             return unformattedNumber;
         }
         final String formattedNumber = unformattedNumber.replaceAll("\\D", "");
-        final Integer defaultPhoneNumberDigits = new Integer(parameterService.getParameterValueAsString(VendorDetail.class,
-                VendorParameterConstants.DEFAULT_PHONE_NUMBER_DIGITS));
+        final Integer defaultPhoneNumberDigits =
+                Integer.valueOf(parameterService.getParameterValueAsString(VendorDetail.class,
+                        VendorParameterConstants.DEFAULT_PHONE_NUMBER_DIGITS
+                ));
         if (formattedNumber.length() < defaultPhoneNumberDigits) {
             return unformattedNumber;
         }

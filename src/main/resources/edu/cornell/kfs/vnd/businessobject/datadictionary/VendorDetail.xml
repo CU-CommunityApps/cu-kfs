@@ -384,11 +384,10 @@
                    </property>
                </bean>
                <bean parent="FieldOverrideForListElementInsert">
-                   <property name="propertyName" value="displayAttributeDefinitions" />
-                   <property name="propertyNameForElementCompare" value="attributeName" />
+                   <property name="propertyName" value="formAttributeDefinitions" />
+                   <property name="propertyNameForElementCompare" value="name" />
                    <property name="element">
-                       <bean parent="VendorDetail-vendorHeader.vendorSupplierDiversitiesAsString"
-                             p:name="vendorSupplierDiversitiesForLookup"/>
+                       <ref bean="VendorDetail-vendorHeader.vendorDebarredIndicator"/>
                    </property>
                    <property name="insertAfter">
                        <list>
