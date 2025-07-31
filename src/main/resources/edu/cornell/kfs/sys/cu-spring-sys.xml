@@ -57,7 +57,11 @@
 			</map>
 		</property>
 	</bean>
-	
+
+    <bean id="emailService"
+          parent="emailService-parentBean"
+          class="edu.cornell.kfs.sys.service.impl.CuEmailServiceImpl"/>
+
 	<bean id="documentReindexerJob" parent="unscheduledJobDescriptor">
 		<property name="steps">
 			<list>
