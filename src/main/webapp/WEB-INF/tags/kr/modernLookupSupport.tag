@@ -241,6 +241,7 @@
       parentId =
         window.ReduxShim.store.getState()['pageHistory'].history[window.ReduxShim.store.getState()['pageHistory'].history.length - 1].parentId;
     }
+    // CU Customization: Backport FINP-12199 change that adds 'formKey' to the param map.
     await window.ReduxShim.store.dispatch(window.ReduxShim.pageHistory.actions.pushHistory({
       parentId,
       title: document.getElementsByTagName('h1')[0].innerText.trim(),
@@ -252,6 +253,7 @@
         returnRequestParamMap: {
           docFormKey: 'docFormKey',
           docNum: 'docNum',
+          formKey: 'formKey',
           methodToCall: 'refresh'
         },
         multipleReturn
@@ -269,7 +271,8 @@
     const elements = document.forms[0].elements;
 
     // Some elements come from the backend on render, and we need them to persist that value
-    const ignoreElements = ['docFormKey'];
+    // CU Customization: Backport FINP-12199 change that adds 'formKey' to the ignoreElements array.
+    const ignoreElements = ['docFormKey', 'formKey'];
     for (let i = 0; i < elements.length; i++) {
       const element = elements[i];
       const key = element.id !== '' ? element.id : element.name;
