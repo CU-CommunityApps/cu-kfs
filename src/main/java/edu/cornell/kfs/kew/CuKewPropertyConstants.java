@@ -2,7 +2,6 @@ package edu.cornell.kfs.kew;
 
 public final class CuKewPropertyConstants {
 
-    public static final String ACTION_REQUEST_ID = "actionRequestId";
     public static final String ACTION_ITEM_ID = "actionItemId";
     public static final String DOCUMENT_ID = "documentId";
 
