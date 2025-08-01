@@ -31,7 +31,7 @@
   </bean>
 
   <bean id="ObjectCodeExtendedAttribute-chartOfAccountsCode" parent="ObjectCodeExtendedAttribute-chartOfAccountsCode-parentBean"/>
-  <bean id="ObjectCodeExtendedAttribute-chartOfAccountsCode-parentBean" abstract="true" parent="ChartAttribute-SelectControl" />
+  <bean id="ObjectCodeExtendedAttribute-chartOfAccountsCode-parentBean" abstract="true" parent="ChartAttribute-SimpleDropdown" />
 
   <bean id="ObjectCodeExtendedAttribute-financialObjectCode" parent="ObjectCodeExtendedAttribute-financialObjectCode-parentBean"/>
   <bean id="ObjectCodeExtendedAttribute-financialObjectCode-parentBean" abstract="true" parent="ObjectCodeAttribute" />

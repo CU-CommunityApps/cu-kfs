@@ -104,7 +104,7 @@
   	</bean>
 
 	<bean id="AwardExtendedAttribute-primeAgreementNumber" parent="AwardExtendedAttribute-primeAgreementNumber-parentBean" />
-	<bean id="AwardExtendedAttribute-primeAgreementNumber-parentBean" abstract="true" parent="Award-proposal.grantNumber"
+	<bean id="AwardExtendedAttribute-primeAgreementNumber-parentBean" abstract="true" parent="Award-grantNumber"
 		p:name="primeAgreementNumber" p:label="Prime Agreement Number" p:shortLabel="Prime Agreement #" />
 
 	<bean id="AwardExtendedAttribute-autoApproveReason" parent="AwardExtendedAttribute-autoApproveReason-parentBean" />

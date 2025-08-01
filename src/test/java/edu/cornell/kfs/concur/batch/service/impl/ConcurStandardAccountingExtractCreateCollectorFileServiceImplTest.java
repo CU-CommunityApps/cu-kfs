@@ -389,8 +389,6 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
     public static class TestDateTimeServiceImpl extends DateTimeServiceImpl {
         
         public TestDateTimeServiceImpl() {
-            this.stringToDateFormats = new String[] {ConcurConstants.DATE_FORMAT};
-            this.dateToStringFormatForUserInterface = ConcurConstants.DATE_FORMAT;
         }
     }
 

@@ -38,10 +38,6 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
     
     private AttachmentService attachmentService;
 
-    public CuPurchaseOrderServiceImpl(final Environment environment) {
-        super(environment);
-    }
-
     @Override
     public void performPurchaseOrderFirstTransmitViaPrinting(final PurchaseOrderDocument po) {
         if (ObjectUtils.isNotNull(po.getPurchaseOrderFirstTransmissionTimestamp())) {

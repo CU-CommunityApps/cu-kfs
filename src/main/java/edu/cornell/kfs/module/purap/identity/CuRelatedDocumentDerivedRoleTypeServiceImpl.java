@@ -46,7 +46,8 @@ public class CuRelatedDocumentDerivedRoleTypeServiceImpl extends RelatedDocument
 
                     }
                 } else { 
-                    for (final String documentId : getPurapService().getRelatedDocumentIds(new Integer(qualification.get(PurapKimAttributes.ACCOUNTS_PAYABLE_PURCHASING_DOCUMENT_LINK_IDENTIFIER)))) {
+                    for (final String documentId : getPurapService().getRelatedDocumentIds(Integer.valueOf(qualification.get(
+                            PurapKimAttributes.ACCOUNTS_PAYABLE_PURCHASING_DOCUMENT_LINK_IDENTIFIER)))) {
                         final Map<String,String> tempQualification = new HashMap<String,String>(1);
                         tempQualification.put(KFSPropertyConstants.DOCUMENT_NUMBER, documentId);
                         for ( final String principalId : getRoleService().getRoleMemberPrincipalIds(KFSConstants.CoreModuleNamespaces.WORKFLOW, RouteLogDerivedRoleTypeServiceImpl.INITIATOR_OR_REVIEWER_ROLE_NAME, tempQualification) ) {

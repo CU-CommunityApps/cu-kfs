@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2023 Kuali, Inc.
+ * Copyright 2005-2024 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -71,8 +71,7 @@ public class AwardActionsProvider extends BusinessObjectActionsProvider {
         final String applicationUrl = configurationService.getPropertyValueAsString(KFSConstants.APPLICATION_URL_KEY);
         url = StringUtils.stripStart(url.replace(applicationUrl, ""), "/fin/");
 
-        final Action invoicesAction = new Action("Invoices", "GET", url, "_blank");
-        return invoicesAction;
+        return new Action("Invoices", "GET", url, "_blank");
     }
 
     public void setConfigurationService(final ConfigurationService configurationService) {
