@@ -28,7 +28,7 @@
             <list>
                 <bean parent="MaintainableFieldDefinition" p:name="authenticatorId" p:required="true" p:unconditionallyReadOnly="true"/>
                 <bean parent="MaintainableFieldDefinition" p:name="authenticatorDescription" p:required="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="usernamePassword" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="credentials" p:required="true"/>
                 <bean parent="MaintainableFieldDefinition" p:name="active" p:required="true" p:defaultValue="true"/>
             </list>
         </property>

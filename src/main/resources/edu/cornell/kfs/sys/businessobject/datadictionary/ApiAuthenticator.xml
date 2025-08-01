@@ -18,7 +18,7 @@
             <list>
                 <ref bean="ApiAuthenticator-authenticatorId"/>
                 <ref bean="ApiAuthenticator-authenticatorDescription"/>
-                <ref bean="ApiAuthenticator-usernamePassword"/>
+                <ref bean="ApiAuthenticator-credentials"/>
                 <ref bean="ApiAuthenticator-active"/>
             </list>
         </property>
@@ -59,12 +59,12 @@
         </property>
     </bean>
 
-    <bean id="ApiAuthenticator-usernamePassword" parent="ApiAuthenticator-usernamePassword-parentBean"/>
+    <bean id="ApiAuthenticator-credentials" parent="ApiAuthenticator-credentials-parentBean"/>
 
-    <bean id="ApiAuthenticator-usernamePassword-parentBean" abstract="true" parent="AttributeDefinition">
-        <property name="name" value="usernamePassword"/>
-        <property name="label" value="Username Password"/>
-        <property name="shortLabel" value="Username Password"/>
+    <bean id="ApiAuthenticator-credentials-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="credentials"/>
+        <property name="label" value="This is most commonly in the format of USERNAME:PASSWORD"/>
+        <property name="shortLabel" value="Credentials"/>
         <property name="maxLength" value="100"/>
         <property name="control">
             <bean parent="TextControlDefinition" p:size="105"/>

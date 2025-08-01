@@ -5,6 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 public interface ApiAuthenticationService {
 
     boolean isAuthorized(String endpointCode, HttpServletRequest request);
-    boolean isAuthorized(String endpointCode, String usernamePassword);
+    boolean isAuthorized(String endpointCode, String credentials);
 
 }

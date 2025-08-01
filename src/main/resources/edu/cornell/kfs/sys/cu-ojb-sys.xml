@@ -436,7 +436,7 @@
     <class-descriptor class="edu.cornell.kfs.sys.businessobject.ApiAuthenticator" table="CU_API_AUTHENTICATOR_T">
         <field-descriptor name="authenticatorId" column="AUTHENTICATOR_ID" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="CU_API_AUTHENTICATOR_SEQ"/>
         <field-descriptor name="authenticatorDescription" column="AUTHENTICATOR_DESC" jdbc-type="VARCHAR"/>
-        <field-descriptor name="usernamePassword" column="USERNAME_PASSWORD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+        <field-descriptor name="credentials" column="CREDENTIALS" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
         <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
         <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
         <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>

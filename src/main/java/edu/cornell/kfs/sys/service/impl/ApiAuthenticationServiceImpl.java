@@ -36,13 +36,13 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
         
         String encodedCredentials = authorizationHeader.substring(CUKFSConstants.BASIC_AUTHENTICATION_STARTER.length());
         byte[] decodedBytes = Base64.decodeBase64(encodedCredentials);
-        String usernamePassword = new String(decodedBytes, StandardCharsets.UTF_8);
+        String credentials = new String(decodedBytes, StandardCharsets.UTF_8);
         
-        return isAuthorized(endpointCode, usernamePassword);
+        return isAuthorized(endpointCode, credentials);
     }
 
     @Override
-    public boolean isAuthorized(String endpointCode, String usernamePassword) {
+    public boolean isAuthorized(String endpointCode, String credentials) {
         LOG.debug("isAuthorized: Checking authorization for endpoint code {} with credentials", endpointCode);
         
         ApiEndpointDescriptor endpointDescriptor = getEndpointDescriptor(endpointCode);
@@ -63,7 +63,7 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
                 authenticationMapping.getApiAuthenticator().isActive()) {
                 
                 ApiAuthenticator authenticator = authenticationMapping.getApiAuthenticator();
-                if (StringUtils.equals(usernamePassword, authenticator.getUsernamePassword())) {
+                if (StringUtils.equals(credentials, authenticator.getCredentials())) {
                     LOG.debug("isAuthorized: Successfully authenticated for endpoint code {} with authenticator {}", 
                         endpointCode, authenticator.getAuthenticatorDescription());
                     return true;
