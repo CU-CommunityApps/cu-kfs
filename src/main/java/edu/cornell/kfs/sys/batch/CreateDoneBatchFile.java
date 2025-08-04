@@ -7,12 +7,16 @@ import org.kuali.kfs.sys.batch.BatchFile;
 
 public class CreateDoneBatchFile extends BatchFile {
 
-	public CreateDoneBatchFile(String id) throws FileNotFoundException {
-		super(id);
-	}
+    public CreateDoneBatchFile() {
+        super();
+    }
 
-	public CreateDoneBatchFile(File file) {
-		super(file);
-	}
+    public CreateDoneBatchFile(String id) throws FileNotFoundException {
+        super(id);
+    }
+
+    public CreateDoneBatchFile(File file) {
+        super(file);
+    }
 
 }
