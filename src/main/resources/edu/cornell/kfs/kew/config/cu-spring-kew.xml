@@ -65,6 +65,10 @@
           p:jcdAlias="kewDataSource"
           p:personService-ref="personService"/>
 
+    <bean id="actionListService" class="edu.cornell.kfs.kew.actionlist.service.impl.CuActionListServiceImpl"
+          lazy-init="true" p:actionListDAO-ref="actionListDAO" p:actionItemDAO-ref="actionItemDAO"
+          p:configurationService-ref="configurationService"/>
+
     <!-- Override route header service and DAO to add a helper method that the 1099/1042S tax process relies on. -->
 
     <bean id="documentRouteHeaderDAO" parent="documentRouteHeaderDAO-parentBean"
@@ -72,6 +76,19 @@
 
     <bean id="documentRouteHeaderService" parent="documentRouteHeaderService-parentBean"
           class="edu.cornell.kfs.kew.routeheader.service.impl.CuRouteHeaderServiceImpl"/>
+
+    <!--
+        Override of email content service to configure the "deploymentEnvironment" property correctly.
+        Once KualiCo fixes that issue, this email content service override can be removed.
+     -->
+    <bean id="emailContentService" class="org.kuali.kfs.kew.mail.service.impl.EmailContentServiceImpl"
+          lazy-init="true"
+          p:deploymentEnvironment="${environment}"
+          p:emailService-ref="emailService"
+          p:groupService-ref="kimGroupService"
+          p:parameterService-ref="parameterService"
+          p:personService-ref="personService"
+          p:routeHeaderService-ref="documentRouteHeaderService"/>
 
     <!-- Override refresh queue service to include custom preservation of action list notes. -->
     <bean id="documentRefreshQueue" class="edu.cornell.kfs.kew.impl.document.CuDocumentRefreshQueueImpl"
