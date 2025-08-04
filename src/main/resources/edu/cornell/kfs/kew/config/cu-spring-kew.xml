@@ -90,16 +90,6 @@
           p:personService-ref="personService"
           p:routeHeaderService-ref="documentRouteHeaderService"/>
 
-    <!-- Override action list email service to support forcing PROD-style emails in non-PROD environments. -->
-
-    <bean id="actionListEmailService"
-          class="edu.cornell.kfs.kew.mail.service.impl.CuActionListEmailServiceImpl"
-          c:environment-ref="environment"
-          p:emailContentGenerator-ref="emailContentService"
-          p:emailService-ref="emailService"
-          p:parameterService-ref="parameterService"
-          p:personService-ref="personService"/>
-
     <!-- Override refresh queue service to include custom preservation of action list notes. -->
     <bean id="documentRefreshQueue" class="edu.cornell.kfs.kew.impl.document.CuDocumentRefreshQueueImpl"
           p:actionRequestService-ref="actionRequestService"
