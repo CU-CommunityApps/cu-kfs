@@ -63,8 +63,9 @@
 
     <bean id="ApiAuthenticator-credentials-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="credentials"/>
-        <property name="label" value="This is most commonly in the format of USERNAME:PASSWORD"/>
+        <property name="label" value="Credentials"/>
         <property name="shortLabel" value="Credentials"/>
+        <property name="description" value="Most commonly USERNAME:PASSWORD"/>
         <property name="maxLength" value="100"/>
         <property name="control">
             <bean parent="TextControlDefinition" p:size="105"/>
