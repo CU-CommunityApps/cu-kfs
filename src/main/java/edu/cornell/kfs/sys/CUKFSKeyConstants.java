@@ -253,4 +253,6 @@ public class CUKFSKeyConstants {
     
     //CU customization: Added blacklist attachment processing
     public static final String ERROR_UPLOADFILE_EXTENSION = "error.uploadFile.extension";
+
+    public static final String ERROR_ACCOUNTING_LINE_PARSER_INVALID_BASE_AMOUNT = "error.accountingLineParser.invalidBaseAmount";
 }

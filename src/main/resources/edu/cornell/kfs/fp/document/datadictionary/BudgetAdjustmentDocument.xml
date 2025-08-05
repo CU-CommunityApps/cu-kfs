@@ -9,7 +9,8 @@
   <bean id="BudgetAdjustmentDocument" parent="BudgetAdjustmentDocument-parentBean">
     <property name="documentClass" value="edu.cornell.kfs.fp.document.CuBudgetAdjustmentDocument"/>
     <property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.CuBudgetAdjustmentDocumentPresentationController"/>
-   </bean>
+    <property name="importedLineParserClass" value="edu.cornell.kfs.fp.businessobject.CuBudgetAdjustmentAccountingLineParser"/>
+  </bean>
    
    <bean id="BudgetAdjustmentDocument-workflowAttributes"
           parent="BudgetAdjustmentDocument-workflowAttributes-parentBean">
