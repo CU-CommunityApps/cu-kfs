@@ -558,7 +558,8 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
             } else {
                 first = false;
             }
-            sb.append(vcc.getCommodityCode().getPurchasingCommodityCode());
+            // CU customization KFSPTS-3487
+            sb.append(vcc.getCommodityCode().getCommodityDescription());
         }
         sb.append(']');
         return sb.toString();
