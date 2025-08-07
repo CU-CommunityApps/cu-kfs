@@ -10,7 +10,7 @@ public class ApiAuthenticator extends PersistableBusinessObjectBase implements M
 
     private Integer authenticatorId;
     private String authenticatorDescription;
-    private String usernamePassword;
+    private String credentials;
     private boolean active;
 
     private List<ApiAuthenticationMapping> authenticationMappings;
@@ -41,12 +41,12 @@ public class ApiAuthenticator extends PersistableBusinessObjectBase implements M
         this.authenticatorDescription = authenticatorDescription;
     }
 
-    public String getUsernamePassword() {
-        return usernamePassword;
+    public String getCredentials() {
+        return credentials;
     }
 
-    public void setUsernamePassword(String usernamePassword) {
-        this.usernamePassword = usernamePassword;
+    public void setCredentials(String credentials) {
+        this.credentials = credentials;
     }
 
     public List<ApiAuthenticationMapping> getAuthenticationMappings() {
