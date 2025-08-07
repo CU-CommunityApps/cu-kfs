@@ -214,7 +214,6 @@ public class ConcurRequestV4ServiceImplTest {
 
     private TestDateTimeServiceImpl buildDateTimeService() throws Exception {
         TestDateTimeServiceImpl dateTimeService = new TestDateTimeServiceImpl();
-        dateTimeService.afterPropertiesSet();
         return dateTimeService;
     }
 

@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2023 Kuali, Inc.
+ * Copyright 2005-2024 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -130,7 +130,7 @@ public class ActionTakenDAOOjbImpl extends PersistenceBrokerDaoSupport implement
     }
 
     //TODO perhaps runtime isn't the best here, maybe a dao runtime exception
-    private void checkNull(final Object value, final String valueName) throws RuntimeException {
+    private static void checkNull(final Object value, final String valueName) throws RuntimeException {
         if (value == null) {
             throw new RuntimeException("Null value for " + valueName);
         }
@@ -151,36 +151,24 @@ public class ActionTakenDAOOjbImpl extends PersistenceBrokerDaoSupport implement
         return (Timestamp) getPersistenceBrokerTemplate().execute(new PersistenceBrokerCallback() {
             @Override
             public Object doInPersistenceBroker(final PersistenceBroker broker) {
-                PreparedStatement statement = null;
-                ResultSet resultSet = null;
                 try {
+                    // The documentation for the getConnection() method of ConnectionManagerImpl (the only
+                    // implementation of ConnectionManagerIF) documents that the caller should never call close() on the
+                    // returned Connection object. It'll be returned to the pool and re-used.
                     final Connection connection = broker.serviceConnectionManager().getConnection();
-                    statement = connection.prepareStatement(LAST_ACTION_TAKEN_DATE_QUERY);
-                    statement.setString(1, documentId);
-                    statement.setString(2, workflowAction.getCode());
-                    resultSet = statement.executeQuery();
-                    if (!resultSet.next()) {
-                        return null;
-                    } else {
-                        return resultSet.getTimestamp(1);
+                    try (PreparedStatement statement = connection.prepareStatement(LAST_ACTION_TAKEN_DATE_QUERY)) {
+                        statement.setString(1, documentId);
+                        statement.setString(2, workflowAction.getCode());
+
+                        try (ResultSet resultSet = statement.executeQuery()) {
+                            if (resultSet.next()) {
+                                return resultSet.getTimestamp(1);
+                            }
+                            return null;
+                        }
                     }
                 } catch (final Exception e) {
                     throw new WorkflowRuntimeException("Error determining Last Action Taken Date.", e);
-                } finally {
-                    if (statement != null) {
-                        try {
-                            statement.close();
-                        } catch (final SQLException e) {
-                            // should we be logging something?
-                        }
-                    }
-                    if (resultSet != null) {
-                        try {
-                            resultSet.close();
-                        } catch (final SQLException e) {
-                            // should we be logging something?
-                        }
-                    }
                 }
             }
         });

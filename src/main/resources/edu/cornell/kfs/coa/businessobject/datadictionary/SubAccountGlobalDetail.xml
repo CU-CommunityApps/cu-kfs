@@ -49,7 +49,7 @@
 
 	<bean id="SubAccountGlobalDetail-chartOfAccountsCode" parent="SubAccountGlobalDetail-chartOfAccountsCode-parentBean" />
 	<bean id="SubAccountGlobalDetail-chartOfAccountsCode-parentBean"
-		abstract="true" parent="ChartAttribute-SelectControl" />
+		abstract="true" parent="ChartAttribute-SimpleDropdown" />
 
 	<bean id="SubAccountGlobalDetail-accountNumber" parent="SubAccountGlobalDetail-accountNumber-parentBean" />
 	<bean id="SubAccountGlobalDetail-accountNumber-parentBean" abstract="true"

@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2023 Kuali, Inc.
+ * Copyright 2005-2024 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -51,10 +51,7 @@ import org.kuali.kfs.krad.datadictionary.PrimitiveAttributeDefinition;
 import org.kuali.kfs.krad.datadictionary.RelationshipDefinition;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.KRADServiceLocator;
-import org.kuali.kfs.krad.service.KRADServiceLocatorWeb;
-import org.kuali.kfs.krad.service.ModuleService;
 import org.kuali.kfs.krad.util.ErrorMessage;
-import org.kuali.kfs.krad.util.ExternalizableBusinessObjectUtils;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -598,19 +595,7 @@ public class DataDictionaryTypeServiceBase implements KimTypeService {
                 throw new KimTypeAttributeException(e);
             }
 
-            String baseLookupUrl = LookupUtils.getBaseLookupUrl(false) + "?methodToCall=start";
-
-            if (ExternalizableBusinessObjectUtils.isExternalizableBusinessObject(lookupClass)) {
-                final ModuleService moduleService = KRADServiceLocatorWeb.getKualiModuleService()
-                        .getResponsibleModuleService(lookupClass);
-                if (moduleService.isExternalizableBusinessObjectLookupable(lookupClass)) {
-                    baseLookupUrl = moduleService.getExternalizableBusinessObjectLookupUrl(lookupClass,
-                            Collections.emptyMap());
-                    // XXX: I'm not proud of this:
-                    baseLookupUrl = baseLookupUrl.substring(0, baseLookupUrl.indexOf("?")) + "?methodToCall=start";
-                }
-            }
-
+            final String baseLookupUrl = LookupUtils.getBaseLookupUrl(false) + "?methodToCall=start";
             final QuickFinder quickFinder = new QuickFinder(baseLookupUrl, lookupClass.getName());
             quickFinder.setLookupParameters(toMap(field.getLookupParameters()));
             quickFinder.setFieldConversions(toMap(field.getFieldConversions()));

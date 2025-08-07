@@ -61,7 +61,7 @@
   </bean>
 
   <bean id="A21SubAccountChange-costShareChartOfAccountCode" parent="A21SubAccountChange-costShareChartOfAccountCode-parentBean"/>
-  <bean id="A21SubAccountChange-costShareChartOfAccountCode-parentBean" abstract="true" parent="ChartAttribute-SelectControl">
+  <bean id="A21SubAccountChange-costShareChartOfAccountCode-parentBean" abstract="true" parent="ChartAttribute-SimpleDropdown">
     <property name="name" value="costShareChartOfAccountCode"/>
     <property name="label" value="Cost Sharing Chart of Accounts Code"/>
     <property name="shortLabel" value="Cost Sharting Chart Code"/>

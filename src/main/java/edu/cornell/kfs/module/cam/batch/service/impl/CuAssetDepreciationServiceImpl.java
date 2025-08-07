@@ -90,7 +90,7 @@ public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl
                 }
 
                 fiscalYear = universityDate.getUniversityFiscalYear();
-                fiscalMonth = new Integer(universityDate.getUniversityFiscalAccountingPeriod());
+                fiscalMonth = Integer.valueOf(universityDate.getUniversityFiscalAccountingPeriod());
                 assetObjectCodes = getAssetObjectCodes(fiscalYear);
                 // If the depreciation date is not = to the system date then, the depreciation process cannot run.
                 LOG.info(

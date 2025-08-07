@@ -67,7 +67,6 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
         jaggaerGenerateSupplierXmlServiceImpl = new JaggaerGenerateSupplierXmlServiceImpl();
         jaggaerGenerateSupplierXmlServiceImpl.setWebServiceCredentialService(buildMockWebServiceCredentialService());
         dateTimeService = new TestDateTimeServiceImpl();
-        dateTimeService.afterPropertiesSet();
         outputFileDirectory = new File(OUTPUT_FILE_PATH);
         outputFileDirectory.mkdir();
     }

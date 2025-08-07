@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
+import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.http.HttpMethod;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -132,7 +133,7 @@ public class ConcurEventNotificationWebApiServiceImpl implements ConcurEventNoti
         Invocation.Builder invocation = client.target(uri)
                 .request()
                 .header(ConcurOAuth2.REQUEST_HEADER_CONTENT_TYPE_KEY_NAME, MediaType.TEXT_PLAIN)
-                .header("Authorization", "Bearer " + accessToken)
+                .header("Authorization", KFSConstants.AUTHORIZATION_PREFIX + accessToken)
                 .accept(MediaType.APPLICATION_JSON);
         if (webRequest.hasJsonBody()) {
             return invocation.method(webRequest.getHttpMethodAsString(), Entity.json(webRequest.getJsonBody()));

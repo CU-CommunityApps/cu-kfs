@@ -166,7 +166,6 @@ public class CuBatchInputFileServiceImplTest extends TestCase {
     private class MockDateTimeService extends DateTimeServiceImpl {
 
         public MockDateTimeService() {
-            timestampToStringFormatForFileName = "yyyyMMdd-HH-mm-ss-S";
         }
 
     }

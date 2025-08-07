@@ -21,7 +21,7 @@
   <bean id="AccountReversionGlobalAccount-documentNumber-parentBean" abstract="true" parent="DocumentHeader-documentNumber" />
 
   <bean id="AccountReversionGlobalAccount-chartOfAccountsCode" parent="AccountReversionGlobalAccount-chartOfAccountsCode-parentBean"/>
-  <bean id="AccountReversionGlobalAccount-chartOfAccountsCode-parentBean" abstract="true" parent="ChartAttribute-SelectControl" />
+  <bean id="AccountReversionGlobalAccount-chartOfAccountsCode-parentBean" abstract="true" parent="ChartAttribute-SimpleDropdown" />
 
   <bean id="AccountReversionGlobalAccount-accountNumber" parent="AccountReversionGlobalAccount-accountNumber-parentBean"/>
   <bean id="AccountReversionGlobalAccount-accountNumber-parentBean" abstract="true" parent="Account-accountNumber" />

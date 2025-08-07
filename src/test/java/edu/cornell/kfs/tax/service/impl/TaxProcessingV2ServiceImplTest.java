@@ -135,7 +135,6 @@ public class TaxProcessingV2ServiceImplTest {
     @SpringXmlTestBeanFactoryMethod
     public static DateTimeService buildSpiedTestDateTimeService() throws Exception {
         final TestDateTimeServiceImpl dateTimeService = new TestDateTimeServiceImpl();
-        dateTimeService.afterPropertiesSet();
         return new CuMockBuilder<>(dateTimeService)
                 .withReturn(TestDateTimeServiceImpl::getLocalDateNow, TEST_DATE_2025_01_10)
                 .build();
