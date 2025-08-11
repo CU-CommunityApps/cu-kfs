@@ -1288,4 +1288,38 @@
         <field-descriptor name="documentCount" column="DOC_CNT" jdbc-type="INTEGER" />
     </class-descriptor>
 
+    <class-descriptor class="edu.cornell.kfs.fp.businessobject.TravelMealCardVerificationData" table="CU_FP_TMCARD_VERIFY_T">
+        <field-descriptor name="cardHolderAccountNumber" column="CARD_ACCOUNT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+        <field-descriptor name="emplid" column="EMPLID" jdbc-type="VARCHAR" primarykey="true" index="true" />
+        <field-descriptor name="cardHolderLine1Address" column="ADDRESS1" jdbc-type="VARCHAR" />
+        <field-descriptor name="cardHolderLine2Address" column="ADDRESS2" jdbc-type="VARCHAR" />
+        <field-descriptor name="cardHolderCityName" column="CITY" jdbc-type="VARCHAR" />
+        <field-descriptor name="cardHolderStateCode" column="STATE_CODE" jdbc-type="VARCHAR" />
+        <field-descriptor name="cardHolderPostalCode" column="POSTAL_CODE" jdbc-type="VARCHAR" />
+        <field-descriptor name="cardHolderWorkPhoneNumber" column="WORK_PHONE" jdbc-type="VARCHAR" />
+        <field-descriptor name="cardHolderPersonalPhoneNumber" column="PERSONAL_PHONE" jdbc-type="VARCHAR" />
+        <field-descriptor name="creditLine" column="CREDIT_LINE" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" />
+        <field-descriptor name="expireDate" column="EXPIRE_DATE" jdbc-type="VARCHAR" />
+        <field-descriptor name="fileCreateDate" column="FILE_CREATE_DATE" jdbc-type="DATE" />
+        <field-descriptor name="loadDate" column="LOAD_DATE" jdbc-type="DATE" />
+    </class-descriptor>
+
+    <class-descriptor class="edu.cornell.kfs.fp.businessobject.TravelMealCardCertificationData" table="CU_FP_TMCARD_CERT_T">
+        <field-descriptor name="cardHolderAccountNumber" column="CARD_ACCOUNT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+        <field-descriptor name="emplid" column="EMPLID" jdbc-type="VARCHAR" primarykey="true" index="true" />
+        <field-descriptor name="cardHolderName" column="CARD_HOLDER_NAME" jdbc-type="VARCHAR" />
+        <field-descriptor name="cardStatus" column="CARD_STATUS" jdbc-type="VARCHAR" />
+        <field-descriptor name="cardType" column="CARD_TYPE" jdbc-type="VARCHAR" />
+        <field-descriptor name="netid" column="NETID" jdbc-type="VARCHAR" />
+        <field-descriptor name="lastTransactionDate" column="LAST_TRANS_DATE" jdbc-type="DATE" />
+        <field-descriptor name="defaultAccountNumber" column="DEFAULT_ACCT_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="creditLine" column="CREDIT_LINE" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" />
+        <field-descriptor name="openDate" column="OPEN_DATE" jdbc-type="DATE" />
+        <field-descriptor name="cycleStartDate" column="CYCLE_START_DATE" jdbc-type="DATE" />
+        <field-descriptor name="cycleSpendToDate" column="CYCLE_SPEND_TO_DATE" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" />
+        <field-descriptor name="activationStatus" column="ACTVTN_STATUS" jdbc-type="VARCHAR" />
+        <field-descriptor name="fileCreateDate" column="FILE_CREATE_DATE" jdbc-type="DATE" />
+        <field-descriptor name="loadDate" column="LOAD_DATE" jdbc-type="DATE" />
+    </class-descriptor>
+
 </descriptor-repository>
