@@ -62,7 +62,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
             ));
             costShareEntry.setFinancialSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
             costShareEntry.setFinancialObjectTypeCode(scrubbedEntryOption.getFinancialObjectTypeTransferExpenseCd());
-            costShareEntry.setTransactionLedgerEntrySequenceNumber(new Integer(0));
+            costShareEntry.setTransactionLedgerEntrySequenceNumber(Integer.valueOf(0));
 
             StringBuffer description = new StringBuffer();
             description.append(costShareDescription);
@@ -166,7 +166,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
             costShareSourceAccountEntry.setFinancialSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
             costShareSourceAccountEntry.setFinancialObjectTypeCode(
                     scrubbedEntryOption.getFinancialObjectTypeTransferExpenseCd());
-            costShareSourceAccountEntry.setTransactionLedgerEntrySequenceNumber(new Integer(0));
+            costShareSourceAccountEntry.setTransactionLedgerEntrySequenceNumber(Integer.valueOf(0));
 
             costShareSourceAccountEntry.setTransactionLedgerEntryAmount(scrubCostShareAmount);
             if (scrubCostShareAmount.isPositive()) {

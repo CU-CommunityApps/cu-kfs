@@ -1,5 +1,6 @@
 package edu.cornell.kfs.vnd.document.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -189,5 +190,7 @@ public interface CUVendorService {
     public VendorContract getVendorB2BContract(VendorDetail vendorDetail, String campus);
     
     public VendorHeader getVendorByEin(String vendorEin);
+    
+    Collection<VendorAddress> getVendorAddresses(int vendorHeaderId, int vendorDetailId, String addressType);
 
 }

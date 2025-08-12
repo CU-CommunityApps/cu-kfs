@@ -64,6 +64,7 @@ public final class VendorPropertyConstants {
     public static final String VENDOR_RESTRICTED_REASON_TEXT = "vendorRestrictedReasonText";
     public static final String VENDOR_DEBARRED_INDICATOR = "vendorHeader.vendorDebarredIndicator";
     public static final String VENDOR_FOREIGN_INDICATOR = "vendorHeader.vendorForeignIndicator";
+    public static final String VENDOR_FOREIGN_TAX_ID = "vendorHeader.vendorForeignTaxId";
     public static final String VENDOR_INACTIVE_REASON = "vendorInactiveReasonCode";
     public static final String VENDOR_GIIN_CODE = "vendorHeader.vendorGIIN";
     public static final String VENDOR_W8SIGNED_DATE = "vendorHeader.vendorW8SignedDate";
@@ -73,7 +74,6 @@ public final class VendorPropertyConstants {
     public static final String VENDOR_W8_TYPE_CODE = "vendorHeader.vendorW8TypeCode";
     public static final String VENDOR_CHAPTER_3_STATUS_CODE = "vendorHeader.vendorChapter3StatusCode";
     public static final String VENDOR_CHAPTER_4_STATUS_CODE = "vendorHeader.vendorChapter4StatusCode";
-
 
     public static final String VENDOR_PAYMENT_TERMS = "vendorPaymentTerms";
     public static final String VENDOR_SHIPPING_PAYMENT_TERMS = "vendorShippingPaymentTerms";

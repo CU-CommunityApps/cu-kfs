@@ -391,7 +391,7 @@
                    </property>
                    <property name="insertAfter">
                        <list>
-                           <ref bean="VendorDetail-defaultPaymentMethodCode"/>
+                           <bean parent="VendorDetail-defaultPaymentMethodCode" p:disableLookup="true"/>
                        </list>
                    </property>
                </bean>

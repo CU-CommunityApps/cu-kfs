@@ -47,22 +47,32 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
     
     @Override
     public void feedOnFile(
-            final File doneFile, 
-            final File dataFile, 
-            final File reconFile, 
-            final PrintStream enterpriseFeedPs,
-            final String feederProcessName, 
-            final String reconciliationTableId,
-            final EnterpriseFeederStatusAndErrorMessagesWrapper statusAndErrors, 
-            final LedgerSummaryReport ledgerSummaryReport,
-            final ReportWriterService errorStatisticsReport, 
-            final EnterpriseFeederReportData feederReportData) {
+            final File doneFile, final File dataFile, final File reconFile, final PrintStream enterpriseFeedPs,
+            final String feederProcessName, final String reconciliationTableId,
+            final EnterpriseFeederStatusAndErrorMessagesWrapper statusAndErrors, final LedgerSummaryReport ledgerSummaryReport,
+            final ReportWriterService errorStatisticsReport, final EnterpriseFeederReportData feederReportData) {
         LOG.info("Processing done file: {}", doneFile::getAbsolutePath);
 
         final List<Message> errorMessages = statusAndErrors.getErrorMessages();
 
-        final ReconciliationBlock reconciliationBlock =
-                determineReconciliationBlock(reconFile, reconciliationTableId, statusAndErrors, errorMessages);
+        ReconciliationBlock reconciliationBlock = null;
+        try (Reader reconReader = new FileReader(reconFile, StandardCharsets.UTF_8)) {
+            reconciliationBlock = reconciliationParserService.parseReconciliationBlock(reconReader, reconciliationTableId);
+        }
+        catch (final IOException e) {
+            LOG.error("IO Error occured trying to read the recon file.", e);
+            errorMessages.add(new Message("IO Error occured trying to read the recon file.", Message.TYPE_FATAL));
+            reconciliationBlock = null;
+            statusAndErrors.setStatus(new FileReconBadLoadAbortedStatus());
+            throw new RuntimeException(e);
+        }
+        catch (final RuntimeException e) {
+            LOG.error("Error occured trying to parse the recon file.", e);
+            errorMessages.add(new Message("Error occured trying to parse the recon file.", Message.TYPE_FATAL));
+            reconciliationBlock = null;
+            statusAndErrors.setStatus(new FileReconBadLoadAbortedStatus());
+            throw e;
+        }
 
         try (
                 final BufferedReader dataFileReader1 = new BufferedReader(new FileReader(dataFile, StandardCharsets.UTF_8));
@@ -158,30 +168,6 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
         }
     }
     
-    private ReconciliationBlock determineReconciliationBlock(
-            final File reconFile,
-            final String reconciliationTableId,
-            final EnterpriseFeederStatusAndErrorMessagesWrapper statusAndErrors,
-            final List<Message> errorMessages
-    ) {
-        final ReconciliationBlock reconciliationBlock;
-        try (Reader reconReader = new FileReader(reconFile, StandardCharsets.UTF_8)) {
-            reconciliationBlock =
-                    reconciliationParserService.parseReconciliationBlock(reconReader, reconciliationTableId);
-        } catch (final IOException e) {
-            LOG.error("IO Error occurred  trying to read the recon file.", e);
-            errorMessages.add(new Message("IO Error occurred  trying to read the recon file.", Message.TYPE_FATAL));
-            statusAndErrors.setStatus(new FileReconBadLoadAbortedStatus());
-            throw new RuntimeException(e);
-        } catch (final RuntimeException e) {
-            LOG.error("Error occurred  trying to parse the recon file.", e);
-            errorMessages.add(new Message("Error occurred  trying to parse the recon file.", Message.TYPE_FATAL));
-            statusAndErrors.setStatus(new FileReconBadLoadAbortedStatus());
-            throw e;
-        }
-        return reconciliationBlock;
-    }
-
     protected List<LaborOriginEntry> generateOffsets(
             final LaborOriginEntry wageEntry, final Collection<String> offsetDocTypes) {
         final List<LaborOriginEntry> offsetEntries = new ArrayList<LaborOriginEntry>();
