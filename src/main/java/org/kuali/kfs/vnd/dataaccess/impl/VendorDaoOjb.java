@@ -55,6 +55,10 @@ import java.util.Objects;
 /**
  * OJB implementation of VendorDao.
  */
+// CU customization: 
+// * update SQL that is MySql specific to work on Oracle database.
+// * partial backport of FINP-10792. This line can be removed with the 03/20/2024 upgrade.
+// * backport FINP-11585 from the 11/21/2024 release
 public class VendorDaoOjb extends PlatformAwareDaoBaseOjb implements VendorDao {
     private static final Logger LOG = LogManager.getLogger();
     private static final String SQL_WILDCARDS = "%_";
@@ -198,7 +202,7 @@ public class VendorDaoOjb extends PlatformAwareDaoBaseOjb implements VendorDao {
     }
 
     @Override
-    public Pair<Collection<? extends BusinessObjectBase>, Integer> getVendorDetailsJDBC(
+    public Pair<Collection<? extends BusinessObjectBase>, Integer> getVendorDetails(
             final Map<String, String> searchProps,
             final int skip,
             final int limit,
@@ -570,8 +574,8 @@ public class VendorDaoOjb extends PlatformAwareDaoBaseOjb implements VendorDao {
                     .append(sortAscending ? " ASC " : " DESC ");
         }
 
-        final int offset = skip * limit;
-        orderedAndLimited.append("OFFSET ").append(offset).append(" ROWS FETCH NEXT ").append(limit).append(" ROWS ONLY ");
+        // backport FINP-11585
+        orderedAndLimited.append("OFFSET ").append(skip).append(" ROWS FETCH NEXT ").append(limit).append(" ROWS ONLY ");
         return orderedAndLimited.toString();
     }
 
@@ -583,61 +587,70 @@ public class VendorDaoOjb extends PlatformAwareDaoBaseOjb implements VendorDao {
             final String sql, final List<String> parameters
     ) {
         final List<VendorDetail> vendorDetails = new ArrayList<>();
-        try (Connection conn = getPersistenceBroker(true).serviceConnectionManager()
-                .getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            // Loop through 2 times, as we have 2 separate sql statements to fill parameters
-            for (int i = 0; i < parameters.size(); i++) {
-                ps.setString(i + 1, parameters.get(i));
-            }
-            for (int i = 0; i < parameters.size(); i++) {
-                ps.setString(i + 1 + parameters.size(), parameters.get(i));
-            }
+        try {
+            // The documentation for the getConnection() method of ConnectionManagerImpl (the only implementation of
+            // ConnectionManagerIF) documents that the caller should never call close() on the returned Connection
+            // object. It'll be returned to the pool and re-used.
+            final Connection conn =
+                    getPersistenceBroker(true).serviceConnectionManager()
+                            .getConnection(); // NOPMD - Don't close connections from PersistenceBroker
+            try (
+                    PreparedStatement ps = conn.prepareStatement(sql)
+            ) {
+                // Loop through 2 times, as we have 2 separate sql statements to fill parameters
+                for (int i = 0; i < parameters.size(); i++) {
+                    ps.setString(i + 1, parameters.get(i));
+                }
+                for (int i = 0; i < parameters.size(); i++) {
+                    ps.setString(i + 1 + parameters.size(), parameters.get(i));
+                }
 
-            LOG.info("Executing SQL: {}", sql);
-            // Nesting try-with-resources to allow setting parameters
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    final VendorHeader header = new VendorHeader();
-                    header.setVendorHeaderGeneratedIdentifier(rs.getInt("VNDR_HDR_GNRTD_ID"));
-                    header.setObjectId(rs.getString("HEADER_OBJ_ID"));
+                LOG.info("Executing SQL: {}", sql);
+                // Nesting try-with-resources to allow setting parameters
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        final VendorHeader header = new VendorHeader();
+                        header.setVendorHeaderGeneratedIdentifier(rs.getInt("VNDR_HDR_GNRTD_ID"));
+                        header.setObjectId(rs.getString("HEADER_OBJ_ID"));
 
-                    final VendorDetail detail = new VendorDetail();
-                    detail.setVendorHeaderGeneratedIdentifier(rs.getInt("VNDR_HDR_GNRTD_ID"));
-                    detail.setVendorDetailAssignedIdentifier(rs.getInt("VNDR_DTL_ASND_ID"));
-                    detail.setObjectId(rs.getString("OBJ_ID"));
-                    detail.setVersionNumber(rs.getLong("VER_NBR"));
-                    detail.setVendorParentIndicator(Objects.equals(rs.getString("VNDR_PARENT_IND"), "Y"));
-                    detail.setVendorName(rs.getString("VNDR_NM"));
-                    detail.setActiveIndicator(Objects.equals(rs.getString("DOBJ_MAINT_CD_ACTV_IND"), "Y"));
-                    detail.setVendorInactiveReasonCode(rs.getString("VNDR_INACTV_REAS_CD"));
-                    detail.setVendorDunsNumber(rs.getString("VNDR_DUNS_NBR"));
-                    detail.setVendorPaymentTermsCode(rs.getString("VNDR_PMT_TERM_CD"));
-                    detail.setVendorShippingTitleCode(rs.getString("VNDR_SHP_TTL_CD"));
-                    detail.setVendorShippingPaymentTermsCode(rs.getString("VNDR_SHP_PMT_TERM_CD"));
-                    detail.setVendorConfirmationIndicator(Objects.equals(rs.getString("VNDR_CNFM_IND"), "Y"));
-                    detail.setVendorPrepaymentIndicator(Objects.equals(rs.getString("VNDR_PRPYMT_IND"), "Y"));
-                    detail.setVendorCreditCardIndicator(Objects.equals(rs.getString("VNDR_CCRD_IND"), "Y"));
-                    detail.setVendorMinimumOrderAmount(new KualiDecimal(rs.getDouble("VNDR_MIN_ORD_AMT")));
-                    detail.setVendorUrlAddress(rs.getString("VNDR_URL_ADDR"));
-                    detail.setVendorSoldToName(rs.getString("VNDR_SOLD_TO_NM"));
-                    detail.setVendorRemitName(rs.getString("VNDR_RMT_NM"));
-                    detail.setVendorRestrictedIndicator(Objects.equals(rs.getString("VNDR_RSTRC_IND"), "Y"));
-                    detail.setVendorRestrictedReasonText(rs.getString("VNDR_RSTRC_REAS_TXT"));
-                    detail.setVendorRestrictedDate(rs.getDate("VNDR_RSTRC_DT"));
-                    detail.setVendorRestrictedPersonIdentifier(rs.getString("VNDR_RSTRC_PRSN_ID"));
-                    detail.setVendorSoldToGeneratedIdentifier(rs.getInt("VNDR_SOLD_TO_GNRTD_ID"));
-                    detail.setVendorSoldToAssignedIdentifier(rs.getInt("VNDR_SOLD_TO_ASND_ID"));
-                    detail.setVendorFirstLastNameIndicator(Objects.equals(rs.getString("VNDR_1ST_LST_NM_IND"), "Y"));
-                    detail.setTaxableIndicator(Objects.equals(rs.getString("COLLECT_TAX_IND"), "Y"));
-                    detail.setDefaultPaymentMethodCode(rs.getString("DFLT_PMT_MTHD_CD"));
-                    detail.setLastUpdatedTimestamp(new Timestamp(rs.getDate("LAST_UPDT_TS").getTime()));
-                    detail.setVendorStateForLookup(rs.getString("POSTAL_STATE_NM"));
-                    detail.setVendorAliasesForLookup(rs.getString("ALL_ALIASES"));
-                    detail.setVendorCommoditiesForLookup(rs.getString("ALL_COMMODITIES"));
-                    detail.setVendorSupplierDiversitiesForLookup(rs.getString("ALL_SUPPLIER_DIVERSITIES"));
-                    detail.setVendorHeader(header);
+                        final VendorDetail detail = new VendorDetail();
+                        detail.setVendorHeaderGeneratedIdentifier(rs.getInt("VNDR_HDR_GNRTD_ID"));
+                        detail.setVendorDetailAssignedIdentifier(rs.getInt("VNDR_DTL_ASND_ID"));
+                        detail.setObjectId(rs.getString("OBJ_ID"));
+                        detail.setVersionNumber(rs.getLong("VER_NBR"));
+                        detail.setVendorParentIndicator(Objects.equals(rs.getString("VNDR_PARENT_IND"), "Y"));
+                        detail.setVendorName(rs.getString("VNDR_NM"));
+                        detail.setActiveIndicator(Objects.equals(rs.getString("DOBJ_MAINT_CD_ACTV_IND"), "Y"));
+                        detail.setVendorInactiveReasonCode(rs.getString("VNDR_INACTV_REAS_CD"));
+                        detail.setVendorDunsNumber(rs.getString("VNDR_DUNS_NBR"));
+                        detail.setVendorPaymentTermsCode(rs.getString("VNDR_PMT_TERM_CD"));
+                        detail.setVendorShippingTitleCode(rs.getString("VNDR_SHP_TTL_CD"));
+                        detail.setVendorShippingPaymentTermsCode(rs.getString("VNDR_SHP_PMT_TERM_CD"));
+                        detail.setVendorConfirmationIndicator(Objects.equals(rs.getString("VNDR_CNFM_IND"), "Y"));
+                        detail.setVendorPrepaymentIndicator(Objects.equals(rs.getString("VNDR_PRPYMT_IND"), "Y"));
+                        detail.setVendorCreditCardIndicator(Objects.equals(rs.getString("VNDR_CCRD_IND"), "Y"));
+                        detail.setVendorMinimumOrderAmount(new KualiDecimal(rs.getDouble("VNDR_MIN_ORD_AMT")));
+                        detail.setVendorUrlAddress(rs.getString("VNDR_URL_ADDR"));
+                        detail.setVendorSoldToName(rs.getString("VNDR_SOLD_TO_NM"));
+                        detail.setVendorRemitName(rs.getString("VNDR_RMT_NM"));
+                        detail.setVendorRestrictedIndicator(Objects.equals(rs.getString("VNDR_RSTRC_IND"), "Y"));
+                        detail.setVendorRestrictedReasonText(rs.getString("VNDR_RSTRC_REAS_TXT"));
+                        detail.setVendorRestrictedDate(rs.getDate("VNDR_RSTRC_DT"));
+                        detail.setVendorRestrictedPersonIdentifier(rs.getString("VNDR_RSTRC_PRSN_ID"));
+                        detail.setVendorSoldToGeneratedIdentifier(rs.getInt("VNDR_SOLD_TO_GNRTD_ID"));
+                        detail.setVendorSoldToAssignedIdentifier(rs.getInt("VNDR_SOLD_TO_ASND_ID"));
+                        detail.setVendorFirstLastNameIndicator(Objects.equals(rs.getString("VNDR_1ST_LST_NM_IND"), "Y"));
+                        detail.setTaxableIndicator(Objects.equals(rs.getString("COLLECT_TAX_IND"), "Y"));
+                        detail.setDefaultPaymentMethodCode(rs.getString("DFLT_PMT_MTHD_CD"));
+                        detail.setLastUpdatedTimestamp(new Timestamp(rs.getDate("LAST_UPDT_TS").getTime()));
+                        detail.setVendorStateForLookup(rs.getString("POSTAL_STATE_NM"));
+                        detail.setVendorAliasesForLookup(rs.getString("ALL_ALIASES"));
+                        detail.setVendorCommoditiesForLookup(rs.getString("ALL_COMMODITIES"));
+                        detail.setVendorSupplierDiversitiesForLookup(rs.getString("ALL_SUPPLIER_DIVERSITIES"));
+                        detail.setVendorHeader(header);
 
-                    vendorDetails.add(detail);
+                        vendorDetails.add(detail);
+                    }
                 }
             }
         } catch (final SQLException | DataAccessResourceFailureException | LookupException | IllegalStateException e) {
@@ -654,21 +667,30 @@ public class VendorDaoOjb extends PlatformAwareDaoBaseOjb implements VendorDao {
 
         final StringBuffer countSql = new StringBuffer(16);
         countSql.append("SELECT COUNT(*) FROM (").append(sql).append(") DUMMY");
-        try (Connection conn = getPersistenceBroker(true).serviceConnectionManager()
-                .getConnection(); PreparedStatement ps = conn.prepareStatement(countSql.toString())) {
-            // Loop through 2 times, as we have 2 separate sql statements to fill parameters
-            for (int i = 0; i < parameters.size(); i++) {
-                ps.setString(i + 1, parameters.get(i));
-            }
-            for (int i = 0; i < parameters.size(); i++) {
-                ps.setString(i + 1 + parameters.size(), parameters.get(i));
-            }
+        try {
+            // The documentation for the getConnection() method of ConnectionManagerImpl (the only implementation of
+            // ConnectionManagerIF) documents that the caller should never call close() on the returned Connection
+            // object. It'll be returned to the pool and re-used.
+            final Connection conn =
+                    getPersistenceBroker(true).serviceConnectionManager()
+                            .getConnection(); // NOPMD - Don't close connections from PersistenceBroker
+            try (
+                    PreparedStatement ps = conn.prepareStatement(countSql.toString())
+            ) {
+                // Loop through 2 times, as we have 2 separate sql statements to fill parameters
+                for (int i = 0; i < parameters.size(); i++) {
+                    ps.setString(i + 1, parameters.get(i));
+                }
+                for (int i = 0; i < parameters.size(); i++) {
+                    ps.setString(i + 1 + parameters.size(), parameters.get(i));
+                }
 
-            LOG.info("Executing SQL: {}", sql);
-            // Nesting try-with-resources to allow setting parameters
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    count = rs.getInt(1);
+                LOG.info("Executing SQL: {}", sql);
+                // Nesting try-with-resources to allow setting parameters
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        count = rs.getInt(1);
+                    }
                 }
             }
         } catch (final SQLException | DataAccessResourceFailureException | LookupException | IllegalStateException e) {
