@@ -62,8 +62,8 @@ public class TaxTableMetadataLookupServiceDefaultImpl
             Map.entry(VendorAddressField.vendorAddressEmailAddress, "VNDR_ADDR_EMAIL_ADDR"),
             Map.entry(VendorAddressField.active, "DOBJ_MAINT_CD_ACTV_IND"),
 
-            Map.entry(VendorField.vendorHeaderGeneratedIdentifier_forHeader, "VNDR_HDR_GNRTD_ID"),
-            Map.entry(VendorField.vendorHeaderGeneratedIdentifier_forDetail, "VNDR_HDR_GNRTD_ID"),
+            Map.entry(VendorField.vendorHeaderGeneratedIdentifier, "VNDR_HDR_GNRTD_ID"),
+            Map.entry(VendorField.vendorDetailVendorHeaderGeneratedIdentifier, "VNDR_HDR_GNRTD_ID"),
             Map.entry(VendorField.vendorDetailAssignedIdentifier, "VNDR_DTL_ASND_ID"),
             Map.entry(VendorField.vendorParentIndicator, "VNDR_PARENT_IND"),
             Map.entry(VendorField.vendorFirstLastNameIndicator, "VNDR_1ST_LST_NM_IND"),
