@@ -36,6 +36,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
@@ -43,7 +44,6 @@ import org.mockito.Mockito;
 
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 import edu.cornell.kfs.sys.util.CreateTestDirectories;
 import edu.cornell.kfs.sys.util.CuMockBuilder;
 import edu.cornell.kfs.sys.util.FixtureUtils;
@@ -131,7 +131,7 @@ public class VendorEmployeeComparisonServiceResultFileTest {
 
     @SpringXmlTestBeanFactoryMethod
     public static DateTimeService buildTestDateTimeService() {
-        return new TestDateTimeServiceImpl();
+        return new DateTimeServiceImpl();
     }
 
     @SpringXmlTestBeanFactoryMethod

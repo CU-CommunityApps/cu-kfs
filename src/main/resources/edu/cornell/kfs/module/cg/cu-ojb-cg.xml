@@ -53,6 +53,7 @@
 	    <field-descriptor name="analystTelephoneNumber" column="CG_ANALYST_PHN_NBR" jdbc-type="VARCHAR" />
 	    <field-descriptor name="awardProjectTitle" column="CGAWD_PROJ_TTL" jdbc-type="VARCHAR" />
 	    <field-descriptor name="awardPurposeCode" column="CGAWD_PURPOSE_CD" jdbc-type="VARCHAR" index="true" />
+	    <field-descriptor name="grantNumber" column="CG_GRANT_NUMBER" jdbc-type="VARCHAR" index="true"/>
 		<field-descriptor name="minInvoiceAmount" column="MIN_INV_AMT" jdbc-type="DECIMAL"
 						  conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" />
 		<field-descriptor name="invoicingOptionCode" column="INV_OPT_CD" jdbc-type="VARCHAR" />

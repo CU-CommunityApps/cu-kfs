@@ -30,7 +30,7 @@
           c:transactionDetailCsvFileType-ref="testTransactionDetailCsvInputFileType"
           c:testCaseHolder-ref="testCaseHolder"/>
 
-    <bean id="dateTimeService" class="edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl"/>
+    <bean id="dateTimeService" class="org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl"/>
 
     <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
         <property name="beanWhitelist">

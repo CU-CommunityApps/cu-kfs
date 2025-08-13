@@ -2,7 +2,7 @@
 
     The Kuali Financial System, a comprehensive financial management system for higher education.
 
-    Copyright 2005-2023 Kuali, Inc.
+    Copyright 2005-2024 Kuali, Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -43,7 +43,6 @@
 <%@ attribute name="maintenanceDocument" required="false" description="Boolean value of whether this page is rendering a maintenance document." %>
 <%@ attribute name="sessionDocument" required="false" description="Unused." %>
 <%@ attribute name="alternativeHelp" required="false"%>
-<%@ attribute name="renderInnerDiv" required="false"%>
 <%@ attribute name="openNav" required="false"%>
 <%@ attribute name="placeFocus" required="false" description="A way to prevent the body onLoad placeFocus() from executing" %>
 <%@ attribute name="additionalBodyClass" required="false" description="Additional css class to add to the body tag."%>
@@ -106,7 +105,7 @@
 			</c:otherwise>
 		</c:choose>
 		<c:if test="${not disableLegacyStyles}">
-			<link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap.min.css">
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap-replacement.css">
 			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 		</c:if>
 		<link href='${pageContext.request.contextPath}/css/lookup.css?${cachingTimestamp}' rel='stylesheet' type='text/css'>
@@ -115,13 +114,12 @@
 		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
 		<c:if test="${param.mode ne 'modal'}">
 			<script src="${pageContext.request.contextPath}/scripts/jquery.min.js"></script>
-			<script src="${pageContext.request.contextPath}/scripts/bootstrap.min.js"></script>
 			<script src="${pageContext.request.contextPath}/scripts/remodal.min.js"></script>
 			<link rel="stylesheet" href="${pageContext.request.contextPath}/css/remodal.min.css">
 		</c:if>
 		<kul:analytics />
-		<script src="https://unpkg.com/@reduxjs/toolkit@1.9.3/dist/redux-toolkit.umd.min.js"></script>
-		<script src="${pageContext.request.contextPath}/scripts/redux-shim/redux-shim.js"></script>
+        <script src="https://unpkg.com/@reduxjs/toolkit@1.9.3/dist/redux-toolkit.umd.min.js"></script>
+        <script src="${pageContext.request.contextPath}/scripts/redux-shim/redux-shim.js"></script>
 	</head>
 	<c:choose>
 		<c:when test="${lookup}" >
@@ -158,7 +156,7 @@
 				  headerMenuBar="${headerMenuBar}" headerTabActive="${headerTabActive}" alternativeHelp="${alternativeHelp}"
 				  errorKey="${errorKey}"
 				  documentWebScope="${documentWebScope}" maintenanceDocument="${maintenanceDocument}"
-				  renderInnerDiv="${renderInnerDiv}" cachingTimestamp="${cachingTimestamp}" openNav="${openNav}"
+				  cachingTimestamp="${cachingTimestamp}" openNav="${openNav}"
 				  additionalBodyClass="${additionalBodyClass}">
 
 			<div id="page-content">

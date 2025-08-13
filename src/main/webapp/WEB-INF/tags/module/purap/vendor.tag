@@ -2,7 +2,7 @@
 
     The Kuali Financial System, a comprehensive financial management system for higher education.
 
-    Copyright 2005-2023 Kuali, Inc.
+    Copyright 2005-2024 Kuali, Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -290,7 +290,7 @@
                     </td>
                 </c:if>                                                 
                 <c:if test="${displayPaymentRequestFields or displayCreditMemoFields}">
-                    <th class="right" rowspan="3">
+                    <th class="right top" rowspan="3">
                         <kul:htmlAttributeLabel attributeEntry="${documentAttributes.noteLine1Text}" />
                     </th>
                     <td class="datacell">
@@ -410,7 +410,7 @@
 
             <c:if test="${displayPaymentRequestFields}">
                 <tr>
-                    <th class="right" rowspan="3">
+                    <th class="right top" rowspan="3">
                         <kul:htmlAttributeLabel attributeEntry="${documentAttributes.specialHandlingInstructionLine1Text}" />
                     </th>
                     <td class="datacell">

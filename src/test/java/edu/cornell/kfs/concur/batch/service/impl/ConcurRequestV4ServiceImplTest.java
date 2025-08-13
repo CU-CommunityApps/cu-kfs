@@ -36,6 +36,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.mockito.Mockito;
@@ -65,7 +66,6 @@ import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ReportDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4StatusDTO;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 import edu.cornell.kfs.sys.web.mock.MockRemoteServerExtension;
 
 public class ConcurRequestV4ServiceImplTest {
@@ -83,7 +83,7 @@ public class ConcurRequestV4ServiceImplTest {
     private String baseRequestV4Url;
     private Map<String, String> concurParameters;
     private Map<String, String> concurProperties;
-    private TestDateTimeServiceImpl testDateTimeService;
+    private DateTimeServiceImpl testDateTimeService;
     private TestConcurRequestV4ServiceImpl requestV4Service;
     private DateTimeZone easternTimeZone;
     private long mockCurrentTimeMillis;
@@ -212,15 +212,14 @@ public class ConcurRequestV4ServiceImplTest {
         return configurationService;
     }
 
-    private TestDateTimeServiceImpl buildDateTimeService() throws Exception {
-        TestDateTimeServiceImpl dateTimeService = new TestDateTimeServiceImpl();
-        dateTimeService.afterPropertiesSet();
+    private DateTimeServiceImpl buildDateTimeService() throws Exception {
+        DateTimeServiceImpl dateTimeService = new DateTimeServiceImpl();
         return dateTimeService;
     }
 
     private DateTimeService buildSpiedDateTimeService(
-            TestDateTimeServiceImpl actualDateTimeService) throws Exception {
-        TestDateTimeServiceImpl dateTimeService = Mockito.spy(actualDateTimeService);
+            DateTimeServiceImpl actualDateTimeService) throws Exception {
+        DateTimeServiceImpl dateTimeService = Mockito.spy(actualDateTimeService);
         Mockito.doAnswer(invocation -> getMockCurrentDate())
                 .when(dateTimeService).getCurrentDate();
         Mockito.doAnswer(invocation -> convertToSameTimeOfDayInEasternTime((Date) invocation.callRealMethod()))

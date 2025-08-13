@@ -247,9 +247,12 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
     @Override
     protected void checkInvoiceNumberLength(final PaymentDetail paymentDetail, final MessageMap errorMap) {
         final int invoiceNumberMaxLength = 25;
-        if (paymentDetail.getInvoiceNbr().length() > invoiceNumberMaxLength) {
-            errorMap.putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.ERROR_PAYMENT_LOAD_INVOICE_NUMBER_TOO_LONG,
-                    paymentDetail.getInvoiceNbr(), Integer.toString(invoiceNumberMaxLength));
+        if (StringUtils.isNotBlank(paymentDetail.getInvoiceNbr()) 
+                && paymentDetail.getInvoiceNbr().length() > invoiceNumberMaxLength) {
+            errorMap.putError(KFSConstants.GLOBAL_ERRORS, 
+                    PdpKeyConstants.ERROR_PAYMENT_LOAD_INVOICE_NUMBER_TOO_LONG,
+                    paymentDetail.getInvoiceNbr(), 
+                    Integer.toString(invoiceNumberMaxLength));
         }
     }
 

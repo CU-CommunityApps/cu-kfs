@@ -22,13 +22,13 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.coreservice.impl.parameter.Parameter;
 import org.kuali.kfs.sys.KFSConstants;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
-import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 import edu.cornell.kfs.sys.util.CuMockBuilder;
 import edu.cornell.kfs.sys.util.FixtureUtils;
 import edu.cornell.kfs.sys.util.SpringXmlTestBeanFactoryMethod;
@@ -134,10 +134,9 @@ public class TaxProcessingV2ServiceImplTest {
 
     @SpringXmlTestBeanFactoryMethod
     public static DateTimeService buildSpiedTestDateTimeService() throws Exception {
-        final TestDateTimeServiceImpl dateTimeService = new TestDateTimeServiceImpl();
-        dateTimeService.afterPropertiesSet();
+        final DateTimeServiceImpl dateTimeService = new DateTimeServiceImpl();
         return new CuMockBuilder<>(dateTimeService)
-                .withReturn(TestDateTimeServiceImpl::getLocalDateNow, TEST_DATE_2025_01_10)
+                .withReturn(DateTimeServiceImpl::getLocalDateNow, TEST_DATE_2025_01_10)
                 .build();
     }
 

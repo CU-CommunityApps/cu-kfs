@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2023 Kuali, Inc.
+ * Copyright 2005-2024 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -1152,8 +1152,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                 final String vndrHdrGenId = vendorNumber.substring(0, dashInd);
                 final String vndrDetailAssignedId = vendorNumber.substring(dashInd + 1);
                 if (StringUtils.isNotEmpty(vndrHdrGenId) && StringUtils.isNotEmpty(vndrDetailAssignedId)) {
-                    alternateVendorHeaderGeneratedIdentifier = new Integer(vndrHdrGenId);
-                    alternateVendorDetailAssignedIdentifier = new Integer(vndrDetailAssignedId);
+                    alternateVendorHeaderGeneratedIdentifier = Integer.valueOf(vndrHdrGenId);
+                    alternateVendorDetailAssignedIdentifier = Integer.valueOf(vndrDetailAssignedId);
                 }
             }
         } else {

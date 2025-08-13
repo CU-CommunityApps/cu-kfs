@@ -28,10 +28,7 @@ import edu.cornell.kfs.vnd.document.service.CUVendorService;
 public class CUVendorServiceImpl extends VendorServiceImpl implements CUVendorService {
 
     private static final Logger LOG = LogManager.getLogger();
-
-    private BusinessObjectService businessObjectService;
     private VendorLookupableHelperServiceImpl vendorLookupableHelperServiceImpl;
-    protected DocumentService documentService;
 
     public VendorDetail getVendorByVendorName(final String vendorName) {
         LOG.info("Entering getVendorByVendorName for vendorName:" + vendorName);

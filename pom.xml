@@ -21,7 +21,7 @@
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
 
-        <kfs.version>2023-12-20</kfs.version>
+        <kfs.version>2024-02-28</kfs.version>
 
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>
         <checkstyle.version>10.12.0</checkstyle.version>
@@ -29,13 +29,13 @@
              This can be removed once all code has been updated to use jaxb or other framework to replace commons-digester.
         -->
         <commons-digester3.version>3.2</commons-digester3.version>
-        <commons-validator.version>1.7</commons-validator.version>
+        <commons-validator.version>1.8.0</commons-validator.version>
         <gson.version>2.10.1</gson.version>
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <hibernate-validator-annotation-processor.version>6.2.5.Final</hibernate-validator-annotation-processor.version>
         <hsqldb.version>2.7.4</hsqldb.version>
-        <httpclient.version>5.2.1</httpclient.version>
-        <httpcore.version>5.2.3</httpcore.version>
+        <httpclient.version>5.3</httpclient.version>
+        <httpcore.version>5.2.4</httpcore.version>
         <!--Backport FINP-11623-->
         <jackson.version>2.18.1</jackson.version>
         <jakarta.el.el-api.version>3.0.3</jakarta.el.el-api.version>
@@ -46,11 +46,11 @@
         <jotm-core.version>2.1.10-kuali-1</jotm-core.version>
         <jsp-api.version>2.3.3</jsp-api.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
-        <junit.version>5.10.1</junit.version>
+        <junit.version>5.10.2</junit.version>
         <ojdbc.version>19.18.0.0</ojdbc.version>
-        <opencsv.version>5.8</opencsv.version>
+        <opencsv.version>5.9</opencsv.version>
         <plexus-utils.version>3.0.24</plexus-utils.version>
-        <mockito.version>4.9.0</mockito.version>
+        <mockito.version>5.10.0</mockito.version>
         <pw-iso20022.version>SRU2023-10.1.3</pw-iso20022.version>
         <squiggly-filter-jackson.version>1.3.18</squiggly-filter-jackson.version>
         <spring.version>5.3.39</spring.version>
@@ -1014,12 +1014,6 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-inline</artifactId>
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>

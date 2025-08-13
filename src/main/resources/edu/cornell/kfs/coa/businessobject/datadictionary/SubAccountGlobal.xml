@@ -109,7 +109,7 @@
     </bean>
     
     <bean id="SubAccountGlobal-a21SubAccount.costShareChartOfAccountCode" parent="SubAccountGlobal-a21SubAccount.costShareChartOfAccountCode-parentBean"/>
-    <bean id="SubAccountGlobal-a21SubAccount.costShareChartOfAccountCode-parentBean" abstract="true" parent="ChartAttribute-SelectControl">
+    <bean id="SubAccountGlobal-a21SubAccount.costShareChartOfAccountCode-parentBean" abstract="true" parent="ChartAttribute-SimpleDropdown">
     	<property name="name" value="a21SubAccount.costShareChartOfAccountCode" />
 		<property name="label" value="Cost Sharing Chart of Accounts Code" />
 		<property name="shortLabel" value="CostShareCOACode" />

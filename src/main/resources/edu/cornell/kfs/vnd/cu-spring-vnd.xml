@@ -45,7 +45,7 @@
         </property>
 	</bean>
 
-  <bean id="vendorDao" parent="platformAwareDao" class="edu.cornell.kfs.vnd.dataaccess.impl.CuVendorDaoOjb" />
+  <bean id="vendorDao" parent="vendorDao-parentBean" class="edu.cornell.kfs.vnd.dataaccess.impl.CuVendorDaoOjb" />
 
 	<bean id="commodityCodeUpdateService" class="edu.cornell.kfs.vnd.batch.service.impl.CommodityCodeUpdateServiceImpl">
 		<property name="commodityCodeInputFileType">
@@ -130,15 +130,7 @@
 		</property>
 	</bean>
 
-    <bean id="cuVendorService" parent="cuVendorService-parentBean"/>
-    <bean id="cuVendorService-parentBean" class="edu.cornell.kfs.vnd.document.service.impl.CUVendorServiceImpl" scope="prototype" abstract="true">
-       <!--  TODO : not override vendorService may have some issue -->
-		<property name="businessObjectService">
-			<ref bean="businessObjectService" />
-		</property>
-		<property name="documentService">
-			<ref bean="documentService" />
-		</property>
+    <bean id="cuVendorService" parent="vendorService-parentBean" class="edu.cornell.kfs.vnd.document.service.impl.CUVendorServiceImpl">
 		<property name="vendorLookupableHelperServiceImpl">
 			<ref bean="vendorLookupableHelperService" />
 		</property>
