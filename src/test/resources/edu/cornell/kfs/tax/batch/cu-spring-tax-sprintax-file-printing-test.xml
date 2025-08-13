@@ -59,7 +59,7 @@
 
     <bean id="parameterService" class="${unit.test.classname}" factory-method="buildMockParameterService"/>
 
-    <bean id="dateTimeService" class="edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl"/>
+    <bean id="dateTimeService" class="org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl"/>
 
     <bean id="encryptionService" class="edu.cornell.kfs.core.impl.encryption.TestEncryptionServiceImpl"/>
 

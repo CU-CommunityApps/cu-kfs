@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2023 Kuali, Inc.
+ * Copyright 2005-2024 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -64,6 +64,11 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     private String vendorLastName;
     // not persisted in the db
     private String vendorStateForLookup;
+
+    // Custom fields for collections in new lookup
+    private String vendorAliasesForLookup;
+    private String vendorCommoditiesForLookup;
+    private String vendorSupplierDiversitiesForLookup;
 
     private boolean activeIndicator;
     private String vendorInactiveReasonCode;
@@ -192,8 +197,8 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         // make sure there's at least one char before and after '-'
         if (dashInd > 0 && dashInd < vendorNumber.length() - 1) {
             try {
-                vendorHeaderGeneratedIdentifier = new Integer(vendorNumber.substring(0, dashInd));
-                vendorDetailAssignedIdentifier = new Integer(vendorNumber.substring(dashInd + 1));
+                vendorHeaderGeneratedIdentifier = Integer.valueOf(vendorNumber.substring(0, dashInd));
+                vendorDetailAssignedIdentifier = Integer.valueOf(vendorNumber.substring(dashInd + 1));
             } catch (final NumberFormatException e) {
                 // in case of invalid number format
             }
@@ -262,8 +267,8 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         // make sure there's at least one char before and after '-'
         if (dashInd > 0 && dashInd < vendorSoldToNumber.length() - 1) {
             try {
-                vendorSoldToGeneratedIdentifier = new Integer(vendorSoldToNumber.substring(0, dashInd));
-                vendorSoldToAssignedIdentifier = new Integer(vendorSoldToNumber.substring(dashInd + 1));
+                vendorSoldToGeneratedIdentifier = Integer.valueOf(vendorSoldToNumber.substring(0, dashInd));
+                vendorSoldToAssignedIdentifier = Integer.valueOf(vendorSoldToNumber.substring(dashInd + 1));
             } catch (final NumberFormatException e) {
                 // in case of invalid number format
             }
@@ -825,4 +830,27 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         this.boNotes = boNotes;
     }
 
+    public String getVendorAliasesForLookup() {
+        return vendorAliasesForLookup;
+    }
+
+    public void setVendorAliasesForLookup(final String vendorAliasesForLookup) {
+        this.vendorAliasesForLookup = vendorAliasesForLookup;
+    }
+
+    public String getVendorCommoditiesForLookup() {
+        return vendorCommoditiesForLookup;
+    }
+
+    public void setVendorCommoditiesForLookup(final String vendorCommoditiesForLookup) {
+        this.vendorCommoditiesForLookup = vendorCommoditiesForLookup;
+    }
+
+    public String getVendorSupplierDiversitiesForLookup() {
+        return vendorSupplierDiversitiesForLookup;
+    }
+
+    public void setVendorSupplierDiversitiesForLookup(final String vendorSupplierDiversitiesForLookup) {
+        this.vendorSupplierDiversitiesForLookup = vendorSupplierDiversitiesForLookup;
+    }
 }

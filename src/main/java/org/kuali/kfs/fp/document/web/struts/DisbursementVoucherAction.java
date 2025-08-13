@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2023 Kuali, Inc.
+ * Copyright 2005-2024 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -122,8 +122,8 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         }
         
         if (dvDoc.getDocumentHeader().getWorkflowDocument().checkStatus(DocumentStatus.SAVED) ||
-        		dvDoc.getDocumentHeader().getWorkflowDocument().checkStatus(DocumentStatus.ENROUTE)) {
-        		checkForDuplicatePayments(dvDoc);		
+                dvDoc.getDocumentHeader().getWorkflowDocument().checkStatus(DocumentStatus.ENROUTE)) {
+                checkForDuplicatePayments(dvDoc);       
         }
     }
     
@@ -843,7 +843,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         VendorAddress vendorAddress = new VendorAddress();
         if (StringUtils.isNotBlank(payeeAddressIdentifier)) {
             try {
-                vendorAddress.setVendorAddressGeneratedIdentifier(new Integer(payeeAddressIdentifier));
+                vendorAddress.setVendorAddressGeneratedIdentifier(Integer.valueOf(payeeAddressIdentifier));
                 vendorAddress = (VendorAddress) SpringContext.getBean(BusinessObjectService.class).retrieve(vendorAddress);
                 dvForm.setTempPayeeIdNumber(payeeIdNumber);
                 dvForm.setOldPayeeType(KFSConstants.PaymentPayeeTypes.VENDOR);

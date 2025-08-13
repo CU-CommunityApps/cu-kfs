@@ -383,6 +383,18 @@
                        </list>
                    </property>
                </bean>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="formAttributeDefinitions" />
+                   <property name="propertyNameForElementCompare" value="name" />
+                   <property name="element">
+                       <ref bean="VendorDetail-vendorHeader.vendorDebarredIndicator"/>
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                           <bean parent="VendorDetail-defaultPaymentMethodCode" p:disableLookup="true"/>
+                       </list>
+                   </property>
+               </bean>
            </list>
        </property>
    </bean>

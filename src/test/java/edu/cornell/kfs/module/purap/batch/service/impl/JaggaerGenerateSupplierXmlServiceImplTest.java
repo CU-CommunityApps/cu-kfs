@@ -28,6 +28,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.mockito.Mockito;
@@ -48,7 +49,6 @@ import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierRequestMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierSyncMessage;
 import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
-import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 
 @Execution(ExecutionMode.SAME_THREAD)
 public class JaggaerGenerateSupplierXmlServiceImplTest {
@@ -58,7 +58,7 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
     
     private static final String OUTPUT_FILE_PATH = "test/jaggaer/JaggaerGenerateSupplierXmlServiceImplTest/";
     private File outputFileDirectory;
-    private TestDateTimeServiceImpl dateTimeService;
+    private DateTimeServiceImpl dateTimeService;
     
 
     @BeforeEach
@@ -66,8 +66,7 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
         Configurator.setLevel(JaggaerGenerateSupplierXmlServiceImpl.class.getName(), Level.DEBUG);
         jaggaerGenerateSupplierXmlServiceImpl = new JaggaerGenerateSupplierXmlServiceImpl();
         jaggaerGenerateSupplierXmlServiceImpl.setWebServiceCredentialService(buildMockWebServiceCredentialService());
-        dateTimeService = new TestDateTimeServiceImpl();
-        dateTimeService.afterPropertiesSet();
+        dateTimeService = new DateTimeServiceImpl();
         outputFileDirectory = new File(OUTPUT_FILE_PATH);
         outputFileDirectory.mkdir();
     }

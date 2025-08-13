@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2023 Kuali, Inc.
+ * Copyright 2005-2024 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -187,10 +187,7 @@ public class CacheConfiguration {
         }
         final LettuceClientConfiguration lettuceClientConfiguration = lettuceClientConfigurationBuilder.build();
 
-        final LettuceConnectionFactory lettuceConnectionFactory =
-                new LettuceConnectionFactory(redisStandaloneConfiguration, lettuceClientConfiguration);
-
-        return lettuceConnectionFactory;
+        return new LettuceConnectionFactory(redisStandaloneConfiguration, lettuceClientConfiguration);
     }
 
     // Note: Not sure exactly why, but Qualifier annotation is required in order for cacheNamesWithDefaultTtl to be
@@ -220,12 +217,10 @@ public class CacheConfiguration {
                         key -> cacheDefaults.entryTtl(cacheNamesWithCustomTtl.get(key)),
                         (configuration, cacheConfiguration) -> cacheConfiguration));
 
-        final RedisCacheManager redisCacheManager = RedisCacheManager.builder(connectionFactory)
+        return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(cacheDefaults)
                 .initialCacheNames(cacheNamesWithDefaultTtl)
                 .withInitialCacheConfigurations(cacheConfigurations)
                 .build();
-
-        return redisCacheManager;
     }
 }

@@ -56,7 +56,7 @@ public class CuBatchInputFileServiceImplTest extends TestCase {
         pcdoBatchInputFileType = new ProcurementCardInputFileType();
         pcdoBatchInputFileType.setDirectoryPath("test/fp/procurementCard");
         pcdoBatchInputFileType.setFileExtension("data");
-        pcdoBatchInputFileType.setDateTimeService(new MockDateTimeService());
+        pcdoBatchInputFileType.setDateTimeService(new DateTimeServiceImpl());
 
         accountReversionInputFileType = new AccountReversionInputFileType();
         accountReversionInputFileType.setDirectoryPath("test/gl/accountReversion/");
@@ -161,14 +161,6 @@ public class CuBatchInputFileServiceImplTest extends TestCase {
         } else {
             assertTrue("done file " + doneFile.getPath() + " does exist", !doneFile.exists());
         }
-    }
-
-    private class MockDateTimeService extends DateTimeServiceImpl {
-
-        public MockDateTimeService() {
-            timestampToStringFormatForFileName = "yyyyMMdd-HH-mm-ss-S";
-        }
-
     }
 
 }

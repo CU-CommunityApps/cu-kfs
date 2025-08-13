@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2023 Kuali, Inc.
+ * Copyright 2005-2024 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -95,6 +95,7 @@ public class Award extends PersistableBusinessObjectBase implements Billable, Mu
     private String billingFrequencyCode;
     private String awardProjectTitle;
     private String awardPurposeCode;
+    private String grantNumber;
     private boolean active;
     private String kimGroupNames;
     private List<AwardProjectDirector> awardProjectDirectors;
@@ -212,13 +213,13 @@ public class Award extends PersistableBusinessObjectBase implements Billable, Mu
         final List<Collection<PersistableBusinessObject>> managedLists = super.buildListOfDeletionAwareLists();
         managedLists.add(ObjectUtils.isNull(getAwardAccounts()) ? new ArrayList() : new ArrayList(getAwardAccounts()));
         managedLists.add(ObjectUtils.isNull(getAwardOrganizations()) ? new ArrayList() :
-            new ArrayList(getAwardOrganizations()));
+                new ArrayList(getAwardOrganizations()));
         managedLists.add(ObjectUtils.isNull(getAwardProjectDirectors()) ? new ArrayList() :
-            new ArrayList(getAwardProjectDirectors()));
+                new ArrayList(getAwardProjectDirectors()));
         managedLists.add(ObjectUtils.isNull(getAwardFundManagers()) ? new ArrayList() :
-            new ArrayList(getAwardFundManagers()));
+                new ArrayList(getAwardFundManagers()));
         managedLists.add(ObjectUtils.isNull(getAwardSubcontractors()) ? new ArrayList() :
-            new ArrayList(getAwardSubcontractors()));
+                new ArrayList(getAwardSubcontractors()));
         return managedLists;
     }
 
@@ -287,8 +288,8 @@ public class Award extends PersistableBusinessObjectBase implements Billable, Mu
                     // newCollectionRecord is set to true to allow deletion of this record after being populated from proposal
                     awardDirector.setNewCollectionRecord(true);
                     awardDirector.setProposalNumber(pDirector.getProposalNumber());
-                    awardDirector.setAwardPrimaryProjectDirectorIndicator(pDirector.
-                            isProposalPrimaryProjectDirectorIndicator());
+                    awardDirector.setAwardPrimaryProjectDirectorIndicator(pDirector
+                            .isProposalPrimaryProjectDirectorIndicator());
                     awardDirector.setAwardProjectDirectorProjectTitle(pDirector.getProposalProjectDirectorProjectTitle());
                     awardDirector.setPrincipalId(pDirector.getPrincipalId());
                     awardDirector.setActive(pDirector.isActive());
@@ -588,6 +589,14 @@ public class Award extends PersistableBusinessObjectBase implements Billable, Mu
         this.awardPurposeCode = awardPurposeCode;
     }
 
+    public String getGrantNumber() {
+        return grantNumber;
+    }
+
+    public void setGrantNumber(final String grantNumber) {
+        this.grantNumber = grantNumber;
+    }
+
     @Override
     public boolean isActive() {
         return active;
@@ -756,9 +765,9 @@ public class Award extends PersistableBusinessObjectBase implements Billable, Mu
     public List<AwardAccount> getActiveAwardAccounts() {
         return awardAccounts.stream()
                 .filter(awardAccount -> awardAccount.isActive()
-                        && (CollectionUtils.isEmpty(selectedAccounts)
-                            || selectedAccounts.contains(
-                                    awardAccount.getChartOfAccountsCode() + awardAccount.getAccountNumber())))
+                                        && (CollectionUtils.isEmpty(selectedAccounts)
+                                            || selectedAccounts.contains(
+                        awardAccount.getChartOfAccountsCode() + awardAccount.getAccountNumber())))
                 .collect(Collectors.toList());
     }
 

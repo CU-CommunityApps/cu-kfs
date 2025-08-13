@@ -407,6 +407,12 @@ public class CuDisbursementVoucherDocumentTest {
         public VendorAddress getVendorDefaultAddress(Integer integer, Integer integer1, String s, String s1, boolean b) {
             return null;
         }
+        
+        @Override
+        public Collection<VendorAddress> getVendorAddresses(int vendorHeaderId, int vendorDetailId, String addressType){
+            return null;
+        }
+         
     }
 
     private static class TestDisbursementVoucherPayeeService implements DisbursementVoucherPayeeService {

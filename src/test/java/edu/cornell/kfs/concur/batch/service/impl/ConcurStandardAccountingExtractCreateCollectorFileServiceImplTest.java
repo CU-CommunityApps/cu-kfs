@@ -197,7 +197,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
     }
 
     protected DateTimeService buildDateTimeService() {
-        return new TestDateTimeServiceImpl();
+        return new DateTimeServiceImpl();
     }
 
     protected SearchService buildBatchFileLookupableHelperService(DateTimeService dateTimeService) {
@@ -379,18 +379,6 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
         @Override
         protected List<File> getDirectoriesToSearch(List<String> selectedPaths) {
             return Collections.singletonList(new File(COLLECTOR_OUTPUT_DIRECTORY_PATH).getAbsoluteFile());
-        }
-    }
-
-
-    /**
-     * Custom DateTimeService class that is configured to automatically handle certain Concur date formats.
-     */
-    public static class TestDateTimeServiceImpl extends DateTimeServiceImpl {
-        
-        public TestDateTimeServiceImpl() {
-            this.stringToDateFormats = new String[] {ConcurConstants.DATE_FORMAT};
-            this.dateToStringFormatForUserInterface = ConcurConstants.DATE_FORMAT;
         }
     }
 
