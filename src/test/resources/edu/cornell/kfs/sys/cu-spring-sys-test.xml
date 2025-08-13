@@ -8,7 +8,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="dateTimeService" class="edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl"/>
+    <bean id="dateTimeService" class="org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl"/>
 
     <bean id="DelimitedFlatFilePropertySpecification" abstract="true"
           class="edu.cornell.kfs.sys.batch.TestDelimitedFlatFilePropertySpecification"/>
