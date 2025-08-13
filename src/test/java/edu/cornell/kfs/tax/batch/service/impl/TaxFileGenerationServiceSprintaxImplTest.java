@@ -378,7 +378,7 @@ public class TaxFileGenerationServiceSprintaxImplTest {
 
     private String createTransactionDetailFieldNameHeader() {
         return Arrays.stream(TransactionDetailField.values())
-                .map(TransactionDetailField::getFieldName)
+                .map(TransactionDetailField::getDtoFieldName)
                 .collect(Collectors.joining(KFSConstants.COMMA));
     }
 

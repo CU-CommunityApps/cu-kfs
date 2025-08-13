@@ -70,12 +70,12 @@ public class TaxDtoRowMapperImpl<T> implements TaxDtoRowMapper<T> {
         final TaxDtoFieldEnum[] fields = fieldEnumClass.getEnumConstants();
 
         for (final TaxDtoFieldEnum field : fields) {
-            final Class<?> propertyType = wrappedDto.getPropertyType(field.getFieldName());
+            final Class<?> propertyType = wrappedDto.getPropertyType(field.getDtoFieldName());
             final FieldReader fieldReader = field.needsEncryptedStorage()
                     ? ENCRYPTED_FIELD_READER
                     : FIELD_READERS.getOrDefault(propertyType, DEFAULT_FIELD_READER);
             final Object fieldValue = fieldReader.getFieldValue(this, field);
-            wrappedDto.setPropertyValue(field.getFieldName(), fieldValue);
+            wrappedDto.setPropertyValue(field.getDtoFieldName(), fieldValue);
         }
 
         return dto;
