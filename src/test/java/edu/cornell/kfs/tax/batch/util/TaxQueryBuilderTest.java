@@ -117,15 +117,15 @@ public class TaxQueryBuilderTest {
                 })
         QUERY_WITH_JOIN_CONDITION(metadataService -> {
             return createEmptyBuilder(metadataService, VendorField.class)
-                    .select(VendorField.vendorHeaderGeneratedIdentifier_forDetail, VendorField.vendorName,
+                    .select(VendorField.vendorDetailVendorHeaderGeneratedIdentifier, VendorField.vendorName,
                             VendorField.vendorTypeCode)
                     .from(VendorDetail.class)
                     .join(VendorHeader.class,
-                            Criteria.equal(VendorField.vendorHeaderGeneratedIdentifier_forDetail,
-                                    VendorField.vendorHeaderGeneratedIdentifier_forHeader)
+                            Criteria.equal(VendorField.vendorDetailVendorHeaderGeneratedIdentifier,
+                                    VendorField.vendorHeaderGeneratedIdentifier)
                     )
                     .where(
-                            Criteria.in(VendorField.vendorHeaderGeneratedIdentifier_forDetail,
+                            Criteria.in(VendorField.vendorDetailVendorHeaderGeneratedIdentifier,
                                     Types.INTEGER, List.of(9753, 9754, 9755))
                     )
                     .build();
@@ -133,7 +133,7 @@ public class TaxQueryBuilderTest {
 
         @CuSqlQueryFixture(sql = "SELECT VEN0.VNDR_NM FROM KFS.PUR_VNDR_DTL_T VEN0 "
                 + "WHERE VEN0.VNDR_HDR_GNRTD_ID = ("
-                        + "SELECT VEN1.VNDR_HDR_GNRTD_ID \"VEN1_VNDR_HDR_GNRTD_ID\" FROM KFS.PUR_VNDR_HDR_T VEN1 "
+                        + "SELECT VEN1.VNDR_HDR_GNRTD_ID FROM KFS.PUR_VNDR_HDR_T VEN1 "
                         + "WHERE VEN1.VNDR_US_TAX_NBR = ?"
                 + ")",
                 parameters = {
@@ -141,14 +141,14 @@ public class TaxQueryBuilderTest {
                 })
         QUERY_WITH_SUBQUERY(metadataService -> {
             final TaxQueryBuilder subQuery = createEmptyBuilder(metadataService, VendorField.class)
-                    .select(VendorField.vendorHeaderGeneratedIdentifier_forHeader)
+                    .select(VendorField.vendorHeaderGeneratedIdentifier)
                     .from(VendorHeader.class)
                     .where(Criteria.equal(VendorField.vendorTaxNumber, "xxxxx1234"));
 
             return createEmptyBuilder(metadataService, VendorField.class)
                     .select(VendorField.vendorName)
                     .from(VendorDetail.class)
-                    .where(Criteria.equal(VendorField.vendorHeaderGeneratedIdentifier_forDetail, subQuery))
+                    .where(Criteria.equal(VendorField.vendorDetailVendorHeaderGeneratedIdentifier, subQuery))
                     .build();
         }),
 
@@ -266,23 +266,23 @@ public class TaxQueryBuilderTest {
 
         NULL_JOIN_BO_CLASS_REFERENCE(metadataService -> {
             createEmptyBuilder(metadataService, VendorField.class)
-                    .select(VendorField.vendorHeaderGeneratedIdentifier_forDetail)
+                    .select(VendorField.vendorDetailVendorHeaderGeneratedIdentifier)
                     .from(VendorDetail.class)
-                    .join(null, Criteria.equal(VendorField.vendorHeaderGeneratedIdentifier_forDetail,
-                            VendorField.vendorHeaderGeneratedIdentifier_forHeader));
+                    .join(null, Criteria.equal(VendorField.vendorDetailVendorHeaderGeneratedIdentifier,
+                            VendorField.vendorHeaderGeneratedIdentifier));
         }),
 
         INVALID_JOIN_BO_CLASS_REFERENCE(metadataService -> {
             createEmptyBuilder(metadataService, VendorField.class)
-                    .select(VendorField.vendorHeaderGeneratedIdentifier_forDetail)
+                    .select(VendorField.vendorDetailVendorHeaderGeneratedIdentifier)
                     .from(VendorDetail.class)
-                    .join(Note.class, Criteria.equal(VendorField.vendorHeaderGeneratedIdentifier_forDetail,
-                            VendorField.vendorHeaderGeneratedIdentifier_forHeader));
+                    .join(Note.class, Criteria.equal(VendorField.vendorDetailVendorHeaderGeneratedIdentifier,
+                            VendorField.vendorHeaderGeneratedIdentifier));
         }),
 
         NULL_JOIN_CRITERIA(metadataService -> {
             createEmptyBuilder(metadataService, VendorField.class)
-                    .select(VendorField.vendorHeaderGeneratedIdentifier_forDetail)
+                    .select(VendorField.vendorDetailVendorHeaderGeneratedIdentifier)
                     .from(VendorDetail.class)
                     .join(VendorHeader.class, (Criteria[]) null);
         }),

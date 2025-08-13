@@ -137,7 +137,7 @@ public class TestTransactionDetailCsvInputFileType extends CsvBatchInputFileType
         }
         
         private String getString(final TransactionDetailField field) {
-            final String fieldName = field.getFieldName();
+            final String fieldName = field.getDtoFieldName();
             return StringUtils.defaultIfEmpty(parsedRow.get(fieldName), null);
         }
 

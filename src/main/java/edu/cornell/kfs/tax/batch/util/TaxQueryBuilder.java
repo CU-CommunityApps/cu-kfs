@@ -19,6 +19,7 @@ import edu.cornell.kfs.tax.batch.metadata.TaxDtoDbMetadata;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.Criteria;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.FieldUpdate;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.QuerySort;
+import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.SqlFunction;
 
 /**
  * Convenience class for building SELECT or UPDATE queries against tax-related data, using metadata helper objects
@@ -79,6 +80,11 @@ public class TaxQueryBuilder {
         } else {
             return getColumnLabel(field);
         }
+    }
+
+    public TaxQueryBuilder deleteFrom(final Class<? extends BusinessObject> baseBusinessObjectClass) {
+        sqlChunk.append("DELETE");
+        return from(baseBusinessObjectClass);
     }
 
     public TaxQueryBuilder from(final Class<? extends BusinessObject> baseBusinessObjectClass) {
@@ -180,6 +186,11 @@ public class TaxQueryBuilder {
         return this;
     }
 
+    protected TaxQueryBuilder appendSqlFunction(final SqlFunction sqlFunction) {
+        sqlFunction.applyToQuery(this);
+        return this;
+    }
+
     protected TaxQueryBuilder appendLeftHalfOfEqualityCondition(final TaxDtoFieldEnum field) {
         return appendLeftHandSideAndOperand(field, " = ");
     }
@@ -191,6 +202,19 @@ public class TaxQueryBuilder {
     protected TaxQueryBuilder appendLeftHandSideAndOperand(final TaxDtoFieldEnum field, final String paddedOperand) {
         return appendColumnLabelForField(field)
                 .appendSql(paddedOperand);
+    }
+
+    protected TaxQueryBuilder appendFunctionNameAndFirstOperand(final String functionName,
+            final TaxDtoFieldEnum field) {
+        return appendSql(functionName)
+                .appendSql(CUKFSConstants.LEFT_PARENTHESIS)
+                .appendColumnLabelForField(field);
+    }
+
+    protected TaxQueryBuilder appendLastFunctionOperand(final int sqlType, final Object value) {
+        return appendSql(CUKFSConstants.COMMA_AND_SPACE)
+                .appendParameter(sqlType, value)
+                .appendSql(CUKFSConstants.RIGHT_PARENTHESIS);
     }
 
     protected TaxQueryBuilder appendColumnLabelForField(final TaxDtoFieldEnum field) {

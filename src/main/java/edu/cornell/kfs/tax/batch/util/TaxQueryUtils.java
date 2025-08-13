@@ -14,6 +14,10 @@ import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
  * 
  * - FieldUpdate: Builds helper objects for constructing the SET clause of an UPDATE query.
  * 
+ * - SqlFunction: Builds helper objects for preparing SQL function invocations within queries. (Note that
+ *             the static factory methods create lambda expressions that perform the actual work; the lambdas
+ *             will get invoked by the TaxQueryBuilder when it appends the SQL functions to the main query.)
+ * 
  * - Criteria: Builds helper objects for preparing the query criteria in the JOIN and WHERE clauses. (Note that
  *             the static factory methods create lambda expressions that perform the actual work; the lambdas
  *             will get invoked by the TaxQueryBuilder when it appends the JOIN and WHERE clauses to the main query.)
@@ -93,6 +97,26 @@ public final class TaxQueryUtils {
     }
 
     @FunctionalInterface
+    public static interface SqlFunction {
+
+        void applyToQuery(final TaxQueryBuilder queryBuilder);
+
+        public static SqlFunction NVL(final TaxDtoFieldEnum field, final String otherValue) {
+            return NVL(field, Types.VARCHAR, otherValue);
+        }
+
+        public static SqlFunction NVL(final TaxDtoFieldEnum field, final java.sql.Date otherValue) {
+            return NVL(field, Types.DATE, otherValue);
+        }
+
+        public static SqlFunction NVL(final TaxDtoFieldEnum field, final int sqlType, final Object otherValue) {
+            return builder -> builder.appendFunctionNameAndFirstOperand("NVL", field)
+                    .appendLastFunctionOperand(sqlType, otherValue);
+        }
+
+    }
+
+    @FunctionalInterface
     public static interface Criteria {
 
         void applyToQuery(final TaxQueryBuilder queryBuilder);
@@ -116,6 +140,11 @@ public final class TaxQueryUtils {
         public static Criteria equal(final TaxDtoFieldEnum firstField, final TaxDtoFieldEnum secondField) {
             return builder -> builder.appendLeftHalfOfEqualityCondition(firstField)
                     .appendColumnLabelForField(secondField);
+        }
+
+        public static Criteria equal(final TaxDtoFieldEnum firstField, final SqlFunction sqlFunction) {
+            return builder -> builder.appendLeftHalfOfEqualityCondition(firstField)
+                    .appendSqlFunction(sqlFunction);
         }
 
         public static <T> Criteria equal(final TaxDtoFieldEnum field, final Function<? super T, String> valueGetter) {
