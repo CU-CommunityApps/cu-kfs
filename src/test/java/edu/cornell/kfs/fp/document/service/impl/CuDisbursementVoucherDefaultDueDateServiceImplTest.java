@@ -13,12 +13,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.mockito.Mockito;
 
 import edu.cornell.kfs.fp.CuFPParameterConstants;
-import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 
 public class CuDisbursementVoucherDefaultDueDateServiceImplTest {
     private CuDisbursementVoucherDefaultDueDateServiceImpl cuDisbursementVoucherDefaultDueDateServiceImpl;
@@ -94,15 +94,15 @@ public class CuDisbursementVoucherDefaultDueDateServiceImplTest {
     }
 
     private DateTimeService buildSpiedDateTimeService(LocalDate currentDate) throws Exception{
-        TestDateTimeServiceImpl dateTimeService = Mockito.spy(buildDateTimeService());
+        DateTimeServiceImpl dateTimeService = Mockito.spy(buildDateTimeService());
         Mockito.doAnswer(invocation -> currentDate).when(dateTimeService)
                 .getLocalDateNow();
 
         return dateTimeService;
     }
 
-    private TestDateTimeServiceImpl buildDateTimeService() throws Exception {
-        TestDateTimeServiceImpl dateTimeService = new TestDateTimeServiceImpl();
+    private DateTimeServiceImpl buildDateTimeService() throws Exception {
+        DateTimeServiceImpl dateTimeService = new DateTimeServiceImpl();
         return dateTimeService;
     }
 

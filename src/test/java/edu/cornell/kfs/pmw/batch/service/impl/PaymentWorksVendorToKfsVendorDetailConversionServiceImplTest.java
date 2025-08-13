@@ -16,6 +16,7 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
 import org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber;
@@ -23,7 +24,6 @@ import org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
-import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
@@ -44,7 +44,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     void setUp() throws Exception {
         Configurator.setLevel(PaymentWorksVendorToKfsVendorDetailConversionServiceImpl.class.getName(), Level.DEBUG);
         conversionService = new PaymentWorksVendorToKfsVendorDetailConversionServiceImpl();
-        conversionService.setDateTimeService(new TestDateTimeServiceImpl());
+        conversionService.setDateTimeService(new DateTimeServiceImpl());
         conversionService.setPaymentWorksTaxRuleDependencyService(new PaymentWorksTaxRuleDependencyServiceImpl());
         pmwVendor = new PaymentWorksVendor();
     }
