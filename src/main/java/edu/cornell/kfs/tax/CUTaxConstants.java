@@ -49,6 +49,7 @@ public final class CUTaxConstants {
     public static final String MASKED_VALUE_9_CHARS = "XXXXXXXXX";
     public static final String MASKED_VALUE_11_CHARS = "XXXXXXXXXXX";
     public static final String MASKED_VALUE_19_CHARS = "XXXXXXXXXXXXXXXXXXX";
+    public static final String KUAL_UNIT = "KUAL";
     public static final int INSERT_BATCH_SIZE = 500;
     public static final int TAX_1099_MAX_BUCKET_LENGTH = 3;
     public static final double TAX_1099_DEFAULT_MIN_REPORTING_AMOUNT = 0.01;

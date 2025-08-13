@@ -28,7 +28,8 @@ public class TaxTableMetadataLookupServiceOjbImpl
 
     @Override
     protected String getColumnLabel(final TaxDtoFieldEnum fieldMapping, final ClassDescriptor classDescriptor) {
-        final FieldDescriptor fieldDescriptor = classDescriptor.getFieldDescriptorByName(fieldMapping.getFieldName());
+        final FieldDescriptor fieldDescriptor = classDescriptor.getFieldDescriptorByName(
+                fieldMapping.getBusinessObjectFieldName());
         return fieldDescriptor.getColumnName();
     }
 
