@@ -749,8 +749,10 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             return true;
         }
 
+        //CU Customization: KFSPTS-35816 Prevent NPE when RecurringDisbursementVoucherDocument is approved
         return SpringContext.getBean(ParameterEvaluatorService.class)
-                .getParameterEvaluator(getClass(), FPParameterConstants.PAYMENT_REASONS_TAX_REVIEW, paymentReasonCode)
+                .getParameterEvaluator(DisbursementVoucherDocument.class,
+                        FPParameterConstants.PAYMENT_REASONS_TAX_REVIEW, paymentReasonCode)
                 .evaluationSucceeds();
     }
 
