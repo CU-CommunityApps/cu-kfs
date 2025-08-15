@@ -63,6 +63,7 @@
                 <value>approveDisbursementVouchersSpawnedByRecurringDvJob</value>
                 <value>corporateBilledCorporatePaidDocumentJob</value>
                 <value>createAccountingDocumentsJob</value>
+                <value>travelMealCardFileFeedJob</value>
             </list>
         </property>
         <property name="batchFileDirectories">
@@ -636,4 +637,93 @@
     	<property name="dateTimeService" ref="dateTimeService"/>
     </bean>
 
+
+    <!-- Travel and Meal Card Verification / Certification data file bean definitions : start -->
+    <bean id="travelMealCardFileFeedJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="travelMealCardInputFileFeedStep" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="cardServicesUtilityService" parent="cardServicesUtilityService-parentBean" />
+    <bean id="cardServicesUtilityService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CardServicesUtilityServiceImpl" abstract="true">
+        <property name="dateTimeService" ref="dateTimeService" />
+    </bean>
+    
+    <bean id="travelMealCardFileFeedService" parent="travelMealCardFileFeedService-parentBean" />
+    <bean id="travelMealCardFileFeedService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.TravelMealCardFileFeedServiceImpl" abstract="true">
+          <property name="batchInputFileService" ref="batchInputFileService" />
+          <property name="travelMealCardFlatInputFileType" ref="travelMealCardFlatInputFileType" />
+          <property name="businessObjectService" ref="businessObjectService" />
+          <property name="dateTimeService" ref="dateTimeService" />
+          <property name="cardServicesUtilityService" ref="cardServicesUtilityService" />
+    </bean>
+    
+    <bean id="travelMealCardInputFileFeedStep" class="edu.cornell.kfs.fp.batch.TravelMealCardInputFileFeedStep" parent="step">
+        <property name="travelMealCardFileFeedService" ref="travelMealCardFileFeedService" />
+        <property name="batchInputFileService"  ref="batchInputFileService" />
+        <property name="dateTimeService"  ref="dateTimeService" />
+        <property name="travelMealCardFlatInputFileType"  ref="travelMealCardFlatInputFileType" />
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="cardServicesUtilityService" ref="cardServicesUtilityService" />
+    </bean>
+    
+    <bean id="travelMealCardFlatInputFileType" class= "edu.cornell.kfs.fp.batch.TravelMealCardFlatInputFileType">
+        <property name="directoryPath">
+           <value>${staging.directory}/fp/tmcardVerification</value>
+        </property>
+        <property name="fileExtension">
+           <value>data</value>
+        </property>
+        <property name="dateTimeService">
+           <ref bean="dateTimeService"/>
+        </property>
+        <property name="flatFileSpecification">
+            <ref bean="tmCardVerifyCertifyFlatFileSpecification"/>
+       </property>
+
+       <property name="processor" ref="TravelMealCardFlatInputFileHandler" />
+    </bean>
+
+    <bean id="TravelMealCardFlatInputFileHandler" parent="TravelMealCardFlatInputFileHandler-parentBean" />
+    <bean id="TravelMealCardFlatInputFileHandler-parentBean" class="edu.cornell.kfs.fp.batch.TravelMealCardFlatInputFileHandler" abstract="true"/>
+    
+    <bean id="tmCardVerifyCertifyFlatFileSpecification" parent="FixedWidthFlatFileSpecification" p:defaultBusinessObjectClass="edu.cornell.kfs.fp.businessobject.TravelMealCardFileLineEntry">
+        <property name="objectSpecifications">
+            <list>
+                <bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.fp.businessobject.TravelMealCardFileLineEntry">
+                    <property name="parseProperties">
+                        <list>
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderName" p:start="0" p:end="25" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardStatus" p:start="25" p:end="75" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardType" p:start="75" p:end="100" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="netid" p:start="100" p:end="115" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderLine1Address" p:start="115" p:end="151" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderLine2Address" p:start="151" p:end="187" p:rightTrim="true"/>
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderCityName" p:start="187" p:end="212" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderStateCode" p:start="212" p:end="214" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderPostalCode" p:start="214" p:end="224" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderWorkPhoneNumber" p:start="224" p:end="235" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderPersonalPhoneNumber" p:start="235" p:end="246" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="lastTransactionDate" p:start="246" p:end="256" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="defaultAccountNumber" p:start="256" p:end="406" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="creditLine" p:start="426" p:end="446" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="openDate" p:start="456" p:end="466" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderAccountNumber" p:start="466" p:end="470" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="emplid" p:start="470" p:end="485" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cycleStartDate" p:start="485" p:end="495" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cycleSpendToDate" p:start="495" p:end="515" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="expireDate" p:start="515" p:end="525" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="activationStatus" p:start="525" p:end="559" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="fileCreateDate" p:start="559" p:end="567" p:rightTrim="true" />
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+   <!-- Travel and Meal Card Verification / Certification data file bean definitions : stop -->
+   
 </beans>
