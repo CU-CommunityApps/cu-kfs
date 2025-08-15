@@ -648,7 +648,9 @@
     </bean>
     
     <bean id="cardServicesUtilityService" parent="cardServicesUtilityService-parentBean" />
-    <bean id="cardServicesUtilityService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CardServicesUtilityServiceImpl" abstract="true"/>
+    <bean id="cardServicesUtilityService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CardServicesUtilityServiceImpl" abstract="true">
+        <property name="dateTimeService" ref="dateTimeService" />
+    </bean>
     
     <bean id="travelMealCardFileFeedService" parent="travelMealCardFileFeedService-parentBean" />
     <bean id="travelMealCardFileFeedService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.TravelMealCardFileFeedServiceImpl" abstract="true">

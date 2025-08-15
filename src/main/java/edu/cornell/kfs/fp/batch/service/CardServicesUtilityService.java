@@ -8,6 +8,8 @@ public interface CardServicesUtilityService {
 
     public String changeFormatFromYYYYMMDDToSlashedMMDDYYYY(String dateAsYYYYMMDD);
     
+    public java.sql.Date convertCardDateToSqlDate(String dateAsYYYYMMDD);
+    
     public KualiDecimal generateKualiDecimal(String stringToConvert);
     
     public void removeDoneFiles(List<String> dataFileNames);

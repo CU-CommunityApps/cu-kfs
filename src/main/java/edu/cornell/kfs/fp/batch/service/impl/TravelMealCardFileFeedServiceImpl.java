@@ -30,7 +30,7 @@ import edu.cornell.kfs.fp.businessobject.TravelMealCardFileLineDataWrapper;
 @Transactional
 public class TravelMealCardFileFeedServiceImpl implements TravelMealCardFileFeedService {
     private static final Logger LOG = LogManager.getLogger();
-
+    
     protected BatchInputFileService batchInputFileService;
     protected TravelMealCardFlatInputFileType travelMealCardFlatInputFileType;
     protected BusinessObjectService businessObjectService;
@@ -108,11 +108,11 @@ public class TravelMealCardFileFeedServiceImpl implements TravelMealCardFileFeed
     protected TravelMealCardFileLineDataWrapper generateTmCardWrapperPair(TravelMealCardFileLineEntry tmCardFileLine) {
         KualiDecimal creditLine = cardServicesUtilityService.generateKualiDecimal(tmCardFileLine.getCreditLine());
         
-        Date fileCreateDate = convertToSqlDate(cardServicesUtilityService.changeFormatFromYYYYMMDDToSlashedMMDDYYYY(tmCardFileLine.getFileCreateDate()));
+        Date fileCreateDate = cardServicesUtilityService.convertCardDateToSqlDate(tmCardFileLine.getFileCreateDate());
         
         Date loadDate = (tmCardFileLine.getLoadDate() == null || tmCardFileLine.getLoadDate().isBlank()) 
                 ? dateTimeService.getCurrentSqlDateMidnight()
-                : convertToSqlDate(cardServicesUtilityService.changeFormatFromYYYYMMDDToSlashedMMDDYYYY(tmCardFileLine.getLoadDate()));
+                : cardServicesUtilityService.convertCardDateToSqlDate(tmCardFileLine.getLoadDate());
         
         TravelMealCardVerificationData verifyData = new TravelMealCardVerificationData();
         verifyData.setCardHolderAccountNumber(tmCardFileLine.getCardHolderAccountNumber());
@@ -136,11 +136,11 @@ public class TravelMealCardFileFeedServiceImpl implements TravelMealCardFileFeed
         certifyData.setCardStatus(tmCardFileLine.getCardStatus());
         certifyData.setCardType(tmCardFileLine.getCardType());
         certifyData.setNetid(tmCardFileLine.getNetid());
-        certifyData.setLastTransactionDate(convertToSqlDate(cardServicesUtilityService.changeFormatFromYYYYMMDDToSlashedMMDDYYYY(tmCardFileLine.getLastTransactionDate())));
+        certifyData.setLastTransactionDate(cardServicesUtilityService.convertCardDateToSqlDate(tmCardFileLine.getLastTransactionDate()));
         certifyData.setDefaultAccountNumber(tmCardFileLine.getDefaultAccountNumber());
         certifyData.setCreditLine(creditLine);
-        certifyData.setOpenDate(convertToSqlDate(cardServicesUtilityService.changeFormatFromYYYYMMDDToSlashedMMDDYYYY(tmCardFileLine.getOpenDate())));
-        certifyData.setCycleStartDate(convertToSqlDate(cardServicesUtilityService.changeFormatFromYYYYMMDDToSlashedMMDDYYYY(tmCardFileLine.getCycleStartDate())));
+        certifyData.setOpenDate(cardServicesUtilityService.convertCardDateToSqlDate(tmCardFileLine.getOpenDate()));
+        certifyData.setCycleStartDate(cardServicesUtilityService.convertCardDateToSqlDate(tmCardFileLine.getCycleStartDate()));
         certifyData.setCycleSpendToDate(cardServicesUtilityService.generateKualiDecimal(tmCardFileLine.getCycleSpendToDate()));
         certifyData.setActivationStatus(tmCardFileLine.getActivationStatus());
         certifyData.setFileCreateDate(fileCreateDate);
@@ -149,22 +149,6 @@ public class TravelMealCardFileFeedServiceImpl implements TravelMealCardFileFeed
         return new TravelMealCardFileLineDataWrapper(verifyData, certifyData);
     }
     
-    /**
-     * Separate method required to encapsulate/isolate ParseException in one spot.
-     */
-    private Date convertToSqlDate(String stringToConvert) {
-        Date sqlDate = null;
-        try {
-            sqlDate = dateTimeService.convertToSqlDate(stringToConvert);
-        } catch (ParseException e) {
-            LOG.error("ParseException generated attempted to convert string " + stringToConvert 
-                    + " to java.sql.Date using dateTimeService.convertToSqlDate" + e.getMessage(), e);
-            throw new RuntimeException("ParseException generated attempted to convert string " + stringToConvert 
-                    + " to java.sql.Date using dateTimeService.convertToSqlDate " + e.getMessage(), e);
-        }
-        return sqlDate;
-    }
-
     /**
      * Load object pairs into CU_FP_TMCARD_VERIFY_T and CU_FP_TMCARD_CERTIFY_T that represent a single line from the file.
      */
