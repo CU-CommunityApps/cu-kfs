@@ -46,7 +46,7 @@ public class TravelMealCardFileFeedServiceIntegTest extends KualiIntegTestBase {
         
         //copy the data file into place
         File dataFileSrc = new File(FIXTURE_DATA_FILE_AND_PATH);
-        batchLocationDataFileNameWithExtension = new String(batchDirectory + CUKFSConstants.SLASH + DATA_FILE_NAME + DATA_EXTENSION);
+        batchLocationDataFileNameWithExtension = batchDirectory + CUKFSConstants.SLASH + DATA_FILE_NAME + DATA_EXTENSION;
         File dataFileDest = new File(batchLocationDataFileNameWithExtension);
         FileUtils.copyFile(dataFileSrc, dataFileDest);
         

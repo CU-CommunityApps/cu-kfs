@@ -638,7 +638,7 @@
     </bean>
 
 
-    <!-- Travel and Meal Card Verification / Certification data file bean definiitons : start -->
+    <!-- Travel and Meal Card Verification / Certification data file bean definitions : start -->
     <bean id="travelMealCardFileFeedJob" parent="scheduledJobDescriptor">
         <property name="steps">
             <list>
@@ -722,6 +722,6 @@
             </list>
         </property>
     </bean>
-   <!-- Travel and Meal Card Verification / Certification data file bean definiitons : stop -->
+   <!-- Travel and Meal Card Verification / Certification data file bean definitions : stop -->
    
 </beans>

@@ -30,9 +30,8 @@ public class TravelMealCardInputFileFeedStep extends AbstractStep {
         boolean processSuccess = false;
 
         //Obtain all .done file names, there could be more than one
-        List<String> doneFiles = new ArrayList<String>();
         List<String> fileNamesToLoad = batchInputFileService.listInputFileNamesWithDoneFile(travelMealCardFlatInputFileType);
-        doneFiles.addAll(fileNamesToLoad);
+        List<String> doneFiles = new ArrayList<String>(fileNamesToLoad);
 
         //Identify and process the most current file
         String fileToProcess = getMostCurrentFileName(fileNamesToLoad);

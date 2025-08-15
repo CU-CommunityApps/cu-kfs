@@ -11,10 +11,7 @@ import edu.cornell.kfs.fp.businessobject.TravelMealCardFileLineEntry;
 
 public class TravelMealCardFlatInputFileType extends FlatFileParserBase {
 
-    protected ArrayList<String> errorMessages;
-    protected int lineCount = 1;
-
-    public String getFileTypeIdentifer() {
+    public String getFileTypeIdentifier() {
         return "travelMealCardFlatInputFileType";
     }
 
