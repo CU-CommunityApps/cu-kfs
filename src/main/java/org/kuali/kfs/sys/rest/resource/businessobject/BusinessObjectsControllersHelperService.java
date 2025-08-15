@@ -71,7 +71,7 @@ import java.util.stream.Stream;
  * ====
  * CU Customization:
  * Updated the code that retrieves the key-value pairs from the values finder,
- * so that it will add an empty key-value pair if one is not present.
+ * so that it will add an empty key-value pair for drop-down-related entries if one is not present.
  * ====
  *
  *
@@ -253,8 +253,13 @@ class BusinessObjectsControllersHelperService {
                 if (valuesFinder == null) {
                     continue;
                 }
-                // CU Customization: keyValues list now comes from the helper method below.
-                final List<KeyValue> keyValues = getKeyValuesForLookup(valuesFinder);
+                // CU Customization: Use a new helper method to derive drop-down keyValues lists.
+                final List<KeyValue> keyValues;
+                if (control.getType() == Control.Type.SELECT) {
+                    keyValues = getDropDownKeyValuesForLookup(valuesFinder);
+                } else {
+                    keyValues = valuesFinder.getKeyValues();
+                }
                 valuesMap.put(singleAttributeName, keyValues);
             }
         }
@@ -265,9 +270,9 @@ class BusinessObjectsControllersHelperService {
 
     /*
      * CU Customization: Added this method and the one right below it,
-     * to forcibly add a blank key-value entry if the values finder does not return one.
+     * to forcibly add a blank key-value entry if the drop-down values finder does not return one.
      */
-    private List<KeyValue> getKeyValuesForLookup(final KeyValuesFinder valuesFinder) {
+    private List<KeyValue> getDropDownKeyValuesForLookup(final KeyValuesFinder valuesFinder) {
         final List<KeyValue> keyValues = valuesFinder.getKeyValues();
         if (hasEntryForBlankKey(keyValues)) {
             return keyValues;
