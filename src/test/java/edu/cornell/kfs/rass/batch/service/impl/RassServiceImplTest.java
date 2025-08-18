@@ -899,7 +899,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE, RassObjectUpdateResultCode.SUCCESS_EDIT)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED))));
+                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE, RassObjectUpdateResultCode.SUCCESS_EDIT))));
     }
 
     @Test
@@ -912,8 +912,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                                 proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CLEAR, RassObjectUpdateResultCode.SUCCESS_EDIT),
                                 proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE, RassObjectUpdateResultCode.SUCCESS_EDIT)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED),
-                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED))));
+                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CLEAR, RassObjectUpdateResultCode.SUCCESS_EDIT),
+                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE, RassObjectUpdateResultCode.SUCCESS_EDIT))));
     }
 
     @Test
@@ -939,7 +939,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE_ALT, RassObjectUpdateResultCode.SUCCESS_EDIT)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED))));
+                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE, RassObjectUpdateResultCode.SUCCESS_EDIT))));
     }
 
     private void assertXmlContentsPerformExpectedObjectUpdates(
@@ -1137,6 +1137,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         assertEquals("Wrong direct cost amount at index " + i, expectedAward.directCostAmount, actualAward.getAwardDirectCostAmount());
         assertEquals("Wrong indirect cost amount at index " + i, expectedAward.indirectCostAmount, actualAward.getAwardIndirectCostAmount());
         assertEqualsOrBothBlank("Wrong award purpose at index " + i, expectedAward.purpose, actualAward.getAwardPurposeCode());
+        assertEqualsOrBothBlank("Wrong grant number at index " + i, expectedAward.grantNumber, actualAward.getGrantNumber());
         assertEqualsOrBothBlank("Wrong grant description at index " + i, expectedAward.grantDescription, actualAward.getGrantDescriptionCode());
         assertEquals("Wrong federal pass-through indicator at index " + i,
                 expectedAward.getNullSafeFederalPassThrough(), actualAward.getFederalPassThroughIndicator());
