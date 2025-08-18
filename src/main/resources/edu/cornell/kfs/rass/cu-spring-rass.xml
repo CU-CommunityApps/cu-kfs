@@ -264,6 +264,7 @@
 				<bean parent="rassProperty" p:xmlPropertyName="indirectCostAmount" p:boPropertyName="awardIndirectCostAmount" p:required="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="totalAmount" p:boPropertyName="awardTotalAmount" p:required="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="purpose" p:boPropertyName="awardPurposeCode" p:required="true" p:valueConverter-ref="rassPurposeCodeConverter"/>
+				<bean parent="rassProperty" p:xmlPropertyName="grantNumber" p:boPropertyName="grantNumber" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="grantDescription" p:boPropertyName="grantDescriptionCode" p:required="true" p:valueConverter-ref="rassGrantDescriptionConverter"/>
 				<bean parent="rassProperty" p:xmlPropertyName="federalPassThrough" p:boPropertyName="federalPassThroughIndicator" p:required="false"
 						p:valueConverter-ref="rassBooleanConverter"/>

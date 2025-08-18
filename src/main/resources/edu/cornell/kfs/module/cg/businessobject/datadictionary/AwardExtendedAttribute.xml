@@ -103,9 +103,16 @@
         <property name="formatterClass" value="org.kuali.kfs.core.web.format.BooleanFormatter"/>
   	</bean>
 
-	<bean id="AwardExtendedAttribute-primeAgreementNumber" parent="AwardExtendedAttribute-primeAgreementNumber-parentBean" />
-	<bean id="AwardExtendedAttribute-primeAgreementNumber-parentBean" abstract="true" parent="Award-grantNumber"
-		p:name="primeAgreementNumber" p:label="Prime Agreement Number" p:shortLabel="Prime Agreement #" />
+    <bean id="AwardExtendedAttribute-primeAgreementNumber" parent="AwardExtendedAttribute-primeAgreementNumber-parentBean" />
+    <bean id="AwardExtendedAttribute-primeAgreementNumber-parentBean" abstract="true" parent="Award-grantNumber"
+          p:name="primeAgreementNumber"
+          p:label="Prime Agreement Number"
+          p:shortLabel="Prime Agreement #"
+          p:maxLength="27">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="29"/>
+        </property>
+    </bean>
 
 	<bean id="AwardExtendedAttribute-autoApproveReason" parent="AwardExtendedAttribute-autoApproveReason-parentBean" />
 	<bean id="AwardExtendedAttribute-autoApproveReason-parentBean" abstract="true" parent="AttributeDefinition"

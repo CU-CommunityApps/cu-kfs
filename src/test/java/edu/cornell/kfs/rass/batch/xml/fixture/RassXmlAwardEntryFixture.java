@@ -348,6 +348,7 @@ public enum RassXmlAwardEntryFixture {
         award.setAwardDirectCostAmount(directCostAmount);
         award.setAwardIndirectCostAmount(indirectCostAmount);
         award.setAwardPurposeCode(defaultToNullIfBlank(purpose));
+        award.setGrantNumber(defaultToNullIfBlank(grantNumber));
         award.setGrantDescriptionCode(defaultToNullIfBlank(grantDescription));
         award.setFederalPassThroughIndicator(getNullSafeFederalPassThrough());
         award.setFederalPassThroughAgencyNumber(defaultToNullIfBlank(federalPassThroughAgencyNumber));
