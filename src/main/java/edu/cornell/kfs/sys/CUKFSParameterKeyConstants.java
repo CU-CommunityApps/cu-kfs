@@ -10,7 +10,6 @@ public class CUKFSParameterKeyConstants {
     public static final String AUTO_CANCEL_DOC_TYPES_PARAMETER = "AUTO_CANCEL_DOC_TYPES";   
     public static final String DAYS_TO_AUTO_CANCEL_PARAMETER = "DAYS_TO_AUTO_CANCEL";
 
-    public static final String NON_REQUEUABLE_DOCUMENT_TYPES = "NON_REQUEUABLE_DOCUMENT_TYPES";
     public static final String REQUEUABLE_ROLES = "REQUEUABLE_ROLES";
     
     public static final String KFS_PDP = "KFS-PDP";
