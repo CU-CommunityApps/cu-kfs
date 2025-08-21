@@ -432,7 +432,8 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
         filterDescription += labelToAdd;
     }
 
-    @Override
+    // TODO: Fix this!
+    //@Override
     public int getCount(final String workflowId) {
         return (Integer) getPersistenceBrokerTemplate().execute(new PersistenceBrokerCallback() {
             @Override

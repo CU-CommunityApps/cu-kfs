@@ -979,10 +979,10 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
 
     protected void sendSummary(final StringBuffer message) {
         final String fromMailId = parameterService.getParameterValueAsString(ElectronicInvoiceStep.class,
-                PurapParameterConstants.ElectronicInvoiceParameters.DAILY_SUMMARY_REPORT_FROM_EMAIL_ADDRESS);
+                PurapParameterConstants.FROM_EMAIL);
         final List<String> toMailIds = new ArrayList<>(parameterService
                 .getParameterValuesAsString(ElectronicInvoiceStep.class,
-                        PurapParameterConstants.ElectronicInvoiceParameters.DAILY_SUMMARY_REPORT_TO_EMAIL_ADDRESSES));
+                        PurapParameterConstants.TO_EMAIL));
 
         LOG.info("From email address parameter value:{}", fromMailId);
         LOG.info("To email address parameter value:{}", toMailIds);
@@ -1298,7 +1298,7 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
      */
     protected void setProcessingCampus(final PaymentRequestDocument preqDoc, final String initiatorCampusCode) {
         final String campusCode = parameterService.getParameterValueAsString(ElectronicInvoiceStep.class,
-                PurapParameterConstants.ElectronicInvoiceParameters.OVERRIDE_PROCESSING_CAMPUS);
+                PurapParameterConstants.ElectronicInvoiceParameters.PROCESSING_CAMPUS);
         if (!StringHelper.isNullOrEmpty(campusCode)) {
             preqDoc.setProcessingCampusCode(campusCode);
         } else {

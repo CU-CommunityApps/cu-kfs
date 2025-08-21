@@ -112,5 +112,15 @@ public class CUKFSPropertyConstants {
     
     public static final String DESCRIPTION = "description";
 
-    
+    /*
+     * The following constants are used by our code but were removed by the 2024-03-06 financials patch,
+     * so we had to copy them here.
+     */
+    public static final String COST_SHARE_SOURCE_ACCOUNT = "costShareAccount";
+    public static final String COST_SHARE_SOURCE_SUB_ACCOUNT = "costShareSourceSubAccount";
+    public static final String CHART_OF_ACCOUNTS = "chartOfAccounts";
+    public static final String BUILDING_NAME = "buildingName";
+    public static final String AGENCY_TYPE = "agencyType";
+    public static final String CHECK_NUMBER = "checkNumber";
+
 }

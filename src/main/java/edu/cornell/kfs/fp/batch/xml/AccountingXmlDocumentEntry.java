@@ -48,9 +48,9 @@ public class AccountingXmlDocumentEntry {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String accountingPeriod;
 
-    @XmlElement(name = "AuxiliaryVoucherType", namespace = StringUtils.EMPTY, required = false)
+    @XmlElement(name = "AdjustmentAccrualVoucherType", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String auxiliaryVoucherType;
+    protected String adjustmentAccrualVoucherType;
 
     @XmlElement(name = "ReversalDate", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(StringToJavaDateAdapter.class)
@@ -152,12 +152,12 @@ public class AccountingXmlDocumentEntry {
         this.accountingPeriod = accountingPeriod;
     }
 
-    public String getAuxiliaryVoucherType() {
-        return auxiliaryVoucherType;
+    public String getAdjustmentAccrualVoucherType() {
+        return adjustmentAccrualVoucherType;
     }
 
-    public void setAuxiliaryVoucherType(String auxiliaryVoucherType) {
-        this.auxiliaryVoucherType = auxiliaryVoucherType;
+    public void setAdjustmentAccrualVoucherType(String adjustmentAccrualVoucherType) {
+        this.adjustmentAccrualVoucherType = adjustmentAccrualVoucherType;
     }
 
     public Date getReversalDate() {
@@ -246,7 +246,7 @@ public class AccountingXmlDocumentEntry {
         sb.append("OrganizationDocumentNumber: ").append(organizationDocumentNumber).append(System.lineSeparator());
         sb.append("PostingFiscalYear: ").append((ObjectUtils.isNotNull(postingFiscalYear) ? postingFiscalYear.intValue() : "null")).append(System.lineSeparator());
         sb.append("AccountingPeriod: ").append(accountingPeriod).append(System.lineSeparator());
-        sb.append("AuxiliaryVoucherType: ").append(auxiliaryVoucherType).append(System.lineSeparator());
+        sb.append("AdjustmentAccrualVoucherType: ").append(adjustmentAccrualVoucherType).append(System.lineSeparator());
         sb.append("ReversalDate: ").append(reversalDate).append(System.lineSeparator());
         return sb.toString();
     }

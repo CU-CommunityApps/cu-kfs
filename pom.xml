@@ -21,7 +21,7 @@
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
 
-        <kfs.version>2024-02-28</kfs.version>
+        <kfs.version>2024-04-24</kfs.version>
 
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>
         <checkstyle.version>10.12.0</checkstyle.version>
@@ -34,7 +34,7 @@
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <hibernate-validator-annotation-processor.version>6.2.5.Final</hibernate-validator-annotation-processor.version>
         <hsqldb.version>2.7.4</hsqldb.version>
-        <httpclient.version>5.3</httpclient.version>
+        <httpclient.version>5.3.1</httpclient.version>
         <httpcore.version>5.2.4</httpcore.version>
         <!--Backport FINP-11623-->
         <jackson.version>2.18.1</jackson.version>
@@ -50,8 +50,8 @@
         <ojdbc.version>19.18.0.0</ojdbc.version>
         <opencsv.version>5.9</opencsv.version>
         <plexus-utils.version>3.0.24</plexus-utils.version>
-        <mockito.version>5.10.0</mockito.version>
-        <pw-iso20022.version>SRU2023-10.1.3</pw-iso20022.version>
+        <mockito.version>5.11.0</mockito.version>
+        <pw-iso20022.version>SRU2023-10.1.4</pw-iso20022.version>
         <squiggly-filter-jackson.version>1.3.18</squiggly-filter-jackson.version>
         <spring.version>5.3.39</spring.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
@@ -70,7 +70,7 @@
         <plugin.dependency.version>3.6.0</plugin.dependency.version>
         <plugin.war.version>3.3.2</plugin.war.version>
         <jaxws-ri.version>2.3.0</jaxws-ri.version>
-        <log4j.version>2.22.1</log4j.version>
+        <log4j.version>2.23.1</log4j.version>
         <cxf.version>3.5.11</cxf.version>
         <wss4j.version>2.4.3</wss4j.version>
     </properties>

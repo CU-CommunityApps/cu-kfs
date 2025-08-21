@@ -504,12 +504,12 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     @Override
     protected void setProcessingCampus(final PaymentRequestDocument preqDoc, final String initiatorCampusCode) {
         String campusCode = parameterService.getParameterValueAsString(ElectronicInvoiceStep.class,
-                PurapParameterConstants.ElectronicInvoiceParameters.OVERRIDE_PROCESSING_CAMPUS);
+                PurapParameterConstants.ElectronicInvoiceParameters.PROCESSING_CAMPUS);
         if(!StringHelper.isNullOrEmpty(campusCode)) {
             preqDoc.setProcessingCampusCode(campusCode);
         }
         else {
-        	// KFSUPGRADE-481 : kfs5 already has the new "ElectronicInvoiceParameters.OVERRIDE_PROCESSING_CAMPUS"
+        	// KFSUPGRADE-481 : kfs5 already has the new "ElectronicInvoiceParameters.PROCESSING_CAMPUS"
         	// Also implemented CU's solution with a parameter DEFAULT_PROCESSING_CAMPUS
         	// not sure we need another default campus code.  anyway, move initial fix here just in case.
             if(StringUtils.isEmpty(initiatorCampusCode)) {
