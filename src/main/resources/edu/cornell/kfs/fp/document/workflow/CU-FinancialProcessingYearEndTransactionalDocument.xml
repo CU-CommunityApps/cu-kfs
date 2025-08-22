@@ -11,7 +11,9 @@
             <routePaths>
                 <routePath>
                     <start name="AdHoc" nextNode="Account"/>
-                    <role name="Account" nextNode="Fund"/>
+                    <role name="Account" nextNode="AccountingOrganizationHierarchy"/>
+                    <role name="AccountingOrganizationHierarchy" nextNode="ObjectCode"/>
+                    <role name="ObjectCode" nextNode="Fund"/>
                     <role name="Fund" nextNode="SubFund"/>
                     <role name="SubFund" nextNode="Award"/>
                     <role name="Award"/>
@@ -20,6 +22,14 @@
             <routeNodes>
                 <start name="AdHoc"/>
                 <role name="Account">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="AccountingOrganizationHierarchy">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="ObjectCode">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
                 </role>
