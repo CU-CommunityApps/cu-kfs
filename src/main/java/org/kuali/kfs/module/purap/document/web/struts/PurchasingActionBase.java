@@ -383,14 +383,14 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
     }
 
     protected String getCaptialAssetLocationNumberFromParameter(final String parameterKey) {
-        final int beginIndex = parameterKey.lastIndexOf("[") + 1;
-        final int endIndex = parameterKey.lastIndexOf("]");
+        final int beginIndex = parameterKey.lastIndexOf('[') + 1;
+        final int endIndex = parameterKey.lastIndexOf(']');
         return parameterKey.substring(beginIndex, endIndex);
     }
 
     protected String getCaptialAssetItemNumberFromParameter(final String parameterKey) {
-        final int beginIndex = parameterKey.indexOf("[") + 1;
-        final int endIndex = parameterKey.indexOf("]");
+        final int beginIndex = parameterKey.indexOf('[') + 1;
+        final int endIndex = parameterKey.indexOf(']');
         return parameterKey.substring(beginIndex, endIndex);
     }
 
@@ -917,7 +917,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                     }
                 }
                 if (needToDistributeAccount && !foundAccountDistributionError) {
-                    final BigDecimal zero = new BigDecimal(0);
+                    final BigDecimal zero = BigDecimal.ZERO;
                     // We should be distributing accounting lines to above the line items all the time;
                     // but only to the below the line items when there is a unit cost.
                     final boolean unitCostNotZeroForBelowLineItems = item.getItemType().isLineItemIndicator()

@@ -1578,7 +1578,7 @@ public class Iso20022FormatExtractor {
             structuredRemittanceInformation.setCdtrRefInf(creditorReferenceInformation);
         }
 
-        addCheckStubText(paymentDetail, structuredRemittanceInformation);
+        addAdditionalRemitInfo(paymentDetail, structuredRemittanceInformation);
 
         return structuredRemittanceInformation;
     }
@@ -1591,33 +1591,41 @@ public class Iso20022FormatExtractor {
      * 
      * Also updated the method to replace newlines in the check stub with spaces.
      */
-    private void addCheckStubText(
+    private void addAdditionalRemitInfo(
             final PaymentDetail paymentDetail,
             final StructuredRemittanceInformation7 structuredRemittanceInformation
     ) {
-        final DisbursementVoucherDocument disbursementVoucherDocument =
-                disbursementVoucherDao.getDocument(paymentDetail.getCustPaymentDocNbr());
-        final String checkStubText;
-        if (disbursementVoucherDocument == null) {
-            checkStubText = cuCheckStubService.getFullCheckStub(paymentDetail);
-        } else {
-            checkStubText = disbursementVoucherDocument.getDisbVchrCheckStubText();
-        }
-
-        // DVs created in the UI will have checkStubText; DVs imported via Payment File Upload will not
-        String cleanedCheckStubText =
-                xmlUtilService.filterOutIllegalXmlCharacters(checkStubText);
-        cleanedCheckStubText = NEWLINE_PATTERN.matcher(cleanedCheckStubText).replaceAll(KFSConstants.BLANK_SPACE);
-        if (StringUtils.isBlank(cleanedCheckStubText)) {
+        if (paymentDetail == null || structuredRemittanceInformation == null) {
             return;
         }
 
-        final String encodedCheckStubText = StringEscapeUtils.escapeXml11(cleanedCheckStubText);
-        String addtlRmtInf = StringUtils.truncate(encodedCheckStubText,
+        final DisbursementVoucherDocument disbursementVoucherDocument =
+                disbursementVoucherDao.getDocument(paymentDetail.getCustPaymentDocNbr());
+
+        String addtlRmtInf;
+
+        if (disbursementVoucherDocument != null) {
+            addtlRmtInf = disbursementVoucherDocument.getDisbVchrCheckStubText();
+        } else {
+            addtlRmtInf = cuCheckStubService.getFullCheckStub(paymentDetail);
+        }
+
+        addtlRmtInf = xmlUtilService.filterOutIllegalXmlCharacters(addtlRmtInf);
+
+        if (StringUtils.isBlank(addtlRmtInf)) {
+            return;
+        }
+
+        addtlRmtInf = StringEscapeUtils.escapeXml11(addtlRmtInf);
+        addtlRmtInf = StringUtils.truncate(addtlRmtInf,
                 cuCheckStubService.getCheckStubMaxLengthForIso20022());
+
         if (DANGLING_ESCAPE.matcher(addtlRmtInf).find()) {
             addtlRmtInf = StringUtils.substringBeforeLast(addtlRmtInf, "&");
         }
+
+        addtlRmtInf = StringUtils.chomp(addtlRmtInf);
+        addtlRmtInf = NEWLINE_PATTERN.matcher(addtlRmtInf).replaceAll(KFSConstants.BLANK_SPACE);
 
         structuredRemittanceInformation.addAddtlRmtInf(addtlRmtInf);
     }

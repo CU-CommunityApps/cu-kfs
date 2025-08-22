@@ -18,6 +18,7 @@
  */
 package org.kuali.kfs.module.purap;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -150,10 +151,10 @@ public final class PaymentRequestStatuses {
         STATUSES_DISALLOWING_HOLD.add(APPDOC_INITIATE);
         STATUSES_DISALLOWING_HOLD.add(APPDOC_IN_PROCESS);
         STATUSES_DISALLOWING_HOLD.addAll(Arrays.asList(
-                CANCELLED_STATUSES.toArray(new String[CANCELLED_STATUSES.size()])));
+                CANCELLED_STATUSES.toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
 
         STATUSES_DISALLOWING_REMOVE_HOLD.addAll(Arrays.asList(
-                CANCELLED_STATUSES.toArray(new String[CANCELLED_STATUSES.size()])));
+                CANCELLED_STATUSES.toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
 
         STATUSES_DISALLOWING_REQUEST_CANCEL.add(APPDOC_INITIATE);
         STATUSES_DISALLOWING_REQUEST_CANCEL.add(APPDOC_IN_PROCESS);
@@ -161,10 +162,10 @@ public final class PaymentRequestStatuses {
         STATUSES_DISALLOWING_REQUEST_CANCEL.add(APPDOC_AUTO_APPROVED);
         STATUSES_DISALLOWING_REQUEST_CANCEL.add(APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW);
         STATUSES_DISALLOWING_REQUEST_CANCEL.addAll(Arrays.asList(
-                CANCELLED_STATUSES.toArray(new String[CANCELLED_STATUSES.size()])));
+                CANCELLED_STATUSES.toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
 
         STATUSES_DISALLOWING_REMOVE_REQUEST_CANCEL.addAll(Arrays.asList(
-                CANCELLED_STATUSES.toArray(new String[CANCELLED_STATUSES.size()])));
+                CANCELLED_STATUSES.toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
 
         STATUSES_PREROUTE.add(APPDOC_IN_PROCESS);
         STATUSES_PREROUTE.add(APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW);
