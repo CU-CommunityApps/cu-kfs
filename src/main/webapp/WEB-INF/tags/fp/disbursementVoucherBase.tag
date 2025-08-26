@@ -126,10 +126,5 @@
 
 	<sys:documentControls transactionalDocument="${documentEntry.transactionalDocument}" extraButtons="${KualiForm.extraButtons}"/>
 	<kul:modernLookupSupport />
-	<script type="application/javascript">
-      document.addEventListener('DOMContentLoaded', () => {
-        wireReplaceInvalidCharacters();
-      });
-	</script>
 </kul:documentPage>
 

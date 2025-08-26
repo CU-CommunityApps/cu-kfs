@@ -1396,8 +1396,8 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         //  determine which of the reject reasons we should suppress based on the parameter
         final List<String> ignoreRejectTypes = new ArrayList<String>(parameterService
-                .getParameterValuesAsString(PurapConstants.PURAP_NAMESPACE, "ElectronicInvoiceReject",
-                        "SUPPRESS_REJECT_REASON_CODES_ON_EIRT_APPROVAL"));
+                .getParameterValuesAsString(ElectronicInvoiceStep.class,
+                        PurapParameterConstants.ElectronicInvoiceParameters.REJECT_REASONS_CODES));
         final List<ElectronicInvoiceRejectReason> rejectReasonsToDelete = new ArrayList<ElectronicInvoiceRejectReason>();
         for (final ElectronicInvoiceRejectReason rejectReason : rejectDocument.getInvoiceRejectReasons()) {
             final String rejectedReasonTypeCode = rejectReason.getInvoiceRejectReasonTypeCode();

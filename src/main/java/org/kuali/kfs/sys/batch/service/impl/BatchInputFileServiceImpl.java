@@ -112,8 +112,7 @@ public class BatchInputFileServiceImpl implements BatchInputFileService {
                         " already exists on the file system.");
             }
 
-            try {
-                final FileOutputStream fos = new FileOutputStream(fileToSave);
+            try (FileOutputStream fos = new FileOutputStream(fileToSave)) {
                 while (fileContents.available() > 0) {
                     fos.write(fileContents.read());
                 }

@@ -33,6 +33,8 @@
 <%@ attribute name="headerDispatch" required="false" description="Overrides the header navigation tab buttons to go directly to the action given here." %>
 <%@ attribute name="lookup" required="false" description="indicates whether the lookup page specific page should be shown"%>
 <%@ attribute name="disableLegacyStyles" description="Boolean determining whether the legacy css should be loaded." %>
+<%@ attribute name="disableLegacyCalendar" required="false"
+              description="Indicates whether legacy javascript calendar should be loaded" %>
 
 <%-- for non-lookup pages --%>
 <%@ attribute name="headerTabActive" required="false" description="The name of the active header tab, if header navigation is used." %>
@@ -78,17 +80,15 @@
 					  rel="stylesheet" type="text/css" />
 			</c:if>
 		</c:forEach>
-		<c:forEach items="${fn:split(ConfigProperties.kns.javascript.files, ',')}"
-				   var="javascriptFile">
-			<c:if test="${fn:length(fn:trim(javascriptFile)) > 0}">
-				<script language="JavaScript" type="text/javascript"
-						src="${pageContext.request.contextPath}/${javascriptFile}"></script>
-			</c:if>
-		</c:forEach>
+        <c:forEach items="${fn:split(ConfigProperties.kns.javascript.files, ',')}" var="javascriptFile">
+            <c:if test="${fn:length(fn:trim(javascriptFile)) > 0 and (not disableLegacyCalendar or (disableLegacyCalendar and not fn:contains(javascriptFile, 'jscalendar')))}">
+                <script language="JavaScript" type="text/javascript" src="${pageContext.request.contextPath}/${javascriptFile}"></script>
+            </c:if>
+        </c:forEach>
 
-		<script type="text/javascript">
-			var jq = jQuery.noConflict();
-		</script>
+        <script type="text/javascript">
+            var jq = jQuery.noConflict();
+        </script>
 
 		<c:choose>
 			<c:when test="${lookup}" >
@@ -120,6 +120,11 @@
 		<kul:analytics />
         <script src="https://unpkg.com/@reduxjs/toolkit@1.9.3/dist/redux-toolkit.umd.min.js"></script>
         <script src="${pageContext.request.contextPath}/scripts/redux-shim/redux-shim.js"></script>
+		<script type="application/javascript">
+          document.addEventListener('DOMContentLoaded', () => {
+            wireReplaceInvalidCharacters();
+          });
+        </script>
 	</head>
 	<c:choose>
 		<c:when test="${lookup}" >

@@ -556,7 +556,7 @@ public class CuVendorRule extends CuVendorRuleBase {
 			 
 				 //User selected address type of PO but left method of PO transmission blank
 				 final String propertyName = propertyScope + CUVendorPropertyConstants.VENDOR_ADDRESS_METHOD_OF_PO_TRANSMISSION;
-				 final String[] parameters = new String[] { addressTypeCode };         
+				 final String[] parameters = { addressTypeCode };         
 		         putFieldError(propertyName, CUVendorKeyConstants.ERROR_PO_TRANSMISSION_REQUIRES_PO_ADDRESS, parameters);
 				 valid &= false;
 		 }
