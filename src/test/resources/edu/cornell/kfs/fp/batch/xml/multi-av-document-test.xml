@@ -11,7 +11,7 @@
             <Explanation>This is an AV document for testing purposes</Explanation>
             <OrganizationDocumentNumber>WXYZ5678</OrganizationDocumentNumber>
             <AccountingPeriod>FEB. 2019</AccountingPeriod>
-            <AuxiliaryVoucherType>AVAD</AuxiliaryVoucherType>
+            <AdjustmentAccrualVoucherType>AVAD</AdjustmentAccrualVoucherType>
             <SourceAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>
@@ -66,7 +66,7 @@
             <Explanation>This is another test AV document</Explanation>
             <OrganizationDocumentNumber>WXYZ5679</OrganizationDocumentNumber>
             <AccountingPeriod>FEB. 2019</AccountingPeriod>
-            <AuxiliaryVoucherType>AVAE</AuxiliaryVoucherType>
+            <AdjustmentAccrualVoucherType>AVAE</AdjustmentAccrualVoucherType>
             <SourceAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>
@@ -107,7 +107,7 @@
             <Explanation>This is yet another test AV document</Explanation>
             <OrganizationDocumentNumber>WXYZ5680</OrganizationDocumentNumber>
             <AccountingPeriod>FEB. 2019</AccountingPeriod>
-            <AuxiliaryVoucherType>AVAE</AuxiliaryVoucherType>
+            <AdjustmentAccrualVoucherType>AVAE</AdjustmentAccrualVoucherType>
             <ReversalDate>03/31/2019</ReversalDate>
             <SourceAccountingLineList>
                 <Accounting>

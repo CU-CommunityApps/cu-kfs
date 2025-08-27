@@ -351,7 +351,7 @@ public enum AccountingXmlDocumentEntryFixture {
     SINGLE_SB_NO_ITEMS_DOCUMENT_TEST_DOC1(BASE_SB_NO_ITEMS, 1),
 
     BASE_AV_ADJUSTMENT(
-            1, CuFPTestConstants.AUXILIARY_VOUCHER_DOC_TYPE,
+            1, CuFPTestConstants.ADJUSTMENT_ACCRUAL_VOUCHER_DOC_TYPE,
             "Test AV Document", "This is an AV document for testing purposes", "WXYZ5678",
             AccountingPeriodFixture.FEB_2019, KFSConstants.AdjustmentAccrualVoucher.ADJUSTMENT_DOC_TYPE, null,
             sourceAccountingLines(
@@ -365,7 +365,7 @@ public enum AccountingXmlDocumentEntryFixture {
             backupLinks(
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
     BASE_AV_ACCRUAL_WITH_DEFAULT_REVERSAL(
-            2, CuFPTestConstants.AUXILIARY_VOUCHER_DOC_TYPE,
+            2, CuFPTestConstants.ADJUSTMENT_ACCRUAL_VOUCHER_DOC_TYPE,
             "Test AV Document 2", "This is another test AV document", "WXYZ5679",
             AccountingPeriodFixture.FEB_2019, KFSConstants.AdjustmentAccrualVoucher.ACCRUAL_DOC_TYPE, null,
             sourceAccountingLines(
@@ -377,7 +377,7 @@ public enum AccountingXmlDocumentEntryFixture {
             adHocRecipients(),
             backupLinks()),
     BASE_AV_ACCRUAL_WITH_SPECIFIC_REVERSAL(
-            3, CuFPTestConstants.AUXILIARY_VOUCHER_DOC_TYPE,
+            3, CuFPTestConstants.ADJUSTMENT_ACCRUAL_VOUCHER_DOC_TYPE,
             "Test AV Document 3", "This is yet another test AV document", "WXYZ5680",
             AccountingPeriodFixture.FEB_2019, KFSConstants.AdjustmentAccrualVoucher.ACCRUAL_DOC_TYPE, "03/31/2019",
             sourceAccountingLines(

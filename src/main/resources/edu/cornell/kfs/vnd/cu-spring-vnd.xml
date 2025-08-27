@@ -1,4 +1,5 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:c="http://www.springframework.org/schema/c"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
@@ -45,7 +46,8 @@
         </property>
 	</bean>
 
-  <bean id="vendorDao" parent="vendorDao-parentBean" class="edu.cornell.kfs.vnd.dataaccess.impl.CuVendorDaoOjb" />
+    <bean id="vendorDaoOjb" parent="vendorDaoOjb-parentBean"
+	      class="edu.cornell.kfs.vnd.dataaccess.impl.CuVendorDaoOjb"/>
 
 	<bean id="commodityCodeUpdateService" class="edu.cornell.kfs.vnd.batch.service.impl.CommodityCodeUpdateServiceImpl">
 		<property name="commodityCodeInputFileType">

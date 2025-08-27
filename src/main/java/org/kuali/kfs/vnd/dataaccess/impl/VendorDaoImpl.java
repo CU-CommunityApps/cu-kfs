@@ -18,6 +18,9 @@
  */
 package org.kuali.kfs.vnd.dataaccess.impl;
 
+import edu.cornell.kfs.vnd.businessobject.VendorWithTaxId;
+import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
@@ -25,6 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.encryption.EncryptionService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.bo.BusinessObjectBase;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
@@ -47,6 +51,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import static java.util.Map.entry;
 
@@ -56,8 +61,9 @@ import static java.util.Map.entry;
  */
 // CU customization: 
 // * update SQL that is MySql specific to work on Oracle database.
+// * update class to implement CU-specific DAO and invoke the related OJB DAO methods.
 // * backport FINP-11585 from the 11/21/2024 release
-public class VendorDaoImpl implements VendorDao {
+public class VendorDaoImpl implements VendorDao, CuVendorDao {
     private static final Logger LOG = LogManager.getLogger();
     private static final int CAPACITY = 16;
     private static final String PARENT_SQL_SELECT =
@@ -688,6 +694,16 @@ public class VendorDaoImpl implements VendorDao {
             // Throw runtime exception to prevent API from reporting no results, but no issues
             throw new RuntimeException("getVendorDetailsCount(...): An error occurred when executing statement");
         }
+    }
+
+    @Override
+    public List<BusinessObject> getSearchResults(final Map<String, String> fieldValues) {
+        return ((CuVendorDao) vendorDaoOjb).getSearchResults(fieldValues);
+    }
+
+    @Override
+    public Stream<VendorWithTaxId> getPotentialEmployeeVendorsAsCloseableStream() {
+        return ((CuVendorDao) vendorDaoOjb).getPotentialEmployeeVendorsAsCloseableStream();
     }
 
 }

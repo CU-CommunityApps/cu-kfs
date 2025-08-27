@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.ValidationEvent;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -47,6 +48,11 @@ public class AccountingXmlDocumentEntry {
     @XmlElement(name = "AccountingPeriod", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String accountingPeriod;
+
+    @Deprecated
+    @XmlElement(name = "AuxiliaryVoucherType", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String auxiliaryVoucherType;
 
     @XmlElement(name = "AdjustmentAccrualVoucherType", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
@@ -150,6 +156,22 @@ public class AccountingXmlDocumentEntry {
 
     public void setAccountingPeriod(String accountingPeriod) {
         this.accountingPeriod = accountingPeriod;
+    }
+
+    @Deprecated
+    public String getAuxiliaryVoucherType() {
+        return auxiliaryVoucherType;
+    }
+
+    @Deprecated
+    public void setAuxiliaryVoucherType(String auxiliaryVoucherType) {
+        this.auxiliaryVoucherType = auxiliaryVoucherType;
+    }
+
+    void afterUnmarshal(final Unmarshaller unmarshaller, final Object parent) {
+        if (StringUtils.isBlank(adjustmentAccrualVoucherType) && StringUtils.isNotBlank(auxiliaryVoucherType)) {
+            adjustmentAccrualVoucherType = auxiliaryVoucherType;
+        }
     }
 
     public String getAdjustmentAccrualVoucherType() {

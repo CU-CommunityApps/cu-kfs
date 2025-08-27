@@ -71,7 +71,7 @@ public enum AccountingDocumentMapping {
     YETF_DOCUMENT(CuFPTestConstants.YEAR_END_TRANSFER_OF_FUNDS_DOC_TYPE,
             YearEndTransferOfFundsDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
             CuYearEndTransferOfFundsDocumentGenerator::new),
-    AV_DOCUMENT(CuFPTestConstants.AUXILIARY_VOUCHER_DOC_TYPE,
+    AV_DOCUMENT(CuFPTestConstants.ADJUSTMENT_ACCRUAL_VOUCHER_DOC_TYPE,
             AdjustmentAccrualVoucherDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
             AdjustmentAccrualVoucherDocumentGenerator::new),
     PE_DOCUMENT(KFSConstants.BALANCE_TYPE_PRE_ENCUMBRANCE,
