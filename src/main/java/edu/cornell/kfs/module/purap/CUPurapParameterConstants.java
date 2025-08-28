@@ -7,6 +7,8 @@ public class CUPurapParameterConstants {
 	
 	public static final String APO_CONTRACT_MANAGER_EMAIL = "APO_CONTRACT_MANAGER_EMAIL";
 	
+	public static final String NON_PERSON_CONTRACT_MANAGER__EMAIL_BY_CODE = "NON_PERSON_CONTRACT_MANAGER__EMAIL_BY_CODE";
+	
 	public static final String AUTO_CLOSE_PO_RESULTS_LIMIT = "AUTO_CLOSE_PO_RESULTS_LIMIT";
 	
 	public static final String MANUAL_DISTRIBUTION_EMAIL = "MANUAL_DISTRIBUTION_EMAIL";

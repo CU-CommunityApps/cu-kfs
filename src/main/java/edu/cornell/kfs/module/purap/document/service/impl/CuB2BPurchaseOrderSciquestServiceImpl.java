@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -951,15 +952,18 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         }    
     }
 
-    protected String getContractManagerEmail(final ContractManager cm) {
-    	// KFSUPGRADE-509 : CU apo contract manager for non-b2b order
-    	// FIXME : if discontinue this fix, then contractmanagermail will be empty, and this will cause verifypocxml to have error,
-    	// hence cxml will not be sent to SQ.  this is mostly for non-b2b order.
-    	if(cm.getContractManagerCode().equals(PurapConstants.APO_CONTRACT_MANAGER)) {
-    		return parameterService.getParameterValueAsString(PurchaseOrderDocument.class, CUPurapParameterConstants.APO_CONTRACT_MANAGER_EMAIL);
-    	} 
+    protected String getContractManagerEmail(final ContractManager contractManager) {
+        if (ObjectUtils.isNotNull(contractManager)) {
+            String contractManagerCode = String.valueOf(contractManager.getContractManagerCode());
+            String nonPersonContractManagerEmail = parameterService.getSubParameterValueAsString(
+                    PurchaseOrderDocument.class, CUPurapParameterConstants.NON_PERSON_CONTRACT_MANAGER__EMAIL_BY_CODE,
+                    contractManagerCode);
+            if (StringUtils.isNotBlank(nonPersonContractManagerEmail)) {
+                return nonPersonContractManagerEmail;
+            }
+        }
 
-        return super.getContractManagerEmail(cm);
+        return super.getContractManagerEmail(contractManager);
     }
 
     /**

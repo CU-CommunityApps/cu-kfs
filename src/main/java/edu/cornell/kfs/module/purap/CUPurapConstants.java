@@ -575,5 +575,4 @@ public class CUPurapConstants {
     public static final String PURCHASE_ORDER_NUMBER_FORMAT_ERROR_RESPONSE_MESSAGE = "The " + PURCHASE_ORDER_NUMBER_URL_PARAMETER_NAME + " was not formatted correctly";
     public static final String PURCHASE_ORDER_NOT_FOUND_MESSAGE = "Purchase Order not found";
     public static final String VENDOR_NOT_FOUND_MESSAGE = "Vendor detail not found";
-    
 }
