@@ -14,6 +14,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.service.AttachmentService;
@@ -38,8 +40,6 @@ import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.WorkflowDocument;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
@@ -951,15 +951,18 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         }    
     }
 
-    protected String getContractManagerEmail(final ContractManager cm) {
-    	// KFSUPGRADE-509 : CU apo contract manager for non-b2b order
-    	// FIXME : if discontinue this fix, then contractmanagermail will be empty, and this will cause verifypocxml to have error,
-    	// hence cxml will not be sent to SQ.  this is mostly for non-b2b order.
-    	if(cm.getContractManagerCode().equals(PurapConstants.APO_CONTRACT_MANAGER)) {
-    		return parameterService.getParameterValueAsString(PurchaseOrderDocument.class, CUPurapParameterConstants.APO_CONTRACT_MANAGER_EMAIL);
-    	} 
+    protected String getContractManagerEmail(final ContractManager contractManager) {
+        if (ObjectUtils.isNotNull(contractManager)) {
+            String contractManagerCode = String.valueOf(contractManager.getContractManagerCode());
+            String nonPersonContractManagerEmail = parameterService.getSubParameterValueAsString(
+                    PurchaseOrderDocument.class, CUPurapParameterConstants.NON_PERSON_CONTRACT_MANAGER_EMAIL_BY_CODE,
+                    contractManagerCode);
+            if (StringUtils.isNotBlank(nonPersonContractManagerEmail)) {
+                return nonPersonContractManagerEmail;
+            }
+        }
 
-        return super.getContractManagerEmail(cm);
+        return super.getContractManagerEmail(contractManager);
     }
 
     /**
