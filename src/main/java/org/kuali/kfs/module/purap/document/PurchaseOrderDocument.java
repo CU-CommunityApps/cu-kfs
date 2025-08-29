@@ -216,7 +216,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     @Override
     public String getDocumentTitle() {
         if (SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(PurchaseOrderDocument.class,
-                PurapParameterConstants.PURAP_OVERRIDE_PO_DOC_TITLE)) {
+                PurapParameterConstants.DOCUMENT_TITLE_IND
+        )) {
             return getCustomDocumentTitle();
         }
 

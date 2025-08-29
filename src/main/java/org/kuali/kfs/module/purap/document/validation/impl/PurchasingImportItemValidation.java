@@ -192,7 +192,7 @@ public class PurchasingImportItemValidation extends PurchasingAccountsPayableImp
             final Map<String, String> fieldValues = new HashMap<>();
             fieldValues.put(KFSPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE, uomCode);
             if (businessObjectService.countMatching(UnitOfMeasure.class, fieldValues) != 1) {
-                final String[] errorParams = {uomCode, "" + item.getItemLineNumber()};
+                final String[] errorParams = {uomCode, item.getItemLineNumber().toString()};
                 GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERRORS,
                         PurapKeyConstants.ERROR_ITEMPARSER_INVALID_UOM_CODE, errorParams);
                 valid = false;

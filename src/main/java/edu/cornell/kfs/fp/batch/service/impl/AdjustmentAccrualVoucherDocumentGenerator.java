@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
-import org.kuali.kfs.fp.document.AuxiliaryVoucherDocument;
+import org.kuali.kfs.fp.document.AdjustmentAccrualVoucherDocument;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.ValidationException;
@@ -22,24 +22,24 @@ import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 
-public class AuxiliaryVoucherDocumentGenerator
-        extends AccountingDocumentGeneratorBase<AuxiliaryVoucherDocument> {
+public class AdjustmentAccrualVoucherDocumentGenerator
+        extends AccountingDocumentGeneratorBase<AdjustmentAccrualVoucherDocument> {
 
     protected AccountingPeriodService accountingPeriodService;
     protected DateTimeService dateTimeService;
 
-    public AuxiliaryVoucherDocumentGenerator() {
+    public AdjustmentAccrualVoucherDocumentGenerator() {
         super();
     }
 
-    public AuxiliaryVoucherDocumentGenerator(
+    public AdjustmentAccrualVoucherDocumentGenerator(
             Supplier<Note> emptyNoteGenerator, Supplier<AdHocRoutePerson> emptyAdHocRoutePersonGenerator) {
         super(emptyNoteGenerator, emptyAdHocRoutePersonGenerator);
     }
 
     @Override
-    public Class<? extends AuxiliaryVoucherDocument> getDocumentClass() {
-        return AuxiliaryVoucherDocument.class;
+    public Class<? extends AdjustmentAccrualVoucherDocument> getDocumentClass() {
+        return AdjustmentAccrualVoucherDocument.class;
     }
 
     @Override
@@ -77,13 +77,13 @@ public class AuxiliaryVoucherDocumentGenerator
     }
 
     @Override
-    protected void populateCustomAccountingDocumentData(AuxiliaryVoucherDocument document, AccountingXmlDocumentEntry documentEntry) {
+    protected void populateCustomAccountingDocumentData(AdjustmentAccrualVoucherDocument document, AccountingXmlDocumentEntry documentEntry) {
         Date sqlDocumentCreateDate = dateTimeService.getCurrentSqlDate();
         
         AccountingPeriod period = findEligibleAccountingPeriod(document, documentEntry);
         document.setAccountingPeriod(period);
         
-        String avTypeCode = validateAndGetAuxiliaryVoucherType(documentEntry);
+        String avTypeCode = validateAndGetAdjustmentAccrualVoucherType(documentEntry);
         document.setTypeCode(avTypeCode);
         
         Optional<Date> reversalDate = validateAndGetReversalDateIfApplicable(
@@ -94,7 +94,7 @@ public class AuxiliaryVoucherDocumentGenerator
     }
 
     protected AccountingPeriod findEligibleAccountingPeriod(
-            AuxiliaryVoucherDocument document, AccountingXmlDocumentEntry documentEntry) {
+            AdjustmentAccrualVoucherDocument document, AccountingXmlDocumentEntry documentEntry) {
         String xmlPeriod = checkForNonBlankValue(
                 documentEntry.getAccountingPeriod(), CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_AV_PERIOD_REQUIRED);
         Collection<AccountingPeriod> openPeriods = accountingPeriodService.getOpenAccountingPeriods();
@@ -108,14 +108,14 @@ public class AuxiliaryVoucherDocumentGenerator
         return StringUtils.equals(period.getUniversityFiscalPeriodName(), xmlPeriod);
     }
 
-    protected String validateAndGetAuxiliaryVoucherType(AccountingXmlDocumentEntry documentEntry) {
+    protected String validateAndGetAdjustmentAccrualVoucherType(AccountingXmlDocumentEntry documentEntry) {
         String avTypeCode = checkForNonBlankValue(
-                documentEntry.getAuxiliaryVoucherType(), CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_AV_TYPE_REQUIRED);
+                documentEntry.getAdjustmentAccrualVoucherType(), CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_AV_TYPE_REQUIRED);
         switch (avTypeCode) {
-            case KFSConstants.AuxiliaryVoucher.ADJUSTMENT_DOC_TYPE :
-            case KFSConstants.AuxiliaryVoucher.ACCRUAL_DOC_TYPE :
+            case KFSConstants.AdjustmentAccrualVoucher.ADJUSTMENT_DOC_TYPE :
+            case KFSConstants.AdjustmentAccrualVoucher.ACCRUAL_DOC_TYPE :
                 return avTypeCode;
-            case KFSConstants.AuxiliaryVoucher.RECODE_DOC_TYPE :
+            case KFSConstants.AdjustmentAccrualVoucher.RECODE_DOC_TYPE :
                 throw buildNewValidationException(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_AV_INVALID_RECODE_TYPE, avTypeCode);
             default :
                 throw buildNewValidationException(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_AV_INVALID_TYPE, avTypeCode);
@@ -125,7 +125,7 @@ public class AuxiliaryVoucherDocumentGenerator
     protected Optional<Date> validateAndGetReversalDateIfApplicable(
             AccountingXmlDocumentEntry documentEntry, AccountingPeriod period, String avTypeCode, Date documentCreateDateWithoutTime) {
         switch (avTypeCode) {
-            case KFSConstants.AuxiliaryVoucher.ACCRUAL_DOC_TYPE :
+            case KFSConstants.AdjustmentAccrualVoucher.ACCRUAL_DOC_TYPE :
                 return Optional.of(validateAndGetReversalDate(documentEntry, period, avTypeCode, documentCreateDateWithoutTime));
             default :
                 if (documentEntry.getReversalDate() != null) {

@@ -134,7 +134,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
     }
 
     public BigDecimal getTotalPercentageOfAccountDistributionsourceAccountingLines() {
-        totalPercentageOfAccountDistributionsourceAccountingLines = new BigDecimal(0);
+        totalPercentageOfAccountDistributionsourceAccountingLines = BigDecimal.ZERO;
         for (final PurApAccountingLine line : getAccountDistributionsourceAccountingLines()) {
             if (line.getAccountLinePercent() != null) {
                 setTotalPercentageOfAccountDistributionsourceAccountingLines(totalPercentageOfAccountDistributionsourceAccountingLines.add(line.getAccountLinePercent()));

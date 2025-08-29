@@ -111,14 +111,10 @@ public class ContractsGrantsInvoiceDocumentPresentationController extends
         final Set<String> currentNodeNames = workflowDocument.getCurrentNodeNames();
         final boolean isAtFundsManagerNode = currentNodeNames.contains(FUNDS_MANAGER_ROUTE_NODE);
 
-        if (isAtFundsManagerNode
-            && workflowDocument.isApprovalRequested()
-            && !isAdhocApprovalRequestedForPrincipal(workflowDocument)
-            && !((ContractsGrantsInvoiceDocument) document).isCorrectionDocument()
-        ) {
-            return true;
-        }
-        return false;
+        return isAtFundsManagerNode
+                && workflowDocument.isApprovalRequested()
+                && !isAdhocApprovalRequestedForPrincipal(workflowDocument)
+                && !((ContractsGrantsInvoiceDocument) document).isCorrectionDocument();
     }
 
     private boolean isAdhocApprovalRequestedForPrincipal(final WorkflowDocument workflowDocument) {

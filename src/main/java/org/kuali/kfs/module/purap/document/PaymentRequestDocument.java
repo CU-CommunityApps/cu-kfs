@@ -966,7 +966,7 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
     }
 
     public KualiDecimal getGrandTotalExcludingDiscount() {
-        final String[] discountCode = new String[]{PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE};
+        final String[] discountCode = {PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE};
         return getTotalDollarAmountWithExclusions(discountCode, true);
     }
 
@@ -984,7 +984,7 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
     }
 
     public KualiDecimal getGrandPreTaxTotalExcludingDiscount() {
-        final String[] discountCode = new String[]{PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE};
+        final String[] discountCode = {PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE};
         return getTotalPreTaxDollarAmountWithExclusions(discountCode, true);
     }
 
@@ -993,7 +993,7 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase implemen
     }
 
     public KualiDecimal getGrandTaxAmountExcludingDiscount() {
-        final String[] discountCode = new String[]{PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE};
+        final String[] discountCode = {PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE};
         return getTotalTaxAmountWithExclusions(discountCode, true);
     }
 

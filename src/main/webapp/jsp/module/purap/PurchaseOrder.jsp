@@ -204,10 +204,4 @@
     </c:if>
     
     <kul:modernLookupSupport />
-    <script type="application/javascript">
-      document.addEventListener('DOMContentLoaded', () => {
-        wireReplaceInvalidCharacters();
-      });
-    </script>
-
 </kul:documentPage>

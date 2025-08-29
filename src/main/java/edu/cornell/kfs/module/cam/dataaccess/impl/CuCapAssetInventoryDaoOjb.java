@@ -1,7 +1,8 @@
 package edu.cornell.kfs.module.cam.dataaccess.impl;
 
-import edu.cornell.kfs.module.cam.CuCamsConstants;
-import edu.cornell.kfs.module.cam.dataaccess.CuCapAssetInventoryDao;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,14 +10,15 @@ import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
+import org.kuali.kfs.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.Building;
 import org.kuali.kfs.sys.businessobject.Room;
-import org.kuali.kfs.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 
-import java.util.List;
-import java.util.Locale;
+import edu.cornell.kfs.module.cam.CuCamsConstants;
+import edu.cornell.kfs.module.cam.dataaccess.CuCapAssetInventoryDao;
+import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
 public class CuCapAssetInventoryDaoOjb extends PlatformAwareDaoBaseOjb implements CuCapAssetInventoryDao {
 
@@ -27,7 +29,7 @@ public class CuCapAssetInventoryDaoOjb extends PlatformAwareDaoBaseOjb implement
         criteria.addEqualTo(CuCamsConstants.CapAssetApi.CAMPUS_CODE_PARAMETER, campusCode);
         criteria.addEqualTo(CuCamsConstants.CapAssetApi.ACTIVE, true);
         if (StringUtils.isNotEmpty(queryName)) {
-            criteria.addLike(getDbPlatform().getUpperCaseFunction() + "(" + KFSPropertyConstants.BUILDING_NAME + ")", "%" + queryName.toUpperCase(Locale.US) + "%");
+            criteria.addLike(getDbPlatform().getUpperCaseFunction() + "(" + CUKFSPropertyConstants.BUILDING_NAME + ")", "%" + queryName.toUpperCase(Locale.US) + "%");
         } else if (StringUtils.isNotEmpty(queryCode)) {
             criteria.addLike(getDbPlatform().getUpperCaseFunction() + "(" + KFSPropertyConstants.BUILDING_CODE + ")", "%" + queryCode.toUpperCase(Locale.US) + "%");
         }

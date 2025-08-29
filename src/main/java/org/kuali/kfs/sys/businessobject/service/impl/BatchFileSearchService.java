@@ -25,6 +25,7 @@ import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -174,7 +175,7 @@ public class BatchFileSearchService extends SearchService {
         // Ignore redundant child paths
         final List<String> searchPaths = new ArrayList<>();
         selectedPaths.stream().sorted(Comparator.comparingInt(String::length)).forEach(selectedPath -> {
-            final String[] searchPathsStringArray = searchPaths.toArray(new String[searchPaths.size()]);
+            final String[] searchPathsStringArray = searchPaths.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
             if (!StringUtils.startsWithAny(selectedPath, searchPathsStringArray)) {
                 searchPaths.add(selectedPath);
             }

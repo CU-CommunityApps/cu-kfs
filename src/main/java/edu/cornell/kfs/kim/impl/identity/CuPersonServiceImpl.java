@@ -24,18 +24,14 @@ import edu.cornell.kfs.kim.api.identity.CuPersonService;
 
 public class CuPersonServiceImpl extends PersonServiceImpl implements CuPersonService {
 
-    // Temporary customization to add a constant from FINP-10589 in the 2024-04-03 financials release.
+    // Copied the following constant from the superclass.
     private static final String LOWER_PRINCIPAL_NAME = "LOWER(" + KIMPropertyConstants.Principal.PRINCIPAL_NAME + ")";
 
     private CriteriaLookupService criteriaLookupService;
     private BusinessObjectService businessObjectService;
 
     /*
-     * Temporary override of getPersonByPrincipalName() to backport the FINP-10589 fix
-     * from the 2024-04-03 financials release. We may be able to remove this backport
-     * when we upgrade to version 2024-04-03 or later; however, KualiCo configured the fix
-     * to use the default Locale instead of Locale.US, so we've updated it to use the latter.
-     * We may have to wait for a follow-up Locale usage fix before removing this backport.
+     * Overridden to use Locale.US when lowercasing the principal name for the search.
      */
     @Cacheable(cacheNames = Person.CACHE_NAME, key = "'{getPerson}-principalName=' + #p0")
     @Override

@@ -11,7 +11,7 @@
             <Explanation>This is an AV document with a non-existent accounting period</Explanation>
             <OrganizationDocumentNumber>WXYZ5678</OrganizationDocumentNumber>
             <AccountingPeriod>FEB. Twenty-Nineteen</AccountingPeriod>
-            <AuxiliaryVoucherType>AVAD</AuxiliaryVoucherType>
+            <AdjustmentAccrualVoucherType>AVAD</AdjustmentAccrualVoucherType>
             <SourceAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>
@@ -66,7 +66,7 @@
             <Explanation>This is an AV document of Recode type, which is not allowed for AV XML use.</Explanation>
             <OrganizationDocumentNumber>WXYZ5679</OrganizationDocumentNumber>
             <AccountingPeriod>FEB. 2019</AccountingPeriod>
-            <AuxiliaryVoucherType>AVRC</AuxiliaryVoucherType>
+            <AdjustmentAccrualVoucherType>AVRC</AdjustmentAccrualVoucherType>
             <SourceAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>
@@ -107,7 +107,7 @@
             <Explanation>This is yet another test AV document</Explanation>
             <OrganizationDocumentNumber>WXYZ5680</OrganizationDocumentNumber>
             <AccountingPeriod>FEB. 2019</AccountingPeriod>
-            <AuxiliaryVoucherType>AVAE</AuxiliaryVoucherType>
+            <AdjustmentAccrualVoucherType>AVAE</AdjustmentAccrualVoucherType>
             <ReversalDate>03/31/2019</ReversalDate>
             <SourceAccountingLineList>
                 <Accounting>
@@ -149,7 +149,7 @@
             <Explanation>This is an AV document that specifies an unrecognized AV type.</Explanation>
             <OrganizationDocumentNumber>WXYZ5679</OrganizationDocumentNumber>
             <AccountingPeriod>FEB. 2019</AccountingPeriod>
-            <AuxiliaryVoucherType>AVXX</AuxiliaryVoucherType>
+            <AdjustmentAccrualVoucherType>AVXX</AdjustmentAccrualVoucherType>
             <SourceAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>
@@ -190,7 +190,7 @@
             <Explanation>This is an AV document that specifies a reversal date for the Adjustment type, which is not allowed.</Explanation>
             <OrganizationDocumentNumber>WXYZ5679</OrganizationDocumentNumber>
             <AccountingPeriod>FEB. 2019</AccountingPeriod>
-            <AuxiliaryVoucherType>AVAD</AuxiliaryVoucherType>
+            <AdjustmentAccrualVoucherType>AVAD</AdjustmentAccrualVoucherType>
             <ReversalDate>03/31/2019</ReversalDate>
             <SourceAccountingLineList>
                 <Accounting>
@@ -232,7 +232,7 @@
             <Explanation>This is an AV document with an accounting line that uses the wrong amount element.</Explanation>
             <OrganizationDocumentNumber>WXYZ5679</OrganizationDocumentNumber>
             <AccountingPeriod>FEB. 2019</AccountingPeriod>
-            <AuxiliaryVoucherType>AVAD</AuxiliaryVoucherType>
+            <AdjustmentAccrualVoucherType>AVAD</AdjustmentAccrualVoucherType>
             <SourceAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>
@@ -273,7 +273,7 @@
             <Explanation>This is an AV document with an accounting line that doesn't define an amount.</Explanation>
             <OrganizationDocumentNumber>WXYZ5679</OrganizationDocumentNumber>
             <AccountingPeriod>FEB. 2019</AccountingPeriod>
-            <AuxiliaryVoucherType>AVAD</AuxiliaryVoucherType>
+            <AdjustmentAccrualVoucherType>AVAD</AdjustmentAccrualVoucherType>
             <SourceAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>
@@ -313,7 +313,7 @@
             <Explanation>This is an AV document with an accounting line that has both a debit and credit amount.</Explanation>
             <OrganizationDocumentNumber>WXYZ5679</OrganizationDocumentNumber>
             <AccountingPeriod>FEB. 2019</AccountingPeriod>
-            <AuxiliaryVoucherType>AVAD</AuxiliaryVoucherType>
+            <AdjustmentAccrualVoucherType>AVAD</AdjustmentAccrualVoucherType>
             <SourceAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>

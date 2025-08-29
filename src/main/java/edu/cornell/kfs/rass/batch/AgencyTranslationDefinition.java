@@ -12,6 +12,7 @@ import edu.cornell.kfs.module.cg.CuCGPropertyConstants;
 import edu.cornell.kfs.module.cg.businessobject.AgencyExtendedAttribute;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntry;
 import edu.cornell.kfs.rass.util.RassUtil;
+import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
 public class AgencyTranslationDefinition extends RassObjectTranslationDefinition<RassXmlAgencyEntry, Agency> {
 
@@ -67,7 +68,7 @@ public class AgencyTranslationDefinition extends RassObjectTranslationDefinition
     @Override
     public void processCustomTranslationForBusinessObjectEdit(
             RassXmlAgencyEntry xmlAgency, Agency oldAgency, Agency newAgency) {
-        refreshReferenceObject(newAgency, KFSPropertyConstants.AGENCY_TYPE);
+        refreshReferenceObject(newAgency, CUKFSPropertyConstants.AGENCY_TYPE);
         refreshReferenceObject(newAgency, KFSPropertyConstants.REPORTS_TO_AGENCY);
         AgencyExtendedAttribute agencyExtension = (AgencyExtendedAttribute) newAgency.getExtension();
         refreshReferenceObject(agencyExtension, CuCGPropertyConstants.AGENCY_ORIGIN);

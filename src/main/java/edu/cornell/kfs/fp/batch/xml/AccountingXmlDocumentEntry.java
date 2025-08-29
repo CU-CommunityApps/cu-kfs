@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.ValidationEvent;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -48,9 +49,14 @@ public class AccountingXmlDocumentEntry {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String accountingPeriod;
 
+    @Deprecated
     @XmlElement(name = "AuxiliaryVoucherType", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String auxiliaryVoucherType;
+
+    @XmlElement(name = "AdjustmentAccrualVoucherType", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String adjustmentAccrualVoucherType;
 
     @XmlElement(name = "ReversalDate", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(StringToJavaDateAdapter.class)
@@ -152,12 +158,28 @@ public class AccountingXmlDocumentEntry {
         this.accountingPeriod = accountingPeriod;
     }
 
+    @Deprecated
     public String getAuxiliaryVoucherType() {
         return auxiliaryVoucherType;
     }
 
+    @Deprecated
     public void setAuxiliaryVoucherType(String auxiliaryVoucherType) {
         this.auxiliaryVoucherType = auxiliaryVoucherType;
+    }
+
+    void afterUnmarshal(final Unmarshaller unmarshaller, final Object parent) {
+        if (StringUtils.isBlank(adjustmentAccrualVoucherType) && StringUtils.isNotBlank(auxiliaryVoucherType)) {
+            adjustmentAccrualVoucherType = auxiliaryVoucherType;
+        }
+    }
+
+    public String getAdjustmentAccrualVoucherType() {
+        return adjustmentAccrualVoucherType;
+    }
+
+    public void setAdjustmentAccrualVoucherType(String adjustmentAccrualVoucherType) {
+        this.adjustmentAccrualVoucherType = adjustmentAccrualVoucherType;
     }
 
     public Date getReversalDate() {
@@ -246,7 +268,7 @@ public class AccountingXmlDocumentEntry {
         sb.append("OrganizationDocumentNumber: ").append(organizationDocumentNumber).append(System.lineSeparator());
         sb.append("PostingFiscalYear: ").append((ObjectUtils.isNotNull(postingFiscalYear) ? postingFiscalYear.intValue() : "null")).append(System.lineSeparator());
         sb.append("AccountingPeriod: ").append(accountingPeriod).append(System.lineSeparator());
-        sb.append("AuxiliaryVoucherType: ").append(auxiliaryVoucherType).append(System.lineSeparator());
+        sb.append("AdjustmentAccrualVoucherType: ").append(adjustmentAccrualVoucherType).append(System.lineSeparator());
         sb.append("ReversalDate: ").append(reversalDate).append(System.lineSeparator());
         return sb.toString();
     }

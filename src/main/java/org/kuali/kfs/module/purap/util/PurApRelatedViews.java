@@ -74,26 +74,6 @@ public class PurApRelatedViews {
         this.accountsPayablePurchasingDocumentLinkIdentifier = accountsPayablePurchasingDocumentLinkIdentifier;
     }
 
-    /**
-     * Reset all related view lists to null.
-     */
-    public void resetRelatedViews() {
-        relatedRequisitionViews = null;
-        relatedPurchaseOrderViews = null;
-        relatedPaymentRequestViews = null;
-        paymentHistoryPaymentRequestViews = null;
-        relatedCreditMemoViews = null;
-        paymentHistoryCreditMemoViews = null;
-        relatedLineItemReceivingViews = null;
-        relatedCorrectionReceivingViews = null;
-        relatedBulkReceivingViews = null;
-        groupedRelatedPurchaseOrderViews = null;
-        groupedRelatedReceivingViews = null;
-        relatedRejectViews = null;
-        // ==== CU Customization (KFSPTS-1656): Added IWantDocument views. ====
-        relatedIWantViews = null;
-    }
-
     public List updateRelatedView(
             final Class<?> clazz, List<? extends AbstractRelatedView> relatedList,
             final boolean removeCurrentDocument) {

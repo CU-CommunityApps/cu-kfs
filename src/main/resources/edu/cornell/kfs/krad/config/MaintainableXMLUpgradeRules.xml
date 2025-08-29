@@ -368,6 +368,10 @@
                 <match>budgetRolloverIndicator</match>
                 <replacement/>
             </pattern>
+            <pattern>
+                <match>auxiliaryVoucherDefaultReversalDate</match>
+                <replacement>adjustmentAccrualVoucherDefaultReversalDate</replacement>
+            </pattern>
         </pattern>
         <pattern>
             <class>org.kuali.kfs.coa.businessobject.PriorYearAccount</class>
@@ -615,6 +619,10 @@
             <class>org.kuali.kfs.module.ar.businessobject.InvoiceRecurrence</class>
             <pattern>
                 <match>documentInitiatorUser</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>documentInitiatorUserIdentifier</match>
                 <replacement/>
             </pattern>
         </pattern>

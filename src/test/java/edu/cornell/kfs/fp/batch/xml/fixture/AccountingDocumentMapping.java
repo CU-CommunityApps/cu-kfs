@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-import org.kuali.kfs.fp.document.AuxiliaryVoucherDocument;
+import org.kuali.kfs.fp.document.AdjustmentAccrualVoucherDocument;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
 import org.kuali.kfs.fp.document.PreEncumbranceDocument;
 import org.kuali.kfs.fp.document.ServiceBillingDocument;
@@ -23,7 +23,7 @@ import org.kuali.kfs.sys.document.AccountingDocument;
 
 import edu.cornell.kfs.fp.CuFPTestConstants;
 import edu.cornell.kfs.fp.batch.service.impl.AccountingDocumentGeneratorBase;
-import edu.cornell.kfs.fp.batch.service.impl.AuxiliaryVoucherDocumentGenerator;
+import edu.cornell.kfs.fp.batch.service.impl.AdjustmentAccrualVoucherDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.CuBudgetAdjustmentDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.CuDisbursementVoucherDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.CuDistributionOfIncomeAndExpenseDocumentGenerator;
@@ -71,9 +71,9 @@ public enum AccountingDocumentMapping {
     YETF_DOCUMENT(CuFPTestConstants.YEAR_END_TRANSFER_OF_FUNDS_DOC_TYPE,
             YearEndTransferOfFundsDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
             CuYearEndTransferOfFundsDocumentGenerator::new),
-    AV_DOCUMENT(CuFPTestConstants.AUXILIARY_VOUCHER_DOC_TYPE,
-            AuxiliaryVoucherDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
-            AuxiliaryVoucherDocumentGenerator::new),
+    AV_DOCUMENT(CuFPTestConstants.ADJUSTMENT_ACCRUAL_VOUCHER_DOC_TYPE,
+            AdjustmentAccrualVoucherDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
+            AdjustmentAccrualVoucherDocumentGenerator::new),
     PE_DOCUMENT(KFSConstants.BALANCE_TYPE_PRE_ENCUMBRANCE,
             PreEncumbranceDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
             PreEncumbranceDocumentGenerator::new);

@@ -281,7 +281,7 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
             p.println("</pdp_load_status>");
 
             // creating .done file
-            final File doneFile = new File(filename.substring(0, filename.lastIndexOf(".")) + ".done");
+            final File doneFile = new File(filename.substring(0, filename.lastIndexOf('.')) + ".done");
             doneFile.createNewFile();
         } catch (final FileNotFoundException e) {
             LOG.error("createOutputFile() Cannot create output file", e);

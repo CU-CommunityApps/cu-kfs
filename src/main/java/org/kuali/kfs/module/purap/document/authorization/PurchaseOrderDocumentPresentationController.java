@@ -141,10 +141,10 @@ public class PurchaseOrderDocumentPresentationController extends
 
         editModes.add(PurchaseOrderEditMode.ASSIGN_SENSITIVE_DATA);
 
-        //if the ENABLE_COMMODITY_CODE_IND system parameter is Y then add this edit mode so that the commodity code
+        //if the COMMODITY_CODE_IND system parameter is Y then add this edit mode so that the commodity code
         // fields would display on the document.
         boolean enableCommodityCode = getParameterService().getParameterValueAsBoolean(
-                KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_COMMODITY_CODE_IND);
+                KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.COMMODITY_CODE_IND);
         if (enableCommodityCode) {
             editModes.add(PurchaseOrderEditMode.ENABLE_COMMODITY_CODE);
         }

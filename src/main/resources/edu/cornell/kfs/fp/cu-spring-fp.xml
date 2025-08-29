@@ -283,7 +283,7 @@
 
     
     <!--  Validations -->
-    <bean id="AuxliaryVoucher-accountingDocumentSingleSubFundValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuAuxiliaryVoucherSingleSubFundValidation" abstract="true" />
+    <bean id="AuxliaryVoucher-accountingDocumentSingleSubFundValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuAdjustmentAccrualVoucherSingleSubFundValidation" abstract="true" />
     
 	<import resource="document/validation/configuration/FinancialProcessingValidators.xml" />
     <import resource="document/validation/configuration/CU-DisbursementVoucherValidation.xml" />
@@ -617,7 +617,7 @@
         <property name="cuCheckStubService" ref="cuCheckStubService"/>
     </bean>
 
-    <bean id="AccountingDocumentGenerator_AV" class="edu.cornell.kfs.fp.batch.service.impl.AuxiliaryVoucherDocumentGenerator">
+    <bean id="AccountingDocumentGenerator_AV" class="edu.cornell.kfs.fp.batch.service.impl.AdjustmentAccrualVoucherDocumentGenerator">
         <property name="personService" ref="personService"/>
         <property name="accountingXmlDocumentDownloadAttachmentService" ref="accountingXmlDocumentDownloadAttachmentService"/>
         <property name="configurationService" ref="configurationService"/>

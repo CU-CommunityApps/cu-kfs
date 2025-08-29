@@ -18,6 +18,7 @@
  */
 package org.kuali.kfs.module.ld.businessobject;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.AccountingLineOverride;
@@ -60,7 +61,7 @@ public final class LaborAccountingLineOverride {
             overrideInputComponents.add(COMPONENT.NON_FRINGE_ACCOUNT_USED);
         }
 
-        final Integer[] inputComponentArray = overrideInputComponents.toArray(new Integer[overrideInputComponents.size()]);
+        final Integer[] inputComponentArray = overrideInputComponents.toArray(ArrayUtils.EMPTY_INTEGER_OBJECT_ARRAY);
         line.setOverrideCode(AccountingLineOverride.valueOf(inputComponentArray).getCode());
     }
 
@@ -110,7 +111,7 @@ public final class LaborAccountingLineOverride {
         if (AccountingLineOverride.needsNonFringAccountOverride(line.getAccount())) {
             neededOverrideComponents.add(COMPONENT.NON_FRINGE_ACCOUNT_USED);
         }
-        final Integer[] inputComponentArray = neededOverrideComponents.toArray(new Integer[neededOverrideComponents.size()]);
+        final Integer[] inputComponentArray = neededOverrideComponents.toArray(ArrayUtils.EMPTY_INTEGER_OBJECT_ARRAY);
 
         return AccountingLineOverride.valueOf(inputComponentArray);
     }

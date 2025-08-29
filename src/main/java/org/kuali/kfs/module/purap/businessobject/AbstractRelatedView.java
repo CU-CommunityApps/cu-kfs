@@ -100,9 +100,9 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
         final String documentTypeName = getDocumentTypeName();
         final DocumentType docType = KEWServiceLocator.getDocumentTypeService().getDocumentTypeByName(documentTypeName);
         final String docHandlerUrl = docType.getResolvedDocumentHandlerUrl();
-        final int endSubString = docHandlerUrl.lastIndexOf("/");
+        final int endSubString = docHandlerUrl.lastIndexOf('/');
         final String serverName = docHandlerUrl.substring(0, endSubString);
-        final String handler = docHandlerUrl.substring(endSubString + 1, docHandlerUrl.lastIndexOf("?"));
+        final String handler = docHandlerUrl.substring(endSubString + 1, docHandlerUrl.lastIndexOf('?'));
         return serverName + "/" + handler + "?channelTitle=" + docType.getName() + "&" +
                 KRADConstants.DISPATCH_REQUEST_PARAMETER + "=" + KRADConstants.DOC_HANDLER_METHOD + "&" +
                 KRADConstants.PARAMETER_DOC_ID + "=" + getDocumentNumber() + "&" +

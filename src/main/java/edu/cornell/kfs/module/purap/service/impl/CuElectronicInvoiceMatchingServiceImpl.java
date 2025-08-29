@@ -223,7 +223,7 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
     // KFSPTS-1719,KFSUPGRADE-485
     // trying to get the total inv amount for this poline
     private BigDecimal getItemTotalAmount(final ElectronicInvoiceItemHolder itemHolder) {
-        BigDecimal totalAmount = new BigDecimal(0);
+        BigDecimal totalAmount = BigDecimal.ZERO;
     	final Integer lineItemNumber = itemHolder.getInvoiceItemLineNumber();
     	if (lineItemNumber != null) {
     	 for (final ElectronicInvoiceItemHolder item : itemHolder.getInvoiceOrderHolder().getItems()) {

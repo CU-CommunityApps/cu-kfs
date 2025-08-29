@@ -459,6 +459,12 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
     }
 
     @Override
+    @Cacheable(value = RoleMember.CACHE_NAME,
+            key = "'{getRoleQualifersForPrincipalByNamespaceAndRolename}' + 'principalId=' + #p0"
+                  + " + '|' + 'namespaceCode=' + #p1"
+                  + " + '|' + 'roleName=' + #p2"
+                  + " + '|' + 'qualification=' + T(org.kuali.kfs.core.api.cache.CacheKeyUtils).mapKey(#p3)",
+            condition = "!T(org.kuali.kfs.kim.api.cache.KimCacheUtils).isDynamicMembshipRoleByNamespaceAndName(#p1, #p2)")
     public List<Map<String, String>> getRoleQualifersForPrincipalByNamespaceAndRolename(
             final String principalId,
             final String namespaceCode, final String roleName, final Map<String, String> qualification)
@@ -476,6 +482,11 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
     }
 
     @Override
+    @Cacheable(value = RoleMember.CACHE_NAME,
+            key = "'{getNestedRoleQualifiersForPrincipalByRoleIds}' + 'principalId=' + #p0"
+                  + " + '|' + 'roleIds=' + T(org.kuali.kfs.core.api.cache.CacheKeyUtils).key(#p1)"
+                  + " + '|' + 'qualification=' + T(org.kuali.kfs.core.api.cache.CacheKeyUtils).mapKey(#p2)",
+            condition = "!T(org.kuali.kfs.kim.api.cache.KimCacheUtils).isDynamicRoleMembership(#p1)")
     public List<Map<String, String>> getNestedRoleQualifiersForPrincipalByRoleIds(
             final String principalId,
             final List<String> roleIds, final Map<String, String> qualification) throws IllegalStateException {

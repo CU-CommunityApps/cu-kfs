@@ -95,9 +95,4 @@
     <sys:documentControls transactionalDocument="true" extraButtons="${extraButtons}"/>
 
     <kul:modernLookupSupport />
-    <script type="application/javascript">
-      document.addEventListener('DOMContentLoaded', () => {
-        wireReplaceInvalidCharacters();
-      });
-    </script>
 </kul:documentPage>

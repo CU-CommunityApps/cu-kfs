@@ -37,7 +37,7 @@ public enum AccountingPeriodFixture {
     public final Integer universityFiscalYear;
     public final String universityFiscalPeriodCode;
     public final String universityFiscalPeriodEndDate;
-    public final String auxiliaryVoucherDefaultReversalDate;
+    public final String adjustmentAccrualVoucherDefaultReversalDate;
     public final boolean active;
 
     AccountingPeriodFixture(Integer universityFiscalYear, String universityFiscalPeriodCode,
@@ -46,11 +46,11 @@ public enum AccountingPeriodFixture {
     }
 
     AccountingPeriodFixture(Integer universityFiscalYear, String universityFiscalPeriodCode,
-            String universityFiscalPeriodEndDate, String auxiliaryVoucherDefaultReversalDate, boolean active) {
+            String universityFiscalPeriodEndDate, String adjustmentAccrualVoucherDefaultReversalDate, boolean active) {
         this.universityFiscalYear = universityFiscalYear;
         this.universityFiscalPeriodCode = universityFiscalPeriodCode;
         this.universityFiscalPeriodEndDate = universityFiscalPeriodEndDate;
-        this.auxiliaryVoucherDefaultReversalDate = auxiliaryVoucherDefaultReversalDate;
+        this.adjustmentAccrualVoucherDefaultReversalDate = adjustmentAccrualVoucherDefaultReversalDate;
         this.active = active;
     }
 
@@ -61,8 +61,8 @@ public enum AccountingPeriodFixture {
         accountingPeriod.setUniversityFiscalPeriodCode(universityFiscalPeriodCode);
         accountingPeriod.setUniversityFiscalPeriodName(getUniversityFiscalPeriodName());
         accountingPeriod.setUniversityFiscalPeriodEndDate(buildSqlDate(universityFiscalPeriodEndDate));
-        if (StringUtils.isNotBlank(auxiliaryVoucherDefaultReversalDate)) {
-            accountingPeriod.setAuxiliaryVoucherDefaultReversalDate(getReversalSqlDate());
+        if (StringUtils.isNotBlank(adjustmentAccrualVoucherDefaultReversalDate)) {
+            accountingPeriod.setAdjustmentAccrualVoucherDefaultReversalDate(getReversalSqlDate());
         }
         accountingPeriod.setActive(active);
         
@@ -112,7 +112,7 @@ public enum AccountingPeriodFixture {
     }
 
     public Date getReversalSqlDate() {
-        return buildSqlDate(auxiliaryVoucherDefaultReversalDate);
+        return buildSqlDate(adjustmentAccrualVoucherDefaultReversalDate);
     }
 
     private Date buildSqlDate(String dateString) {
