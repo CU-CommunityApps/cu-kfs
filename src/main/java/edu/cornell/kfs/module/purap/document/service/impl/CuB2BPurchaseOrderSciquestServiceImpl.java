@@ -955,7 +955,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         if (ObjectUtils.isNotNull(contractManager)) {
             String contractManagerCode = String.valueOf(contractManager.getContractManagerCode());
             String nonPersonContractManagerEmail = parameterService.getSubParameterValueAsString(
-                    PurchaseOrderDocument.class, CUPurapParameterConstants.NON_PERSON_CONTRACT_MANAGER__EMAIL_BY_CODE,
+                    PurchaseOrderDocument.class, CUPurapParameterConstants.NON_PERSON_CONTRACT_MANAGER_EMAIL_BY_CODE,
                     contractManagerCode);
             if (StringUtils.isNotBlank(nonPersonContractManagerEmail)) {
                 return nonPersonContractManagerEmail;
