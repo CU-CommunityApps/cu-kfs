@@ -1200,7 +1200,7 @@
         </property>
         <property name="displayAttributeDefinitions">
             <list>
-                <bean parent="PaymentWorksVendor-id" p:disableInquiry="true"/>
+                <ref bean="PaymentWorksVendor-id"/>
                 <bean parent="PaymentWorksVendor-pmwVendorRequestId" p:disableInquiry="true"/>
                 <ref bean="PaymentWorksVendor-kfsVendorNumber"/>
                 <ref bean="PaymentWorksVendor-requestingCompanyLegalName"/>
@@ -1213,7 +1213,8 @@
 
     <bean id="PaymentWorksVendor-inquiryDefinition" parent="PaymentWorksVendor-inquiryDefinition-parentBean" />
     <bean id="PaymentWorksVendor-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
-        <property name="title" value="PaymentWorks Vendor Inquiry" />
+        <property name="title" value="PaymentWorks Vendor Inquiry"/>
+        <property name="inquirableClass" value="edu.cornell.kfs.pmw.batch.businessobject.inquiry.PaymentWorksVendorInquirableImpl"/>
         <property name="inquirySections">
             <list>
                 <bean parent="InquirySectionDefinition">
