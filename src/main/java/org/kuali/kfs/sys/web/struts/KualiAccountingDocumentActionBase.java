@@ -256,7 +256,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         if (rulePassed) {
             deleteAccountingLine(false, financialDocumentForm, deleteIndex);
         } else {
-            final String[] errorParams = new String[]{"target", Integer.toString(deleteIndex + 1)};
+            final String[] errorParams = {"target", Integer.toString(deleteIndex + 1)};
             GlobalVariables.getMessageMap().putError(errorPath,
                     KFSKeyConstants.ERROR_ACCOUNTINGLINE_DELETERULE_INVALIDACCOUNT, errorParams);
         }
@@ -293,7 +293,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         if (rulePassed) {
             deleteAccountingLine(true, financialDocumentForm, deleteIndex);
         } else {
-            final String[] errorParams = new String[]{"source", Integer.toString(deleteIndex + 1)};
+            final String[] errorParams = {"source", Integer.toString(deleteIndex + 1)};
             GlobalVariables.getMessageMap().putError(errorPath,
                     KFSKeyConstants.ERROR_ACCOUNTINGLINE_DELETERULE_INVALIDACCOUNT, errorParams);
         }

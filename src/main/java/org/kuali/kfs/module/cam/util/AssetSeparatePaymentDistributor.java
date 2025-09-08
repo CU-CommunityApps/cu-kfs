@@ -335,32 +335,6 @@ public class AssetSeparatePaymentDistributor {
     }
 
     /**
-     * Sums up YTD values and Previous Year value to decide accumulated depreciation amount
-     */
-    private void computeAccumulatedDepreciationAmount() {
-        KualiDecimal previousYearAmount;
-        for (final Asset asset : newAssets) {
-            final List<AssetPayment> assetPayments = asset.getAssetPayments();
-            for (final AssetPayment currPayment : assetPayments) {
-                previousYearAmount = currPayment.getPreviousYearPrimaryDepreciationAmount();
-                previousYearAmount = previousYearAmount == null ? KualiDecimal.ZERO : previousYearAmount;
-                final KualiDecimal computedAmount = previousYearAmount.add(sumPeriodicDepreciationAmounts(currPayment));
-                if (computedAmount.isNonZero()) {
-                    currPayment.setAccumulatedPrimaryDepreciationAmount(computedAmount);
-                }
-            }
-        }
-        for (final AssetPayment currPayment : offsetPayments) {
-            previousYearAmount = currPayment.getPreviousYearPrimaryDepreciationAmount();
-            previousYearAmount = previousYearAmount == null ? KualiDecimal.ZERO : previousYearAmount;
-            final KualiDecimal computedAmount = previousYearAmount.add(sumPeriodicDepreciationAmounts(currPayment));
-            if (computedAmount.isNonZero()) {
-                currPayment.setAccumulatedPrimaryDepreciationAmount(computedAmount);
-            }
-        }
-    }
-
-    /**
      * Sums up periodic amounts for a payment
      *
      * @param currPayment Payment

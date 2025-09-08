@@ -857,7 +857,7 @@
             <Explanation>This is an AV document for testing purposes</Explanation>
             <OrganizationDocumentNumber>WXYZ5678</OrganizationDocumentNumber>
             <AccountingPeriod>FEB. 2019</AccountingPeriod>
-            <AuxiliaryVoucherType>AVAD</AuxiliaryVoucherType>
+            <AdjustmentAccrualVoucherType>AVAD</AdjustmentAccrualVoucherType>
             <SourceAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>

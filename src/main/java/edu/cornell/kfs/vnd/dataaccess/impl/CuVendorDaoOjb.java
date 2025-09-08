@@ -21,6 +21,8 @@ import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
 import org.apache.ojb.broker.query.ReportQueryByCriteria;
 import org.apache.ojb.broker.util.collections.RemovalAwareCollection;
+import org.kuali.kfs.core.framework.persistence.dao.PlatformAwareDao;
+import org.kuali.kfs.core.framework.persistence.platform.DatabasePlatform;
 import org.kuali.kfs.kns.lookup.CollectionIncomplete;
 import org.kuali.kfs.kns.lookup.LookupUtils;
 import org.kuali.kfs.krad.bo.BusinessObject;
@@ -39,13 +41,23 @@ import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
 import edu.cornell.kfs.vnd.businessobject.VendorWithTaxId;
 import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
 
-public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
+public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao, PlatformAwareDao {
     private static final Logger LOG = LogManager.getLogger(CuVendorDaoOjb.class);
 
     private static final String ACTIVE_INDICATOR = "activeIndicator";
-    
+
+    // KualiCo's VendorDaoOjb class is no longer a platform-aware DAO, so we have to inject DatabasePlatform here.
+    private DatabasePlatform dbPlatform;
+
     @Override
     public VendorContract getVendorB2BContract(final VendorDetail vendorDetail, final String campus, final Date currentSqlDate) {
+        LOG.trace(
+                "getVendorB2BContract(...) - Enter : vendorDetail={}, campus={}, currentSqlDate={}",
+                vendorDetail,
+                campus,
+                currentSqlDate
+        );
+
         final Criteria header = new Criteria();
         final Criteria detail = new Criteria();
         final Criteria campusCode = new Criteria();
@@ -66,10 +78,16 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         //header.addAndCriteria(endDate);
         header.addAndCriteria(b2b);
 
-        return (VendorContract) getPersistenceBrokerTemplate()
-                .getObjectByQuery(new QueryByCriteria(VendorContract.class, header));
+        final VendorContract vendorContract =
+                (VendorContract) getPersistenceBrokerTemplate().getObjectByQuery(new QueryByCriteria(
+                        VendorContract.class,
+                        header
+                ));
+        LOG.trace("getVendorB2BContract(...) - Exit : vendorContract={}", vendorContract);
+        return vendorContract;
     }        
     
+    @Override
     public List<BusinessObject> getSearchResults(final Map<String,String> fieldValues) {
         final List results = new ArrayList();
         final Map<String, VendorDetail> nonDupResults = new HashMap<String, VendorDetail>();
@@ -253,6 +271,16 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         vendor.setVendorId(vendorId);
         vendor.setVendorTaxNumber((String) queryResultRow[2]);
         return vendor;
+    }
+
+    @Override
+    public DatabasePlatform getDbPlatform() {
+        return dbPlatform;
+    }
+
+    @Override
+    public void setDbPlatform(final DatabasePlatform dbPlatform) {
+        this.dbPlatform = dbPlatform;
     }
 
 }

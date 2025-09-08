@@ -21,8 +21,6 @@ package org.kuali.kfs.kew.actionlist.dao.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.ojb.broker.PersistenceBroker;
-import org.apache.ojb.broker.accesslayer.LookupException;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
@@ -32,17 +30,11 @@ import org.kuali.kfs.kew.actionitem.OutboxItemActionListExtension;
 import org.kuali.kfs.kew.actionlist.ActionListFilter;
 import org.kuali.kfs.kew.actionlist.dao.ActionListDAO;
 import org.kuali.kfs.kew.api.KewApiConstants;
-import org.kuali.kfs.kew.api.WorkflowRuntimeException;
 import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
 import org.kuali.kfs.kim.api.group.GroupService;
-import org.springmodules.orm.ojb.PersistenceBrokerCallback;
 import org.springmodules.orm.ojb.support.PersistenceBrokerDaoSupport;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.HashMap;
@@ -56,14 +48,11 @@ import java.util.Map;
  */
 
 /**
- * OJB implementation of the {@link ActionListDAO}.
+ * Uses OJB for directly implemented methods; throws {@link UnsupportedOperationException} for the remaining methods.
  */
 public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements ActionListDAO {
 
     private static final Logger LOG = LogManager.getLogger();
-    private static final String ACTION_LIST_COUNT_QUERY =
-            "select count(distinct(ai.doc_hdr_id)) "
-            + "from krew_actn_itm_t ai where ai.PRNCPL_ID = ? and (ai.dlgn_typ is null or ai.dlgn_typ = 'P')";
 
     private GroupService groupService;
     private DateTimeService dateTimeService;
@@ -309,7 +298,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
                 criteria.addEqualTo("delegationType", DelegationType.PRIMARY.getCode());
                 filter.setDelegationType(DelegationType.PRIMARY.getCode());
                 filter.setExcludeDelegationType(false);
-                addToFilterDescription(filteredByItems, "Primary Delegator Id");
+                filteredByItems = addToFilterDescription(filteredByItems, "Primary Delegator Id");
                 addedDelegationCriteria = true;
                 filterOn = true;
             } else if (!filter.getPrimaryDelegateId().trim().equals(KewApiConstants.PRIMARY_DELEGATION_DEFAULT)) {
@@ -330,7 +319,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
                 criteria.addEqualTo("delegationType", DelegationType.PRIMARY.getCode());
                 filter.setDelegationType(DelegationType.PRIMARY.getCode());
                 filter.setExcludeDelegationType(false);
-                addToFilterDescription(filteredByItems, "Primary Delegator Id");
+                filteredByItems = addToFilterDescription(filteredByItems, "Primary Delegator Id");
                 addedDelegationCriteria = true;
                 filterOn = true;
             }
@@ -347,7 +336,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
                 // method
                 if (!filter.isExcludeDelegationType()) {
                     criteria.addEqualTo("delegationType", DelegationType.SECONDARY.getCode());
-                    addToFilterDescription(filteredByItems, "Secondary Delegator Id");
+                    filteredByItems = addToFilterDescription(filteredByItems, "Secondary Delegator Id");
                     addedDelegationCriteria = true;
                     filterOn = true;
                 }
@@ -356,7 +345,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
                 criteria.addEqualTo("delegationType", DelegationType.SECONDARY.getCode());
                 filter.setDelegationType(DelegationType.SECONDARY.getCode());
                 filter.setExcludeDelegationType(false);
-                addToFilterDescription(filteredByItems, "Secondary Delegator Id");
+                filteredByItems = addToFilterDescription(filteredByItems, "Secondary Delegator Id");
                 addedDelegationCriteria = true;
                 filterOn = true;
             } else if (!filter.getDelegatorId().trim().equals(
@@ -385,7 +374,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
                     orCrit.addOrCriteria(groupCrit);
                     criteria.addAndCriteria(orCrit);
                 }
-                addToFilterDescription(filteredByItems, "Secondary Delegator Id");
+                filteredByItems = addToFilterDescription(filteredByItems, "Secondary Delegator Id");
                 addedDelegationCriteria = true;
                 filterOn = true;
             }
@@ -427,36 +416,11 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
         }
     }
 
-    private void addToFilterDescription(String filterDescription, final String labelToAdd) {
-        filterDescription += filterDescription.isEmpty() ? "" : ", ";
-        filterDescription += labelToAdd;
-    }
-
-    @Override
-    public int getCount(final String workflowId) {
-        return (Integer) getPersistenceBrokerTemplate().execute(new PersistenceBrokerCallback() {
-            @Override
-            public Object doInPersistenceBroker(final PersistenceBroker broker) {
-                try {
-                    // The documentation for the getConnection() method of ConnectionManagerImpl (the only
-                    // implementation of ConnectionManagerIF) documents that the caller should never call close() on the
-                    // returned Connection object. It'll be returned to the pool and re-used.
-                    final Connection connection = broker.serviceConnectionManager().getConnection();
-                    try (PreparedStatement statement = connection.prepareStatement(ACTION_LIST_COUNT_QUERY)) {
-                        statement.setString(1, workflowId);
-
-                        try (ResultSet resultSet = statement.executeQuery()) {
-                            if (!resultSet.next()) {
-                                throw new WorkflowRuntimeException("Error determining Action List Count.");
-                            }
-                            return resultSet.getInt(1);
-                        }
-                    }
-                } catch (SQLException | LookupException e) {
-                    throw new WorkflowRuntimeException("Error determining Action List Count.", e);
-                }
-            }
-        });
+    private static String addToFilterDescription(final String filterDescription, final String labelToAdd) {
+        if (filterDescription.isEmpty()) {
+            return labelToAdd;
+        }
+        return String.join(", ", filterDescription, labelToAdd);
     }
 
     /**

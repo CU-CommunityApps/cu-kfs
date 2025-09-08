@@ -2,6 +2,8 @@ package edu.cornell.kfs.concur;
 
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
+import edu.cornell.kfs.sys.CUKFSPropertyConstants;
+
 public class ConcurConstants {
     public static final String AUTHORIZATION_PROPERTY = "Authorization";
     public static final String BASIC_AUTHENTICATION_SCHEME = "Basic";
@@ -245,7 +247,7 @@ public class ConcurConstants {
     
     public static final class ConcurAIConstants {
         public static final String CHART_AND_ACCOUNT_MUST_BE_PROVIDED = "A chart and account must be provided using the proper format.  The URL parameters are "
-                + KFSPropertyConstants.CHART_OF_ACCOUNTS + " and " + KFSPropertyConstants.ACCOUNT_NUMBER;
+                + CUKFSPropertyConstants.CHART_OF_ACCOUNTS + " and " + KFSPropertyConstants.ACCOUNT_NUMBER;
         public static final String ACCOUNT_NOT_FOUND_MESSAGE = "Could not find an account with a chart of {0} and account number {1}";
         public static final String RESOURCE_NAME = "Concur AI resouce.";
     }

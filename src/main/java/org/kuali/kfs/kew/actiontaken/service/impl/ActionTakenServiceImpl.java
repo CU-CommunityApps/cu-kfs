@@ -18,6 +18,11 @@
  */
 package org.kuali.kfs.kew.actiontaken.service.impl;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.kuali.kfs.kew.actionrequest.ActionRequest;
 import org.kuali.kfs.kew.actiontaken.ActionTaken;
 import org.kuali.kfs.kew.actiontaken.dao.ActionTakenDAO;
@@ -25,10 +30,7 @@ import org.kuali.kfs.kew.actiontaken.service.ActionTakenService;
 import org.kuali.kfs.kew.api.action.WorkflowAction;
 import org.kuali.kfs.kim.api.group.GroupService;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import edu.cornell.kfs.kew.actiontaken.dao.CuActionTakenDAO;
 
 /**
  * ====
@@ -131,10 +133,23 @@ public class ActionTakenServiceImpl implements ActionTakenService {
     public Timestamp getLastApprovedDate(final String documentId) {
         return getActionTakenDAO().getLastActionTakenDate(documentId, WorkflowAction.APPROVE);
     }
-    
-    public Timestamp getLastModifiedDate(String documentId) {
-        return getActionTakenDAO().getLastModifiedDate(documentId);
+
+    /*
+     * CU Customization: Added methods related to retrieving a document's Last Modified Date.
+     */
+
+    @Override
+    public Timestamp getLastModifiedDate(final String documentId) {
+        return getCuActionTakenDAO().getLastModifiedDate(documentId);
     }
+
+    private CuActionTakenDAO getCuActionTakenDAO() {
+        return (CuActionTakenDAO) actionTakenDAO;
+    }
+
+    /*
+     * End CU Customization
+     */
 
     public void setGroupService(final GroupService groupService) {
         this.groupService = groupService;

@@ -6,11 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDateTime;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,6 +51,7 @@ import com.rsmart.kuali.kfs.cr.document.service.GlTransactionService;
 
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 import edu.cornell.kfs.sys.util.CreateTestDirectories;
 
 @Execution(ExecutionMode.SAME_THREAD)
@@ -281,7 +281,7 @@ public class CheckReconciliationImportStepTest {
         Map<String, Object> criteria = invocation.getArgument(1);
         String checkReconKey = createCheckReconMapKey(
                 (String) criteria.get(KFSPropertyConstants.BANK_ACCOUNT_NUMBER),
-                (KualiInteger) criteria.get(KFSPropertyConstants.CHECK_NUMBER));
+                (KualiInteger) criteria.get(CUKFSPropertyConstants.CHECK_NUMBER));
         CheckReconciliation checkRecon = currentCheckReconRows.get(checkReconKey);
         return (checkRecon != null) ? List.of(checkRecon) : List.of();
     }

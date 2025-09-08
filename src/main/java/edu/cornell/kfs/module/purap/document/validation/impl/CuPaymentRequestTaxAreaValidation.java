@@ -38,7 +38,7 @@ public class CuPaymentRequestTaxAreaValidation extends PaymentRequestTaxAreaVali
         }
 
         // validate that the federal and state tax rate abide to certain relationship
-        if (fedrate.compareTo(new BigDecimal(0)) == 0 && strate.compareTo(new BigDecimal(0)) != 0) {
+        if (fedrate.compareTo(BigDecimal.ZERO) == 0 && strate.compareTo(BigDecimal.ZERO) != 0) {
             valid = false;
             errorMap.putError(PurapPropertyConstants.TAX_STATE_PERCENT, PurapKeyConstants.ERROR_PAYMENT_REQUEST_TAX_RATE_MUST_ZERO_IF, PurapPropertyConstants.TAX_FEDERAL_PERCENT, PurapPropertyConstants.TAX_STATE_PERCENT);
         }

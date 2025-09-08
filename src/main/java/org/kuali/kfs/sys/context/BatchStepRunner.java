@@ -61,7 +61,7 @@ public final class BatchStepRunner {
             PojoPlugin.initBeanUtils();
             
             final String[] stepNames;
-            if (args[0].indexOf(",") > 0) {
+            if (args[0].indexOf(',') > 0) {
                 stepNames = StringUtils.split(args[0], ",");
             } else {
                 stepNames = new String[]{args[0]};

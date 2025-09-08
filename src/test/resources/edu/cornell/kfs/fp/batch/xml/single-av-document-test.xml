@@ -11,6 +11,10 @@
             <Explanation>This is an AV document for testing purposes</Explanation>
             <OrganizationDocumentNumber>WXYZ5678</OrganizationDocumentNumber>
             <AccountingPeriod>FEB. 2019</AccountingPeriod>
+            <!--
+                Temporarily leaving old element name in place for testing auto-translation to new property.
+                This element should be changed to the new name once the old name's handling is removed.
+            -->
             <AuxiliaryVoucherType>AVAD</AuxiliaryVoucherType>
             <SourceAccountingLineList>
                 <Accounting>
