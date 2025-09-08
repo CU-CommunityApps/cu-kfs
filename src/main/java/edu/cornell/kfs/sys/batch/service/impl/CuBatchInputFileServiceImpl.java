@@ -49,8 +49,7 @@ public class CuBatchInputFileServiceImpl extends BatchInputFileServiceImpl {
             throw new FileStorageException("Cannot store file because the name " + saveFileName + " already exists on the file system.");
         }
 
-        try {
-            final FileOutputStream fos = new FileOutputStream(fileToSave);
+        try (FileOutputStream fos = new FileOutputStream(fileToSave)) {
             while (fileContents.available() > 0) {
                 fos.write(fileContents.read());
             }

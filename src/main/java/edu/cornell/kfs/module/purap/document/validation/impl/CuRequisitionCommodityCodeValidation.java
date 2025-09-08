@@ -34,12 +34,12 @@ public class CuRequisitionCommodityCodeValidation extends PurchasingCommodityCod
         // if the ENABLE_COMMODITY_CODE_IND parameter is  N then we don't
         // need to check for the ITEMS_REQUIRE_COMMODITY_CODE_IND parameter anymore, just return false. 
         boolean enableCommodityCode = getParameterService()
-                .getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_COMMODITY_CODE_IND);
+                .getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.COMMODITY_CODE_IND);
         if (!enableCommodityCode) {
             return false;
         } else {        
             return getParameterService().getParameterValueAsBoolean(RequisitionDocument.class,
-                    PurapRuleConstants.ITEMS_REQUIRE_COMMODITY_CODE_IND);
+                    PurapRuleConstants.COMMODITY_CODE_REQUIRED_IND);
         }
     }
 

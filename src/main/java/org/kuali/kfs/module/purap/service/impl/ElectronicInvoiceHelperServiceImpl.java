@@ -979,10 +979,10 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
 
     protected void sendSummary(final StringBuffer message) {
         final String fromMailId = parameterService.getParameterValueAsString(ElectronicInvoiceStep.class,
-                PurapParameterConstants.ElectronicInvoiceParameters.DAILY_SUMMARY_REPORT_FROM_EMAIL_ADDRESS);
+                PurapParameterConstants.FROM_EMAIL);
         final List<String> toMailIds = new ArrayList<>(parameterService
                 .getParameterValuesAsString(ElectronicInvoiceStep.class,
-                        PurapParameterConstants.ElectronicInvoiceParameters.DAILY_SUMMARY_REPORT_TO_EMAIL_ADDRESSES));
+                        PurapParameterConstants.TO_EMAIL));
 
         LOG.info("From email address parameter value:{}", fromMailId);
         LOG.info("To email address parameter value:{}", toMailIds);
@@ -1049,8 +1049,8 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
 
         //  determine which of the reject reasons we should suppress based on the parameter
         final List<String> ignoreRejectTypes = new ArrayList<>(parameterService
-                .getParameterValuesAsString(PurapConstants.PURAP_NAMESPACE, "ElectronicInvoiceReject",
-                        "SUPPRESS_REJECT_REASON_CODES_ON_EIRT_APPROVAL"));
+                .getParameterValuesAsString(ElectronicInvoiceStep.class,
+                        PurapParameterConstants.ElectronicInvoiceParameters.REJECT_REASONS_CODES));
         final List<ElectronicInvoiceRejectReason> rejectReasonsToDelete = new ArrayList<>();
         for (final ElectronicInvoiceRejectReason rejectReason : rejectDocument.getInvoiceRejectReasons()) {
             final String rejectedReasonTypeCode = rejectReason.getInvoiceRejectReasonTypeCode();
@@ -1298,7 +1298,7 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
      */
     protected void setProcessingCampus(final PaymentRequestDocument preqDoc, final String initiatorCampusCode) {
         final String campusCode = parameterService.getParameterValueAsString(ElectronicInvoiceStep.class,
-                PurapParameterConstants.ElectronicInvoiceParameters.OVERRIDE_PROCESSING_CAMPUS);
+                PurapParameterConstants.ElectronicInvoiceParameters.PROCESSING_CAMPUS);
         if (!StringHelper.isNullOrEmpty(campusCode)) {
             preqDoc.setProcessingCampusCode(campusCode);
         } else {

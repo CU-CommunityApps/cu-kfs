@@ -18,7 +18,6 @@
  */
 package org.kuali.kfs.module.ar.batch.service.impl;
 
-import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
@@ -122,20 +121,6 @@ public class VerifyBillingFrequencyServiceImpl implements VerifyBillingFrequency
     private Date calculateDaysBeyond(final Date date, final int daysBeyond) {
         final LocalDate beyondDate = date.toLocalDate().plusDays(daysBeyond);
         return Date.valueOf(beyondDate);
-    }
-
-    /**
-     * This checks to see if the period code is empty or invalid ("13", "AB", "BB", "CB")
-     *
-     * @param period
-     * @return
-     */
-    protected boolean isInvalidPeriodCode(final AccountingPeriod period) {
-        final String periodCode = period.getUniversityFiscalPeriodCode();
-        if (StringUtils.isBlank(periodCode)) {
-            throw new IllegalArgumentException("invalid (null) universityFiscalPeriodCode (" + periodCode + ")for" + period);
-        }
-        return invalidPeriodCodes.contains(periodCode);
     }
 
     /**

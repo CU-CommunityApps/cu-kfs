@@ -197,7 +197,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     }
 
     protected void renderGroupLevelActions(final PageContext pageContext, final Tag parentTag) throws JspException {
-        final JspWriter out = pageContext.getOut();
+        final JspWriter out = pageContext.getOut(); // NOPMD - JSP container will automatically close
 
         try {
             out.write(buildGroupActionsBeginning());
@@ -374,7 +374,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      * @throws JspException thrown if something goes wrong
      */
     protected void renderUploadCell(final PageContext pageContext, final Tag parentTag) throws JspException {
-        final JspWriter out = pageContext.getOut();
+        final JspWriter out = pageContext.getOut(); // NOPMD - JSP container will automatically close
 
         if (canUpload()) {
             try {

@@ -17,7 +17,7 @@ import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.coa.service.impl.AccountingPeriodServiceImpl;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.fp.document.AuxiliaryVoucherDocument;
+import org.kuali.kfs.fp.document.AdjustmentAccrualVoucherDocument;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
@@ -71,14 +71,14 @@ public class CreateAccountingDocumentServiceImplTestAV extends CreateAccountingD
     protected void assertAccountingDocumentIsCorrect(Class<? extends AccountingDocument> documentClass,
             AccountingDocument expectedDocument, AccountingDocument actualDocument) {
         super.assertAccountingDocumentIsCorrect(documentClass, expectedDocument, actualDocument);
-        if (AuxiliaryVoucherDocument.class.isAssignableFrom(documentClass)) {
-            assertAuxiliaryVoucherDocumentIsCorrect((AuxiliaryVoucherDocument) expectedDocument,
-                    (AuxiliaryVoucherDocument) actualDocument);
+        if (AdjustmentAccrualVoucherDocument.class.isAssignableFrom(documentClass)) {
+            assertAdjustmentAccrualVoucherDocumentIsCorrect((AdjustmentAccrualVoucherDocument) expectedDocument,
+                    (AdjustmentAccrualVoucherDocument) actualDocument);
         }
     }
 
-    private void assertAuxiliaryVoucherDocumentIsCorrect(AuxiliaryVoucherDocument expectedDocument,
-            AuxiliaryVoucherDocument actualDocument) {
+    private void assertAdjustmentAccrualVoucherDocumentIsCorrect(AdjustmentAccrualVoucherDocument expectedDocument,
+            AdjustmentAccrualVoucherDocument actualDocument) {
         assertEquals("Wrong accounting period code", expectedDocument.getPostingPeriodCode(),
                 actualDocument.getPostingPeriodCode());
         assertEquals("Wrong accounting period fiscal year", expectedDocument.getPostingYear(),
@@ -92,11 +92,11 @@ public class CreateAccountingDocumentServiceImplTestAV extends CreateAccountingD
         ConfigurationService configurationService = super.buildMockConfigurationService();
         Mockito.when(configurationService
                 .getPropertyValueAsString(Mockito.startsWith(CuFPTestConstants.AV_VALIDATION_MESSAGE_KEY_PREFIX)))
-                .then(this::buildAuxiliaryVoucherErrorMessage);
+                .then(this::buildAdjustmentAccrualVoucherErrorMessage);
         return configurationService;
     }
 
-    private String buildAuxiliaryVoucherErrorMessage(InvocationOnMock invocation) {
+    private String buildAdjustmentAccrualVoucherErrorMessage(InvocationOnMock invocation) {
         String messageKey = invocation.getArgument(0);
         return messageKey + " {0}";
     }
@@ -145,7 +145,7 @@ public class CreateAccountingDocumentServiceImplTestAV extends CreateAccountingD
 
         protected AccountingDocumentGenerator<?> buildAccountingDocumentGenerator(
                 BiFunction<Supplier<Note>, Supplier<AdHocRoutePerson>, AccountingDocumentGeneratorBase<?>> generatorConstructor) {
-            AuxiliaryVoucherDocumentGenerator avGenerator = (AuxiliaryVoucherDocumentGenerator) super.buildAccountingDocumentGenerator(
+            AdjustmentAccrualVoucherDocumentGenerator avGenerator = (AdjustmentAccrualVoucherDocumentGenerator) super.buildAccountingDocumentGenerator(
                     generatorConstructor);
             avGenerator.setAccountingPeriodService(accountingPeriodService);
             avGenerator.setDateTimeService(dateTimeService);

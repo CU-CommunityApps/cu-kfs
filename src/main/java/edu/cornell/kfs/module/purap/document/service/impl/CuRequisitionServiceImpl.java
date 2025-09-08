@@ -128,7 +128,7 @@ public class CuRequisitionServiceImpl extends RequisitionServiceImpl {
         // These are needed for commodity codes. They are put in here so that we don't have to loop through items too
         // many times.
         final String purchaseOrderRequiresCommodityCode = parameterService.getParameterValueAsString(
-                PurchaseOrderDocument.class, PurapRuleConstants.ITEMS_REQUIRE_COMMODITY_CODE_IND);
+                PurchaseOrderDocument.class, PurapRuleConstants.COMMODITY_CODE_REQUIRED_IND);
         final boolean commodityCodeRequired = "Y".equals(purchaseOrderRequiresCommodityCode);
         
         for (final Object anItem : requisition.getItems()) {

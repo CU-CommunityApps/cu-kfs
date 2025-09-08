@@ -379,24 +379,6 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     }
 
     /**
-     * figure out the current customer Number on the form
-     *
-     * @param paymentApplicationForm
-     * @return
-     */
-    protected String findCustomerNumber(final PaymentApplicationForm paymentApplicationForm) {
-        final boolean validInvoice = isValidInvoice(paymentApplicationForm);
-        String customerNumber = paymentApplicationForm.getSelectedCustomerNumber();
-        final String currentInvoiceNumber = paymentApplicationForm.getEnteredInvoiceDocumentNumber();
-        // Invoice number entered, but no customer number entered
-        if (StringUtils.isBlank(customerNumber) && StringUtils.isNotBlank(currentInvoiceNumber) && validInvoice) {
-            final Customer customer = getCustomerInvoiceDocumentService().getCustomerByInvoiceDocumentNumber(currentInvoiceNumber);
-            customerNumber = customer.getCustomerNumber();
-        }
-        return customerNumber;
-    }
-
-    /**
      * checks if the invoice is valid
      *
      * @param paymentApplicationForm

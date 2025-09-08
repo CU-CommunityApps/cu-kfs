@@ -13,6 +13,43 @@
     <property name="promptBeforeValidationClass" value="org.kuali.kfs.fp.document.validation.impl.ExpiredAccountOverridePreRules"/>
   </bean>
 
+    <!--
+	    Temporary override of parent bean to backport the FINP-11027 changes.
+		This bean override should be removed when we upgrade to the 2024-05-29 financials patch.
+	-->
+	<bean id="PurchaseOrderAmendmentDocument-parentBean" abstract="true"
+          parent="PurchaseOrderDocument-parentBean" p:documentTypeName="POA" p:sessionDocument="true"
+          p:documentClass="org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument"
+          p:baseDocumentClass="org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument"
+          p:businessRulesClass="org.kuali.kfs.sys.document.validation.impl.AccountingRuleEngineRuleBase"
+          p:documentAuthorizerClass="org.kuali.kfs.module.purap.document.authorization.PurchasingAccountsPayableTransactionalDocumentAuthorizerBase"
+          p:documentPresentationControllerClass="org.kuali.kfs.module.purap.document.authorization.PurchaseOrderAmendmentDocumentPresentationController"
+          p:importedLineParserClass="org.kuali.kfs.module.purap.businessobject.PurApAccountingLineParser"
+          p:potentiallySensitive="true" p:workflowAttributes-ref="PurchaseOrderAmendmentDocument-workflowAttributes"
+          p:validationMap-ref="PurchaseOrderAmendmentDocument-validations">
+        <property name="attributes">
+            <list merge="true">
+                <ref bean="PurchaseOrderAmendmentDocument-newUnorderedItem"/>
+                <ref bean="PurchaseOrderAmendmentDocument-receivingDeliveryCampusCode"/>
+            </list>
+        </property>
+        <property name="relationships">
+            <list>
+                <bean parent="RelationshipDefinition" p:objectAttributeName="deliveryCampus">
+                    <property name="primitiveAttributes">
+                        <list>
+                            <bean parent="PrimitiveAttributeDefinition" p:sourceName="deliveryCampusCode"
+                                  p:targetName="campusCode"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+	<!--
+	    End of FINP-11027 backport.
+	-->
+
     <bean id="RoutingType-PurchaseOrderAmendmentDocument-newUnorderedItemAccount" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>

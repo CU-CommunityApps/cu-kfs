@@ -21,6 +21,9 @@ package org.kuali.kfs.vnd.document.validation.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.Organization;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kns.datadictionary.BusinessObjectEntry;
 import org.kuali.kfs.kns.datadictionary.validation.fieldlevel.FixedPointValidationPattern;
@@ -64,9 +67,6 @@ import org.kuali.kfs.vnd.businessobject.W8TypeOwnershipType;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.CommodityCodeService;
 import org.kuali.kfs.vnd.service.TaxNumberService;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.springframework.util.AutoPopulatingList;
 
 import java.lang.reflect.Field;
@@ -79,6 +79,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Business rules applicable to VendorDetail document.
@@ -824,7 +825,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         final String vendorAddressTabPrefix = KFSConstants.ADD_PREFIX + "." + VendorPropertyConstants.VENDOR_ADDRESS + ".";
         if (StringUtils.isNotBlank(vendorTypeCode) && StringUtils.isNotBlank(vendorAddressTypeRequiredCode)
                 && !validAddressType) {
-            final String[] parameters = new String[]{vendorTypeCode, vendorAddressTypeRequiredCode};
+            final String[] parameters = {vendorTypeCode, vendorAddressTypeRequiredCode};
             putFieldError(vendorAddressTabPrefix + VendorPropertyConstants.VENDOR_ADDRESS_TYPE_CODE,
                     VendorKeyConstants.ERROR_ADDRESS_TYPE, parameters);
             final String addressLine1Label = getDataDictionaryService().getAttributeLabel(VendorAddress.class,
@@ -878,7 +879,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
                 value = (Integer) itr.next();
                 if (!vendorDivisionsIdsWithDesiredAddressType.contains(value)) {
                     vendorId = newVendor.getVendorHeaderGeneratedIdentifier().toString() + '-' + value.toString();
-                    final String[] parameters = new String[]{vendorId, vendorTypeCode, vendorAddressTypeRequiredCode};
+                    final String[] parameters = {vendorId, vendorTypeCode, vendorAddressTypeRequiredCode};
 
                     //divisions without the desired address type should only be an warning
                     GlobalVariables.getMessageMap().putWarningWithoutFullErrorPath(MAINTAINABLE_ERROR_PREFIX +
@@ -964,7 +965,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         // if the selected address type does not allow defaults, then the user should not be allowed to
         // select the default indicator or add any campuses to the address
         if (!allowDefaultAddressIndicator) {
-            final String[] parameters = new String[]{addedAddressTypeCode};
+            final String[] parameters = {addedAddressTypeCode};
             GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_DEFAULT_ADDRESS +
                     "[" + 0 + "]." + VendorPropertyConstants.VENDOR_DEFAULT_ADDRESS_CAMPUS,
                     VendorKeyConstants.ERROR_ADDRESS_DEFAULT_CAMPUS_NOT_ALLOWED, parameters);
@@ -977,7 +978,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             if (vendorDefaultAddress.getVendorCampusCode().equalsIgnoreCase(addedAddressCampusCode)) {
                 GlobalVariables.getMessageMap().clearErrorPath();
                 GlobalVariables.getMessageMap().addToErrorPath(errorPath);
-                final String[] parameters = new String[]{addedAddressCampusCode, addedAddressTypeCode};
+                final String[] parameters = {addedAddressCampusCode, addedAddressTypeCode};
                 GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_DEFAULT_ADDRESS +
                         "[" + i + "]." + VendorPropertyConstants.VENDOR_DEFAULT_ADDRESS_CAMPUS,
                         VendorKeyConstants.ERROR_ADDRESS_DEFAULT_CAMPUS, parameters);
@@ -1002,10 +1003,15 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         String addressTypeDesc;
         String campusCode;
         boolean valid = true;
-        boolean previousValue = false;
 
         // This is a HashMap to store the default Address Type Codes and their associated default Indicator
         final HashMap<String, Boolean> addressTypeCodeDefaultIndicator = new HashMap<>();
+
+        // This is a HashSet to store the Address Type Codes which have "allow default indicator" set to true/yes
+        final Set<String> addressTypesRequiringDefault = vendorAddresses.stream()
+                .filter(this::findAllowDefaultAddressIndicatorHelper)
+                .map(VendorAddress::getVendorAddressTypeCode)
+                .collect(Collectors.toCollection(HashSet::new));
 
         // This is a HashMap to store Address Type Codes and Address Campus Codes for Default Addresses
         final HashMap<String, String> addressTypeDefaultCampus = new HashMap<>();
@@ -1020,27 +1026,30 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             addressTypeDesc = address.getVendorAddressType().getVendorAddressTypeDescription();
             final String errorPath = MAINTAINABLE_ERROR_PREFIX + VendorPropertyConstants.VENDOR_ADDRESS + "[" + i + "]";
             GlobalVariables.getMessageMap().addToErrorPath(errorPath);
-            final String[] parameters = new String[]{addressTypeCode};
+            final String[] parameters = {addressTypeCode};
 
             // If "allow default indicator" is set to true/yes for address type, one address must have the default
             // indicator set (no more, no less).
             // For example, if a vendor contains three PO type addresses and the PO address type is set to allow
             // defaults in the address type table, then only one of these PO addresses can have the default indicator
             // set to true/yes.
-            if (findAllowDefaultAddressIndicatorHelper(address)) {
+            if (addressTypesRequiringDefault.contains(addressTypeCode)) {
                 if (address.isVendorDefaultAddressIndicator()) {
                     addressTypesHavingDefaultTrue.add(addressTypeCode);
                 }
-                if (!addressTypeCodeDefaultIndicator.isEmpty()
-                        && addressTypeCodeDefaultIndicator.containsKey(addressTypeCode)) {
-                    previousValue = addressTypeCodeDefaultIndicator.get(addressTypeCode);
-                }
 
-                if (addressTypeCodeDefaultIndicator.put(addressTypeCode, address.isVendorDefaultAddressIndicator()) != null
-                        && previousValue && address.isVendorDefaultAddressIndicator()) {
+                if (address.isVendorDefaultAddressIndicator() && isDefaultPreviouslySet(addressTypeCode,
+                        addressTypeCodeDefaultIndicator
+                )) {
                     GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_DEFAULT_ADDRESS_INDICATOR,
-                            VendorKeyConstants.ERROR_ADDRESS_DEFAULT_INDICATOR, addressTypeDesc);
+                            VendorKeyConstants.ERROR_ADDRESS_DEFAULT_INDICATOR,
+                            addressTypeDesc
+                    );
                     valid = false;
+                } else if (address.isVendorDefaultAddressIndicator() && !isDefaultPreviouslySet(addressTypeCode,
+                        addressTypeCodeDefaultIndicator
+                )) {
+                    addressTypeCodeDefaultIndicator.put(addressTypeCode, address.isVendorDefaultAddressIndicator());
                 }
 
             } else {
@@ -1064,7 +1073,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
                 campusCode = addressTypeDefaultCampus.put(addressTypeCode, defaultAddress.getVendorCampusCode());
                 if (StringUtils.isNotBlank(campusCode)
                         && campusCode.equalsIgnoreCase(defaultAddress.getVendorCampusCode())) {
-                    final String[] newParameters = new String[]{defaultAddress.getVendorCampusCode(), addressTypeCode};
+                    final String[] newParameters = {defaultAddress.getVendorCampusCode(), addressTypeCode};
                     GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_DEFAULT_ADDRESS +
                             "[" + j + "]." + VendorPropertyConstants.VENDOR_DEFAULT_ADDRESS_CAMPUS,
                             VendorKeyConstants.ERROR_ADDRESS_DEFAULT_CAMPUS, newParameters);
@@ -1078,13 +1087,12 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 
         // If "allow default indicator" is set to true/yes for address type, one address must have the default
         // indicator set to true
-        if (!addressTypeCodeDefaultIndicator.isEmpty()) {
-            final Set<String> addressTypes = addressTypeCodeDefaultIndicator.keySet();
-            for (final String addressType : addressTypes) {
+        if (!addressTypesRequiringDefault.isEmpty()) {
+            for (final String addressType : addressTypesRequiringDefault) {
                 if (!addressTypesHavingDefaultTrue.contains(addressType)) {
                     int addressIndex = 0;
                     for (final VendorAddress address : vendorAddresses) {
-                        final String[] parameters = new String[]{address.getVendorAddressType().getVendorAddressTypeDescription()};
+                        final String[] parameters = {address.getVendorAddressType().getVendorAddressTypeDescription()};
                         final String propertyName = VendorPropertyConstants.VENDOR_ADDRESS + "[" + addressIndex + "]." +
                                                     VendorPropertyConstants.VENDOR_DEFAULT_ADDRESS_INDICATOR;
                         if (address.getVendorAddressType().getVendorAddressTypeCode().equalsIgnoreCase(addressType)) {
@@ -1099,6 +1107,16 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         }
 
         return valid;
+    }
+
+    private static boolean isDefaultPreviouslySet(
+            final String addressTypeCode,
+            final HashMap<String, Boolean> addressTypeCodeDefaultIndicator
+    ) {
+        if (addressTypeCode.isEmpty() || !addressTypeCodeDefaultIndicator.containsKey(addressTypeCode)) {
+            return false;
+        }
+        return addressTypeCodeDefaultIndicator.get(addressTypeCode);
     }
 
     /**
@@ -1425,7 +1443,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
                         //check for duplicate campus; vendor is implicitly the same
                         if (contract.getVendorCampusCode().equals(vndrContract.getVendorCampusCode())) {
                             valid = false;
-                            final String[] errorArray = new String[]{contract.getVendorContractName(),
+                            final String[] errorArray = {contract.getVendorContractName(),
                                     contract.getVendorCampusCode()};
                             GlobalVariables.getMessageMap().putError(
                                     VendorPropertyConstants.VENDOR_CONTRACT_B2B_INDICATOR,

@@ -18,6 +18,7 @@
  */
 package org.kuali.kfs.module.purap;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -114,12 +115,12 @@ public final class CreditMemoStatuses {
         STATUSES_DISALLOWING_HOLD.add(APPDOC_INITIATE);
         STATUSES_DISALLOWING_HOLD.add(APPDOC_IN_PROCESS);
         STATUSES_DISALLOWING_HOLD
-                .addAll(Arrays.asList(CANCELLED_STATUSES.toArray(new String[CANCELLED_STATUSES.size()])));
+                .addAll(Arrays.asList(CANCELLED_STATUSES.toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
 
         STATUSES_NOT_REQUIRING_ENTRY_REVERSAL.add(APPDOC_INITIATE);
         STATUSES_NOT_REQUIRING_ENTRY_REVERSAL.add(APPDOC_IN_PROCESS);
         STATUSES_NOT_REQUIRING_ENTRY_REVERSAL
-                .addAll(Arrays.asList(CANCELLED_STATUSES.toArray(new String[CANCELLED_STATUSES.size()])));
+                .addAll(Arrays.asList(CANCELLED_STATUSES.toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
     }
 
     public static HashMap<String, String> getCreditMemoAppDocDisapproveStatuses() {

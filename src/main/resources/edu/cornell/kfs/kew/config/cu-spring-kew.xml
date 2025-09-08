@@ -58,6 +58,13 @@
         </property>
     </bean>
 
+    <bean class="edu.cornell.kfs.kew.actiontaken.dao.impl.CuActionTakenDaoImpl"
+          id="actionTakenDAO"
+          lazy-init="true"
+          c:actionTakenDaoOjb-ref="actionTakenDaoOjb"
+          c:jdbcTemplate-ref="jdbcTemplate"
+    />
+
     <!-- Override action list and action item DAOs/services to support the action list notes customization. -->
 
     <bean id="actionItemDAO" class="edu.cornell.kfs.kew.actionitem.dao.impl.CuActionItemDAOOjbImpl" lazy-init="true"
@@ -71,7 +78,12 @@
 
     <!-- Override route header service and DAO to add a helper method that the 1099/1042S tax process relies on. -->
 
-    <bean id="documentRouteHeaderDAO" parent="documentRouteHeaderDAO-parentBean"
+    <bean id="documentRouteHeaderDAO"
+          parent="documentRouteHeaderDAO-parentBean"
+          class="edu.cornell.kfs.kew.routeheader.dao.impl.CuDocumentRouteHeaderDaoImpl"/>
+
+    <bean id="documentRouteHeaderDaoOjb"
+          parent="documentRouteHeaderDaoOjb-parentBean"
           class="edu.cornell.kfs.kew.routeheader.dao.impl.CuDocumentRouteHeaderDAOOjbImpl"/>
 
     <bean id="documentRouteHeaderService" parent="documentRouteHeaderService-parentBean"

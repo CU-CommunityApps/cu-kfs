@@ -4,11 +4,11 @@
         <documentType>
             <name>AV</name>
             <parent>FP</parent>
-            <label>Auxiliary Voucher</label>
+            <label>Adjustment/Accrual Voucher</label>
             <authorizer>org.kuali.kfs.krad.workflow.authorizer.CfDocumentTypeAuthorizer</authorizer>
-            <docHandler>${application.url}/financialAuxiliaryVoucher.do?methodToCall=docHandler</docHandler>
-            <helpDefinitionURL>default.htm?turl=WordDocuments%2Fauxiliaryvoucher.htm</helpDefinitionURL>
-            <docSearchHelpURL>default.htm?turl=WordDocuments%2Fauxiliaryvoucher.htm</docSearchHelpURL>
+            <docHandler>${application.url}/financialAdjustmentAccrualVoucher.do?methodToCall=docHandler</docHandler>
+            <helpDefinitionURL>default.htm?turl=WordDocuments%2Fadjustmentaccrualvoucher.htm</helpDefinitionURL>
+            <docSearchHelpURL>default.htm?turl=WordDocuments%2Fadjustmentaccrualvoucher.htm</docSearchHelpURL>
             <active>true</active>
             <routingVersion>2</routingVersion>
             <routePaths>
