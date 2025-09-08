@@ -48,7 +48,7 @@ import java.util.Map;
  */
 
 /**
- * OJB implementation of the {@link ActionListDAO}.
+ * Uses OJB for directly implemented methods; throws {@link UnsupportedOperationException} for the remaining methods.
  */
 public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements ActionListDAO {
 
