@@ -115,11 +115,11 @@
 </c:if>
         <c:choose>
             <c:when test="${!empty userNameFieldName}">
-                <span style="white-space:nowrap;" id="${userNameFieldName}.div">${userName}&nbsp;</span>
+                <span style="white-space:nowrap;" id="${userNameFieldName}.div"><c:out value="${userName}" />&nbsp;</span>
             </c:when>
             <c:otherwise><%-- guess at the name if the name field is not being rendered --%>
                 <%-- CU Customization: Reference the potentially masked name field instead. --%>
-                <span style="white-space:nowrap;" id='${fn:replace( userIdFieldName, ".principalName", ".nameMaskedIfNecessary" )}.div'>${userName}&nbsp;</span>
+                <span style="white-space:nowrap;" id='${fn:replace( userIdFieldName, ".principalName", ".nameMaskedIfNecessary" )}.div'><c:out value="${userName}" />&nbsp;</span>
                 <%-- When the user name field is not set, most likely, the name is not passed through
                      (It is also not available to be passed in, since only the Field objects are present
                      for use by rowDisplay.tag.  So, we fire off the needed JS to update the name. --%>
