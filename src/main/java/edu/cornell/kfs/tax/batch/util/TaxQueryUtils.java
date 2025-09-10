@@ -5,6 +5,7 @@ import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.function.Function;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 
 /**
@@ -114,6 +115,16 @@ public final class TaxQueryUtils {
                     .appendLastFunctionOperand(sqlType, otherValue);
         }
 
+        public static SqlFunction TO_CHAR(final TaxDtoFieldEnum field) {
+            return builder -> builder.appendFunctionNameAndFirstOperand("TO_CHAR", field)
+                    .appendSql(CUKFSConstants.RIGHT_PARENTHESIS);
+        }
+
+        public static SqlFunction CONCAT(final SqlFunction nestedFunction, final String suffix) {
+            return builder -> builder.appendFunctionNameAndFirstOperand("CONCAT", nestedFunction)
+                    .appendLastFunctionOperand(Types.VARCHAR, suffix);
+        }
+
     }
 
     @FunctionalInterface
@@ -175,6 +186,32 @@ public final class TaxQueryUtils {
                     .appendColumnLabelForField(secondField);
         }
 
+        public static Criteria between(final TaxDtoFieldEnum field, final int sqlType,
+                final Object rangeStart, final Object rangeEnd) {
+            return builder -> builder.appendLeftHalfOfBetweenCondition(field)
+                    .appendParameter(sqlType, rangeStart)
+                    .appendSql(" AND ")
+                    .appendParameter(sqlType, rangeEnd);
+        }
+
+        public static Criteria between(final TaxDtoFieldEnum sourceField,
+                final TaxDtoFieldEnum rangeStartField, final TaxDtoFieldEnum rangeEndField) {
+            return builder -> builder.appendLeftHalfOfBetweenCondition(sourceField)
+                    .appendColumnLabelForField(rangeStartField)
+                    .appendSql(" AND ")
+                    .appendColumnLabelForField(rangeEndField);
+        }
+
+        public static Criteria like(final TaxDtoFieldEnum firstField, final String pattern) {
+            return builder -> builder.appendLeftHalfOfLikeCondition(firstField)
+                    .appendParameter(Types.VARCHAR, pattern);
+        }
+
+        public static Criteria like(final TaxDtoFieldEnum firstField, final SqlFunction patternAsFunction) {
+            return builder -> builder.appendLeftHalfOfLikeCondition(firstField)
+                    .appendSqlFunction(patternAsFunction);
+        }
+
         public static Criteria isNull(final TaxDtoFieldEnum field) {
             return builder -> builder.appendNullCheckCondition(field, true);
         }
@@ -191,6 +228,10 @@ public final class TaxQueryUtils {
             return builder -> builder.appendInCondition(field, sqlType, values);
         }
 
+        public static Criteria in(final TaxDtoFieldEnum field, final TaxQueryBuilder subQuery) {
+            return builder -> builder.appendInCondition(field, subQuery);
+        }
+
         public static Criteria notIn(final TaxDtoFieldEnum field, final Collection<? extends String> values) {
             return notIn(field, Types.VARCHAR, values);
         }
@@ -205,6 +246,10 @@ public final class TaxQueryUtils {
 
         public static Criteria or(final Criteria... criteria) {
             return builder -> builder.appendOrCondition(true, criteria);
+        }
+
+        public static Criteria notAnd(final Criteria... criteria) {
+            return builder -> builder.appendNotAndCondition(criteria);
         }
 
     }
