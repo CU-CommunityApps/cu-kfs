@@ -6,57 +6,46 @@ import java.util.List;
 
 public enum ViewsIntegFixture {
     COLLEGE_ORG_HRCY_V(
-            "COLLEGE_ORG_HRCY_V",
             "SELECT FIN_COA_CD, ORG_CD, ORG_NM, COLLEGE_FIN_COA_CD, COLLEGE_ORG_CD, COLLEGE_ORG_NM FROM KFS.COLLEGE_ORG_HRCY_V WHERE ORG_CD = '0100'",
             createExpectedResults_COLLEGE_ORG_HRCY_V()),
     
     PERSON_DEPARTMENT_INFO_V_INCOMPLETE_DATA(
-            "PERSON_DEPARTMENT_INFO_V_INCOMPLETE_DATA",
             "SELECT NET_ID, FULL_NAME, LAST_NAME, FIRST_NAME, MIDDLE_NAME, PRIMARY_DEPARTMENT, DEPARTMENT_CHART, DEPARTMENT_ORG_CD, DEPARTMENT_ORG_NAME, COLLEGE_CHART, COLLEGE_ORG_CD, COLLEGE_ORG_NAME FROM KFS.PERSON_DEPARTMENT_INFO_V WHERE NET_ID = 'imw4'",
             createExpectedResults_PERSON_DEPARTMENT_INFO_V_INCOMPLETE_DATA()),
     
     PERSON_DEPARTMENT_INFO_V_COMPLETE_DATA(
-            "PERSON_DEPARTMENT_INFO_V_COMPLETE_DATA",
             "SELECT NET_ID, FULL_NAME, LAST_NAME, FIRST_NAME, MIDDLE_NAME, PRIMARY_DEPARTMENT, DEPARTMENT_CHART, DEPARTMENT_ORG_CD, DEPARTMENT_ORG_NAME, COLLEGE_CHART, COLLEGE_ORG_CD, COLLEGE_ORG_NAME FROM KFS.PERSON_DEPARTMENT_INFO_V WHERE NET_ID = 'jdh34'",
             createExpectedResults_PERSON_DEPARTMENT_INFO_V_COMPLETE_DATA()),
     
     PCDO_INFO_V(
-            "PCDO_INFO_V",
             "SELECT DOCUMENT_ID, TRANSACTION_DATE, TOTAL_AMOUNT, TOTAL_AMOUNT_FORMATTED, HOLDER_NAME, HOLDER_NET_ID, VENDOR_NAME FROM KFS.PCDO_INFO_V WHERE DOCUMENT_ID = '132868'",
             createExpectedResults_PCDO_INFO_V()),
     
     PCARD_USER_INFO_V_INCOMPLETE_DATA(
-            "PCARD_USER_INFO_V_INCOMPLETE_DATA",
             "SELECT FULL_NAME, NET_ID, DEPARTMENT_ORG_CD, DEPARTMENT_ORG_NAME, COLLEGE_ORG_CD, COLLEGE_ORG_NAME, CARD_ACCOUNT_NBR, EMPLOYEE_ID, CARD_ACCOUNT_STATUS, CYCLE_START_DATE, SUMMARY_AMOUNT, LOAD_DATE, HAS_ESHOP FROM KFS.PCARD_USER_INFO_V WHERE NET_ID = 'jdh34'",
             createExpectedResults_PCARD_USER_INFO_V_INCOMPLETE_DATA()),
     
     PERSON_ESHOP_ROLE_V_COMPLETE_DATA(
-            "PERSON_ESHOP_ROLE_V_COMPLETE_DATA",
             "SELECT NET_ID, ESHOP_ROLE_COUNT FROM KFS.PERSON_ESHOP_ROLE_V WHERE NET_ID = 'tjh265'",
             createExpectedResults_PERSON_ESHOP_ROLE_V_COMPLETE_DATA()),
     
     PERSON_ESHOP_ROLE_V_INCOMPLETE_DATA(
-            "PERSON_ESHOP_ROLE_V_INCOMPLETE_DATA",
             "SELECT NET_ID, ESHOP_ROLE_COUNT FROM KFS.PERSON_ESHOP_ROLE_V WHERE NET_ID = 'jdh34'",
             createExpectedResults_PERSON_ESHOP_ROLE_V_INCOMPLETE_DATA()),
     
     PERSON_ROLE_V_INCOMPLETE_DATA(
-            "PERSON_ROLE_V_INCOMPLETE_DATA",
             "SELECT PRINCIPAL_ID, NET_ID, ROLE_NAMESPACE, ROLE_NAME, ROLE_ID FROM KFS.PERSON_ROLE_V WHERE NET_ID = 'imw4'",
             createExpectedResults_PERSON_ROLE_V_INCOMPLETE_DATA()),
     
     PERSON_ROLE_V_COMPLETE_DATA(
-            "PERSON_ROLE_V_COMPLETE_DATA",
             "SELECT PRINCIPAL_ID, NET_ID, ROLE_NAMESPACE, ROLE_NAME, ROLE_ID FROM KFS.PERSON_ROLE_V WHERE NET_ID = 'jdh34'",
             createExpectedResults_PERSON_ROLE_V_COMPLETE_DATA()),
     
     PURCHASE_DETAILS_V_COMPLETE_DATA(
-            "PURCHASE_DETAILS_V_COMPLETE_DATA",
             "SELECT NET_ID, PRINCIPAL_ID, DOCUMENT_ID, DOC_TITLE, STATUS_CODE, CREATE_DATE, FINALIZATION_DATE, DOC_TYPE_ID, TOTAL_AMOUNT, DOC_TYPE_NAME, DOCUMENT_LABEL, REQS_VENDOR_NAME, IWANT_VENDOR_NAME, VENDOR_NAME FROM KFS.PURCHASE_DETAILS_V WHERE NET_ID = 'dp65'",
             createExpectedResults_PURCHASE_DETAILS_V_COMPLETE_DATA()),
     
     PURCHASE_DETAILS_V_INCOMPLETE_DATA(
-            "PURCHASE_DETAILS_V_INCOMPLETE_DATA",
             "SELECT NET_ID, PRINCIPAL_ID, DOCUMENT_ID, DOC_TITLE, STATUS_CODE, CREATE_DATE, FINALIZATION_DATE, DOC_TYPE_ID, TOTAL_AMOUNT, DOC_TYPE_NAME, DOCUMENT_LABEL, REQS_VENDOR_NAME, IWANT_VENDOR_NAME, VENDOR_NAME FROM KFS.PURCHASE_DETAILS_V WHERE NET_ID = 'jdh34'",
             createExpectedResults_PURCHASE_DETAILS_V_INCOMPLETE_DATA());
     
@@ -234,13 +223,9 @@ public enum ViewsIntegFixture {
         return expectedResultSetList;
     }
     
-    private final String identifierForViewAndDataBeingTested;
     private final String query;
     private final List<HashMap<String, String>> expectedResults;
     
-    public String getIdentifierForViewAndDataBeingTested() {
-        return identifierForViewAndDataBeingTested;
-    }
     
     public String getQuery() {
         return query;
@@ -250,8 +235,7 @@ public enum ViewsIntegFixture {
         return expectedResults;
     }
     
-    ViewsIntegFixture(String identifierForViewAndDataBeingTested, String query, List<HashMap<String, String>> expectedResults) {
-        this.identifierForViewAndDataBeingTested = identifierForViewAndDataBeingTested;
+    ViewsIntegFixture(String query, List<HashMap<String, String>> expectedResults) {
         this.query = query;
         this.expectedResults = expectedResults;
     }

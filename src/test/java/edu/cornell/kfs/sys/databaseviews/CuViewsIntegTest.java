@@ -39,61 +39,61 @@ public class CuViewsIntegTest extends KualiIntegTestBase {
     @Test
     public void testCollegeOrgHierarchyView() {
         List dataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.COLLEGE_ORG_HRCY_V.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.COLLEGE_ORG_HRCY_V.getIdentifierForViewAndDataBeingTested(), dataValuesReturned, ViewsIntegFixture.COLLEGE_ORG_HRCY_V.getExpectedResults()));
+        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.COLLEGE_ORG_HRCY_V.name(), dataValuesReturned, ViewsIntegFixture.COLLEGE_ORG_HRCY_V.getExpectedResults()));
     }
 
 
     @Test
     public void testPersonDepartmentInfoView() {
         List incompleteDataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_INCOMPLETE_DATA.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_INCOMPLETE_DATA.getIdentifierForViewAndDataBeingTested(), incompleteDataValuesReturned, ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_INCOMPLETE_DATA.getExpectedResults()));
+        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_INCOMPLETE_DATA.name(), incompleteDataValuesReturned, ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_INCOMPLETE_DATA.getExpectedResults()));
 
         List dataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_COMPLETE_DATA.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_COMPLETE_DATA.getIdentifierForViewAndDataBeingTested(), dataValuesReturned, ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_COMPLETE_DATA.getExpectedResults()));
+        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_COMPLETE_DATA.name(), dataValuesReturned, ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_COMPLETE_DATA.getExpectedResults()));
     }
 
 
     @Test
     public void testPcdoInfoView() {
         List dataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PCDO_INFO_V.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PCDO_INFO_V.getIdentifierForViewAndDataBeingTested(), dataValuesReturned, ViewsIntegFixture.PCDO_INFO_V.getExpectedResults()));
+        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PCDO_INFO_V.name(), dataValuesReturned, ViewsIntegFixture.PCDO_INFO_V.getExpectedResults()));
     }
 
 
     @Test
     public void testPcardUserInfoView() {
         List dataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PCARD_USER_INFO_V_INCOMPLETE_DATA.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PCARD_USER_INFO_V_INCOMPLETE_DATA.getIdentifierForViewAndDataBeingTested(), dataValuesReturned, ViewsIntegFixture.PCARD_USER_INFO_V_INCOMPLETE_DATA.getExpectedResults()));
+        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PCARD_USER_INFO_V_INCOMPLETE_DATA.name(), dataValuesReturned, ViewsIntegFixture.PCARD_USER_INFO_V_INCOMPLETE_DATA.getExpectedResults()));
     }
 
 
     @Test
     public void testPersonEshopRoleView() {
         List dataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PERSON_ESHOP_ROLE_V_COMPLETE_DATA.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PERSON_ESHOP_ROLE_V_COMPLETE_DATA.getIdentifierForViewAndDataBeingTested(), dataValuesReturned, ViewsIntegFixture.PERSON_ESHOP_ROLE_V_COMPLETE_DATA.getExpectedResults()));
+        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PERSON_ESHOP_ROLE_V_COMPLETE_DATA.name(), dataValuesReturned, ViewsIntegFixture.PERSON_ESHOP_ROLE_V_COMPLETE_DATA.getExpectedResults()));
 
         List incompleteDataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PERSON_ESHOP_ROLE_V_INCOMPLETE_DATA.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PERSON_ESHOP_ROLE_V_INCOMPLETE_DATA.getIdentifierForViewAndDataBeingTested(), incompleteDataValuesReturned, ViewsIntegFixture.PERSON_ESHOP_ROLE_V_INCOMPLETE_DATA.getExpectedResults()));
+        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PERSON_ESHOP_ROLE_V_INCOMPLETE_DATA.name(), incompleteDataValuesReturned, ViewsIntegFixture.PERSON_ESHOP_ROLE_V_INCOMPLETE_DATA.getExpectedResults()));
     }
 
 
     @Test
     public void testPersonRoleView() {
         List incompleteDataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PERSON_ROLE_V_INCOMPLETE_DATA.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PERSON_ROLE_V_INCOMPLETE_DATA.getIdentifierForViewAndDataBeingTested(), incompleteDataValuesReturned, ViewsIntegFixture.PERSON_ROLE_V_INCOMPLETE_DATA.getExpectedResults()));
+        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PERSON_ROLE_V_INCOMPLETE_DATA.name(), incompleteDataValuesReturned, ViewsIntegFixture.PERSON_ROLE_V_INCOMPLETE_DATA.getExpectedResults()));
 
         List dataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PERSON_ROLE_V_COMPLETE_DATA.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PERSON_ROLE_V_COMPLETE_DATA.getIdentifierForViewAndDataBeingTested(), dataValuesReturned, ViewsIntegFixture.PERSON_ROLE_V_COMPLETE_DATA.getExpectedResults()));
+        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PERSON_ROLE_V_COMPLETE_DATA.name(), dataValuesReturned, ViewsIntegFixture.PERSON_ROLE_V_COMPLETE_DATA.getExpectedResults()));
     }
 
 
     @Test
     public void testPurchaseDetailsView() {
         List incompleteDataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PURCHASE_DETAILS_V_INCOMPLETE_DATA.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PURCHASE_DETAILS_V_INCOMPLETE_DATA.getIdentifierForViewAndDataBeingTested(), incompleteDataValuesReturned, ViewsIntegFixture.PURCHASE_DETAILS_V_INCOMPLETE_DATA.getExpectedResults()));
+        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PURCHASE_DETAILS_V_INCOMPLETE_DATA.name(), incompleteDataValuesReturned, ViewsIntegFixture.PURCHASE_DETAILS_V_INCOMPLETE_DATA.getExpectedResults()));
 
         List dataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PURCHASE_DETAILS_V_COMPLETE_DATA.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PURCHASE_DETAILS_V_COMPLETE_DATA.getIdentifierForViewAndDataBeingTested(), dataValuesReturned, ViewsIntegFixture.PURCHASE_DETAILS_V_COMPLETE_DATA.getExpectedResults()));
+        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PURCHASE_DETAILS_V_COMPLETE_DATA.name(), dataValuesReturned, ViewsIntegFixture.PURCHASE_DETAILS_V_COMPLETE_DATA.getExpectedResults()));
     }
 
 
