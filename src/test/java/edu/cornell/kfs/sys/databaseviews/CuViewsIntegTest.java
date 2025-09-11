@@ -38,68 +38,53 @@ public class CuViewsIntegTest extends KualiIntegTestBase {
     
     @Test
     public void testCollegeOrgHierarchyView() {
-        List dataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.COLLEGE_ORG_HRCY_V.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.COLLEGE_ORG_HRCY_V.name(), dataValuesReturned, ViewsIntegFixture.COLLEGE_ORG_HRCY_V.getExpectedResults()));
+        runUnitTest(ViewsIntegFixture.COLLEGE_ORG_HRCY_V);
     }
-
 
     @Test
     public void testPersonDepartmentInfoView() {
-        List incompleteDataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_INCOMPLETE_DATA.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_INCOMPLETE_DATA.name(), incompleteDataValuesReturned, ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_INCOMPLETE_DATA.getExpectedResults()));
-
-        List dataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_COMPLETE_DATA.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_COMPLETE_DATA.name(), dataValuesReturned, ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_COMPLETE_DATA.getExpectedResults()));
+        runUnitTest(ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_INCOMPLETE_DATA);
+        runUnitTest(ViewsIntegFixture.PERSON_DEPARTMENT_INFO_V_COMPLETE_DATA);
     }
-
 
     @Test
     public void testPcdoInfoView() {
-        List dataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PCDO_INFO_V.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PCDO_INFO_V.name(), dataValuesReturned, ViewsIntegFixture.PCDO_INFO_V.getExpectedResults()));
+        runUnitTest(ViewsIntegFixture.PCDO_INFO_V);
     }
-
 
     @Test
     public void testPcardUserInfoView() {
-        List dataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PCARD_USER_INFO_V_INCOMPLETE_DATA.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PCARD_USER_INFO_V_INCOMPLETE_DATA.name(), dataValuesReturned, ViewsIntegFixture.PCARD_USER_INFO_V_INCOMPLETE_DATA.getExpectedResults()));
+       runUnitTest(ViewsIntegFixture.PCARD_USER_INFO_V_INCOMPLETE_DATA);
     }
-
 
     @Test
     public void testPersonEshopRoleView() {
-        List dataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PERSON_ESHOP_ROLE_V_COMPLETE_DATA.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PERSON_ESHOP_ROLE_V_COMPLETE_DATA.name(), dataValuesReturned, ViewsIntegFixture.PERSON_ESHOP_ROLE_V_COMPLETE_DATA.getExpectedResults()));
-
-        List incompleteDataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PERSON_ESHOP_ROLE_V_INCOMPLETE_DATA.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PERSON_ESHOP_ROLE_V_INCOMPLETE_DATA.name(), incompleteDataValuesReturned, ViewsIntegFixture.PERSON_ESHOP_ROLE_V_INCOMPLETE_DATA.getExpectedResults()));
+        runUnitTest(ViewsIntegFixture.PERSON_ESHOP_ROLE_V_COMPLETE_DATA);
+        runUnitTest(ViewsIntegFixture.PERSON_ESHOP_ROLE_V_INCOMPLETE_DATA);
     }
-
 
     @Test
     public void testPersonRoleView() {
-        List incompleteDataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PERSON_ROLE_V_INCOMPLETE_DATA.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PERSON_ROLE_V_INCOMPLETE_DATA.name(), incompleteDataValuesReturned, ViewsIntegFixture.PERSON_ROLE_V_INCOMPLETE_DATA.getExpectedResults()));
-
-        List dataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PERSON_ROLE_V_COMPLETE_DATA.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PERSON_ROLE_V_COMPLETE_DATA.name(), dataValuesReturned, ViewsIntegFixture.PERSON_ROLE_V_COMPLETE_DATA.getExpectedResults()));
+        runUnitTest(ViewsIntegFixture.PERSON_ROLE_V_INCOMPLETE_DATA);
+        runUnitTest(ViewsIntegFixture.PERSON_ROLE_V_COMPLETE_DATA);
     }
-
 
     @Test
     public void testPurchaseDetailsView() {
-        List incompleteDataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PURCHASE_DETAILS_V_INCOMPLETE_DATA.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PURCHASE_DETAILS_V_INCOMPLETE_DATA.name(), incompleteDataValuesReturned, ViewsIntegFixture.PURCHASE_DETAILS_V_INCOMPLETE_DATA.getExpectedResults()));
-
-        List dataValuesReturned =  integTestSqlDao.sqlSelect(ViewsIntegFixture.PURCHASE_DETAILS_V_COMPLETE_DATA.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(ViewsIntegFixture.PURCHASE_DETAILS_V_COMPLETE_DATA.name(), dataValuesReturned, ViewsIntegFixture.PURCHASE_DETAILS_V_COMPLETE_DATA.getExpectedResults()));
+        runUnitTest(ViewsIntegFixture.PURCHASE_DETAILS_V_INCOMPLETE_DATA);
+        runUnitTest(ViewsIntegFixture.PURCHASE_DETAILS_V_COMPLETE_DATA);
     }
 
 
+    private void runUnitTest(ViewsIntegFixture dataFixtureForTest) {
+        List incompleteDataValuesReturned =  integTestSqlDao.sqlSelect(dataFixtureForTest.getQuery());
+        assertTrue(actualResultsMatchExpectedResults(dataFixtureForTest.name(), incompleteDataValuesReturned, dataFixtureForTest.getExpectedResults()));
+
+    }
+
 
     private boolean actualResultsMatchExpectedResults(String identifierForViewAndDataBeingTested, List rowsOfActualResults, List rowsOfExpectedResults) {
-        //Row counts for expected and actual do not match. Fource unit test to fail.
+        //Row counts for expected and actual do not match. Force unit test to fail.
         if (rowsOfActualResults.size() != rowsOfExpectedResults.size()) {
             LOG.error("actualResultsMatchExpectedResults: Query SHOULD HAVE returned the same number of key-value pairs we were expecting.");
             LOG.error("actualResultsMatchExpectedResults: Instead, query executed by unit test {} returned rowOfActualResults.size() = {} rather than expectedResults.size = {}", identifierForViewAndDataBeingTested, rowsOfActualResults.size(), rowsOfExpectedResults.size());
