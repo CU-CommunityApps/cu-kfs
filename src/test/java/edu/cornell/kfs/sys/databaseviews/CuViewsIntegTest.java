@@ -77,8 +77,8 @@ public class CuViewsIntegTest extends KualiIntegTestBase {
 
 
     private void runUnitTest(ViewsIntegFixture dataFixtureForTest) {
-        List incompleteDataValuesReturned =  integTestSqlDao.sqlSelect(dataFixtureForTest.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(dataFixtureForTest.name(), incompleteDataValuesReturned, dataFixtureForTest.getExpectedResults()));
+        List queryResultsReturned =  integTestSqlDao.sqlSelect(dataFixtureForTest.getQuery());
+        assertTrue(actualResultsMatchExpectedResults(dataFixtureForTest.name(), queryResultsReturned, dataFixtureForTest.getExpectedResults()));
 
     }
 
@@ -129,7 +129,7 @@ public class CuViewsIntegTest extends KualiIntegTestBase {
 
 
 
-    private boolean validateReturnedQueryDataRowIsInExpectedResults(Map<String, String> actualRowOfDataFromQuery, List expectedResultsList) { //, boolean[] expectedRowsMatchedToValidatedQueryRows) {
+    private boolean validateReturnedQueryDataRowIsInExpectedResults(Map<String, String> actualRowOfDataFromQuery, List expectedResultsList) {
         
         List<Map<String, String>> expectedResultsMapList = expectedResultsList;
         boolean exactMatchExpectedRowFound = false;
@@ -190,10 +190,7 @@ public class CuViewsIntegTest extends KualiIntegTestBase {
 
 
     private boolean moreRowsToValidate (int currentRowBeingValidated, int sizeOfList) {
-        if (currentRowBeingValidated < sizeOfList) {
-            return true;
-        }
-        return false;
+        return currentRowBeingValidated < sizeOfList;
     }
 
 
