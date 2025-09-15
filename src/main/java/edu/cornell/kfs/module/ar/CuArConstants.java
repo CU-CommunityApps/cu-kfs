@@ -7,5 +7,6 @@ public class CuArConstants {
     public static final int CINV_DATE_RANGE_START_DATE_END_INDEX = 10;
     public static final int CINV_DATE_RANGE_END_DATE_START_INDEX = 14;
     public static final String QUESTION_NEWLINE_STRING = "[br]";
-
+    
+    public static final String FF_425_PREDETERMINED = "Predetermined";
 }

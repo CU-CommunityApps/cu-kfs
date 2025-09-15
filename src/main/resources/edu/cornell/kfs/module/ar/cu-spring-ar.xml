@@ -73,5 +73,18 @@
     
     <bean id="arEmailService" parent="arEmailService-parentBean"
         class="edu.cornell.kfs.module.ar.service.impl.CuAREmailServiceImpl" />
+    
+    <alias name="contractsGrantsBillingUtilityService" alias="cuContractsGrantsBillingUtilityService"/>
+    
+    <bean id="contractsGrantsBillingUtilityService" 
+          class="edu.cornell.kfs.module.ar.service.impl.CuContractsGrantsBillingUtilityServiceImpl"
+          parent="contractsGrantsBillingUtilityService-parentBean"/>
+          
+    <bean id="contractsGrantsInvoiceReportService"
+          parent="contractsGrantsInvoiceReportService-parentBean"
+          class="edu.cornell.kfs.module.ar.report.service.impl.CuContractsGrantsInvoiceReportServiceImpl"
+          p:financialSystemUserService-ref="financialSystemUserService"
+          p:contractsGrantsInvoiceCreateDocumentService-ref="contractsGrantsInvoiceCreateDocumentService"
+          p:contractsGrantsBillingUtilityService-ref="contractsGrantsBillingUtilityService"/>
 
 </beans>
