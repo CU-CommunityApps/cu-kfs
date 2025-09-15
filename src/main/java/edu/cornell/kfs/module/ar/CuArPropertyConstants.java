@@ -37,4 +37,20 @@ public class CuArPropertyConstants {
                 + KFSConstants.DELIMITER + KIMPropertyConstants.Principal.PRINCIPAL_NAME;
     }
 
+    public static class CuFederalFormReportFields {
+        public static final String AWARD_COST_SHARE_AMT = "awd_cost_share_amt";
+        public static final String CINV_COST_SHARE_AMT = "cinv_cost_share_amt";
+        public static final String REMAINING_COST_SHARE_AMT = "remaining_cost_share_amt";
+        public static final String CG_MANAGER_FIRST_NAME = "cg_manager_first_name";
+        public static final String CG_MANAGER_MIDDLE_NAME = "cg_manager_middle_name";
+        public static final String CG_MANAGER_LAST_NAME = "cg_manager_last_name";
+        
+        // These constants are defined in base code class ArPropertyConstants but their string values
+        // do not match the place holder string on form FEDERAL_FINANCIAL_FORM.pdf.
+        // Redefining here to get the form value substitution to work correctly.
+        public static final String TOTAL_FEDERAL_INCOME_EARNED = "total_federal_program_income";
+        public static final String INCOME_EXPENDED_DEDUCATION_ALTERNATIVE = "income_expended_in_accordance_with_deduction";
+        public static final String INCOME_EXPENDED_ADDITION_ALTERNATIVE = "income_expended_in_accordnace_with_addition";
+    }
+
 }
