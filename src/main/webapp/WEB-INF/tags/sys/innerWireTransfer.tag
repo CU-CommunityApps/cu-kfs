@@ -26,6 +26,7 @@
 <c:set var="wireTransAttributes" value="${DataDictionary.PaymentSourceWireTransfer.attributes}" />
 <%-- Cornell Customization --%>
 <c:set var="wireTransExtendedAttributes" value="${DataDictionary.PaymentSourceWireTransferExtendedAttribute.attributes}" />
+<c:set var="canUnmask" value="${kfunc:isNonProductionEnvAndUnmaskingTurnedOff()? 'false' : 'true'}" />
 
 <table cellpadding=0 class="datatable standard" summary="Wire Transfer Section">
 	<tbody>
@@ -139,6 +140,7 @@
                 <c:set var="mask"
                        value="${
                     accountNumberReadOnly
+                    or not canUnmask
                     or (
                         not KualiForm.document.documentHeader.workflowDocument.initiated
                         and not KualiForm.document.documentHeader.workflowDocument.saved

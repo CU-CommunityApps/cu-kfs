@@ -3,6 +3,7 @@ package edu.cornell.kfs.kns.util;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.identity.Person;
+import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.sys.context.SpringContext;
 
 public final class CuWebUtils {
@@ -26,6 +27,10 @@ public final class CuWebUtils {
             // ==== CU Customization: Return potentially masked Person name instead. ====
             return person.getNameMaskedIfNecessary();
         }
+    }
+    
+    public static boolean isNonProductionEnvAndUnmaskingTurnedOff() {
+        return KNSServiceLocator.getBusinessObjectAuthorizationService().isNonProductionEnvAndUnmaskingTurnedOff();
     }
 
 }
