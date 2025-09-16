@@ -26,7 +26,7 @@
 <c:set var="wireTransAttributes" value="${DataDictionary.PaymentSourceWireTransfer.attributes}" />
 <%-- Cornell Customization --%>
 <c:set var="wireTransExtendedAttributes" value="${DataDictionary.PaymentSourceWireTransferExtendedAttribute.attributes}" />
-<c:set var="maskNonProd" value="${kfunc:isNonProductionEnvAndUnmaskingTurnedOff()? 'true' : 'false'}" />
+<c:set var="maskNonProd" value="${kfunc:isNonProductionEnvAndUnmaskingTurnedOff() ? 'true' : 'false'}" />
 
 <table cellpadding=0 class="datatable standard" summary="Wire Transfer Section">
 	<tbody>
@@ -137,8 +137,10 @@
                     and not wireEntryMode
                     and not frnEntryMode
                 }"/>
+                <%-- Cornell Customization: Start: added fix for bank account number masking in development environments --%>
                 <c:set var="mask"
                        value="${
+                     
                     (maskNonProd and not KualiForm.document.documentHeader.workflowDocument.initiated)
                     or accountNumberReadOnly
                     or (
@@ -147,6 +149,7 @@
                         and not wireEntryMode
                     )
                 }"/>
+                <%-- Cornell Customization: End: added fix for bank account number masking in development environments --%>
 				<kul:htmlControlAttribute mask="${mask}"
                                           attributeEntry="${wireTransAttributes.payeeAccountNumber}"
                                           forceRequired="true" property="document.wireTransfer.payeeAccountNumber"
