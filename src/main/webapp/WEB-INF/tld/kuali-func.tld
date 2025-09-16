@@ -162,6 +162,7 @@
     <!--
         CU Customization: Modified this function to use a CU-specific implementation instead.
         Also corrected a typo in the "example" element.
+        Add new method isNonProductionEnvAndUnmaskingTurnedOff.
     -->
     <function>
         <description>Fetches the display name for a principal when given the principal ID</description>
@@ -169,6 +170,13 @@
         <function-class>edu.cornell.kfs.kns.util.CuWebUtils</function-class>
         <function-signature>java.lang.String getPrincipalDisplayName(java.lang.String)</function-signature>
         <example>${kfunc:getPrincipalDisplayName("1234")}</example>
+    </function>
+    <function>
+        <description>Returns whether this is a non production environment and unmasking is turned off</description>
+        <name>isNonProductionEnvAndUnmaskingTurnedOff</name>
+        <function-class>edu.cornell.kfs.kns.util.CuWebUtils</function-class>
+        <function-signature>boolean isNonProductionEnvAndUnmaskingTurnedOff()</function-signature>
+        <example>${kfunc:isNonProductionEnvAndUnmaskingTurnedOff()}</example>
     </function>
     <!-- End CU Customization -->
     <function>
