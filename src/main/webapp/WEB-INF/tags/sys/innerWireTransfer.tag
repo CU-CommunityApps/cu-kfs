@@ -139,7 +139,7 @@
                 }"/>
                 <c:set var="mask"
                        value="${
-                    maskNonProd
+                    (maskNonProd and not KualiForm.document.documentHeader.workflowDocument.initiated)
                     or accountNumberReadOnly
                     or (
                         not KualiForm.document.documentHeader.workflowDocument.initiated
