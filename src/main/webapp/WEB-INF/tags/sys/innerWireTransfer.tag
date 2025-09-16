@@ -140,7 +140,6 @@
                 <%-- Cornell Customization: Start: added fix for bank account number masking in development environments --%>
                 <c:set var="mask"
                        value="${
-                     
                     (maskNonProd and not KualiForm.document.documentHeader.workflowDocument.initiated)
                     or accountNumberReadOnly
                     or (
