@@ -79,7 +79,14 @@ public class VendorDaoImpl implements VendorDao, CuVendorDao {
             + "ALL_SUPPLIER_DIVERSITIES, HEADER.VNDR_TYP_CD ";
 
     private static final String PARENT_SQL_FROM = "FROM PUR_VNDR_DTL_T DETAIL ";
-
+    
+    /*
+     * KFSPTS-36151 CU Customization for Oracle
+     * replaced 
+     * LEFT JOIN (SELECT LISTAGG(DISTINCT VNDR_ALIAS_NM, ', ') WITHIN GROUP (ORDER BY VNDR_ALIAS_NM ASC) AS ALL_ALIASES, "
+     * with
+     * "LEFT JOIN (SELECT LISTAGG(DISTINCT VNDR_ALIAS_NM, ', ') WITHIN GROUP (ORDER BY VNDR_ALIAS_NM ASC) AS ALL_ALIASES, "
+     */
     private static final String PARENT_SQL_JOIN =
             "JOIN PUR_VNDR_HDR_T HEADER ON DETAIL.VNDR_HDR_GNRTD_ID = HEADER.VNDR_HDR_GNRTD_ID "
             + "LEFT JOIN SH_CNTRY_T COUNTRY ON HEADER.VNDR_CORP_CTZN_CNTRY_CD = " + "COUNTRY.POSTAL_CNTRY_CD "
