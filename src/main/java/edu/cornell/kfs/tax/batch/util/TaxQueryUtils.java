@@ -4,8 +4,13 @@ import java.sql.Types;
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.Validate;
+import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.util.CuSqlChunk;
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 
 /**
@@ -13,7 +18,8 @@ import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
  * 
  * - QuerySort: Builds helper objects for controlling what fields to sort the query on and in which direction.
  * 
- * - FieldUpdate: Builds helper objects for constructing the SET clause of an UPDATE query.
+ * - FieldUpdate: Builds helper objects for constructing the SET clause of an UPDATE query
+ *             (or the VALUES clause of an INSERT query).
  * 
  * - SqlFunction: Builds helper objects for preparing SQL function invocations within queries. (Note that
  *             the static factory methods create lambda expressions that perform the actual work; the lambdas
@@ -63,6 +69,8 @@ public final class TaxQueryUtils {
 
         private static final long serialVersionUID = 1L;
 
+        private static final Pattern SEQUENCE_NAME_PATTERN = Pattern.compile("^(\\w+\\.)?\\w+$");
+
         private final int sqlType;
 
         private FieldUpdate(final TaxDtoFieldEnum field, final int sqlType, final Object value) {
@@ -86,6 +94,20 @@ public final class TaxQueryUtils {
             return new FieldUpdate(field, sqlType, value);
         }
 
+        public static <T> FieldUpdate ofCharBoolean(final TaxDtoFieldEnum field,
+                final Function<? super T, Boolean> valueGetter) {
+            final Function<? super T, String> stringValueGetter = dto -> {
+                final Boolean booleanValue = valueGetter.apply(dto);
+                if (booleanValue == null) {
+                    return null;
+                } else {
+                    return Boolean.TRUE.equals(booleanValue)
+                            ? KRADConstants.YES_INDICATOR_VALUE : KRADConstants.NO_INDICATOR_VALUE;
+                }
+            };
+            return of(field, stringValueGetter);
+        }
+
         public static <T> FieldUpdate of(final TaxDtoFieldEnum field, final Function<? super T, String> valueGetter) {
             return of(field, Types.VARCHAR, valueGetter);
         }
@@ -93,6 +115,12 @@ public final class TaxQueryUtils {
         public static <T> FieldUpdate of(final TaxDtoFieldEnum field, final int sqlType,
                 final Function<? super T, ?> valueGetter) {
             return new FieldUpdate(field, sqlType, valueGetter);
+        }
+
+        public static FieldUpdate ofNextSequenceValue(final TaxDtoFieldEnum field, final String sequenceName) {
+            Validate.isTrue(SEQUENCE_NAME_PATTERN.matcher(sequenceName).matches(),
+                    "Invalid sequence name: %s", sequenceName);
+            return new FieldUpdate(field, Types.NULL, CuSqlChunk.of(sequenceName, ".NEXTVAL"));
         }
 
     }

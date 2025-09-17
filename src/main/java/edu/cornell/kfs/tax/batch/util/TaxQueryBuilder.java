@@ -173,10 +173,45 @@ public class TaxQueryBuilder {
                 sqlChunk.append(CUKFSConstants.COMMA_AND_SPACE);
             }
             final String columnLabel = getColumnLabel(fieldUpdate.getField());
-            sqlChunk.append(columnLabel).append(" = ")
-                    .appendAsParameter(fieldUpdate.getSqlType(), fieldUpdate.getValue());
+            sqlChunk.append(columnLabel).append(" = ");
+            appendFieldUpdateValue(fieldUpdate);
             i++;
         }
+        return this;
+    }
+
+    public TaxQueryBuilder insertValuesInto(final Class<? extends BusinessObject> businessObjectClass,
+            final FieldUpdate... fieldUpdates) {
+        final String tableReference = getTableReferenceDeclaration(businessObjectClass);
+        sqlChunk.append("INSERT INTO ")
+                .append(tableReference)
+                .append(KFSConstants.BLANK_SPACE)
+                .append(CUKFSConstants.LEFT_PARENTHESIS);
+
+        int i = 0;
+        for (final FieldUpdate fieldUpdate : fieldUpdates) {
+            if (i > 0) {
+                sqlChunk.append(CUKFSConstants.COMMA_AND_SPACE);
+            }
+            final String columnLabel = getColumnLabel(fieldUpdate.getField());
+            sqlChunk.append(columnLabel);
+            i++;
+        }
+
+        sqlChunk.append(CUKFSConstants.RIGHT_PARENTHESIS)
+                .append(" VALUES ")
+                .append(CUKFSConstants.LEFT_PARENTHESIS);
+
+        i = 0;
+        for (final FieldUpdate fieldUpdate : fieldUpdates) {
+            if (i > 0) {
+                sqlChunk.append(CUKFSConstants.COMMA_AND_SPACE);
+            }
+            appendFieldUpdateValue(fieldUpdate);
+            i++;
+        }
+
+        sqlChunk.append(CUKFSConstants.RIGHT_PARENTHESIS);
         return this;
     }
 
@@ -184,6 +219,14 @@ public class TaxQueryBuilder {
         return sqlChunk.toQuery();
     }
 
+    protected TaxQueryBuilder appendFieldUpdateValue(final FieldUpdate fieldUpdate) {
+        if (fieldUpdate.getValue() instanceof CuSqlChunk) {
+            sqlChunk.append((CuSqlChunk) fieldUpdate.getValue());
+        } else {
+            sqlChunk.appendAsParameter(fieldUpdate.getSqlType(), fieldUpdate.getValue());
+        }
+        return this;
+    }
 
     protected TaxQueryBuilder appendNotAndCondition(final Criteria... criteria) {
         sqlChunk.append("NOT ");

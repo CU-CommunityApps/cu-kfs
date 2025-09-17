@@ -41,8 +41,8 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 public class CuPaymentRequestDocument extends PaymentRequestDocument {
 	private static final Logger LOG = LogManager.getLogger();
     // KFSPTS-1891
-    public static String DOCUMENT_TYPE_NON_CHECK = "PRNC";
-    public static String DOCUMENT_TYPE_INTERNAL_BILLING = "PRID";
+    public static final String DOCUMENT_TYPE_NON_CHECK = "PRNC";
+    public static final String DOCUMENT_TYPE_INTERNAL_BILLING = "PRID";
     
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
     private static CuCheckStubService cuCheckStubService;

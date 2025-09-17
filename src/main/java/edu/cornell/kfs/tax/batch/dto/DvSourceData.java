@@ -10,7 +10,6 @@ import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.kfs.sys.businessobject.UniversityDate;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 
 import edu.cornell.kfs.tax.batch.annotation.HasNestedEnumWithDtoFieldListing;
@@ -57,8 +56,6 @@ public class DvSourceData {
     private String vendorOwnershipCode;
     private String vendorOwnershipCategoryCode;
     private Boolean vendorForeignIndicator;
-    // Fields from SH_UNIV_DATE_T (UniversityDate)
-    private Date universityDate;
     // Fields from TX_DV_DISBURSEMENT_V (Disbursement Fields)
     private String custPaymentDocNbr;
     private String disbursementNbr;
@@ -329,14 +326,6 @@ public class DvSourceData {
         this.vendorForeignIndicator = vendorForeignIndicator;
     }
 
-    public Date getUniversityDate() {
-        return universityDate;
-    }
-
-    public void setUniversityDate(final Date universityDate) {
-        this.universityDate = universityDate;
-    }
-
     public String getCustPaymentDocNbr() {
         return custPaymentDocNbr;
     }
@@ -409,8 +398,6 @@ public class DvSourceData {
         vendorOwnershipCode(VendorHeader.class),
         vendorOwnershipCategoryCode(VendorHeader.class),
         vendorForeignIndicator(VendorHeader.class),
-        // Fields from SH_UNIV_DATE_T (UniversityDate)
-        universityDate(UniversityDate.class),
         // Fields from TX_DV_DISBURSEMENT_V (Disbursement Fields)
         custPaymentDocNbr(DvDisbursementView.class),
         disbursementNbr(DvDisbursementView.class),

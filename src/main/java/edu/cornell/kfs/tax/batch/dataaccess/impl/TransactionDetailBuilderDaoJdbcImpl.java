@@ -2,6 +2,7 @@ package edu.cornell.kfs.tax.batch.dataaccess.impl;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -10,6 +11,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.function.FailableFunction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.encryption.EncryptionService;
@@ -20,6 +23,8 @@ import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount;
+import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.PaymentAccountDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
@@ -36,11 +41,12 @@ import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
 import edu.cornell.kfs.sys.util.CuSqlQueryPlatformAwareDaoBaseJdbc;
 import edu.cornell.kfs.tax.CUTaxConstants;
+import edu.cornell.kfs.tax.batch.CUTaxBatchConstants;
 import edu.cornell.kfs.tax.batch.TaxBatchConfig;
 import edu.cornell.kfs.tax.batch.TaxStatistics;
+import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoRowMapper;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailBuilderDao;
-import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailHandler;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionSourceHandler;
 import edu.cornell.kfs.tax.batch.dto.DvSourceData;
 import edu.cornell.kfs.tax.batch.dto.DvSourceData.DvSourceDataField;
@@ -55,6 +61,7 @@ import edu.cornell.kfs.tax.batch.metadata.TaxDtoDbMetadata;
 import edu.cornell.kfs.tax.batch.service.TaxTableMetadataLookupService;
 import edu.cornell.kfs.tax.batch.util.TaxQueryBuilder;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.Criteria;
+import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.FieldUpdate;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.QuerySort;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.SqlFunction;
 import edu.cornell.kfs.tax.businessobject.DvDisbursementView;
@@ -101,17 +108,97 @@ public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAware
     }
 
     @Override
+    public void insertTransactionDetailsWithoutVendorInfo(
+            final List<TransactionDetail> transactionDetails, final TaxBatchConfig config) {
+        final CuSqlQuery insertQuery = createQueryForBatchInsertingTransactionDetails(config);
+        int[] insertCounts = executeBatchUpdate(insertQuery, transactionDetails);
+
+        for (int i = 0; i < insertCounts.length; i++) {
+            if (insertCounts[i] != 1) {
+                LOG.warn("insertTransactionDetailsWithoutVendorInfo, Batch insert for Transaction Detail "
+                        + "at batch index {} should have inserted 1 row, but it actually inserted {} rows instead!",
+                        i, insertCounts[i]);
+            }
+        }
+        LOG.debug("insertTransactionDetailsWithoutVendorInfo, Inserted {} transaction details", transactionDetails::size);
+    }
+
+    private CuSqlQuery createQueryForBatchInsertingTransactionDetails(final TaxBatchConfig config) {
+        final TaxDtoDbMetadata metadata = taxTableMetadataLookupService.getDatabaseMappingMetadataForDto(
+                TransactionDetailField.class);
+        final FieldUpdate taxBoxFieldUpdate = getTaxBoxFieldUpdateForInsert(config);
+
+        final FieldUpdate[] fieldUpdates = {
+                FieldUpdate.ofNextSequenceValue(TransactionDetailField.transactionDetailId, CUTaxBatchConstants.TRANSACTION_DETAIL_ID_SEQUENCE),
+                FieldUpdate.of(TransactionDetailField.reportYear, Types.INTEGER, TransactionDetail::getReportYear),
+                FieldUpdate.of(TransactionDetailField.documentNumber, TransactionDetail::getDocumentNumber),
+                FieldUpdate.of(TransactionDetailField.documentType, TransactionDetail::getDocumentType),
+                FieldUpdate.of(TransactionDetailField.financialDocumentLineNumber, Types.INTEGER, TransactionDetail::getFinancialDocumentLineNumber),
+                FieldUpdate.of(TransactionDetailField.finObjectCode, TransactionDetail::getFinObjectCode),
+                FieldUpdate.of(TransactionDetailField.netPaymentAmount, Types.DECIMAL, TransactionDetail::getNetPaymentAmount),
+                FieldUpdate.of(TransactionDetailField.documentTitle, TransactionDetail::getDocumentTitle),
+                FieldUpdate.of(TransactionDetailField.vendorTaxNumber, TransactionDetail::getVendorTaxNumber),
+                FieldUpdate.of(TransactionDetailField.incomeCode, TransactionDetail::getIncomeCode),
+                FieldUpdate.of(TransactionDetailField.incomeCodeSubType, TransactionDetail::getIncomeCodeSubType),
+                FieldUpdate.of(TransactionDetailField.dvCheckStubText, TransactionDetail::getDvCheckStubText),
+                FieldUpdate.of(TransactionDetailField.payeeId, TransactionDetail::getPayeeId),
+                FieldUpdate.ofCharBoolean(TransactionDetailField.nraPaymentIndicator, TransactionDetail::getNraPaymentIndicator),
+                FieldUpdate.of(TransactionDetailField.paymentDate, Types.DATE, TransactionDetail::getPaymentDate),
+                FieldUpdate.of(TransactionDetailField.paymentPayeeName, TransactionDetail::getPaymentPayeeName),
+                FieldUpdate.of(TransactionDetailField.incomeClassCode, TransactionDetail::getIncomeClassCode),
+                FieldUpdate.ofCharBoolean(TransactionDetailField.incomeTaxTreatyExemptIndicator, TransactionDetail::getIncomeTaxTreatyExemptIndicator),
+                FieldUpdate.ofCharBoolean(TransactionDetailField.foreignSourceIncomeIndicator, TransactionDetail::getForeignSourceIncomeIndicator),
+                FieldUpdate.of(TransactionDetailField.federalIncomeTaxPercent, Types.DECIMAL, TransactionDetail::getFederalIncomeTaxPercent),
+                FieldUpdate.of(TransactionDetailField.paymentDescription, TransactionDetail::getPaymentDescription),
+                FieldUpdate.of(TransactionDetailField.paymentLine1Address, TransactionDetail::getPaymentLine1Address),
+                FieldUpdate.of(TransactionDetailField.paymentCountryName, TransactionDetail::getPaymentCountryName),
+                FieldUpdate.of(TransactionDetailField.chartCode, TransactionDetail::getChartCode),
+                FieldUpdate.of(TransactionDetailField.accountNumber, TransactionDetail::getAccountNumber),
+                FieldUpdate.of(TransactionDetailField.initiatorNetId, TransactionDetail::getInitiatorNetId),
+                taxBoxFieldUpdate,
+                FieldUpdate.of(TransactionDetailField.paymentReasonCode, TransactionDetail::getPaymentReasonCode),
+                FieldUpdate.of(TransactionDetailField.disbursementNbr, Types.BIGINT, TransactionDetail::getDisbursementNbr),
+                FieldUpdate.of(TransactionDetailField.paymentStatusCode, TransactionDetail::getPaymentStatusCode),
+                FieldUpdate.of(TransactionDetailField.disbursementTypeCode, TransactionDetail::getDisbursementTypeCode),
+                FieldUpdate.of(TransactionDetailField.ledgerDocumentTypeCode, TransactionDetail::getLedgerDocumentTypeCode)
+        };
+
+        return new TaxQueryBuilder(metadata)
+                .insertValuesInto(TransactionDetail.class, fieldUpdates)
+                .build();
+    }
+
+    private FieldUpdate getTaxBoxFieldUpdateForInsert(final TaxBatchConfig config) {
+        switch (config.getTaxType()) {
+            case CUTaxConstants.TAX_TYPE_1099:
+                throw new UnsupportedOperationException(
+                        "This implementation currently does not support 1099 tax processing");
+            case CUTaxConstants.TAX_TYPE_1042S:
+                return FieldUpdate.of(TransactionDetailField.form1042SBox, CUTaxConstants.NEEDS_UPDATING_BOX_KEY);
+            default:
+                throw new IllegalStateException("Unrecognized tax type: " + config.getTaxType());
+        }
+    }
+
+    @Override
     public TaxStatistics createDvTransactionDetails(final TaxBatchConfig config,
-            final TransactionSourceHandler<DvSourceData> dvSourceHandler,
-            final TransactionDetailHandler secondPassHandler) {
+            final TransactionSourceHandler<DvSourceData> dvSourceHandler) {
         final TaxDtoDbMetadata metadata = taxTableMetadataLookupService.getDatabaseMappingMetadataForDto(
                 DvSourceDataField.class);
         final CuSqlQuery query = createDvSourceDataQuery(config, metadata);
+
+        return queryAndProcessTaxSourceData(query, resultSet -> {
+            final TaxDtoRowMapper<DvSourceData> rowMapper = new TaxDtoRowMapperImpl<>(
+                    DvSourceData::new, encryptionService, metadata, resultSet);
+            return dvSourceHandler.generateTransactionDetails(config, rowMapper);
+        });
+    }
+
+    private TaxStatistics queryAndProcessTaxSourceData(final CuSqlQuery query,
+            FailableFunction<ResultSet, TaxStatistics, Exception> queryResultsProcessor) {
         return queryForResults(query, resultSet -> {
             try {
-                final TaxDtoRowMapper<DvSourceData> rowMapper = new TaxDtoRowMapperImpl<>(
-                        DvSourceData::new, encryptionService, metadata, resultSet);
-                return dvSourceHandler.generateTransactionDetails(config, rowMapper);
+                return queryResultsProcessor.apply(resultSet);
             } catch (final IOException e) {
                 throw new UncheckedIOException(e);
             } catch (final SQLException | RuntimeException e) {
@@ -145,7 +232,7 @@ public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAware
                 .where(
                         Criteria.isNotNull(DvSourceDataField.accountingLineSequenceNumber),
                         Criteria.isNotNull(DvSourceDataField.financialDocumentLineTypeCode),
-                        getTaxTypeSpecificDvQueryCriteria(config)
+                        getTaxTypeSpecificQueryCriteria(config, DvSourceDataField.vendorForeignIndicator)
                 )
                 .orderBy(
                         QuerySort.ascending(DvSourceDataField.vendorTaxNumber),
@@ -156,13 +243,18 @@ public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAware
                 .build();
     }
 
-    private Criteria getTaxTypeSpecificDvQueryCriteria(final TaxBatchConfig config) {
+    private Criteria getTaxTypeSpecificQueryCriteria(final TaxBatchConfig config,
+            final TaxDtoFieldEnum vendorForeignIndicatorField) {
+        final String vendorForeignIndicatorValue =
+                StringUtils.equals(config.getTaxType(), CUTaxConstants.TAX_TYPE_1042S)
+                        ? KRADConstants.YES_INDICATOR_VALUE : KRADConstants.NO_INDICATOR_VALUE;
+
         switch (config.getTaxType()) {
             case CUTaxConstants.TAX_TYPE_1099:
                 throw new UnsupportedOperationException(
                         "This implementation currently does not support 1099 tax processing");
             case CUTaxConstants.TAX_TYPE_1042S:
-                return Criteria.equal(DvSourceDataField.vendorForeignIndicator, KRADConstants.YES_INDICATOR_VALUE);
+                return Criteria.equal(vendorForeignIndicatorField, vendorForeignIndicatorValue);
             default:
                 throw new IllegalStateException("Unrecognized tax type: " + config.getTaxType());
         }
@@ -233,12 +325,16 @@ public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAware
 
     @Override
     public TaxStatistics createPdpTransactionDetails(final TaxBatchConfig config,
-            final TransactionSourceHandler<PdpSourceData> pdpSourceHandler,
-            final TransactionDetailHandler secondPassHandler) {
+            final TransactionSourceHandler<PdpSourceData> pdpSourceHandler) {
         final TaxDtoDbMetadata metadata = taxTableMetadataLookupService.getDatabaseMappingMetadataForDto(
                 PdpSourceDataField.class);
-        createPdpSourceDataQuery(config, metadata);
-        return null;
+        final CuSqlQuery query = createPdpSourceDataQuery(config, metadata);
+
+        return queryAndProcessTaxSourceData(query, resultSet -> {
+            final TaxDtoRowMapper<PdpSourceData> rowMapper = new TaxDtoRowMapperImpl<>(
+                    PdpSourceData::new, encryptionService, metadata, resultSet);
+            return pdpSourceHandler.generateTransactionDetails(config, rowMapper);
+        });
     }
 
     private CuSqlQuery createPdpSourceDataQuery(final TaxBatchConfig config, final TaxDtoDbMetadata metadata) {
@@ -276,7 +372,7 @@ public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAware
                         ),
                         Criteria.between(PdpSourceDataField.disbursementNbr,
                                 PdpSourceDataField.beginDisbursementNbr, PdpSourceDataField.endDisbursementNbr),
-                        getTaxTypeSpecificPdpQueryCriteria(config)
+                        getTaxTypeSpecificQueryCriteria(config, PdpSourceDataField.vendorForeignIndicator)
                 )
                 .orderBy(
                         QuerySort.ascending(PdpSourceDataField.vendorTaxNumber),
@@ -286,30 +382,52 @@ public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAware
                 .build();
     }
 
-    private Criteria getTaxTypeSpecificPdpQueryCriteria(final TaxBatchConfig config) {
-        switch (config.getTaxType()) {
-            case CUTaxConstants.TAX_TYPE_1099:
-                throw new UnsupportedOperationException(
-                        "This implementation currently does not support 1099 tax processing");
-            case CUTaxConstants.TAX_TYPE_1042S:
-                return Criteria.equal(PdpSourceDataField.vendorForeignIndicator, KRADConstants.YES_INDICATOR_VALUE);
-            default:
-                throw new IllegalStateException("Unrecognized tax type: " + config.getTaxType());
-        }
-    }
-
     @Override
     public TaxStatistics createPrncTransactionDetails(final TaxBatchConfig config,
-            final TransactionSourceHandler<PrncSourceData> prncSourceHandler,
-            final TransactionDetailHandler secondPassHandler) {
+            final TransactionSourceHandler<PrncSourceData> prncSourceHandler) {
         final TaxDtoDbMetadata metadata = taxTableMetadataLookupService.getDatabaseMappingMetadataForDto(
                 PrncSourceDataField.class);
-        createPrncSourceDataQuery(config, metadata);
-        return null;
+        final CuSqlQuery query = createPrncSourceDataQuery(config, metadata);
+
+        return queryAndProcessTaxSourceData(query, resultSet -> {
+            final TaxDtoRowMapper<PrncSourceData> rowMapper = new TaxDtoRowMapperImpl<>(
+                    PrncSourceData::new, encryptionService, metadata, resultSet);
+            return prncSourceHandler.generateTransactionDetails(config, rowMapper);
+        });
     }
 
     private CuSqlQuery createPrncSourceDataQuery(final TaxBatchConfig config, final TaxDtoDbMetadata metadata) {
+        final TaxQueryBuilder documentsFilteredByFinalizedDateSubquery =
+                createRouteHeaderSubqueryFilteredByFinalizedDate(
+                        config, CuPaymentRequestDocument.DOCUMENT_TYPE_NON_CHECK, metadata);
+
         return new TaxQueryBuilder(metadata)
+                .selectAllMappedFields()
+                .from(PaymentRequestItem.class)
+                .join(CuPaymentRequestDocument.class, Criteria.equal(
+                        PrncSourceDataField.purapDocumentIdentifier, PrncSourceDataField.preqPurapDocumentIdentifier))
+                .join(PaymentRequestAccount.class, Criteria.equal(
+                        PrncSourceDataField.itemIdentifier, PrncSourceDataField.accountItemIdentifier))
+                .join(VendorHeader.class, Criteria.equal(
+                        PrncSourceDataField.preqVendorHeaderGeneratedIdentifier,
+                        PrncSourceDataField.vendorHeaderGeneratedIdentifier))
+                .join(UniversityDate.class, Criteria.equal(
+                        PrncSourceDataField.universityDate, Types.DATE, config.getStartDate()))
+                .where(
+                        Criteria.in(PrncSourceDataField.paymentMethodCode, List.of(
+                                PaymentSourceConstants.PAYMENT_METHOD_DRAFT,
+                                PaymentSourceConstants.PAYMENT_METHOD_WIRE
+                        )),
+                        Criteria.isNotNull(PrncSourceDataField.accountIdentifier),
+                        Criteria.in(PrncSourceDataField.preqDocumentNumber, documentsFilteredByFinalizedDateSubquery),
+                        getTaxTypeSpecificQueryCriteria(config, PrncSourceDataField.vendorForeignIndicator)
+                )
+                .orderBy(
+                        QuerySort.ascending(PrncSourceDataField.vendorTaxNumber),
+                        QuerySort.ascending(PrncSourceDataField.preqDocumentNumber),
+                        QuerySort.ascending(PrncSourceDataField.accountItemIdentifier),
+                        QuerySort.ascending(PrncSourceDataField.accountIdentifier)
+                )
                 .build();
     }
 
