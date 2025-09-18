@@ -31,6 +31,14 @@ public class CornellLoginFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse)servletResponse;
 
         String remoteUser = getRemoteUser(httpRequest);
+
+        // Session fixation mitigation: Invalidate and create new session after authentication
+        if (remoteUser != null && httpRequest.getSession(false) != null) {
+            LOG.info("doFilter, Session fixation mitigation: invalidating and creating new session for user: {}", remoteUser);
+            httpRequest.getSession().invalidate();
+            httpRequest.getSession(true);
+        }
+
         HttpServletRequestWrapper request =  new HttpServletRequestWrapper(httpRequest) {
             @Override
             public String getRemoteUser() {
