@@ -11,9 +11,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,22 +31,6 @@ public class CornellLoginFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse)servletResponse;
 
         String remoteUser = getRemoteUser(httpRequest);
-
-        HttpSession session = httpRequest.getSession(false);
-        String sessionUser = (session != null) ? (String) session.getAttribute(CUWebAuthAuthenticationService.CUWAL_REMOTE_USER_HEADER) : null;
-
-        if (remoteUser != null && (sessionUser == null || !StringUtils.equals(remoteUser,sessionUser))) {
-            LOG.info("doFilter, create a new session to remediate session fixation vulernability for user {}", remoteUser);
-            if (session != null) {
-                session.invalidate();
-            }
-            HttpSession newSession = httpRequest.getSession(true);
-            newSession.setAttribute(CUWebAuthAuthenticationService.CUWAL_REMOTE_USER_HEADER, remoteUser);
-        } else if (session != null && remoteUser != null) {
-            LOG.info("doFilter, keep existing session up to date for user {}", remoteUser);
-            session.setAttribute(CUWebAuthAuthenticationService.CUWAL_REMOTE_USER_HEADER, remoteUser);
-        }
-
         HttpServletRequestWrapper request =  new HttpServletRequestWrapper(httpRequest) {
             @Override
             public String getRemoteUser() {
