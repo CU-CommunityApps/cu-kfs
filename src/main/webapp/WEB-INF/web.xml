@@ -89,7 +89,7 @@
 
     <filter>
         <filter-name>SessionExpirationFilter</filter-name>
-        <filter-class>org.kuali.kfs.sys.web.filter.SessionExpirationFilter</filter-class>
+        <filter-class>edu.cornell.kfs.web.filter.CuSessionExpirationFilter</filter-class>
     </filter>
     
     <filter>
