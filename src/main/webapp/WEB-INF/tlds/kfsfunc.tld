@@ -112,6 +112,16 @@
         </example>
     </function>
 
+    <function>
+        <description>URL-encodes a String value using the UTF-8 charset.</description>
+        <name>urlEncode</name>
+        <function-class>edu.cornell.kfs.sys.web.CuWebUtilities</function-class>
+        <function-signature>String urlEncode(java.lang.String)</function-signature>
+        <example>
+            &lt;kul:inquiry boClassName="org.kuali.kfs.kim.impl.identity.Person" keyValues="principalId=${kfsfunc:urlEncode(universalId)}"&gt;DETAILS&lt;/kul:inquiry&gt;
+        </example>
+    </function>
+
     <!-- End of CU-specific functions -->
 
 </taglib>
