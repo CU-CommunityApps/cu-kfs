@@ -32,11 +32,11 @@ public class CornellLoginFilter implements Filter {
 
         String remoteUser = getRemoteUser(httpRequest);
 
-        // Session fixation mitigation: Only invalidate and create new session if authentication transitions from unauthenticated to authenticated
-        boolean wasAuthenticated = httpRequest.getSession(false) != null && httpRequest.getSession(false).getAttribute("remoteUser") != null;
+        // Session fixation mitigation: Always invalidate and create a new session when a remote user is detected and the session is not new
         boolean isAuthenticated = remoteUser != null;
+        boolean sessionExists = httpRequest.getSession(false) != null;
 
-        if (isAuthenticated && !wasAuthenticated && httpRequest.getSession(false) != null) {
+        if (isAuthenticated && sessionExists && !httpRequest.getSession(false).isNew()) {
             LOG.info("Session fixation mitigation: invalidating and creating new session for user: " + remoteUser);
             httpRequest.getSession().invalidate();
             httpRequest.getSession(true); // create new session
