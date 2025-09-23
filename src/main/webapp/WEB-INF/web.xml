@@ -45,7 +45,7 @@
 
     <filter>
         <filter-name>AuthenticationTokenFilter</filter-name>
-        <filter-class>org.kuali.kfs.sys.web.filter.AuthenticationTokenFilter</filter-class>
+        <filter-class>edu.cornell.kfs.web.filter.CuAuthenticationTokenFilter</filter-class>
     </filter>
 
     <filter>
@@ -79,7 +79,7 @@
 
     <filter>
         <filter-name>ResourceLoginFilter</filter-name>
-        <filter-class>org.kuali.kfs.web.filter.ResourceLoginFilter</filter-class>
+        <filter-class>edu.cornell.kfs.web.filter.CuResourceLoginFilter</filter-class>
     </filter>
 
     <filter>
@@ -89,7 +89,7 @@
 
     <filter>
         <filter-name>SessionExpirationFilter</filter-name>
-        <filter-class>org.kuali.kfs.sys.web.filter.SessionExpirationFilter</filter-class>
+        <filter-class>edu.cornell.kfs.web.filter.CuSessionExpirationFilter</filter-class>
     </filter>
     
     <filter>
