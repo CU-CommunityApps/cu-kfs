@@ -11,6 +11,7 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,14 +23,16 @@ import org.springframework.jdbc.core.SqlParameterValue;
 
 import edu.cornell.kfs.sys.util.CuSqlQuery;
 import edu.cornell.kfs.sys.util.FixtureUtils;
+import edu.cornell.kfs.sys.util.TestSpringContextExtension;
 import edu.cornell.kfs.sys.util.fixture.CuSqlQueryFixture;
 import edu.cornell.kfs.sys.util.fixture.SqlParameterFixture;
+import edu.cornell.kfs.tax.CuTaxTestConstants.TaxSpringBeans;
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 import edu.cornell.kfs.tax.batch.dto.NoteLite.NoteField;
 import edu.cornell.kfs.tax.batch.dto.VendorDetailLite.VendorField;
 import edu.cornell.kfs.tax.batch.metadata.TaxDtoDbMetadata;
 import edu.cornell.kfs.tax.batch.service.TaxTableMetadataLookupService;
-import edu.cornell.kfs.tax.batch.service.impl.TaxTableMetadataLookupServiceDefaultImpl;
+import edu.cornell.kfs.tax.batch.service.impl.TaxTableMetadataLookupServiceOjbImpl;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.Criteria;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.QuerySort;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail;
@@ -38,11 +41,16 @@ import edu.cornell.kfs.tax.businessobject.TransactionDetail.TransactionDetailFie
 @Execution(ExecutionMode.SAME_THREAD)
 public class TaxQueryBuilderTest {
 
+    @RegisterExtension
+    static TestSpringContextExtension springContextExtension = TestSpringContextExtension.forClassPathSpringXmlFile(
+            "edu/cornell/kfs/tax/batch/cu-spring-tax-query-builder-test.xml");
+
     private TaxTableMetadataLookupService metadataService;
 
     @BeforeEach
     void setUp() throws Exception {
-        metadataService = new TaxTableMetadataLookupServiceDefaultImpl();
+        metadataService = springContextExtension.getBean(
+                TaxSpringBeans.TAX_TABLE_METADATA_LOOKUP_SERVICE, TaxTableMetadataLookupServiceOjbImpl.class);
     }
 
     @AfterEach
@@ -151,6 +159,11 @@ public class TaxQueryBuilderTest {
                     .where(Criteria.equal(VendorField.vendorDetailVendorHeaderGeneratedIdentifier, subQuery))
                     .build();
         }),
+
+        /*QUERY_WITH_SUBQUERY_JOIN(metadataService -> {
+            return createEmptyBuilder(metadataService, VendorField.class)
+                    .build();
+        }),*/
 
         @CuSqlQueryFixture(sql = "SELECT TRA0.IRS_1099_1042S_DETAIL_ID FROM KFS.TX_TRANSACTION_DETAIL_T TRA0 "
                 + "WHERE TRA0.VNDR_FRGN_LN2_ADDR IS NULL AND ("
