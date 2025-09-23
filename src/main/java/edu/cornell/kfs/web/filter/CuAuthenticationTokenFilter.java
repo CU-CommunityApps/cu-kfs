@@ -50,6 +50,9 @@ public class CuAuthenticationTokenFilter extends AuthenticationTokenFilter {
                     if (session != null && !session.isNew()) {
                         session.invalidate();
                         request.getSession(true);
+                        // Redirect to ensure new JSESSIONID cookie is sent
+                        response.sendRedirect(request.getRequestURI());
+                        return;
                     }
                 }
                 BearerTokenContext.setBearerToken(financialsAuthToken.get());
@@ -83,6 +86,9 @@ public class CuAuthenticationTokenFilter extends AuthenticationTokenFilter {
                 if (session != null && !session.isNew()) {
                     session.invalidate();
                     request.getSession(true);
+                    // Redirect to ensure new JSESSIONID cookie is sent
+                    response.sendRedirect(request.getRequestURI());
+                    return;
                 }
                 BearerTokenContext.setBearerToken(financialsAuthToken.get());
                 filterChain.doFilter(request, response);

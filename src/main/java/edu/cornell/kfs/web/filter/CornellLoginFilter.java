@@ -40,6 +40,9 @@ public class CornellLoginFilter implements Filter {
             LOG.info("Session fixation mitigation: invalidating and creating new session for user: " + remoteUser);
             httpRequest.getSession().invalidate();
             httpRequest.getSession(true); // create new session
+            // Redirect to ensure new JSESSIONID cookie is sent
+            httpResponse.sendRedirect(httpRequest.getRequestURI());
+            return;
         }
 
         HttpServletRequestWrapper request =  new HttpServletRequestWrapper(httpRequest) {
