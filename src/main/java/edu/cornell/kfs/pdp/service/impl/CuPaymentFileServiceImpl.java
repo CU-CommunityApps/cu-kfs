@@ -177,7 +177,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         final MessageMap errorMap = new MessageMap();
         errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING,
                 "Error reading XML file: " + genericException.getMessage());
-        paymentFileEmailService.sendErrorEmail(paymentFileForEmail, errorMap);
+        paymentFileEmailService.sendErrorEmail(incomingFileName, paymentFileForEmail, errorMap);
     }
     
     /**

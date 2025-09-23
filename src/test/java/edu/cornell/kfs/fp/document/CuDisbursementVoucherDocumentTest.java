@@ -43,7 +43,6 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
-import org.kuali.kfs.vnd.businessobject.VendorRoutingComparable;
 import org.kuali.kfs.vnd.businessobject.VendorType;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
@@ -355,16 +354,6 @@ public class CuDisbursementVoucherDocumentTest {
 
         @Override
         public boolean shouldVendorRouteForApproval(String s) {
-            return false;
-        }
-
-        @Override
-        public boolean equalMemberLists(List<? extends VendorRoutingComparable> list, List<? extends VendorRoutingComparable> list1) {
-            return false;
-        }
-
-        @Override
-        public boolean noRouteSignificantChangeOccurred(VendorDetail vendorDetail, VendorHeader vendorHeader, VendorDetail vendorDetail1, VendorHeader vendorHeader1) {
             return false;
         }
 

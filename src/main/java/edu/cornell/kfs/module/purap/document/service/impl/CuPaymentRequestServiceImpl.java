@@ -350,7 +350,10 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         processedLocalDate = processedLocalDate.plusDays(Integer.parseInt(defaultDays));
 
         if (ObjectUtils.isNull(terms) || StringUtils.isEmpty(terms.getVendorPaymentTermsCode())) {
-            invoicedLocalDate = invoicedLocalDate.plusDays(PurapConstants.PREQ_PAY_DATE_EMPTY_TERMS_DEFAULT_DAYS);
+            final String defaultDaysFromInvoiceDate =
+                                        parameterService.getParameterValueAsString(PaymentRequestDocument.class,
+                                        PurapParameterConstants.PAY_DATE_DEFAULT);
+            invoicedLocalDate = invoicedLocalDate.plusDays(Integer.parseInt(defaultDaysFromInvoiceDate));
             return returnLaterDate(invoicedLocalDate, processedLocalDate);
         }
 
