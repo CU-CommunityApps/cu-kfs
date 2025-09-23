@@ -130,19 +130,6 @@ public final class TaxQueryUtils {
 
         void applyToQuery(final TaxQueryBuilder queryBuilder);
 
-        public static SqlFunction NVL(final TaxDtoFieldEnum field, final String otherValue) {
-            return NVL(field, Types.VARCHAR, otherValue);
-        }
-
-        public static SqlFunction NVL(final TaxDtoFieldEnum field, final java.sql.Date otherValue) {
-            return NVL(field, Types.DATE, otherValue);
-        }
-
-        public static SqlFunction NVL(final TaxDtoFieldEnum field, final int sqlType, final Object otherValue) {
-            return builder -> builder.appendFunctionNameAndFirstOperand("NVL", field)
-                    .appendLastFunctionOperand(sqlType, otherValue);
-        }
-
         public static SqlFunction TO_CHAR(final TaxDtoFieldEnum field) {
             return builder -> builder.appendFunctionNameAndFirstOperand("TO_CHAR", field)
                     .appendSql(CUKFSConstants.RIGHT_PARENTHESIS);
