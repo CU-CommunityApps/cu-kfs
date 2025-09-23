@@ -1,5 +1,6 @@
 package edu.cornell.kfs.fp.batch.xml.fixture;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.function.Consumer;
@@ -21,7 +22,7 @@ public enum AccountingXmlDocumentItemFixture {
     public final String serviceDate;
     public final String stockNumber;
     public final String description;
-    public final Integer quantity;
+    public final BigDecimal quantity;
     public final String unitOfMeasureCode;
     public final KualiDecimal itemCost;
 
@@ -34,7 +35,7 @@ public enum AccountingXmlDocumentItemFixture {
         this.serviceDate = serviceDate;
         this.stockNumber = stockNumber;
         this.description = description;
-        this.quantity = Integer.valueOf(quantity);
+        this.quantity = BigDecimal.valueOf(quantity);
         this.unitOfMeasureCode = unitOfMeasureCode;
         this.itemCost = new KualiDecimal(itemCost);
     }

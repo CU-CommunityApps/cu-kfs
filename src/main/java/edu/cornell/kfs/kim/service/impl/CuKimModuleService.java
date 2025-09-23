@@ -8,9 +8,8 @@ import org.kuali.kfs.kim.service.impl.KimModuleService;
 
 public class CuKimModuleService extends KimModuleService {
     
-    @Override
     public List<List<String>> listAlternatePrimaryKeyFieldNames(final Class businessObjectInterfaceClass) {
-        List<List<String>> alternateKeyList = super.listAlternatePrimaryKeyFieldNames(businessObjectInterfaceClass);
+        List<List<String>> alternateKeyList = null;
 
         if (Person.class.isAssignableFrom(businessObjectInterfaceClass)) {
             if (alternateKeyList == null) {

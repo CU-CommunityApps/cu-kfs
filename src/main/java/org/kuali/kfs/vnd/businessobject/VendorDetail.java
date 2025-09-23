@@ -48,7 +48,7 @@ import java.util.Map;
  *
  * @see org.kuali.kfs.vnd.businessobject.VendorHeader
  */
-public class VendorDetail extends PersistableBusinessObjectBase implements VendorRoutingComparable {
+public class VendorDetail extends PersistableBusinessObjectBase {
 
     private static final Logger LOG = LogManager.getLogger();
 
@@ -707,60 +707,6 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
 
     public void setDefaultFaxNumber(final String defaultFaxNumber) {
         this.defaultFaxNumber = defaultFaxNumber;
-    }
-
-    @Override
-    public boolean isEqualForRouting(final Object toCompare) {
-        LOG.debug("Entering isEqualForRouting.");
-        if (ObjectUtils.isNull(toCompare) || !(toCompare instanceof VendorDetail)) {
-            return false;
-        } else {
-            final VendorDetail detail = (VendorDetail) toCompare;
-            return new EqualsBuilder().append(
-                    getVendorHeaderGeneratedIdentifier(), detail.getVendorHeaderGeneratedIdentifier()).append(
-                    getVendorDetailAssignedIdentifier(), detail.getVendorDetailAssignedIdentifier()).append(
-                    isVendorParentIndicator(), detail.isVendorParentIndicator()).append(
-                    getVendorName(), detail.getVendorName()).append(
-                    getVendorLastName(), detail.getVendorLastName()).append(
-                    getVendorFirstName(), detail.getVendorFirstName()).append(
-                    isActiveIndicator(), detail.isActiveIndicator()).append(
-                    getVendorInactiveReasonCode(), detail.getVendorInactiveReasonCode()).append(
-                    getVendorDunsNumber(), detail.getVendorDunsNumber()).append(
-                    getVendorPaymentTermsCode(), detail.getVendorPaymentTermsCode()).append(
-                    getVendorShippingTitleCode(), detail.getVendorShippingTitleCode()).append(
-                    getVendorShippingPaymentTermsCode(), detail.getVendorShippingPaymentTermsCode()).append(
-                    getVendorConfirmationIndicator(), detail.getVendorConfirmationIndicator()).append(
-                    getVendorPrepaymentIndicator(), detail.getVendorPrepaymentIndicator()).append(
-                    getVendorCreditCardIndicator(), detail.getVendorCreditCardIndicator()).append(
-                    getVendorMinimumOrderAmount(), detail.getVendorMinimumOrderAmount()).append(
-                    getVendorUrlAddress(), detail.getVendorUrlAddress()).append(
-                    getVendorRemitName(), detail.getVendorRemitName()).append(
-                    getVendorRestrictedIndicator(), detail.getVendorRestrictedIndicator()).append(
-                    getVendorRestrictedReasonText(), detail.getVendorRestrictedReasonText()).append(
-                    getVendorRestrictedDate(), detail.getVendorRestrictedDate()).append(
-                    getVendorRestrictedPersonIdentifier(), detail.getVendorRestrictedPersonIdentifier()).append(
-                    getVendorSoldToGeneratedIdentifier(), detail.getVendorSoldToGeneratedIdentifier()).append(
-                    getVendorSoldToAssignedIdentifier(), detail.getVendorSoldToAssignedIdentifier()).append(
-                    getVendorSoldToName(), detail.getVendorSoldToName()).append( // KFSUPGRADE-779
-                    isTaxableIndicator(), detail.isTaxableIndicator()).append( 
-                    ((VendorDetailExtension)getExtension()).isInsuranceRequiredIndicator(),((VendorDetailExtension)detail.getExtension()).isInsuranceRequiredIndicator()).append(
-                    ((VendorDetailExtension)getExtension()).getInsuranceRequirementsCompleteIndicator(),((VendorDetailExtension)detail.getExtension()).getInsuranceRequirementsCompleteIndicator()).append(
-                    ((VendorDetailExtension)getExtension()).getCornellAdditionalInsuredIndicator(),((VendorDetailExtension)detail.getExtension()).getCornellAdditionalInsuredIndicator()).append(
-                    ((VendorDetailExtension)getExtension()).getGeneralLiabilityCoverageAmount(),((VendorDetailExtension)detail.getExtension()).getGeneralLiabilityCoverageAmount()).append(
-                    ((VendorDetailExtension)getExtension()).getGeneralLiabilityExpiration(),((VendorDetailExtension)detail.getExtension()).getGeneralLiabilityExpiration()).append(
-                    ((VendorDetailExtension)getExtension()).getAutomobileLiabilityCoverageAmount(),((VendorDetailExtension)detail.getExtension()).getAutomobileLiabilityCoverageAmount()).append(
-                    ((VendorDetailExtension)getExtension()).getAutomobileLiabilityExpiration(),((VendorDetailExtension)detail.getExtension()).getAutomobileLiabilityExpiration()).append(
-                    ((VendorDetailExtension)getExtension()).getWorkmansCompCoverageAmount(),((VendorDetailExtension)detail.getExtension()).getWorkmansCompCoverageAmount()).append(
-                    ((VendorDetailExtension)getExtension()).getWorkmansCompExpiration(),((VendorDetailExtension)detail.getExtension()).getWorkmansCompExpiration()).append(
-                    ((VendorDetailExtension)getExtension()).getExcessLiabilityUmbExpiration(),((VendorDetailExtension)detail.getExtension()).getExcessLiabilityUmbExpiration()).append(
-                    ((VendorDetailExtension)getExtension()).getExcessLiabilityUmbrellaAmount(),((VendorDetailExtension)detail.getExtension()).getExcessLiabilityUmbrellaAmount()).append(
-                    ((VendorDetailExtension)getExtension()).getHealthOffSiteCateringLicenseReq(),((VendorDetailExtension)detail.getExtension()).getHealthOffSiteCateringLicenseReq()).append(
-                    ((VendorDetailExtension)getExtension()).getHealthOffSiteLicenseExpirationDate(),((VendorDetailExtension)detail.getExtension()).getHealthOffSiteLicenseExpirationDate()).append(
-                    ((VendorDetailExtension)getExtension()).getInsuranceNotes(),((VendorDetailExtension)detail.getExtension()).getInsuranceNotes()).append(
-                    ((VendorDetailExtension)getExtension()).getMerchantNotes(),((VendorDetailExtension)detail.getExtension()).getMerchantNotes()).append(
-                    getDefaultPaymentMethodCode(), detail.getDefaultPaymentMethodCode()).append( // end KFSUPGRADE-779
-                    isVendorFirstLastNameIndicator(), detail.isVendorFirstLastNameIndicator()).isEquals();
-        }
     }
 
     /**

@@ -201,7 +201,7 @@ class BusinessObjectsControllersHelperService {
 
     Map<String, Object> getLookupValues(
             final UserSession userSession, final String businessObjectName
-    ) {
+    ) throws InstantiationException, IllegalAccessException {
         LOG.debug("getLookupValues(...) - Enter : businessObjectName={}", businessObjectName);
 
         final BusinessObjectEntry businessObjectEntry =
@@ -290,7 +290,7 @@ class BusinessObjectsControllersHelperService {
 
     Object getLookupValuesAttributeDefinition(
             final UserSession userSession, final String businessObjectName, final String attributeName
-    ) {
+    ) throws InstantiationException, IllegalAccessException {
         LOG.debug(
                 "getLookupValuesAttributeDefinition(...) - Enter : businessObjectName={}; attributeName={}",
                 businessObjectName,
@@ -335,7 +335,7 @@ class BusinessObjectsControllersHelperService {
     private boolean doesAttrWithGivenNameExistForClass(
             final Class<? extends BusinessObjectBase> businessObjectClass,
             final String attributeDefinitionName
-    ) {
+    ) throws InstantiationException, IllegalAccessException {
         final SearchService searchService = getSearchService(businessObjectClass);
         final List<FormAttribute> attributeDefinitions = searchService.getFormAttributes(businessObjectClass);
         for (final FormAttribute attributeDefinition : attributeDefinitions) {

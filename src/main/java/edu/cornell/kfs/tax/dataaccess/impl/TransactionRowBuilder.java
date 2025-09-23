@@ -472,9 +472,9 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
     protected int getMaxSearchSize() {
     	if (maxSearchResultSize == null) {
 	    	String searchLimit = getParameterService().getParameterValueAsString(KFSConstants.CoreModuleNamespaces.WORKFLOW,
-	        		KRADConstants.DetailTypes.DOCUMENT_SEARCH_DETAIL_TYPE, KewApiConstants.DOC_SEARCH_RESULT_CAP);
+	        		KRADConstants.DetailTypes.DOCUMENT_SEARCH_DETAIL_TYPE, KewApiConstants.RESULTS_RETURNED);
 	    	try {
-	    		LOG.debug("Found a value for KewApiConstants.DOC_SEARCH_RESULT_CAP, and it is '" + searchLimit + "'");
+	    		LOG.debug("Found a value for KewApiConstants.RESULTS_RETURNED, and it is '" + searchLimit + "'");
 	    		maxSearchResultSize = new Integer(searchLimit);
 	    	} catch (Exception e) {
 	    		LOG.warn("Unable to convert '" + searchLimit +
