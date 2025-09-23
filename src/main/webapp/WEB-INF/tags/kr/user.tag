@@ -74,7 +74,7 @@
   <c:when test="${readOnly}">
     <input type="hidden" id='<c:out value="${userIdFieldName}"/>' name='<c:out value="${userIdFieldName}"/>' value='<c:out value="${userId}"/>' />
     <%-- CU Customization: Escape the Principal ID and Principal Name used in the URL parameters. --%>
-    <kul:inquiry boClassName="org.kuali.kfs.kim.impl.identity.Person" keyValues="principalId=${kfsfunc:urlEncode(universalId)}&principalName=${kfsfunc:urlEncode(userId)}/>}" render="true"><c:out value="${userId}" /></kul:inquiry>&nbsp;
+    <kul:inquiry boClassName="org.kuali.kfs.kim.impl.identity.Person" keyValues="principalId=${kfsfunc:urlEncode(universalId)}&principalName=${kfsfunc:urlEncode(userId)}" render="true"><c:out value="${userId}" /></kul:inquiry>&nbsp;
   </c:when>
   <c:otherwise>
     ${kfunc:registerEditableProperty(KualiForm, userIdFieldName)}
