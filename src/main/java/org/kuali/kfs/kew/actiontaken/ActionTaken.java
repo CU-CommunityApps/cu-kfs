@@ -19,6 +19,7 @@
 package org.kuali.kfs.kew.actiontaken;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.kuali.kfs.kew.actionrequest.ActionRequest;
 import org.kuali.kfs.kew.actionrequest.KimGroupRecipient;
 import org.kuali.kfs.kew.actionrequest.PersonRecipient;
@@ -34,9 +35,11 @@ import org.kuali.kfs.kim.impl.role.RoleLite;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.sys.KFSConstants;
 
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +53,15 @@ import java.util.Map;
 public class ActionTaken extends PersistableBusinessObjectBase {
 
     private static final long serialVersionUID = -81505450567067594L;
+
+    /**
+     * Sort by date in descending order
+     */
+    public static final Comparator<ActionTaken> COMPARATOR_ACTION_DATE = Comparator.nullsLast(
+            Comparator.comparing(ActionTaken::getActionDate, Comparator.nullsLast(Comparator.reverseOrder()))
+                .thenComparing(ActionTaken::getActionTakenIdNumber, Comparator.nullsLast(Comparator.reverseOrder()))
+    );
+
     private String actionTakenId;
     private String documentId;
     private String actionTaken;
@@ -170,6 +182,13 @@ public class ActionTaken extends PersistableBusinessObjectBase {
 
     public String getActionTakenId() {
         return actionTakenId;
+    }
+
+    private BigInteger getActionTakenIdNumber() {
+        if (NumberUtils.isDigits(actionTakenId)) {
+            return new BigInteger(actionTakenId);
+        }
+        return null;
     }
 
     public void setActionTakenId(final String actionTakenId) {

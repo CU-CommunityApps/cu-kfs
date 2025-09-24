@@ -18,15 +18,6 @@
  */
 package org.kuali.kfs.sys.document.web.renderers;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts.taglib.html.HiddenTag;
@@ -50,6 +41,14 @@ import org.kuali.kfs.sys.document.web.AccountingLineViewAction;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.KeyValue;
 
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.tagext.Tag;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.cornell.kfs.sys.businessobject.options.FavoriteAccountValuesFinder;
 
 /**
@@ -63,15 +62,14 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     private AccountingDocument accountingDocument;
     private String lineCollectionProperty;
     private final KNSFileTag scriptFileTag = new KNSFileTag();
-    private final KNSFileTag noscriptFileTag = new KNSFileTag();
     private final KNSSubmitTag uploadButtonTag = new KNSSubmitTag();
     private final KNSSubmitTag showHideTag = new KNSSubmitTag();
     private final HiddenTag hideStateTag = new HiddenTag();
     private final KNSSubmitTag cancelButtonTag = new KNSSubmitTag();
     private boolean shouldUpload = true;
-    private boolean canEdit = false;
+    private boolean canEdit;
 
-    private boolean groupActionsRendered = false;
+    private boolean groupActionsRendered;
 
     private boolean hideDetails;
     // KFSPTS-985
@@ -83,7 +81,6 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      */
     public GroupTitleLineRenderer() {
         scriptFileTag.setSize("30");
-        noscriptFileTag.setSize("30");
         uploadButtonTag.setStyleClass("btn btn-green");
         uploadButtonTag.setValue("Add");
         cancelButtonTag.setProperty("methodToCall.cancel");
@@ -109,11 +106,6 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
         scriptFileTag.setPageContext(null);
         scriptFileTag.setParent(null);
         scriptFileTag.setProperty(null);
-
-        // clean noscript file tag
-        noscriptFileTag.setPageContext(null);
-        noscriptFileTag.setParent(null);
-        noscriptFileTag.setProperty(null);
 
         // clean upload button tag
         uploadButtonTag.setPageContext(null);
@@ -165,8 +157,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
             renderGroupLevelActions(pageContext, parentTag);
 
             pageContext.getOut().write(buildRowEnding());
-        }
-        catch (final IOException ioe) {
+        } catch (final IOException ioe) {
             throw new JspException("Difficulty in rendering import/group header line", ioe);
         }
     }
@@ -209,8 +200,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
             renderUploadCell(pageContext, parentTag);
 
             out.write(buildGroupActionsColumnEnding());
-        }
-        catch (final IOException ioe) {
+        } catch (final IOException ioe) {
             throw new JspException("Difficulty rendering group level actions", ioe);
         }
     }
@@ -248,11 +238,11 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     }
 
     /**
-     * Builds the tags for the title cell of the import line.
+     * Builds the tags for the title cell of the import line,
      *
      * @return the String with the HTML for the title cell
      */
-    protected String buildTitleCell() throws JspException{
+    protected String buildTitleCell() throws JspException {
         final StringBuilder titleCell = new StringBuilder();
         int colSpan = titleCellSpan;
 
@@ -286,7 +276,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
         return titleCell.toString();
     }
 
-    protected String buildBlankCell() throws JspException{
+    protected String buildBlankCell() throws JspException {
         final StringBuilder titleCell = new StringBuilder();
         titleCell.append("<th style=\"visibility:hidden;\"></th>");
         return titleCell.toString();
@@ -300,10 +290,10 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     }
 
     protected void renderGroupActions(final PageContext pageContext, final Tag parentTag) throws JspException {
-        final List<? extends AccountingLineViewActionDefinition> accountingLineGroupActions = accountingLineGroupDefinition.
-                getAccountingLineGroupActions();
-        if (!this.isGroupActionsRendered() || accountingLineGroupActions == null || accountingLineGroupActions.
-                isEmpty()) {
+        final List<? extends AccountingLineViewActionDefinition> accountingLineGroupActions = accountingLineGroupDefinition
+                .getAccountingLineGroupActions();
+        if (!isGroupActionsRendered() || accountingLineGroupActions == null || accountingLineGroupActions
+                .isEmpty()) {
             return;
         }
 
@@ -312,13 +302,13 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
             final String actionMethod = action.getActionMethod();
             final String actionLabel = action.getActionLabel();
 
-            final AccountingLineViewAction viewAction = new AccountingLineViewAction(actionMethod, actionLabel, 
+            final AccountingLineViewAction viewAction = new AccountingLineViewAction(actionMethod, actionLabel,
                     action.getButtonStyle(), action.getButtonLabel(), action.getButtonIcon());
             viewActions.add(viewAction);
         }
 
         if (!viewActions.isEmpty()) {
-            ActionsRenderer actionsRenderer = new ActionsRenderer();
+            final ActionsRenderer actionsRenderer = new ActionsRenderer();
             actionsRenderer.setActions(viewActions);
             actionsRenderer.render(pageContext, parentTag);
             actionsRenderer.clear();
@@ -339,8 +329,8 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      * Renders the show/hide button
      *
      * @param pageContext the page context to render to
-     * @param parentTag the tag requesting all this rendering
-     * @throws JspException thrown under terrible circumstances when the rendering failed and had to be left behind like 
+     * @param parentTag   the tag requesting all this rendering
+     * @throws JspException thrown under terrible circumstances when the rendering failed and had to be left behind like
      *                      so much refuse
      */
     protected void renderHideDetails(final PageContext pageContext, final Tag parentTag) throws JspException {
@@ -355,10 +345,10 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
 
         showHideTag.setPageContext(pageContext);
         showHideTag.setParent(parentTag);
-        showHideTag.setProperty("methodToCall."+toggle+"Details");
+        showHideTag.setProperty("methodToCall." + toggle + "Details");
         showHideTag.setStyleClass("btn btn-default uppercase");
-        showHideTag.setAlt(toggle+" transaction details");
-        showHideTag.setTitle(toggle+" transaction details");
+        showHideTag.setAlt(toggle + " transaction details");
+        showHideTag.setTitle(toggle + " transaction details");
         showHideTag.setValue(displayToggle + " Details");
 
         showHideTag.doStartTag();
@@ -366,11 +356,11 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     }
 
     /**
-     * Oy, the big one...this one actually renders instead of returning the HTML in a String. This is because it's kind 
-     * of complex(and a likely target for future refactoring)
+     * Oy, the big one...this one actually renders instead of returning the HTML in a String. This is because it's kind
+     * of complex (and a likely target for future refactoring).
      *
      * @param pageContext the page context to render to
-     * @param parentTag the tag that is requesting all the rendering
+     * @param parentTag   the tag that is requesting all the rendering
      * @throws JspException thrown if something goes wrong
      */
     protected void renderUploadCell(final PageContext pageContext, final Tag parentTag) throws JspException {
@@ -384,7 +374,6 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
                 final String uploadDiv = getUploadDivName();
 
                 out.write("\n<SCRIPT type=\"text/javascript\">\n");
-                out.write("<!--\n");
                 out.write("\tfunction " + hideImport + "(showLinkId, uploadDivId) {\n");
                 out.write("\t\tdocument.getElementById(showLinkId).style.display=\"inline\";\n");
                 out.write("\t\tdocument.getElementById(uploadDivId).style.display=\"none\";\n");
@@ -409,8 +398,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
                     scriptFileTag.setProperty(StringUtils
                             .substringBeforeLast(getLineCollectionProperty(), ".") + "." + accountingLineGroupDefinition
                             .getImportedLinePropertyPrefix() + "File");
-                }
-                else {
+                } else {
                     scriptFileTag.setProperty(accountingLineGroupDefinition.getImportedLinePropertyPrefix() + "File");
                 }
                 scriptFileTag.doStartTag();
@@ -447,31 +435,16 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
                 out.write("' +\n");
 
                 out.write("\t'</div>');\n");
-                out.write("\t//-->\n");
                 out.write("</SCRIPT>\n");
-                out.write("<NOSCRIPT>\n");
-                out.write("\tImport " + accountingLineGroupDefinition.getGroupLabel() + " lines\n");
-
-                noscriptFileTag.setPageContext(pageContext);
-                noscriptFileTag.setParent(parentTag);
-                noscriptFileTag.setProperty(accountingLineGroupDefinition.getImportedLinePropertyPrefix() + "File");
-                noscriptFileTag.doStartTag();
-                noscriptFileTag.doEndTag();
-
-                uploadButtonTag.doStartTag();
-                uploadButtonTag.doEndTag();
-
-                out.write("</NOSCRIPT>\n");
-            }
-            catch (IOException ioe) {
+            } catch (final IOException ioe) {
                 throw new JspException("Difficulty rendering accounting lines import upload", ioe);
             }
         }
     }
 
     /**
-     * @return the name of the line collection property, but in a form that is okay for javascript variable/function 
-     * naming
+     * @return the name of the line collection property, but in a form that is okay for javascript variable/function
+     * naming.
      */
     protected String getVariableFriendlyLineCollectionProperty() {
         return lineCollectionProperty.replaceAll("[^A-Za-z0-9]", "_");
@@ -513,13 +486,13 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     }
 
     /**
-     * Allows overriding of whether something can be uploaded - though this serves only to turn uploading more off, 
-     * never more on
+     * Allows overriding of whether something can be uploaded - though this serves only to turn uploading more off,
+     * never more on.
      *
      * @param allowUpload should we be allowed to upload?
      */
     public void overrideCanUpload(final boolean allowUpload) {
-        this.shouldUpload = allowUpload;
+        shouldUpload = allowUpload;
     }
 
     /**
@@ -604,13 +577,13 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      * @param groupActionsRenderred The groupActionsRendered value to set.
      */
     public void setGroupActionsRendered(final boolean groupActionsRenderred) {
-        this.groupActionsRendered = groupActionsRenderred;
+        groupActionsRendered = groupActionsRenderred;
     }
 
     /**
      * @param canEdit The canEdit value to set.
      */
-    public void setCanEdit(boolean canEdit) {
+    public void setCanEdit(final boolean canEdit) {
         this.canEdit = canEdit;
     }
 

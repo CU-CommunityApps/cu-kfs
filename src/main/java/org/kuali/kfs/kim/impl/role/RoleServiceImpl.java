@@ -233,7 +233,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getCriteriaLookupService().lookup(DelegateMember.class, queryByCriteria, lc.build());
     }
 
-    @Cacheable(cacheNames = Role.CACHE_NAME, key = "'{" + Role.CACHE_NAME + "}id=' + #p0")
+    @Cacheable(cacheNames = Role.CACHE_NAME, key = "'namespaceCode=' + #p0 + '|' + 'name='+ #p1")
     @Override
     public RoleLite getRoleWithoutMembers(final String roleId) throws IllegalStateException {
         incomingParamCheck(roleId, "roleId");
@@ -258,7 +258,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
     protected RoleLite getRoleFromCache(final String id) {
         final Cache cache = cacheManager.getCache(Role.CACHE_NAME);
-        final Cache.ValueWrapper cachedValue = cache.get("{" + Role.CACHE_NAME + "}id=" + id);
+        final Cache.ValueWrapper cachedValue = cache.get("id=" + id);
         if (cachedValue != null) {
             return (RoleLite) cachedValue.get();
         }
@@ -267,8 +267,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
     protected RoleLite getRoleFromCache(final String namespaceCode, final String name) {
         final Cache cache = cacheManager.getCache(Role.CACHE_NAME);
-        final String key = "{" + Role.CACHE_NAME + "}namespaceCode=" + namespaceCode + "|name=" + name;
-        final Cache.ValueWrapper cachedValue = cache.get(key);
+        final Cache.ValueWrapper cachedValue = cache.get("namespaceCode=" + namespaceCode + "|name=" + name);
         if (cachedValue != null) {
             return (RoleLite) cachedValue.get();
         }
@@ -288,9 +287,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
     protected void putRoleInCache(final RoleLite role) {
         if (role != null) {
             final Cache cache = cacheManager.getCache(Role.CACHE_NAME);
-            final String idKey = "{" + Role.CACHE_NAME + "}id=" + role.getId();
-            final String nameKey = "{" + Role.CACHE_NAME + "}namespaceCode=" + role.getNamespaceCode() + "|name="
-                                   + role.getName();
+            final String idKey = "id=" + role.getId();
+            final String nameKey = "namespaceCode=" + role.getNamespaceCode() + "|name=" + role.getName();
             cache.put(idKey, role);
             cache.put(nameKey, role);
         }
@@ -300,7 +298,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         if (roles != null && !roles.isEmpty()) {
             roles.forEach(this::putRoleInCache);
             final Cache cache = cacheManager.getCache(Role.CACHE_NAME);
-            final String nameKey = "{" + Role.CACHE_NAME + "s}namespaceCode=" + namespaceCode + "|name="
+            final String nameKey = "{Roles}namespaceCode=" + namespaceCode + "|name="
                                    + name;
             cache.put(nameKey, roles);
         }
@@ -367,7 +365,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
     }
 
     @Cacheable(cacheNames = Role.CACHE_NAME,
-            key = "'{" + Role.CACHE_NAME + "}-namespaceCode=' + #p0 + '|' + 'name='+ #p1")
+            key = "'namespaceCode=' + #p0 + '|' + 'name='+ #p1")
     @Override
     public RoleLite getRoleByNamespaceCodeAndName(final String namespaceCode, final String roleName) throws IllegalStateException {
         incomingParamCheck(namespaceCode, "namespaceCode");
@@ -376,7 +374,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
     }
 
     @Cacheable(cacheNames = Role.CACHE_NAME,
-            key = "'{" + Role.CACHE_NAME + "}-namespaceCode=' + #p0 + '|' + 'name='+ #p1")
+            key = "'{Roles}namespaceCode=' + #p0 + '|' + 'name='+ #p1")
     @Override
     public List<RoleLite> getAllRolesByNamespaceCodeAndName(final String namespaceCode,
             final String roleName) throws IllegalStateException {

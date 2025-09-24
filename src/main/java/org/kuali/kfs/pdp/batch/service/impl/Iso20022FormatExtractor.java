@@ -120,6 +120,7 @@ import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -130,6 +131,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder.BankAccountTypes;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
@@ -776,7 +778,11 @@ public class Iso20022FormatExtractor {
 
         int numberOfTransactions = 0;
         BigDecimal controlSum = BigDecimal.ZERO;
-        for (final Integer disbursementNumber : disbursementPaymentDetails.keySet()) {
+        final List<Integer> sortedDisbursementNumbers = disbursementPaymentDetails.keySet()
+                .stream()
+                .sorted(Comparator.naturalOrder())
+                .collect(Collectors.toList());
+        for (final Integer disbursementNumber : sortedDisbursementNumbers) {
             final Collection<PaymentDetail> paymentDetails = disbursementPaymentDetails.get(disbursementNumber);
             final PaymentGroup disbursementTemplatePaymentGroup = paymentDetails.iterator().next().getPaymentGroup();
             final CreditTransferTransactionInformation10 creditTransferTransactionInformation =

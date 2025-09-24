@@ -21,7 +21,9 @@ package org.kuali.kfs.module.purap.document.authorization;
 import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.purap.PurapAuthorizationConstants;
 import org.kuali.kfs.module.purap.businessobject.SensitiveData;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.identity.PurapKimAttributes;
@@ -32,6 +34,7 @@ import org.kuali.kfs.sys.document.authorization.AccountingDocumentAuthorizerBase
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class PurchasingAccountsPayableTransactionalDocumentAuthorizerBase extends AccountingDocumentAuthorizerBase {
 
@@ -64,11 +67,29 @@ public class PurchasingAccountsPayableTransactionalDocumentAuthorizerBase extend
             }
         }
     }
-    
+
+    /**
+     * Overridden to allow vendor edit if doc can be edited (to allow for the POA to override and restrict vendor edit).
+     */
+    @Override
+    public Set<String> getDocumentActions(
+            final Document document, final Person user,
+            final Set<String> documentActionsFromPresentationController) {
+
+        final Set<String> documentActionsToReturn = super.getDocumentActions(document, user,
+                documentActionsFromPresentationController);
+
+        if (documentActionsToReturn.contains(KRADConstants.KUALI_ACTION_CAN_EDIT)) {
+            documentActionsToReturn.add(PurapAuthorizationConstants.CAN_EDIT_VENDOR);
+        }
+
+        return documentActionsToReturn;
+    }
+
     @Override
     public boolean canEditDocumentOverview(final Document document, final Person user) {
         return isAuthorizedByTemplate(document, KFSConstants.CoreModuleNamespaces.KFS,
-                KimConstants.PermissionTemplateNames.EDIT_DOCUMENT, user.getPrincipalId());
+            KimConstants.PermissionTemplateNames.EDIT_DOCUMENT, user.getPrincipalId());
     }
 
 }
