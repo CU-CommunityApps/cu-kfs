@@ -37,11 +37,9 @@ import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.api.permission.PermissionService;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kns.datadictionary.BusinessObjectEntry;
-import org.kuali.kfs.kns.service.BusinessObjectMetaDataService;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.bo.BusinessObjectBase;
-import org.kuali.kfs.krad.bo.DataObjectRelationship;
 import org.kuali.kfs.krad.exception.AuthorizationException;
 import org.kuali.kfs.krad.keyvalues.HierarchicalControlValuesFinder;
 import org.kuali.kfs.krad.keyvalues.HierarchicalData;
@@ -51,7 +49,6 @@ import org.kuali.kfs.krad.service.ModuleService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.KRADUtils;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.businessobject.service.SearchService;
 import org.kuali.kfs.sys.rest.resource.responses.LookupResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +60,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -85,7 +81,6 @@ class BusinessObjectsControllersHelperService {
     private static final Logger LOG = LogManager.getLogger();
 
     private final BusinessObjectDictionaryService businessObjectDictionaryService;
-    private final BusinessObjectMetaDataService businessObjectMetaDataService;
     private final DataDictionaryService dataDictionaryService;
     private final KualiModuleService kualiModuleService;
     private final LookupDictionary lookupDictionary;
@@ -95,7 +90,6 @@ class BusinessObjectsControllersHelperService {
     @Autowired
     BusinessObjectsControllersHelperService(
             final BusinessObjectDictionaryService businessObjectDictionaryService,
-            final BusinessObjectMetaDataService businessObjectMetaDataService,
             final DataDictionaryService dataDictionaryService,
             final KualiModuleService kualiModuleService,
             final LookupDictionary lookupDictionary,
@@ -104,8 +98,6 @@ class BusinessObjectsControllersHelperService {
     ) {
         Validate.isTrue(businessObjectDictionaryService != null, "businessObjectDictionaryService must be provided");
         this.businessObjectDictionaryService = businessObjectDictionaryService;
-        Validate.isTrue(businessObjectMetaDataService != null, "businessObjectMetaDataService must be provided");
-        this.businessObjectMetaDataService = businessObjectMetaDataService;
         Validate.isTrue(dataDictionaryService != null, "dataDictionaryService must be provided");
         this.dataDictionaryService = dataDictionaryService;
         Validate.isTrue(kualiModuleService != null, "kualiModuleService must be provided");
@@ -167,14 +159,6 @@ class BusinessObjectsControllersHelperService {
         final SearchService searchService = getSearchService(businessObjectBaseClass);
 
         final List<FormAttribute> lookupAttributes = searchService.getFormAttributes(businessObjectBaseClass);
-        // We are skipping nested lookup configuration for BatchFile, as it doesn't have any, and a BatchFile object
-        // cannot be instantiated without a file path or File object to determine the relationship.
-        // TODO: Move all of the BatchFile stuff into it's own thing at some point
-        if (!Objects.equals(businessObjectBaseClass, BatchFile.class)) {
-            for (final FormAttribute lookupAttribute : lookupAttributes) {
-                setNestedLookupFields(lookupAttribute, businessObjectClass);
-            }
-        }
 
         String title = lookupDictionary.getLookupTitle(businessObjectBaseClass);
         if (StringUtils.isEmpty(title)) {
@@ -344,33 +328,6 @@ class BusinessObjectsControllersHelperService {
             }
         }
         return false;
-    }
-
-    private void setNestedLookupFields(
-            final FormAttribute lookupAttribute,
-            final Class<? extends BusinessObject> businessObjectClass
-    ) throws InstantiationException, IllegalAccessException {
-        final boolean disableLookup = lookupAttribute.getDisableLookup();
-        if (disableLookup) {
-            return;
-        }
-
-        final String attributeName = lookupAttribute.getName();
-
-        final DataObjectRelationship relationship = businessObjectMetaDataService.getBusinessObjectRelationship(
-                businessObjectClass.newInstance(),
-                businessObjectClass,
-                attributeName,
-                "",
-                false
-        );
-
-        if (relationship != null) {
-            lookupAttribute.setCanLookup(true);
-            final String lookupClassName = relationship.getRelatedClass().getSimpleName();
-            lookupAttribute.setLookupClassName(lookupClassName);
-            lookupAttribute.setLookupRelationshipMappings(relationship.getParentToChildReferences());
-        }
     }
 
     private boolean shouldCreateNewUrlBeIncluded(
