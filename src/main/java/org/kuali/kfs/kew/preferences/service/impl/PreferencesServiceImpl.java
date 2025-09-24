@@ -21,7 +21,6 @@ package org.kuali.kfs.kew.preferences.service.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.kew.actionlist.service.ActionListService;
 import org.kuali.kfs.kew.api.KewApiConstants;
