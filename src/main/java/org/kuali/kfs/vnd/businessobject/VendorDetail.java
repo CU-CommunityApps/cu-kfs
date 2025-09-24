@@ -20,7 +20,6 @@ package org.kuali.kfs.vnd.businessobject;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
@@ -33,8 +32,6 @@ import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.document.service.VendorService;
-
-import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 import java.sql.Date;
 import java.util.ArrayList;
