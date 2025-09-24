@@ -79,7 +79,7 @@
 
     <filter>
         <filter-name>ResourceLoginFilter</filter-name>
-        <filter-class>org.kuali.kfs.web.filter.ResourceLoginFilter</filter-class>
+        <filter-class>edu.cornell.kfs.web.filter.CuResourceLoginFilter</filter-class>
     </filter>
 
     <filter>
