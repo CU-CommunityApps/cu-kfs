@@ -31,6 +31,34 @@ public class CornellLoginFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse)servletResponse;
 
         String remoteUser = getRemoteUser(httpRequest);
+
+        // Session fixation mitigation: invalidate session if remoteUser is authenticated and different from session principal
+        if (remoteUser != null && !remoteUser.isEmpty()) {
+            javax.servlet.http.HttpSession session = httpRequest.getSession(false);
+            boolean shouldInvalidate = false;
+
+            if (session != null) {
+                Object principalObj = session.getAttribute("principalName");
+                if (principalObj instanceof String) {
+                    String currentPrincipal = (String) principalObj;
+                    if (!remoteUser.equals(currentPrincipal)) {
+                        shouldInvalidate = true;
+                    }
+                } else {
+                    // No principalName set, treat as privilege change
+                    shouldInvalidate = true;
+                }
+            }
+
+            if (shouldInvalidate && session != null) {
+                session.invalidate();
+                session = null;
+            }
+
+            javax.servlet.http.HttpSession newSession = (session == null) ? httpRequest.getSession(true) : session;
+            newSession.setAttribute("principalName", remoteUser);
+        }
+
         HttpServletRequestWrapper request =  new HttpServletRequestWrapper(httpRequest) {
             @Override
             public String getRemoteUser() {
