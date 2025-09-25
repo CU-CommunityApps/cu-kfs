@@ -284,12 +284,12 @@ public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAware
                         .join(UniversityDate.class,
                                 Criteria.equal(DvSubQueryField.universityDate, Types.DATE, config.getStartDate()))
                         .where(
-                                Criteria.in(DvSubQueryField.documentDisbVchrPaymentMethodCode, List.of(
+                                Criteria.in(DvSubQueryField.disbVchrPaymentMethodCode, List.of(
                                         PaymentSourceConstants.PAYMENT_METHOD_DRAFT,
                                         PaymentSourceConstants.PAYMENT_METHOD_WIRE
                                 )),
                                 Criteria.isNull(DvSubQueryField.paidDate),
-                                Criteria.in(DvSubQueryField.dvDocumentNumber, documentsFilteredByFinalizedDateSubquery)
+                                Criteria.in(DvSubQueryField.documentNumber, documentsFilteredByFinalizedDateSubquery)
                         )
                 );
     }
