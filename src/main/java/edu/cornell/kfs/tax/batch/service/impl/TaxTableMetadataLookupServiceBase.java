@@ -40,6 +40,12 @@ import edu.cornell.kfs.tax.batch.service.TaxTableMetadataLookupService;
  *            unprefixed table column name will be used as the alias.
  * -- Otherwise, an alias will be formed by taking the table-alias-prefixed column name
  *            and converting the dot into an underscore. (Example: DOC1.OBJ_ID --> DOC1_OBJ_ID)
+ * 
+ * NOTE: When a metadata object has explicit aliases like in the latter case, take care when
+ *       using such objects for certain subquery expressions (especially subquery joins),
+ *       since it increases the risk of the custom aliases becoming incompatible with the parent query.
+ *       Such aliases generally don't cause a problem in a top-level UNION or UNION ALL query,
+ *       because the aliases in the first set will override those of the subsequent sets.
  */
 public abstract class TaxTableMetadataLookupServiceBase<T> implements TaxTableMetadataLookupService {
 

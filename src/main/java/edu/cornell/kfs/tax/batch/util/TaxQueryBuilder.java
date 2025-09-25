@@ -61,9 +61,9 @@ public class TaxQueryBuilder {
 
     public TaxQueryBuilder selectAllFieldsMappedTo(final Class<? extends BusinessObject> businessObjectClass) {
         final Class<? extends TaxDtoFieldEnum> enumClass = mappingMetadata.getFieldEnumClass();
-        final Stream<TaxDtoFieldEnum> fields = Arrays.stream(enumClass.getEnumConstants());
+        Stream<TaxDtoFieldEnum> fields = Arrays.stream(enumClass.getEnumConstants());
         // Calling filter() on a separate line, because chaining it with the one above results in type mismatch errors.
-        fields.filter(field -> businessObjectClass.equals(field.getMappedBusinessObjectClass()));
+        fields = fields.filter(field -> businessObjectClass.equals(field.getMappedBusinessObjectClass()));
         return select(fields);
     }
 

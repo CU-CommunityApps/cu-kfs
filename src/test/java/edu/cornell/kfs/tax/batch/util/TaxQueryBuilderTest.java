@@ -17,10 +17,12 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.springframework.jdbc.core.SqlParameterValue;
 
+import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
 import edu.cornell.kfs.sys.util.FixtureUtils;
 import edu.cornell.kfs.sys.util.TestSpringContextExtension;
@@ -29,6 +31,7 @@ import edu.cornell.kfs.sys.util.fixture.SqlParameterFixture;
 import edu.cornell.kfs.tax.CuTaxTestConstants.TaxSpringBeans;
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 import edu.cornell.kfs.tax.batch.dto.NoteLite.NoteField;
+import edu.cornell.kfs.tax.batch.dto.PrncSourceData.PrncSourceDataField;
 import edu.cornell.kfs.tax.batch.dto.VendorDetailLite.VendorField;
 import edu.cornell.kfs.tax.batch.metadata.TaxDtoDbMetadata;
 import edu.cornell.kfs.tax.batch.service.TaxTableMetadataLookupService;
@@ -160,10 +163,134 @@ public class TaxQueryBuilderTest {
                     .build();
         }),
 
-        /*QUERY_WITH_SUBQUERY_JOIN(metadataService -> {
-            return createEmptyBuilder(metadataService, VendorField.class)
+        @CuSqlQueryFixture(sql = "SELECT CUP0.FDOC_NBR \"CUP0_FDOC_NBR\", VEN4.VNDR_US_TAX_NBR "
+                + "FROM KFS.AP_PMT_RQST_T CUP0 "
+                + "JOIN ("
+                        + "SELECT VEN6.VNDR_HDR_GNRTD_ID, VEN6.VNDR_US_TAX_NBR "
+                        + "FROM KFS.PUR_VNDR_HDR_T VEN6 "
+                        + "JOIN KFS.PUR_VNDR_DTL_T VEN5 ON VEN6.VNDR_HDR_GNRTD_ID = VEN5.VNDR_HDR_GNRTD_ID "
+                        + "WHERE VEN5.VNDR_DTL_ASND_ID = ?"
+                + ") VEN4 ON CUP0.VNDR_HDR_GNRTD_ID = VEN4.VNDR_HDR_GNRTD_ID "
+                + "WHERE CUP0.FDOC_NBR <> ?",
+                parameters = {
+                        @SqlParameterFixture(type = Types.INTEGER, value = "0"),
+                        @SqlParameterFixture(type = Types.VARCHAR, value = "22446688")
+                })
+        QUERY_WITH_SUBQUERY_JOIN(metadataService -> {
+            final TaxDtoDbMetadata metadata = metadataService.getDatabaseMappingMetadataForDto(PrncSourceDataField.class);
+            final TaxDtoDbMetadata subQueryMetadata = metadataService.getDatabaseMappingMetadataForDto(
+                    VendorField.class, metadata.getMaximumAliasSuffix() + 1);
+
+            final TaxQueryBuilder vendorSubQuery = new TaxQueryBuilder(subQueryMetadata)
+                    .select(VendorField.vendorHeaderGeneratedIdentifier, VendorField.vendorTaxNumber)
+                    .from(VendorHeader.class)
+                    .join(VendorDetail.class,
+                            Criteria.equal(VendorField.vendorHeaderGeneratedIdentifier,
+                                    VendorField.vendorDetailVendorHeaderGeneratedIdentifier))
+                    .where(
+                            Criteria.equal(VendorField.vendorDetailAssignedIdentifier, Types.INTEGER, 0)
+                    );
+            
+            return new TaxQueryBuilder(metadata)
+                    .select(PrncSourceDataField.preqDocumentNumber, PrncSourceDataField.vendorTaxNumber)
+                    .from(CuPaymentRequestDocument.class)
+                    .join(vendorSubQuery, VendorHeader.class,
+                            Criteria.equal(PrncSourceDataField.preqVendorHeaderGeneratedIdentifier,
+                                    PrncSourceDataField.vendorHeaderGeneratedIdentifier))
+                    .where(
+                            Criteria.notEqual(PrncSourceDataField.preqDocumentNumber, "22446688")
+                    )
                     .build();
-        }),*/
+        }),
+
+        @CuSqlQueryFixture(sql = "SELECT VEN0.VNDR_HDR_GNRTD_ID \"VEN0_VNDR_HDR_GNRTD_ID\", "
+                + "VEN0.VNDR_DTL_ASND_ID, VEN0.VNDR_PARENT_IND, VEN0.VNDR_1ST_LST_NM_IND, VEN0.VNDR_NM "
+                + "FROM KFS.PUR_VNDR_DTL_T VEN0 "
+                + "JOIN KFS.PUR_VNDR_HDR_T VEN1 ON VEN0.VNDR_HDR_GNRTD_ID = VEN1.VNDR_HDR_GNRTD_ID "
+                + "WHERE VEN1.VNDR_FRGN_IND = ?",
+                parameters = {
+                        @SqlParameterFixture(type = Types.VARCHAR, value = KRADConstants.YES_INDICATOR_VALUE)
+                })
+        QUERY_WITH_SINGLE_BO_SELECT(metadataService -> {
+            return createEmptyBuilder(metadataService, VendorField.class)
+                    .selectAllFieldsMappedTo(VendorDetail.class)
+                    .from(VendorDetail.class)
+                    .join(VendorHeader.class,
+                            Criteria.equal(VendorField.vendorDetailVendorHeaderGeneratedIdentifier,
+                                    VendorField.vendorHeaderGeneratedIdentifier)
+                    )
+                    .where(
+                            Criteria.equal(VendorField.vendorForeignIndicator, KRADConstants.YES_INDICATOR_VALUE)
+                    )
+                    .build();
+        }),
+
+        @CuSqlQueryFixture(sql = "SELECT VEN1.VNDR_HDR_GNRTD_ID, VEN0.VNDR_DTL_ASND_ID, VEN0.VNDR_NM "
+                + "FROM KFS.PUR_VNDR_HDR_T VEN1 "
+                + "LEFT JOIN KFS.PUR_VNDR_DTL_T VEN0 "
+                        + "ON VEN1.VNDR_HDR_GNRTD_ID = VEN0.VNDR_HDR_GNRTD_ID AND VEN0.VNDR_DTL_ASND_ID = ? "
+                + "WHERE VEN1.VNDR_FRGN_IND = ?",
+                parameters = {
+                        @SqlParameterFixture(type = Types.INTEGER, value = "1"),
+                        @SqlParameterFixture(type = Types.VARCHAR, value = KRADConstants.YES_INDICATOR_VALUE)
+                })
+        QUERY_WITH_LEFT_JOIN(metadataService -> {
+            return createEmptyBuilder(metadataService, VendorField.class)
+                    .select(VendorField.vendorHeaderGeneratedIdentifier,
+                            VendorField.vendorDetailAssignedIdentifier, VendorField.vendorName)
+                    .from(VendorHeader.class)
+                    .leftJoin(VendorDetail.class,
+                            Criteria.equal(VendorField.vendorHeaderGeneratedIdentifier,
+                                    VendorField.vendorDetailVendorHeaderGeneratedIdentifier),
+                            Criteria.equal(VendorField.vendorDetailAssignedIdentifier, Types.INTEGER, 1)
+                    )
+                    .where(
+                            Criteria.equal(VendorField.vendorForeignIndicator, KRADConstants.YES_INDICATOR_VALUE)
+                    )
+                    .build();
+        }),
+
+        /*
+         * NOTE: Despite the alias mismatch on the vendor header ID selections,
+         *       this SQL should still be acceptable because the first set's aliases
+         *       will override those from the second set.
+         */
+        @CuSqlQueryFixture(sql = "SELECT VEN0.VNDR_HDR_GNRTD_ID \"VEN0_VNDR_HDR_GNRTD_ID\", "
+                + "VEN0.VNDR_DTL_ASND_ID, VEN0.VNDR_NM "
+                + "FROM KFS.PUR_VNDR_DTL_T VEN0 "
+                + "WHERE VEN0.VNDR_NM LIKE ? "
+                + "UNION ALL "
+                + "SELECT VEN2.VNDR_HDR_GNRTD_ID \"VEN2_VNDR_HDR_GNRTD_ID\", VEN2.VNDR_DTL_ASND_ID, VEN2.VNDR_NM "
+                + "FROM KFS.PUR_VNDR_DTL_T VEN2 "
+                + "WHERE VEN2.VNDR_HDR_GNRTD_ID BETWEEN ? AND ?",
+                parameters = {
+                        @SqlParameterFixture(type = Types.VARCHAR, value = "Joe's %"),
+                        @SqlParameterFixture(type = Types.INTEGER, value = "13579"),
+                        @SqlParameterFixture(type = Types.INTEGER, value = "13679")
+                })
+        QUERY_WITH_UNION(metadataService -> {
+            final TaxDtoDbMetadata metadata = metadataService.getDatabaseMappingMetadataForDto(VendorField.class);
+            final TaxDtoDbMetadata unionMetadata = metadataService.getDatabaseMappingMetadataForDto(
+                    VendorField.class, metadata.getMaximumAliasSuffix() + 1);
+
+            return new TaxQueryBuilder(metadata)
+                    .select(VendorField.vendorDetailVendorHeaderGeneratedIdentifier,
+                            VendorField.vendorDetailAssignedIdentifier, VendorField.vendorName)
+                    .from(VendorDetail.class)
+                    .where(
+                            Criteria.like(VendorField.vendorName, "Joe's %")
+                    )
+                    .unionAll(new TaxQueryBuilder(unionMetadata)
+                            .select(VendorField.vendorDetailVendorHeaderGeneratedIdentifier,
+                                    VendorField.vendorDetailAssignedIdentifier, VendorField.vendorName)
+                            .from(VendorDetail.class)
+                            .where(
+                                    Criteria.between(VendorField.vendorDetailVendorHeaderGeneratedIdentifier,
+                                            Types.INTEGER, 13579, 13679)
+                            )
+                    )
+                    .build();
+        }),
 
         @CuSqlQueryFixture(sql = "SELECT TRA0.IRS_1099_1042S_DETAIL_ID FROM KFS.TX_TRANSACTION_DETAIL_T TRA0 "
                 + "WHERE TRA0.VNDR_FRGN_LN2_ADDR IS NULL AND ("
