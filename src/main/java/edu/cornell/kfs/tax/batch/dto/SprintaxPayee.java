@@ -202,7 +202,7 @@ public class SprintaxPayee extends TaxPayeeBase {
         }
 
         @Override
-        public String getBusinessObjectFieldName() {
+        public String getDtoFieldName() {
             return fieldName;
         }
 
