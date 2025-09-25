@@ -1,10 +1,15 @@
 package edu.cornell.kfs.module.purap.document.validation.impl;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.MessageMap;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
@@ -25,12 +30,6 @@ import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.kew.api.WorkflowDocument;
-import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.MessageMap;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
@@ -90,15 +89,9 @@ public class CuPurchasingProcessVendorValidation extends PurchasingProcessVendor
         }
 
         // make sure that the vendor is of allowed type
-        final List<String> allowedVendorTypes = new ArrayList<>(parameterService
-                .getParameterValuesAsString(KfsParameterConstants.PURCHASING_DOCUMENT.class,
-                        PurapRuleConstants.PURAP_VENDOR_TYPE_ALLOWED_ON_REQ_AND_PO));
-        if (allowedVendorTypes != null && !allowedVendorTypes.isEmpty()){
-            if (ObjectUtils.isNotNull(vendorHeader) && ObjectUtils.isNotNull(vendorHeader.getVendorTypeCode())
-                    && !allowedVendorTypes.contains(vendorHeader.getVendorTypeCode())) {
-                    valid = false;
-                    errorMap.putError(VendorPropertyConstants.VENDOR_NAME, PurapKeyConstants.ERROR_INVALID_VENDOR_TYPE);
-            }
+        if (!isVendorTypeAllowedByParameterCheck(vendorHeader)) {
+            errorMap.putError(VendorPropertyConstants.VENDOR_NAME, PurapKeyConstants.ERROR_INVALID_VENDOR_TYPE);
+            valid = false;
         }
 
         // make sure that the vendor is active
@@ -164,7 +157,20 @@ public class CuPurchasingProcessVendorValidation extends PurchasingProcessVendor
         }
         return (return_value);
     }  
-        
+    
+    boolean isVendorTypeAllowedByParameterCheck(final VendorHeader vendorHeader) {
+        final Collection<String> allowedVendorTypes = parameterService.getParameterValuesAsString(
+                KfsParameterConstants.PURCHASING_DOCUMENT.class,
+                PurapRuleConstants.PURAP_VENDOR_TYPE_ALLOWED_ON_REQ_AND_PO);
+        if (!allowedVendorTypes.isEmpty()) {
+            if (vendorHeader != null && vendorHeader.getVendorTypeCode() != null && !allowedVendorTypes.contains(
+                vendorHeader.getVendorTypeCode())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 	/**
 	 * This routine verifies that the data necessary for the Method of PO Transmission chosen on the REQ, 
 	 * PO, or POA document exists on the document's VendorAddress record for the chosen Vendor.    
