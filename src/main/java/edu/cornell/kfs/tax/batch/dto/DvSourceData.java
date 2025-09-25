@@ -6,12 +6,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
-import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 
+import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.tax.batch.annotation.HasNestedEnumWithDtoFieldListing;
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 import edu.cornell.kfs.tax.businessobject.DvDisbursementView;
@@ -43,7 +43,7 @@ public class DvSourceData {
     private String financialObjectCode;
     private String financialDocumentLineDescription;
     private String debitCreditCode;
-    // Fields from FP_DV_DOC_T (DisbursementVoucherDocument)
+    // Fields from FP_DV_DOC_T (CuDisbursementVoucherDocument)
     private String dvDocumentNumber;
     private String disbVchrCheckStubText;
     private String documentDisbVchrPaymentMethodCode;
@@ -384,13 +384,13 @@ public class DvSourceData {
         financialObjectCode(SourceAccountingLine.class),
         financialDocumentLineDescription(SourceAccountingLine.class),
         debitCreditCode(SourceAccountingLine.class),
-        // Fields from FP_DV_DOC_T (DisbursementVoucherDocument)
-        dvDocumentNumber(DisbursementVoucherDocument.class, KFSPropertyConstants.DOCUMENT_NUMBER),
-        disbVchrCheckStubText(DisbursementVoucherDocument.class),
-        documentDisbVchrPaymentMethodCode(DisbursementVoucherDocument.class,
+        // Fields from FP_DV_DOC_T (CuDisbursementVoucherDocument)
+        dvDocumentNumber(CuDisbursementVoucherDocument.class, KFSPropertyConstants.DOCUMENT_NUMBER),
+        disbVchrCheckStubText(CuDisbursementVoucherDocument.class),
+        documentDisbVchrPaymentMethodCode(CuDisbursementVoucherDocument.class,
                 KFSPropertyConstants.DISB_VCHR_PAYMENT_METHOD_CODE),
-        extractDate(DisbursementVoucherDocument.class),
-        paidDate(DisbursementVoucherDocument.class),
+        extractDate(CuDisbursementVoucherDocument.class),
+        paidDate(CuDisbursementVoucherDocument.class),
         // Fields from PUR_VNDR_HDR_T (VendorHeader)
         vendorHeaderGeneratedIdentifier(VendorHeader.class),
         vendorTaxNumber(VendorHeader.class),

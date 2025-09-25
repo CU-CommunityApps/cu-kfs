@@ -18,10 +18,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.sys.businessobject.UniversityDate;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.springframework.jdbc.core.SqlParameterValue;
 
+import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
 import edu.cornell.kfs.sys.util.FixtureUtils;
@@ -32,12 +34,15 @@ import edu.cornell.kfs.tax.CuTaxTestConstants.TaxSpringBeans;
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 import edu.cornell.kfs.tax.batch.dto.NoteLite.NoteField;
 import edu.cornell.kfs.tax.batch.dto.PrncSourceData.PrncSourceDataField;
+import edu.cornell.kfs.tax.batch.dto.SubQueryFields.DvSubQueryField;
 import edu.cornell.kfs.tax.batch.dto.VendorDetailLite.VendorField;
 import edu.cornell.kfs.tax.batch.metadata.TaxDtoDbMetadata;
 import edu.cornell.kfs.tax.batch.service.TaxTableMetadataLookupService;
 import edu.cornell.kfs.tax.batch.service.impl.TaxTableMetadataLookupServiceOjbImpl;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.Criteria;
+import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.FieldUpdate;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.QuerySort;
+import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.SqlFunction;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail.TransactionDetailField;
 
@@ -150,7 +155,7 @@ public class TaxQueryBuilderTest {
                 parameters = {
                         @SqlParameterFixture(type = Types.VARCHAR, value = "xxxxx1234")
                 })
-        QUERY_WITH_SUBQUERY(metadataService -> {
+        QUERY_WITH_SINGLE_VALUE_SUBQUERY(metadataService -> {
             final TaxQueryBuilder subQuery = createEmptyBuilder(metadataService, VendorField.class)
                     .select(VendorField.vendorHeaderGeneratedIdentifier)
                     .from(VendorHeader.class)
@@ -160,6 +165,50 @@ public class TaxQueryBuilderTest {
                     .select(VendorField.vendorName)
                     .from(VendorDetail.class)
                     .where(Criteria.equal(VendorField.vendorDetailVendorHeaderGeneratedIdentifier, subQuery))
+                    .build();
+        }),
+
+        @CuSqlQueryFixture(sql = "SELECT VEN0.VNDR_NM FROM KFS.PUR_VNDR_DTL_T VEN0 "
+                + "WHERE VEN0.VNDR_HDR_GNRTD_ID IN ("
+                        + "SELECT VEN1.VNDR_HDR_GNRTD_ID FROM KFS.PUR_VNDR_HDR_T VEN1 "
+                        + "WHERE VEN1.VNDR_FRGN_IND = ?"
+                + ")",
+                parameters = {
+                        @SqlParameterFixture(type = Types.VARCHAR, value = KRADConstants.NO_INDICATOR_VALUE)
+                })
+        QUERY_WITH_MULTI_VALUE_SUBQUERY(metadataService -> {
+            final TaxQueryBuilder subQuery = createEmptyBuilder(metadataService, VendorField.class)
+                    .select(VendorField.vendorHeaderGeneratedIdentifier)
+                    .from(VendorHeader.class)
+                    .where(Criteria.equal(VendorField.vendorForeignIndicator, KRADConstants.NO_INDICATOR_VALUE));
+
+            return createEmptyBuilder(metadataService, VendorField.class)
+                    .select(VendorField.vendorName)
+                    .from(VendorDetail.class)
+                    .where(Criteria.in(VendorField.vendorDetailVendorHeaderGeneratedIdentifier, subQuery))
+                    .build();
+        }),
+
+        @CuSqlQueryFixture(sql = "SELECT UNI1.UNIV_DT "
+                + "FROM KFS.SH_UNIV_DATE_T UNI1 "
+                + "JOIN KFS.FP_DV_DOC_T CUD0 "
+                        + "ON UNI1.UNIV_DT BETWEEN CUD0.DV_EXTRT_DT AND CUD0.DV_PD_DT "
+                + "WHERE UNI1.UNIV_DT BETWEEN ? AND ?",
+                parameters = {
+                        @SqlParameterFixture(type = Types.DATE, value = "2025-01-01"),
+                        @SqlParameterFixture(type = Types.DATE, value = "2025-12-31")
+                })
+        QUERY_WITH_BETWEEN_CONDITIONS(metadataService -> {
+            return createEmptyBuilder(metadataService, DvSubQueryField.class)
+                    .select(DvSubQueryField.universityDate)
+                    .from(UniversityDate.class)
+                    .join(CuDisbursementVoucherDocument.class,
+                            Criteria.between(DvSubQueryField.universityDate,
+                                    DvSubQueryField.extractDate, DvSubQueryField.paidDate)
+                    )
+                    .where(
+                            Criteria.between(DvSubQueryField.universityDate, Types.DATE,
+                                    java.sql.Date.valueOf("2025-01-01"), java.sql.Date.valueOf("2025-12-31")))
                     .build();
         }),
 
@@ -288,6 +337,112 @@ public class TaxQueryBuilderTest {
                                     Criteria.between(VendorField.vendorDetailVendorHeaderGeneratedIdentifier,
                                             Types.INTEGER, 13579, 13679)
                             )
+                    )
+                    .build();
+        }),
+
+        @CuSqlQueryFixture(sql = "SELECT TRA0.IRS_1099_1042S_DETAIL_ID "
+                + "FROM KFS.TX_TRANSACTION_DETAIL_T TRA0 "
+                + "WHERE TRA0.DV_CHK_STUB_TXT LIKE CONCAT(TRA0.VENDOR_NAME, ?) "
+                + "AND TRA0.DOC_TITLE LIKE CONCAT(TO_CHAR(TRA0.REPORT_YEAR), ?)",
+                parameters = {
+                        @SqlParameterFixture(type = Types.VARCHAR, value = " - %"),
+                        @SqlParameterFixture(type = Types.VARCHAR, value = ": %")
+                })
+        QUERY_WITH_FUNCTIONS(metadataService -> {
+            return createEmptyBuilder(metadataService, TransactionDetailField.class)
+                    .select(TransactionDetailField.transactionDetailId)
+                    .from(TransactionDetail.class)
+                    .where(
+                            Criteria.like(TransactionDetailField.dvCheckStubText,
+                                    SqlFunction.CONCAT(TransactionDetailField.vendorName, " - %")),
+                            Criteria.like(TransactionDetailField.documentTitle,
+                                    SqlFunction.CONCAT(
+                                            SqlFunction.TO_CHAR(TransactionDetailField.reportYear), ": %"))
+                    )
+                    .build();
+        }),
+
+        @CuSqlQueryFixture(sql = "SELECT TRA0.IRS_1099_1042S_DETAIL_ID "
+                + "FROM KFS.TX_TRANSACTION_DETAIL_T TRA0 "
+                + "WHERE TRA0.REPORT_YEAR = ? "
+                + "AND TRA0.PARENT_VENDOR_NAME = CONCAT(TRA0.VENDOR_NAME, ?) "
+                + "AND NOT ("
+                        + "TRA0.FDOC_NBR = ? "
+                        + "AND TRA0.DV_CHK_STUB_TXT LIKE ?"
+                + ")",
+                parameters = {
+                        @SqlParameterFixture(type = Types.INTEGER, value = "2024"),
+                        @SqlParameterFixture(type = Types.VARCHAR, value = " Division X"),
+                        @SqlParameterFixture(type = Types.VARCHAR, value = "567567567"),
+                        @SqlParameterFixture(type = Types.VARCHAR, value = "Reimburse%")
+                })
+        QUERY_WITH_NOT_AND_CONDITION(metadataService -> {
+            return createEmptyBuilder(metadataService, TransactionDetailField.class)
+                    .select(TransactionDetailField.transactionDetailId)
+                    .from(TransactionDetail.class)
+                    .where(
+                            Criteria.equal(TransactionDetailField.reportYear, Types.INTEGER, 2024),
+                            Criteria.equal(TransactionDetailField.parentVendorName,
+                                    SqlFunction.CONCAT(TransactionDetailField.vendorName, " Division X")),
+                            Criteria.notAnd(
+                                    Criteria.equal(TransactionDetailField.documentNumber, "567567567"),
+                                    Criteria.like(TransactionDetailField.dvCheckStubText, "Reimburse%")
+                            )
+                    )
+                    .build();
+        }),
+
+        @CuSqlQueryFixture(sql = "INSERT INTO KFS.TX_TRANSACTION_DETAIL_T TRA0 ("
+                + "TRA0.REPORT_YEAR, TRA0.FDOC_NBR, TRA0.IRS_1099_1042S_DETAIL_ID"
+                + ") VALUES (?, ?, KFS.TEST_SEQ01.NEXTVAL)",
+                parameters = {
+                        @SqlParameterFixture(type = Types.INTEGER, value = "2024"),
+                        @SqlParameterFixture(type = Types.VARCHAR, value = "777888999")
+                })
+        INSERT_QUERY(metadataService -> {
+            return createEmptyBuilder(metadataService, TransactionDetailField.class)
+                    .insertValuesInto(TransactionDetail.class,
+                            FieldUpdate.of(TransactionDetailField.reportYear, Types.INTEGER, 2024),
+                            FieldUpdate.of(TransactionDetailField.documentNumber, "777888999"),
+                            FieldUpdate.ofNextSequenceValue(TransactionDetailField.transactionDetailId, "TEST_SEQ01")
+                    )
+                    .build();
+        }),
+
+        @CuSqlQueryFixture(sql = "UPDATE KFS.TX_TRANSACTION_DETAIL_T TRA0 "
+                + "SET TRA0.REPORT_YEAR = ?, TRA0.VENDOR_NAME = ? "
+                + "WHERE TRA0.REPORT_YEAR = ? "
+                + "AND TRA0.VENDOR_NAME IS NULL",
+                parameters = {
+                        @SqlParameterFixture(type = Types.INTEGER, value = "2025"),
+                        @SqlParameterFixture(type = Types.VARCHAR, value = "Anonymous"),
+                        @SqlParameterFixture(type = Types.INTEGER, value = "2024")
+                })
+        UPDATE_QUERY(metadataService -> {
+            return createEmptyBuilder(metadataService, TransactionDetailField.class)
+                    .update(TransactionDetail.class)
+                    .set(
+                            FieldUpdate.of(TransactionDetailField.reportYear, Types.INTEGER, 2025),
+                            FieldUpdate.of(TransactionDetailField.vendorName, "Anonymous")
+                    )
+                    .where(
+                            Criteria.equal(TransactionDetailField.reportYear, Types.INTEGER, 2024),
+                            Criteria.isNull(TransactionDetailField.vendorName)
+                    )
+                    .build();
+        }),
+
+        @CuSqlQueryFixture(sql = "DELETE FROM KFS.TX_TRANSACTION_DETAIL_T TRA0 "
+                + "WHERE TRA0.REPORT_YEAR = ?",
+                parameters = {
+                        @SqlParameterFixture(type = Types.INTEGER, value = "2024")
+                })
+        DELETE_QUERY(metadataService -> {
+            return createEmptyBuilder(metadataService, TransactionDetailField.class)
+                    .deleteFrom(TransactionDetail.class)
+                    .where(
+                            Criteria.equal(TransactionDetailField.reportYear, Types.INTEGER, 2024)
                     )
                     .build();
         }),
@@ -425,6 +580,39 @@ public class TaxQueryBuilderTest {
                     .select(VendorField.vendorDetailVendorHeaderGeneratedIdentifier)
                     .from(VendorDetail.class)
                     .join(VendorHeader.class, (Criteria[]) null);
+        }),
+
+        NULL_BO_CLASS_FOR_SUBQUERY_JOIN(metadataService -> {
+            final TaxQueryBuilder subQuery = createEmptyBuilder(metadataService, VendorField.class)
+                    .select(VendorField.vendorHeaderGeneratedIdentifier, VendorField.vendorTaxNumber)
+                    .from(VendorHeader.class);
+
+            createEmptyBuilder(metadataService, VendorField.class)
+                    .select(VendorField.vendorDetailVendorHeaderGeneratedIdentifier)
+                    .from(VendorDetail.class)
+                    .join(subQuery, null,
+                                Criteria.equal(VendorField.vendorHeaderGeneratedIdentifier,
+                                        VendorField.vendorDetailVendorHeaderGeneratedIdentifier));
+        }),
+
+        NULL_SUBQUERY_FOR_SUBQUERY_JOIN(metadataService -> {
+            createEmptyBuilder(metadataService, VendorField.class)
+                    .select(VendorField.vendorDetailVendorHeaderGeneratedIdentifier)
+                    .from(VendorDetail.class)
+                    .join(null, VendorHeader.class,
+                                Criteria.equal(VendorField.vendorHeaderGeneratedIdentifier,
+                                        VendorField.vendorDetailVendorHeaderGeneratedIdentifier));
+        }),
+
+        NULL_CRITERIA_FOR_SUBQUERY_JOIN(metadataService -> {
+            final TaxQueryBuilder subQuery = createEmptyBuilder(metadataService, VendorField.class)
+                    .select(VendorField.vendorHeaderGeneratedIdentifier, VendorField.vendorTaxNumber)
+                    .from(VendorHeader.class);
+
+            createEmptyBuilder(metadataService, VendorField.class)
+                    .select(VendorField.vendorDetailVendorHeaderGeneratedIdentifier)
+                    .from(VendorDetail.class)
+                    .join(subQuery, VendorHeader.class, (Criteria[]) null);
         }),
 
         NULL_WHERE_CRITERIA(metadataService -> {

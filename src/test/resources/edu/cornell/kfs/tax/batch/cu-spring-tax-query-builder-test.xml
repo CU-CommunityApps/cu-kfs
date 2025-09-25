@@ -13,8 +13,10 @@
         <property name="ojbRepositoryFiles">
             <list>
                 <value>classpath:org/kuali/kfs/krad/config/OJB-repository-krad.xml</value>
+                <value>classpath:org/kuali/kfs/fp/ojb-fp.xml</value>
                 <value>classpath:org/kuali/kfs/module/purap/ojb-purap.xml</value>
                 <value>classpath:org/kuali/kfs/sys/ojb-sys.xml</value>
+                <value>classpath:edu/cornell/kfs/fp/cu-ojb-fp.xml</value>
                 <value>classpath:edu/cornell/kfs/module/purap/cu-ojb-purap.xml</value>
                 <value>classpath:edu/cornell/kfs/tax/cu-ojb-tax.xml</value>
                 <value>classpath:edu/cornell/kfs/vnd/cu-ojb-vnd.xml</value>
@@ -28,6 +30,7 @@
                 <value>org.kuali.kfs.sys.businessobject.UniversityDate</value>
                 <value>org.kuali.kfs.vnd.businessobject.VendorHeader</value>
                 <value>org.kuali.kfs.vnd.businessobject.VendorDetail</value>
+                <value>edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument</value>
                 <value>edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument</value>
                 <value>edu.cornell.kfs.tax.businessobject.TransactionDetail</value>
             </set>
