@@ -8,9 +8,11 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.Validate;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.util.CuSqlChunk;
+import edu.cornell.kfs.tax.batch.CUTaxBatchConstants;
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 
 /**
@@ -69,7 +71,7 @@ public final class TaxQueryUtils {
 
         private static final long serialVersionUID = 1L;
 
-        private static final Pattern SEQUENCE_NAME_PATTERN = Pattern.compile("^(\\w+\\.)?\\w+$");
+        private static final Pattern SEQUENCE_NAME_PATTERN = Pattern.compile("^\\w+$");
 
         private final int sqlType;
 
@@ -120,7 +122,8 @@ public final class TaxQueryUtils {
         public static FieldUpdate ofNextSequenceValue(final TaxDtoFieldEnum field, final String sequenceName) {
             Validate.isTrue(SEQUENCE_NAME_PATTERN.matcher(sequenceName).matches(),
                     "Invalid sequence name: %s", sequenceName);
-            return new FieldUpdate(field, Types.NULL, CuSqlChunk.of(sequenceName, ".NEXTVAL"));
+            return new FieldUpdate(field, Types.NULL,
+                    CuSqlChunk.of(CUTaxBatchConstants.KFS_SCHEMA, KFSConstants.DELIMITER, sequenceName, ".NEXTVAL"));
         }
 
     }
@@ -133,6 +136,11 @@ public final class TaxQueryUtils {
         public static SqlFunction TO_CHAR(final TaxDtoFieldEnum field) {
             return builder -> builder.appendFunctionNameAndFirstOperand("TO_CHAR", field)
                     .appendSql(CUKFSConstants.RIGHT_PARENTHESIS);
+        }
+
+        public static SqlFunction CONCAT(final TaxDtoFieldEnum field, final String suffix) {
+            return builder -> builder.appendFunctionNameAndFirstOperand("CONCAT", field)
+                    .appendLastFunctionOperand(Types.VARCHAR, suffix);
         }
 
         public static SqlFunction CONCAT(final SqlFunction nestedFunction, final String suffix) {

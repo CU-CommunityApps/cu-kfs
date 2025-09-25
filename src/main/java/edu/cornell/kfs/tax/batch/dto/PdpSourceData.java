@@ -6,7 +6,6 @@ import java.sql.Timestamp;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax;
-import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
@@ -18,6 +17,7 @@ import org.kuali.kfs.pdp.businessobject.ProcessSummary;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 
+import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.pdp.CUPdpPropertyConstants;
 import edu.cornell.kfs.tax.batch.annotation.HasNestedEnumWithDtoFieldListing;
@@ -73,7 +73,7 @@ public class PdpSourceData {
     // Fields from from AP_PMT_RQST_T (CuPaymentRequestDocument)
     private String preqDocumentNumber;
     private String taxClassificationCode;
-    // Fields from FP_DV_DOC_T (DisbursementVoucherDocument)
+    // Fields from FP_DV_DOC_T (CuDisbursementVoucherDocument)
     private String dvDocumentNumber;
     // Fields from FP_DV_NRA_TAX_T (DisbursementVoucherNonresidentTax)
     private String dvNraDocumentNumber;
@@ -481,8 +481,8 @@ public class PdpSourceData {
         // Fields from from AP_PMT_RQST_T (CuPaymentRequestDocument)
         preqDocumentNumber(CuPaymentRequestDocument.class, KFSPropertyConstants.DOCUMENT_NUMBER),
         taxClassificationCode(CuPaymentRequestDocument.class),
-        // Fields from FP_DV_DOC_T (DisbursementVoucherDocument)
-        dvDocumentNumber(DisbursementVoucherDocument.class, KFSPropertyConstants.DOCUMENT_NUMBER),
+        // Fields from FP_DV_DOC_T (CuDisbursementVoucherDocument)
+        dvDocumentNumber(CuDisbursementVoucherDocument.class, KFSPropertyConstants.DOCUMENT_NUMBER),
         // Fields from FP_DV_NRA_TAX_T (DisbursementVoucherNonresidentTax)
         dvNraDocumentNumber(DisbursementVoucherNonresidentTax.class, KFSPropertyConstants.DOCUMENT_NUMBER),
         dvIncomeClassCode(DisbursementVoucherNonresidentTax.class, KFSPropertyConstants.INCOME_CLASS_CODE);

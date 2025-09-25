@@ -19,7 +19,6 @@ import org.kuali.kfs.core.api.encryption.EncryptionService;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
-import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.kfs.krad.util.KRADConstants;
@@ -36,6 +35,7 @@ import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.UniversityDate;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 
+import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.kim.CuKimConstants;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
@@ -219,7 +219,7 @@ public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAware
                         DvSourceDataField.payeeDetailDocumentNumber, DvSourceDataField.dvNraDocumentNumber))
                 .join(SourceAccountingLine.class, Criteria.equal(
                         DvSourceDataField.payeeDetailDocumentNumber, DvSourceDataField.accountingLineDocumentNumber))
-                .join(dvDocumentSubQuery, DisbursementVoucherDocument.class, Criteria.equal(
+                .join(dvDocumentSubQuery, CuDisbursementVoucherDocument.class, Criteria.equal(
                         DvSourceDataField.payeeDetailDocumentNumber, DvSourceDataField.dvDocumentNumber))
                 .join(VendorHeader.class,
                         Criteria.equal(DvSourceDataField.disbursementVoucherPayeeTypeCode, PaymentPayeeTypes.VENDOR),
@@ -272,15 +272,15 @@ public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAware
                         config, DisbursementVoucherConstants.DOCUMENT_TYPE_CODE, dvMetadata2);
 
         return new TaxQueryBuilder(dvMetadata1)
-                .selectAllFieldsMappedTo(DisbursementVoucherDocument.class)
-                .from(DisbursementVoucherDocument.class)
+                .selectAllFieldsMappedTo(CuDisbursementVoucherDocument.class)
+                .from(CuDisbursementVoucherDocument.class)
                 .join(UniversityDate.class,
                         Criteria.equal(DvSubQueryField.paidDate, DvSubQueryField.universityDate))
                 .where(Criteria.between(
                         DvSubQueryField.paidDate, Types.DATE, config.getStartDate(), config.getEndDate()))
                 .unionAll(new TaxQueryBuilder(dvMetadata2)
-                        .selectAllFieldsMappedTo(DisbursementVoucherDocument.class)
-                        .from(DisbursementVoucherDocument.class)
+                        .selectAllFieldsMappedTo(CuDisbursementVoucherDocument.class)
+                        .from(CuDisbursementVoucherDocument.class)
                         .join(UniversityDate.class,
                                 Criteria.equal(DvSubQueryField.universityDate, Types.DATE, config.getStartDate()))
                         .where(
@@ -357,7 +357,7 @@ public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAware
                 )
                 .leftJoin(CuPaymentRequestDocument.class, Criteria.equal(
                         PdpSourceDataField.custPaymentDocNbr, PdpSourceDataField.preqDocumentNumber))
-                .leftJoin(DisbursementVoucherDocument.class, Criteria.equal(
+                .leftJoin(CuDisbursementVoucherDocument.class, Criteria.equal(
                         PdpSourceDataField.custPaymentDocNbr, PdpSourceDataField.dvDocumentNumber))
                 .leftJoin(DisbursementVoucherNonresidentTax.class, Criteria.equal(
                         PdpSourceDataField.dvDocumentNumber, PdpSourceDataField.dvNraDocumentNumber))
