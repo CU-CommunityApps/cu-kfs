@@ -204,14 +204,16 @@ public class CuElectronicInvoiceTestAction extends ElectronicInvoiceTestAction {
                 "  </Request>\n" +
                 "</cXML>";
 
-            final ServletOutputStream sos;
-            sos = response.getOutputStream();
-            final ByteArrayOutputStream baOutStream = new ByteArrayOutputStream();
-            final StringBufferInputStream inStream = new StringBufferInputStream(eInvoiceFile);
-            convert(baOutStream, inStream);         
-            response.setContentLength(baOutStream.size());
-            baOutStream.writeTo(sos);
-            sos.flush();
+            try (
+                    StringBufferInputStream inStream = new StringBufferInputStream(eInvoiceFile);
+                    ByteArrayOutputStream baOutStream = new ByteArrayOutputStream()
+            ) {
+                final ServletOutputStream sos = response.getOutputStream(); // NOPMD - closing here causes exceptions
+                convert(baOutStream, inStream);
+                response.setContentLength(baOutStream.size());
+                baOutStream.writeTo(sos);
+                sos.flush();
+            }
         }
 
       return mapping.findForward(KFSConstants.MAPPING_BASIC);
