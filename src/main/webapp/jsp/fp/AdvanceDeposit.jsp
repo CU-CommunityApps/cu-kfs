@@ -32,11 +32,9 @@
     <sys:hiddenDocumentFields/>
     <sys:documentOverview editingMode="${KualiForm.editingMode}"/>
     <SCRIPT type="text/javascript">
-        <!--
         function submitForm() {
             document.forms[0].submit();
         }
-        //-->
     </SCRIPT>
 
     <fp:advanceDeposits editingMode="${KualiForm.editingMode}"/>

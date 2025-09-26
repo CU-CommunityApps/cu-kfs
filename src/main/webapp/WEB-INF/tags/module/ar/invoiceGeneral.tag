@@ -129,7 +129,7 @@
         </tr>
         <c:choose>
             <c:when test="${KualiForm.document.invoiceGeneralDetail.billingFrequencyCode eq ArConstants.BillingFrequencyValues.MILESTONE.code or
-					KualiForm.document.invoiceGeneralDetail.billingFrequencyCode eq ArConstants.BillingFrequencyValues.PREDETERMINED_BILLING.code}">
+                    KualiForm.document.invoiceGeneralDetail.billingFrequencyCode eq ArConstants.BillingFrequencyValues.PREDETERMINED_BILLING.code}">
                 <tr>
                     <th class="right" style="width: 25%;">
                         <kul:htmlAttributeLabel attributeEntry="${invoiceGeneralDetailAttributes.finalBillIndicator}" />

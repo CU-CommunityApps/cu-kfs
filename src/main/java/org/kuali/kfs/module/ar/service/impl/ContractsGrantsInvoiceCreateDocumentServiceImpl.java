@@ -645,6 +645,9 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                 if (!CollectionUtils.isEmpty(milestones)) {
                     document.getInvoiceMilestones().clear();
                     document.getInvoiceMilestones().addAll(buildInvoiceMilestones(milestones));
+
+                    final Date billedDate = document.getInvoiceMilestones().stream().map(InvoiceMilestone::getMilestoneActualCompletionDate).max(Date::compareTo).get();
+                    invoiceGeneralDetail.setLastBilledDate(billedDate);
                 }
             } else if (ArConstants.BillingFrequencyValues.isPredeterminedBilling(docInvoiceGeneralDetail)) {
                 final AwardAccount awardAccount = awardAccounts.get(0);
@@ -654,6 +657,9 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                 if (!CollectionUtils.isEmpty(bills)) {
                     document.getInvoiceBills().clear();
                     document.getInvoiceBills().addAll(buildInvoiceBills(bills));
+
+                    final Date billedDate = document.getInvoiceBills().stream().map(InvoiceBill::getBillDate).max(Date::compareTo).get();
+                    invoiceGeneralDetail.setLastBilledDate(billedDate);
                 }
             }
 

@@ -48,10 +48,11 @@ public class CuB2BDaoImpl extends B2BDaoImpl {
                  LOG.info("content-type is text/xml");
              }
              
-
-             try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
-                 final HttpEntity entity = response.getEntity();
-                 return EntityUtils.toString(entity);
+             try (
+                 CloseableHttpResponse response = httpClient.execute(httpPost);
+                 HttpEntity entity = response.getEntity()
+             ) {
+                return EntityUtils.toString(entity);
              }
 
          } catch (IOException | ParseException e) {

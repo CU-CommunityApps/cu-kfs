@@ -72,8 +72,12 @@
           p:jcdAlias="kewDataSource"
           p:personService-ref="personService"/>
 
-    <bean id="actionListService" class="edu.cornell.kfs.kew.actionlist.service.impl.CuActionListServiceImpl"
-          lazy-init="true" p:actionListDAO-ref="actionListDAO" p:actionItemDAO-ref="actionItemDAO"
+    <bean class="edu.cornell.kfs.kew.actionlist.service.impl.CuActionListServiceImpl"
+          id="actionListService"
+          lazy-init="true"
+          p:actionListOutBox="${actionlist.outbox}" 
+          p:actionListDAO-ref="actionListDAO" 
+          p:actionItemDAO-ref="actionItemDAO"
           p:configurationService-ref="configurationService"/>
 
     <!-- Override route header service and DAO to add a helper method that the 1099/1042S tax process relies on. -->

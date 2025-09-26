@@ -21,8 +21,8 @@ package org.kuali.kfs.kew.preferences.service.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.kew.actionlist.service.ActionListService;
 import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kew.api.preferences.Preferences;
 import org.kuali.kfs.kew.api.preferences.PreferencesService;
@@ -54,6 +54,7 @@ public class PreferencesServiceImpl implements PreferencesService {
 
     private static final Map<String, String> USER_OPTION_KEY_DEFAULT_MAP;
 
+    private ActionListService actionListService;
     private ConfigurationService configurationService;
 
     static {
@@ -136,7 +137,7 @@ public class PreferencesServiceImpl implements PreferencesService {
 
                 if (!isSaveRequired) {
                     if (!optionKey.equals(Preferences.KEYS.USE_OUT_BOX)
-                            || ConfigContext.getCurrentContextConfig().getOutBoxOn()) {
+                            || actionListService.isOutBoxOn()) {
                         isSaveRequired = true;
                     }
                 }
@@ -184,7 +185,7 @@ public class PreferencesServiceImpl implements PreferencesService {
         optionsMap.put(Preferences.KEYS.NOTIFY_FYI, preferences.getNotifyFYI());
         optionsMap.put(Preferences.KEYS.SHOW_NOTES, preferences.getShowNotes());
         optionsMap.put(Preferences.KEYS.SHOW_LAST_MODIFIED_DATE, preferences.getShowLastModifiedDate());
-        if (ConfigContext.getCurrentContextConfig().getOutBoxOn()) {
+        if (actionListService.isOutBoxOn()) {
             optionsMap.put(Preferences.KEYS.USE_OUT_BOX, preferences.getUseOutbox());
         }
         for (final Entry<String, String> documentTypePreference : preferences.getDocumentTypeNotificationPreferences()
@@ -238,7 +239,12 @@ public class PreferencesServiceImpl implements PreferencesService {
         return KEWServiceLocator.getService(KEWServiceLocator.USER_OPTIONS_SRV);
     }
 
+    public void setActionListService(final ActionListService actionListService) {
+        this.actionListService = actionListService;
+    }
+
     public void setConfigurationService(final ConfigurationService configurationService) {
         this.configurationService = configurationService;
     }
+
 }

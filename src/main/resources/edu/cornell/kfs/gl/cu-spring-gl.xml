@@ -190,18 +190,24 @@
 	 	
 	    <bean id="glPosterService" abstract="true" class="edu.cornell.kfs.gl.batch.service.impl.CuPosterServiceImpl"
           p:flexibleOffsetAccountService-ref="flexibleOffsetAccountService"
-          p:verifyTransaction-ref="glVerifyTransaction" p:dateTimeService-ref="dateTimeService"
-          p:reversalDao-ref="glReversalDao" p:accountingPeriodService-ref="accountingPeriodService"
+          p:verifyTransaction-ref="glVerifyTransaction" 
+          p:dateTimeService-ref="dateTimeService"
+          p:reversalDao-ref="glReversalDao" 
+          p:accountingPeriodService-ref="accountingPeriodService"
           p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
           p:expenditureTransactionDao-ref="glExpenditureTransactionDao"
           p:indirectCostRecoveryRateDetailDao-ref="indirectCostRecoveryRateDetailDao"
-          p:objectCodeService-ref="objectCodeService" p:configurationService-ref="configurationService"
-          p:parameterService-ref="parameterService" p:runDateService-ref="glRunDateService"
-          p:offsetDefinitionService-ref="offsetDefinitionService" p:dataDictionaryService-ref="dataDictionaryService"
+          p:objectCodeService-ref="objectCodeService" 
+          p:configurationService-ref="configurationService"
+          p:parameterService-ref="parameterService" 
+          p:runDateService-ref="glRunDateService"
+          p:offsetDefinitionService-ref="offsetDefinitionService" 
+          p:dataDictionaryService-ref="dataDictionaryService"
           p:businessObjectService-ref="businessObjectService"
           p:batchFileDirectoryName="${staging.directory}/gl/originEntry"
           p:accountingCycleCachingService-ref="accountingCycleCachingService"
-          p:persistenceStructureService-ref="persistenceStructureService" p:persistenceService-ref="persistenceService">
+          p:persistenceStructureService-ref="persistenceStructureService" 
+          p:persistenceService-ref="persistenceService">
           <property name="transactionPosters">
             <list>
                 <ref bean="glPostGlEntry"/>

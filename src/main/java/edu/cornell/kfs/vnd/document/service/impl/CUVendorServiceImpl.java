@@ -13,7 +13,6 @@ import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
-import org.kuali.kfs.vnd.businessobject.VendorRoutingComparable;
 import org.kuali.kfs.vnd.businessobject.lookup.VendorLookupableHelperServiceImpl;
 import org.kuali.kfs.vnd.document.service.impl.VendorServiceImpl;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
@@ -109,18 +108,7 @@ public class CUVendorServiceImpl extends VendorServiceImpl implements CUVendorSe
             final String addressType, final String campus) {
       return null;
     }
-
-
-    private List<VendorRoutingComparable> convertToRountingComparable(final List<? extends PersistableBusinessObjectBase> vendorCollection) {
-        final List<VendorRoutingComparable> retList = new ArrayList<VendorRoutingComparable>();
-        if (CollectionUtils.isNotEmpty(vendorCollection)) {
-            for (final PersistableBusinessObjectBase pbo : vendorCollection) {
-                retList.add((VendorRoutingComparable)pbo);                
-            }
-        }
-        return retList;
-    }
-   
+    
     public void setDocumentService(final DocumentService documentService) {
         this.documentService = documentService;
         super.setDocumentService(documentService);

@@ -64,6 +64,7 @@ import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
+import org.kuali.kfs.module.purap.businessobject.CapitalAssetSystem;
 import org.kuali.kfs.module.purap.businessobject.CreditMemoView;
 import org.kuali.kfs.module.purap.businessobject.ItemType;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestView;
@@ -98,6 +99,8 @@ import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.SufficientFundsItem;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.MultiselectableDocSearchConversion;
+import org.kuali.kfs.sys.document.validation.event.AccountingDocumentSaveWithNoLedgerEntryGenerationEvent;
+import org.kuali.kfs.sys.document.validation.event.DocumentSystemSaveEvent;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.CommodityCode;
@@ -107,6 +110,7 @@ import org.kuali.kfs.vnd.businessobject.ShippingPaymentTerms;
 import org.kuali.kfs.vnd.businessobject.ShippingTitle;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
+import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -439,9 +443,34 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                 // if doc is FINAL or canceled, saving should not be creating GL entries
                 setGeneralLedgerPendingEntries(new ArrayList<>());
             } else if (!workFlowDocument.isFinal()) {
-                super.prepareForSave(event);
+                final KualiDocumentEvent adjustedEvent = adjustEventForPrepareForSave(event);
+                super.prepareForSave(adjustedEvent);
             }
         }
+    }
+
+    private KualiDocumentEvent adjustEventForPrepareForSave(final KualiDocumentEvent event) {
+        if (!(event instanceof DocumentSystemSaveEvent)) {
+            return event;
+        }
+        if (event instanceof AccountingDocumentSaveWithNoLedgerEntryGenerationEvent) {
+            return event;
+        }
+        if (CollectionUtils.isEmpty(generalLedgerPendingEntries)) {
+            return event;
+        }
+        // if there are GLPEs, do not regenerate if they are approved
+        if (!StringUtils.equals(
+                KFSConstants.PENDING_ENTRY_APPROVED_STATUS_CODE.APPROVED,
+                generalLedgerPendingEntries.get(0).getFinancialDocumentApprovedCode())) {
+            return event;
+        }
+        final AccountingDocumentSaveWithNoLedgerEntryGenerationEvent newEvent =
+                new AccountingDocumentSaveWithNoLedgerEntryGenerationEvent(
+                        event.getErrorPathPrefix(),
+                        event.getDocument());
+        BeanUtils.copyProperties(event, newEvent);
+        return newEvent;
     }
 
     /**
