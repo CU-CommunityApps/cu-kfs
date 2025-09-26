@@ -115,17 +115,9 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
     protected PaymentFileLoad parsePaymentFile(
             final BatchInputFileType paymentInputFileType, final String incomingFileName, 
             final MessageMap errorMap) {
-        final FileInputStream fileContents;
-        try {
-            fileContents = new FileInputStream(incomingFileName);
-        } catch (final FileNotFoundException e1) {
-            LOG.error("parsePaymentFile: file to load not found {}", incomingFileName, e1);
-            throw new RuntimeException("Cannot find the file requested to be loaded " + incomingFileName, e1);
-        }
-
         // do the parse
         PaymentFileLoad paymentFile = null;
-        try {
+        try (FileInputStream fileContents = new FileInputStream(incomingFileName)) {
             final byte[] fileByteContent = IOUtils.toByteArray(fileContents);
             paymentFile = (PaymentFileLoad) batchInputFileService.parse(paymentInputFileType, fileByteContent);
         } catch (final IOException e) {
