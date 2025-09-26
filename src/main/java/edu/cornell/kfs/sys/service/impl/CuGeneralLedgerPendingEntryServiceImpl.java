@@ -33,8 +33,7 @@ public class CuGeneralLedgerPendingEntryServiceImpl extends GeneralLedgerPending
             final String referenceOriginCode, final String description, final boolean isDebit, final KualiDecimal amount,
             final GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("populateExplicitGeneralLedgerPendingEntry(AccountingDocument, AccountingLine,"
-                    + " GeneralLedgerPendingEntrySequenceHelper, GeneralLedgerPendingEntry)  start");
+            LOG.debug("buildGeneralLedgerPendingEntry,  start");
         }
 
         final GeneralLedgerPendingEntry explicitEntry = new GeneralLedgerPendingEntry();
@@ -85,8 +84,7 @@ public class CuGeneralLedgerPendingEntryServiceImpl extends GeneralLedgerPending
         explicitEntry.setUniversityFiscalYear(document.getPostingYear());
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("populateExplicitGeneralLedgerPendingEntry(AccountingDocument, AccountingLine, "
-                    + "GeneralLedgerPendingEntrySequenceHelper, GeneralLedgerPendingEntry)  end");
+            LOG.debug("buildGeneralLedgerPendingEntry,  end");
         }
 
         return explicitEntry;
