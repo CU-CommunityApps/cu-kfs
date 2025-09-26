@@ -21,6 +21,7 @@ public final class CUTaxBatchConstants {
     public static final String VENDOR_EMAIL_ADDRESS = "vendorEmailAddress";
 
     public static final String KFS_SCHEMA = "KFS";
+    public static final String TRANSACTION_DETAIL_ID_SEQUENCE = "TX_TRANSACTION_DETAIL_S";
 
     /**
      * Helper enum identifying the various sources/types of the tax data/output fields

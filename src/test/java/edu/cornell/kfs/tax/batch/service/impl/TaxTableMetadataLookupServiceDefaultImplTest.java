@@ -70,9 +70,9 @@ public class TaxTableMetadataLookupServiceDefaultImplTest {
                                 tableName = "KFS.PUR_VNDR_HDR_T", tableAlias = "VEN1")
                 },
                 mappedFields = {
-                        @TaxFieldFixture(key = "vendorHeaderGeneratedIdentifier_forHeader",
-                                column = "VEN1.VNDR_HDR_GNRTD_ID", alias = "VEN1_VNDR_HDR_GNRTD_ID"),
-                        @TaxFieldFixture(key = "vendorHeaderGeneratedIdentifier_forDetail",
+                        @TaxFieldFixture(key = "vendorHeaderGeneratedIdentifier",
+                                column = "VEN1.VNDR_HDR_GNRTD_ID", alias = "VNDR_HDR_GNRTD_ID"),
+                        @TaxFieldFixture(key = "vendorDetailVendorHeaderGeneratedIdentifier",
                                 column = "VEN0.VNDR_HDR_GNRTD_ID", alias = "VEN0_VNDR_HDR_GNRTD_ID"),
                         @TaxFieldFixture(key = "vendorDetailAssignedIdentifier", column = "VEN0.VNDR_DTL_ASND_ID",
                                 alias = "VNDR_DTL_ASND_ID"),

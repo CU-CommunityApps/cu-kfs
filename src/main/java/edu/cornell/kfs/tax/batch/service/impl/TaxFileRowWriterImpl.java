@@ -66,7 +66,7 @@ public class TaxFileRowWriterImpl implements TaxFileRowWriter {
         this.taxOutputSections = taxOutputDefinition.getSections().stream()
                 .collect(Collectors.toUnmodifiableMap(TaxOutputSectionV2::getName, Function.identity()));
         this.validNonStaticFields = Arrays.stream(fieldEnumClass.getEnumConstants())
-                .map(TaxDtoFieldEnum::getFieldName)
+                .map(TaxDtoFieldEnum::getDtoFieldName)
                 .collect(Collectors.toUnmodifiableSet());
         this.amountFormat = createDecimalFormat(taxOutputDefinition.getAmountFormat(),
                 CUTaxConstants.DEFAULT_AMOUNT_FORMAT, CUTaxConstants.DEFAULT_AMOUNT_MAX_INT_DIGITS);
