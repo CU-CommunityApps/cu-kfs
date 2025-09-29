@@ -111,6 +111,7 @@ public class CUKFSPropertyConstants {
     }
     
     public static final String DESCRIPTION = "description";
+    public static final String ADDITIONAL_SCRIPT_FILE_PREFIX = "additionalScriptFile";
 
     /*
      * The following constants are used by our code but were removed by the 2024-03-06 financials patch,
