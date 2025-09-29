@@ -1,5 +1,7 @@
 package edu.cornell.kfs.sys.web;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
@@ -105,6 +107,10 @@ public final class CuWebUtilities {
     public static long convertLocalDateTimeToMilliseconds(LocalDateTime localDateTime) {
         long milliseconds = localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         return milliseconds;
+    }
+
+    public static String urlEncode(final String value) {
+        return URLEncoder.encode(StringUtils.defaultString(value), StandardCharsets.UTF_8);
     }
 
 }

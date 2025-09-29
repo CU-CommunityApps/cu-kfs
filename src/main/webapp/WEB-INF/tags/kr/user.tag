@@ -73,7 +73,8 @@
 <c:choose>
   <c:when test="${readOnly}">
     <input type="hidden" id='<c:out value="${userIdFieldName}"/>' name='<c:out value="${userIdFieldName}"/>' value='<c:out value="${userId}"/>' />
-    <kul:inquiry boClassName="org.kuali.kfs.kim.impl.identity.Person" keyValues="principalId=${universalId}&principalName=${userId}" render="true"><c:out value="${userId}" /></kul:inquiry>&nbsp;
+    <%-- CU Customization: Escape the Principal ID and Principal Name used in the URL parameters. --%>
+    <kul:inquiry boClassName="org.kuali.kfs.kim.impl.identity.Person" keyValues="principalId=${kfsfunc:urlEncode(universalId)}&principalName=${kfsfunc:urlEncode(userId)}" render="true"><c:out value="${userId}" /></kul:inquiry>&nbsp;
   </c:when>
   <c:otherwise>
     ${kfunc:registerEditableProperty(KualiForm, userIdFieldName)}
@@ -115,11 +116,12 @@
 </c:if>
         <c:choose>
             <c:when test="${!empty userNameFieldName}">
-                <span style="white-space:nowrap;" id="${userNameFieldName}.div">${userName}&nbsp;</span>
+                <%-- CU Customization: Escape the Person Name. --%>
+                <span style="white-space:nowrap;" id="${userNameFieldName}.div"><c:out value="${userName}"/>&nbsp;</span>
             </c:when>
             <c:otherwise><%-- guess at the name if the name field is not being rendered --%>
-                <%-- CU Customization: Reference the potentially masked name field instead. --%>
-                <span style="white-space:nowrap;" id='${fn:replace( userIdFieldName, ".principalName", ".nameMaskedIfNecessary" )}.div'>${userName}&nbsp;</span>
+                <%-- CU Customization: Reference the potentially masked name field instead, and escape the name. --%>
+                <span style="white-space:nowrap;" id='${fn:replace( userIdFieldName, ".principalName", ".nameMaskedIfNecessary" )}.div'><c:out value="${userName}"/>&nbsp;</span>
                 <%-- When the user name field is not set, most likely, the name is not passed through
                      (It is also not available to be passed in, since only the Field objects are present
                      for use by rowDisplay.tag.  So, we fire off the needed JS to update the name. --%>
@@ -134,11 +136,13 @@
 
 <c:if test="${!empty universalIdFieldName}">
   ${kfunc:registerEditableProperty(KualiForm, universalIdFieldName)}
-  <input type="hidden" name="${universalIdFieldName}" id="${universalIdFieldName}" value="${universalId}" />
+  <%-- CU Customization: Escape the Principal ID. --%>
+  <input type="hidden" name="${universalIdFieldName}" id="${universalIdFieldName}" value='<c:out value="${universalId}"/>' />
 </c:if>
 <c:if test="${!empty userNameFieldName}">
   ${kfunc:registerEditableProperty(KualiForm, userNameFieldName)}
-  <input type="hidden" name="${userNameFieldName}" id="${userNameFieldName}" value="${userName}" />
+  <%-- CU Customization: Escape the Person Name. --%>
+  <input type="hidden" name="${userNameFieldName}" id="${userNameFieldName}" value='<c:out value="${userName}"/>' />
 </c:if>
 
 <c:if test="${highlight}">
