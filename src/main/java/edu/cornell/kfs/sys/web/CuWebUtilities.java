@@ -110,7 +110,7 @@ public final class CuWebUtilities {
     }
 
     public static String urlEncode(final String value) {
-        return URLEncoder.encode(value, StandardCharsets.UTF_8);
+        return URLEncoder.encode(StringUtils.defaultString(value), StandardCharsets.UTF_8);
     }
 
 }
