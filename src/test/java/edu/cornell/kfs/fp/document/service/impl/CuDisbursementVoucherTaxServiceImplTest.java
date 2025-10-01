@@ -13,7 +13,6 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
-import org.kuali.kfs.vnd.businessobject.VendorRoutingComparable;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
 import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
@@ -159,19 +158,6 @@ public class CuDisbursementVoucherTaxServiceImplTest{
 
 		@Override
 		public boolean shouldVendorRouteForApproval(String documentId) {
-			return false;
-		}
-
-		@Override
-		public boolean equalMemberLists(
-				List<? extends VendorRoutingComparable> list_a,
-				List<? extends VendorRoutingComparable> list_b) {
-			return false;
-		}
-
-		@Override
-		public boolean noRouteSignificantChangeOccurred(VendorDetail newVDtl,
-				VendorHeader newVHdr, VendorDetail oldVDtl, VendorHeader oldVHdr) {
 			return false;
 		}
 

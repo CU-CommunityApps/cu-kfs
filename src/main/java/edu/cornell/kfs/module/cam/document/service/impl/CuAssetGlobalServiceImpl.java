@@ -2,12 +2,9 @@ package edu.cornell.kfs.module.cam.document.service.impl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.module.cam.CamsConstants;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.module.cam.businessobject.AssetGlobal;
 import org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail;
-import org.kuali.kfs.module.cam.businessobject.AssetLocation;
 import org.kuali.kfs.module.cam.document.service.impl.AssetGlobalServiceImpl;
 
 import edu.cornell.kfs.module.cam.businessobject.AssetExtension;
@@ -24,47 +21,6 @@ public class CuAssetGlobalServiceImpl extends AssetGlobalServiceImpl {
         ae.setCapitalAssetNumber(asset.getCapitalAssetNumber());
         return asset;
 
-    }
-    
-    /*
-     * This method is overridden to prevent an NPE when the Asset Representative is null
-     * when FINP-11058 is is brought into our over lay we should be able to remove this override
-     */
-    @Override
-    protected void setupAssetLocationOffCampus(final AssetGlobalDetail assetGlobalDetail, final Asset asset) {
-        // We are not checking if it already exists since on a new asset it can't
-        final AssetLocation offCampusAssetLocation = new AssetLocation();
-        offCampusAssetLocation.setCapitalAssetNumber(asset.getCapitalAssetNumber());
-        offCampusAssetLocation.setAssetLocationTypeCode(CamsConstants.AssetLocationTypeCode.OFF_CAMPUS);
-        asset.getAssetLocations().add(offCampusAssetLocation);
-
-        // Set the location fields either way
-        offCampusAssetLocation.setAssetLocationContactName(assetGlobalDetail.getOffCampusName());
-        offCampusAssetLocation.setAssetLocationContactIdentifier(assetGlobalDetail.getRepresentativeUniversalIdentifier());
-        processAssetLocationInstitutionName(assetGlobalDetail, offCampusAssetLocation);
-        offCampusAssetLocation.setAssetLocationStreetAddress(assetGlobalDetail.getOffCampusAddress());
-        offCampusAssetLocation.setAssetLocationCityName(assetGlobalDetail.getOffCampusCityName());
-        offCampusAssetLocation.setAssetLocationStateCode(assetGlobalDetail.getOffCampusStateCode());
-        offCampusAssetLocation.setAssetLocationCountryCode(assetGlobalDetail.getOffCampusCountryCode());
-        offCampusAssetLocation.setAssetLocationZipCode(assetGlobalDetail.getOffCampusZipCode());
-
-        // There is no phone number field on Asset Global... odd...
-        offCampusAssetLocation.setAssetLocationPhoneNumber(null);
-    }
-    
-    /*
-     * CU-Customization
-     * The asset representative might not be a Cornell person, so we need to handle this situation
-     * KualiCo jira FINP-11058 should address this bug
-     */
-    private void processAssetLocationInstitutionName(final AssetGlobalDetail assetGlobalDetail,
-            final AssetLocation offCampusAssetLocation) {
-        if (ObjectUtils.isNotNull(assetGlobalDetail.getAssetRepresentative())) {
-            offCampusAssetLocation.setAssetLocationInstitutionName(
-                    assetGlobalDetail.getAssetRepresentative().getPrimaryDepartmentCode());
-        } else {
-            LOG.info("processAssetLocationInstitutionName, the asset representative is not set, unable to set asset location institution name");
-        }
     }
 
 }

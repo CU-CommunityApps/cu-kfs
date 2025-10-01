@@ -146,7 +146,4 @@
             </list>
         </property>
     </bean>    	
-   
-    <bean id="Requisition-assignToTradeInValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuRequisitionAssignToTradeInValidation" abstract="true" />
-   
 </beans>

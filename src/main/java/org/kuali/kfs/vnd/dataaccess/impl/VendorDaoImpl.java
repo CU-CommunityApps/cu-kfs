@@ -412,18 +412,31 @@ public class VendorDaoImpl implements VendorDao, CuVendorDao {
         final String wildcardAdjusted = parseWildcard(value);
         final String comparator = StringUtils.containsAny(wildcardAdjusted, SQL_WILDCARDS) ? "LIKE" : "=";
 
-        parentSqlWhere.append("AND DETAIL.VNDR_HDR_GNRTD_ID IN (SELECT VNDR_HDR_GNRTD_ID FROM PUR_VNDR_DTL_T ")
-                .append("NUMBER_DETAIL WHERE NUMBER_DETAIL.VNDR_HDR_GNRTD_ID || '-' || ")
-                .append("NUMBER_DETAIL.VNDR_DTL_ASND_ID ")
-                .append(comparator)
-                .append(" ? )");
+        if (value.contains("-")) {
+            parentSqlWhere.append("AND DETAIL.VNDR_HDR_GNRTD_ID IN (SELECT VNDR_HDR_GNRTD_ID FROM PUR_VNDR_DTL_T ")
+                    .append("NUMBER_DETAIL WHERE CONCAT(NUMBER_DETAIL.VNDR_HDR_GNRTD_ID, '-', ")
+                    .append("NUMBER_DETAIL.VNDR_DTL_ASND_ID) ")
+                    .append(comparator)
+                    .append(" ? )");
 
-        childSqlWhere.append("AND CHILD.VNDR_HDR_GNRTD_ID IN (SELECT VNDR_HDR_GNRTD_ID FROM PUR_VNDR_DTL_T ")
-                .append("NUMBER_DETAIL WHERE NUMBER_DETAIL.VNDR_HDR_GNRTD_ID || '-' || ")
-                .append("NUMBER_DETAIL.VNDR_DTL_ASND_ID ")
-                .append(comparator)
-                .append(" ? )");
-        sqlParameters.add(wildcardAdjusted);
+            childSqlWhere.append("AND CHILD.VNDR_HDR_GNRTD_ID IN (SELECT VNDR_HDR_GNRTD_ID FROM PUR_VNDR_DTL_T ")
+                    .append("NUMBER_DETAIL WHERE CONCAT(NUMBER_DETAIL.VNDR_HDR_GNRTD_ID, '-', ")
+                    .append("NUMBER_DETAIL.VNDR_DTL_ASND_ID) ")
+                    .append(comparator)
+                    .append(" ? )");
+            sqlParameters.add(wildcardAdjusted);
+        } else {
+            parentSqlWhere.append("AND DETAIL.VNDR_HDR_GNRTD_ID IN (SELECT VNDR_HDR_GNRTD_ID FROM PUR_VNDR_DTL_T ")
+                    .append("NUMBER_DETAIL WHERE NUMBER_DETAIL.VNDR_HDR_GNRTD_ID ")
+                    .append(comparator)
+                    .append(" ? )");
+
+            childSqlWhere.append("AND CHILD.VNDR_HDR_GNRTD_ID IN (SELECT VNDR_HDR_GNRTD_ID FROM PUR_VNDR_DTL_T ")
+                    .append("NUMBER_DETAIL WHERE NUMBER_DETAIL.VNDR_HDR_GNRTD_ID ")
+                    .append(comparator)
+                    .append(" ? )");
+            sqlParameters.add(wildcardAdjusted);
+        }
     }
 
     private static void addActiveCriteria(

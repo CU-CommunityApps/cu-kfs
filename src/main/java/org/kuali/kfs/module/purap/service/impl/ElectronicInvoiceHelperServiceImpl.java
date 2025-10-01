@@ -171,7 +171,8 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
         emailTextErrorList = new StringBuffer();
 
         final boolean moveFiles = parameterService.getParameterValueAsBoolean(ElectronicInvoiceStep.class,
-                PurapParameterConstants.ElectronicInvoiceParameters.FILE_MOVE_AFTER_LOAD_IND);
+                PurapParameterConstants.ElectronicInvoiceParameters.MOVE_FILE_IND
+        );
 
         int failedCnt = 0;
 

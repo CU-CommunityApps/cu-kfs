@@ -319,13 +319,18 @@ public class KualiDocumentActionBase extends KualiAction {
             formBase.setLookFuture(routeHeader.getDocumentType().getLookIntoFuturePolicy().getPolicyValue());
 
             if (formBase.isShowFuture()) {
-                try {
-                    populateRouteLogFutureRequests(formBase, routeHeader);
-                } catch (final Exception e) {
-                    final String errorMsg = "Unable to determine Future Action Requests";
-                    LOG.info(errorMsg, e);
-                    formBase.setShowFutureError(errorMsg);
+                String errorMsg = "";
+                if (workflowDocument.isInitiated()) {
+                    errorMsg = "Unable to determine Future Action Requests for INITIATED document";
+                } else {
+                    try {
+                        populateRouteLogFutureRequests(formBase, routeHeader);
+                    } catch (final Exception e) {
+                        errorMsg = "Unable to determine Future Action Requests";
+                        LOG.info(errorMsg, e);
+                    }
                 }
+                formBase.setShowFutureError(errorMsg);
             }
             request.setAttribute("routeHeader", routeHeader);
         }
