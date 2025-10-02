@@ -31,15 +31,12 @@ public class TaxStatistics implements TaxStatisticsHandler {
     public TaxStatistics(final TaxStatistics... otherStatistics) {
         this();
         for (final TaxStatistics otherStatistic : otherStatistics) {
-            for (final Map.Entry<TaxStatType, MutableInt> statisticEntry : otherStatistic.statistics.entrySet()) {
-                statistics.merge(statisticEntry.getKey(), statisticEntry.getValue(), TaxStatistics::mergeStatistic);
+            for (final Map.Entry<TaxStatType, MutableInt> otherEntry : otherStatistic.statistics.entrySet()) {
+                final MutableInt existingStatisticValue = statistics.computeIfAbsent(
+                        otherEntry.getKey(), key -> new MutableInt(0));
+                existingStatisticValue.add(otherEntry.getValue());
             }
         }
-    }
-
-    private static MutableInt mergeStatistic(final MutableInt oldValue, final MutableInt newValue) {
-        oldValue.add(newValue);
-        return oldValue;
     }
 
     @Override
