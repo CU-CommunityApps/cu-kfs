@@ -32,7 +32,7 @@ import edu.cornell.kfs.tax.batch.service.TaxTableMetadataLookupService;
  * 
  * 1. Sort the related enum's mapped business object classes in classname order.
  * 2. Take the first 3 characters from each mapped class's simple name, uppercase them,
- *            and append a unique numeric suffix (starting from zero).
+ *            and append a unique numeric suffix (starting from zero or a caller-defined start value).
  * 
  * For column aliases, this implementation will derive them as follows:
  * 
@@ -40,26 +40,40 @@ import edu.cornell.kfs.tax.batch.service.TaxTableMetadataLookupService;
  *            unprefixed table column name will be used as the alias.
  * -- Otherwise, an alias will be formed by taking the table-alias-prefixed column name
  *            and converting the dot into an underscore. (Example: DOC1.OBJ_ID --> DOC1_OBJ_ID)
+ * 
+ * NOTE: When a metadata object has explicit aliases like in the latter case, take care when
+ *       using such objects for certain subquery expressions (especially subquery joins),
+ *       since it increases the risk of the custom aliases becoming incompatible with the parent query.
+ *       Such aliases generally don't cause a problem in a top-level UNION or UNION ALL query,
+ *       because the aliases in the first set will override those of the subsequent sets.
  */
 public abstract class TaxTableMetadataLookupServiceBase<T> implements TaxTableMetadataLookupService {
 
     @Override
     public TaxDtoDbMetadata getDatabaseMappingMetadataForDto(
             final Class<? extends TaxDtoFieldEnum> dtoFieldEnumClass) {
+        return getDatabaseMappingMetadataForDto(dtoFieldEnumClass, 0);
+    }
+
+    @Override
+    public TaxDtoDbMetadata getDatabaseMappingMetadataForDto(
+            final Class<? extends TaxDtoFieldEnum> dtoFieldEnumClass, final int aliasSuffixOffset) {
         Validate.notNull(dtoFieldEnumClass, "dtoFieldEnumClass cannot be null");
         Validate.isTrue(dtoFieldEnumClass.isEnum(), "dtoFieldEnumClass must be an enum class");
+        Validate.isTrue(aliasSuffixOffset >= 0, "aliasSuffixOffset must be a nonnegative integer");
 
         final List<Class<? extends BusinessObject>> mappedClasses = getAndSortMappedBusinessObjectClasses(
                 dtoFieldEnumClass);
         final Map<Class<? extends BusinessObject>, T> metadataMappings = getMetadataForBusinessObjects(mappedClasses);
         final Map<Class<? extends BusinessObject>, String> tableNameMappings = getTableNameMappings(metadataMappings);
-        final Map<Class<? extends BusinessObject>, String> tableAliasMappings = getTableAliasMappings(mappedClasses);
+        final Map<Class<? extends BusinessObject>, String> tableAliasMappings = getTableAliasMappings(
+                mappedClasses, aliasSuffixOffset);
         final Map<TaxDtoFieldEnum, String> columnLabelMappings = getColumnLabelMappings(
                 dtoFieldEnumClass, metadataMappings, tableAliasMappings);
         final Map<TaxDtoFieldEnum, String> columnAliasMappings = getColumnAliasMappings(columnLabelMappings);
 
         return new TaxDtoDbMetadata(tableNameMappings, tableAliasMappings, dtoFieldEnumClass, columnLabelMappings,
-                columnAliasMappings);
+                columnAliasMappings, aliasSuffixOffset);
     }
 
     protected List<Class<? extends BusinessObject>> getAndSortMappedBusinessObjectClasses(
@@ -95,8 +109,8 @@ public abstract class TaxTableMetadataLookupServiceBase<T> implements TaxTableMe
     protected abstract String getTableName(final T metadata);
 
     protected Map<Class<? extends BusinessObject>, String> getTableAliasMappings(
-            final List<Class<? extends BusinessObject>> mappedClasses) {
-        int numericSuffix = -1;
+            final List<Class<? extends BusinessObject>> mappedClasses, final int aliasSuffixOffset) {
+        int numericSuffix = -1 + aliasSuffixOffset;
         final Stream.Builder<Pair<Class<? extends BusinessObject>, String>> tableAliases = Stream.builder();
 
         for (final Class<? extends BusinessObject> mappedClass : mappedClasses) {

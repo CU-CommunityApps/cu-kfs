@@ -28,6 +28,17 @@ public class TaxStatistics implements TaxStatisticsHandler {
         }
     }
 
+    public TaxStatistics(final TaxStatistics... otherStatistics) {
+        this();
+        for (final TaxStatistics otherStatistic : otherStatistics) {
+            for (final Map.Entry<TaxStatType, MutableInt> otherEntry : otherStatistic.statistics.entrySet()) {
+                final MutableInt existingStatisticValue = statistics.computeIfAbsent(
+                        otherEntry.getKey(), key -> new MutableInt(0));
+                existingStatisticValue.add(otherEntry.getValue());
+            }
+        }
+    }
+
     @Override
     public void increment(final TaxStatType entryType) {
         statistics.computeIfAbsent(entryType, key -> new MutableInt(0))
