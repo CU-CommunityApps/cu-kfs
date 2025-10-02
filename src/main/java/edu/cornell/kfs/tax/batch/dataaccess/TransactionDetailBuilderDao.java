@@ -13,7 +13,7 @@ public interface TransactionDetailBuilderDao {
 
     void deleteTransactionDetailsForConfiguredTaxTypeAndYear(final TaxBatchConfig config);
 
-    void insertTransactionDetailsWithoutVendorInfo(
+    void insertTransactionDetails(
             final List<TransactionDetail> transactionDetails, final TaxBatchConfig config);
 
     TaxStatistics createDvTransactionDetails(final TaxBatchConfig config,

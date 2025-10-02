@@ -78,6 +78,8 @@ public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAware
 
     @Override
     public void deleteTransactionDetailsForConfiguredTaxTypeAndYear(final TaxBatchConfig config) {
+        LOG.info("deleteTransactionDetailsForConfiguredTaxTypeAndYear, Deleting existing rows for tax type {} and year {}",
+                config.getTaxType(), config.getReportYear());
         final TaxDtoDbMetadata metadata = taxTableMetadataLookupService.getDatabaseMappingMetadataForDto(
                 TransactionDetailField.class);
         final TransactionDetailField taxBoxField = getTaxBoxFieldForCriteria(config);
@@ -91,7 +93,7 @@ public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAware
                 .build();
 
         final int numDeletedRows = executeUpdate(query);
-        LOG.debug("deleteTransactionDetailsForConfiguredTaxTypeAndYear, Deleted {} rows for tax type {} and year {}",
+        LOG.info("deleteTransactionDetailsForConfiguredTaxTypeAndYear, Deleted {} rows for tax type {} and year {}",
                 numDeletedRows, config.getTaxType(), config.getReportYear());
     }
 
@@ -108,19 +110,20 @@ public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAware
     }
 
     @Override
-    public void insertTransactionDetailsWithoutVendorInfo(
+    public void insertTransactionDetails(
             final List<TransactionDetail> transactionDetails, final TaxBatchConfig config) {
+        LOG.info("insertTransactionDetails, Preparing batch insert of transaction details");
         final CuSqlQuery insertQuery = createQueryForBatchInsertingTransactionDetails(config);
-        int[] insertCounts = executeBatchUpdate(insertQuery, transactionDetails);
+        final int[] insertCounts = executeBatchUpdate(insertQuery, transactionDetails);
 
         for (int i = 0; i < insertCounts.length; i++) {
             if (insertCounts[i] != 1) {
-                LOG.warn("insertTransactionDetailsWithoutVendorInfo, Batch insert for Transaction Detail "
+                LOG.warn("insertTransactionDetails, Batch insert for Transaction Detail "
                         + "at batch index {} should have inserted 1 row, but it actually inserted {} rows instead!",
                         i, insertCounts[i]);
             }
         }
-        LOG.debug("insertTransactionDetailsWithoutVendorInfo, Inserted {} transaction details", transactionDetails::size);
+        LOG.info("insertTransactionDetails, Inserted {} transaction details", transactionDetails.size());
     }
 
     private CuSqlQuery createQueryForBatchInsertingTransactionDetails(final TaxBatchConfig config) {
