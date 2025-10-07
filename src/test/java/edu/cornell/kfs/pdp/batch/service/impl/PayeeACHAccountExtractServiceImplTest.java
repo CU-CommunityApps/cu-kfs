@@ -613,7 +613,7 @@ public class PayeeACHAccountExtractServiceImplTest {
 
     private static class TestEmailService extends EmailServiceImpl {
         public TestEmailService() {
-            super(new Environment("unittest", "Cornell"));
+            super(new Environment("unittest", "prd", "Cornell"));
         }
 
         @Override
