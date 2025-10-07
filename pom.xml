@@ -137,7 +137,12 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <argLine>-Xms1024m -Xmx1024m -Doracle.jdbc.DateZeroTime=true</argLine>
+                    <argLine>
+                        -Xms1024m -Xmx1024m -Doracle.jdbc.DateZeroTime=true
+                        --add-opens=java.base/java.lang=ALL-UNNAMED
+                        --add-opens=java.rmi/sun.rmi.server=ALL-UNNAMED
+                        --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+                    </argLine>
                     <excludes>
                         <exclude>${test.excludes}</exclude>
                     </excludes>
