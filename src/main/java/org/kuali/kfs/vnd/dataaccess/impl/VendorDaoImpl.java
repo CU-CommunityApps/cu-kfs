@@ -414,13 +414,13 @@ public class VendorDaoImpl implements VendorDao, CuVendorDao {
 
         if (value.contains("-")) {
             parentSqlWhere.append("AND DETAIL.VNDR_HDR_GNRTD_ID IN (SELECT VNDR_HDR_GNRTD_ID FROM PUR_VNDR_DTL_T ")
-                    .append("NUMBER_DETAIL WHERE CONCAT(NUMBER_DETAIL.VNDR_HDR_GNRTD_ID, '-', ")
+                    .append("NUMBER_DETAIL WHERE NUMBER_DETAIL.VNDR_HDR_GNRTD_ID || '-' || ")
                     .append("NUMBER_DETAIL.VNDR_DTL_ASND_ID) ")
                     .append(comparator)
                     .append(" ? )");
 
             childSqlWhere.append("AND CHILD.VNDR_HDR_GNRTD_ID IN (SELECT VNDR_HDR_GNRTD_ID FROM PUR_VNDR_DTL_T ")
-                    .append("NUMBER_DETAIL WHERE CONCAT(NUMBER_DETAIL.VNDR_HDR_GNRTD_ID, '-', ")
+                    .append("NUMBER_DETAIL WHERE NUMBER_DETAIL.VNDR_HDR_GNRTD_ID || '-' || ")
                     .append("NUMBER_DETAIL.VNDR_DTL_ASND_ID) ")
                     .append(comparator)
                     .append(" ? )");

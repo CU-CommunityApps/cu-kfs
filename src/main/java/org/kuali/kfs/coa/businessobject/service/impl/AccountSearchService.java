@@ -33,8 +33,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-// CU Customization: This code is a backport of changes for FINP-10933 form the 05-01-2024 version of financials. In addition to the base code fix, a customization was added
-// to handle name masking for Person objects. Name masking is a local Cornell customization. This overlay cannot be removed with the 05-01-2024 upgrade due to the customization
+// CU Customization: A customization was added to handle name masking for Person objects. Name masking is a local Cornell customization. This overlay cannot be removed with the 05-01-2024 upgrade due to the customization
 // needed to handle masked names for the Person object. 
 public class AccountSearchService extends DefaultSearchService {
 
