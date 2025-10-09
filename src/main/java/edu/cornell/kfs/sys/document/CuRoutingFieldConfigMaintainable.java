@@ -12,6 +12,7 @@ import org.kuali.kfs.vnd.VendorConstants;
 public class CuRoutingFieldConfigMaintainable extends RoutingFieldConfigMaintainable {
     
     protected static final List<String> CU_VENDOR_DOC_TYPE_FIELD_NAMES = List.of(
+            "taxableIndicator",
             "extension.insuranceRequiredIndicator",
             "extension.insuranceRequirementsCompleteIndicator",
             "extension.cornellAdditionalInsuredIndicator",
