@@ -158,7 +158,8 @@ public class CuPurchasingProcessVendorValidation extends PurchasingProcessVendor
         return (return_value);
     }  
     
-    boolean isVendorTypeAllowedByParameterCheck(final VendorHeader vendorHeader) {
+    // CU customization: set method access to protected
+    protected boolean isVendorTypeAllowedByParameterCheck(final VendorHeader vendorHeader) {
         final Collection<String> allowedVendorTypes = parameterService.getParameterValuesAsString(
                 KfsParameterConstants.PURCHASING_DOCUMENT.class,
                 PurapRuleConstants.PURAP_VENDOR_TYPE_ALLOWED_ON_REQ_AND_PO);

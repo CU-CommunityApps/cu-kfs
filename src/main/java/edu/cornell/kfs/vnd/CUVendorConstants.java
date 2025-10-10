@@ -9,7 +9,6 @@ import java.util.Map;
  * Holds constants for Vendor.
  */
 public class CUVendorConstants {
-	public static final String VENDOR_DOCUMENT_TYPE_NAME = "PVEN";
     public static final String EXPIRED_DATE_QUESTION_ID = "confirmVendorDateExpiration";
 
     public static class EXPIRABLE_COVERAGES {

@@ -6,9 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.kuali.kfs.kew.api.exception.WorkflowException;
-
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.ValidationException;
@@ -19,6 +17,7 @@ import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.SupplierDiversity;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
@@ -32,7 +31,6 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorRequestsReportService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorDataProcessingIntoKfsService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorToKfsVendorDetailConversionService;
-import edu.cornell.kfs.vnd.CUVendorConstants;
 
 public class PaymentWorksVendorDataProcessingIntoKfsServiceImpl implements PaymentWorksVendorDataProcessingIntoKfsService {
 	private static final Logger LOG = LogManager.getLogger(PaymentWorksVendorDataProcessingIntoKfsServiceImpl.class);
@@ -166,7 +164,7 @@ public class PaymentWorksVendorDataProcessingIntoKfsServiceImpl implements Payme
     }
     
     private MaintenanceDocument buildVendorMaintenanceDocumentBase(VendorDetail newVendorDetail, VendorDetail oldVendorDetail, String documentAction, boolean isNewVendor, List<Note> notesToPersist) throws WorkflowException{
-        MaintenanceDocument vendorMaintDoc = (MaintenanceDocument) getDocumentService().getNewDocument(CUVendorConstants.VENDOR_DOCUMENT_TYPE_NAME);
+        MaintenanceDocument vendorMaintDoc = (MaintenanceDocument) getDocumentService().getNewDocument(VendorConstants.VENDOR_DOC_TYPE);
         vendorMaintDoc.getNewMaintainableObject().setBusinessObject(newVendorDetail);
         vendorMaintDoc.getOldMaintainableObject().setBusinessObject(oldVendorDetail);
         vendorMaintDoc.getDocumentHeader().setDocumentDescription(buildVendorMainenanceDocumentDescription(newVendorDetail, isNewVendor));

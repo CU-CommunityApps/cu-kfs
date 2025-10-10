@@ -81,7 +81,7 @@ public class CuGeneralLedgerPendingEntryServiceImpl extends GeneralLedgerPending
                 getEntryValue(description, document.getDocumentHeader().getDocumentDescription()));
         explicitEntry.setUniversityFiscalPeriodCode(
                 determineFiscalPeriodCode((GeneralLedgerPendingEntrySource) document));
-        explicitEntry.setUniversityFiscalYear(document.getPostingYear());
+        explicitEntry.setUniversityFiscalYear(determineFiscalYear((GeneralLedgerPendingEntrySource)document));
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("buildGeneralLedgerPendingEntry,  end");

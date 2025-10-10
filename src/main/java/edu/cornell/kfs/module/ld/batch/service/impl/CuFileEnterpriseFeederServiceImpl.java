@@ -98,6 +98,7 @@ public class CuFileEnterpriseFeederServiceImpl extends FileEnterpriseFeederServi
                     // we need to be extremely resistant to a file load failing so that it doesn't prevent other files
                     // from loading
                     LOG.error("Caught exception when feeding done file: {}", doneFile::getAbsolutePath);
+                    fatal = true;
                 } finally {
                     statusAndErrorsList.add(statusAndErrors);
                     final boolean doneFileDeleted = doneFile.delete();

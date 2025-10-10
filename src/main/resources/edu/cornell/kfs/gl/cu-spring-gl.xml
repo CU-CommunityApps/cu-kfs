@@ -68,7 +68,8 @@
 		</property>
 	</bean>  
 
-    <bean id="glBalanceDao" parent="platformAwareDao" class="edu.cornell.kfs.gl.dataaccess.impl.CuBalanceDaoOjb"/>
+    <bean id="glBalanceDao" parent="platformAwareDao" class="edu.cornell.kfs.gl.dataaccess.impl.CuBalanceDaoOjb"
+          p:parameterService-ref="parameterService"/>
     
     <bean id="glBalanceService" class="edu.cornell.kfs.gl.service.impl.CuBalanceServiceImpl" parent="glBalanceService-parentBean"/>
 
