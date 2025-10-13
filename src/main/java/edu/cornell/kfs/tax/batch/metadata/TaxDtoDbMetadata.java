@@ -13,16 +13,18 @@ public final class TaxDtoDbMetadata {
     private final Class<? extends TaxDtoFieldEnum> fieldEnumClass;
     private final Map<TaxDtoFieldEnum, String> columnLabels;
     private final Map<TaxDtoFieldEnum, String> columnAliases;
+    private final int aliasSuffixOffset;
 
     public TaxDtoDbMetadata(final Map<Class<? extends BusinessObject>, String> tableNames,
             final Map<Class<? extends BusinessObject>, String> tableAliases,
             final Class<? extends TaxDtoFieldEnum> fieldEnumClass, final Map<TaxDtoFieldEnum, String> columnLabels,
-            final Map<TaxDtoFieldEnum, String> columnAliases) {
+            final Map<TaxDtoFieldEnum, String> columnAliases, final int aliasSuffixOffset) {
         this.tableNames = tableNames;
         this.tableAliases = tableAliases;
         this.fieldEnumClass = fieldEnumClass;
         this.columnLabels = columnLabels;
         this.columnAliases = columnAliases;
+        this.aliasSuffixOffset = aliasSuffixOffset;
     }
 
     public Class<? extends TaxDtoFieldEnum> getFieldEnumClass() {
@@ -51,6 +53,10 @@ public final class TaxDtoDbMetadata {
 
     public int getMappedColumnCount() {
         return columnLabels.size();
+    }
+
+    public int getMaximumAliasSuffix() {
+        return aliasSuffixOffset + tableAliases.size() - 1;
     }
 
 }

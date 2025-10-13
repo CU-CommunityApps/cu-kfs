@@ -13,6 +13,7 @@ import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 public class VendorDetailLite {
 
     private Integer vendorHeaderGeneratedIdentifier;
+    private Integer vendorDetailVendorHeaderGeneratedIdentifier;
     private Integer vendorDetailAssignedIdentifier;
     private boolean vendorParentIndicator;
     private boolean vendorFirstLastNameIndicator;
@@ -31,6 +32,15 @@ public class VendorDetailLite {
 
     public void setVendorHeaderGeneratedIdentifier(final Integer vendorHeaderGeneratedIdentifier) {
         this.vendorHeaderGeneratedIdentifier = vendorHeaderGeneratedIdentifier;
+    }
+
+    public Integer getVendorDetailVendorHeaderGeneratedIdentifier() {
+        return vendorDetailVendorHeaderGeneratedIdentifier;
+    }
+
+    public void setVendorDetailVendorHeaderGeneratedIdentifier(
+            final Integer vendorDetailVendorHeaderGeneratedIdentifier) {
+        this.vendorDetailVendorHeaderGeneratedIdentifier = vendorDetailVendorHeaderGeneratedIdentifier;
     }
 
     public Integer getVendorDetailAssignedIdentifier() {
@@ -124,10 +134,9 @@ public class VendorDetailLite {
 
 
     public enum VendorField implements TaxDtoFieldEnum {
-        vendorHeaderGeneratedIdentifier_forHeader(
-                VendorHeader.class, VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID, true),
-        vendorHeaderGeneratedIdentifier_forDetail(
-                VendorDetail.class, VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID, true),
+        vendorHeaderGeneratedIdentifier(VendorHeader.class),
+        vendorDetailVendorHeaderGeneratedIdentifier(
+                VendorDetail.class, VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID),
         vendorDetailAssignedIdentifier(VendorDetail.class),
         vendorParentIndicator(VendorDetail.class),
         vendorFirstLastNameIndicator(VendorDetail.class),
@@ -142,32 +151,24 @@ public class VendorDetailLite {
 
         private final Class<? extends BusinessObject> mappedClass;
         private final String fieldName;
-        private final boolean needsExplicitAlias;
 
         private VendorField(final Class<? extends BusinessObject> mappedClass) {
-            this(mappedClass, null, false);
+            this(mappedClass, null);
         }
 
-        private VendorField(final Class<? extends BusinessObject> mappedClass, final String fieldName,
-                final boolean needsExplicitAlias) {
+        private VendorField(final Class<? extends BusinessObject> mappedClass, final String fieldName) {
             this.mappedClass = mappedClass;
             this.fieldName = StringUtils.defaultIfBlank(fieldName, name());
-            this.needsExplicitAlias = needsExplicitAlias;
         }
 
         @Override
-        public String getFieldName() {
+        public String getBusinessObjectFieldName() {
             return fieldName;
         }
 
         @Override
         public Class<? extends BusinessObject> getMappedBusinessObjectClass() {
             return mappedClass;
-        }
-
-        @Override
-        public boolean needsExplicitAlias() {
-            return needsExplicitAlias;
         }
 
         @Override
