@@ -7,4 +7,7 @@ public interface TaxTableMetadataLookupService {
 
     TaxDtoDbMetadata getDatabaseMappingMetadataForDto(final Class<? extends TaxDtoFieldEnum> dtoFieldEnumClass);
 
+    TaxDtoDbMetadata getDatabaseMappingMetadataForDto(final Class<? extends TaxDtoFieldEnum> dtoFieldEnumClass,
+            final int aliasSuffixOffset);
+
 }

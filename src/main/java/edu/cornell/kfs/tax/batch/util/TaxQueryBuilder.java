@@ -19,6 +19,7 @@ import edu.cornell.kfs.tax.batch.metadata.TaxDtoDbMetadata;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.Criteria;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.FieldUpdate;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.QuerySort;
+import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.SqlFunction;
 
 /**
  * Convenience class for building SELECT or UPDATE queries against tax-related data, using metadata helper objects
@@ -58,6 +59,14 @@ public class TaxQueryBuilder {
         return select(fields);
     }
 
+    public TaxQueryBuilder selectAllFieldsMappedTo(final Class<? extends BusinessObject> businessObjectClass) {
+        final Class<? extends TaxDtoFieldEnum> enumClass = mappingMetadata.getFieldEnumClass();
+        Stream<TaxDtoFieldEnum> fields = Arrays.stream(enumClass.getEnumConstants());
+        // Calling filter() on a separate line, because chaining it with the one above results in type mismatch errors.
+        fields = fields.filter(field -> businessObjectClass.equals(field.getMappedBusinessObjectClass()));
+        return select(fields);
+    }
+
     public TaxQueryBuilder select(final TaxDtoFieldEnum... fields) {
         return select(Stream.of(fields));
     }
@@ -81,6 +90,11 @@ public class TaxQueryBuilder {
         }
     }
 
+    public TaxQueryBuilder deleteFrom(final Class<? extends BusinessObject> baseBusinessObjectClass) {
+        sqlChunk.append("DELETE");
+        return from(baseBusinessObjectClass);
+    }
+
     public TaxQueryBuilder from(final Class<? extends BusinessObject> baseBusinessObjectClass) {
         final String tableReference = getTableReferenceDeclaration(baseBusinessObjectClass);
         sqlChunk.append(" FROM ").append(tableReference);
@@ -102,9 +116,31 @@ public class TaxQueryBuilder {
         return appendAndCondition(false, joinCriteria);
     }
 
+    public TaxQueryBuilder join(final TaxQueryBuilder subQuery,
+            final Class<? extends BusinessObject> subQueryBusinessObjectClass,
+            final Criteria... joinCriteria) {
+        final String subQueryAlias = mappingMetadata.getTableAlias(subQueryBusinessObjectClass);
+        sqlChunk.append(" JOIN ");
+        appendSubQuery(subQuery);
+        sqlChunk.append(KFSConstants.BLANK_SPACE).append(subQueryAlias).append(" ON ");
+        return appendAndCondition(false, joinCriteria);
+    }
+
+    public TaxQueryBuilder leftJoin(final Class<? extends BusinessObject> businessObjectClass,
+            final Criteria... joinCriteria) {
+        final String tableReference = getTableReferenceDeclaration(businessObjectClass);
+        sqlChunk.append(" LEFT JOIN ").append(tableReference).append(" ON ");
+        return appendAndCondition(false, joinCriteria);
+    }
+
     public TaxQueryBuilder where(final Criteria... criteria) {
         sqlChunk.append(" WHERE ");
         return appendAndCondition(false, criteria);
+    }
+
+    public TaxQueryBuilder unionAll(final TaxQueryBuilder siblingQuery) {
+        sqlChunk.append(" UNION ALL ").append(siblingQuery.sqlChunk);
+        return this;
     }
 
     public final TaxQueryBuilder orderBy(final QuerySort... fieldSorters) {
@@ -137,10 +173,45 @@ public class TaxQueryBuilder {
                 sqlChunk.append(CUKFSConstants.COMMA_AND_SPACE);
             }
             final String columnLabel = getColumnLabel(fieldUpdate.getField());
-            sqlChunk.append(columnLabel).append(" = ")
-                    .appendAsParameter(fieldUpdate.getSqlType(), fieldUpdate.getValue());
+            sqlChunk.append(columnLabel).append(" = ");
+            appendFieldUpdateValue(fieldUpdate);
             i++;
         }
+        return this;
+    }
+
+    public TaxQueryBuilder insertValuesInto(final Class<? extends BusinessObject> businessObjectClass,
+            final FieldUpdate... fieldUpdates) {
+        final String tableReference = getTableReferenceDeclaration(businessObjectClass);
+        sqlChunk.append("INSERT INTO ")
+                .append(tableReference)
+                .append(KFSConstants.BLANK_SPACE)
+                .append(CUKFSConstants.LEFT_PARENTHESIS);
+
+        int i = 0;
+        for (final FieldUpdate fieldUpdate : fieldUpdates) {
+            if (i > 0) {
+                sqlChunk.append(CUKFSConstants.COMMA_AND_SPACE);
+            }
+            final String columnLabel = getColumnLabel(fieldUpdate.getField());
+            sqlChunk.append(columnLabel);
+            i++;
+        }
+
+        sqlChunk.append(CUKFSConstants.RIGHT_PARENTHESIS)
+                .append(" VALUES ")
+                .append(CUKFSConstants.LEFT_PARENTHESIS);
+
+        i = 0;
+        for (final FieldUpdate fieldUpdate : fieldUpdates) {
+            if (i > 0) {
+                sqlChunk.append(CUKFSConstants.COMMA_AND_SPACE);
+            }
+            appendFieldUpdateValue(fieldUpdate);
+            i++;
+        }
+
+        sqlChunk.append(CUKFSConstants.RIGHT_PARENTHESIS);
         return this;
     }
 
@@ -148,7 +219,19 @@ public class TaxQueryBuilder {
         return sqlChunk.toQuery();
     }
 
+    protected TaxQueryBuilder appendFieldUpdateValue(final FieldUpdate fieldUpdate) {
+        if (fieldUpdate.getValue() instanceof CuSqlChunk) {
+            sqlChunk.append((CuSqlChunk) fieldUpdate.getValue());
+        } else {
+            sqlChunk.appendAsParameter(fieldUpdate.getSqlType(), fieldUpdate.getValue());
+        }
+        return this;
+    }
 
+    protected TaxQueryBuilder appendNotAndCondition(final Criteria... criteria) {
+        sqlChunk.append("NOT ");
+        return appendAndCondition(true, criteria);
+    }
 
     protected TaxQueryBuilder appendAndCondition(final boolean addParentheses, final Criteria... criteria) {
         return appendMultiPartCondition(" AND ", addParentheses, criteria);
@@ -180,6 +263,11 @@ public class TaxQueryBuilder {
         return this;
     }
 
+    protected TaxQueryBuilder appendSqlFunction(final SqlFunction sqlFunction) {
+        sqlFunction.applyToQuery(this);
+        return this;
+    }
+
     protected TaxQueryBuilder appendLeftHalfOfEqualityCondition(final TaxDtoFieldEnum field) {
         return appendLeftHandSideAndOperand(field, " = ");
     }
@@ -188,9 +276,37 @@ public class TaxQueryBuilder {
         return appendLeftHandSideAndOperand(field, " <> ");
     }
 
+    protected TaxQueryBuilder appendLeftHalfOfBetweenCondition(final TaxDtoFieldEnum field) {
+        return appendLeftHandSideAndOperand(field, " BETWEEN ");
+    }
+
+    protected TaxQueryBuilder appendLeftHalfOfLikeCondition(final TaxDtoFieldEnum field) {
+        return appendLeftHandSideAndOperand(field, " LIKE ");
+    }
+
     protected TaxQueryBuilder appendLeftHandSideAndOperand(final TaxDtoFieldEnum field, final String paddedOperand) {
         return appendColumnLabelForField(field)
                 .appendSql(paddedOperand);
+    }
+
+    protected TaxQueryBuilder appendFunctionNameAndFirstOperand(final String functionName,
+            final TaxDtoFieldEnum field) {
+        return appendSql(functionName)
+                .appendSql(CUKFSConstants.LEFT_PARENTHESIS)
+                .appendColumnLabelForField(field);
+    }
+
+    protected TaxQueryBuilder appendFunctionNameAndFirstOperand(final String functionName,
+            final SqlFunction nestedFunction) {
+        return appendSql(functionName)
+                .appendSql(CUKFSConstants.LEFT_PARENTHESIS)
+                .appendSqlFunction(nestedFunction);
+    }
+
+    protected TaxQueryBuilder appendLastFunctionOperand(final int sqlType, final Object value) {
+        return appendSql(CUKFSConstants.COMMA_AND_SPACE)
+                .appendParameter(sqlType, value)
+                .appendSql(CUKFSConstants.RIGHT_PARENTHESIS);
     }
 
     protected TaxQueryBuilder appendColumnLabelForField(final TaxDtoFieldEnum field) {
@@ -209,6 +325,11 @@ public class TaxQueryBuilder {
         final String columnLabel = getColumnLabel(field);
         sqlChunk.append(CuSqlChunk.asSqlInCondition(columnLabel, sqlType, values));
         return this;
+    }
+
+    protected TaxQueryBuilder appendInCondition(final TaxDtoFieldEnum field, final TaxQueryBuilder subQuery) {
+        return appendLeftHandSideAndOperand(field, " IN ")
+                .appendSubQuery(subQuery);
     }
 
     protected TaxQueryBuilder appendNotInCondition(final TaxDtoFieldEnum field, final int sqlType,

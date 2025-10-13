@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="classpath:edu/cornell/kfs/tax/cu-spring-tax.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-base-test-beans.xml"/>
+
+    <bean id="testDescriptorRepository"
+          class="edu.cornell.kfs.sys.dataaccess.xml.MockFilteredDescriptorRepositoryFactoryBean">
+        <property name="ojbRepositoryFiles">
+            <list>
+                <value>classpath:org/kuali/kfs/krad/config/OJB-repository-krad.xml</value>
+                <value>classpath:org/kuali/kfs/fp/ojb-fp.xml</value>
+                <value>classpath:org/kuali/kfs/module/purap/ojb-purap.xml</value>
+                <value>classpath:org/kuali/kfs/sys/ojb-sys.xml</value>
+                <value>classpath:edu/cornell/kfs/fp/cu-ojb-fp.xml</value>
+                <value>classpath:edu/cornell/kfs/module/purap/cu-ojb-purap.xml</value>
+                <value>classpath:edu/cornell/kfs/tax/cu-ojb-tax.xml</value>
+                <value>classpath:edu/cornell/kfs/vnd/cu-ojb-vnd.xml</value>
+            </list>
+        </property>
+        <property name="descriptorsToKeep">
+            <set>
+                <value>org.kuali.kfs.krad.bo.Note</value>
+                <value>org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount</value>
+                <value>org.kuali.kfs.module.purap.businessobject.PaymentRequestItem</value>
+                <value>org.kuali.kfs.sys.businessobject.UniversityDate</value>
+                <value>org.kuali.kfs.vnd.businessobject.VendorHeader</value>
+                <value>org.kuali.kfs.vnd.businessobject.VendorDetail</value>
+                <value>edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument</value>
+                <value>edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument</value>
+                <value>edu.cornell.kfs.tax.businessobject.TransactionDetail</value>
+            </set>
+        </property>
+    </bean>
+
+    <bean id="taxTableMetadataLookupService"
+          parent="taxTableMetadataLookupService-parentBean"
+          class="edu.cornell.kfs.tax.batch.service.impl.TestTaxTableMetadataLookupServiceFactoryBean"
+          p:descriptorRepository-ref="testDescriptorRepository"/>
+
+    <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
+        <property name="beanWhitelist">
+            <set merge="true">
+                <idref bean="testDescriptorRepository"/>
+                <idref bean="taxTableMetadataLookupService"/>
+                <idref bean="taxTableMetadataLookupService-parentBean"/>
+            </set>
+        </property>
+    </bean>
+
+</beans>

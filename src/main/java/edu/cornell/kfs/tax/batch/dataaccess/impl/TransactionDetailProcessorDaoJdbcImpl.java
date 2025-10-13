@@ -184,10 +184,10 @@ public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwa
                 .selectAllMappedFields()
                 .from(VendorDetail.class)
                 .join(VendorHeader.class,
-                        Criteria.equal(VendorField.vendorHeaderGeneratedIdentifier_forDetail,
-                                VendorField.vendorHeaderGeneratedIdentifier_forHeader))
+                        Criteria.equal(VendorField.vendorDetailVendorHeaderGeneratedIdentifier,
+                                VendorField.vendorHeaderGeneratedIdentifier))
                 .where(
-                        Criteria.equal(VendorField.vendorHeaderGeneratedIdentifier_forDetail, Types.INTEGER,
+                        Criteria.equal(VendorField.vendorDetailVendorHeaderGeneratedIdentifier, Types.INTEGER,
                                 vendorId.getLeft()),
                         Criteria.or(
                                 Criteria.equal(VendorField.vendorDetailAssignedIdentifier, Types.INTEGER,
