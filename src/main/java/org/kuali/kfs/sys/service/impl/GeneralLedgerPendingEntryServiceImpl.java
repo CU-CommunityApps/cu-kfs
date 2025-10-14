@@ -399,7 +399,7 @@ public class GeneralLedgerPendingEntryServiceImpl implements GeneralLedgerPendin
         return evaluator.evaluationSucceeds();
     }
 
-    // CU customization: chance method access from private to protected
+    // CU customization: change method access from private to protected
     protected Integer determineFiscalYear(final GeneralLedgerPendingEntrySource glpeSource) {
         if (isFiscalPeriodEnabledForThisDoc(glpeSource)) {
             return glpeSource.getPostingYear();
