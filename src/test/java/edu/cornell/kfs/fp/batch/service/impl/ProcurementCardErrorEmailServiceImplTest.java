@@ -17,7 +17,7 @@ public class ProcurementCardErrorEmailServiceImplTest {
     public void setUp() throws Exception {
         procurementCardErrorEmailService = new ProcurementCardErrorEmailServiceImpl();
 
-        Environment environment = new Environment("unittest", "Cornell");
+        Environment environment = new Environment("unittest", "prd", "Cornell");
         EmailServiceImpl emailService = new EmailServiceImpl(environment);
         ParameterService parameterService = new MockParameterServiceImpl();
 
