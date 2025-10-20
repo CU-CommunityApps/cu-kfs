@@ -701,23 +701,23 @@
                             <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardType" p:start="75" p:end="100" p:rightTrim="true" />
                             <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="netid" p:start="100" p:end="115" p:rightTrim="true" />
                             <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderLine1Address" p:start="115" p:end="151" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderLine2Address" p:start="151" p:end="187" p:rightTrim="true"/>
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderLine2Address" p:start="151" p:end="187" p:rightTrim="true" />
                             <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderCityName" p:start="187" p:end="212" p:rightTrim="true" />
                             <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderStateCode" p:start="212" p:end="214" />
                             <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderPostalCode" p:start="214" p:end="224" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderWorkPhoneNumber" p:start="224" p:end="235" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderPersonalPhoneNumber" p:start="235" p:end="246" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="lastTransactionDate" p:start="246" p:end="256" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="defaultAccountNumber" p:start="256" p:end="406" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="creditLine" p:start="406" p:end="426" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="openDate" p:start="426" p:end="436" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderAccountNumber" p:start="436" p:end="440" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="emplid" p:start="440" p:end="455" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cycleStartDate" p:start="455" p:end="465" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cycleSpendToDate" p:start="465" p:end="485" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="expireDate" p:start="485" p:end="495" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="activationStatus" p:start="495" p:end="529" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="fileCreateDate" p:start="529" p:end="537" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderWorkPhoneNumber" p:start="224" p:end="234" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderPersonalPhoneNumber" p:start="234" p:end="244" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="lastTransactionDate" p:start="244" p:end="252" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="defaultAccountNumber" p:start="252" p:end="302" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="creditLine" p:start="302" p:end="322" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="openDate" p:start="322" p:end="330" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderAccountNumber" p:start="330" p:end="334" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="emplid" p:start="334" p:end="349" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cycleStartDate" p:start="349" p:end="357" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cycleSpendToDate" p:start="357" p:end="377" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="expireDate" p:start="377" p:end="385" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="activationStatus" p:start="385" p:end="419" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="fileCreateDate" p:start="419" p:end="427" p:rightTrim="true" />
                         </list>
                     </property>
                 </bean>
