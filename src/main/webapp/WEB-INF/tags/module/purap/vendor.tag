@@ -91,7 +91,7 @@
                 <td class="datacell" width="25%">
                     <kul:htmlControlAttribute 
                     	attributeEntry="${documentAttributes.vendorName}" property="document.vendorName" 
-                    	readOnly="${not vendorEditable or vendorReadOnly or displayPaymentRequestFields or displayCreditMemoFields or purchaseOrderAwarded or lockB2BEntry}"
+                    	readOnly="${not vendorEditable or vendorReadOnly or displayPaymentRequestFields or displayCreditMemoFields or purchaseOrderAwarded or lockB2BEntry}"/>
                     <c:if test="${vendorEditable and (displayRequisitionFields or displayPurchaseOrderFields) and !purchaseOrderAwarded and !lockB2BEntry}" >
                         <kul:lookup  boClassName="org.kuali.kfs.vnd.businessobject.VendorDetail" 
                         	lookupParameters="'Y':activeIndicator, 'PO':vendorHeader.vendorTypeCode"

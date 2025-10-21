@@ -61,6 +61,8 @@ import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.service.UniversityDateService;
 import org.springframework.util.AutoPopulatingList;
 
 import javax.servlet.http.HttpServletRequest;
@@ -123,6 +125,7 @@ public abstract class KualiDocumentFormBase extends KualiForm implements Seriali
 
     private BusinessObjectDictionaryService businessObjectDictionaryService;
     private DocumentDictionaryService documentDictionaryService;
+    private UniversityDateService universityDateService;
 
     /*
        Stores the error map from previous requests, so that we can continue to display error messages displayed during
@@ -1109,6 +1112,10 @@ public abstract class KualiDocumentFormBase extends KualiForm implements Seriali
         return -getNextNavCount();
     }
 
+    public Integer getCurrentFiscalYear() {
+        return getUniversityDateService().getCurrentFiscalYear();
+    }
+
     private DocumentDictionaryService getDocumentDictionaryService() {
         if (documentDictionaryService == null) {
             documentDictionaryService = KRADServiceLocatorWeb.getDocumentDictionaryService();
@@ -1121,5 +1128,12 @@ public abstract class KualiDocumentFormBase extends KualiForm implements Seriali
             businessObjectDictionaryService = KNSServiceLocator.getBusinessObjectDictionaryService();
         }
         return businessObjectDictionaryService;
+    }
+
+    private UniversityDateService getUniversityDateService() {
+        if (universityDateService == null) {
+            universityDateService = SpringContext.getBean(UniversityDateService.class);
+        }
+        return universityDateService;
     }
 }
