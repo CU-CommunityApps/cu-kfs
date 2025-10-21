@@ -64,60 +64,60 @@ public class CuFileEnterpriseFeederServiceImpl extends FileEnterpriseFeederServi
                             new EnterpriseFeederStatusAndErrorMessagesWrapper();
                     statusAndErrors.setErrorMessages(new ArrayList<>());
 
-                final File dataFile = getDataFile(doneFile);
-                final File reconFile = getReconFile(doneFile);
-
-                statusAndErrors.setFileNames(dataFile, reconFile, doneFile);
-
-                if (dataFile == null) {
-                    LOG.error("Unable to find data file for done file: {}", doneFile::getAbsolutePath);
-                    statusAndErrors.getErrorMessages().add(
-                        new Message("Unable to find data file for done file: " + doneFile.getAbsolutePath(),
-                                Message.TYPE_FATAL));
-                    statusAndErrors.setStatus(new RequiredFilesMissingStatus());
-                }
-
-                if (reconFile == null) {
-                    LOG.error("Unable to find recon file for done file: {}", doneFile::getAbsolutePath);
-                    statusAndErrors.getErrorMessages().add(
-                        new Message("Unable to find recon file for done file: " + doneFile.getAbsolutePath(),
-                                Message.TYPE_FATAL));
-                    statusAndErrors.setStatus(new RequiredFilesMissingStatus());
-                }
-
-                try {
-                    if (dataFile != null && reconFile != null) {
-                        LOG.info("Data file: {}", dataFile::getAbsolutePath);
-                        LOG.info("Reconciliation File: {}", reconFile::getAbsolutePath);
-
-                        fileEnterpriseFeederHelperService.feedOnFile(doneFile, dataFile, reconFile, enterpriseFeedPs,
-                                processName, reconciliationTableId, statusAndErrors, ledgerSummaryReport,
-                                errorStatisticsReport, feederReportData);
-                    }
-                } catch (final RuntimeException e) {
-                    // we need to be extremely resistant to a file load failing so that it doesn't prevent other files
-                    // from loading
-                    LOG.error("Caught exception when feeding done file: {}", doneFile::getAbsolutePath);
-                    fatal = true;
-                } finally {
-                    statusAndErrorsList.add(statusAndErrors);
-                    final boolean doneFileDeleted = doneFile.delete();
-                    if (!doneFileDeleted) {
+                    final File dataFile = getDataFile(doneFile);
+                    final File reconFile = getReconFile(doneFile);
+    
+                    statusAndErrors.setFileNames(dataFile, reconFile, doneFile);
+    
+                    if (dataFile == null) {
+                        LOG.error("Unable to find data file for done file: {}", doneFile::getAbsolutePath);
                         statusAndErrors.getErrorMessages().add(
-                            new Message("Unable to delete done file: " + doneFile.getAbsolutePath(),
+                            new Message("Unable to find data file for done file: " + doneFile.getAbsolutePath(),
                                     Message.TYPE_FATAL));
+                        statusAndErrors.setStatus(new RequiredFilesMissingStatus());
                     }
-                    if (performNotifications) {
-                        enterpriseFeederNotificationService.notifyFileFeedStatus(processName,
-                                statusAndErrors.getStatus(), doneFile, dataFile, reconFile,
-                                statusAndErrors.getErrorMessages());
+    
+                    if (reconFile == null) {
+                        LOG.error("Unable to find recon file for done file: {}", doneFile::getAbsolutePath);
+                        statusAndErrors.getErrorMessages().add(
+                            new Message("Unable to find recon file for done file: " + doneFile.getAbsolutePath(),
+                                    Message.TYPE_FATAL));
+                        statusAndErrors.setStatus(new RequiredFilesMissingStatus());
+                    }
+    
+                    try {
+                        if (dataFile != null && reconFile != null) {
+                            LOG.info("Data file: {}", dataFile::getAbsolutePath);
+                            LOG.info("Reconciliation File: {}", reconFile::getAbsolutePath);
+    
+                            fileEnterpriseFeederHelperService.feedOnFile(doneFile, dataFile, reconFile, enterpriseFeedPs,
+                                    processName, reconciliationTableId, statusAndErrors, ledgerSummaryReport,
+                                    errorStatisticsReport, feederReportData);
+                        }
+                    } catch (final RuntimeException e) {
+                        // we need to be extremely resistant to a file load failing so that it doesn't prevent other files
+                        // from loading
+                        LOG.error("Caught exception when feeding done file: {}", doneFile::getAbsolutePath);
+                        fatal = true;
+                    } finally {
+                        statusAndErrorsList.add(statusAndErrors);
+                        final boolean doneFileDeleted = doneFile.delete();
+                        if (!doneFileDeleted) {
+                            statusAndErrors.getErrorMessages().add(
+                                new Message("Unable to delete done file: " + doneFile.getAbsolutePath(),
+                                        Message.TYPE_FATAL));
+                        }
+                        if (performNotifications) {
+                            enterpriseFeederNotificationService.notifyFileFeedStatus(processName,
+                                    statusAndErrors.getStatus(), doneFile, dataFile, reconFile,
+                                    statusAndErrors.getErrorMessages());
+                        }
                     }
                 }
+            } catch (final IOException e) {
+                LOG.error("enterpriseFeedFile doesn't exist {}", enterpriseFeedFileName);
+                throw new RuntimeException("enterpriseFeedFile doesn't exist " + enterpriseFeedFileName);
             }
-        } catch (final IOException e) {
-            LOG.error("enterpriseFeedFile doesn't exist {}", enterpriseFeedFileName);
-            throw new RuntimeException("enterpriseFeedFile doesn't exist " + enterpriseFeedFileName);
-        }
 
             // if errors encountered is greater than max allowed the enterprise feed file should not be sent
             boolean enterpriseFeedFileCreated = false;
