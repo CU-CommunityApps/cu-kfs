@@ -82,7 +82,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
                 errorMessages.add(new Message("Unable to parse reconciliation file.", Message.TYPE_FATAL));
             }
             else {
-                final Iterator<LaborOriginEntry> fileIterator = new LaborOriginEntryFileIterator(dataFileReader1, false);
+                final Iterator<LaborOriginEntry> fileIterator = new LaborOriginEntryFileIterator(dataFileReader1);
                 reconciliationService.reconcile(fileIterator, reconciliationBlock, errorMessages);
             }
 

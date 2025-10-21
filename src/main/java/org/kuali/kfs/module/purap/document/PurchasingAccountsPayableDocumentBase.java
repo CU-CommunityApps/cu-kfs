@@ -720,9 +720,10 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         setVendorStateCode(vendorAddress.getVendorStateCode());
         setVendorPostalCode(vendorAddress.getVendorZipCode());
         setVendorCountryCode(vendorAddress.getVendorCountryCode());
+        setVendorAddressInternationalProvinceName(vendorAddress.getVendorAddressInternationalProvinceName());
         //KFSPTS-1639
         setVendorEmailAddress(vendorAddress.getVendorAddressEmailAddress());
-  }
+    }
 
     /**
      * @return the vendor number for this document.

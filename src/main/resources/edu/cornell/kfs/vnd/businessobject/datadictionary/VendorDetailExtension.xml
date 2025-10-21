@@ -205,7 +205,7 @@
 
   <bean id="VendorDetailExtension-insuranceNotes-parentBean" abstract="true" parent="AttributeDefinition">
     <property name="name" value="insuranceNotes"/>
-    <property name="label" value="Notes"/>
+    <property name="label" value="Insurance Notes"/>
     <property name="shortLabel" value="Notes"/>
     <property name="maxLength" value="240"/>
     <property name="validationPattern">
@@ -220,7 +220,7 @@
 
   <bean id="VendorDetailExtension-merchantNotes-parentBean" abstract="true" parent="AttributeDefinition">
     <property name="name" value="merchantNotes"/>
-    <property name="label" value="Notes"/>
+    <property name="label" value="Merchant Notes"/>
     <property name="shortLabel" value="Notes"/>
     <property name="maxLength" value="240"/>
     <property name="validationPattern">

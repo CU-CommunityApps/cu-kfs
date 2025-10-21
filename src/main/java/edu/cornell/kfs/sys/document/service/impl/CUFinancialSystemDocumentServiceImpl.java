@@ -299,18 +299,18 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
     public int getMaxResultCap(final DocumentSearchCriteria criteria) {
         int systemLimit = KewApiConstants.DOCUMENT_LOOKUP_DEFAULT_RESULT_CAP;
         final String resultCapValue = getParameterService().getParameterValueAsString(KFSConstants.CoreModuleNamespaces.WORKFLOW,
-                KRADConstants.DetailTypes.DOCUMENT_SEARCH_DETAIL_TYPE, KewApiConstants.DOC_SEARCH_RESULT_CAP);
+                KRADConstants.DetailTypes.DOCUMENT_SEARCH_DETAIL_TYPE, KewApiConstants.RESULTS_RETURNED);
         if (StringUtils.isNotBlank(resultCapValue)) {
             try {
                 final int configuredLimit = Integer.parseInt(resultCapValue);
                 if (configuredLimit <= 0) {
-                    LOG.warn(KewApiConstants.DOC_SEARCH_RESULT_CAP + " was less than or equal to zero.  Please " +
+                    LOG.warn(KewApiConstants.RESULTS_RETURNED + " was less than or equal to zero.  Please " +
                             "use a positive integer.");
                 } else {
                     systemLimit = configuredLimit;
                 }
             } catch (final NumberFormatException e) {
-                LOG.warn(KewApiConstants.DOC_SEARCH_RESULT_CAP + " is not a valid number.  Value was " +
+                LOG.warn(KewApiConstants.RESULTS_RETURNED + " is not a valid number.  Value was " +
                         resultCapValue + ".  Using default: " + KewApiConstants.DOCUMENT_LOOKUP_DEFAULT_RESULT_CAP);
             }
         }

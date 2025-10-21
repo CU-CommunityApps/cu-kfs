@@ -18,10 +18,10 @@ import org.kuali.kfs.kns.service.impl.BusinessObjectAuthorizationServiceImpl;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
 import edu.cornell.kfs.krad.CUKRADPropertyConstants;
-import edu.cornell.kfs.vnd.CUVendorConstants;
 
 public class CuBusinessObjectAuthorizationServiceImpl extends BusinessObjectAuthorizationServiceImpl {
 
@@ -57,7 +57,7 @@ public class CuBusinessObjectAuthorizationServiceImpl extends BusinessObjectAuth
 
     private boolean shouldHideAttachmentLinkOnVendorInquiry(final Person user) {
         final Map<String, String> permissionDetails = Collections.singletonMap(
-                KewApiConstants.DOCUMENT_TYPE_NAME_DETAIL, CUVendorConstants.VENDOR_DOCUMENT_TYPE_NAME);
+                KewApiConstants.DOCUMENT_TYPE_NAME_DETAIL, VendorConstants.VENDOR_DOC_TYPE);
         return !permissionService.hasPermissionByTemplate(user.getPrincipalId(), KFSConstants.CoreModuleNamespaces.KFS,
                 KimConstants.PermissionTemplateNames.VIEW_NOTE_ATTACHMENT, permissionDetails);
     }

@@ -71,8 +71,9 @@ public class CuPurchaseOrderProcessVendorValidation extends CuPurchasingProcessV
                 errorMap.putError(PurapPropertyConstants.ALTERNATE_VENDOR_NAME,PurapKeyConstants.ERROR_PURCHASE_ORDER_ALTERNATE_VENDOR_DEBARRED);
                 valid &= false;
             }
-            if (StringUtils.equals(alternateVendor.getVendorHeader().getVendorTypeCode(), VendorTypes.DISBURSEMENT_VOUCHER)) {
-                errorMap.putError(PurapPropertyConstants.ALTERNATE_VENDOR_NAME,PurapKeyConstants.ERROR_PURCHASE_ORDER_ALTERNATE_VENDOR_DV_TYPE);
+            // make sure that the vendor is of allowed type
+            if (!isVendorTypeAllowedByParameterCheck(alternateVendor.getVendorHeader())) {
+                errorMap.putError(PurapPropertyConstants.ALTERNATE_VENDOR_NAME, PurapKeyConstants.ERROR_INVALID_VENDOR_TYPE);
                 valid &= false;
             }
             if (!alternateVendor.isActiveIndicator()) {

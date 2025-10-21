@@ -24,6 +24,7 @@
     <form-beans>
         <form-bean name="KualiForm"
                    type="org.kuali.kfs.kns.web.struts.form.KualiForm"/>
+        <form-bean name="InquiryForm" type="edu.cornell.kfs.kns.web.struts.form.CuInquiryForm"/>
                     <!-- Security Request Wizard Form -->
         <form-bean name="SecurityRequestWizardForm"
 			type="edu.cornell.kfs.ksr.web.struts.SecurityRequestWizardForm" />

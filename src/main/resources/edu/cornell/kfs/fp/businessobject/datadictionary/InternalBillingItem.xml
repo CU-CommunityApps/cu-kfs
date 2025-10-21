@@ -14,6 +14,10 @@
             p:exclusiveMin="#{null}"/>
 
     <bean id="InternalBillingItem-itemQuantity" parent="InternalBillingItem-itemQuantity-parentBean"
-            p:exclusiveMin="#{null}" p:validationPattern-ref="IntegerValidation"/>
+            p:exclusiveMin="#{null}">
+          <property name="validationPattern">
+                    <bean parent="FixedPointValidationPattern" p:precision="7" p:scale="2" p:allowNegative="true"/>
+          </property>
+    </bean>
 
 </beans>
