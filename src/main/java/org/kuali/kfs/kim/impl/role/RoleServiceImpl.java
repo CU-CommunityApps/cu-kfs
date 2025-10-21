@@ -233,7 +233,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getCriteriaLookupService().lookup(DelegateMember.class, queryByCriteria, lc.build());
     }
 
-    @Cacheable(cacheNames = Role.CACHE_NAME, key = "'namespaceCode=' + #p0 + '|' + 'name='+ #p1")
+    @Cacheable(cacheNames = Role.CACHE_NAME, key = "'id=' + #p0")
     @Override
     public RoleLite getRoleWithoutMembers(final String roleId) throws IllegalStateException {
         incomingParamCheck(roleId, "roleId");

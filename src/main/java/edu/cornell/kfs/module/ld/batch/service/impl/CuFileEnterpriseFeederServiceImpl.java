@@ -39,24 +39,24 @@ public class CuFileEnterpriseFeederServiceImpl extends FileEnterpriseFeederServi
             enterpriseFeedFile = new File(laborOriginEntryDirectoryName + File.separator + 
                                           enterpriseFeedFileName);
 
-			LOG.info("New File created for enterprise feeder service run: {}", enterpriseFeedFileName);
+            LOG.info("New File created for enterprise feeder service run: {}", enterpriseFeedFileName);
 
-			final File directory = new File(directoryName);
-			if (!directory.exists() || !directory.isDirectory()) {
-			    LOG.error("Directory doesn't exist and or it's not really a directory {}", directoryName);
-				throw new RuntimeException("Directory doesn't exist and or it's not really a directory " + directoryName);
-			}
+            final File directory = new File(directoryName);
+            if (!directory.exists() || !directory.isDirectory()) {
+                LOG.error("Directory doesn't exist and or it's not really a directory {}", directoryName);
+                throw new RuntimeException("Directory doesn't exist and or it's not really a directory " + directoryName);
+            }
 
-			final File[] doneFiles = directory.listFiles(doneFileFilter);
-			reorderDoneFiles(doneFiles);
-			boolean fatal = false;
-			
-			final LedgerSummaryReport ledgerSummaryReport = new LedgerSummaryReport();
+            final File[] doneFiles = directory.listFiles(doneFileFilter);
+            reorderDoneFiles(doneFiles);
+            boolean fatal = false;
+            
+            final LedgerSummaryReport ledgerSummaryReport = new LedgerSummaryReport();
 
-			//  keeps track of statistics for reporting
-			final EnterpriseFeederReportData feederReportData = new EnterpriseFeederReportData();
+            //  keeps track of statistics for reporting
+            final EnterpriseFeederReportData feederReportData = new EnterpriseFeederReportData();
 
-			final List<EnterpriseFeederStatusAndErrorMessagesWrapper> statusAndErrorsList = new ArrayList<EnterpriseFeederStatusAndErrorMessagesWrapper>();
+            final List<EnterpriseFeederStatusAndErrorMessagesWrapper> statusAndErrorsList = new ArrayList<EnterpriseFeederStatusAndErrorMessagesWrapper>();
 
             try (PrintStream enterpriseFeedPs = new PrintStream(enterpriseFeedFile, StandardCharsets.UTF_8)) {
                 for (final File doneFile : doneFiles) {
@@ -119,38 +119,38 @@ public class CuFileEnterpriseFeederServiceImpl extends FileEnterpriseFeederServi
             throw new RuntimeException("enterpriseFeedFile doesn't exist " + enterpriseFeedFileName);
         }
 
-			// if errors encountered is greater than max allowed the enterprise feed file should not be sent
-			boolean enterpriseFeedFileCreated = false;
-			if (feederReportData.getNumberOfErrorEncountered() > getMaximumNumberOfErrorsAllowed() || fatal) {
-				enterpriseFeedFile.delete();
-			}
-			else {
-				// generate done file
-				final String enterpriseFeedDoneFileName = enterpriseFeedFileName.replace(
-						LaborConstants.BatchFileSystem.EXTENSION, LaborConstants.BatchFileSystem.DONE_FILE_EXTENSION);
-				final File enterpriseFeedDoneFile = new File(laborOriginEntryDirectoryName + File.separator
-						+ enterpriseFeedDoneFileName);
-				if (!enterpriseFeedDoneFile.exists()) {
-					try {
-						enterpriseFeedDoneFile.createNewFile();
-					}
-					catch (final IOException e) {
-						LOG.error("Unable to create done file for enterprise feed output group.", e);
-						throw new RuntimeException("Unable to create done file for enterprise feed output group.", e);
-					}
-				}
+            // if errors encountered is greater than max allowed the enterprise feed file should not be sent
+            boolean enterpriseFeedFileCreated = false;
+            if (feederReportData.getNumberOfErrorEncountered() > getMaximumNumberOfErrorsAllowed() || fatal) {
+                enterpriseFeedFile.delete();
+            }
+            else {
+                // generate done file
+                final String enterpriseFeedDoneFileName = enterpriseFeedFileName.replace(
+                        LaborConstants.BatchFileSystem.EXTENSION, LaborConstants.BatchFileSystem.DONE_FILE_EXTENSION);
+                final File enterpriseFeedDoneFile = new File(laborOriginEntryDirectoryName + File.separator
+                        + enterpriseFeedDoneFileName);
+                if (!enterpriseFeedDoneFile.exists()) {
+                    try {
+                        enterpriseFeedDoneFile.createNewFile();
+                    }
+                    catch (final IOException e) {
+                        LOG.error("Unable to create done file for enterprise feed output group.", e);
+                        throw new RuntimeException("Unable to create done file for enterprise feed output group.", e);
+                    }
+                }
 
-				enterpriseFeedFileCreated = true;
-			}
+                enterpriseFeedFileCreated = true;
+            }
 
-			// write out totals to log file
+            // write out totals to log file
             LOG.info("Total records read: {}", feederReportData::getNumberOfRecordsRead);
             LOG.info("Total amount read: {}", feederReportData::getTotalAmountRead);
             LOG.info("Total records written: {}", feederReportData::getNumberOfRecordsRead);
             LOG.info("Total amount written: {}", feederReportData::getTotalAmountWritten);
 
-			generateReport(enterpriseFeedFileCreated, feederReportData, statusAndErrorsList, ledgerSummaryReport,
-					laborOriginEntryDirectoryName + File.separator + enterpriseFeedFileName);
+            generateReport(enterpriseFeedFileCreated, feederReportData, statusAndErrorsList, ledgerSummaryReport,
+                    laborOriginEntryDirectoryName + File.separator + enterpriseFeedFileName);
         }
     }
 }
