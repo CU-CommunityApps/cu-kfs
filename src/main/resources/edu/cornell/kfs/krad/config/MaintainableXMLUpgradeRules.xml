@@ -634,6 +634,13 @@
             </pattern>
         </pattern>
         <pattern>
+            <class>org.kuali.kfs.sys.document.LedgerPostingDocumentBase</class>
+            <pattern>
+                <match>checkPostingYearForCopy</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
             <class>org.kuali.kfs.module.cam.businessobject.AssetLocation</class>
             <pattern>
                 <match>assetLocationContact</match>
@@ -677,6 +684,13 @@
             </pattern>
             <pattern>
                 <match>organizationInFinancialProcessingIndicator</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.module.ar.businessobject.OrganizationOptions</class>
+            <pattern>
+                <match>cgBillerIndicator</match>
                 <replacement/>
             </pattern>
         </pattern>

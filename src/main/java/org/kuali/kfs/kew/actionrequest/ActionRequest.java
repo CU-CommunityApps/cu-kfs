@@ -90,6 +90,7 @@ public class ActionRequest extends PersistableBusinessObjectBase {
     private String qualifiedRoleNameLabel;
     private String displayStatus;
 
+    private String delegationId;
     private String delegationTypeCode;
     private String approvePolicy;
 
@@ -524,6 +525,14 @@ public class ActionRequest extends PersistableBusinessObjectBase {
 
     public void setQualifiedRoleName(final String roleName) {
         qualifiedRoleName = roleName;
+    }
+
+    public String getDelegationId() {
+        return delegationId;
+    }
+
+    public void setDelegationId(final String delegationId) {
+        this.delegationId = delegationId;
     }
 
     public DelegationType getDelegationType() {

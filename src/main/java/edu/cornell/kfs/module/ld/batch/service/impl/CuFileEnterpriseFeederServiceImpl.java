@@ -36,124 +36,121 @@ public class CuFileEnterpriseFeederServiceImpl extends FileEnterpriseFeederServi
 
             File enterpriseFeedFile = null;
             final String enterpriseFeedFileName = LaborConstants.BatchFileSystem.LABOR_ENTERPRISE_FEED + LaborConstants.BatchFileSystem.EXTENSION;
-            enterpriseFeedFile = new File(laborOriginEntryDirectoryName + File.separator + enterpriseFeedFileName);
+            enterpriseFeedFile = new File(laborOriginEntryDirectoryName + File.separator + 
+                                          enterpriseFeedFileName);
 
-			PrintStream enterpriseFeedPs = null;
-			try {
-				enterpriseFeedPs = new PrintStream(enterpriseFeedFile, StandardCharsets.UTF_8);
-			}
-			catch (final IOException e) {
-				LOG.error("enterpriseFeedFile doesn't exist {}", enterpriseFeedFileName);
-				throw new RuntimeException("enterpriseFeedFile doesn't exist " + enterpriseFeedFileName);
-			}
-			
-			LOG.info("New File created for enterprise feeder service run: {}", enterpriseFeedFileName);
+            LOG.info("New File created for enterprise feeder service run: {}", enterpriseFeedFileName);
 
-			final File directory = new File(directoryName);
-			if (!directory.exists() || !directory.isDirectory()) {
-			    LOG.error("Directory doesn't exist and or it's not really a directory {}", directoryName);
-				throw new RuntimeException("Directory doesn't exist and or it's not really a directory " + directoryName);
-			}
+            final File directory = new File(directoryName);
+            if (!directory.exists() || !directory.isDirectory()) {
+                LOG.error("Directory doesn't exist and or it's not really a directory {}", directoryName);
+                throw new RuntimeException("Directory doesn't exist and or it's not really a directory " + directoryName);
+            }
 
-			final File[] doneFiles = directory.listFiles(doneFileFilter);
-			reorderDoneFiles(doneFiles);
-			boolean fatal = false;
-			
-			final LedgerSummaryReport ledgerSummaryReport = new LedgerSummaryReport();
+            final File[] doneFiles = directory.listFiles(doneFileFilter);
+            reorderDoneFiles(doneFiles);
+            boolean fatal = false;
+            
+            final LedgerSummaryReport ledgerSummaryReport = new LedgerSummaryReport();
 
-			//  keeps track of statistics for reporting
-			final EnterpriseFeederReportData feederReportData = new EnterpriseFeederReportData();
+            //  keeps track of statistics for reporting
+            final EnterpriseFeederReportData feederReportData = new EnterpriseFeederReportData();
 
-			final List<EnterpriseFeederStatusAndErrorMessagesWrapper> statusAndErrorsList = new ArrayList<EnterpriseFeederStatusAndErrorMessagesWrapper>();
+            final List<EnterpriseFeederStatusAndErrorMessagesWrapper> statusAndErrorsList = new ArrayList<EnterpriseFeederStatusAndErrorMessagesWrapper>();
 
-			for (final File doneFile : doneFiles) {
-				File dataFile = null;
-				File reconFile = null;
+            try (PrintStream enterpriseFeedPs = new PrintStream(enterpriseFeedFile, StandardCharsets.UTF_8)) {
+                for (final File doneFile : doneFiles) {
+                    final EnterpriseFeederStatusAndErrorMessagesWrapper statusAndErrors =
+                            new EnterpriseFeederStatusAndErrorMessagesWrapper();
+                    statusAndErrors.setErrorMessages(new ArrayList<>());
 
-				final EnterpriseFeederStatusAndErrorMessagesWrapper statusAndErrors = new EnterpriseFeederStatusAndErrorMessagesWrapper();
-				statusAndErrors.setErrorMessages(new ArrayList<Message>());
+                    final File dataFile = getDataFile(doneFile);
+                    final File reconFile = getReconFile(doneFile);
+    
+                    statusAndErrors.setFileNames(dataFile, reconFile, doneFile);
+    
+                    if (dataFile == null) {
+                        LOG.error("Unable to find data file for done file: {}", doneFile::getAbsolutePath);
+                        statusAndErrors.getErrorMessages().add(
+                            new Message("Unable to find data file for done file: " + doneFile.getAbsolutePath(),
+                                    Message.TYPE_FATAL));
+                        statusAndErrors.setStatus(new RequiredFilesMissingStatus());
+                    }
+    
+                    if (reconFile == null) {
+                        LOG.error("Unable to find recon file for done file: {}", doneFile::getAbsolutePath);
+                        statusAndErrors.getErrorMessages().add(
+                            new Message("Unable to find recon file for done file: " + doneFile.getAbsolutePath(),
+                                    Message.TYPE_FATAL));
+                        statusAndErrors.setStatus(new RequiredFilesMissingStatus());
+                    }
+    
+                    try {
+                        if (dataFile != null && reconFile != null) {
+                            LOG.info("Data file: {}", dataFile::getAbsolutePath);
+                            LOG.info("Reconciliation File: {}", reconFile::getAbsolutePath);
+    
+                            fileEnterpriseFeederHelperService.feedOnFile(doneFile, dataFile, reconFile, enterpriseFeedPs,
+                                    processName, reconciliationTableId, statusAndErrors, ledgerSummaryReport,
+                                    errorStatisticsReport, feederReportData);
+                        }
+                    } catch (final RuntimeException e) {
+                        // we need to be extremely resistant to a file load failing so that it doesn't prevent other files
+                        // from loading
+                        LOG.error("Caught exception when feeding done file: {}", doneFile::getAbsolutePath);
+                        fatal = true;
+                    } finally {
+                        statusAndErrorsList.add(statusAndErrors);
+                        final boolean doneFileDeleted = doneFile.delete();
+                        if (!doneFileDeleted) {
+                            statusAndErrors.getErrorMessages().add(
+                                new Message("Unable to delete done file: " + doneFile.getAbsolutePath(),
+                                        Message.TYPE_FATAL));
+                        }
+                        if (performNotifications) {
+                            enterpriseFeederNotificationService.notifyFileFeedStatus(processName,
+                                    statusAndErrors.getStatus(), doneFile, dataFile, reconFile,
+                                    statusAndErrors.getErrorMessages());
+                        }
+                    }
+                }
+            } catch (final IOException e) {
+                LOG.error("enterpriseFeedFile doesn't exist {}", enterpriseFeedFileName);
+                throw new RuntimeException("enterpriseFeedFile doesn't exist " + enterpriseFeedFileName);
+            }
 
-				dataFile = getDataFile(doneFile);
-				reconFile = getReconFile(doneFile);
+            // if errors encountered is greater than max allowed the enterprise feed file should not be sent
+            boolean enterpriseFeedFileCreated = false;
+            if (feederReportData.getNumberOfErrorEncountered() > getMaximumNumberOfErrorsAllowed() || fatal) {
+                enterpriseFeedFile.delete();
+            }
+            else {
+                // generate done file
+                final String enterpriseFeedDoneFileName = enterpriseFeedFileName.replace(
+                        LaborConstants.BatchFileSystem.EXTENSION, LaborConstants.BatchFileSystem.DONE_FILE_EXTENSION);
+                final File enterpriseFeedDoneFile = new File(laborOriginEntryDirectoryName + File.separator
+                        + enterpriseFeedDoneFileName);
+                if (!enterpriseFeedDoneFile.exists()) {
+                    try {
+                        enterpriseFeedDoneFile.createNewFile();
+                    }
+                    catch (final IOException e) {
+                        LOG.error("Unable to create done file for enterprise feed output group.", e);
+                        throw new RuntimeException("Unable to create done file for enterprise feed output group.", e);
+                    }
+                }
 
-				statusAndErrors.setFileNames(dataFile, reconFile, doneFile);
+                enterpriseFeedFileCreated = true;
+            }
 
-				if (dataFile == null) {
-					LOG.error("Unable to find data file for done file: {}", doneFile::getAbsolutePath);
-					statusAndErrors.getErrorMessages().add(
-							new Message("Unable to find data file for done file: " + doneFile.getAbsolutePath(), Message.TYPE_FATAL));
-					statusAndErrors.setStatus(new RequiredFilesMissingStatus());
-				}
-
-				if (reconFile == null) {
-				    LOG.error("Unable to find recon file for done file: {}", doneFile::getAbsolutePath);
-					statusAndErrors.getErrorMessages().add(
-							new Message("Unable to find recon file for done file: " + doneFile.getAbsolutePath(), Message.TYPE_FATAL));
-					statusAndErrors.setStatus(new RequiredFilesMissingStatus());
-				}
-
-				try {
-					if (dataFile != null && reconFile != null) {
-					    LOG.info("Data file: {}", dataFile::getAbsolutePath);
-					    LOG.info("Reconciliation File: {}", reconFile::getAbsolutePath);
-
-						fileEnterpriseFeederHelperService.feedOnFile(doneFile, dataFile, reconFile, enterpriseFeedPs, processName,
-								reconciliationTableId, statusAndErrors, ledgerSummaryReport, errorStatisticsReport, feederReportData);
-					}
-				}
-				catch (final RuntimeException e) {
-					// we need to be extremely resistant to a file load failing so that it doesn't prevent other files from loading
-				    LOG.error("Caught exception when feeding done file: {}", doneFile::getAbsolutePath);
-					fatal = true;
-				}
-				finally {
-					statusAndErrorsList.add(statusAndErrors);
-					final boolean doneFileDeleted = doneFile.delete();
-					if (!doneFileDeleted) {
-						statusAndErrors.getErrorMessages().add(
-								new Message("Unable to delete done file: " + doneFile.getAbsolutePath(), Message.TYPE_FATAL));
-					}
-					if (performNotifications) {
-						enterpriseFeederNotificationService.notifyFileFeedStatus(processName, statusAndErrors.getStatus(), doneFile, dataFile,
-								reconFile, statusAndErrors.getErrorMessages());
-					}
-				}
-			}
-
-			enterpriseFeedPs.close();
-
-			// if errors encountered is greater than max allowed the enterprise feed file should not be sent
-			boolean enterpriseFeedFileCreated = false;
-			if (feederReportData.getNumberOfErrorEncountered() > getMaximumNumberOfErrorsAllowed() || fatal) {
-				enterpriseFeedFile.delete();
-			}
-			else {
-				// generate done file
-				final String enterpriseFeedDoneFileName = enterpriseFeedFileName.replace(
-						LaborConstants.BatchFileSystem.EXTENSION, LaborConstants.BatchFileSystem.DONE_FILE_EXTENSION);
-				final File enterpriseFeedDoneFile = new File(laborOriginEntryDirectoryName + File.separator
-						+ enterpriseFeedDoneFileName);
-				if (!enterpriseFeedDoneFile.exists()) {
-					try {
-						enterpriseFeedDoneFile.createNewFile();
-					}
-					catch (final IOException e) {
-						LOG.error("Unable to create done file for enterprise feed output group.", e);
-						throw new RuntimeException("Unable to create done file for enterprise feed output group.", e);
-					}
-				}
-
-				enterpriseFeedFileCreated = true;
-			}
-
-			// write out totals to log file
+            // write out totals to log file
             LOG.info("Total records read: {}", feederReportData::getNumberOfRecordsRead);
             LOG.info("Total amount read: {}", feederReportData::getTotalAmountRead);
             LOG.info("Total records written: {}", feederReportData::getNumberOfRecordsRead);
             LOG.info("Total amount written: {}", feederReportData::getTotalAmountWritten);
 
-			generateReport(enterpriseFeedFileCreated, feederReportData, statusAndErrorsList, ledgerSummaryReport,
-					laborOriginEntryDirectoryName + File.separator + enterpriseFeedFileName);
+            generateReport(enterpriseFeedFileCreated, feederReportData, statusAndErrorsList, ledgerSummaryReport,
+                    laborOriginEntryDirectoryName + File.separator + enterpriseFeedFileName);
         }
     }
 }

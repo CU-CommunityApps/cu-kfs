@@ -61,11 +61,9 @@
                         </c:if>
                         <c:if test="${!readOnly && !isYearEnd}">
                             <SCRIPT type="text/javascript">
-                                <!--
                                 function submitForChangedAccountingPeriod() {
                                     document.forms[0].submit();
                                 }
-                                //-->
                             </SCRIPT>
                             <html:select property="selectedAccountingPeriod"
                                          onchange="submitForChangedAccountingPeriod()">
@@ -77,10 +75,6 @@
                                 </c:forEach>
                             </html:select>
 
-                            <NOSCRIPT><html:submit value="refresh"
-                                                   title="press this button to refresh the page after changing the accounting period"
-                                                   alt="press this button to refresh the page after changing the accounting period"/>
-                            </NOSCRIPT>
                         </c:if></td>
                 </tr>
                 <tr>
@@ -96,11 +90,9 @@
 
                         <c:if test="${!readOnly && !isYearEnd}">
                             <SCRIPT type="text/javascript">
-                                <!--
                                 function submitForChangedBalanceType() {
                                     document.forms[0].submit();
                                 }
-                                //-->
                             </SCRIPT>
                             <html:select property="selectedBalanceType.code" onchange="submitForChangedBalanceType()">
                                 <c:forEach items="${KualiForm.balanceTypes}" var="balanceType">
@@ -109,10 +101,7 @@
                                     </html:option>
                                 </c:forEach>
                             </html:select>
-                            <NOSCRIPT><html:submit value="refresh"
-                                                   title="press this button to refresh the page after changing the balance type"
-                                                   alt="press this button to refresh the page after changing the balance type"/>
-                            </NOSCRIPT>
+
                             <kul:lookup
                                     boClassName="org.kuali.kfs.coa.businessobject.BalanceType"
                                     fieldConversions="code:selectedBalanceType.code"

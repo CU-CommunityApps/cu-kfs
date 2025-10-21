@@ -20,25 +20,15 @@
 --%>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
-<%@ attribute name="documentAttributes" required="true" type="java.util.Map"
-              description="The DataDictionary entry containing attributes for this row's fields." %>
-
-<%@ attribute name="displayRequisitionFields" required="false"
-              description="Boolean to indicate if REQ specific fields should be displayed" %>
-
-<%@ attribute name="displayPurchaseOrderFields" required="false"
-              description="Boolean to indicate if PO specific fields should be displayed" %>
-              
-<%@ attribute name="displayPaymentRequestFields" required="false"
-              description="Boolean to indicate if PREQ specific fields should be displayed" %>              
-              
-<%@ attribute name="displayCreditMemoFields" required="false"
-              description="Boolean to indicate if CM specific fields should be displayed" %>              
-              
-<%@ attribute name="purchaseOrderAwarded" required="false"
-              description="Boolean to indicate if this is a PO that has been awarded" %>              
+<%@ attribute name="documentAttributes" required="true" type="java.util.Map" description="The DataDictionary entry containing attributes for this row's fields." %>
+<%@ attribute name="displayRequisitionFields" required="false" description="Boolean to indicate if REQ specific fields should be displayed" %>
+<%@ attribute name="displayPurchaseOrderFields" required="false" description="Boolean to indicate if PO specific fields should be displayed" %>
+<%@ attribute name="displayPaymentRequestFields" required="false" description="Boolean to indicate if PREQ specific fields should be displayed" %>
+<%@ attribute name="displayCreditMemoFields" required="false" description="Boolean to indicate if CM specific fields should be displayed" %>
+<%@ attribute name="purchaseOrderAwarded" required="false" description="Boolean to indicate if this is a PO that has been awarded" %>
 
 <c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}" />
+<c:set var="canEditVendor" value="${KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR]}" />
 <c:set var="vendorReadOnly" value="${(not empty KualiForm.editingMode['lockVendorEntry'])}" />
 <c:set var="amendmentEntry" value="${(not empty KualiForm.editingMode['amendmentEntry'])}" />
 <c:set var="lockB2BEntry" value="${(not empty KualiForm.editingMode['lockB2BEntry'])}" />
@@ -51,6 +41,8 @@
 <c:set var="fullDocEntryCompleted" value="${(not empty KualiForm.editingMode['fullDocumentEntryCompleted'])}" />
 <c:set var="readOnlyForPREQ" value="${(displayPaymentRequestFields) and (fullDocEntryCompleted)}" />
 <c:set var="achAccountInfoDisplayed" value="${(not empty KualiForm.editingMode['achAccountInfoDisplayed'])}" />
+
+<c:set var="vendorEditable" value="${(fullEntryMode or amendmentEntry) and canEditVendor}" />
 
 <c:choose> 
   <c:when test="${displayPurchaseOrderFields or displayPaymentRequestFields}" > 
@@ -99,9 +91,8 @@
                 <td class="datacell" width="25%">
                     <kul:htmlControlAttribute 
                     	attributeEntry="${documentAttributes.vendorName}" property="document.vendorName" 
-                    	readOnly="${not (fullEntryMode or amendmentEntry) or vendorReadOnly or displayPaymentRequestFields or displayCreditMemoFields or purchaseOrderAwarded or lockB2BEntry}" tabindexOverride="${tabindexOverrideBase + 0}"/>
-                    <%-- KFSUPGRADE-349 --%>
-                    <c:if test="${(((fullEntryMode and !amendmentEntry) or (restrictFullEntry and displayRequisitionFields)) and (displayRequisitionFields or displayPurchaseOrderFields) and !purchaseOrderAwarded and !lockB2BEntry)}" >
+                    	readOnly="${not vendorEditable or vendorReadOnly or displayPaymentRequestFields or displayCreditMemoFields or purchaseOrderAwarded or lockB2BEntry}"
+                    <c:if test="${vendorEditable and (displayRequisitionFields or displayPurchaseOrderFields) and !purchaseOrderAwarded and !lockB2BEntry}" >
                         <kul:lookup  boClassName="org.kuali.kfs.vnd.businessobject.VendorDetail" 
                         	lookupParameters="'Y':activeIndicator, 'PO':vendorHeader.vendorTypeCode"
                         	fieldConversions="vendorHeaderGeneratedIdentifier:document.vendorHeaderGeneratedIdentifier,vendorDetailAssignedIdentifier:document.vendorDetailAssignedIdentifier,defaultAddressLine1:document.vendorLine1Address,defaultAddressLine2:document.vendorLine2Address,defaultAddressCity:document.vendorCityName,defaultAddressPostalCode:document.vendorPostalCode,defaultAddressStateCode:document.vendorStateCode,defaultAddressInternationalProvince:document.vendorAddressInternationalProvinceName,defaultAddressCountryCode:document.vendorCountryCode"/>

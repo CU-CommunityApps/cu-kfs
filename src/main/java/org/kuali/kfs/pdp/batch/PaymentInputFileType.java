@@ -197,7 +197,7 @@ public class PaymentInputFileType extends XmlBatchInputFileTypeBase<PaymentFileL
             );
 
             // Send error email
-            paymentFileEmailService.sendErrorEmail(paymentFile, errorMap);
+            paymentFileEmailService.sendErrorEmail(null, paymentFile, errorMap);
             throw new ParseException("Error parsing xml contents: " + e1.getMessage(), e1);
         }
 

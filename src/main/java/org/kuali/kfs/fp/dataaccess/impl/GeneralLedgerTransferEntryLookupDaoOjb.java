@@ -49,7 +49,7 @@ public class GeneralLedgerTransferEntryLookupDaoOjb extends PlatformAwareDaoBase
         criteria.addAndCriteria(buildExcludeCorrectingDocumentEntriesCriteria());
         criteria.addNotExists(buildDocumentInErrorEntriesCriteria());
         criteria.addAndCriteria(buildFundAndSubFundGroupCriteria(currentFiscalYear, fundGroups, subFundGroups));
-        criteria.addNotIn(KFSPropertyConstants.DOCUMENT_NUMBER, buildDocumentExclusions());
+        criteria.addAndCriteria(buildDocumentExclusions());
 
         //PDP_PMT_DTL_T.DISB_NBR is a number filed while FDOC_NBR is a varchar field. This causes an invalid number error to be generated
         //in Oracle which in turn causes a stacktrace. Adding TO_CHAR to the disbursement number fixes the issue for Oracle databases.
@@ -123,17 +123,30 @@ public class GeneralLedgerTransferEntryLookupDaoOjb extends PlatformAwareDaoBase
         return criteria;
     }
 
-    private ReportQueryByCriteria buildDocumentExclusions() {
+    private Criteria buildDocumentExclusions() {
         final Criteria criteria = new Criteria();
-        criteria.addIn(KFSPropertyConstants.WORKFLOW_DOCUMENT_TYPE_NAME,
+
+        criteria.addNotIn(KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE, Arrays.asList(
+                PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT,
+                PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT
+        ));
+
+        final Criteria orCriteria = new Criteria();
+
+        final Criteria exclusionCriteria = new Criteria();
+        exclusionCriteria.addIn(KFSPropertyConstants.WORKFLOW_DOCUMENT_TYPE_NAME,
                 Arrays.asList(PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT,
                         PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT));
-        criteria.addNotIn(KFSPropertyConstants.WORKFLOW_DOCUMENT_STATUS_CODE,
+        exclusionCriteria.addNotIn(KFSPropertyConstants.WORKFLOW_DOCUMENT_STATUS_CODE,
                 Arrays.asList(KFSConstants.DocumentStatusCodes.PROCESSED, KFSConstants.DocumentStatusCodes.FINAL));
 
-        final ReportQueryByCriteria subQuery = QueryFactory.newReportQuery(DocumentHeader.class, criteria);
+        final ReportQueryByCriteria subQuery = QueryFactory.newReportQuery(DocumentHeader.class, exclusionCriteria);
         subQuery.setAttributes(new String[]{KFSPropertyConstants.DOCUMENT_NUMBER});
-        return subQuery;
+
+        orCriteria.addNotIn(KFSPropertyConstants.DOCUMENT_NUMBER, subQuery);
+        criteria.addOrCriteria(orCriteria);
+
+        return criteria;
     }
 
     private ReportQueryByCriteria buildExcludeCancelledPdpPayments(final String entryDocumentNumberField) {

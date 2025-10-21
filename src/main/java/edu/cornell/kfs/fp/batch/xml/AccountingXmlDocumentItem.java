@@ -1,5 +1,6 @@
 package edu.cornell.kfs.fp.batch.xml;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -32,7 +33,7 @@ public class AccountingXmlDocumentItem {
     protected String description;
 
     @XmlElement(name = "quantity", namespace = StringUtils.EMPTY, required = true)
-    protected Integer quantity;
+    protected BigDecimal quantity;
 
     @XmlElement(name = "uom", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
@@ -66,11 +67,11 @@ public class AccountingXmlDocumentItem {
         this.description = description;
     }
 
-    public Integer getQuantity() {
+    public BigDecimal getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+    public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
     }
 

@@ -217,7 +217,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
                 failedCnt++;
                 // one of the scenario is that save EIRT failed vecause of validation failed.  So, no EIRT will
                 // be created.
-                boolean moveFiles = BooleanUtils.toBoolean(parameterService.getParameterValueAsString(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.FILE_MOVE_AFTER_LOAD_IND));
+                boolean moveFiles = BooleanUtils.toBoolean(parameterService.getParameterValueAsString(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.MOVE_FILE_IND));
                 if(moveFiles) {
         	            if (LOG.isInfoEnabled()) {
         	                LOG.info(xmlFile.getName() + " has caused by saving EIRT failure.");
@@ -894,7 +894,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             final byte[] xmlAsBytes) {
 
         // Checks parameter to see if files should be moved to the accept/reject folders after load
-        boolean moveFiles = BooleanUtils.toBoolean(parameterService.getParameterValueAsString(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.FILE_MOVE_AFTER_LOAD_IND));
+        boolean moveFiles = BooleanUtils.toBoolean(parameterService.getParameterValueAsString(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.MOVE_FILE_IND));
         ElectronicInvoice eInvoice = null;
         boolean isExtractFailure = false;
         boolean isCompleteFailure = false;

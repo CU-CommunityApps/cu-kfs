@@ -118,7 +118,6 @@
 					</td>
                     <td colspan="${mainColumnCount - 4}" class="right nowrap">
 						<SCRIPT type="text/javascript">
-							<!--
 							function hideImport() {
 								document.getElementById("showLink").style.display="inline";
 								document.getElementById("uploadDiv").style.display="none";
@@ -138,13 +137,7 @@
 										'<html:submit property="methodToCall.importItems" styleClass="btn btn-green" alt="add imported items" title="add imported items" value="Add"/>' +
 										'<html:submit property="methodToCall.cancel" styleClass="btn btn-default" alt="cancel import" title="cancel import" onclick="hideImport();return false;" value="Cancel" />' +
 								'<\/div>');
-							//-->
 	            		</SCRIPT>
-						<NOSCRIPT>
-							Import lines
-							<html:file size="30" property="itemImportFile" style="font:10px;height:16px;" />
-								<html:submit property="methodToCall.importItems" alt="add imported items" title="add imported items" styleClass="btn btn-green" value="Add" />
-						</NOSCRIPT>
 					</td>
 				</tr>
             </c:if>
