@@ -137,7 +137,7 @@ public class CuLaborPendingEntryConverterServiceImpl extends LaborPendingEntryCo
             offsetEntry.setTransactionLedgerEntrySequenceNumber(getNextSequenceNumber(sequenceHelper));
 
             // calculate the offsetAmount amount (ledger amt * (benfit pct/100) )
-            final KualiDecimal fringeBenefitPercent = benefitsCalculation.getPositionFringeBenefitPercent();
+            final KualiDecimal fringeBenefitPercent = new KualiDecimal(benefitsCalculation.getPositionFringeBenefitPercent());
             KualiDecimal offsetAmount = fringeBenefitPercent.multiply(
                     pendingEntry.getTransactionLedgerEntryAmount()).divide(KFSConstants.ONE_HUNDRED.kualiDecimalValue());
             offsetEntry.setTransactionLedgerEntryAmount(offsetAmount.abs());
