@@ -168,6 +168,13 @@ public class KimFeedServiceImpl implements KimFeedService {
 
     private void mergeAffiliations(Person kfsPerson, EdwPerson edwPerson) {
         String primaryKfsAffiliation = convertPrimaryAffiliationCode(edwPerson);
+        if (StringUtils.equals(kfsPerson.getAffiliationTypeCode(), KfsAffiliations.MACHINE)) {
+            LOG.info("mergeAffiliations, User '{}' has the '{}' primary affiliation (aka '{}') in EDW, "
+                    + "but has the '{}' primary affiliation in KFS. The latter will be used as the primary for KFS.",
+                            kfsPerson.getPrincipalName(), primaryKfsAffiliation, edwPerson.getPrimaryAffiliation(),
+                            kfsPerson.getAffiliationTypeCode());
+            primaryKfsAffiliation = kfsPerson.getAffiliationTypeCode();
+        }
         Map<String, String> newAffiliationStatuses = Map.ofEntries(
                 Map.entry(KfsAffiliations.ACADEMIC, getAndVerifyAffilStatus(edwPerson, EdwPerson::getAcademicAffil)),
                 Map.entry(KfsAffiliations.AFFILIATE, getAndVerifyAffilStatus(edwPerson, EdwPerson::getAffiliateAffil)),
@@ -252,6 +259,10 @@ public class KimFeedServiceImpl implements KimFeedService {
             kfsPerson.setEmployeeStatusCode(
                     getPrimaryEmploymentAffiliationStatus(edwPerson, primaryEmploymentAffiliation));
             kfsPerson.setEmployeeTypeCode(KFSConstants.PROFESSIONAL_EMPLOYEE_TYPE_CODE);
+        } else if (hasExistingEmploymentAffiliation(kfsPerson)) {
+            LOG.info("mergeEmploymentInformation, User '{}' has no employment affiliations in EDW, but has at least "
+                    + "one such affiliation in KFS (likely created manually). The employee-related fields for this "
+                    + "user will be left as-is on the KFS side.", kfsPerson.getPrincipalName());
         } else {
             kfsPerson.setPrimaryDepartmentCode(null);
             kfsPerson.setEmployeeId(null);
@@ -300,6 +311,12 @@ public class KimFeedServiceImpl implements KimFeedService {
         } else {
             return CuKimConstants.DEPARTMENT_CODE_PREFIX + orgCode;
         }
+    }
+
+    private boolean hasExistingEmploymentAffiliation(final Person kfsPerson) {
+        return kfsPerson.getPersonExtension().getAffiliations().stream()
+                .anyMatch(affiliation -> StringUtils.equalsAny(affiliation.getAffiliationTypeCode(),
+                        KfsAffiliations.FACULTY, KfsAffiliations.STAFF));
     }
 
     private void mergeName(Person kfsPerson, EdwPerson edwPerson) {
