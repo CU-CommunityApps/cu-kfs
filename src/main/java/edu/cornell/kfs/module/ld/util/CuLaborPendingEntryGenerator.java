@@ -224,7 +224,7 @@ public class CuLaborPendingEntryGenerator {
 
         for (final PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
             final String tmpLaborBenefitRateCategoryCode = accountingLine.getAccount().getLaborBenefitRateCategoryCode();
-            final BenefitsCalculation benefitsCalculation = positionObjectBenefit.getBenefitsCalculation(tmpLaborBenefitRateCategoryCode);
+            final BenefitsCalculation benefitsCalculation = positionObjectBenefit.getBenefitsCalculation();
             positionObjectBenefit.setLaborLedgerBenefitsCalculation(benefitsCalculation);
             positionObjectBenefit.setLaborBenefitRateCategoryCode(tmpLaborBenefitRateCategoryCode);
             fringeBenefitObjectCode = positionObjectBenefit.getBenefitsCalculation().getPositionFringeBenefitObjectCode();
