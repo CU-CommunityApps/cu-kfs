@@ -22,7 +22,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 @ConfigureContext(session = ccs1)
 public class TravelMealCardFileFeedServiceIntegTest extends KualiIntegTestBase {
     private static final Logger LOG = LogManager.getLogger();
-    private static final String DATA_FILE_NAME = "fp_tmcard_verify_20250807";
+    private static final String DATA_FILE_NAME = "fp_tmcard_verify_20251020";
     private static final String DATA_EXTENSION = ".data";
     private static final String DONE_EXTENSION = ".done";
     private static final String FIXTURE_DATA_FILE_AND_PATH = "src/test/resources/edu/cornell/kfs/fp/batch/service/fixture/" + DATA_FILE_NAME + DATA_EXTENSION;
