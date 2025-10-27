@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--
+        CU Customization: Override Vendor Debarred bean to implement an equivalent of the FINP-11997 fix.
+                          This override can be removed when we upgrade to the 2025-05-07 version of financials.
+    -->
+    <bean id="VendorContract-vendorDetail.vendorHeader.vendorDebarredIndicator"
+          parent="VendorContract-vendorDetail.vendorHeader.vendorDebarredIndicator-parentBean"
+          p:defaultValue=""/>
+
+</beans>
