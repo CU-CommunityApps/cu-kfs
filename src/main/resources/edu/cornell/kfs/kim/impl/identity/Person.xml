@@ -12,6 +12,8 @@
         * Configured an alternate validation pattern for phone numbers.
         
         * Added masking of Base Salary Amount.
+        
+        * Handle name masking for Person sorting
      -->
 
     <import resource="classpath:edu/cornell/kfs/kim/cu-kim-attribute-beans.xml"/>
@@ -19,6 +21,7 @@
 
     <bean id="Person"
           parent="Person-parentBean"
+          p:searchService-ref="cuPersonSearchService"
     >
         <property name="attributes">
             <list merge="true">
@@ -658,5 +661,9 @@
     </bean>
 
     <!-- End of Person Lookup overrides. -->
+    
+    <bean id="cuPersonSearchService"
+          parent="personSearchService"
+          class="edu.cornell.kfs.kim.impl.identity.CuPersonSearchService"/>
 
 </beans>
