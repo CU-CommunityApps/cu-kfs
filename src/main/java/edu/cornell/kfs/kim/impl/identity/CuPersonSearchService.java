@@ -29,7 +29,7 @@ public class CuPersonSearchService extends PersonSearchService {
         String transformedSortField = sortField;
         if (StringUtils.equalsIgnoreCase(sortField,
                 KIMPropertyConstants.Person.NAME + CuKimPropertyConstants.MASKED_IF_NECESSARY_SUFFIX)) {
-            transformedSortField = KIMPropertyConstants.Person.LAST_NAME;
+            transformedSortField = KIMPropertyConstants.Person.NAME;
         }
 
         return transformedSortField;
