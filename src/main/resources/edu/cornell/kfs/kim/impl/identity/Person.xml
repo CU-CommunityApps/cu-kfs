@@ -21,7 +21,7 @@
 
     <bean id="Person"
           parent="Person-parentBean"
-          p:searchService-ref="CuPersonSearchService"
+          p:searchService-ref="cuPersonSearchService"
     >
         <property name="attributes">
             <list merge="true">
@@ -662,7 +662,7 @@
 
     <!-- End of Person Lookup overrides. -->
     
-    <bean id="CuPersonSearchService"
+    <bean id="cuPersonSearchService"
           parent="personSearchService"
           class="edu.cornell.kfs.kim.impl.identity.CuPersonSearchService"/>
 
