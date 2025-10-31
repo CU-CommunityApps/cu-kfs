@@ -138,6 +138,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         ValidationResult validationResults = new ValidationResult();
         ConcurEventNotificationStatus reportResults = ConcurEventNotificationStatus.validAccounts;
         try {
+            validationResults.add(validateAllocationItemsExist(reportNumber, allocationItems));
             for (ConcurExpenseAllocationV3ListItemDTO allocationItem : allocationItems) {
                 ConcurAccountInfo info = buildConcurAccountInfo(allocationItem);
                 LOG.info("validateExpenseAllocations, for report " + reportNumber + " account info: " + info.toString());
@@ -159,6 +160,16 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         processingResults.add(resultsDTO);
         updateStatusInConcur(accessToken, reportNumber, validationResults.isValid(), resultsDTO);
         
+    }
+
+    protected ValidationResult validateAllocationItemsExist(final String reportNumber,
+            final List<ConcurExpenseAllocationV3ListItemDTO> allocationItems) {
+        final ValidationResult result = new ValidationResult();
+        if (allocationItems.isEmpty()) {
+            result.setValid(false);
+            result.addErrorMessage("No allocations exist on report " + reportNumber);
+        }
+        return result;
     }
     
     protected void updateStatusInConcur(String accessToken, String reportId, boolean reportValid, ConcurEventNotificationResponse resultsDTO) {
