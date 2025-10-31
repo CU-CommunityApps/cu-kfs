@@ -1299,7 +1299,7 @@
         <field-descriptor name="cardHolderWorkPhoneNumber" column="WORK_PHONE" jdbc-type="VARCHAR" />
         <field-descriptor name="cardHolderPersonalPhoneNumber" column="PERSONAL_PHONE" jdbc-type="VARCHAR" />
         <field-descriptor name="creditLine" column="CREDIT_LINE" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" />
-        <field-descriptor name="expireDate" column="EXPIRE_DATE" jdbc-type="VARCHAR" />
+        <field-descriptor name="expireDate" column="EXPIRE_DATE" jdbc-type="DATE" />
         <field-descriptor name="fileCreateDate" column="FILE_CREATE_DATE" jdbc-type="DATE" />
         <field-descriptor name="loadDate" column="LOAD_DATE" jdbc-type="DATE" />
     </class-descriptor>

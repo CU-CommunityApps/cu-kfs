@@ -125,7 +125,7 @@ public class TravelMealCardFileFeedServiceImpl implements TravelMealCardFileFeed
         verifyData.setCardHolderWorkPhoneNumber(tmCardFileLine.getCardHolderWorkPhoneNumber());
         verifyData.setCardHolderPersonalPhoneNumber(tmCardFileLine.getCardHolderPersonalPhoneNumber());
         verifyData.setCreditLine(creditLine);
-        verifyData.setExpireDate(tmCardFileLine.getExpireDate());
+        verifyData.setExpireDate(cardServicesUtilityService.convertCardDateToSqlDate(tmCardFileLine.getExpireDate()));
         verifyData.setFileCreateDate(fileCreateDate);
         verifyData.setLoadDate(loadDate);
         

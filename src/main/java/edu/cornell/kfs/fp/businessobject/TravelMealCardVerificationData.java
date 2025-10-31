@@ -18,7 +18,7 @@ public class TravelMealCardVerificationData extends PersistableBusinessObjectBas
     protected String cardHolderWorkPhoneNumber;
     protected String cardHolderPersonalPhoneNumber;
     protected KualiDecimal creditLine;
-    protected String expireDate;
+    protected Date expireDate;
     protected Date fileCreateDate;
     protected Date loadDate;
     
@@ -112,11 +112,11 @@ public class TravelMealCardVerificationData extends PersistableBusinessObjectBas
         this.creditLine = creditLine;
     }
     
-    public String getExpireDate() {
+    public Date getExpireDate() {
         return expireDate;
     }
     
-    public void setExpireDate(String expireDate) {
+    public void setExpireDate(Date  expireDate) {
         this.expireDate = expireDate;
     }
     
