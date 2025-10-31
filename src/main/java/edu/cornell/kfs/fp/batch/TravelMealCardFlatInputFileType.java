@@ -8,7 +8,6 @@ import org.kuali.kfs.sys.exception.ParseException;
 
 import edu.cornell.kfs.fp.businessobject.TravelMealCardFileLineEntry;
 
-
 public class TravelMealCardFlatInputFileType extends FlatFileParserBase {
 
     public String getFileTypeIdentifier() {

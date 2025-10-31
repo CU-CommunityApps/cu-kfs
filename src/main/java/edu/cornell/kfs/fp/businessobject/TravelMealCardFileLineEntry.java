@@ -27,7 +27,7 @@ public class TravelMealCardFileLineEntry extends PersistableBusinessObjectBase {
     protected String emplid;
     protected String cycleStartDate;              //Date
     protected String cycleSpendToDate;            //KualiDecimal
-    protected String expireDate;                  //String, yyyymm, there is no day in this value
+    protected String expireDate;                  //Date
     protected String activationStatus;
     protected String fileCreateDate;              //Date
     protected String loadDate;                    //Date, not in file, actual date batch job attempted to load the file
