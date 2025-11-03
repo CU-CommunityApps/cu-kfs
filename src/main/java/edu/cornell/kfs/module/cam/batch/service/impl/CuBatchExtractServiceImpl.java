@@ -87,8 +87,8 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
     @Override
     public void separatePOLines(List<Entry> fpLines, List<Entry> purapLines, Collection<Entry> elgibleGLEntries) {
         for (Entry entry : elgibleGLEntries) {
-            if (PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT
-                    .equals(entry.getFinancialDocumentTypeCode())) {
+            if (PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT_TYPES
+                    .contains(entry.getFinancialDocumentTypeCode())) {
                 purapLines.add(entry);
             } else if (!PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT
                     .equals(entry.getFinancialDocumentTypeCode())) {
@@ -190,7 +190,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                 papdMap.put(entry.getDocumentNumber(), cabPurapDoc);
 
                 // we only deal with PREQ or CM, so isPREQ = !isCM, isCM = !PREQ
-                final boolean isPREQ = PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equals(entry.getFinancialDocumentTypeCode());
+                final boolean isPREQ = PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT_TYPES.contains(entry.getFinancialDocumentTypeCode());
                 final boolean hasRevisionWithMixedLines = isPREQ && hasRevisionWithMixedLines(matchedPurApAcctLines);
 
                 for (final PurApAccountingLineBase purApAccountingLine : matchedPurApAcctLines) {
