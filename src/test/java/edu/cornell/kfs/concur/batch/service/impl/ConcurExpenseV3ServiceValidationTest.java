@@ -190,18 +190,22 @@ public class ConcurExpenseV3ServiceValidationTest {
         final ValidationResult result = new ValidationResult();
         if (StringUtils.isAnyBlank(accountInfo.getChart(), accountInfo.getAccountNumber(),
                 accountInfo.getObjectCode())) {
-            final String messageSuffix = accountInfo.toString().replace(KFSConstants.NEWLINE, " /// ");
+            final String messageSuffix = createUniqueErrorMessageSuffixWithoutNewlines(accountInfo);
             result.setValid(false);
             result.addErrorMessage("One or more required account info fields is missing: " + messageSuffix);
         } else if (StringUtils.equalsAnyIgnoreCase(UNKNOWN, accountInfo.getChart(), accountInfo.getAccountNumber(),
                 accountInfo.getSubAccountNumber(), accountInfo.getObjectCode(), accountInfo.getSubObjectCode(),
                 accountInfo.getProjectCode())) {
-            final String messageSuffix = accountInfo.toString().replace(KFSConstants.NEWLINE, " /// ");
+            final String messageSuffix = createUniqueErrorMessageSuffixWithoutNewlines(accountInfo);
             result.setValid(false);
             result.addErrorMessage("One or more account info fields was marked as referring to a nonexistent value: "
                     + messageSuffix);
         }
         return result;
+    }
+
+    private String createUniqueErrorMessageSuffixWithoutNewlines(final ConcurAccountInfo accountInfo) {
+        return accountInfo.toString().replace(KFSConstants.NEWLINE, " /// ");
     }
 
     private ConcurBatchUtilityService buildMockConcurBatchUtilityService() {
