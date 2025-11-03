@@ -133,13 +133,16 @@ public final class LaborPendingEntryGenerator {
         for (final PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
             positionObjectBenefit.setLaborBenefitRateCategoryCode(accountingLine.getAccount()
                     .getLaborBenefitRateCategoryCode());
-            String fringeBenefitObjectCode = positionObjectBenefit.getBenefitsCalculation()
-                    .getPositionFringeBenefitObjectCode();
+            final BenefitsCalculation benefitsCalculation = positionObjectBenefit.getBenefitsCalculation();
+            if (ObjectUtils.isNull(benefitsCalculation)) {
+                continue;
+            }
+            String fringeBenefitObjectCode = benefitsCalculation.getPositionFringeBenefitObjectCode();
 
             final KualiDecimal benefitAmount = SpringContext.getBean(LaborBenefitsCalculationService.class)
                     .calculateFringeBenefit(positionObjectBenefit, accountingLine.getAmount(),
                             accountingLine.getAccountNumber(), accountingLine.getSubAccountNumber());
-            if (benefitAmount.isNonZero() && positionObjectBenefit.getBenefitsCalculation().isActive()) {
+            if (benefitAmount.isNonZero() && benefitsCalculation.isActive()) {
 
                 final ParameterService parameterService = SpringContext.getBean(ParameterService.class);
                 final Boolean enableFringeBenefitCalculationByBenefitRate = parameterService.getParameterValueAsBoolean(
@@ -309,7 +312,11 @@ public final class LaborPendingEntryGenerator {
         for (final PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
             positionObjectBenefit.setLaborBenefitRateCategoryCode(accountingLine.getAccount()
                     .getLaborBenefitRateCategoryCode());
-            final String benefitTypeCode = positionObjectBenefit.getBenefitsCalculation().getPositionBenefitTypeCode();
+            final BenefitsCalculation benefitsCalculation = positionObjectBenefit.getBenefitsCalculation();
+            if (ObjectUtils.isNull(benefitsCalculation)) {
+                continue;
+            }
+            final String benefitTypeCode = benefitsCalculation.getPositionBenefitTypeCode();
 
             KualiDecimal benefitAmount = SpringContext.getBean(LaborBenefitsCalculationService.class)
                     .calculateFringeBenefit(positionObjectBenefit, accountingLine.getAmount(),
