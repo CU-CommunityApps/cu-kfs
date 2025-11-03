@@ -1115,31 +1115,31 @@ div.inquiry table.datatable th {
     border-right-style: none !important;
 }
 
-.MuiDataGrid-main.css-jdaxyo {
+.MuiBox-root.css-rn556 .MuiDataGrid-main.css-jdaxyo {
     overflow-x: visible !important;
     overflow-y: visible !important;
 }
 
-.MuiDataGrid-virtualScroller.css-vcglal {
+.MuiBox-root.css-rn556 .MuiDataGrid-virtualScroller.css-vcglal {
     overflow-x: visible !important;
     overflow-y: visible !important;
     width: max-content !important;
 }
 
-.MuiDataGrid-footerContainer.MuiDataGrid-withBorderColor.css-9ffb5l {
+.MuiBox-root.css-rn556 .MuiDataGrid-footerContainer.MuiDataGrid-withBorderColor.css-9ffb5l {
     border-right-color: rgb(224, 224, 224) !important;
     border-right-style: solid !important;
     border-right-width: 1px !important;
 }
 
-.MuiDataGrid-columnHeaders.css-qjqt6o {
+.MuiBox-root.css-rn556 .MuiDataGrid-columnHeaders.css-qjqt6o {
     border-right-color: rgb(224, 224, 224) !important;
     border-right-style: solid !important;
     border-right-width: 1px !important;
     margin-right: 40px !important;
 }
 
-.MuiDataGrid-virtualScrollerContent.css-0 {
+.MuiBox-root.css-rn556 .MuiDataGrid-virtualScrollerContent.css-0 {
     border-right-color: rgb(224, 224, 224) !important;
     border-right-style: solid !important;
     border-right-width: 1px !important;
@@ -1148,17 +1148,17 @@ div.inquiry table.datatable th {
 
 /* Change the "sticky" vertical positioning of the lookup results header to prevent the page header from hiding it. */
 
-.MuiDataGrid-topContainer.css-1oudwrl {
+.MuiBox-root.css-rn556 .MuiDataGrid-topContainer.css-1oudwrl {
     top: 68px !important;
 }
 
 /* Effectively hide any widget-specific scrollbars. */
 
-.MuiDataGrid-scrollbar--horizontal.css-1rtad1 {
+.MuiBox-root.css-rn556 .MuiDataGrid-scrollbar--horizontal.css-1rtad1 {
     overflow-x: hidden !important;
 }
 
-.MuiDataGrid-scrollbar--vertical.css-1b9e9gy {
+.MuiBox-root.css-rn556 .MuiDataGrid-scrollbar--vertical.css-1b9e9gy {
     overflow-y: hidden !important;
 }
 
