@@ -13,4 +13,24 @@
           parent="VendorContract-vendorDetail.vendorHeader.vendorDebarredIndicator-parentBean"
           p:defaultValue=""/>
 
+    <!--
+        CU Customization: Use a field override bean to implement an equivalent of the FINP-12042 lookup fix.
+                          This override can be removed when we upgrade to the 2025-04-30 version of financials.
+    -->
+    <bean parent="DataDictionaryBeanOverride"
+          p:beanName="VendorContract-lookupDefinition">
+       <property name="fieldOverrides">
+           <list>
+               <bean parent="FieldOverrideForListElementReplace"
+                     p:propertyName="displayAttributeDefinitions"
+                     p:propertyNameForElementCompare="name"
+                     p:element-ref="VendorContract-vendorB2bIndicator">
+                   <property name="replaceWith">
+                        <bean parent="VendorContract-vendorB2bIndicator" p:type="BOOLEAN"/>
+                   </property>
+               </bean>
+           </list>
+       </property>
+   </bean>
+
 </beans>
