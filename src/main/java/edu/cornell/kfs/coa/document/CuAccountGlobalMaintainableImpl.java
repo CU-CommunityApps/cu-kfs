@@ -1,5 +1,6 @@
 package edu.cornell.kfs.coa.document;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,7 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
                 .flatMap(this::generateTrickleDownMaintenanceLocks);
         
         return Stream.concat(accountLocks.stream(), trickleDownLocks)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toCollection(ArrayList::new));
     }
     
     @Override
