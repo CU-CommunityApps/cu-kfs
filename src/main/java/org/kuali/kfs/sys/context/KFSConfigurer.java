@@ -18,6 +18,21 @@
  */
 package org.kuali.kfs.sys.context;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRegistration;
+import javax.servlet.ServletSecurityElement;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.mock.MockServletContext;
@@ -58,28 +73,26 @@ import org.springframework.context.event.SmartApplicationListener;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import edu.cornell.kfs.core.framework.resourceloader.CuSpringResourceLoader;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
-import javax.servlet.MultipartConfigElement;
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
-import javax.servlet.ServletSecurityElement;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-
-//CU customization: this is still needed for our local customization of CuSchedulerServiceImpl to allow certain processes to run without Quartz
+/*
+ * CU Customization:
+ * 
+ * -- Re-included removed scheduledThreadPool, which is needed for our local customization of CuSchedulerServiceImpl
+ *    to allow certain processes to run without Quartz.
+ * 
+ * -- Separated KualiCo's Spring MVC Controller initialization into a child Spring context;
+ *    also added another child Spring context for initializing Cornell-specific Spring MVC Controllers.
+ */
 public class KFSConfigurer implements DisposableBean, InitializingBean, ServletContextAware, SmartApplicationListener {
 
     private static final Logger LOG = LogManager.getLogger();
     /* This is under the webapp context (i.e. .../fin/<SPRING_MVC_ROOT_PATH>) */
     private static final String SPRING_MVC_ROOT_PATH = "/api";
+    // CU customization
+    private static final String CU_SPRING_MVC_ROOT_PATH = "/ws/cu";
     // CU customization
     private static final String SCHEDULED_THREAD_POOL_SERVICE = "rice.ksb.scheduledThreadPool";
 
@@ -87,6 +100,10 @@ public class KFSConfigurer implements DisposableBean, InitializingBean, ServletC
     // CU customization
     private KSBScheduledThreadPoolExecutor scheduledThreadPool;
     private ServletContext servletContext;
+    // CU customization
+    private CuSpringResourceLoader kualicoMvcEndpointsLoader;
+    // CU customization
+    private CuSpringResourceLoader cuMvcEndpointsLoader;
 
     private boolean testMode;
 
@@ -126,15 +143,30 @@ public class KFSConfigurer implements DisposableBean, InitializingBean, ServletC
      */
     private void enableSpringMvcForRestApis() {
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.setApplicationContext(GlobalResourceLoader.getContext());
+        // CU Customization: Use a child Spring context instead of the main Spring context.
+        dispatcherServlet.setApplicationContext(kualicoMvcEndpointsLoader.getContext());
         final ServletRegistration.Dynamic servletRegistration =
                 servletContext.addServlet("SpringMvcDispatcherServlet", dispatcherServlet);
         servletRegistration.addMapping(SPRING_MVC_ROOT_PATH + "/*");
+
+        // CU Customization: Initialize a separate servlet for handling CU-specific Spring MVC endpoints.
+        final DispatcherServlet cuDispatcherServlet = new DispatcherServlet();
+        cuDispatcherServlet.setApplicationContext(cuMvcEndpointsLoader.getContext());
+        final ServletRegistration.Dynamic cuServletRegistration =
+                servletContext.addServlet("CuSpringMvcDispatcherServlet", cuDispatcherServlet);
+        cuServletRegistration.addMapping(CU_SPRING_MVC_ROOT_PATH + "/*");
     }
 
     @Override
     public final void destroy() throws Exception {
         doAdditionalModuleStopLogic();
+        // CU Customization: Shut down child Spring contexts.
+        if (cuMvcEndpointsLoader != null) {
+            cuMvcEndpointsLoader.stop();
+        }
+        if (kualicoMvcEndpointsLoader != null) {
+            kualicoMvcEndpointsLoader.stop();
+        }
         GlobalResourceLoader.stop();
     }
 
@@ -182,6 +214,18 @@ public class KFSConfigurer implements DisposableBean, InitializingBean, ServletC
     private void initializeResourceLoaders() throws Exception {
         GlobalResourceLoader.initialize(servletContext, getPrimarySpringFiles());
         GlobalResourceLoader.start();
+
+        // CU Customization: Initialize child Spring contexts that will handle the Spring MVC endpoints.
+
+        final String kualicoSpringFilePath = ConfigContext.getCurrentContextConfig().getProperty(
+                CUKFSPropertyConstants.KUALICO_SPRING_MVC_SOURCE_FILE_KEY);
+        kualicoMvcEndpointsLoader = new CuSpringResourceLoader(List.of(kualicoSpringFilePath), servletContext);
+        kualicoMvcEndpointsLoader.start();
+
+        final String cuSpringFilePath = ConfigContext.getCurrentContextConfig().getProperty(
+                CUKFSPropertyConstants.CU_SPRING_MVC_SOURCE_FILE_KEY);
+        cuMvcEndpointsLoader = new CuSpringResourceLoader(List.of(cuSpringFilePath), servletContext);
+        cuMvcEndpointsLoader.start();
     }
 
     // These ApplicationEventS are for the startup ApplicationContext (AC), not the main AC; however, most of/all the
