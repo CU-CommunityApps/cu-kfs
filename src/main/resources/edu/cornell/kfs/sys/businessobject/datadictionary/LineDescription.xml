@@ -7,112 +7,112 @@
     <bean id="GECSourceAccountingLine-financialDocumentLineDescription"
         parent="GECSourceAccountingLine-financialDocumentLineDescription-parentBean">
         <property name="validationPattern">
-            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" p:maxLength="40" />
+            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" />
         </property>
     </bean>
 
     <bean id="GECTargetAccountingLine-financialDocumentLineDescription"
         parent="GECTargetAccountingLine-financialDocumentLineDescription-parentBean">
         <property name="validationPattern">
-            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" p:maxLength="40" />
+            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" />
         </property>
     </bean>
 
     <bean id="GeneralLedgerTransferSourceAccountingLine-financialDocumentLineDescription"
         parent="GeneralLedgerTransferSourceAccountingLine-financialDocumentLineDescription-parentBean">
         <property name="validationPattern">
-            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" p:maxLength="40" />
+            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" />
         </property>
     </bean>
 
     <bean id="GeneralLedgerTransferTargetAccountingLine-financialDocumentLineDescription"
         parent="GeneralLedgerTransferTargetAccountingLine-financialDocumentLineDescription-parentBean">
         <property name="validationPattern">
-            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" p:maxLength="40" />
+            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" />
         </property>
     </bean>
 
     <bean id="ProcurementCardSourceAccountingLine-financialDocumentLineDescription"
         parent="ProcurementCardSourceAccountingLine-financialDocumentLineDescription-parentBean">
         <property name="validationPattern">
-            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" p:maxLength="40" />
+            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" />
         </property>
     </bean>
 
     <bean id="ProcurementCardTargetAccountingLine-financialDocumentLineDescription"
         parent="ProcurementCardTargetAccountingLine-financialDocumentLineDescription-parentBean">
         <property name="validationPattern">
-            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" p:maxLength="40" />
+            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" />
         </property>
     </bean>
 
     <bean id="VoucherSourceAccountingLine-financialDocumentLineDescription"
         parent="VoucherSourceAccountingLine-financialDocumentLineDescription-parentBean">
         <property name="validationPattern">
-            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" p:maxLength="40" />
+            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" />
         </property>
     </bean>
 
     <bean id="NonInvoiced-financialDocumentLineDescription"
         parent="NonInvoiced-financialDocumentLineDescription-parentBean">
         <property name="validationPattern">
-            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" p:maxLength="40" />
+            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" />
         </property>
     </bean>
 
     <bean id="ExpenseTransferSourceAccountingLine-financialDocumentLineDescription"
         parent="ExpenseTransferSourceAccountingLine-financialDocumentLineDescription-parentBean">
         <property name="validationPattern">
-            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" p:maxLength="40" />
+            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" />
         </property>
     </bean>
 
     <bean id="ExpenseTransferTargetAccountingLine-financialDocumentLineDescription"
         parent="ExpenseTransferTargetAccountingLine-financialDocumentLineDescription-parentBean">
         <property name="validationPattern">
-            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" p:maxLength="40" />
+            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" />
         </property>
     </bean>
 
     <bean id="LaborJournalVoucherDetail-financialDocumentLineDescription"
         parent="LaborJournalVoucherDetail-financialDocumentLineDescription-parentBean">
         <property name="validationPattern">
-            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" p:maxLength="40" />
+            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" />
         </property>
     </bean>
 
     <bean id="CreditMemoAccount-financialDocumentLineDescription"
         parent="CreditMemoAccount-financialDocumentLineDescription-parentBean">
         <property name="validationPattern">
-            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" p:maxLength="40" />
+            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" />
         </property>
     </bean>
 
     <bean id="PaymentRequestAccount-financialDocumentLineDescription"
         parent="PaymentRequestAccount-financialDocumentLineDescription-parentBean">
         <property name="validationPattern">
-            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" p:maxLength="40" />
+            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" />
         </property>
     </bean>
 
     <bean id="PurchaseOrderAccount-financialDocumentLineDescription"
         parent="PurchaseOrderAccount-financialDocumentLineDescription-parentBean">
         <property name="validationPattern">
-            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" p:maxLength="40" />
+            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" />
         </property>
     </bean>
 
     <bean id="RequisitionAccount-financialDocumentLineDescription"
         parent="RequisitionAccount-financialDocumentLineDescription-parentBean">
         <property name="validationPattern">
-            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" p:maxLength="40" />
+            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" />
         </property>
     </bean>
 
     <bean id="SourceAccountingLine-financialDocumentLineDescription"
         parent="SourceAccountingLine-financialDocumentLineDescription-parentBean">
         <property name="validationPattern">
-            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" p:maxLength="40" />
+            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" />
         </property>
     </bean>
 

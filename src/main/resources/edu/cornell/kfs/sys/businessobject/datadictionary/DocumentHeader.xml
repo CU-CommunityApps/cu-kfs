@@ -7,7 +7,7 @@
     <bean id="DocumentHeader-documentDescription"
         parent="DocumentHeader-documentDescription-parentBean">
         <property name="validationPattern">
-            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" p:maxLength="40" />
+            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true" />
         </property>
     </bean>
 
