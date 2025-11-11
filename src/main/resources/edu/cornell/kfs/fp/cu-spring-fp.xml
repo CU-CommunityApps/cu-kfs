@@ -283,7 +283,7 @@
 
     
     <!--  Validations -->
-    <bean id="AuxliaryVoucher-accountingDocumentSingleSubFundValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuAdjustmentAccrualVoucherSingleSubFundValidation" abstract="true" />
+    <bean id="AdjustmentAccrualVoucher-accountingDocumentSingleSubFundValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuAdjustmentAccrualVoucherSingleSubFundValidation" abstract="true" />
     
 	<import resource="document/validation/configuration/FinancialProcessingValidators.xml" />
     <import resource="document/validation/configuration/CU-DisbursementVoucherValidation.xml" />
