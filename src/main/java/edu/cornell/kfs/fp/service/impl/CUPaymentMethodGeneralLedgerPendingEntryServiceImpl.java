@@ -30,6 +30,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.OffsetDefinition;
 import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.coa.service.OffsetDefinitionService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.fp.FPKeyConstants;
 import org.kuali.kfs.gl.businessobject.Entry;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -42,17 +43,16 @@ import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
+import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.GeneralLedgerPostingDocument;
 import org.kuali.kfs.sys.document.service.AccountingDocumentRuleHelperService;
-import org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseConstants.GENERAL_LEDGER_PENDING_ENTRY_CODE;
 import org.kuali.kfs.sys.service.BankService;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.sys.service.UniversityDateService;
 import org.springframework.cache.annotation.Cacheable;
 
-import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -66,6 +66,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
     protected ObjectCodeService objectCodeService;
     protected BusinessObjectService businessObjectService;
     protected BankService bankService;
+    protected UniversityDateService universityDateService;
 
     @Cacheable(value=SystemOptions.CACHE_NAME, key="'{isPaymentMethodProcessedUsingPdp}'+#p0")
     public boolean isPaymentMethodProcessedUsingPdp(String paymentMethodCode) {
@@ -247,9 +248,12 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
 
         // check for balance type Actual offset pending entries and replace the object code with chart cash object code (currently replacing object code 2900 with 1000)
         List<GeneralLedgerPendingEntry> glpes = document.getGeneralLedgerPendingEntries();
+        final Integer currentFiscalYear = universityDateService.getCurrentFiscalYear();
 
         for (GeneralLedgerPendingEntry glpe : glpes) {
-            OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getActiveByPrimaryId(glpe.getUniversityFiscalYear(), glpe.getChartOfAccountsCode(), documentType, KFSConstants.BALANCE_TYPE_ACTUAL).orElse(null);
+            final Integer universityFiscalYear = glpe.getUniversityFiscalYear() != null
+                    ? glpe.getUniversityFiscalYear() : currentFiscalYear;
+            OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getActiveByPrimaryId(universityFiscalYear, glpe.getChartOfAccountsCode(), documentType, KFSConstants.BALANCE_TYPE_ACTUAL).orElse(null);
             if (ObjectUtils.isNotNull(offsetDefinition) &&
                     glpe.getFinancialObjectCode().equalsIgnoreCase(offsetDefinition.getFinancialObjectCode())) {
                 if (ObjectUtils.isNull(glpe.getChart())) {
@@ -359,6 +363,10 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
 
     public void setBankService(BankService bankService) {
         this.bankService = bankService;
+    }
+
+    public void setUniversityDateService(final UniversityDateService universityDateService) {
+        this.universityDateService = universityDateService;
     }
 
 }
