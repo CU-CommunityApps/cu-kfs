@@ -8,6 +8,8 @@ public interface TravelMealCardFileFeedService {
 
     public boolean loadTmCardDataFromBatchFile(String fileName);
     
+    public void sendNotificationFileNotReceived();
+    
    /*
     * NOTE: Visibility of the method is public ONLY for unit testing purposes.
     *       It is not intended to be called outside of the actual implementation class.

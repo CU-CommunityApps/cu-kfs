@@ -38,4 +38,10 @@ public class CuFPParameterConstants {
     
     public static final String ERROR_TRANS_OBJECT_CODE_PARM_NM = "ERROR_TRANSACTION_OBJECT_CODE";
 
+    public static final class TravelMealCardFileFeedService {
+        public static final String TRAVEL_MEAL_CARD_LOAD_FILE_STEP_COMPONENT_NAME = "TravelMealCardLoadFileStep";
+        public static final String TMCARD_NO_NEW_FILE_EMAIL_ADDRESSES = "TMCARD_NO_NEW_FILE_EMAIL_ADDRESSES";
+        public static final String TMCARD_NO_NEW_FILE_MESSAGE = "TMCARD_NO_NEW_FILE_EMAIL_MESSAGE";
+        public static final String TMCARD_NO_NEW_FILE_SUBJECT = "TMCARD_NO_NEW_FILE_EMAIL_SUBJECT";
+    }
 }

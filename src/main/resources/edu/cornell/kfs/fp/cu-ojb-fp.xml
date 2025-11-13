@@ -1314,7 +1314,6 @@
         <field-descriptor name="netid" column="NETID" jdbc-type="VARCHAR" />
         <field-descriptor name="lastTransactionDate" column="LAST_TRANS_DATE" jdbc-type="DATE" />
         <field-descriptor name="defaultAccountNumber" column="DEFAULT_ACCT_NBR" jdbc-type="VARCHAR" />
-        <field-descriptor name="creditLine" column="CREDIT_LINE" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" />
         <field-descriptor name="openDate" column="OPEN_DATE" jdbc-type="DATE" />
         <field-descriptor name="cycleStartDate" column="CYCLE_START_DATE" jdbc-type="DATE" />
         <field-descriptor name="cycleSpendToDate" column="CYCLE_SPEND_TO_DATE" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" />

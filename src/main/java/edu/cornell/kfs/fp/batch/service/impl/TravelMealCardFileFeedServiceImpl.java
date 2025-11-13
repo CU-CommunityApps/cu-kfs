@@ -4,7 +4,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Date;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.fp.batch.TravelMealCardFlatInputFileType;
 import edu.cornell.kfs.fp.batch.service.CardServicesUtilityService;
+import edu.cornell.kfs.fp.batch.service.TravelMealCardEmailService;
 import edu.cornell.kfs.fp.batch.service.TravelMealCardFileFeedService;
 import edu.cornell.kfs.fp.businessobject.TravelMealCardFileLineEntry;
 import edu.cornell.kfs.fp.businessobject.TravelMealCardVerificationData;
@@ -36,6 +36,7 @@ public class TravelMealCardFileFeedServiceImpl implements TravelMealCardFileFeed
     protected BusinessObjectService businessObjectService;
     protected DateTimeService dateTimeService;
     protected CardServicesUtilityService cardServicesUtilityService;
+    protected TravelMealCardEmailService travelMealCardEmailService;
     
     public boolean loadTmCardDataFromBatchFile(String fileName) {
         LOG.info("Reading TMCard file data lines for .done file: {}", fileName);
@@ -138,7 +139,6 @@ public class TravelMealCardFileFeedServiceImpl implements TravelMealCardFileFeed
         certifyData.setNetid(tmCardFileLine.getNetid());
         certifyData.setLastTransactionDate(cardServicesUtilityService.convertCardDateToSqlDate(tmCardFileLine.getLastTransactionDate()));
         certifyData.setDefaultAccountNumber(tmCardFileLine.getDefaultAccountNumber());
-        certifyData.setCreditLine(creditLine);
         certifyData.setOpenDate(cardServicesUtilityService.convertCardDateToSqlDate(tmCardFileLine.getOpenDate()));
         certifyData.setCycleStartDate(cardServicesUtilityService.convertCardDateToSqlDate(tmCardFileLine.getCycleStartDate()));
         certifyData.setCycleSpendToDate(cardServicesUtilityService.generateKualiDecimal(tmCardFileLine.getCycleSpendToDate()));
@@ -206,6 +206,12 @@ public class TravelMealCardFileFeedServiceImpl implements TravelMealCardFileFeed
         
         LOG.info("logClassLoaderDebugInfo:: ProcurementCardSummaryEntry Class Loader: retrievedEntry = {}", (ObjectUtils.isNull(retrievedCertifyRecord) ? "IS NULL" : retrievedCertifyRecord.toString()));
     }
+    
+    public void sendNotificationFileNotReceived() {
+        travelMealCardEmailService.sendErrorEmail(travelMealCardEmailService.getFileNotReceivedRecipentEmailAddress(),
+                travelMealCardEmailService.generateNewFileNotReceivedSubject(),
+                travelMealCardEmailService.generateNewFileNotReceivedMessage());
+    }
 
     public BatchInputFileService getBatchInputFileService() {
         return batchInputFileService;
@@ -245,6 +251,14 @@ public class TravelMealCardFileFeedServiceImpl implements TravelMealCardFileFeed
 
     public void setCardServicesUtilityService(CardServicesUtilityService cardServicesUtilityService) {
         this.cardServicesUtilityService = cardServicesUtilityService;
+    }
+
+    public TravelMealCardEmailService getTravelMealCardEmailService() {
+        return travelMealCardEmailService;
+    }
+
+    public void setTravelMealCardEmailService(TravelMealCardEmailService travelMealCardEmailService) {
+        this.travelMealCardEmailService = travelMealCardEmailService;
     }
 
 }

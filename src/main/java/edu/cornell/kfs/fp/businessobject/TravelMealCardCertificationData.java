@@ -16,7 +16,6 @@ public class TravelMealCardCertificationData extends PersistableBusinessObjectBa
     protected String netid;
     protected Date lastTransactionDate;
     protected String defaultAccountNumber;
-    protected KualiDecimal creditLine;
     protected Date openDate;
     protected Date cycleStartDate;
     protected KualiDecimal cycleSpendToDate;
@@ -97,14 +96,6 @@ public class TravelMealCardCertificationData extends PersistableBusinessObjectBa
     
     public void setDefaultAccountNumber(String defaultAccountNumber) {
         this.defaultAccountNumber = defaultAccountNumber;
-    }
-    
-    public KualiDecimal getCreditLine() {
-        return creditLine;
-    }
-    
-    public void setCreditLine(KualiDecimal creditLine) {
-        this.creditLine = creditLine;
     }
     
     public Date getOpenDate() {

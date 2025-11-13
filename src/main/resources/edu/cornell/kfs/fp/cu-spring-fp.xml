@@ -643,7 +643,7 @@
     <bean id="travelMealCardFileFeedJob" parent="scheduledJobDescriptor">
         <property name="steps">
             <list>
-                <ref bean="travelMealCardInputFileFeedStep" />
+                <ref bean="travelMealCardLoadFileStep" />
             </list>
         </property>
     </bean>
@@ -653,6 +653,11 @@
         <property name="dateTimeService" ref="dateTimeService" />
     </bean>
     
+    <bean id="travelMealCardEmailService" class="edu.cornell.kfs.fp.batch.service.impl.TravelMealCardEmailServiceImpl">
+        <property name="parameterService" ref="parameterService"/>
+        <property name="emailService" ref="emailService"/>
+    </bean>
+    
     <bean id="travelMealCardFileFeedService" parent="travelMealCardFileFeedService-parentBean" />
     <bean id="travelMealCardFileFeedService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.TravelMealCardFileFeedServiceImpl" abstract="true">
           <property name="batchInputFileService" ref="batchInputFileService" />
@@ -660,9 +665,10 @@
           <property name="businessObjectService" ref="businessObjectService" />
           <property name="dateTimeService" ref="dateTimeService" />
           <property name="cardServicesUtilityService" ref="cardServicesUtilityService" />
+          <property name="travelMealCardEmailService" ref="travelMealCardEmailService" />
     </bean>
     
-    <bean id="travelMealCardInputFileFeedStep" class="edu.cornell.kfs.fp.batch.TravelMealCardInputFileFeedStep" parent="step">
+    <bean id="travelMealCardLoadFileStep" class="edu.cornell.kfs.fp.batch.TravelMealCardLoadFileStep" parent="step">
         <property name="travelMealCardFileFeedService" ref="travelMealCardFileFeedService" />
         <property name="batchInputFileService"  ref="batchInputFileService" />
         <property name="dateTimeService"  ref="dateTimeService" />

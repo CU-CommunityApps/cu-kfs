@@ -17,7 +17,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 
-public class TravelMealCardInputFileFeedStep extends AbstractStep {
+public class TravelMealCardLoadFileStep extends AbstractStep {
 
     protected BatchInputFileService batchInputFileService;
     protected BatchInputFileType travelMealCardFlatInputFileType;
@@ -37,6 +37,9 @@ public class TravelMealCardInputFileFeedStep extends AbstractStep {
         String fileToProcess = getMostCurrentFileName(fileNamesToLoad);
         if (fileToProcess != null) {
             processSuccess = travelMealCardFileFeedService.loadTmCardDataFromBatchFile(fileToProcess);
+        } else {
+            //Retain current data in the tables and send email that no new data file received for processing.
+            travelMealCardFileFeedService.sendNotificationFileNotReceived();
         }
         
         if (processSuccess) {
