@@ -5,6 +5,7 @@ import java.text.MessageFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.module.ar.ArKeyConstants;
 import org.kuali.kfs.module.ar.businessobject.CustomerAddress;
+import org.kuali.kfs.module.ar.businessobject.InvoiceAddressDetail;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.service.impl.AREmailServiceImpl;
 import org.kuali.kfs.module.cg.businessobject.Award;
@@ -35,7 +36,7 @@ public class CuAREmailServiceImpl extends AREmailServiceImpl {
     }
     
     @Override
-    protected String getMessageBody(final ContractsGrantsInvoiceDocument invoice, final CustomerAddress customerAddress) {
+    protected String getMessageBody(final ContractsGrantsInvoiceDocument invoice, final InvoiceAddressDetail invoiceAddressDetail, final CustomerAddress customerAddress) {
         final String message = kualiConfigurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_EMAIL_BODY);
 
         final Person fundManager = invoice.getInvoiceGeneralDetail().getAward().getAwardPrimaryFundManager().getFundManager();

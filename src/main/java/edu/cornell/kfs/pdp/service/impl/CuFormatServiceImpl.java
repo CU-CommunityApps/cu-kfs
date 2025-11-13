@@ -38,10 +38,10 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
     public FormatProcessSummary startFormatProcess(final Person user, final String campus,
 			final List<CustomerProfile> customers, final Date paydate, final String paymentTypes,
 			final String paymentDistribution) {
-        LOG.debug("startFormatProcess() started");
+        LOG.debug("startFormatProcess() - started");
 
         for (final CustomerProfile element : customers) {
-            LOG.debug("startFormatProcess() Customer: {}", element);
+            LOG.debug("startFormatProcess() - Customer: {}", element);
         }
 
         // Create the process
@@ -68,9 +68,9 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
         final LocalDateTime endOfPayDate = dateTimeService.getLocalDateTimeAtEndOfDay(sqlDate);
         final Timestamp paydateTs = Timestamp.valueOf(endOfPayDate);
 
-        LOG.debug("startFormatProcess() last update = {}", now);
-        LOG.debug("startFormatProcess() entered paydate = {}", paydate);
-        LOG.debug("startFormatProcess() actual paydate = {}", paydateTs);
+        LOG.debug("startFormatProcess() - last update = {}", now);
+        LOG.debug("startFormatProcess() - entered paydate = {}", paydate);
+        LOG.debug("startFormatProcess() - actual paydate = {}", paydateTs);
 
         final PaymentStatus format = this.businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, PdpConstants.PaymentStatusCodes.FORMAT);
 
@@ -102,7 +102,7 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
 
         // if no payments found for format clear the format process
         if (preFormatProcessSummary.getProcessSummaryList().size() == 0) {
-            LOG.debug("startFormatProcess() No payments to process.  Format process ending");
+            LOG.debug("startFormatProcess() - No payments to process.  Format process ending");
             clearUnfinishedFormat(paymentProcess.getId().intValue());
         }
 

@@ -26,12 +26,6 @@
 
 <kul:tab tabTitle="Tax Information" defaultOpen="true" tabErrorKey="${PurapConstants.PAYMENT_REQUEST_TAX_TAB_ERRORS}">
     <div class="tab-container" align=center>
-    	<c:if test="${taxAreaEditable}">
-    		<h3>Tax Area Edits</h3>  
-    	</c:if>  	
-    	<c:if test="${!taxAreaEditable}">
-    		<h3>Tax Information</h3>
-    	</c:if>  	
 
         <table cellpadding="0" cellspacing="0" class="datatable" summary="Tax Info Section">
 

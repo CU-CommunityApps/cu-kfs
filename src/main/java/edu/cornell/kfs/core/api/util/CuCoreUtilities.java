@@ -51,7 +51,7 @@ public final class CuCoreUtilities {
      * backwards-compatibility reasons. This class simply circumvents that behavior to allow proper interpretation of
      * absolute paths (i.e. not stripping a leading slash)
      */
-    private static class AbsoluteFileSystemResourceLoader extends FileSystemResourceLoader {
+    private static final class AbsoluteFileSystemResourceLoader extends FileSystemResourceLoader {
         @Override
         protected Resource getResourceByPath(final String path) {
             return new FileSystemResource(path);

@@ -29,6 +29,9 @@
 <c:set var="payeeAttributesEx" value="${DataDictionary.CuDisbursementVoucherPayeeDetailExtension.attributes}" />
 <c:set var="campusNodeEditMode" value="${(not empty KualiForm.editingMode['campusNodeEditMode'])}" />
 <c:set var="achAccountInfoDisplayed" value="${(not empty KualiForm.editingMode['achAccountInfoDisplayed'])}" />
+<c:set var="canEditPayeeAddress"
+       value="${not empty
+       KualiForm.documentActions[KfsAuthorizationConstants.DisbursementVoucherEditMode.CAN_EDIT_PAYEE_ADDRESS]}" />
 <c:set var="travelEntryMode" value="${(not empty KualiForm.editingMode['travelEntry'])}" />
 <c:set var="travelSystemGeneratedEntryMode" value="${(not empty KualiForm.editingMode['travelSystemGeneratedEntry'])}" />
 <c:set var="displayInvoiceFields" value="${KualiForm.editingMode['displayInvoiceFields']}" scope="request"/>
@@ -133,7 +136,7 @@
               <td class="datacell">
                 <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrPayeeLine1Addr}"
                                           property="document.dvPayeeDetail.disbVchrPayeeLine1Addr"
-                                          readOnly="${!fullEntryMode && !payeeEntryMode}"/>
+                                          readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress}"/>
               </td>
 
               <th class="bord-l-b">
@@ -142,7 +145,7 @@
               <td class="datacell">
                 <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrPayeeLine2Addr}"
                                           property="document.dvPayeeDetail.disbVchrPayeeLine2Addr"
-                                          readOnly="${!fullEntryMode && !payeeEntryMode}"/>
+                                          readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress}"/>
               </td>
             </tr>
 
@@ -153,7 +156,7 @@
               <td class="datacell">
                 <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrPayeeCityName}"
                                           property="document.dvPayeeDetail.disbVchrPayeeCityName"
-                                          readOnly="${!fullEntryMode && !payeeEntryMode}"/>
+                                          readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress}"/>
               </td>
 
 			  <th class="bord-l-b">
@@ -162,7 +165,7 @@
               <td class="datacell">
                 <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrPayeeStateCode}"
                                           property="document.dvPayeeDetail.disbVchrPayeeStateCode"
-                                          readOnly="${!fullEntryMode && !payeeEntryMode}"/>
+                                          readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress}"/>
                 <c:if test="${fullEntryMode || payeeEntryMode}">
               		<kul:lookup boClassName="org.kuali.kfs.sys.businessobject.State"
                                 fieldConversions="countryCode:document.dvPayeeDetail.disbVchrPayeeCountryCode,code:document.dvPayeeDetail.disbVchrPayeeStateCode"
@@ -173,12 +176,23 @@
 
             <tr>
               <th class="bord-l-b">
+                <div align="right"><kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbVchrPayeeProvinceName}"/></div>
+              </th>
+              <td class="datacell">
+                 <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrPayeeProvinceName}"
+                                           property="document.dvPayeeDetail.disbVchrPayeeProvinceName"
+                                           readOnly="${!fullEntryMode && !payeeEntryMode}"/>
+              </td>
+            </tr>
+
+            <tr>
+              <th class="bord-l-b">
               	<div align="right"><kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbVchrPayeeCountryCode}"/></div>
               </th>
               <td class="datacell">
                 <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrPayeeCountryCode}"
                                           property="document.dvPayeeDetail.disbVchrPayeeCountryCode"
-                                          readOnly="${!fullEntryMode && !payeeEntryMode}"/>
+                                          readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress}"/>
               </td>
 
               <th class="bord-l-b">
@@ -187,7 +201,7 @@
               <td class="datacell">
                 <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrPayeeZipCode}"
                                           property="document.dvPayeeDetail.disbVchrPayeeZipCode"
-                                          readOnly="${!fullEntryMode && !payeeEntryMode}"/>
+                                          readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress}"/>
                 <c:if test="${fullEntryMode || payeeEntryMode}">
               		<kul:lookup boClassName="org.kuali.kfs.sys.businessobject.PostalCode"
                                 fieldConversions="code:document.dvPayeeDetail.disbVchrPayeeZipCode,countryCode:document.dvPayeeDetail.disbVchrPayeeCountryCode,stateCode:document.dvPayeeDetail.disbVchrPayeeStateCode,cityName:document.dvPayeeDetail.disbVchrPayeeCityName"
