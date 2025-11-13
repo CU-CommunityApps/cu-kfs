@@ -19,6 +19,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.fp.batch.TravelMealCardFlatInputFileType;
+import edu.cornell.kfs.fp.batch.TravelMealCardLoadDataFileResults;
 import edu.cornell.kfs.fp.batch.service.CardServicesUtilityService;
 import edu.cornell.kfs.fp.batch.service.TravelMealCardEmailService;
 import edu.cornell.kfs.fp.batch.service.TravelMealCardFileFeedService;
@@ -38,22 +39,28 @@ public class TravelMealCardFileFeedServiceImpl implements TravelMealCardFileFeed
     protected CardServicesUtilityService cardServicesUtilityService;
     protected TravelMealCardEmailService travelMealCardEmailService;
     
-    public boolean loadTmCardDataFromBatchFile(String fileName) {
+    public TravelMealCardLoadDataFileResults loadTmCardDataFromBatchFile(String fileName) {
         LOG.info("Reading TMCard file data lines for .done file: {}", fileName);
+        TravelMealCardLoadDataFileResults loadResults = new TravelMealCardLoadDataFileResults();
+        loadResults.setNameOfFileLoaded(fileName);
         List<TravelMealCardFileLineEntry> tmCardFileLineEntryList = readTmCardFileContents(fileName);
         
         if (tmCardFileLineEntryList == null) {
             LOG.info("NO data found in input file. Previous data items retained in Travel and Meal Card Verification and Certification tables.");
-            return true;
+            loadResults.setSuccess(true);
+            return loadResults;
         }
 
+        loadResults.setNumberOfLinesInFile(tmCardFileLineEntryList.size());
         LOG.info("Generating TMCard Verification and Certification class pairs in TravelMealCardFileLineDataWrapper from {} file data rows.", tmCardFileLineEntryList.size());
         List<TravelMealCardFileLineDataWrapper> dataClassPairsToLoadToDatabase = new ArrayList<TravelMealCardFileLineDataWrapper>();
         generateTmCardCertifyVerifyPairsToLoadToDB(tmCardFileLineEntryList, dataClassPairsToLoadToDatabase); 
 
+        loadResults.setNumberOfLinesSuccessfullyRead(dataClassPairsToLoadToDatabase.size());
         LOG.info("Loading {} pairs of data objects into the appropriate table CU_FP_TMCARD_VERIFY_T or CU_FP_TMCARD_CERTIFY_T.", dataClassPairsToLoadToDatabase.size());
         loadTmCardObjectPairsIntoDatabase(dataClassPairsToLoadToDatabase);
-        return true;
+        loadResults.setSuccess(true);
+        return loadResults;
     }
     
     /**
@@ -211,6 +218,12 @@ public class TravelMealCardFileFeedServiceImpl implements TravelMealCardFileFeed
         travelMealCardEmailService.sendErrorEmail(travelMealCardEmailService.getFileNotReceivedRecipentEmailAddress(),
                 travelMealCardEmailService.generateNewFileNotReceivedSubject(),
                 travelMealCardEmailService.generateNewFileNotReceivedMessage());
+    }
+    
+    public void sendFileProcessingResultsNotification(TravelMealCardLoadDataFileResults loadResults) {
+        travelMealCardEmailService.sendErrorEmail(travelMealCardEmailService.getFileProcessedRecipentEmailAddress(),
+                travelMealCardEmailService.generateNewFileProcessedSubject(),
+                travelMealCardEmailService.generateNewFileProcessedMessage());
     }
 
     public BatchInputFileService getBatchInputFileService() {

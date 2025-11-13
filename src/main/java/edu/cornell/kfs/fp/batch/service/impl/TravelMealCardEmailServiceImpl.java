@@ -62,30 +62,6 @@ public class TravelMealCardEmailServiceImpl implements TravelMealCardEmailServic
     }
     
     @Override
-    public void sendReportEmail(String fromAddress, List<String> toAddresses) {
-        LOG.info("sendReportEmail: Needs to be written.");
-//        BodyMailMessage message = new BodyMailMessage();
-//        message.setFromAddress(fromAddress);
-//        String subject = reportWriterService.getTitle();
-//        message.setSubject(subject);
-//        message.getToAddresses().addAll(toAddresses);
-//        String body = concurBatchUtilityService.getFileContents(reportWriterService.getReportFile().getAbsolutePath());
-//        message.setMessage(body);
-//
-//        boolean htmlMessage = false;
-//        if (LOG.isDebugEnabled()) {
-//            LOG.debug("sendEmail, from address: " + fromAddress + "  to addresses: " + toAddresses);
-//            LOG.debug("sendEmail, the email subject: " + subject);
-//            LOG.debug("sendEmail, the email body: " + body);
-//        }
-//        try {
-//            emailService.sendMessage(message, htmlMessage);
-//        } catch (Exception e) {
-//            LOG.error("sendEmail, the email could not be sent", e);
-//        }
-    }
-
-    @Override
     public String generateNewFileNotReceivedSubject() {
         return parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
                 CuFPParameterConstants.TravelMealCardFileFeedService.TRAVEL_MEAL_CARD_LOAD_FILE_STEP_COMPONENT_NAME, 
@@ -103,7 +79,28 @@ public class TravelMealCardEmailServiceImpl implements TravelMealCardEmailServic
     public String getFileNotReceivedRecipentEmailAddress() {
         return parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
             CuFPParameterConstants.TravelMealCardFileFeedService.TRAVEL_MEAL_CARD_LOAD_FILE_STEP_COMPONENT_NAME, 
-            CuFPParameterConstants.TravelMealCardFileFeedService.TMCARD_NO_NEW_FILE_EMAIL_ADDRESSES);
+            CuFPParameterConstants.TravelMealCardFileFeedService.TMCARD_RECIPIENT_EMAIL_ADDRESSES);
+    }
+    
+    @Override
+    public String generateNewFileProcessedSubject() {
+        return parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
+                CuFPParameterConstants.TravelMealCardFileFeedService.TRAVEL_MEAL_CARD_LOAD_FILE_STEP_COMPONENT_NAME, 
+                CuFPParameterConstants.TravelMealCardFileFeedService.TMCARD_NEW_FILE_PROCESSED_SUBJECT);
+    }
+    
+    @Override
+    public String generateNewFileProcessedMessage() {
+        return parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
+                CuFPParameterConstants.TravelMealCardFileFeedService.TRAVEL_MEAL_CARD_LOAD_FILE_STEP_COMPONENT_NAME, 
+                CuFPParameterConstants.TravelMealCardFileFeedService.TMCARD_NEW_FILE_PROCESSED_MESSAGE);
+    }
+
+    @Override
+    public String getFileProcessedRecipentEmailAddress() {
+        return parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
+            CuFPParameterConstants.TravelMealCardFileFeedService.TRAVEL_MEAL_CARD_LOAD_FILE_STEP_COMPONENT_NAME, 
+            CuFPParameterConstants.TravelMealCardFileFeedService.TMCARD_RECIPIENT_EMAIL_ADDRESSES);
     }
 
     public EmailService getEmailService() {

@@ -27,25 +27,29 @@ public class TravelMealCardLoadFileStep extends AbstractStep {
     protected CardServicesUtilityService cardServicesUtilityService;
 
     public boolean execute(String arg0, LocalDateTime arg1) throws InterruptedException {
-        boolean processSuccess = false;
+        TravelMealCardLoadDataFileResults loadResults = new TravelMealCardLoadDataFileResults();
 
         //Obtain all .done file names, there could be more than one
         List<String> fileNamesToLoad = batchInputFileService.listInputFileNamesWithDoneFile(travelMealCardFlatInputFileType);
         List<String> doneFiles = new ArrayList<String>(fileNamesToLoad);
-
+        
         //Identify and process the most current file
         String fileToProcess = getMostCurrentFileName(fileNamesToLoad);
-        if (fileToProcess != null) {
-            processSuccess = travelMealCardFileFeedService.loadTmCardDataFromBatchFile(fileToProcess);
-        } else {
-            //Retain current data in the tables and send email that no new data file received for processing.
+        if (fileToProcess == null) {
+          //Retain current data in the tables and send email that no new data file received for processing.
             travelMealCardFileFeedService.sendNotificationFileNotReceived();
+            return loadResults.isSuccess();
         }
         
-        if (processSuccess) {
+        loadResults = travelMealCardFileFeedService.loadTmCardDataFromBatchFile(fileToProcess);
+      
+        if (loadResults.isSuccess()) {
             cardServicesUtilityService.removeDoneFiles(doneFiles);
         }
-        return processSuccess;
+        
+        travelMealCardFileFeedService.sendFileProcessingResultsNotification(loadResults);
+
+        return loadResults.isSuccess();
     }
 
     /**
