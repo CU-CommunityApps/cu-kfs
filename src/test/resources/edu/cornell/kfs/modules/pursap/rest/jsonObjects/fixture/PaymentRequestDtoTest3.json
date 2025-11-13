@@ -1,0 +1,48 @@
+{
+  "vendorNumber": "V67890",
+  "poNumber": "PO24680",
+  "invoiceDate": "10/05/2025",
+  "receivedDate": "10/06/2025",
+  "invoiceNumber": "INV-2025-003",
+  "invoiceAmount": 2500,
+  "specialHandlingLine1": "Multiple items",
+  "specialHandlingLine2": "Multiple notes",
+  "specialHandlingLine3": "Extra handling",
+  "items": [
+    {
+      "lineNumber": "1",
+      "itemQuantity": 5,
+      "itemPrice": 200
+    },
+    {
+      "lineNumber": "2",
+      "itemQuantity": 3,
+      "itemPrice": 400
+    },
+    {
+      "lineNumber": "3",
+      "itemQuantity": 2,
+      "itemPrice": 500
+    }
+  ],
+  "freightPrice": 100,
+  "freightDescription": "Bulk Freight",
+  "miscellaneousPrice": 75,
+  "miscellaneousDescription": "Service Fee",
+  "shippingPrice": 150,
+  "shippingDescription": "Overnight Shipping",
+  "notes": [
+    {
+      "noteText": "First note",
+      "noteType": "General"
+    },
+    {
+      "noteText": "Second note",
+      "noteType": "Urgent"
+    },
+    {
+      "noteText": "Third note",
+      "noteType": "Follow-up"
+    }
+  ]
+}
