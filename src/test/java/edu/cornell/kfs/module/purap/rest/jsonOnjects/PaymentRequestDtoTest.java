@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import edu.cornell.kfs.module.purap.rest.jsonOnjects.fixture.PaymentRequestDtoFixture;
+import edu.cornell.kfs.module.purap.rest.jsonOnjects.fixture.PaymentRequestResultsDtoFixture;
 import edu.cornell.kfs.sys.typeadapters.KualiDecimalTypeAdapter;
 
 import org.apache.logging.log4j.LogManager;
@@ -33,27 +34,57 @@ public class PaymentRequestDtoTest {
 
     @ParameterizedTest
     @EnumSource
-    public void testReadJsonToDto(PaymentRequestDtoFixture paymentRequestDtoFixture) throws IOException {
+    public void testReadJsonToPaymentRequestDto(PaymentRequestDtoFixture paymentRequestDtoFixture) throws IOException {
         Gson gson = buildGson();
+
         String actualJsonString = readFileToString(paymentRequestDtoFixture.jsonFileName);
         PaymentRequestDto actualDto = gson.fromJson(actualJsonString, PaymentRequestDto.class);
         PaymentRequestDto exptectedDto = paymentRequestDtoFixture.toPaymentRequestDto();
 
-        LOG.debug("testPaymentRequestDtoFixture, actualDto DTO: {}", actualDto.toString());
-        LOG.debug("testPaymentRequestDtoFixture, expected DTO: {}", exptectedDto.toString());
+        LOG.debug("testReadJsonToPaymentRequestDto, actualDto DTO: {}", actualDto.toString());
+        LOG.debug("testReadJsonToPaymentRequestDto, expected DTO: {}", exptectedDto.toString());
 
         assertEquals(exptectedDto, actualDto);
     }
 
     @ParameterizedTest
     @EnumSource
-    public void testWriteDtoToJson(PaymentRequestDtoFixture paymentRequestDtoFixture) throws IOException {
+    public void testWritePaymentRequestDtoToJson(PaymentRequestDtoFixture paymentRequestDtoFixture) throws IOException {
         Gson gson = buildGson();
 
         String expectedJsonString = readFileToString(paymentRequestDtoFixture.jsonFileName);
         JsonElement expectedJsonObject = JsonParser.parseString(expectedJsonString);
 
         String actualJsonString = gson.toJson(paymentRequestDtoFixture.toPaymentRequestDto());
+        JsonElement actualJsonObject = JsonParser.parseString(actualJsonString);
+
+        assertEquals(expectedJsonObject, actualJsonObject);
+    }
+
+    @ParameterizedTest
+    @EnumSource
+    public void testReadJsonToPaymentRequestResultsDto(PaymentRequestResultsDtoFixture paymentRequestResultsDtoFixture) throws IOException {
+        Gson gson = buildGson();
+
+        String actualJsonString = readFileToString(paymentRequestResultsDtoFixture.jsonFileName);
+        PaymentRequestResultsDto actualDto = gson.fromJson(actualJsonString, PaymentRequestResultsDto.class);
+        PaymentRequestResultsDto exptectedDto = paymentRequestResultsDtoFixture.toPaymentRequestResultsDto();
+
+        LOG.debug("testReadJsonToPaymentRequestResultsDto, actualDto DTO: {}", actualDto.toString());
+        LOG.debug("testReadJsonToPaymentRequestResultsDto, expected DTO: {}", exptectedDto.toString());
+
+        assertEquals(exptectedDto, actualDto);
+    }
+
+    @ParameterizedTest
+    @EnumSource
+    public void testWritePaymentRequestResultsDtoToJson(PaymentRequestResultsDtoFixture paymentRequestResultsDtoFixture) throws IOException {
+        Gson gson = buildGson();
+
+        String expectedJsonString = readFileToString(paymentRequestResultsDtoFixture.jsonFileName);
+        JsonElement expectedJsonObject = JsonParser.parseString(expectedJsonString);
+
+        String actualJsonString = gson.toJson(paymentRequestResultsDtoFixture.toPaymentRequestResultsDto());
         JsonElement actualJsonObject = JsonParser.parseString(actualJsonString);
 
         assertEquals(expectedJsonObject, actualJsonObject);

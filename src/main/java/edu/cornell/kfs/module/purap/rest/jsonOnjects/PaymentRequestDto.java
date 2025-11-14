@@ -10,7 +10,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 public class PaymentRequestDto {
-
     private String vendorNumber;
     private String poNumber;
     private Date invoiceDate;
@@ -32,44 +31,6 @@ public class PaymentRequestDto {
     public PaymentRequestDto() {
         items = new ArrayList<>();
         notes = new ArrayList<>();
-    }
-
-    public PaymentRequestDto(
-            String vendorNumber,
-            String poNumber,
-            java.sql.Date invoiceDate,
-            java.sql.Date receivedDate,
-            String invoiceNumber,
-            org.kuali.kfs.core.api.util.type.KualiDecimal invoiceAmount,
-            String specialHandlingLine1,
-            String specialHandlingLine2,
-            String specialHandlingLine3,
-            java.util.List<PaymentRequestLineItemDto> items,
-            org.kuali.kfs.core.api.util.type.KualiDecimal freightPrice,
-            String freightDescription,
-            org.kuali.kfs.core.api.util.type.KualiDecimal miscellaneousPrice,
-            String miscellaneousDescription,
-            org.kuali.kfs.core.api.util.type.KualiDecimal shippingPrice,
-            String shippingDescription,
-            java.util.List<PaymentRequestNoteDto> notes) {
-        this();
-        this.vendorNumber = vendorNumber;
-        this.poNumber = poNumber;
-        this.invoiceDate = invoiceDate;
-        this.receivedDate = receivedDate;
-        this.invoiceNumber = invoiceNumber;
-        this.invoiceAmount = invoiceAmount;
-        this.specialHandlingLine1 = specialHandlingLine1;
-        this.specialHandlingLine2 = specialHandlingLine2;
-        this.specialHandlingLine3 = specialHandlingLine3;
-        this.items = items;
-        this.freightPrice = freightPrice;
-        this.freightDescription = freightDescription;
-        this.miscellaneousPrice = miscellaneousPrice;
-        this.miscellaneousDescription = miscellaneousDescription;
-        this.shippingPrice = shippingPrice;
-        this.shippingDescription = shippingDescription;
-        this.notes = notes;
     }
 
     public String getVendorNumber() {
