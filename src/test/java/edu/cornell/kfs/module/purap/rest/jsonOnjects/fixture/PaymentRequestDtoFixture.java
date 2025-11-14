@@ -3,7 +3,6 @@ package edu.cornell.kfs.module.purap.rest.jsonOnjects.fixture;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +16,7 @@ import edu.cornell.kfs.module.purap.rest.jsonOnjects.PaymentRequestDto;
 
 public enum PaymentRequestDtoFixture {
 
-    EXAMPLE_FILE_1("/edu/cornell/kfs/modules/pursap/rest/jsonObjects/fixture/PaymentRequestDtoTest1.json",
+    JSON_PARSE_EXAMPLE_FILE_1("/edu/cornell/kfs/modules/pursap/rest/jsonObjects/fixture/PaymentRequestDtoTest1.json",
             "V12345", "PO98765", "11/01/2025", "11/02/2025",
             "INV-2025-001", new KualiDecimal(1000), "Line1", "Line2",
             "Line3",
@@ -25,13 +24,13 @@ public enum PaymentRequestDtoFixture {
             new KualiDecimal(75), "Express Shipping",
             buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_GENERAL)),
-    EXAMPLE_FILE_2("/edu/cornell/kfs/modules/pursap/rest/jsonObjects/fixture/PaymentRequestDtoTest2.json",
+    JSON_PARSE_EXAMPLE_FILE_2("/edu/cornell/kfs/modules/pursap/rest/jsonObjects/fixture/PaymentRequestDtoTest2.json",
             "V54321", "PO12345", "12/15/2025", "12/16/2025",
             "INV-2025-002", new KualiDecimal(500), "No items", "No notes",
             StringUtils.EMPTY,
             new KualiDecimal(0), StringUtils.EMPTY, new KualiDecimal(0), StringUtils.EMPTY,
             new KualiDecimal(0), StringUtils.EMPTY, buildItems(), buildNotes()),
-    EXAMPLE_FILE_3("/edu/cornell/kfs/modules/pursap/rest/jsonObjects/fixture/PaymentRequestDtoTest3.json",
+    JSON_PARSE_EXAMPLE_FILE_3("/edu/cornell/kfs/modules/pursap/rest/jsonObjects/fixture/PaymentRequestDtoTest3.json",
             "V67890", "PO24680", "10/05/2025", "10/06/2025",
             "INV-2025-003", new KualiDecimal(2500), "Multiple items", "Multiple notes",
             "Extra handling",
@@ -40,7 +39,11 @@ public enum PaymentRequestDtoFixture {
             buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_5_200, PaymentRequestLineItemDtoFixture.ITEM_2_3_400,
                     PaymentRequestLineItemDtoFixture.ITEM_3_2_500),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_FIRST, PaymentRequestNoteDtoFixture.NOTE_SECOND,
-                    PaymentRequestNoteDtoFixture.NOTE_THIRD));
+                    PaymentRequestNoteDtoFixture.NOTE_THIRD)),
+    VALIDATION_TEST_EMPTY(StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, 
+        StringUtils.EMPTY, null, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, 
+        null, StringUtils.EMPTY, null, StringUtils.EMPTY, null, 
+        StringUtils.EMPTY, buildItems(), buildNotes());
 
     private static final DateTimeFormatter DATE_FORMATTER_MMDDYYYY = DateTimeFormatter.ofPattern(
             KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
