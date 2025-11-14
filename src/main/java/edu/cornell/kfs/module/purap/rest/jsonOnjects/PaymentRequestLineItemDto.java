@@ -6,19 +6,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 public class PaymentRequestLineItemDto {
-
     private String lineNumber;
     private KualiDecimal itemQuantity;
     private KualiDecimal itemPrice;
-
-    public PaymentRequestLineItemDto() {
-    }
-
-    public PaymentRequestLineItemDto(String lineNumber, KualiDecimal itemQuantity, KualiDecimal itemPrice) {
-        this.lineNumber = lineNumber;
-        this.itemQuantity = itemQuantity;
-        this.itemPrice = itemPrice;
-    }
 
     public String getLineNumber() {
         return lineNumber;

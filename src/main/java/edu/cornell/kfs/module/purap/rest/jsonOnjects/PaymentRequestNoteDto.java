@@ -5,17 +5,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class PaymentRequestNoteDto {
-
     private String noteText;
     private String noteType;
-
-    public PaymentRequestNoteDto() {
-    }
-
-    public PaymentRequestNoteDto(String noteText, String noteType) {
-        this.noteText = noteText;
-        this.noteType = noteType;
-    }
 
     public String getNoteText() {
         return noteText;
