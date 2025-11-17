@@ -49,8 +49,9 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
         final String payeeTypeCode = getVendorPayeeTypeCodeMapping().get(vendorTypeCode);
         disbursementPayee.setPayeeTypeCode(payeeTypeCode);
 
-        final String vendorAddress = MessageFormat.format(DisbursementPayee.addressPattern, vendorDetail.getDefaultAddressLine1(),
+        final String vendorAddress = MessageFormat.format(DisbursementPayee.addressPatternWithProvince, vendorDetail.getDefaultAddressLine1(),
                 vendorDetail.getDefaultAddressCity(), vendorDetail.getDefaultAddressStateCode(),
+                vendorDetail.getDefaultAddressInternationalProvince(),
                 vendorDetail.getDefaultAddressCountryCode());
         disbursementPayee.setAddress(vendorAddress);
 

@@ -199,7 +199,11 @@ public class CuLaborPendingEntryGenerator {
         	final String tmpLaborBenefitRateCategoryCode = accountingLine.getAccount().getLaborBenefitRateCategoryCode();
 
             positionObjectBenefit.setLaborBenefitRateCategoryCode(tmpLaborBenefitRateCategoryCode);
-            final String benefitTypeCode = positionObjectBenefit.getBenefitsCalculation().getPositionBenefitTypeCode();
+            final BenefitsCalculation benefitsCalculation = positionObjectBenefit.getBenefitsCalculation();
+            if (ObjectUtils.isNull(benefitsCalculation)) {
+                continue;
+            }
+            final String benefitTypeCode = benefitsCalculation.getPositionBenefitTypeCode();
 
             Map<String, KualiDecimal> benefitSumsByObjectCode = new HashMap<String, KualiDecimal> ();
             KualiDecimal benefitAmount = SpringContext.getBean(LaborBenefitsCalculationService.class).calculateFringeBenefit(positionObjectBenefit, accountingLine.getAmount(), accountingLine.getAccountNumber(), accountingLine.getSubAccountNumber());
