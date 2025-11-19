@@ -49,8 +49,9 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
         final String payeeTypeCode = getVendorPayeeTypeCodeMapping().get(vendorTypeCode);
         disbursementPayee.setPayeeTypeCode(payeeTypeCode);
 
-        final String vendorAddress = MessageFormat.format(addressPattern, vendorDetail.getDefaultAddressLine1(),
+        final String vendorAddress = MessageFormat.format(DisbursementPayee.addressPatternWithProvince, vendorDetail.getDefaultAddressLine1(),
                 vendorDetail.getDefaultAddressCity(), vendorDetail.getDefaultAddressStateCode(),
+                vendorDetail.getDefaultAddressInternationalProvince(),
                 vendorDetail.getDefaultAddressCountryCode());
         disbursementPayee.setAddress(vendorAddress);
 
@@ -107,7 +108,7 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
 
         disbursementPayee.setPayeeTypeCode(payeeTypeCode);
         
-        final String personAddress = MessageFormat.format(addressPattern, person.getAddressLine1(), person.getAddressCity(), person.getAddressStateProvinceCode(), person.getAddressCountryCode() == null ? "" : person.getAddressCountryCode());
+        final String personAddress = MessageFormat.format(DisbursementPayee.addressPattern, person.getAddressLine1(), person.getAddressCity(), person.getAddressStateProvinceCode(), person.getAddressCountryCode() == null ? "" : person.getAddressCountryCode());
         disbursementPayee.setAddress(personAddress);
 
         return (DisbursementPayee) disbursementPayee;

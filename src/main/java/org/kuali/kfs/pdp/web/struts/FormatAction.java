@@ -23,9 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -53,6 +50,9 @@ import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 /**
@@ -60,6 +60,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
  */
 public class FormatAction extends KualiAction {
 
+    private DateTimeService dateTimeService;
     protected FormatService formatService;
 
     public FormatAction() {
@@ -97,7 +98,6 @@ public class FormatAction extends KualiAction {
 
         Person kualiUser = GlobalVariables.getUserSession().getPerson();
         FormatSelection formatSelection = formatService.getDataForFormat(kualiUser);
-        DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
 
         formatForm.setCampus(kualiUser.getCampusCode());
 
@@ -105,7 +105,7 @@ public class FormatAction extends KualiAction {
         if (formatSelection.getStartDate() != null) {
             GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS,
                     PdpKeyConstants.Format.ERROR_PDP_FORMAT_PROCESS_ALREADY_RUNNING,
-                    dateTimeService.toDateTimeString(formatSelection.getStartDate()));
+                    getDateTimeService().toDateTimeString(formatSelection.getStartDate()));
         } else {
             List<CustomerProfile> customers = formatSelection.getCustomerList();
 
@@ -117,7 +117,7 @@ public class FormatAction extends KualiAction {
                 }
             }
 
-            formatForm.setPaymentDate(dateTimeService.toDateString(dateTimeService.getCurrentTimestamp()));
+            formatForm.setPaymentDate(getDateTimeService().toDateString(getDateTimeService().getCurrentTimestamp()));
             formatForm.setPaymentTypes(PdpConstants.PaymentTypes.ALL);
             formatForm.setCustomers(customers);
             formatForm.setRanges(formatSelection.getRangeList());
@@ -140,8 +140,6 @@ public class FormatAction extends KualiAction {
             HttpServletResponse response) throws Exception {
         FormatForm formatForm = (FormatForm) form;
 
-        DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
-
         if (formatForm.getCampus() == null) {
             return mapping.findForward(PdpConstants.MAPPING_SELECTION);
         }
@@ -155,7 +153,7 @@ public class FormatAction extends KualiAction {
             }
         }
 
-        Date paymentDate = dateTimeService.convertToSqlDate(formatForm.getPaymentDate());
+        final Date paymentDate = getDateTimeService().convertToSqlDate(formatForm.getPaymentDate());
         Person kualiUser = GlobalVariables.getUserSession().getPerson();
 
         FormatProcessSummary formatProcessSummary = formatService.startFormatProcess(kualiUser, formatForm.getCampus(),
@@ -264,6 +262,13 @@ public class FormatAction extends KualiAction {
         }
 
         return mapping.findForward(KRADConstants.MAPPING_PORTAL);
+    }
+    //CU customization: change method access from private to protected
+    protected DateTimeService getDateTimeService() {
+        if (dateTimeService == null) {
+            dateTimeService = SpringContext.getBean(DateTimeService.class);
+        }
+        return dateTimeService;
     }
 
     /**
