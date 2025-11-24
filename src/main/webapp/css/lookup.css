@@ -1162,12 +1162,6 @@ div.inquiry table.datatable th {
     overflow-y: hidden !important;
 }
 
-/* The rule below is only temporary until we upgrade to the 07/31/2024 financials patch. */
-
-.MuiDataGrid-cell[data-field="actions"] .UY_0wULi9WvnVjswimig a {
-    display: block !important;
-}
-
 /*
  * End CU Customization
  */

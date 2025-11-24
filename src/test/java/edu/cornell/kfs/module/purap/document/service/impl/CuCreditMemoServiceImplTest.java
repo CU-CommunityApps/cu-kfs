@@ -26,7 +26,6 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.document.service.impl.VendorServiceImpl;
-import org.kuali.kfs.vnd.fixture.VendorAddressFixture;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl;
@@ -37,6 +36,7 @@ import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
+import edu.cornell.kfs.vnd.fixture.VendorAddressFixture;
 import edu.cornell.kfs.vnd.fixture.VendorDetailExtensionFixture;
 import edu.cornell.kfs.vnd.fixture.VendorHeaderFixture;
 public class CuCreditMemoServiceImplTest {

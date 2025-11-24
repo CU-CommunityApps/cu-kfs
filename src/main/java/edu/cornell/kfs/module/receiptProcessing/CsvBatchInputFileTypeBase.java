@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -146,17 +147,30 @@ public abstract class CsvBatchInputFileTypeBase<E extends Enum<E>> extends Batch
 
             String errorMessage;
 
-            if (!CollectionUtils.isEqualCollection(expectedHeaderList, inputHeaderList)) {
-                errorMessage = "CSV Batch Input File contains incorrect number of headers";
-                //collection has same elements, now check the exact content orders by looking at the toString comparisons
-            } else if (!expectedHeaderList.equals(inputHeaderList)) {
-                errorMessage = "CSV Batch Input File headers are different";
-            } else {
-                errorMessage = validateDetailRowsContainExpectedNumberOfFields(expectedHeaderList, csvReader);
+            if (expectedHeaderList.size() != inputHeaderList.size()) {
+                final String errorTemplate =
+                        "CSV Batch Input File contains an incorrect number of headers.  Expected: {0}, Found: {1}";
+                errorMessage = MessageFormat.format(errorTemplate, expectedHeaderList.size(), inputHeaderList.size());
+
+                LOG.error("validateCSVFileInput(List<String>, InputStream) - {}", errorMessage);
+                throw new ParseException(errorMessage);
             }
 
+            final String errorTemplate = "CSV Batch Input File header mismatch.  Expected header: ({0}) in "
+                                         + "position: {1}, Found : ({2})";
+            for (int i = 0; i < expectedHeaderList.size(); i++) {
+                if (!StringUtils.equals(expectedHeaderList.get(i), inputHeaderList.get(i))) {
+
+                    errorMessage = MessageFormat.format(errorTemplate, expectedHeaderList.get(i),
+                            Integer.valueOf(i).toString(), inputHeaderList.get(i));
+
+                    LOG.error("validateCSVFileInput(List<String>, InputStream) - {}", errorMessage);
+                    throw new ParseException(errorMessage);
+                }
+            }
+            errorMessage = validateDetailRowsContainExpectedNumberOfFields(expectedHeaderList, csvReader);
             if (errorMessage != null) {
-                LOG.error(errorMessage);
+                LOG.error("validateCSVFileInput(List<String>, InputStream) - {}", errorMessage);
                 throw new ParseException(errorMessage);
             }
         }
