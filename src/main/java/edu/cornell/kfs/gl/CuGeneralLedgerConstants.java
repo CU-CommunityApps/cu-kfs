@@ -16,10 +16,10 @@ public class CuGeneralLedgerConstants {
 	public static class OrganizationReversionProcess {
 		public static final String ORGANIZATION_REVERSION_COA = "ORGANIZATION_REVERSION_COA";
 		public static final String CARRY_FORWARD_OBJECT_CODE = "CARRY_FORWARD_OBJECT_CODE";
-		public static final String DEFAULT_FINANCIAL_SYSTEM_ORIGINATION_CODE = "MANUAL_FEED_ORIGINATION";
-		public static final String DEFAULT_FINANCIAL_BALANCE_TYPE_CODE = "CASH_BALANCE_TYPE";
-		public static final String DEFAULT_FINANCIAL_BALANCE_TYPE_CODE_YEAR_END = "BUDGET_BALANCE_TYPE";
-		public static final String DEFAULT_DOCUMENT_NUMBER_PREFIX = "DOCUMENT_NUMBER_PREFIX";
+		public static final String MANUAL_FEED_ORIGINATION = "MANUAL_FEED_ORIGINATION";
+		public static final String CASH_BALANCE_TYPE = "CASH_BALANCE_TYPE";
+		public static final String BUDGET_BALANCE_TYPE = "BUDGET_BALANCE_TYPE";
+		public static final String DOCUMENT_NUMBER_PREFIX = "DOCUMENT_NUMBER_PREFIX";
 		public static final String UNALLOC_OBJECT_CODE_PARM = "UNALLOCATED_OBJECT_CODE";
 		public static final String CASH_REVERSION_OBJECT_CODE_PARM = "CASH_REVERSION_OBJECT_CODE";
 	}
