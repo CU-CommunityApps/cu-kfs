@@ -75,6 +75,7 @@
     <field-descriptor name="disbVchrPayeeCityName" column="DV_PAYEE_CTY_NM" jdbc-type="VARCHAR" />
     <field-descriptor name="disbVchrPayeeStateCode" column="DV_PAYEE_ST_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="disbVchrPayeeZipCode" column="DV_PAYEE_ZIP_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="disbVchrPayeeProvinceName" column="DV_PAYEE_PROV_NM" jdbc-type="VARCHAR"/>
     <field-descriptor name="disbVchrPayeeCountryCode" column="DV_PAYEE_CNTRY_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="disbVchrSpecialHandlingPersonName" column="DV_RMT_PRSN_NM" jdbc-type="VARCHAR" />
     <field-descriptor name="disbVchrSpecialHandlingLine1Addr" column="DV_RMT_LN1_ADDR" jdbc-type="VARCHAR" />

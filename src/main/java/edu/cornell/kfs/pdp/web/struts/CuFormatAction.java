@@ -41,7 +41,6 @@ public class CuFormatAction extends FormatAction {
         
         final Person kualiUser = GlobalVariables.getUserSession().getPerson();
         final FormatSelection formatSelection = formatService.getDataForFormat(kualiUser);
-        final DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
 
         formatForm.setCampus(kualiUser.getCampusCode());
 
@@ -49,7 +48,7 @@ public class CuFormatAction extends FormatAction {
         if (formatSelection.getStartDate() != null) {
             GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS,
                     PdpKeyConstants.Format.ERROR_PDP_FORMAT_PROCESS_ALREADY_RUNNING, 
-                    dateTimeService.toDateTimeString(formatSelection.getStartDate()));
+                    getDateTimeService().toDateTimeString(formatSelection.getStartDate()));
         } else {
             final List<CustomerProfile> customers = formatSelection.getCustomerList();
 
@@ -61,7 +60,7 @@ public class CuFormatAction extends FormatAction {
                 }
             }
 
-            formatForm.setPaymentDate(dateTimeService.toDateString(dateTimeService.getCurrentTimestamp()));
+            formatForm.setPaymentDate(getDateTimeService().toDateString(getDateTimeService().getCurrentTimestamp()));
             formatForm.setPaymentTypes(PdpConstants.PaymentTypes.ALL);
             formatForm.setPaymentDistribution(CUPdpConstants.PaymentDistributions.PROCESS_ALL);
             formatForm.setCustomers(customers);
@@ -77,8 +76,6 @@ public class CuFormatAction extends FormatAction {
             final HttpServletResponse response) throws Exception {
         final CuFormatForm formatForm = (CuFormatForm) form;
     
-        final DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
-    
         if (formatForm.getCampus() == null) {
             return mapping.findForward(PdpConstants.MAPPING_SELECTION);
         }
@@ -92,7 +89,7 @@ public class CuFormatAction extends FormatAction {
             }
         }
     
-        final Date paymentDate = dateTimeService.convertToSqlDate(formatForm.getPaymentDate());
+        final Date paymentDate = getDateTimeService().convertToSqlDate(formatForm.getPaymentDate());
         final Person kualiUser = GlobalVariables.getUserSession().getPerson();
     
         final FormatProcessSummary formatProcessSummary = ((CuFormatService) formatService).startFormatProcess(kualiUser, formatForm.getCampus(), 
