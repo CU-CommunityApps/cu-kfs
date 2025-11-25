@@ -64,4 +64,6 @@ public class CUPurapKeyConstants {
     public static final String MESSAGE_BATCH_UPLOAD_TITLE_JAGGAER = "jaggaer.xml.upload.title";
 
     public static final String MESSAGE_BATCH_FEED_TITLE_IWANT_DOC = "message.batchFeed.title.iwantdoc";
+
+    public static final String ERROR_PAYMENTREQUEST_AT_LEAST_ONE_MUST_BE_ENTERED = "error.paymentrequest.at.least.one.must.be.entered";
 }

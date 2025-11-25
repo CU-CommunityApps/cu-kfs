@@ -7,7 +7,8 @@ public enum PaymentRequestNoteDtoFixture {
     NOTE_GENERAL("Note text", "General"),
     NOTE_FIRST("First note", "General"),
     NOTE_SECOND("Second note", "Urgent"),
-    NOTE_THIRD("Third note", "Follow-up");
+    NOTE_THIRD("Third note", "Follow-up"),
+    EMPTY_NOTE(null, null);
 
     public final String noteText;
     public final String noteType;

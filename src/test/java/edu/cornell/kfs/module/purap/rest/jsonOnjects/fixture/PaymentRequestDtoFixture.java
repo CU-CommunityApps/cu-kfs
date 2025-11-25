@@ -40,10 +40,22 @@ public enum PaymentRequestDtoFixture {
                     PaymentRequestLineItemDtoFixture.ITEM_3_2_500),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_FIRST, PaymentRequestNoteDtoFixture.NOTE_SECOND,
                     PaymentRequestNoteDtoFixture.NOTE_THIRD)),
+    VALIDATION_TEST_EMPTY_NO_ITEMS_NO_NOTES(StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, 
+        StringUtils.EMPTY, null, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, 
+        null, StringUtils.EMPTY, null, StringUtils.EMPTY, null, 
+        StringUtils.EMPTY, buildItems(), buildNotes(), false, buildMessageList(),
+        buildMessageList("Vendor Number is a required field.", "PO Number is a required field.", 
+            "Invoice Date is a required field.", "Received Date is a required field.", "Invoice Number is a required field.", 
+            "Invoice Amount is a required field.", "At lest one item must be entered.", "At lest one note must be entered.")),
     VALIDATION_TEST_EMPTY(StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, 
         StringUtils.EMPTY, null, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, 
         null, StringUtils.EMPTY, null, StringUtils.EMPTY, null, 
-        StringUtils.EMPTY, buildItems(), buildNotes());
+        StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.EMPTY_ITEM), 
+        buildNotes(PaymentRequestNoteDtoFixture.EMPTY_NOTE), false, buildMessageList(),
+        buildMessageList("Vendor Number is a required field.", "PO Number is a required field.", 
+            "Invoice Date is a required field.", "Received Date is a required field.", "Invoice Number is a required field.", 
+            "Invoice Amount is a required field.", "Item Price is a required field.", "Item Quality is a required field.",
+            "Item Line Number is a required field.", "Note Text is a required field."));
 
     private static final DateTimeFormatter DATE_FORMATTER_MMDDYYYY = DateTimeFormatter.ofPattern(
             KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
@@ -66,6 +78,9 @@ public enum PaymentRequestDtoFixture {
     public final KualiDecimal shippingPrice;
     public final String shippingDescription;
     public final List<PaymentRequestNoteDtoFixture> notes;
+    public boolean expectedValidation;
+    public List<String> expectedSuccessMessages;
+    public List<String> expectedErrorMessages;
 
     private PaymentRequestDtoFixture(String jsonFileName, String vendorNumber, String poNumber, String invoiceDate,
             String receivedDate, String invoiceNumber, KualiDecimal invoiceAmount, String specialHandlingLine1,
@@ -74,6 +89,20 @@ public enum PaymentRequestDtoFixture {
             KualiDecimal miscellaneousPrice,
             String miscellaneousDescription, KualiDecimal shippingPrice, String shippingDescription,
             List<PaymentRequestLineItemDtoFixture> items, List<PaymentRequestNoteDtoFixture> notes) {
+        this(jsonFileName, vendorNumber, poNumber, invoiceDate, receivedDate, invoiceNumber, invoiceAmount, 
+            specialHandlingLine1, specialHandlingLine2, specialHandlingLine3, freightPrice, freightDescription, 
+            miscellaneousPrice, miscellaneousDescription, shippingPrice, shippingDescription, items, notes, 
+            false, null, null);
+    }
+
+    private PaymentRequestDtoFixture(String jsonFileName, String vendorNumber, String poNumber, String invoiceDate,
+            String receivedDate, String invoiceNumber, KualiDecimal invoiceAmount, String specialHandlingLine1,
+            String specialHandlingLine2,
+            String specialHandlingLine3, KualiDecimal freightPrice, String freightDescription,
+            KualiDecimal miscellaneousPrice,
+            String miscellaneousDescription, KualiDecimal shippingPrice, String shippingDescription,
+            List<PaymentRequestLineItemDtoFixture> items, List<PaymentRequestNoteDtoFixture> notes,
+            boolean expectedValidation, List<String> expectedSuccessMessages, List<String> expectedErrorMessages) {
         this.jsonFileName = jsonFileName;
         this.vendorNumber = vendorNumber;
         this.poNumber = poNumber;
@@ -92,6 +121,9 @@ public enum PaymentRequestDtoFixture {
         this.shippingDescription = shippingDescription;
         this.items = items;
         this.notes = notes;
+        this.expectedValidation = expectedValidation;
+        this.expectedSuccessMessages = expectedSuccessMessages;
+        this.expectedErrorMessages = expectedErrorMessages;
     }
 
     private static List<PaymentRequestLineItemDtoFixture> buildItems(PaymentRequestLineItemDtoFixture... items) {
@@ -100,6 +132,10 @@ public enum PaymentRequestDtoFixture {
 
     private static List<PaymentRequestNoteDtoFixture> buildNotes(PaymentRequestNoteDtoFixture... notes) {
         return Collections.unmodifiableList(Arrays.asList(notes));
+    }
+
+    private static List<String> buildMessageList(String ... messages) {
+        return Collections.unmodifiableList(Arrays.asList(messages));
     }
 
     public PaymentRequestDto toPaymentRequestDto() {
@@ -125,7 +161,11 @@ public enum PaymentRequestDtoFixture {
     }
 
     private Date buildDate(String dateString) {
-        LocalDate localDate = LocalDate.parse(dateString, DATE_FORMATTER_MMDDYYYY);
-        return Date.valueOf(localDate);
+        try {
+            LocalDate localDate = LocalDate.parse(dateString, DATE_FORMATTER_MMDDYYYY);
+            return Date.valueOf(localDate);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
