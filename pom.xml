@@ -21,7 +21,7 @@
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
 
-        <kfs.version>2024-07-31</kfs.version>
+        <kfs.version>2024-09-25</kfs.version>
 
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>
         <checkstyle.version>10.17.0</checkstyle.version>

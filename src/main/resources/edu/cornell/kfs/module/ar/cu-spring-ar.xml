@@ -59,12 +59,12 @@
     </bean>
 
 	<bean id="totalAmountBilledToDateExceedsTotalBudgetSuspensionCategory" parent="totalAmountBilledToDateExceedsTotalBudgetSuspensionCategory-parentBean" 
-		class="edu.cornell.kfs.module.ar.document.validation.impl.CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory">
+		class="edu.cornell.kfs.module.ar.document.service.impl.CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategoryServiceImpl">
 	</bean>
 
     <bean id="firstInvoiceForAwardSuspensionCategory" parent="firstInvoiceForAwardSuspensionCategory-parentBean"/>
     <bean id="firstInvoiceForAwardSuspensionCategory-parentBean"
-          class="edu.cornell.kfs.module.ar.document.validation.impl.FirstInvoiceForAwardSuspensionCategory" abstract="true"
+          class="edu.cornell.kfs.module.ar.document.service.impl.FirstInvoiceForAwardSuspensionCategoryServiceImpl" abstract="true"
           p:code="99"
           p:financialSystemDocumentService-ref="financialSystemDocumentService"
           p:contractsGrantsInvoiceDocumentDao-ref="contractsGrantsInvoiceDocumentDao"/>
