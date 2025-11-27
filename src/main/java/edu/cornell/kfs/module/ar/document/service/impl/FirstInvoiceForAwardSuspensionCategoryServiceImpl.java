@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.ar.document.validation.impl;
+package edu.cornell.kfs.module.ar.document.service.impl;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -15,7 +15,7 @@ import org.kuali.kfs.module.ar.ArPropertyConstants;
 import org.kuali.kfs.module.ar.businessobject.InvoiceAccountDetail;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.document.dataaccess.ContractsGrantsInvoiceDocumentDao;
-import org.kuali.kfs.module.ar.document.validation.SuspensionCategoryBase;
+import org.kuali.kfs.module.ar.document.service.SuspensionCategoryService;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -24,7 +24,7 @@ import org.kuali.kfs.core.api.search.SearchOperator;
 
 import edu.cornell.kfs.module.ar.CuArPropertyConstants;
 
-public class FirstInvoiceForAwardSuspensionCategory extends SuspensionCategoryBase {
+public class FirstInvoiceForAwardSuspensionCategoryServiceImpl implements SuspensionCategoryService {
 
     private FinancialSystemDocumentService financialSystemDocumentService;
     private ContractsGrantsInvoiceDocumentDao contractsGrantsInvoiceDocumentDao;

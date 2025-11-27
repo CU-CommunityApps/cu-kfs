@@ -23,7 +23,6 @@ import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.kew.actionrequest.service.ActionRequestService;
 import org.kuali.kfs.kew.api.document.DocumentProcessingOptions;
 import org.kuali.kfs.kew.api.document.DocumentProcessingQueue;
-import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 import org.kuali.kfs.kew.engine.OrchestrationConfig;
 import org.kuali.kfs.kew.engine.WorkflowEngineFactory;
 import org.kuali.kfs.kew.engine.node.service.RouteNodeService;
@@ -47,7 +46,6 @@ public class DocumentProcessingQueueImpl implements DocumentProcessingQueue {
 
     private WorkflowEngineFactory workflowEngineFactory;
     private ActionRequestService actionRequestService;
-    private DocumentAttributeIndexingQueue documentAttributeIndexingQueue;
     private RouteHeaderService routeHeaderService;
     private RouteNodeService routeNodeService;
 
@@ -92,7 +90,7 @@ public class DocumentProcessingQueueImpl implements DocumentProcessingQueue {
             final OrchestrationConfig config = helper.configFor(options);
             helper.processDocument(documentId, config, workflowEngineFactory);
         }
-        helper.queueForIndexing(documentId, options, documentAttributeIndexingQueue);
+        helper.queueForIndexing(documentId, options);
     }
 
     /*
@@ -151,10 +149,6 @@ public class DocumentProcessingQueueImpl implements DocumentProcessingQueue {
 
     public void setRouteNodeService(final RouteNodeService routeNodeService) {
         this.routeNodeService = routeNodeService;
-    }
-
-    public void setDocumentAttributeIndexingQueue(final DocumentAttributeIndexingQueue documentAttributeIndexingQueue) {
-        this.documentAttributeIndexingQueue = documentAttributeIndexingQueue;
     }
 
 }
