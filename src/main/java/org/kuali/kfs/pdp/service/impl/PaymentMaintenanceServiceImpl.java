@@ -29,7 +29,6 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.krad.bo.KualiCode;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -77,6 +76,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 
@@ -116,25 +116,13 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
      * @param user             the user that changed the status
      */
     protected void changeStatus(
-            final PaymentGroup paymentGroup, final String newPaymentStatus, final String changeStatus, final String note,
-            final Person user) {
-        LOG.debug("changeStatus() started with new status of {}", newPaymentStatus);
-
-        final PaymentGroupHistory paymentGroupHistory = new PaymentGroupHistory();
-        final KualiCode cd = businessObjectService.findBySinglePrimaryKey(PaymentChangeCode.class, changeStatus);
-        paymentGroupHistory.setPaymentChange((PaymentChangeCode) cd);
-        paymentGroupHistory.setOrigPaymentStatus(paymentGroup.getPaymentStatus());
-        paymentGroupHistory.setChangeUser(user);
-        paymentGroupHistory.setChangeNoteText(note);
-        paymentGroupHistory.setPaymentGroup(paymentGroup);
-        paymentGroupHistory.setChangeTime(new Timestamp(new Date().getTime()));
-
-        businessObjectService.save(paymentGroupHistory);
-
-        final KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, newPaymentStatus);
-        paymentGroup.setPaymentStatus((PaymentStatus) code);
-        businessObjectService.save(paymentGroup);
-        LOG.debug("changeStatus() Status has been changed; exit method.");
+            final PaymentGroup paymentGroup,
+            final String newPaymentStatus,
+            final String changeStatus,
+            final String note,
+            final Person user
+    ) {
+        changeStatus(paymentGroup, newPaymentStatus, changeStatus, note, user, new PaymentGroupHistory());
     }
 
     /**
@@ -145,15 +133,20 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
      * @param changeStatus        the status that is changed
      * @param note                the note entered by the user
      * @param user                the user that changed the
-     * @param paymentGroupHistory
      */
     protected void changeStatus(
-            final PaymentGroup paymentGroup, final String newPaymentStatus, final String changeStatus, final String note,
-            final Person user, final PaymentGroupHistory paymentGroupHistory) {
-        LOG.debug("changeStatus() started with new status of {}", newPaymentStatus);
+            final PaymentGroup paymentGroup,
+            final String newPaymentStatus,
+            final String changeStatus,
+            final String note,
+            final Person user,
+            final PaymentGroupHistory paymentGroupHistory
+    ) {
+        LOG.debug("changeStatus(...) - Enter : newPaymentStatus={}", newPaymentStatus);
 
-        final KualiCode cd = businessObjectService.findBySinglePrimaryKey(PaymentChangeCode.class, changeStatus);
-        paymentGroupHistory.setPaymentChange((PaymentChangeCode) cd);
+        final PaymentChangeCode cd =
+                businessObjectService.findBySinglePrimaryKey(PaymentChangeCode.class, changeStatus);
+        paymentGroupHistory.setPaymentChange(cd);
         paymentGroupHistory.setOrigPaymentStatus(paymentGroup.getPaymentStatus());
         paymentGroupHistory.setChangeUser(user);
         paymentGroupHistory.setChangeNoteText(note);
@@ -162,22 +155,25 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
 
         businessObjectService.save(paymentGroupHistory);
 
-        final KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, newPaymentStatus);
-        if (paymentGroup.getPaymentStatus() != code) {
-            paymentGroup.setPaymentStatus((PaymentStatus) code);
-        }
+        final PaymentStatus code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, newPaymentStatus);
+        paymentGroup.setPaymentStatus(code);
         businessObjectService.save(paymentGroup);
 
-        LOG.debug("changeStatus() Status has been changed; exit method.");
+        LOG.debug("changeStatus(...) - Status has been changed; exit method.");
     }
 
     @Override
-    public boolean cancelPendingPayment(final Integer paymentGroupId, final Integer paymentDetailId, final String note, final Person user) {
-        LOG.debug("cancelPendingPayment() started");
+    public boolean cancelPendingPayment(
+            final Integer paymentGroupId,
+            final Integer paymentDetailId,
+            final String note,
+            final Person user
+    ) {
+        LOG.debug("cancelPendingPayment(...) - Enter");
 
         final PaymentGroup paymentGroup = paymentGroupService.get(paymentGroupId);
         if (paymentGroup == null) {
-            LOG.debug("cancelPendingPayment() Pending payment not found; throw exception.");
+            LOG.debug("cancelPendingPayment(...) - Pending payment not found; throw exception.");
             GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS,
                     PdpKeyConstants.PaymentDetail.ErrorMessages.ERROR_PAYMENT_NOT_FOUND);
             return false;
@@ -186,18 +182,18 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
         final String paymentStatus = paymentGroup.getPaymentStatus().getCode();
 
         if (!PdpConstants.PaymentStatusCodes.CANCEL_PAYMENT.equals(paymentStatus)) {
-            LOG.debug("cancelPendingPayment() Payment status is {}; continue with cancel.", paymentStatus);
+            LOG.debug("cancelPendingPayment(...) - Continue with cancel : paymentStatus={}", paymentStatus);
 
             if (PdpConstants.PaymentStatusCodes.OPEN.equals(paymentStatus)
                     || PdpConstants.PaymentStatusCodes.HELD_CD.equals(paymentStatus)) {
                 if (!pdpAuthorizationService.hasCancelPaymentPermission(user.getPrincipalId())) {
                     LOG.warn(
-                            "cancelPendingPayment() Payment status is {}; user does not have rights to cancel. This "
-                            + "should not happen unless user is URL spoofing.",
+                            "cancelPendingPayment(...) - User does not have rights to cancel. This should not happen "
+                                + "unless user is URL spoofing : paymentStatus={}",
                             paymentStatus
                     );
-                    throw new RuntimeException("cancelPendingPayment() Payment status is " + paymentStatus +
-                            "; user does not have rights to cancel. This should not happen unless user is URL spoofing.");
+                    throw new RuntimeException("Payment status is " + paymentStatus + "; user does not have rights to"
+                           + " cancel. This should not happen unless user is URL spoofing.");
                 }
 
                 changeStatus(paymentGroup, PdpConstants.PaymentStatusCodes.CANCEL_PAYMENT,
@@ -221,7 +217,7 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
                 LOG.debug("cancelPendingPayment() Pending payment cancelled; exit method.");
             } else {
                 LOG.debug(
-                        "cancelPendingPayment() Payment status is {}; cannot cancel payment in this status",
+                        "cancelPendingPayment(...) - Cannot cancel payment in this status : paymentStatus={}",
                         paymentStatus
                 );
 
@@ -230,28 +226,29 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
                 return false;
             }
         } else {
-            LOG.debug("cancelPendingPayment() Pending payment group has already been cancelled; exit method.");
+            LOG.debug("cancelPendingPayment(...) - Pending payment group has already been cancelled; exit method.");
         }
         return true;
     }
 
     @Override
     public boolean holdPendingPayment(final Integer paymentGroupId, final String note, final Person user) {
-        LOG.debug("holdPendingPayment() started");
+        LOG.debug("holdPendingPayment(...) - Enter");
         // All actions must be performed on entire group not individual detail record
 
         if (!pdpAuthorizationService.hasHoldPaymentPermission(user.getPrincipalId())) {
             LOG.warn(
-                    "holdPendingPayment() User {} does not have rights to hold payments. This should not happen unless user is URL spoofing.",
+                    "holdPendingPayment(...) - User does not have rights to hold payments. This should not happen "
+                        + "unless user is URL spoofing : user.principalId={}",
                     user::getPrincipalId
             );
-            throw new RuntimeException("holdPendingPayment() User " + user.getPrincipalId() +
+            throw new RuntimeException("User " + user.getPrincipalId() +
                     " does not have rights to hold payments. This should not happen unless user is URL spoofing.");
         }
 
         final PaymentGroup paymentGroup = paymentGroupService.get(paymentGroupId);
         if (paymentGroup == null) {
-            LOG.debug("holdPendingPayment() Pending payment not found; throw exception.");
+            LOG.debug("holdPendingPayment(...) - Pending payment not found; throw exception.");
             GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS,
                     PdpKeyConstants.PaymentDetail.ErrorMessages.ERROR_PAYMENT_NOT_FOUND);
             return false;
@@ -261,14 +258,15 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
 
         if (!PdpConstants.PaymentStatusCodes.HELD_CD.equals(paymentStatus)) {
             if (PdpConstants.PaymentStatusCodes.OPEN.equals(paymentStatus)) {
-                LOG.debug("holdPendingPayment() Payment status is {}; continue with hold.", paymentStatus);
+                LOG.debug("holdPendingPayment(...) - Continue with hold : paymentStatus={}", paymentStatus);
 
                 changeStatus(paymentGroup, PdpConstants.PaymentStatusCodes.HELD_CD,
                         PdpConstants.PaymentChangeCodes.HOLD_CHNG_CD, note, user);
 
                 LOG.debug("holdPendingPayment() Pending payment was put on hold; exit method.");
             } else {
-                LOG.debug("holdPendingPayment() Payment status is {}; cannot hold payment in this status",
+                LOG.debug(
+                        "holdPendingPayment(...) - Cannot hold payment in this status - paymentStatus={}",
                         paymentStatus
                 );
 
@@ -277,7 +275,7 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
                 return false;
             }
         } else {
-            LOG.debug("holdPendingPayment() Pending payment group has already been held; exit method.");
+            LOG.debug("holdPendingPayment(...) Pending payment group has already been held; exit method.");
         }
         return true;
 
@@ -285,11 +283,11 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
 
     @Override
     public boolean removeHoldPendingPayment(final Integer paymentGroupId, final String note, final Person user) {
-        LOG.debug("removeHoldPendingPayment() started");
+        LOG.debug("removeHoldPendingPayment(...) -Enter");
 
         final PaymentGroup paymentGroup = paymentGroupService.get(paymentGroupId);
         if (paymentGroup == null) {
-            LOG.debug("removeHoldPendingPayment() Payment not found; throw exception.");
+            LOG.debug("removeHoldPendingPayment(...) - Payment not found; throw exception.");
 
             GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS,
                     PdpKeyConstants.PaymentDetail.ErrorMessages.ERROR_PAYMENT_NOT_FOUND);
@@ -299,25 +297,27 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
         final String paymentStatus = paymentGroup.getPaymentStatus().getCode();
 
         if (!PdpConstants.PaymentStatusCodes.OPEN.equals(paymentStatus)) {
-            LOG.debug("removeHoldPendingPayment() Payment status is {}; continue with hold removal.", paymentStatus);
+            LOG.debug("removeHoldPendingPayment(...) - Continue with hold removal : paymentStatus={}", paymentStatus);
 
             if (PdpConstants.PaymentStatusCodes.HELD_CD.equals(paymentStatus)) {
                 if (!pdpAuthorizationService.hasHoldPaymentPermission(user.getPrincipalId())) {
                     LOG.warn(
-                            "removeHoldPendingPayment() User {} does not have rights to hold payments. This should not happen unless user is URL spoofing.",
+                            "removeHoldPendingPayment(...) User does not have rights to set payments as immediate. "
+                                + "This should not happen unless user is URL spoofing : user.principalId={}",
                             user::getPrincipalId
                     );
-                    throw new RuntimeException("removeHoldPendingPayment() User " + user.getPrincipalId() +
-                            " does not have rights to hold payments. This should not happen unless user is URL spoofing.");
+                    throw new RuntimeException("User " + user.getPrincipalId() + " does not have rights to hold "
+                               + "payments. This should not happen unless user is URL spoofing.");
                 }
 
                 changeStatus(paymentGroup, PdpConstants.PaymentStatusCodes.OPEN,
                         PdpConstants.PaymentChangeCodes.REMOVE_HOLD_CHNG_CD, note, user);
 
-                LOG.debug("removeHoldPendingPayment() Pending payment was taken off hold; exit method.");
+                LOG.debug("removeHoldPendingPayment(...) - Pending payment was taken off hold; exit method.");
             } else {
                 LOG.debug(
-                        "removeHoldPendingPayment() Payment status is {}; cannot remove hold on payment in this status",
+                        "removeHoldPendingPayment(...) - Cannot remove hold on payment in this status : "
+                            + "paymentStatus={}",
                         paymentStatus
                 );
 
@@ -326,24 +326,25 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
                 return false;
             }
         } else {
-            LOG.debug("removeHoldPendingPayment() Pending payment group has already been un-held; exit method.");
+            LOG.debug("removeHoldPendingPayment(...) - Pending payment group has already been un-held; exit method.");
         }
         return true;
     }
 
     @Override
     public void changeImmediateFlag(final Integer paymentGroupId, final String note, final Person user) {
-        LOG.debug("changeImmediateFlag() started");
+        LOG.debug("changeImmediateFlag(...) - Enter");
 
         // All actions must be performed on entire group not individual detail record
 
         if (!pdpAuthorizationService.hasSetAsImmediatePayPermission(user.getPrincipalId())) {
             LOG.warn(
-                    "changeImmediateFlag() User {} does not have rights to set payments as immediate. This should not happen unless user is URL spoofing.",
+                    "changeImmediateFlag(...) - User does not have rights to set payments as immediate. This "
+                        + "should not happen unless user is URL spoofing : user.principalId={}",
                     user::getPrincipalId
             );
-            throw new RuntimeException("changeImmediateFlag() User " + user.getPrincipalId() +
-                    " does not have rights to payments as immediate. This should not happen unless user is URL spoofing.");
+            throw new RuntimeException("User " + user.getPrincipalId() + " does not have rights to payments as "
+                       + "immediate. This should not happen unless user is URL spoofing.");
         }
 
         final PaymentGroupHistory paymentGroupHistory = new PaymentGroupHistory();
@@ -362,24 +363,30 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
     }
 
     @Override
-    public boolean cancelDisbursement(final Integer paymentGroupId, final Integer paymentDetailId, final String note, final Person user) {
-        LOG.debug("cancelDisbursement() started");
+    public boolean cancelDisbursement(
+            final Integer paymentGroupId,
+            final Integer paymentDetailId,
+            final String note,
+            final Person user
+    ) {
+        LOG.debug("cancelDisbursement(...) - Enter");
 
         // All actions must be performed on entire group not individual detail record
 
         if (!pdpAuthorizationService.hasCancelPaymentPermission(user.getPrincipalId())) {
             LOG.warn(
-                    "cancelDisbursement() User {} does not have rights to cancel payments. This should not happen unless user is URL spoofing.",
+                    "cancelDisbursement(...) - User does not have rights to cancel payments. This should not "
+                        + "happen unless user is URL spoofing : user.principalId={}",
                     user::getPrincipalId
             );
-            throw new RuntimeException("cancelDisbursement() User " + user.getPrincipalId() +
+            throw new RuntimeException("User " + user.getPrincipalId() +
                     " does not have rights to cancel payments. This should not happen unless user is URL spoofing.");
         }
 
         final PaymentGroup paymentGroup = paymentGroupService.get(paymentGroupId);
 
         if (paymentGroup == null) {
-            LOG.debug("cancelDisbursement() Disbursement not found; throw exception.");
+            LOG.debug("cancelDisbursement(...) - Disbursement not found; throw exception.");
             GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS,
                     PdpKeyConstants.PaymentDetail.ErrorMessages.ERROR_DISBURSEMENT_NOT_FOUND);
             return false;
@@ -391,7 +398,7 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
             if (PdpConstants.PaymentStatusCodes.EXTRACTED.equals(paymentStatus)
                 && ObjectUtils.isNotNull(paymentGroup.getDisbursementDate())
                 || PdpConstants.PaymentStatusCodes.PENDING_ACH.equals(paymentStatus)) {
-                LOG.debug("cancelDisbursement() Payment status is {}; continue with cancel.", paymentStatus);
+                LOG.debug("cancelDisbursement(...) - Continue with cancel : paymentStatus={}", paymentStatus);
 
                 final List<PaymentGroup> allDisbursementPaymentGroups = paymentGroupService.getByDisbursementNumber(
                         paymentGroup.getDisbursementNbr().intValue());
@@ -400,9 +407,9 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
                     final PaymentGroupHistory pgh = new PaymentGroupHistory();
 
                     if (!element.getPaymentDetails().get(0).isDisbursementActionAllowed()) {
-                        LOG.warn("cancelDisbursement() Payment does not allow disbursement action. This should " +
+                        LOG.warn("cancelDisbursement(...) - Payment does not allow disbursement action. This should " +
                                 "not happen unless user is URL spoofing.");
-                        throw new RuntimeException("cancelDisbursement() Payment does not allow disbursement action. " +
+                        throw new RuntimeException("Payment does not allow disbursement action. " +
                                 "This should not happen unless user is URL spoofing.");
                     }
 
@@ -422,10 +429,13 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
                     // these payment details will be canceled when running processPdpCancelAndPaidJOb
                     final Map<String, KualiInteger> primaryKeys = new HashMap<>();
 
-                    primaryKeys.put(PdpPropertyConstants.PaymentDetail.PAYMENT_DETAIL_PAYMENT_GROUP_ID, element.getId());
+                    primaryKeys.put(
+                            PdpPropertyConstants.PaymentDetail.PAYMENT_DETAIL_PAYMENT_GROUP_ID,
+                            element.getId());
 
                     // cancel all  payment details for payment group
-                    final List<PaymentDetail> pds = (List<PaymentDetail>) businessObjectService.findMatching(PaymentDetail.class, primaryKeys);
+                    final List<PaymentDetail> pds = (List<PaymentDetail>)
+                            businessObjectService.findMatching(PaymentDetail.class, primaryKeys);
                     if (pds != null && !pds.isEmpty()) {
                         for (final PaymentDetail pd : pds) {
                             pd.setPrimaryCancelledPayment(Boolean.TRUE);
@@ -437,7 +447,8 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
                 LOG.debug("cancelDisbursement() Disbursement cancelled; exit method.");
             } else {
                 LOG.debug(
-                        "cancelDisbursement() Payment status is {} and disbursement date is {}; cannot cancel payment in this status",
+                        "cancelDisbursement(...) - Cannot cancel payment in this status : paymentStatus={}; "
+                            + "paymentGroup.disbursementDate={}",
                         () -> paymentStatus,
                         paymentGroup::getDisbursementDate
                 );
@@ -447,7 +458,7 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
                 return false;
             }
         } else {
-            LOG.debug("cancelDisbursement() Disbursement has already been cancelled; exit method.");
+            LOG.debug("cancelDisbursement(...) - Disbursement has already been cancelled; exit method.");
         }
         return true;
     }
@@ -521,13 +532,13 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
 
     @Override
     public boolean reissueDisbursement(final Integer paymentGroupId, final String note, final Person user) {
-        LOG.debug("reissueDisbursement() started");
+        LOG.debug("reissueDisbursement(...) - Enter");
 
         // All actions must be performed on entire group not individual detail record
 
         final PaymentGroup paymentGroup = paymentGroupService.get(paymentGroupId);
         if (paymentGroup == null) {
-            LOG.debug("reissueDisbursement() Disbursement not found; throw exception.");
+            LOG.debug("reissueDisbursement(...) - Disbursement not found; throw exception.");
             GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS,
                     PdpKeyConstants.PaymentDetail.ErrorMessages.ERROR_DISBURSEMENT_NOT_FOUND);
             return false;
@@ -537,7 +548,9 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
         if (disbursementTypeCode != null
                 && !PdpConstants.DisbursementTypeCodes.ACH.equals(disbursementTypeCode)
                 && !PdpConstants.DisbursementTypeCodes.CHECK.equals(disbursementTypeCode)) {
-            LOG.debug("reissueDisbursement() Disbursement type cannot be {}", disbursementTypeCode);
+            LOG.debug(
+                    "reissueDisbursement(..) - Invalid disbursement type : disbursementTypeCode={}",
+                    disbursementTypeCode);
             GlobalVariables.getMessageMap().putError(
                     KFSConstants.GLOBAL_ERRORS,
                     PdpKeyConstants.PaymentDetail.ErrorMessages.ERROR_DISBURSEMENT_INVALID_TO_CANCEL_AND_REISSUE);
@@ -548,75 +561,23 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
 
         if (!PdpConstants.PaymentStatusCodes.OPEN.equals(paymentStatus)) {
             if (PdpConstants.PaymentStatusCodes.CANCEL_DISBURSEMENT.equals(paymentStatus)
-                    && ObjectUtils.isNotNull(paymentGroup.getDisbursementDate())) {
-                LOG.debug("reissueDisbursement() Payment status is {}; continue with reissue.", paymentStatus);
-
-                final List<PaymentGroup> allDisbursementPaymentGroups = paymentGroupService.getByDisbursementNumber(
-                        paymentGroup.getDisbursementNbr().intValue());
-
-                for (final PaymentGroup pg : allDisbursementPaymentGroups) {
-                    final PaymentGroupHistory pgh = new PaymentGroupHistory();
-
-                    if (!pg.getPaymentDetails().get(0).isDisbursementActionAllowed()) {
-                        LOG.warn("reissueDisbursement() Payment does not allow disbursement action. This should " +
-                                "not happen unless user is URL spoofing.");
-                        throw new RuntimeException("reissueDisbursement() Payment does not allow disbursement " +
-                                "action. This should not happen unless user is URL spoofing.");
-                    }
-
-                    pgh.setOrigProcessImmediate(pg.getProcessImmediate());
-                    pgh.setOrigPmtSpecHandling(pg.getPymtSpecialHandling());
-                    pgh.setBank(pg.getBank());
-                    pgh.setOrigPaymentDate(pg.getPaymentDate());
-                    //put a check for null since disbursement date was not set in testMode / dev
-                    if (ObjectUtils.isNotNull(pg.getDisbursementDate())) {
-                        pgh.setOrigDisburseDate(new Timestamp(pg.getDisbursementDate().getTime()));
-                    }
-                    pgh.setOrigAchBankRouteNbr(pg.getAchBankRoutingNbr());
-                    pgh.setOrigDisburseNbr(pg.getDisbursementNbr());
-                    pgh.setOrigAdviceEmail(pg.getAdviceEmailAddress());
-                    pgh.setDisbursementType(pg.getDisbursementType());
-                    pgh.setProcess(pg.getProcess());
-
-                    glPendingTransactionService.generateReissueGeneralLedgerPendingEntries(pg);
-
+                    && ObjectUtils.isNotNull(paymentGroup.getDisbursementDate())
+            ) {
+                if (ObjectUtils.isNull(paymentGroup.getEpicPaymentCancelledExtractedDate())) {
                     LOG.debug(
-                            "reissueDisbursement() Status is '{}; delete row from AchAccountNumber table.",
-                            paymentStatus
-                    );
-
-                    final AchAccountNumber achAccountNumber = pg.getAchAccountNumber();
-
-                    if (ObjectUtils.isNotNull(achAccountNumber)) {
-                        businessObjectService.delete(achAccountNumber);
-                        pg.setAchAccountNumber(null);
-                    }
-
-                    // if bank functionality is not enabled or the group bank is inactive clear bank code
-                    if (!bankService.isBankSpecificationEnabled() || !pg.getBank().isActive()) {
-                        pg.setBank(null);
-                    }
-
-                    pg.setDisbursementDate((java.sql.Date) null);
-                    pg.setAchBankRoutingNbr(null);
-                    pg.setAchAccountType(null);
-                    pg.setPhysCampusProcessCd(null);
-                    pg.setDisbursementNbr((KualiInteger) null);
-                    pg.setAdviceEmailAddress(null);
-                    pg.setDisbursementType(null);
-                    pg.setProcess(null);
-                    pg.setProcessImmediate(false);
-
-                    processPdpReissue(pg);
-
-                    changeStatus(pg, PdpConstants.PaymentStatusCodes.OPEN,
-                            PdpConstants.PaymentChangeCodes.REISSUE_DISBURSEMENT, note, user, pgh);
+                            "reissueDisbursement(...) - Cancel not extracted, process as cancel-reissue"
+                                + " : paymentStatus={}",
+                            paymentStatus);
+                    return doReissueDisbursementUnprocessedCancel(paymentGroup, user, note);
+                } else {
+                    LOG.debug("reissueDisbursement(...) - Continue with reissue : paymentStatus={}", paymentStatus);
+                    doReissueDisbursement(paymentGroup, user, note);
+                    LOG.debug("reissueDisbursement(...) - Disbursement reissued; exit method.");
                 }
-
-                LOG.debug("reissueDisbursement() Disbursement reissued; exit method.");
             } else {
                 LOG.debug(
-                        "reissueDisbursement() Payment status is {} and disbursement date is {}; cannot cancel payment",
+                        "reissueDisbursement(...) - Cannot cancel payment : paymentStatus={}, "
+                            + "paymentGroup.disbursementDate={}",
                         () -> paymentStatus,
                         paymentGroup::getDisbursementDate
                 );
@@ -631,6 +592,55 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
         return true;
     }
 
+    private boolean doReissueDisbursementUnprocessedCancel(
+            final PaymentGroup paymentGroup,
+            final Person user,
+            final String note
+    ) {
+        final Set<String> cancelCheckAchTypes = Set.of(
+                PdpConstants.FinancialDocumentTypeCodes.CANCEL_CHECK,
+                PdpConstants.FinancialDocumentTypeCodes.CANCEL_ACH
+        );
+        if (!glPendingTransactionService.clearUnextractedTransactions(paymentGroup, cancelCheckAchTypes)) {
+            return false;
+        }
+        doCancelReissueDisbursement(paymentGroup, user, note);
+        return true;
+    }
+
+    private void doReissueDisbursement(final PaymentGroup paymentGroup, final Person user, final String note) {
+        final List<PaymentGroup> allDisbursementPaymentGroups = paymentGroupService.getByDisbursementNumber(
+                paymentGroup.getDisbursementNbr().intValue());
+
+        for (final PaymentGroup pg : allDisbursementPaymentGroups) {
+            final PaymentGroupHistory pgh = new PaymentGroupHistory();
+
+            if (!pg.getPaymentDetails().get(0).isDisbursementActionAllowed()) {
+                LOG.warn("doReissueDisbursement(...) - Payment does not allow disbursement action. This should " +
+                        "not happen unless user is URL spoofing.");
+                throw new RuntimeException("Payment does not allow disbursement " +
+                        "action. This should not happen unless user is URL spoofing.");
+            }
+
+            initializePaymentGroupHistoryForReissue(pg, pgh);
+
+            glPendingTransactionService.generateReissueGeneralLedgerPendingEntries(pg);
+
+            LOG.debug(
+                    "doReissueDisbursement(...) - Delete row from AchAccountNumber table : "
+                        + "paymentGroup.paymentStatus.code={}",
+                    () -> paymentGroup.getPaymentStatus().getCode()
+            );
+
+            adjustPaymentGroupForReissue(pg);
+
+            processPdpReissue(pg);
+
+            changeStatus(pg, PdpConstants.PaymentStatusCodes.OPEN,
+                    PdpConstants.PaymentChangeCodes.REISSUE_DISBURSEMENT, note, user, pgh);
+        }
+    }
+
     /**
      * @param paymentGroup to execute reissue logic on per purap integration service
      */
@@ -640,13 +650,13 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
         paymentGroup.setEpicPaymentCancelledExtractedDate(null);
 
         for (final PaymentDetail paymentDetail : paymentDetails) {
-            LOG.debug("processPdpReissue() - process payment detail; paymentDetailId={}", paymentDetail::getId);
+            LOG.debug("processPdpReissue(...) - process payment detail; paymentDetailId={}", paymentDetail::getId);
             final String documentTypeCode = paymentDetail.getFinancialDocumentTypeCode();
             final String documentNumber = paymentDetail.getCustPaymentDocNbr();
 
             if (isPurchasingBatchDocument(documentTypeCode)) {
                 LOG.debug(
-                        "processPdpReissue() - document type is a purchasing batch document; paymentDetailId={}, "
+                        "processPdpReissue(...) - document type is a purchasing batch document; paymentDetailId={}, "
                             + "documentTypeCode={}",
                         paymentDetail::getId,
                         paymentDetail::getCustPaymentDocNbr
@@ -654,7 +664,7 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
                 handlePurchasingBatchReissue(documentNumber, documentTypeCode);
             } else if (DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH.equals(documentTypeCode)) {
                 LOG.debug(
-                        "processPdpReissue() - document type is DVCA; paymentDetailId={}",
+                        "processPdpReissue(...) - document type is DVCA; paymentDetailId={}",
                         paymentDetail::getId
                 );
                 disbursementVoucherExtractService.reextractForReissue(documentNumber);
@@ -734,16 +744,17 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
 
         if (!pdpAuthorizationService.hasCancelPaymentPermission(user.getPrincipalId())) {
             LOG.warn(
-                    "cancelReissueDisbursement() User {} does not have rights to cancel payments. This should not happen unless user is URL spoofing.",
+                    "cancelReissueDisbursement(...) - User does not have rights to cancel payments. This should "
+                    + "not happen unless user is URL spoofing : user.principalId={}",
                     user::getPrincipalId
             );
-            throw new RuntimeException("cancelReissueDisbursement() User " + user.getPrincipalId() + " does not " +
+            throw new RuntimeException("User " + user.getPrincipalId() + " does not " +
                     "have rights to cancel payments. This should not happen unless user is URL spoofing.");
         }
 
         final PaymentGroup paymentGroup = paymentGroupService.get(paymentGroupId);
         if (paymentGroup == null) {
-            LOG.debug("cancelReissueDisbursement() Disbursement not found; throw exception.");
+            LOG.debug("cancelReissueDisbursement(...) - Disbursement not found; throw exception.");
             GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS,
                     PdpKeyConstants.PaymentDetail.ErrorMessages.ERROR_DISBURSEMENT_NOT_FOUND);
             return false;
@@ -753,7 +764,7 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
         if (disbursementTypeCode != null
                 && !PdpConstants.DisbursementTypeCodes.ACH.equals(disbursementTypeCode)
                 && !PdpConstants.DisbursementTypeCodes.CHECK.equals(disbursementTypeCode)) {
-            LOG.debug("cancelReissueDisbursement() Disbursement type cannot be {}", disbursementTypeCode);
+            LOG.debug("cancelReissueDisbursement(...) - Disbursement type cannot be {}", disbursementTypeCode);
             GlobalVariables.getMessageMap().putError(
                     KFSConstants.GLOBAL_ERRORS,
                     PdpKeyConstants.PaymentDetail.ErrorMessages.ERROR_DISBURSEMENT_INVALID_TO_CANCEL_AND_REISSUE);
@@ -765,78 +776,15 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
         if (!PdpConstants.PaymentStatusCodes.OPEN.equals(paymentStatus)) {
             if (PdpConstants.PaymentStatusCodes.EXTRACTED.equals(paymentStatus)
                 && ObjectUtils.isNotNull(paymentGroup.getDisbursementDate())
-                || PdpConstants.PaymentStatusCodes.PENDING_ACH.equals(paymentStatus)) {
-                LOG.debug("cancelReissueDisbursement() Payment status is {}; continue with cancel.", paymentStatus);
-
-                final List<PaymentGroup> allDisbursementPaymentGroups = paymentGroupService.getByDisbursementNumber(
-                        paymentGroup.getDisbursementNbr().intValue());
-
-                for (final PaymentGroup pg : allDisbursementPaymentGroups) {
-                    final PaymentGroupHistory pgh = new PaymentGroupHistory();
-
-                    if (!pg.getPaymentDetails().get(0).isDisbursementActionAllowed()) {
-                        LOG.warn("cancelDisbursement() Payment does not allow disbursement action. This should " +
-                                "not happen unless user is URL spoofing.");
-                        throw new RuntimeException("cancelDisbursement() Payment does not allow disbursement " +
-                                "action. This should not happen unless user is URL spoofing.");
-                    }
-
-                    if (ObjectUtils.isNotNull(pg.getDisbursementType())
-                        && pg.getDisbursementType().getCode().equals(PdpConstants.DisbursementTypeCodes.CHECK)) {
-                        pgh.setPmtCancelExtractStat(Boolean.FALSE);
-                    }
-
-                    pgh.setOrigProcessImmediate(pg.getProcessImmediate());
-                    pgh.setOrigPmtSpecHandling(pg.getPymtSpecialHandling());
-                    pgh.setBank(pg.getBank());
-                    pgh.setOrigPaymentDate(pg.getPaymentDate());
-                    //put a check for null since disbursement date was not set in testMode / dev
-                    if (ObjectUtils.isNotNull(pg.getDisbursementDate())) {
-                        pgh.setOrigDisburseDate(new Timestamp(pg.getDisbursementDate().getTime()));
-                    }
-                    pgh.setOrigAchBankRouteNbr(pg.getAchBankRoutingNbr());
-                    pgh.setOrigDisburseNbr(pg.getDisbursementNbr());
-                    pgh.setOrigAdviceEmail(pg.getAdviceEmailAddress());
-                    pgh.setDisbursementType(pg.getDisbursementType());
-                    pgh.setProcess(pg.getProcess());
-
-                    glPendingTransactionService.generateCancelReissueGeneralLedgerPendingEntry(pg);
-
-                    LOG.debug(
-                            "cancelReissueDisbursement() Status is '{}; delete row from AchAccountNumber table.",
-                            paymentStatus
-                    );
-
-                    final AchAccountNumber achAccountNumber = pg.getAchAccountNumber();
-
-                    if (ObjectUtils.isNotNull(achAccountNumber)) {
-                        businessObjectService.delete(achAccountNumber);
-                        pg.setAchAccountNumber(null);
-                    }
-
-                    // if bank functionality is not enabled or the group bank is inactive clear bank code
-                    if (!bankService.isBankSpecificationEnabled() || !pg.getBank().isActive()) {
-                        pg.setBank(null);
-                    }
-
-                    pg.setDisbursementDate((java.sql.Date) null);
-                    pg.setAchBankRoutingNbr(null);
-                    pg.setAchAccountType(null);
-                    pg.setPhysCampusProcessCd(null);
-                    pg.setDisbursementNbr((KualiInteger) null);
-                    pg.setAdviceEmailAddress(null);
-                    pg.setDisbursementType(null);
-                    pg.setProcess(null);
-                    pg.setProcessImmediate(false);
-
-                    changeStatus(pg, PdpConstants.PaymentStatusCodes.OPEN,
-                            PdpConstants.PaymentChangeCodes.CANCEL_REISSUE_DISBURSEMENT, note, user, pgh);
-                }
-
-                LOG.debug("cancelReissueDisbursement() Disbursement cancelled and reissued; exit method.");
+                || PdpConstants.PaymentStatusCodes.PENDING_ACH.equals(paymentStatus)
+            ) {
+                LOG.debug("cancelReissueDisbursement(...) - Continue with cancel : paymentStatus={}", paymentStatus);
+                doCancelReissueDisbursement(paymentGroup, user, note);
+                LOG.debug("cancelReissueDisbursement(...) - Disbursement cancelled and reissued; exit method.");
             } else {
                 LOG.debug(
-                        "cancelReissueDisbursement() Payment status is {} and disbursement date is {}; cannot cancel payment",
+                        "cancelReissueDisbursement(...) - Cannot cancel payment : "
+                            + "paymentStatus={}; paymentGroup.disbursementDate={}",
                         () -> paymentStatus,
                         paymentGroup::getDisbursementDate
                 );
@@ -849,6 +797,82 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
             LOG.debug("cancelReissueDisbursement() Disbursement already cancelled and reissued; exit method.");
         }
         return true;
+    }
+
+    private void doCancelReissueDisbursement(final PaymentGroup paymentGroup, final Person user, final String note) {
+        final List<PaymentGroup> allDisbursementPaymentGroups = paymentGroupService.getByDisbursementNumber(
+                paymentGroup.getDisbursementNbr().intValue());
+
+        for (final PaymentGroup pg : allDisbursementPaymentGroups) {
+            final PaymentGroupHistory pgh = new PaymentGroupHistory();
+
+            if (!pg.getPaymentDetails().get(0).isDisbursementActionAllowed()) {
+                LOG.warn("doCancelReissueDisbursement(...) - Payment does not allow disbursement action. This should " +
+                        "not happen unless user is URL spoofing.");
+                throw new RuntimeException("Payment does not allow disbursement " +
+                        "action. This should not happen unless user is URL spoofing.");
+            }
+
+            if (ObjectUtils.isNotNull(pg.getDisbursementType())
+                && pg.getDisbursementType().getCode().equals(PdpConstants.DisbursementTypeCodes.CHECK)) {
+                pgh.setPmtCancelExtractStat(Boolean.FALSE);
+            }
+
+            initializePaymentGroupHistoryForReissue(pg, pgh);
+
+            glPendingTransactionService.generateCancelReissueGeneralLedgerPendingEntry(pg);
+
+            LOG.debug(
+                    "doCancelReissueDisbursement(...) - Delete row from AchAccountNumber table : "
+                        + "paymentGroup.paymentStatus.code={}",
+                    () -> paymentGroup.getPaymentStatus().getCode()
+            );
+
+            adjustPaymentGroupForReissue(pg);
+
+            changeStatus(pg, PdpConstants.PaymentStatusCodes.OPEN,
+                    PdpConstants.PaymentChangeCodes.CANCEL_REISSUE_DISBURSEMENT, note, user, pgh);
+        }
+    }
+
+    private static void initializePaymentGroupHistoryForReissue(final PaymentGroup pg, final PaymentGroupHistory pgh) {
+        pgh.setOrigProcessImmediate(pg.getProcessImmediate());
+        pgh.setOrigPmtSpecHandling(pg.getPymtSpecialHandling());
+        pgh.setBank(pg.getBank());
+        pgh.setOrigPaymentDate(pg.getPaymentDate());
+        //put a check for null since disbursement date was not set in testMode / dev
+        if (ObjectUtils.isNotNull(pg.getDisbursementDate())) {
+            pgh.setOrigDisburseDate(new Timestamp(pg.getDisbursementDate().getTime()));
+        }
+        pgh.setOrigAchBankRouteNbr(pg.getAchBankRoutingNbr());
+        pgh.setOrigDisburseNbr(pg.getDisbursementNbr());
+        pgh.setOrigAdviceEmail(pg.getAdviceEmailAddress());
+        pgh.setDisbursementType(pg.getDisbursementType());
+        pgh.setProcess(pg.getProcess());
+    }
+
+    private void adjustPaymentGroupForReissue(final PaymentGroup pg) {
+        final AchAccountNumber achAccountNumber = pg.getAchAccountNumber();
+
+        if (ObjectUtils.isNotNull(achAccountNumber)) {
+            businessObjectService.delete(achAccountNumber);
+            pg.setAchAccountNumber(null);
+        }
+
+        // if bank functionality is not enabled or the group bank is inactive clear bank code
+        if (!bankService.isBankSpecificationEnabled() || !pg.getBank().isActive()) {
+            pg.setBank(null);
+        }
+
+        pg.setDisbursementDate((java.sql.Date) null);
+        pg.setAchBankRoutingNbr(null);
+        pg.setAchAccountType(null);
+        pg.setPhysCampusProcessCd(null);
+        pg.setDisbursementNbr((KualiInteger) null);
+        pg.setAdviceEmailAddress(null);
+        pg.setDisbursementType(null);
+        pg.setProcess(null);
+        pg.setProcessImmediate(false);
     }
 
     public void setPaymentGroupDao(final PaymentGroupDao dao) {
