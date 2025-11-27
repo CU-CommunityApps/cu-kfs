@@ -51,7 +51,6 @@ public class PaymentWorksVendorToKfsPayeeAchAccountConversionServiceImpl impleme
         kfsAchDataWrapper.getPayeeAchAccount().setBankAccountNumber(pmwVendor.getBankAcctBankAccountNumber());
         kfsAchDataWrapper.getPayeeAchAccount().setBankAccountTypeCode(convertBankAccountTypeFromPmwToKfs(pmwVendor.getBankAcctType()));
         kfsAchDataWrapper.getPayeeAchAccount().setStandardEntryClass(determineStandardEntryClass(kfsAchDataWrapper.getPayeeAchAccount().getBankAccountTypeCode()));
-        kfsAchDataWrapper.getPayeeAchAccount().setPayeeName(pmwVendor.getRequestingCompanyLegalName());
         kfsAchDataWrapper.getPayeeAchAccount().setPayeeEmailAddress(pmwVendor.getBankAcctAchEmail());
         kfsAchDataWrapper.getPayeeAchAccount().setAchTransactionType(PaymentWorksConstants.KFSPayeeAchMaintenanceDocumentConstants.ACH_DIRECT_DEPOSIT_TRANSACTION_TYPE);
         kfsAchDataWrapper.getPayeeAchAccount().setActive(true);

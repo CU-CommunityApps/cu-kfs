@@ -1482,22 +1482,15 @@ public class KualiDocumentActionBase extends KualiAction {
             throw buildAuthorizationException("annotate", document);
         }
 
-        // only do this if the note has been persisted
-        if (attachment != null) {
-            //KFSMI-798 - refresh() changed to refreshNonUpdateableReferences()
-            //All references for the business object Attachment are auto-update="none",
-            //so refreshNonUpdateableReferences() should work the same as refresh()
-            if (note.getNoteIdentifier() != null) {
-                // KULRICE-2343 don't blow away note reference if the note wasn't persisted
-                attachment.refreshNonUpdateableReferences();
-            }
-            getAttachmentService().deleteAttachmentContents(attachment);
-        }
         // delete the note if the document is already saved
         if (!document.getDocumentHeader().getWorkflowDocument().isInitiated()) {
             getNoteService().deleteNote(note);
         }
         document.removeNote(note);
+        // only do this if the note has been persisted
+        if (attachment != null) {
+            getAttachmentService().deleteAttachmentContents(attachment);
+        }
     }
 
     /**
