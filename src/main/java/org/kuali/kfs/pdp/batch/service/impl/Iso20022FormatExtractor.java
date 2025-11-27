@@ -112,7 +112,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -943,6 +942,7 @@ public class Iso20022FormatExtractor {
                 templateCustomerProfile.getAddress4(),
                 templateCustomerProfile.getCity(),
                 templateCustomerProfile.getStateCode(),
+                null,
                 templateCustomerProfile.getZipCode(),
                 isoCountryCode
         );
@@ -958,6 +958,7 @@ public class Iso20022FormatExtractor {
                 null,
                 achBank.getBankCityName(),
                 achBank.getBankStateCode(),
+                null,
                 achBank.getBankZipCode(),
                 "US"
         );
@@ -996,6 +997,7 @@ public class Iso20022FormatExtractor {
                 templatePaymentGroup.getLine4Address(),
                 templatePaymentGroup.getCity(),
                 templatePaymentGroup.getState(),
+                templatePaymentGroup.getProvince(),
                 templatePaymentGroup.getZipCd(),
                 isoCountryCode
         );
@@ -1008,6 +1010,7 @@ public class Iso20022FormatExtractor {
             final String addressLine4,
             final String city,
             final String stateCode,
+            final String province,
             final String postalCode,
             final String countryCode
     ) {
@@ -1035,6 +1038,10 @@ public class Iso20022FormatExtractor {
 
         if (StringUtils.isNotBlank(stateCode)) {
             postalAddress.setCtrySubDvsn(stateCode);
+        }
+
+        if (StringUtils.isNotBlank(province)) {
+            postalAddress.setCtrySubDvsn(province);
         }
 
         if (StringUtils.isNotBlank(postalCode)) {
@@ -1855,20 +1862,18 @@ public class Iso20022FormatExtractor {
          * CU Customization: Moved the filename property derivation to its own method.
          */
         final String propertyName = determinePropertyContainingExtractFilenamePrefix(extractTypeContext);
-        final String rawCheckFilePrefix =
-                configurationService.getPropertyValueAsString(propertyName);
-        final String formattedCheckFilePrefix = MessageFormat.format(rawCheckFilePrefix, new Object[]{null});
+        final String filePrefix = configurationService.getPropertyValueAsString(propertyName);
 
         final String finalFormattedCheckFilePrefix;
         if (extractTypeContext.isExtractionType(ExtractionType.ACH)) {
-            finalFormattedCheckFilePrefix = formattedCheckFilePrefix;
+            finalFormattedCheckFilePrefix = filePrefix;
         } else {
             // Check whether this is for research participant upload. If the customer profile matches research
             // participant's customer profile, then change the filename to append the RP-Upload prefix.
             finalFormattedCheckFilePrefix =
                     isResearchParticipantExtractFile(extractTypeContext)
-                            ? PdpConstants.RESEARCH_PARTICIPANT_FILE_PREFIX + KFSConstants.DASH + formattedCheckFilePrefix
-                            : formattedCheckFilePrefix;
+                            ? PdpConstants.RESEARCH_PARTICIPANT_FILE_PREFIX + KFSConstants.DASH + filePrefix
+                            : filePrefix;
         }
 
         final Date disbursementDate = extractTypeContext.getDisbursementDate();

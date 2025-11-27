@@ -271,7 +271,8 @@ public abstract class KualiDocumentFormBase extends KualiForm implements Seriali
             urlBuffer.append("<a href='")
                 .append(KRADServiceLocator.getKualiConfigurationService()
                         .getPropertyValueAsString(KFSConstants.APPLICATION_URL_KEY))
-                .append("/" + personInquiryUrl)
+                .append("/")
+                .append(personInquiryUrl)
                 .append("&mode=modal")
                 .append("' ")
                 .append("data-remodal-target='modal'")
@@ -1114,6 +1115,10 @@ public abstract class KualiDocumentFormBase extends KualiForm implements Seriali
 
     public Integer getCurrentFiscalYear() {
         return getUniversityDateService().getCurrentFiscalYear();
+    }
+
+    public String getCurrentFiscalPeriod() {
+        return getUniversityDateService().getCurrentUniversityDate().getUniversityFiscalAccountingPeriod();
     }
 
     private DocumentDictionaryService getDocumentDictionaryService() {

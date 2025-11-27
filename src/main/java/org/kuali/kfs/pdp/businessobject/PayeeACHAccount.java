@@ -42,7 +42,6 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
     private String bankRoutingNumber;
     private String bankAccountNumber;
     private String payeeIdNumber;
-    private String payeeName;
     private String payeeEmailAddress;
     private String payeeIdentifierTypeCode;
     private String achTransactionType;
@@ -111,14 +110,9 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
                 return vendor.getVendorName();
             }
         }
-
-        // otherwise return field value
-        return payeeName;
+        return null;
     }
 
-    public void setPayeeName(final String payeeName) {
-        this.payeeName = payeeName;
-    }
 
     // CU Customization: Added getter and setter for principal name.
 
