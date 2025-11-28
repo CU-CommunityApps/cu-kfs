@@ -51,10 +51,10 @@
     
     <bean id="contractsGrantsInvoiceDocumentService" parent="contractsGrantsInvoiceDocumentService-parentBean"
           class="edu.cornell.kfs.module.ar.document.service.impl.CuContractsGrantsInvoiceDocumentServiceImpl">
-        <property name="suspensionCategories">
-            <list merge="true">
-                <ref bean="firstInvoiceForAwardSuspensionCategory"/>
-            </list>
+        <property name="suspensionCategoryServiceMap">
+            <map merge="true">
+                <entry key="99" value-ref="firstInvoiceForAwardSuspensionCategory"/>
+            </map>
         </property>
     </bean>
 
@@ -65,7 +65,6 @@
     <bean id="firstInvoiceForAwardSuspensionCategory" parent="firstInvoiceForAwardSuspensionCategory-parentBean"/>
     <bean id="firstInvoiceForAwardSuspensionCategory-parentBean"
           class="edu.cornell.kfs.module.ar.document.service.impl.FirstInvoiceForAwardSuspensionCategoryServiceImpl" abstract="true"
-          p:code="99"
           p:financialSystemDocumentService-ref="financialSystemDocumentService"
           p:contractsGrantsInvoiceDocumentDao-ref="contractsGrantsInvoiceDocumentDao"/>
 
