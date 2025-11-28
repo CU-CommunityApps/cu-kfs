@@ -136,16 +136,17 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
 
         if (!pdpAuthorizationService.hasCancelPaymentPermission(user.getPrincipalId())) {
             LOG.warn(
-                    "cancelReissueDisbursement() User {} does not have rights to cancel payments. This should not happen unless user is URL spoofing.",
+                    "cancelReissueDisbursement(...) - User does not have rights to cancel payments. This should "
+                    + "not happen unless user is URL spoofing : user.principalId={}",
                     user::getPrincipalId
             );
-            throw new RuntimeException("cancelReissueDisbursement() User " + user.getPrincipalId() + " does not " +
+            throw new RuntimeException("User " + user.getPrincipalId() + " does not " +
                     "have rights to cancel payments. This should not happen unless user is URL spoofing.");
         }
 
         final PaymentGroup paymentGroup = paymentGroupService.get(paymentGroupId);
         if (paymentGroup == null) {
-            LOG.debug("cancelReissueDisbursement() Disbursement not found; throw exception.");
+            LOG.debug("cancelReissueDisbursement(...) - Disbursement not found; throw exception.");
             GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.PaymentDetail.ErrorMessages.ERROR_DISBURSEMENT_NOT_FOUND);
             return false;
         }
@@ -154,7 +155,7 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
         if (disbursementTypeCode != null
                 && !PdpConstants.DisbursementTypeCodes.ACH.equals(disbursementTypeCode)
                 && !PdpConstants.DisbursementTypeCodes.CHECK.equals(disbursementTypeCode)) {
-            LOG.debug("cancelReissueDisbursement() Disbursement type cannot be {}", disbursementTypeCode);
+            LOG.debug("cancelReissueDisbursement(...) - Disbursement type cannot be {}", disbursementTypeCode);
             GlobalVariables.getMessageMap().putError(
                     KFSConstants.GLOBAL_ERRORS,
                     PdpKeyConstants.PaymentDetail.ErrorMessages.ERROR_DISBURSEMENT_INVALID_TO_CANCEL_AND_REISSUE);
