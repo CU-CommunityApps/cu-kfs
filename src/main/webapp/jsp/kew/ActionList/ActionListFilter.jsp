@@ -155,10 +155,8 @@
                 </tr>
                 <tr>
                     <th><span class="thnormal"><bean-el:message key="actionList.ActionListFilter.filter.label.documentType"/></span></th>
-                    <td class="datacell">
-                      <span id="docTypeElementId">
-                        <c:out value="${ActionListFilterForm.docTypeFullName}" />
-                      </span>
+                    <td class="datacell filter-input">
+                      <html-el:text property="docTypeFullName"/>
                       <kul:lookup boClassName="org.kuali.kfs.kew.doctype.bo.DocumentType" fieldConversions="name:docTypeFullName"/>
                     </td>
                     <td>
