@@ -1,6 +1,6 @@
 {
   "vendorNumber": "V12345",
-  "poNumber": "PO98765",
+  "poNumber": 98765,
   "invoiceDate": "11/01/2025",
   "receivedDate": "11/02/2025",
   "invoiceNumber": "INV-2025-001",

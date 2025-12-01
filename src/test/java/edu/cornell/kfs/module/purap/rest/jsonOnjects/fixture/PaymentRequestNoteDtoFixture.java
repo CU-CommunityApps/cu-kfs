@@ -1,5 +1,7 @@
 package edu.cornell.kfs.module.purap.rest.jsonOnjects.fixture;
 
+import org.kuali.kfs.module.purap.PurapConstants;
+
 import edu.cornell.kfs.module.purap.rest.jsonOnjects.PaymentRequestNoteDto;
 
 public enum PaymentRequestNoteDtoFixture {
@@ -8,6 +10,7 @@ public enum PaymentRequestNoteDtoFixture {
     NOTE_FIRST("First note", "General"),
     NOTE_SECOND("Second note", "Urgent"),
     NOTE_THIRD("Third note", "Follow-up"),
+    NOTE_VALID("A testing note", PurapConstants.AttachmentTypeCodes.ATTACHMENT_TYPE_OTHER),
     EMPTY_NOTE(null, null);
 
     public final String noteText;

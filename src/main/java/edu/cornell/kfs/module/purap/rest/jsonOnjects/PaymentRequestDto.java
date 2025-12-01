@@ -11,7 +11,7 @@ import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 public class PaymentRequestDto {
     private String vendorNumber;
-    private String poNumber;
+    private Integer poNumber;
     private Date invoiceDate;
     private Date receivedDate;
     private String invoiceNumber;
@@ -41,11 +41,15 @@ public class PaymentRequestDto {
         this.vendorNumber = vendorNumber;
     }
 
-    public String getPoNumber() {
+    public Integer getPoNumber() {
         return poNumber;
     }
 
-    public void setPoNumber(String poNumber) {
+    public String getPoNumberString() {
+        return String.valueOf(poNumber);
+    }
+
+    public void setPoNumber(Integer poNumber) {
         this.poNumber = poNumber;
     }
 
