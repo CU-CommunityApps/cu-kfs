@@ -55,4 +55,8 @@
   <kul:routeLog />
   <kul:superUserActions />
   <kul:documentControls transactionalDocument="false" />
+  <SCRIPT type="text/javascript">
+    var kualiForm = document.forms['KualiForm'];
+    var kualiElements = kualiForm.elements;
+  </SCRIPT>
 </kul:documentPage>

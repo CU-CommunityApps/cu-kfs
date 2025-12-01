@@ -30,16 +30,17 @@ import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.module.ar.CuArPropertyConstants;
 import edu.cornell.kfs.module.ar.document.fixture.ContractsGrantsInvoiceDocumentFixture;
+import edu.cornell.kfs.module.ar.document.service.impl.FirstInvoiceForAwardSuspensionCategoryServiceImpl;
 
-public class FirstInvoiceForAwardSuspensionCategoryTest {
+public class FirstInvoiceForAwardSuspensionCategoryServiceImplTest {
 
     private FinancialSystemDocumentService financialSystemDocumentService;
-    private FirstInvoiceForAwardSuspensionCategory suspensionCategory;
+    private FirstInvoiceForAwardSuspensionCategoryServiceImpl suspensionCategory;
 
     @Before
     public void setUp() throws Exception {
         financialSystemDocumentService = new FinancialSystemDocumentServiceImpl();
-        suspensionCategory = new FirstInvoiceForAwardSuspensionCategory();
+        suspensionCategory = new FirstInvoiceForAwardSuspensionCategoryServiceImpl();
         suspensionCategory.setFinancialSystemDocumentService(financialSystemDocumentService);
         suspensionCategory.setContractsGrantsInvoiceDocumentDao(buildMockContractsGrantsInvoiceDocumentDao());
     }

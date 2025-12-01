@@ -45,6 +45,7 @@ public final class Environment {
     public static final String PROPERTY_NAME = "environment";
 
     private final String lane;
+    private final boolean productionAdjacent;
     private final boolean productionEnvironment;
     private final String tenant;
 
@@ -69,6 +70,7 @@ public final class Environment {
         LOG.info("Environment, Allowed Production environment codes/lanes: prd, prod, {}", productionEnvironmentCode);
         LOG.info("Environment, Current environment code/lane: {}", this.lane);
         productionEnvironment = List.of("prd", "prod", productionEnvironmentCode).contains(this.lane);
+        productionAdjacent = List.of("sbx", "dbg").contains(this.lane);
         LOG.info("Environment, Resulting is-production-environment setting: {}", productionEnvironment);
     }
 
@@ -92,6 +94,13 @@ public final class Environment {
      */
     public boolean isProductionEnvironment() {
         return productionEnvironment;
+    }
+
+    /**
+     * @return True if {@code lane} is "sbx" or "dbg"; otherwise, false.
+     */
+    public boolean isProductionAdjacent() {
+        return productionAdjacent;
     }
 
     @Override

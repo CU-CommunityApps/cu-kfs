@@ -123,6 +123,8 @@ public class Award extends PersistableBusinessObjectBase implements Billable, Mu
     private boolean excludedFromInvoicing;
     private boolean additionalFormsRequiredIndicator;
     private String additionalFormsDescription;
+    private boolean suspendInvoiceIndicator;
+    private String suspendInvoiceDescription;
     private String excludedFromInvoicingReason;
     private String instrumentTypeCode;
     private String invoicingOptionCode;
@@ -930,6 +932,22 @@ public class Award extends PersistableBusinessObjectBase implements Billable, Mu
 
     public void setAdditionalFormsDescription(final String additionalFormsDescription) {
         this.additionalFormsDescription = additionalFormsDescription;
+    }
+
+    public boolean isSuspendInvoiceIndicator() {
+        return suspendInvoiceIndicator;
+    }
+
+    public void setSuspendInvoiceIndicator(final boolean suspendInvoiceIndicator) {
+        this.suspendInvoiceIndicator = suspendInvoiceIndicator;
+    }
+
+    public String getSuspendInvoiceDescription() {
+        return suspendInvoiceDescription;
+    }
+
+    public void setSuspendInvoiceDescription(final String suspendInvoiceDescription) {
+        this.suspendInvoiceDescription = suspendInvoiceDescription;
     }
 
     public String getInstrumentTypeCode() {
