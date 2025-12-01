@@ -6,15 +6,15 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 public class PaymentRequestLineItemDto {
-    private String lineNumber;
+    private Integer lineNumber;
     private KualiDecimal itemQuantity;
     private KualiDecimal itemPrice;
 
-    public String getLineNumber() {
+    public Integer getLineNumber() {
         return lineNumber;
     }
 
-    public void setLineNumber(String lineNumber) {
+    public void setLineNumber(Integer lineNumber) {
         this.lineNumber = lineNumber;
     }
 

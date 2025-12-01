@@ -8,6 +8,7 @@ import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
+import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.sys.KFSKeyConstants;
@@ -109,7 +110,7 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.ITEM_QUANTITY, results);
         }
 
-        if (StringUtils.isBlank(itemDto.getLineNumber())) {
+        if (itemDto.getLineNumber() == null) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.ITEM_LINE_NUMBER, results);
         }
 
@@ -168,8 +169,12 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
 
     private void validatePoLine(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results, PurchaseOrderDocument poDoc) {
         for (PaymentRequestLineItemDto line : paymentRequestDto.getItems()) {
-            line.getLineNumber();
-            poDoc.getItemByLineNumber(0);
+            PurApItem item = poDoc.getItemByLineNumber(line.getLineNumber());
+            if (ObjectUtils.isNull(item)) {
+                results.setValid(false);
+                String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_PO_INVALID_LINE);
+                results.getErrorMessages().add(MessageFormat.format(messageBase, String.valueOf(paymentRequestDto.getPoNumber()), String.valueOf(line.getLineNumber())));
+            }
         }
     }
 

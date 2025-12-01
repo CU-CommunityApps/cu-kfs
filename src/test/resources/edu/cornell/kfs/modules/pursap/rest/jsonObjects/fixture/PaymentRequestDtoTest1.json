@@ -10,7 +10,7 @@
   "specialHandlingLine3": "Line3",
   "items": [
     {
-      "lineNumber": "1",
+      "lineNumber": 1,
       "itemQuantity": 10,
       "itemPrice": 100
     }

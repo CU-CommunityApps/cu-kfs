@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
@@ -12,6 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
+import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.sys.KFSKeyConstants;
@@ -22,6 +24,7 @@ import org.mockito.Mockito;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.rest.jsonOnjects.PaymentRequestResultsDto;
 import edu.cornell.kfs.module.purap.rest.jsonOnjects.fixture.PaymentRequestDtoFixture;
+import edu.cornell.kfs.module.purap.rest.jsonOnjects.fixture.PaymentRequestLineItemDtoFixture;
 
 public class PaymentRequestDtoValidationServiceImplTest {
     private static final Logger LOG = LogManager.getLogger();
@@ -39,7 +42,7 @@ public class PaymentRequestDtoValidationServiceImplTest {
         ConfigurationService service = Mockito.mock(ConfigurationService.class);
         Mockito.when(service.getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED)).thenReturn("{0} is a required field.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_AT_LEAST_ONE_MUST_BE_ENTERED))
-            .thenReturn("At lest one {0} must be entered.");
+            .thenReturn("At least one {0} must be entered.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_INVALID_VENDOR_NUMBER))
             .thenReturn("Vendor Number {0} is not valid.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_INVALID_PO))
@@ -48,6 +51,8 @@ public class PaymentRequestDtoValidationServiceImplTest {
             .thenReturn("PO Number {0} has a vendor number {1} but the vendor number supplied was {2}.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_PO_NOT_OPEN))
             .thenReturn("PO Number {0} is not open, it has a status of {1}.");
+        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_PO_INVALID_LINE))
+            .thenReturn("PO Number {0} does not have a line number {1}.");
         return service;
     }
 
@@ -69,7 +74,14 @@ public class PaymentRequestDtoValidationServiceImplTest {
         Mockito.when(service.getCurrentPurchaseOrder(98767)).thenReturn(docForPo98767);
 
         PurchaseOrderDocument docForPo98768 = buildMockPurchaseOrderDocument("1234-1", PurchaseOrderStatuses.APPDOC_OPEN);
+        Mockito.when(docForPo98768.getItemByLineNumber(PaymentRequestLineItemDtoFixture.ITEM_1_10_100.lineNumber)).thenReturn(null);
         Mockito.when(service.getCurrentPurchaseOrder(98768)).thenReturn(docForPo98768);
+
+        PurchaseOrderDocument docForPo98769 = buildMockPurchaseOrderDocument("1234-1", PurchaseOrderStatuses.APPDOC_OPEN);
+        PurApItem item = Mockito.mock(PurApItem.class);
+        Mockito.when(docForPo98769.getItemByLineNumber(PaymentRequestLineItemDtoFixture.ITEM_1_10_100.lineNumber)).thenReturn(item);
+        Mockito.when(service.getCurrentPurchaseOrder(98769)).thenReturn(docForPo98769);
+
         return service;
     }
 

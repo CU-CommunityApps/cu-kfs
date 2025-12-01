@@ -46,7 +46,7 @@ public enum PaymentRequestDtoFixture {
         StringUtils.EMPTY, buildItems(), buildNotes(), false, buildMessageList(),
         buildMessageList("Vendor Number is a required field.", "PO Number is a required field.", 
             "Invoice Date is a required field.", "Received Date is a required field.", "Invoice Number is a required field.", 
-            "Invoice Amount is a required field.", "At lest one item must be entered.", "At lest one note must be entered.")),
+            "Invoice Amount is a required field.", "At least one item must be entered.", "At least one note must be entered.")),
     VALIDATION_TEST_EMPTY(StringUtils.EMPTY, StringUtils.EMPTY, null, StringUtils.EMPTY, StringUtils.EMPTY, 
         StringUtils.EMPTY, null, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, 
         null, StringUtils.EMPTY, null, StringUtils.EMPTY, null, 
@@ -97,7 +97,14 @@ public enum PaymentRequestDtoFixture {
         null, StringUtils.EMPTY, null, StringUtils.EMPTY, null, 
         StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100), 
         buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), false, buildMessageList(),
-        buildMessageList(""));
+        buildMessageList("PO Number 98768 does not have a line number 1.")),
+    VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_GOOD_LINE(StringUtils.EMPTY, "1234-1", Integer.valueOf(98769),  
+        "11/25/2025",  "11/26/2025", 
+        "invoiceNumber", new KualiDecimal(50), StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, 
+        null, StringUtils.EMPTY, null, StringUtils.EMPTY, null, 
+        StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100), 
+        buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), true, buildMessageList(),
+        buildMessageList());
 
     private static final DateTimeFormatter DATE_FORMATTER_MMDDYYYY = DateTimeFormatter.ofPattern(
             KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);

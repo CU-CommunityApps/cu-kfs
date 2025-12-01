@@ -10,17 +10,17 @@
   "specialHandlingLine3": "Extra handling",
   "items": [
     {
-      "lineNumber": "1",
+      "lineNumber": 1,
       "itemQuantity": 5,
       "itemPrice": 200
     },
     {
-      "lineNumber": "2",
+      "lineNumber": 2,
       "itemQuantity": 3,
       "itemPrice": 400
     },
     {
-      "lineNumber": "3",
+      "lineNumber": 3,
       "itemQuantity": 2,
       "itemPrice": 500
     }

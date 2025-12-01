@@ -70,4 +70,5 @@ public class CUPurapKeyConstants {
     public static final String ERORR_PAYMENTREQUEST_INVALID_PO = "error.paymentrequest.po.invalid";
     public static final String ERORR_PAYMENTREQUEST_PO_NOT_MATCH_VENDOR = "error.paymentrequest.po.not_match_vendor";
     public static final String ERORR_PAYMENTREQUEST_PO_NOT_OPEN = "error.paymentrequest.po.not.open";
+    public static final String ERORR_PAYMENTREQUEST_PO_INVALID_LINE = "error.paymentrequest.po.invalid.line.number";
 }
