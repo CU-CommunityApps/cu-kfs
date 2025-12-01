@@ -28,6 +28,7 @@ import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.gl.businessobject.AccountBalance;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.businessobject.SystemOptions;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -49,7 +50,6 @@ import java.util.stream.Stream;
 public class AccountBalanceDaoSqlHelper {
     private static final Logger LOG = LogManager.getLogger();
     private static final String ORGANIZATION_CODE_CRITERIA = "account.organizationCode";
-    private static final String UNIVERSITY_FISCAL_YEAR_REPLACE = "[[FISCAL_YEAR]]";
 
     private static final Map<String, String> CONSOLIDATED_SORT_MAP =
             Map.ofEntries(Map.entry("universityFiscalYear", "UNIV_FISCAL_YR"),
@@ -58,7 +58,8 @@ public class AccountBalanceDaoSqlHelper {
                     Map.entry("objectCode", "FIN_OBJECT_CD"),
                     Map.entry("currentBudgetLineBalanceAmount", "BUDGET"),
                     Map.entry("accountLineActualsBalanceAmount", "ACTUALS"),
-                    Map.entry("accountLineEncumbranceBalanceAmount", "ENCUMBRANCE")
+                    Map.entry("accountLineEncumbranceBalanceAmount", "ENCUMBRANCE"),
+                    Map.entry(GeneralLedgerConstants.DummyBusinessObject.GENERIC_AMOUNT, "VARIANCE")
             );
 
     private static final Map<String, String> UNCONSOLIDATED_SORT_MAP = Stream.concat(
@@ -90,11 +91,15 @@ public class AccountBalanceDaoSqlHelper {
     protected final boolean excludeBalanceSheets;
     protected final boolean excludePriorYearBalances;
     protected final ParameterService parameterService;
+    protected final SystemOptions systemOptions;
 
     // Exposing for overriding in UConn
     public AccountBalanceDaoSqlHelper(
-            final Map<String, String> fieldValues, final boolean isConsolidated, final int currentUniversityFiscalYear,
-            final ParameterService parameterService
+            final Map<String, String> fieldValues,
+            final boolean isConsolidated,
+            final int currentUniversityFiscalYear,
+            final ParameterService parameterService,
+            final SystemOptions systemOptions
     ) {
         this.fieldValues = fieldValues;
         this.isConsolidated = isConsolidated;
@@ -119,6 +124,7 @@ public class AccountBalanceDaoSqlHelper {
                 GeneralLedgerConstants.IncludeExcludeOptions.EXCLUDE
         );
         this.parameterService = parameterService;
+        this.systemOptions = systemOptions;
     }
 
     // Exposing for overriding in UConn
@@ -133,6 +139,7 @@ public class AccountBalanceDaoSqlHelper {
         accountBalance.setAccountLineActualsBalanceAmount(new KualiDecimal(rs.getBigDecimal("ACTUALS")));
         accountBalance.setAccountLineEncumbranceBalanceAmount(new KualiDecimal(rs.getBigDecimal("ENCUMBRANCE")));
         accountBalance.setCurrentBudgetLineBalanceAmount(new KualiDecimal(rs.getBigDecimal("BUDGET")));
+        accountBalance.getDummyBusinessObject().setGenericAmount(new KualiDecimal(rs.getBigDecimal("VARIANCE")));
         if (isConsolidated) {
             accountBalance.setSubAccountNumber(Constant.CONSOLIDATED_SUB_ACCOUNT_NUMBER);
             accountBalance.setSubObjectCode(Constant.CONSOLIDATED_SUB_OBJECT_CODE);
@@ -148,8 +155,8 @@ public class AccountBalanceDaoSqlHelper {
             final String baseSql
     ) {
         String orderedAndLimited = baseSql;
-        final int limit = Integer.parseInt(fieldValues.get(KFSConstants.Search.LIMIT));
-        final int skip = Integer.parseInt(fieldValues.get(KFSConstants.Search.SKIP));
+        final int limit = Integer.parseInt(fieldValues.getOrDefault(KFSConstants.Search.LIMIT, "100"));
+        final int skip = Integer.parseInt(fieldValues.getOrDefault(KFSConstants.Search.SKIP, "0"));
         final String sort = fieldValues.get(KFSConstants.Search.SORT);
         if (StringUtils.isNotBlank(sort)) {
             final boolean sortDescending = sort.startsWith("-");
@@ -259,9 +266,9 @@ public class AccountBalanceDaoSqlHelper {
         final String pendingEncumbranceSql = buildPendingEncumbranceSql();
         final String finalSql = buildFinalSql();
         final String outerSelect =
-                isConsolidated ? OuterWrapperSql.CONSOLIDATED_SELECT : OuterWrapperSql.UNCONSOLIDATED_SELECT;
+                isConsolidated ? OuterWrapperSql.AGGREGATE_CONSOLIDATED_SELECT : OuterWrapperSql.AGGREGATE_UNCONSOLIDATED_SELECT;
         final String groupByClause =
-                isConsolidated ? OuterWrapperSql.CONSOLIDATED_GROUP_BY : OuterWrapperSql.UNCONSOLIDATED_GROUP_BY;
+                isConsolidated ? OuterWrapperSql.AGGREGATE_CONSOLIDATED_GROUP_BY : OuterWrapperSql.AGGREGATE_UNCONSOLIDATED_GROUP_BY;
         final String fromClause = PendingBalanceSql.UNION_ALIASES.stream()
                 .map(alias -> (isConsolidated
                                        ? PendingBalanceSql.CONSOLIDATED_UNION_SELECT
@@ -269,18 +276,18 @@ public class AccountBalanceDaoSqlHelper {
                 .collect(Collectors.joining(" UNION ALL "));
 
         // CU customization: AS BALANCES has been replaced with BALANCES for Oracle compatibility
+        final String aggregateSql = outerSelect + " FROM (" + fromClause + ") BALANCES " + groupByClause;
+        final String varianceSql = wrapWithVariance(aggregateSql);
+
+        // CU customization:
         // All CTEs (Common Table Expressions - WITH clauses) are now at the top level. Oracle doesn't allow WITH clauses to be nested within other WITH clauses.
         return "WITH " + pendingBudgetSql + ", "
                + actualBalancesSql + ", "
                + pendingActualsSql + ", "
                + encumbranceBalancesSql + ", "
                + pendingEncumbranceSql + ", "
-               + "FINAL_BALANCES AS (" + finalSql + ")"
-               + outerSelect
-               + " FROM ("
-               + fromClause
-               + ") BALANCES "
-               + groupByClause;
+               + "FINAL_BALANCES AS (" + finalSql + ") "
+               + varianceSql;
     }
 
     private String buildPendingBudgetSql() {
@@ -289,8 +296,8 @@ public class AccountBalanceDaoSqlHelper {
                 : PendingBalanceSql.UNCONSOLIDATED_INNER_SELECT;
         innerSelectClause += PendingBalanceSql.Budget.INNER_SELECT;
         // If include prior year balances, set the fiscal year to the search criteria value
-        innerSelectClause = innerSelectClause.replace(
-                UNIVERSITY_FISCAL_YEAR_REPLACE,
+        innerSelectClause = String.format(
+                innerSelectClause,
                 excludePriorYearBalances
                         ? PendingBalanceSql.UNIVERSITY_FISCAL_YEAR_DEFAULT
                         : fieldValues.get(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR)
@@ -314,8 +321,8 @@ public class AccountBalanceDaoSqlHelper {
                 : PendingBalanceSql.UNCONSOLIDATED_INNER_SELECT;
         innerSelectClause += PendingBalanceSql.Actuals.INNER_SELECT;
         // If include prior year balances, set the fiscal year to the search criteria value
-        innerSelectClause = innerSelectClause.replace(
-                UNIVERSITY_FISCAL_YEAR_REPLACE,
+        innerSelectClause = String.format(
+                innerSelectClause,
                 excludePriorYearBalances
                         ? PendingBalanceSql.UNIVERSITY_FISCAL_YEAR_DEFAULT
                         : fieldValues.get(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR)
@@ -351,8 +358,8 @@ public class AccountBalanceDaoSqlHelper {
                 : PendingBalanceSql.UNCONSOLIDATED_INNER_SELECT;
         innerSelectClause += PendingBalanceSql.Encumbrance.INNER_SELECT;
         // If include prior year balances, set the fiscal year to the search criteria value
-        innerSelectClause = innerSelectClause.replace(
-                UNIVERSITY_FISCAL_YEAR_REPLACE,
+        innerSelectClause = String.format(
+                innerSelectClause,
                 excludePriorYearBalances
                         ? PendingBalanceSql.UNIVERSITY_FISCAL_YEAR_DEFAULT
                         : fieldValues.get(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR)
@@ -383,22 +390,46 @@ public class AccountBalanceDaoSqlHelper {
     }
 
     private String wrap(final String unwrappedSql) {
-        final String selectClause =
-                isConsolidated ? OuterWrapperSql.CONSOLIDATED_SELECT : OuterWrapperSql.UNCONSOLIDATED_SELECT;
-        final String groupByClause =
-                isConsolidated ? OuterWrapperSql.CONSOLIDATED_GROUP_BY : OuterWrapperSql.UNCONSOLIDATED_GROUP_BY;
+        final String selectClause = isConsolidated
+                ? OuterWrapperSql.AGGREGATE_CONSOLIDATED_SELECT
+                : OuterWrapperSql.AGGREGATE_UNCONSOLIDATED_SELECT;
+        final String groupByClause = isConsolidated
+                ? OuterWrapperSql.AGGREGATE_CONSOLIDATED_GROUP_BY
+                : OuterWrapperSql.AGGREGATE_UNCONSOLIDATED_GROUP_BY;
         // CU customization: AS BALANCES has been replaced with BALANCES for Oracle compatibility
-        return selectClause + " FROM (" + unwrappedSql + ") BALANCES " + groupByClause;
+        final String aggregateClause = selectClause + " FROM (" + unwrappedSql + ") BALANCES " + groupByClause;
+        return wrapWithVariance(aggregateClause);
+    }
+
+    private String wrapWithVariance(final String aggregateSql) {
+        final String varianceSelectClause = isConsolidated
+                ? OuterWrapperSql.VARIANCE_CONSOLIDATED_SELECT
+                : OuterWrapperSql.VARIANCE_UNCONSOLIDATED_SELECT;
+        return varianceSelectClause + String.format(OuterWrapperSql.VARIANCE_FROM, aggregateSql)
+               + OuterWrapperSql.VARIANCE_JOIN;
     }
 
     private String buildFinalSql() {
         String selectClause = isConsolidated
                 ? FinalBalanceSql.CONSOLIDATED_INNER_SELECT
                 : FinalBalanceSql.UNCONSOLIDATED_INNER_SELECT;
-        selectClause += FinalBalanceSql.INNER_SELECT;
+        final boolean beginningEncumbrancesLoaded = systemOptions.isFinancialBeginEncumbranceLoadInd();
+        final String amountSelect;
+        if (excludePriorYearBalances || !beginningEncumbrancesLoaded) {
+            amountSelect = String.format(FinalBalanceSql.INNER_SELECT, FinalBalanceSql.DEFAULT_ENCUMBRANCE);
+        } else {
+            amountSelect = String.format(
+                    FinalBalanceSql.INNER_SELECT,
+                    String.format(
+                            FinalBalanceSql.PRIOR_YEAR_ENCUMBRANCE,
+                            Integer.parseInt(fieldValues.get(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR)) - 1
+                    )
+            );
+        }
+        selectClause += amountSelect;
         // If include prior year balances, set the fiscal year to the search criteria value
-        selectClause = selectClause.replace(
-                UNIVERSITY_FISCAL_YEAR_REPLACE,
+        selectClause = String.format(
+                selectClause,
                 excludePriorYearBalances
                         ? FinalBalanceSql.UNIVERSITY_FISCAL_YEAR_DEFAULT
                         : fieldValues.get(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR)
@@ -475,7 +506,33 @@ public class AccountBalanceDaoSqlHelper {
     }
 
     private static final class OuterWrapperSql {
-        private static final String CONSOLIDATED_SELECT =
+        private static final String VARIANCE_CONSOLIDATED_SELECT =
+                "SELECT AGGREGATED_BALANCES.UNIV_FISCAL_YR,"
+                + "     AGGREGATED_BALANCES.FIN_COA_CD,"
+                + "     ACCOUNT_NBR,"
+                + "     AGGREGATED_BALANCES.FIN_OBJECT_CD,"
+                + "     BUDGET,"
+                + "     ACTUALS,"
+                + "     ENCUMBRANCE,"
+                + "     CASE"
+                + "         WHEN OBJECT_CODE.FIN_OBJ_TYP_CD IN"
+                + "             (OPTIONS.FOBJTP_EXPNXPND_CD, OPTIONS.FOBJTP_XPNDNEXP_CD, OPTIONS.FOBJTP_XPND_EXP_CD)"
+                + "         THEN BUDGET - ACTUALS - ENCUMBRANCE"
+                + "         ELSE ACTUALS - BUDGET"
+                + "     END AS VARIANCE";
+        private static final String VARIANCE_UNCONSOLIDATED_SELECT = VARIANCE_CONSOLIDATED_SELECT
+                + ",    FIN_SUB_OBJ_CD,"
+                + "     SUB_ACCT_NBR";
+        // CU customization: AS AGGREGATED_BALANCES has been replaced with AGGREGATED_BALANCES for Oracle compatibility
+        private static final String VARIANCE_FROM = " FROM (%s) AGGREGATED_BALANCES";
+        private static final String VARIANCE_JOIN =
+                "   JOIN FS_OPTION_T OPTIONS ON AGGREGATED_BALANCES.UNIV_FISCAL_YR = OPTIONS.UNIV_FISCAL_YR"
+                + " JOIN CA_OBJECT_CODE_T OBJECT_CODE ON"
+                + "          AGGREGATED_BALANCES.UNIV_FISCAL_YR = OBJECT_CODE.UNIV_FISCAL_YR"
+                + "      AND AGGREGATED_BALANCES.FIN_COA_CD = OBJECT_CODE.FIN_COA_CD"
+                + "      AND AGGREGATED_BALANCES.FIN_OBJECT_CD = OBJECT_CODE.FIN_OBJECT_CD";
+
+        private static final String AGGREGATE_CONSOLIDATED_SELECT =
                 "SELECT UNIV_FISCAL_YR,"
                 + "     FIN_COA_CD,"
                 + "     ACCOUNT_NBR,"
@@ -483,17 +540,17 @@ public class AccountBalanceDaoSqlHelper {
                 + "     SUM(BUDGET) BUDGET,"
                 + "     SUM(ACTUALS) ACTUALS,"
                 + "     SUM(ENCUMBRANCE) ENCUMBRANCE";
-        private static final String UNCONSOLIDATED_SELECT =
-                CONSOLIDATED_SELECT
+        private static final String AGGREGATE_UNCONSOLIDATED_SELECT =
+                AGGREGATE_CONSOLIDATED_SELECT
                 + ",    FIN_SUB_OBJ_CD,"
                 + "     SUB_ACCT_NBR";
-        private static final String CONSOLIDATED_GROUP_BY =
+        private static final String AGGREGATE_CONSOLIDATED_GROUP_BY =
                 "GROUP BY UNIV_FISCAL_YR,"
                 + "       FIN_COA_CD,"
                 + "       ACCOUNT_NBR,"
                 + "       FIN_OBJECT_CD";
-        private static final String UNCONSOLIDATED_GROUP_BY =
-                CONSOLIDATED_GROUP_BY
+        private static final String AGGREGATE_UNCONSOLIDATED_GROUP_BY =
+                AGGREGATE_CONSOLIDATED_GROUP_BY
                 + ",      FIN_SUB_OBJ_CD,"
                 + "       SUB_ACCT_NBR";
     }
@@ -501,7 +558,7 @@ public class AccountBalanceDaoSqlHelper {
     private static final class FinalBalanceSql {
         private static final String UNIVERSITY_FISCAL_YEAR_DEFAULT = "BALANCE.UNIV_FISCAL_YR";
         private static final String CONSOLIDATED_INNER_SELECT =
-                "SELECT [[FISCAL_YEAR]] UNIV_FISCAL_YR,"
+                "SELECT %s UNIV_FISCAL_YR,"
                 + "     BALANCE.FIN_COA_CD,"
                 + "     BALANCE.ACCOUNT_NBR,"
                 + "     BALANCE.FIN_OBJECT_CD, ";
@@ -509,10 +566,19 @@ public class AccountBalanceDaoSqlHelper {
                 CONSOLIDATED_INNER_SELECT
                 + "     FIN_SUB_OBJ_CD,"
                 + "     SUB_ACCT_NBR,";
+        // CU customization: AS ENCUMBRANCE has been replaced with ENCUMBRANCE for Oracle compatibility
         private static final String INNER_SELECT =
                 "       CURR_BDLN_BAL_AMT BUDGET,"
                 + "     ACLN_ACTLS_BAL_AMT ACTUALS,"
-                + "     ACLN_ENCUM_BAL_AMT ENCUMBRANCE ";
+                + "     %s ENCUMBRANCE ";
+
+        private static final String PRIOR_YEAR_ENCUMBRANCE =
+                "CASE"
+                + "    WHEN BALANCE.UNIV_FISCAL_YR = %s THEN 0"
+                + "    ELSE ACLN_ENCUM_BAL_AMT "
+                + "END";
+
+        private static final String DEFAULT_ENCUMBRANCE = "ACLN_ENCUM_BAL_AMT";
 
         private static final String INNER_FROM =
                 "FROM GL_ACCT_BALANCES_T BALANCE"
@@ -527,7 +593,7 @@ public class AccountBalanceDaoSqlHelper {
         private static final String UNIVERSITY_FISCAL_YEAR_DEFAULT =
                 "NVL(BALANCE.UNIV_FISCAL_YR, :currentUniversityFiscalYear)";
         private static final String CONSOLIDATED_INNER_SELECT =
-                "SELECT [[FISCAL_YEAR]] UNIV_FISCAL_YR,"
+                "SELECT %s UNIV_FISCAL_YR,"
                 + "     BALANCE.FIN_COA_CD,"
                 + "     BALANCE.ACCOUNT_NBR,"
                 + "     BALANCE.FIN_OBJECT_CD,"
