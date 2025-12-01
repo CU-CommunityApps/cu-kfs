@@ -35,26 +35,34 @@
         <hibernate-validator-annotation-processor.version>6.2.5.Final</hibernate-validator-annotation-processor.version>
         <hsqldb.version>2.7.4</hsqldb.version>
         <httpclient.version>5.3.1</httpclient.version>
-        <httpcore.version>5.2.4</httpcore.version>
+        <httpcore.version>5.2.5</httpcore.version>
         <!--Backport FINP-11623-->
         <jackson.version>2.18.1</jackson.version>
         <jakarta.el.el-api.version>3.0.3</jakarta.el.el-api.version>
         <javassist.version>3.29.2-GA</javassist.version>
-        <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
+        <!-- JavaEE 8 version properties -->
+        <jakarta.el.version>3.0.4</jakarta.el.version>
+        <jakarta.mail.version>1.6.7</jakarta.mail.version>
+        <jakarta.servlet.jsp.jstl.version>1.2.6</jakarta.servlet.jsp.jstl.version>
+        <jakarta.servlet.jsp-api.version>2.3.6</jakarta.servlet.jsp-api.version>
+        <jakarta.servlet-api.version>4.0.4</jakarta.servlet-api.version>
+
+        <!-- JakartaEE 10 version properties -->
+        <jakarta.xml.bind-api.version>4.0.2</jakarta.xml.bind-api.version>
+        <jaxb-impl.version>4.0.5</jaxb-impl.version>
+        
         <jersey.version>2.25.1</jersey.version>
         <jotm-core.version>2.1.10-kuali-1</jotm-core.version>
-        <jsp-api.version>2.3.3</jsp-api.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
-        <junit.version>5.10.3</junit.version>
+        <junit.version>5.11.0</junit.version>
         <ojdbc.version>19.18.0.0</ojdbc.version>
         <opencsv.version>5.9</opencsv.version>
         <plexus-utils.version>3.0.24</plexus-utils.version>
-        <mockito.version>5.12.0</mockito.version>
-        <pw-iso20022.version>SRU2023-10.1.5</pw-iso20022.version>
+        <mockito.version>5.13.0</mockito.version>
+        <pw-iso20022.version>SRU2023-10.1.7</pw-iso20022.version>
         <squiggly-filter-jackson.version>1.3.18</squiggly-filter-jackson.version>
         <spring.version>5.3.39</spring.version>
-        <validation-api.version>2.0.1.Final</validation-api.version>
         <xapool.version>1.5.0-patch7</xapool.version>
         <maven.compiler.version>3.10.1</maven.compiler.version>
         <project.java.version>1.11</project.java.version>
@@ -898,9 +906,9 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${javax.servlet-api.version}</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${jakarta.servlet-api.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -955,11 +963,17 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>javax.servlet.jsp-api</artifactId>
-            <version>${jsp-api.version}</version>
+            <groupId>jakarta.servlet.jsp</groupId>
+            <artifactId>jakarta.servlet.jsp-api</artifactId>
+            <version>${jakarta.servlet.jsp-api.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.el</artifactId>
+            <version>${jakarta.el.version}</version>
+             <scope>provided</scope>
+         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
