@@ -30,14 +30,5 @@ public class PaymentRequestUtil {
             this.required = required;
             this.friendlyName = friendlyName;
         }
-
-        /*
-    
-    
-    private List<PaymentRequestLineItemDto> items;
-    
-
-    private List<PaymentRequestNoteDto> notes;
-         */
     }
 }
