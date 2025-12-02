@@ -103,8 +103,8 @@ public enum PaymentRequestDtoFixture {
         "invoiceNumber", new KualiDecimal(50), StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, 
         null, StringUtils.EMPTY, null, StringUtils.EMPTY, null, 
         StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100), 
-        buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), true, buildMessageList(),
-        buildMessageList());
+        buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), true, 
+        buildMessageList("Successfully passed validation"), buildMessageList());
 
     private static final DateTimeFormatter DATE_FORMATTER_MMDDYYYY = DateTimeFormatter.ofPattern(
             KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);

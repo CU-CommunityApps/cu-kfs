@@ -4,6 +4,8 @@ import java.text.MessageFormat;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
@@ -24,7 +26,7 @@ import edu.cornell.kfs.module.purap.service.PaymentRequestDtoValidationService;
 import edu.cornell.kfs.module.purap.util.PaymentRequestUtil.PaymentRequestDtoFields;
 
 public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDtoValidationService {
-
+    private static final Logger LOG = LogManager.getLogger();
     private ConfigurationService configurationService;
     private VendorService vendorService;
     private PurchaseOrderService purchaseOrderService;
@@ -40,6 +42,16 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
                 validatePO(paymentRequestDto, results);
             }
         }
+        /*
+        When we implement creating of the PO document, remove this statement
+        Also update PaymentRequestDtoFixture.VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_GOOD_LINE 
+        to not have this is a succes message
+        */
+        if (results.isValid()) {
+            results.getSuccessMessages().add("Successfully passed validation");
+        }
+
+        LOG.debug("validatePaymentRequestDto, validation results: {}", results.toString());
         return results;
     }
 

@@ -34,12 +34,12 @@ public class PaymentRequestDtoTest {
     public void testReadJsonToPaymentRequestDto(PaymentRequestDtoFixture paymentRequestDtoFixture) throws IOException {
         String actualJsonString = readFileToString(paymentRequestDtoFixture.jsonFileName);
         PaymentRequestDto actualDto = gson.fromJson(actualJsonString, PaymentRequestDto.class);
-        PaymentRequestDto exptectedDto = paymentRequestDtoFixture.toPaymentRequestDto();
+        PaymentRequestDto expectedDto = paymentRequestDtoFixture.toPaymentRequestDto();
 
         LOG.debug("testReadJsonToPaymentRequestDto, actualDto DTO: {}", actualDto.toString());
-        LOG.debug("testReadJsonToPaymentRequestDto, expected DTO: {}", exptectedDto.toString());
+        LOG.debug("testReadJsonToPaymentRequestDto, expected DTO: {}", expectedDto.toString());
 
-        assertEquals(exptectedDto, actualDto);
+        assertEquals(expectedDto, actualDto);
     }
 
     private static java.util.stream.Stream<PaymentRequestDtoFixture> jsonParseFixtures() {
