@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.purap.rest.jsonOnjects.fixture;
+package edu.cornell.kfs.module.purap.rest.jsonObjects.fixture;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -12,11 +12,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.module.purap.rest.jsonOnjects.PaymentRequestDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestDto;
 
 public enum PaymentRequestDtoFixture {
 
-    JSON_PARSE_EXAMPLE_FILE_1("/edu/cornell/kfs/modules/pursap/rest/jsonObjects/fixture/PaymentRequestDtoTest1.json",
+    JSON_PARSE_EXAMPLE_FILE_1("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestDtoTest1.json",
             "V12345", Integer.valueOf(98765), "11/01/2025", "11/02/2025",
             "INV-2025-001", new KualiDecimal(1000), "Line1", "Line2",
             "Line3",
@@ -24,13 +24,13 @@ public enum PaymentRequestDtoFixture {
             new KualiDecimal(75), "Express Shipping",
             buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_GENERAL)),
-    JSON_PARSE_EXAMPLE_FILE_2("/edu/cornell/kfs/modules/pursap/rest/jsonObjects/fixture/PaymentRequestDtoTest2.json",
+    JSON_PARSE_EXAMPLE_FILE_2("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestDtoTest2.json",
             "V54321", Integer.valueOf(98765), "12/15/2025", "12/16/2025",
             "INV-2025-002", new KualiDecimal(500), "No items", "No notes",
             StringUtils.EMPTY,
             new KualiDecimal(0), StringUtils.EMPTY, new KualiDecimal(0), StringUtils.EMPTY,
             new KualiDecimal(0), StringUtils.EMPTY, buildItems(), buildNotes()),
-    JSON_PARSE_EXAMPLE_FILE_3("/edu/cornell/kfs/modules/pursap/rest/jsonObjects/fixture/PaymentRequestDtoTest3.json",
+    JSON_PARSE_EXAMPLE_FILE_3("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestDtoTest3.json",
             "V67890", Integer.valueOf(98765), "10/05/2025", "10/06/2025",
             "INV-2025-003", new KualiDecimal(2500), "Multiple items", "Multiple notes",
             "Extra handling",
@@ -54,7 +54,7 @@ public enum PaymentRequestDtoFixture {
         buildNotes(PaymentRequestNoteDtoFixture.EMPTY_NOTE), false, buildMessageList(),
         buildMessageList("Vendor Number is a required field.", "PO Number is a required field.", 
             "Invoice Date is a required field.", "Received Date is a required field.", "Invoice Number is a required field.", 
-            "Invoice Amount is a required field.", "Item Price is a required field.", "Item Quality is a required field.",
+            "Invoice Amount is a required field.", "Item Price is a required field.", "Item Quantity is a required field.",
             "Item Line Number is a required field.", "Note Text is a required field.")),
     VALIDATION_TEST_FULL_VALUE_BAD_NOTE_TYPE(StringUtils.EMPTY, "vendNumber", Integer.valueOf(98765),  
         "11/25/2025",  "11/26/2025", 

@@ -1,8 +1,8 @@
-package edu.cornell.kfs.module.purap.rest.jsonOnjects.fixture;
+package edu.cornell.kfs.module.purap.rest.jsonObjects.fixture;
 
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
-import edu.cornell.kfs.module.purap.rest.jsonOnjects.PaymentRequestLineItemDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestLineItemDto;
 
 public enum PaymentRequestLineItemDtoFixture {
 

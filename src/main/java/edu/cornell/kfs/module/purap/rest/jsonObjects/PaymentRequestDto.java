@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.purap.rest.jsonOnjects;
+package edu.cornell.kfs.module.purap.rest.jsonObjects;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 public class PaymentRequestDto {
@@ -46,7 +47,7 @@ public class PaymentRequestDto {
     }
 
     public String getPoNumberString() {
-        return String.valueOf(poNumber);
+        return poNumber != null ? String.valueOf(poNumber) : StringUtils.EMPTY;
     }
 
     public void setPoNumber(Integer poNumber) {

@@ -14,11 +14,11 @@ public class PaymentRequestUtil {
         FREIGHT_PRICE(false, "Freight Price"),
         FREIGHT_DESCRIPTION(false, "Freight Description"),
         MISC_PRICE(false, "Miscellaneous Price"),
-        MISC_DESCRIPTION(false, "Miscellaneous Descritpion"),
+        MISC_DESCRIPTION(false, "Miscellaneous Description"),
         SHIPPING_PRICE(false, "Shipping Price"),
         SHIPPING_DESCRIPTION(false, "Shipping Description"),
         ITEM_LINE_NUMBER(true, "Item Line Number"),
-        ITEM_QUANTITY(true, "Item Quality"),
+        ITEM_QUANTITY(true, "Item Quantity"),
         ITEM_PRICE(true, "Item Price"),
         NOTE_TEXT(true, "Note Text"),
         NOTE_TYPE(false, "Note Type");

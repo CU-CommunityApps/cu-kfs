@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.purap.rest.jsonOnjects;
+package edu.cornell.kfs.module.purap.rest.jsonObjects;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

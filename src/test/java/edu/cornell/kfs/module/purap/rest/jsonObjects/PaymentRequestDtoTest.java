@@ -1,23 +1,22 @@
-package edu.cornell.kfs.module.purap.rest.jsonOnjects;
+package edu.cornell.kfs.module.purap.rest.jsonObjects;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-import edu.cornell.kfs.module.purap.rest.jsonOnjects.fixture.PaymentRequestDtoFixture;
-import edu.cornell.kfs.module.purap.rest.jsonOnjects.fixture.PaymentRequestResultsDtoFixture;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.fixture.PaymentRequestDtoFixture;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.fixture.PaymentRequestResultsDtoFixture;
 import edu.cornell.kfs.sys.typeadapters.KualiDecimalTypeAdapter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.sys.KFSConstants;
-
-import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -39,7 +38,7 @@ public class PaymentRequestDtoTest {
         LOG.debug("testReadJsonToPaymentRequestDto, actualDto DTO: {}", actualDto.toString());
         LOG.debug("testReadJsonToPaymentRequestDto, expected DTO: {}", expectedDto.toString());
 
-        assertEquals(expectedDto, actualDto);
+        Assertions.assertEquals(expectedDto, actualDto);
     }
 
     private static java.util.stream.Stream<PaymentRequestDtoFixture> jsonParseFixtures() {
@@ -56,7 +55,7 @@ public class PaymentRequestDtoTest {
         String actualJsonString = gson.toJson(paymentRequestDtoFixture.toPaymentRequestDto());
         JsonElement actualJsonObject = JsonParser.parseString(actualJsonString);
 
-        assertEquals(expectedJsonObject, actualJsonObject);
+        Assertions.assertEquals(expectedJsonObject, actualJsonObject);
     }
 
     @ParameterizedTest
@@ -69,7 +68,7 @@ public class PaymentRequestDtoTest {
         LOG.debug("testReadJsonToPaymentRequestResultsDto, actualDto DTO: {}", actualDto.toString());
         LOG.debug("testReadJsonToPaymentRequestResultsDto, expected DTO: {}", exptectedDto.toString());
 
-        assertEquals(exptectedDto, actualDto);
+        Assertions.assertEquals(exptectedDto, actualDto);
     }
 
     @ParameterizedTest
@@ -81,7 +80,7 @@ public class PaymentRequestDtoTest {
         String actualJsonString = gson.toJson(paymentRequestResultsDtoFixture.toPaymentRequestResultsDto());
         JsonElement actualJsonObject = JsonParser.parseString(actualJsonString);
 
-        assertEquals(expectedJsonObject, actualJsonObject);
+        Assertions.assertEquals(expectedJsonObject, actualJsonObject);
     }
 
     private String readFileToString(String fileName) throws IOException {

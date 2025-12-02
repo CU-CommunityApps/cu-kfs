@@ -1,8 +1,8 @@
-package edu.cornell.kfs.module.purap.rest.jsonOnjects.fixture;
+package edu.cornell.kfs.module.purap.rest.jsonObjects.fixture;
 
 import org.kuali.kfs.module.purap.PurapConstants;
 
-import edu.cornell.kfs.module.purap.rest.jsonOnjects.PaymentRequestNoteDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestNoteDto;
 
 public enum PaymentRequestNoteDtoFixture {
 

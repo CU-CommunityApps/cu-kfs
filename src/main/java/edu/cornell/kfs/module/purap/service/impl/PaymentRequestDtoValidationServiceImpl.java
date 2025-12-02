@@ -18,10 +18,10 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
-import edu.cornell.kfs.module.purap.rest.jsonOnjects.PaymentRequestDto;
-import edu.cornell.kfs.module.purap.rest.jsonOnjects.PaymentRequestLineItemDto;
-import edu.cornell.kfs.module.purap.rest.jsonOnjects.PaymentRequestNoteDto;
-import edu.cornell.kfs.module.purap.rest.jsonOnjects.PaymentRequestResultsDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestLineItemDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestNoteDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestResultsDto;
 import edu.cornell.kfs.module.purap.service.PaymentRequestDtoValidationService;
 import edu.cornell.kfs.module.purap.util.PaymentRequestUtil.PaymentRequestDtoFields;
 

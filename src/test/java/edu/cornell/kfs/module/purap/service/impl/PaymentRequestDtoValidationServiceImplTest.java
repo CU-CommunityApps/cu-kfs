@@ -1,8 +1,5 @@
 package edu.cornell.kfs.module.purap.service.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 
 import org.apache.logging.log4j.Level;
@@ -10,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -24,9 +22,9 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.mockito.Mockito;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
-import edu.cornell.kfs.module.purap.rest.jsonOnjects.PaymentRequestResultsDto;
-import edu.cornell.kfs.module.purap.rest.jsonOnjects.fixture.PaymentRequestDtoFixture;
-import edu.cornell.kfs.module.purap.rest.jsonOnjects.fixture.PaymentRequestLineItemDtoFixture;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestResultsDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.fixture.PaymentRequestDtoFixture;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.fixture.PaymentRequestLineItemDtoFixture;
 
 public class PaymentRequestDtoValidationServiceImplTest {
     private static final Logger LOG = LogManager.getLogger();
@@ -106,9 +104,9 @@ public class PaymentRequestDtoValidationServiceImplTest {
     public void testReadJsonToPaymentRequestDto(PaymentRequestDtoFixture paymentRequestDtoFixture) throws IOException {
         PaymentRequestResultsDto actualResults = validationService.validatePaymentRequestDto(paymentRequestDtoFixture.toPaymentRequestDto());
         LOG.info("testReadJsonToPaymentRequestDto, actual results: " + actualResults);
-        assertEquals(paymentRequestDtoFixture.expectedValidation, actualResults.isValid());
-        assertEquals(paymentRequestDtoFixture.expectedErrorMessages, actualResults.getErrorMessages());
-        assertEquals(paymentRequestDtoFixture.expectedSuccessMessages, actualResults.getSuccessMessages());
+        Assertions.assertEquals(paymentRequestDtoFixture.expectedValidation, actualResults.isValid());
+        Assertions.assertEquals(paymentRequestDtoFixture.expectedErrorMessages, actualResults.getErrorMessages());
+        Assertions.assertEquals(paymentRequestDtoFixture.expectedSuccessMessages, actualResults.getSuccessMessages());
     }
 
     private static java.util.stream.Stream<PaymentRequestDtoFixture> validationFixtures() {

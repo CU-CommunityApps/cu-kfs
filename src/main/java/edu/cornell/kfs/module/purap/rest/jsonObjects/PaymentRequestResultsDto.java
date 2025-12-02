@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.purap.rest.jsonOnjects;
+package edu.cornell.kfs.module.purap.rest.jsonObjects;
 
 import java.util.ArrayList;
 import java.util.List;

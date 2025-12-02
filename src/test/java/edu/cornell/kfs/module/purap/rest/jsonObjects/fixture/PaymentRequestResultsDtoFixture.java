@@ -1,20 +1,20 @@
-package edu.cornell.kfs.module.purap.rest.jsonOnjects.fixture;
+package edu.cornell.kfs.module.purap.rest.jsonObjects.fixture;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import edu.cornell.kfs.module.purap.rest.jsonOnjects.PaymentRequestResultsDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestResultsDto;
 
 public enum PaymentRequestResultsDtoFixture {
-    VALID_NO_MESSAGES("/edu/cornell/kfs/modules/pursap/rest/jsonObjects/fixture/PaymentRequestResults_valid_no_messages.json",
+    VALID_NO_MESSAGES("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestResults_valid_no_messages.json",
         true, buildStringList(), buildStringList()),
-    VALID_SUCCESS_MESSAGE("/edu/cornell/kfs/modules/pursap/rest/jsonObjects/fixture/PaymentRequestResults_valid_success_message.json",
+    VALID_SUCCESS_MESSAGE("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestResults_valid_success_message.json",
         true, buildStringList("success message 1"), buildStringList()),
-    INVALID_SUCCESS_AND_ERROR_MESSAGES("/edu/cornell/kfs/modules/pursap/rest/jsonObjects/fixture/PaymentRequestResults_invalid_succes_and_error_messages.json",
+    INVALID_SUCCESS_AND_ERROR_MESSAGES("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestResults_invalid_succes_and_error_messages.json",
         false, buildStringList("success message 1", "success message 2"), 
         buildStringList("error message 1", "error message 2")),
-    INVALID_ERROR_MESSAGE("/edu/cornell/kfs/modules/pursap/rest/jsonObjects/fixture/PaymentRequestResults_invalid_error_message.json",
+    INVALID_ERROR_MESSAGE("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestResults_invalid_error_message.json",
         false, buildStringList(), buildStringList("error message 1"));
 
     public final String jsonFileName;
