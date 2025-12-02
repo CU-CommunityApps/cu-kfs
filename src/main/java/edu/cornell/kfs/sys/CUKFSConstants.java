@@ -250,6 +250,7 @@ public class CUKFSConstants {
         public static final String CONCUR_ACCOUNT_DETAIL = "concurAccountDetails";
         public static final String EINVOICE = "eInvoice";
         public static final String PURCHASE_ORDER_DETAILS = "poDetail";
+        public static final String PAYMENT_REQUEST = "preq";
     }
 
     /*
