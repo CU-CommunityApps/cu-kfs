@@ -137,7 +137,7 @@
           event.preventDefault();
           const businessObjectName = event.target.getAttribute('data-businessObjectName');
           const lookupParameters = event.target.getAttribute('data-parameters');
-          //Cornell customization: change the lookup url to start with /kfs/ rather than /fin/
+          // Cornell customization: change the lookup url to start with /kfs/ rather than /fin/
           let lookupUrl = '/kfs/webapp/lookup/' + businessObjectName;
           const formFromUrl = location.search.substring(1);
           const formParams = new URLSearchParams(formFromUrl);
