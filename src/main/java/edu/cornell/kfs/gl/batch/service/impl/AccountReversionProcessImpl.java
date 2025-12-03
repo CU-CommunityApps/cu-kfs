@@ -43,6 +43,7 @@ import edu.cornell.kfs.coa.businessobject.ClosedAccountReversion;
 import edu.cornell.kfs.coa.businessobject.Reversion;
 import edu.cornell.kfs.coa.service.AccountReversionService;
 import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
+import edu.cornell.kfs.gl.batch.AccountReversionCurrentYearAccountStep;
 import edu.cornell.kfs.gl.batch.service.ReversionUnitOfWorkService;
 import edu.cornell.kfs.gl.businessobject.ReversionUnitOfWork;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
@@ -65,9 +66,9 @@ public class AccountReversionProcessImpl extends ReversionProcessBase implements
         this.CARRY_FORWARD_OBJECT_CODE = getParameterService().getParameterValueAsString(Reversion.class, CuGeneralLedgerConstants.ReversionProcess.CARRY_FORWARD_OBJECT_CODE);
         this.DEFAULT_FINANCIAL_DOCUMENT_TYPE_CODE = getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_NAMESPACE, GLParameterConstants.ANNUAL_CLOSING_COMPONENT, GLParameterConstants.DOCUMENT_TYPE);
         this.DEFAULT_FINANCIAL_SYSTEM_ORIGINATION_CODE = getParameterService().getParameterValueAsString(Reversion.class, CuGeneralLedgerConstants.ReversionProcess.MANUAL_FEED_ORIGINATION);
-        this.DEFAULT_FINANCIAL_BALANCE_TYPE_CODE = getParameterService().getParameterValueAsString(Reversion.class, CuGeneralLedgerConstants.ReversionProcess.CASH_BALANCE_TYPE);
-        this.DEFAULT_FINANCIAL_BALANCE_TYPE_CODE_YEAR_END = getParameterService().getParameterValueAsString(Reversion.class, CuGeneralLedgerConstants.ReversionProcess.BUDGET_BALANCE_TYPE);
-        this.DEFAULT_DOCUMENT_NUMBER_PREFIX = getParameterService().getParameterValueAsString(Reversion.class, CuGeneralLedgerConstants.ReversionProcess.DOCUMENT_NUMBER_PREFIX);
+        this.DEFAULT_FINANCIAL_BALANCE_TYPE_CODE = getParameterService().getParameterValueAsString(AccountReversionCurrentYearAccountStep.class, CuGeneralLedgerConstants.ReversionProcess.CASH_BALANCE_TYPE);
+        this.DEFAULT_FINANCIAL_BALANCE_TYPE_CODE_YEAR_END = getParameterService().getParameterValueAsString(AccountReversionCurrentYearAccountStep.class, CuGeneralLedgerConstants.ReversionProcess.BUDGET_BALANCE_TYPE);
+        this.DEFAULT_DOCUMENT_NUMBER_PREFIX = getParameterService().getParameterValueAsString(AccountReversionCurrentYearAccountStep.class, CuGeneralLedgerConstants.ReversionProcess.DOCUMENT_NUMBER_PREFIX);
 
         this.CASH_REVERTED_TO_MESSAGE = getConfigurationService().getPropertyValueAsString(KFSKeyConstants.OrganizationReversionProcess.CASH_REVERTED_TO);
         this.FUND_BALANCE_REVERTED_TO_MESSAGE = getConfigurationService().getPropertyValueAsString(KFSKeyConstants.OrganizationReversionProcess.FUND_BALANCE_REVERTED_TO);
