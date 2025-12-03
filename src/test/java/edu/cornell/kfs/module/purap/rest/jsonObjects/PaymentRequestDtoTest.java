@@ -24,9 +24,9 @@ import java.nio.charset.StandardCharsets;
 public class PaymentRequestDtoTest {
     private static final Logger LOG = LogManager.getLogger();
     private static Gson gson = new GsonBuilder()
-        .setDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT)
-        .registerTypeAdapter(KualiDecimal.class, new KualiDecimalTypeAdapter())
-        .create();
+            .setDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT)
+            .registerTypeAdapter(KualiDecimal.class, new KualiDecimalTypeAdapter())
+            .create();
 
     @ParameterizedTest
     @MethodSource("jsonParseFixtures")
@@ -43,7 +43,7 @@ public class PaymentRequestDtoTest {
 
     private static java.util.stream.Stream<PaymentRequestDtoFixture> jsonParseFixtures() {
         return java.util.Arrays.stream(PaymentRequestDtoFixture.values())
-            .filter(dto -> dto.name().startsWith("JSON_PARSE_"));
+                .filter(dto -> dto.name().startsWith("JSON_PARSE_"));
     }
 
     @ParameterizedTest
@@ -60,7 +60,8 @@ public class PaymentRequestDtoTest {
 
     @ParameterizedTest
     @EnumSource
-    public void testReadJsonToPaymentRequestResultsDto(PaymentRequestResultsDtoFixture paymentRequestResultsDtoFixture) throws IOException {
+    public void testReadJsonToPaymentRequestResultsDto(PaymentRequestResultsDtoFixture paymentRequestResultsDtoFixture)
+            throws IOException {
         String actualJsonString = readFileToString(paymentRequestResultsDtoFixture.jsonFileName);
         PaymentRequestResultsDto actualDto = gson.fromJson(actualJsonString, PaymentRequestResultsDto.class);
         PaymentRequestResultsDto exptectedDto = paymentRequestResultsDtoFixture.toPaymentRequestResultsDto();
@@ -73,7 +74,8 @@ public class PaymentRequestDtoTest {
 
     @ParameterizedTest
     @EnumSource
-    public void testWritePaymentRequestResultsDtoToJson(PaymentRequestResultsDtoFixture paymentRequestResultsDtoFixture) throws IOException {
+    public void testWritePaymentRequestResultsDtoToJson(PaymentRequestResultsDtoFixture paymentRequestResultsDtoFixture)
+            throws IOException {
         String expectedJsonString = readFileToString(paymentRequestResultsDtoFixture.jsonFileName);
         JsonElement expectedJsonObject = JsonParser.parseString(expectedJsonString);
 

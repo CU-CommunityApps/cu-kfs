@@ -42,19 +42,21 @@ public class PaymentRequestDtoValidationServiceImplTest {
 
     private ConfigurationService buildMockConfigurationService() {
         ConfigurationService service = Mockito.mock(ConfigurationService.class);
-        Mockito.when(service.getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED)).thenReturn("{0} is a required field.");
-        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_AT_LEAST_ONE_MUST_BE_ENTERED))
-            .thenReturn("At least one {0} must be entered.");
+        Mockito.when(service.getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED))
+                .thenReturn("{0} is a required field.");
+        Mockito.when(
+                service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_AT_LEAST_ONE_MUST_BE_ENTERED))
+                .thenReturn("At least one {0} must be entered.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_INVALID_VENDOR_NUMBER))
-            .thenReturn("Vendor Number {0} is not valid.");
+                .thenReturn("Vendor Number {0} is not valid.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_INVALID_PO))
-            .thenReturn("PO Number {0} is not valid.");
+                .thenReturn("PO Number {0} is not valid.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_PO_NOT_MATCH_VENDOR))
-            .thenReturn("PO Number {0} has a vendor number {1} but the vendor number supplied was {2}.");
+                .thenReturn("PO Number {0} has a vendor number {1} but the vendor number supplied was {2}.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_PO_NOT_OPEN))
-            .thenReturn("PO Number {0} is not open, it has a status of {1}.");
+                .thenReturn("PO Number {0} is not open, it has a status of {1}.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_PO_INVALID_LINE))
-            .thenReturn("PO Number {0} does not have a line number {1}.");
+                .thenReturn("PO Number {0} does not have a line number {1}.");
         return service;
     }
 
@@ -68,20 +70,26 @@ public class PaymentRequestDtoValidationServiceImplTest {
     private PurchaseOrderService buildMockPurchaseOrderService() {
         PurchaseOrderService service = Mockito.mock(PurchaseOrderService.class);
         Mockito.when(service.getCurrentPurchaseOrder(98765)).thenReturn(null);
-        
-        PurchaseOrderDocument docForPo98766 = buildMockPurchaseOrderDocument("987-32", PurchaseOrderStatuses.APPDOC_CANCELLED);
+
+        PurchaseOrderDocument docForPo98766 = buildMockPurchaseOrderDocument("987-32",
+                PurchaseOrderStatuses.APPDOC_CANCELLED);
         Mockito.when(service.getCurrentPurchaseOrder(98766)).thenReturn(docForPo98766);
 
-        PurchaseOrderDocument docForPo98767 = buildMockPurchaseOrderDocument("1234-1", PurchaseOrderStatuses.APPDOC_AWAIT_PURCHASING_REVIEW);
+        PurchaseOrderDocument docForPo98767 = buildMockPurchaseOrderDocument("1234-1",
+                PurchaseOrderStatuses.APPDOC_AWAIT_PURCHASING_REVIEW);
         Mockito.when(service.getCurrentPurchaseOrder(98767)).thenReturn(docForPo98767);
 
-        PurchaseOrderDocument docForPo98768 = buildMockPurchaseOrderDocument("1234-1", PurchaseOrderStatuses.APPDOC_OPEN);
-        Mockito.when(docForPo98768.getItemByLineNumber(PaymentRequestLineItemDtoFixture.ITEM_1_10_100.lineNumber)).thenReturn(null);
+        PurchaseOrderDocument docForPo98768 = buildMockPurchaseOrderDocument("1234-1",
+                PurchaseOrderStatuses.APPDOC_OPEN);
+        Mockito.when(docForPo98768.getItemByLineNumber(PaymentRequestLineItemDtoFixture.ITEM_1_10_100.lineNumber))
+                .thenReturn(null);
         Mockito.when(service.getCurrentPurchaseOrder(98768)).thenReturn(docForPo98768);
 
-        PurchaseOrderDocument docForPo98769 = buildMockPurchaseOrderDocument("1234-1", PurchaseOrderStatuses.APPDOC_OPEN);
+        PurchaseOrderDocument docForPo98769 = buildMockPurchaseOrderDocument("1234-1",
+                PurchaseOrderStatuses.APPDOC_OPEN);
         PurApItem item = Mockito.mock(PurApItem.class);
-        Mockito.when(docForPo98769.getItemByLineNumber(PaymentRequestLineItemDtoFixture.ITEM_1_10_100.lineNumber)).thenReturn(item);
+        Mockito.when(docForPo98769.getItemByLineNumber(PaymentRequestLineItemDtoFixture.ITEM_1_10_100.lineNumber))
+                .thenReturn(item);
         Mockito.when(service.getCurrentPurchaseOrder(98769)).thenReturn(docForPo98769);
 
         return service;
@@ -102,7 +110,8 @@ public class PaymentRequestDtoValidationServiceImplTest {
     @ParameterizedTest
     @MethodSource("validationFixtures")
     public void testReadJsonToPaymentRequestDto(PaymentRequestDtoFixture paymentRequestDtoFixture) throws IOException {
-        PaymentRequestResultsDto actualResults = validationService.validatePaymentRequestDto(paymentRequestDtoFixture.toPaymentRequestDto());
+        PaymentRequestResultsDto actualResults = validationService
+                .validatePaymentRequestDto(paymentRequestDtoFixture.toPaymentRequestDto());
         LOG.info("testReadJsonToPaymentRequestDto, actual results: " + actualResults);
         Assertions.assertEquals(paymentRequestDtoFixture.expectedValidation, actualResults.isValid());
         Assertions.assertEquals(paymentRequestDtoFixture.expectedErrorMessages, actualResults.getErrorMessages());
@@ -111,7 +120,7 @@ public class PaymentRequestDtoValidationServiceImplTest {
 
     private static java.util.stream.Stream<PaymentRequestDtoFixture> validationFixtures() {
         return java.util.Arrays.stream(PaymentRequestDtoFixture.values())
-            .filter(dto -> dto.name().startsWith("VALIDATION_TEST_"));
+                .filter(dto -> dto.name().startsWith("VALIDATION_TEST_"));
     }
-    
+
 }

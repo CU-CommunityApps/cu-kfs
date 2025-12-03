@@ -20,5 +20,5 @@ public class PaymentRequestApplication extends Application {
     public Set<Object> getSingletons() {
         return singletons;
     }
-    
+
 }

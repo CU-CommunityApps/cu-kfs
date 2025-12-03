@@ -36,17 +36,18 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         PaymentRequestResultsDto results = new PaymentRequestResultsDto();
         results.setValid(true);
         validateRequiredFields(paymentRequestDto, results);
-        if (results.isValid()){
+        if (results.isValid()) {
             validateVendorNumber(paymentRequestDto, results);
-            if (results.isValid()){
+            if (results.isValid()) {
                 validatePO(paymentRequestDto, results);
             }
         }
         /*
-        When we implement creating of the PO document, remove this statement
-        Also update PaymentRequestDtoFixture.VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_GOOD_LINE 
-        to not have this is a succes message
-        */
+         * When we implement creating of the PO document, remove this statement
+         * Also update
+         * PaymentRequestDtoFixture.VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_GOOD_LINE
+         * to not have this is a succes message
+         */
         if (results.isValid()) {
             results.getSuccessMessages().add("Successfully passed validation");
         }
@@ -108,7 +109,8 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
     }
 
     private String buildAtLeastOneElementError(String fieldName) {
-        String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_AT_LEAST_ONE_MUST_BE_ENTERED);
+        String messageBase = configurationService
+                .getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_AT_LEAST_ONE_MUST_BE_ENTERED);
         return MessageFormat.format(messageBase, fieldName);
     }
 
@@ -136,9 +138,9 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
 
         if (!isValidNoteType(noteDto.getNoteType())) {
             results.setValid(false);
-            String errorMessage = "If a note type is entered, it must be '" + 
-                PurapConstants.AttachmentTypeCodes.ATTACHMENT_TYPE_OTHER + "' or '" + 
-                PurapConstants.AttachmentTypeCodes.ATTACHMENT_TYPE_INVOICE_IMAGE + "'.";
+            String errorMessage = "If a note type is entered, it must be '" +
+                    PurapConstants.AttachmentTypeCodes.ATTACHMENT_TYPE_OTHER + "' or '" +
+                    PurapConstants.AttachmentTypeCodes.ATTACHMENT_TYPE_INVOICE_IMAGE + "'.";
             results.getErrorMessages().add(errorMessage);
         }
     }
@@ -154,7 +156,8 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         VendorDetail vendorDetail = vendorService.getByVendorNumber(paymentRequestDto.getVendorNumber());
         if (ObjectUtils.isNull(vendorDetail)) {
             results.setValid(false);
-            String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_INVALID_VENDOR_NUMBER);
+            String messageBase = configurationService
+                    .getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_INVALID_VENDOR_NUMBER);
             results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getVendorNumber()));
         }
     }
@@ -164,28 +167,36 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(paymentRequestDto.getPoNumber());
         if (poDoc == null) {
             results.setValid(false);
-            String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_INVALID_PO);
+            String messageBase = configurationService
+                    .getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_INVALID_PO);
             results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumberString()));
         } else if (!StringUtils.equalsIgnoreCase(poDoc.getVendorNumber(), paymentRequestDto.getVendorNumber())) {
             results.setValid(false);
-            String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_PO_NOT_MATCH_VENDOR);
-            results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumberString(), poDoc.getVendorNumber(), paymentRequestDto.getVendorNumber()));
-        } else if (!StringUtils.equals(poDoc.getApplicationDocumentStatus(), PurchaseOrderStatuses.APPDOC_OPEN) ) {
+            String messageBase = configurationService
+                    .getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_PO_NOT_MATCH_VENDOR);
+            results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumberString(),
+                    poDoc.getVendorNumber(), paymentRequestDto.getVendorNumber()));
+        } else if (!StringUtils.equals(poDoc.getApplicationDocumentStatus(), PurchaseOrderStatuses.APPDOC_OPEN)) {
             results.setValid(false);
-            String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_PO_NOT_OPEN);
-            results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumberString(), poDoc.getApplicationDocumentStatus()));
+            String messageBase = configurationService
+                    .getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_PO_NOT_OPEN);
+            results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumberString(),
+                    poDoc.getApplicationDocumentStatus()));
         } else {
             validatePoLine(paymentRequestDto, results, poDoc);
         }
     }
 
-    private void validatePoLine(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results, PurchaseOrderDocument poDoc) {
+    private void validatePoLine(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results,
+            PurchaseOrderDocument poDoc) {
         for (PaymentRequestLineItemDto line : paymentRequestDto.getItems()) {
             PurApItem item = poDoc.getItemByLineNumber(line.getLineNumber());
             if (ObjectUtils.isNull(item)) {
                 results.setValid(false);
-                String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_PO_INVALID_LINE);
-                results.getErrorMessages().add(MessageFormat.format(messageBase, String.valueOf(paymentRequestDto.getPoNumber()), String.valueOf(line.getLineNumber())));
+                String messageBase = configurationService
+                        .getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_PO_INVALID_LINE);
+                results.getErrorMessages().add(MessageFormat.format(messageBase,
+                        String.valueOf(paymentRequestDto.getPoNumber()), String.valueOf(line.getLineNumber())));
             }
         }
     }
@@ -198,7 +209,7 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         this.vendorService = vendorService;
     }
 
-    public void setPurchaseOrderService(PurchaseOrderService purchaseOrderService){ 
+    public void setPurchaseOrderService(PurchaseOrderService purchaseOrderService) {
         this.purchaseOrderService = purchaseOrderService;
     }
 

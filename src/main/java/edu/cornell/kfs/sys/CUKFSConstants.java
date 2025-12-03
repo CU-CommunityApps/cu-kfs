@@ -253,6 +253,9 @@ public class CUKFSConstants {
         public static final String PAYMENT_REQUEST = "preq";
     }
 
+    public static final String CHAR_SET_UTF_8 = "UTF-8";
+    public static final String FORM_DELIMITER_PATTERN = "\\A";
+
     /*
      * Modified backport of FINP-11262 ticket's addition of the static nested
      * KFSConstants.NoScientificNotationFormat class, adjusted for Cornell use.

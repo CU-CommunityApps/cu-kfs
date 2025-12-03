@@ -24,9 +24,9 @@ import edu.cornell.kfs.sys.service.ApiAuthenticationService;
 public class PaymentRequestAuthFilter implements Filter {
     private static final Logger LOG = LogManager.getLogger();
     private static final Gson gson = new Gson();
-    
+
     private ApiAuthenticationService apiAuthenticationService;
-    
+
     @Override
     public void init(FilterConfig filterConfig) {
     }
@@ -41,7 +41,7 @@ public class PaymentRequestAuthFilter implements Filter {
 
         checkAuthorization(httpServletRequest, httpServletResponse, chain);
     }
-    
+
     private void checkAuthorization(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException {
         try {
@@ -58,7 +58,7 @@ public class PaymentRequestAuthFilter implements Filter {
             response.getWriter().println(gson.toJson(CUKFSConstants.UNAUTHORIZED));
         }
     }
-    
+
     private boolean isAuthorized(HttpServletRequest request) {
         return getApiAuthenticationService().isAuthorized(CUKFSConstants.EndpointCodes.PAYMENT_REQUEST, request);
     }
@@ -66,7 +66,7 @@ public class PaymentRequestAuthFilter implements Filter {
     @Override
     public void destroy() {
     }
-    
+
     public ApiAuthenticationService getApiAuthenticationService() {
         if (apiAuthenticationService == null) {
             apiAuthenticationService = SpringContext.getBean(ApiAuthenticationService.class);
