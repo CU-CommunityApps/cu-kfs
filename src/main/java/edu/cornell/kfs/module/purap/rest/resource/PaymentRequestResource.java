@@ -60,20 +60,20 @@ public class PaymentRequestResource {
             String jsonBody = scanner.hasNext() ? scanner.next() : "";
             PaymentRequestDto paymentRequestDto = gson.fromJson(jsonBody, PaymentRequestDto.class);
 
-            LOG.info("createPaymentRequestDocument, Received PaymentRequestDto: {}", paymentRequestDto);
-
             String loggedInUser = getApiAuthenticationService().getAuthenticateUser(servletRequest);
-            LOG.info("createPaymentRequestDocument, logged in user: {}", loggedInUser);
+            LOG.info("createPaymentRequestDocument, logged in user: {} and the paymentRequestDto: {}", loggedInUser, paymentRequestDto);
 
             PaymentRequestResultsDto results = getPaymentRequestDtoValidationService().validatePaymentRequestDto(paymentRequestDto);
             if (results.isValid()) {
+                results.getSuccessMessages().add("In follow up user stories, this endpoint will be updated" +
+                    " to create a preq document using logged in user " + loggedInUser);
                 return Response.ok(gson.toJson(results)).build();
             } else {
                 return Response.status(Status.BAD_REQUEST).entity(gson.toJson(results)).build();
             }
 
         } catch (Exception e) {
-            LOG.error("createPaymentRequestDocument, an error occured", e);
+            LOG.error("createPaymentRequestDocument, an error occurred", e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(CUKFSConstants.INTERNAL_SERVER_ERROR).build();
         }
     }
