@@ -33,7 +33,7 @@ import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 import edu.cornell.kfs.sys.web.LazyInputStreamResource;
 
 @RestController
-@RequestMapping(path = "coa/account-attachments")
+@RequestMapping(path = "coa/account-attachments/api")
 public class AccountAttachmentController {
 
     private static final Logger LOG = LogManager.getLogger();
@@ -52,7 +52,7 @@ public class AccountAttachmentController {
         this.attachmentService = attachmentService;
     }
 
-    @GetMapping(path = "{chartCode}/{accountNumber}")
+    @GetMapping(path = "get-attachment-list/{chartCode}/{accountNumber}")
     public ResponseEntity<AccountAttachmentListingDto> getAttachmentMetadataForAccount(
             @PathVariable("chartCode") final String chartCode,
             @PathVariable("accountNumber") final String accountNumber
@@ -63,7 +63,7 @@ public class AccountAttachmentController {
         return ResponseEntity.ok(attachmentListing);
     }
 
-    @GetMapping(path = "{chartCode}/{accountNumber}/{attachmentId}")
+    @GetMapping(path = "get-attachment-contents/{chartCode}/{accountNumber}/{attachmentId}")
     public ResponseEntity<Resource> getAccountAttachment(
             @PathVariable("chartCode") final String chartCode,
             @PathVariable("accountNumber") final String accountNumber,
@@ -99,7 +99,11 @@ public class AccountAttachmentController {
 
     @ExceptionHandler
     public ResponseEntity<AccountAttachmentErrorResponseDto> handleException(final ResponseStatusException e) {
-        LOG.error("handleException, Encountered ResponseStatusException during account attachment operation", e);
+        if (e.getStatus() == HttpStatus.NOT_FOUND && StringUtils.isNotBlank(e.getReason())) {
+            LOG.warn("handleException, Operation failed due to nonexistent data: {}", e.getReason());
+        } else {
+            LOG.error("handleException, Encountered ResponseStatusException during account attachment operation", e);
+        }
         final List<String> errorMessages = StringUtils.isNotBlank(e.getReason()) ? List.of(e.getReason()) : List.of();
         return createErrorResponse(e.getStatus(), errorMessages);
     }

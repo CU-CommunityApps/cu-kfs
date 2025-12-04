@@ -270,4 +270,18 @@
           parent="platformAwareDaoJdbc"
           class="edu.cornell.kfs.coa.batch.dataaccess.impl.CopyLegacyAccountAttachmentsDaoJdbc"/>
 
+    <bean id="accountAttachmentControllerHelperService" parent="accountAttachmentControllerHelperService-parentBean"/>
+    <bean id="accountAttachmentControllerHelperService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.coa.service.impl.AccountAttachmentControllerHelperServiceImpl"
+          p:accountService-ref="accountService"
+          p:dataDictionaryService-ref="dataDictionaryService"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="accountAttachmentAuthFilter"
+          parent="apiAuthenticationFilter-baseBean"
+          p:endpointCode="#{T(edu.cornell.kfs.sys.CUKFSConstants$EndpointCodes).ACCOUNT_ATTACHMENTS}"/>
+
+    <alias name="accountAttachmentAuthFilter" alias="AccountAttachmentAuthFilter"/>
+
 </beans>

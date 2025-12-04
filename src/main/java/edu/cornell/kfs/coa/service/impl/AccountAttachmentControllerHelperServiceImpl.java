@@ -1,6 +1,7 @@
 package edu.cornell.kfs.coa.service.impl;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -8,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.exception.ContextedRuntimeException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kuali.kfs.coa.businessobject.Account;
@@ -18,6 +20,7 @@ import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
+import org.kuali.kfs.krad.datadictionary.validation.CharacterLevelValidationPattern;
 import org.kuali.kfs.krad.datadictionary.validation.ValidationPattern;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSKeyConstants;
@@ -139,20 +142,34 @@ public class AccountAttachmentControllerHelperServiceImpl implements AccountAtta
             return errors.build();
         }
 
+        final ValidationPattern validationPattern = attribute.getValidationPattern();
+        Objects.requireNonNull(validationPattern, "Unexpected null validation pattern for " + attribute.getName());
+        final boolean patternEnforcesLength = doesValidationPatternEnforceLengthRequirements(validationPattern);
         final Integer maxLength = attribute.getMaxLength();
-        Objects.requireNonNull(maxLength, "Unexpected null max length for " + attribute.getName());
-        if (propertyValue.length() > attribute.getMaxLength()) {
+        Validate.validState(maxLength != null || patternEnforcesLength,
+                "No attribute-level or pattern-level length checks exist for " + attribute.getName());
+
+        if (!patternEnforcesLength && propertyValue.length() > attribute.getMaxLength()) {
             errors.add(createErrorMessage(KFSKeyConstants.ERROR_MAX_LENGTH,
                     attribute.getLabel(), attribute.getMaxLength()));
         }
 
-        final ValidationPattern validationPattern = attribute.getValidationPattern();
-        Objects.requireNonNull(validationPattern, "Unexpected null validation pattern for " + attribute.getName());
         if (!validationPattern.matches(propertyValue)) {
-            errors.add(createErrorMessage(validationPattern.getValidationErrorMessageKey(), attribute.getLabel()));
+            final String[] stringParms = validationPattern.getValidationErrorMessageParameters(attribute.getLabel());
+            final Object[] errorParms = Arrays.stream(stringParms).toArray();
+            errors.add(createErrorMessage(validationPattern.getValidationErrorMessageKey(), errorParms));
         }
 
         return errors.build();
+    }
+
+    private boolean doesValidationPatternEnforceLengthRequirements(final ValidationPattern validationPattern) {
+        if (validationPattern instanceof CharacterLevelValidationPattern) {
+            final CharacterLevelValidationPattern charPattern = (CharacterLevelValidationPattern) validationPattern;
+            return charPattern.getMaxLength() != -1 || charPattern.getExactLength() != -1;
+        } else {
+            return false;
+        }
     }
 
     private String createErrorMessage(final String patternKey, final Object... arguments) {
@@ -168,6 +185,18 @@ public class AccountAttachmentControllerHelperServiceImpl implements AccountAtta
             exception = exception.addContextValue(CUKFSPropertyConstants.ERRORS, error);
         }
         return exception;
+    }
+
+    public void setAccountService(final AccountService accountService) {
+        this.accountService = accountService;
+    }
+
+    public void setDataDictionaryService(final DataDictionaryService dataDictionaryService) {
+        this.dataDictionaryService = dataDictionaryService;
+    }
+
+    public void setConfigurationService(final ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }

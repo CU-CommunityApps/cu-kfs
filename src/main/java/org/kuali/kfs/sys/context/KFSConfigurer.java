@@ -92,7 +92,7 @@ public class KFSConfigurer implements DisposableBean, InitializingBean, ServletC
     /* This is under the webapp context (i.e. .../fin/<SPRING_MVC_ROOT_PATH>) */
     private static final String SPRING_MVC_ROOT_PATH = "/api";
     // CU customization
-    private static final String CU_SPRING_MVC_ROOT_PATH = "/ws/api";
+    private static final String CU_SPRING_MVC_ROOT_PATH = "/ws/cu";
     // CU customization
     private static final String SCHEDULED_THREAD_POOL_SERVICE = "rice.ksb.scheduledThreadPool";
 

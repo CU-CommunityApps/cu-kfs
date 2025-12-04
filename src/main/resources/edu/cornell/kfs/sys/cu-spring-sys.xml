@@ -474,5 +474,10 @@
             <ref bean="apiFrameworkLookupableHelperService" />
         </property>
     </bean>
-    
+
+    <bean id="apiAuthenticationFilter-baseBean"
+          abstract="true"
+          class="edu.cornell.kfs.sys.web.filter.ApiAuthenticationFilter"
+          p:apiAuthenticationService-ref="apiAuthenticationService"/>
+
 </beans>
