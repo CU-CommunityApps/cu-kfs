@@ -366,5 +366,12 @@
         p:filePath="${reports.directory}/purap"
         p:fileNamePrefix="jaggaer_generate_xml_report_"
         p:title="Jaggaer Generate XML Report File"/>
+
+    <bean id="paymentRequestDtoValidationService" parent="paymentRequestDtoValidationService-parentBean" />
+    <bean id="paymentRequestDtoValidationService-parentBean" abstract="true"
+        class="edu.cornell.kfs.module.purap.service.impl.PaymentRequestDtoValidationServiceImpl"
+        p:configurationService-ref="configurationService"
+        p:vendorService-ref="vendorService"
+        p:purchaseOrderService-ref="purchaseOrderService"/>
     
 </beans>

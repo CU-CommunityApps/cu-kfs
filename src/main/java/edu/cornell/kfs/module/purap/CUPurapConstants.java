@@ -570,6 +570,7 @@ public class CUPurapConstants {
 
     public static final String IWNT_NO_ATTACHMENTS_QUESTION_ID = "IWantDocumentNoAttachments";
     
+    public static final String PAYMENT_REQUEST_ENDPOINT_DESCRIPTION = "Payment Request Resource";
     public static final String PURCHASE_ORDER_ENDPOINT_DESCRIPTION = "Purchase Order Resource";
     public static final String PURCHASE_ORDER_NUMBER_URL_PARAMETER_NAME = "poNumber";
     public static final String PURCHASE_ORDER_NUMBER_FORMAT_ERROR_RESPONSE_MESSAGE = "The " + PURCHASE_ORDER_NUMBER_URL_PARAMETER_NAME + " was not formatted correctly";
