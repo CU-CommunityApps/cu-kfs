@@ -589,6 +589,15 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         return StringUtils.left(description, descriptionMaxLength);
     }
 
+    /*
+     * CU Customization KFSPTS-33340
+     * With FINP-7466 (KualiCo patch 2024-05-01), two lines were introduced that determine and set
+     * the last billed date to be the last invoiced milestone date when invoicing by milestones.
+     * Our customization to the Federal Financial Reports creation began encountering a stacktrace
+     * for the case where method buildInvoiceMilestones does not create any invoiced milestones
+     * under certain data conditions. Encapsulated that FINP change in a conditional to ensure
+     * milestones ARE built before attempting that new logic.
+     */
     /**
      * This method takes all the applicable attributes from the associated award object and sets those attributes into
      * their corresponding invoice attributes.
@@ -646,8 +655,11 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                     document.getInvoiceMilestones().clear();
                     document.getInvoiceMilestones().addAll(buildInvoiceMilestones(milestones));
 
-                    final Date billedDate = document.getInvoiceMilestones().stream().map(InvoiceMilestone::getMilestoneActualCompletionDate).max(Date::compareTo).get();
-                    invoiceGeneralDetail.setLastBilledDate(billedDate);
+                    /* CU Customization: KFSPTS-33340 */
+                    if (!document.getInvoiceMilestones().isEmpty() || document.getInvoiceMilestones().size() != 0) {
+                        final Date billedDate = document.getInvoiceMilestones().stream().map(InvoiceMilestone::getMilestoneActualCompletionDate).max(Date::compareTo).get();
+                        invoiceGeneralDetail.setLastBilledDate(billedDate);
+                    }
                 }
             } else if (ArConstants.BillingFrequencyValues.isPredeterminedBilling(docInvoiceGeneralDetail)) {
                 final AwardAccount awardAccount = awardAccounts.get(0);
