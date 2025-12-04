@@ -4,10 +4,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ContextedRuntimeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.bo.Attachment;
@@ -29,7 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 import edu.cornell.kfs.coa.rest.jsonObjects.AccountAttachmentErrorResponseDto;
 import edu.cornell.kfs.coa.rest.jsonObjects.AccountAttachmentListingDto;
 import edu.cornell.kfs.coa.service.AccountAttachmentControllerHelperService;
-import edu.cornell.kfs.sys.CUKFSPropertyConstants;
+import edu.cornell.kfs.sys.web.CuResponseStatusException;
 import edu.cornell.kfs.sys.web.LazyInputStreamResource;
 
 @RestController
@@ -98,6 +96,14 @@ public class AccountAttachmentController {
     }
 
     @ExceptionHandler
+    public ResponseEntity<AccountAttachmentErrorResponseDto> handleException(final CuResponseStatusException e) {
+        LOG.error("handleException, Encountered CuResponseStatusException during account attachment operation", e);
+        final AccountAttachmentErrorResponseDto errorResponse = (AccountAttachmentErrorResponseDto) e.getStatusInfo();
+        return ResponseEntity.status(e.getStatus())
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<AccountAttachmentErrorResponseDto> handleException(final ResponseStatusException e) {
         if (e.getStatus() == HttpStatus.NOT_FOUND && StringUtils.isNotBlank(e.getReason())) {
             LOG.warn("handleException, Operation failed due to nonexistent data: {}", e.getReason());
@@ -106,18 +112,6 @@ public class AccountAttachmentController {
         }
         final List<String> errorMessages = StringUtils.isNotBlank(e.getReason()) ? List.of(e.getReason()) : List.of();
         return createErrorResponse(e.getStatus(), errorMessages);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<AccountAttachmentErrorResponseDto> handleException(final ContextedRuntimeException e) {
-        LOG.error("handleException, Encountered ContextedRuntimeException during account attachment operation", e);
-        final Object statusFromContext = e.getFirstContextValue(CUKFSPropertyConstants.STATUS);
-        final List<String> errorMessages = e.getContextValues(CUKFSPropertyConstants.ERRORS).stream()
-                .map(String.class::cast)
-                .collect(Collectors.toUnmodifiableList());
-        final HttpStatus status = statusFromContext != null
-                ? (HttpStatus) statusFromContext : HttpStatus.INTERNAL_SERVER_ERROR;
-        return createErrorResponse(status, errorMessages);
     }
 
     @ExceptionHandler

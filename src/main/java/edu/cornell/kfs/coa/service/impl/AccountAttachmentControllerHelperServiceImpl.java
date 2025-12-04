@@ -1,57 +1,38 @@
 package edu.cornell.kfs.coa.service.impl;
 
-import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.exception.ContextedRuntimeException;
-import org.apache.commons.lang3.tuple.Pair;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.service.AccountService;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.krad.bo.Attachment;
-import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
-import org.kuali.kfs.krad.datadictionary.validation.CharacterLevelValidationPattern;
-import org.kuali.kfs.krad.datadictionary.validation.ValidationPattern;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import edu.cornell.kfs.coa.rest.jsonObjects.AccountAttachmentErrorResponseDto;
 import edu.cornell.kfs.coa.rest.jsonObjects.AccountAttachmentListItemDto;
 import edu.cornell.kfs.coa.rest.jsonObjects.AccountAttachmentListingDto;
 import edu.cornell.kfs.coa.service.AccountAttachmentControllerHelperService;
 import edu.cornell.kfs.krad.CUKRADPropertyConstants;
-import edu.cornell.kfs.sys.CUKFSPropertyConstants;
+import edu.cornell.kfs.sys.service.WebApiPropertyValidationService;
+import edu.cornell.kfs.sys.util.WebApiProperty;
+import edu.cornell.kfs.sys.web.CuResponseStatusException;
 
-@SuppressWarnings("deprecation")
 public class AccountAttachmentControllerHelperServiceImpl implements AccountAttachmentControllerHelperService {
 
-    private static final Map<String, Class<? extends BusinessObject>> PROPERTY_TO_BO_MAPPINGS = Map.ofEntries(
-            Map.entry(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, Account.class),
-            Map.entry(KFSPropertyConstants.ACCOUNT_NUMBER, Account.class),
-            Map.entry(CUKRADPropertyConstants.ATTACHMENT_IDENTIFIER, Attachment.class)
-    );
-
     private AccountService accountService;
-    private DataDictionaryService dataDictionaryService;
-    private ConfigurationService configurationService;
+    private WebApiPropertyValidationService webApiPropertyValidationService;
 
     @Override
     public AccountAttachmentListingDto getAccountAttachmentListing(final String chartCode, final String accountNumber) {
         validatePropertyValues(
-                Pair.of(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartCode),
-                Pair.of(KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber));
+                WebApiProperty.required(Account.class, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartCode),
+                WebApiProperty.required(Account.class, KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber));
 
         final Account account = getExistingAccount(chartCode, accountNumber);
         return createAccountAttachmentListing(account);
@@ -99,9 +80,9 @@ public class AccountAttachmentControllerHelperServiceImpl implements AccountAtta
     public Attachment getAccountAttachment(final String chartCode, final String accountNumber,
             final String attachmentId) {
         validatePropertyValues(
-                Pair.of(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartCode),
-                Pair.of(KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber),
-                Pair.of(CUKRADPropertyConstants.ATTACHMENT_IDENTIFIER, attachmentId));
+                WebApiProperty.required(Account.class, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartCode),
+                WebApiProperty.required(Account.class, KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber),
+                WebApiProperty.required(Attachment.class, CUKRADPropertyConstants.ATTACHMENT_IDENTIFIER, attachmentId));
 
         final Account account = getExistingAccount(chartCode, accountNumber);
         final List<Note> accountNotes = account.getBoNotes();
@@ -115,88 +96,21 @@ public class AccountAttachmentControllerHelperServiceImpl implements AccountAtta
         return matchingAttachment;
     }
 
-    @SafeVarargs
-    private void validatePropertyValues(final Pair<String, String>... properties) {
-        List<String> errors = Stream.of(properties)
-                .flatMap(this::validatePropertyValue)
-                .collect(Collectors.toUnmodifiableList());
+    private void validatePropertyValues(final WebApiProperty... properties) {
+        final List<String> errors = webApiPropertyValidationService.validateProperties(properties);
         if (!errors.isEmpty()) {
-            throw createContextedRuntimeException(HttpStatus.BAD_REQUEST, "Invalid search parameters", errors);
+            throw new CuResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid search parameters",
+                    AccountAttachmentErrorResponseDto.of(errors));
         }
-    }
-
-    private Stream<String> validatePropertyValue(final Pair<String, String> property) {
-        return validatePropertyValue(property.getLeft(), property.getRight());
-    }
-
-    private Stream<String> validatePropertyValue(final String propertyName, final String propertyValue) {
-        final Stream.Builder<String> errors = Stream.builder();
-        final Class<? extends BusinessObject> boClass = PROPERTY_TO_BO_MAPPINGS.get(propertyName);
-        Objects.requireNonNull(boClass, "Unexpected null BO class for BO property " + propertyName);
-        final AttributeDefinition attribute = dataDictionaryService.getAttributeDefinition(
-                boClass.getSimpleName(), propertyName);
-        Objects.requireNonNull(attribute, "Unexpected null data dictionary attribute for " + propertyName);
-
-        if (StringUtils.isBlank(propertyValue)) {
-            errors.add(createErrorMessage(KFSKeyConstants.ERROR_REQUIRED, attribute.getLabel()));
-            return errors.build();
-        }
-
-        final ValidationPattern validationPattern = attribute.getValidationPattern();
-        Objects.requireNonNull(validationPattern, "Unexpected null validation pattern for " + attribute.getName());
-        final boolean patternEnforcesLength = doesValidationPatternEnforceLengthRequirements(validationPattern);
-        final Integer maxLength = attribute.getMaxLength();
-        Validate.validState(maxLength != null || patternEnforcesLength,
-                "No attribute-level or pattern-level length checks exist for " + attribute.getName());
-
-        if (!patternEnforcesLength && propertyValue.length() > attribute.getMaxLength()) {
-            errors.add(createErrorMessage(KFSKeyConstants.ERROR_MAX_LENGTH,
-                    attribute.getLabel(), attribute.getMaxLength()));
-        }
-
-        if (!validationPattern.matches(propertyValue)) {
-            final String[] stringParms = validationPattern.getValidationErrorMessageParameters(attribute.getLabel());
-            final Object[] errorParms = Arrays.stream(stringParms).toArray();
-            errors.add(createErrorMessage(validationPattern.getValidationErrorMessageKey(), errorParms));
-        }
-
-        return errors.build();
-    }
-
-    private boolean doesValidationPatternEnforceLengthRequirements(final ValidationPattern validationPattern) {
-        if (validationPattern instanceof CharacterLevelValidationPattern) {
-            final CharacterLevelValidationPattern charPattern = (CharacterLevelValidationPattern) validationPattern;
-            return charPattern.getMaxLength() != -1 || charPattern.getExactLength() != -1;
-        } else {
-            return false;
-        }
-    }
-
-    private String createErrorMessage(final String patternKey, final Object... arguments) {
-        final String pattern = configurationService.getPropertyValueAsString(patternKey);
-        return MessageFormat.format(pattern, arguments);
-    }
-
-    private ContextedRuntimeException createContextedRuntimeException(
-            final HttpStatus httpStatus, final String message, final List<String> errors) {
-        ContextedRuntimeException exception = new ContextedRuntimeException(message)
-                .addContextValue(CUKFSPropertyConstants.STATUS, httpStatus);
-        for (final String error : errors) {
-            exception = exception.addContextValue(CUKFSPropertyConstants.ERRORS, error);
-        }
-        return exception;
     }
 
     public void setAccountService(final AccountService accountService) {
         this.accountService = accountService;
     }
 
-    public void setDataDictionaryService(final DataDictionaryService dataDictionaryService) {
-        this.dataDictionaryService = dataDictionaryService;
-    }
-
-    public void setConfigurationService(final ConfigurationService configurationService) {
-        this.configurationService = configurationService;
+    public void setWebApiPropertyValidationService(
+            final WebApiPropertyValidationService webApiPropertyValidationService) {
+        this.webApiPropertyValidationService = webApiPropertyValidationService;
     }
 
 }
