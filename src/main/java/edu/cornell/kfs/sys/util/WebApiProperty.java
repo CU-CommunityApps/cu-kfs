@@ -8,6 +8,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
+/**
+ * Helper class for mapping a web service data input value to an Attribute Definition in the Data Dictionary.
+ */
 public final class WebApiProperty {
 
     private final Class<? extends BusinessObject> businessObjectClass;
