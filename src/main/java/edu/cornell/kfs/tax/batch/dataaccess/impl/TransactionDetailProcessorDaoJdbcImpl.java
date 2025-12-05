@@ -238,18 +238,18 @@ public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwa
 
 
     @Override
-    public VendorAddressLite getHighestPriorityUSVendorAddress(final Integer vendorHeaderId,
+    public List<VendorAddressLite> getPrioritizedUSVendorAddresses(final Integer vendorHeaderId,
             final Integer vendorDetailId) {
-        return getHighestPriorityVendorAddress(Pair.of(vendorHeaderId, vendorDetailId), true);
+        return getPrioritizedVendorAddresses(Pair.of(vendorHeaderId, vendorDetailId), true);
     }
 
     @Override
-    public VendorAddressLite getHighestPriorityForeignVendorAddress(final Integer vendorHeaderId,
+    public List<VendorAddressLite> getPrioritizedForeignVendorAddresses(final Integer vendorHeaderId,
             final Integer vendorDetailId) {
-        return getHighestPriorityVendorAddress(Pair.of(vendorHeaderId, vendorDetailId), false);
+        return getPrioritizedVendorAddresses(Pair.of(vendorHeaderId, vendorDetailId), false);
     }
 
-    private VendorAddressLite getHighestPriorityVendorAddress(final Pair<Integer, Integer> vendorId,
+    private List<VendorAddressLite> getPrioritizedVendorAddresses(final Pair<Integer, Integer> vendorId,
             final boolean searchForUSAddresses) {
         final TaxDtoDbMetadata addressMetadata = taxTableMetadataLookupService
                 .getDatabaseMappingMetadataForDto(VendorAddressField.class);
@@ -291,15 +291,15 @@ public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwa
                 .build();
     }
 
-    private VendorAddressLite readVendorAddressResults(final ResultSet resultSet,
+    private List<VendorAddressLite> readVendorAddressResults(final ResultSet resultSet,
             final TaxDtoDbMetadata addressMetadata) throws SQLException {
         final TaxDtoRowMapper<VendorAddressLite> addressMapper = new TaxDtoRowMapperImpl<>(
                 VendorAddressLite::new, encryptionService, addressMetadata, resultSet);
-        if (addressMapper.moveToNextRow()) {
-            return addressMapper.readCurrentRow();
-        } else {
-            return null;
+        final Stream.Builder<VendorAddressLite> addresses = Stream.builder();
+        while (addressMapper.moveToNextRow()) {
+            addresses.add(addressMapper.readCurrentRow());
         }
+        return addresses.build().collect(Collectors.toUnmodifiableList());
     }
 
 

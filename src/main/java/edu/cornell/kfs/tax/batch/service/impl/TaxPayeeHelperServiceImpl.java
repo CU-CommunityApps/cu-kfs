@@ -2,6 +2,7 @@ package edu.cornell.kfs.tax.batch.service.impl;
 
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.apache.commons.lang3.StringUtils;
@@ -132,10 +133,12 @@ public class TaxPayeeHelperServiceImpl implements TaxPayeeHelperService {
 
     private void initializeVendorAddressData(final TaxPayeeBase payee,
             final VendorDetailLite vendor, final TaxStatisticsHandler statistics) throws SQLException {
-        final VendorAddressLite usAddress = transactionDetailProcessorDao.getHighestPriorityUSVendorAddress(
+        final List<VendorAddressLite> usAddresses = transactionDetailProcessorDao.getPrioritizedUSVendorAddresses(
                 vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
-        final VendorAddressLite foreignAddress = transactionDetailProcessorDao.getHighestPriorityForeignVendorAddress(
+        final List<VendorAddressLite> foreignAddresses = transactionDetailProcessorDao.getPrioritizedForeignVendorAddresses(
                 vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
+        final VendorAddressLite usAddress = !usAddresses.isEmpty() ? usAddresses.get(0) : null;
+        final VendorAddressLite foreignAddress = !foreignAddresses.isEmpty() ? foreignAddresses.get(0) : null;
 
         if (ObjectUtils.isNotNull(usAddress)) {
             payee.setVendorLine1Address(usAddress.getVendorLine1Address());

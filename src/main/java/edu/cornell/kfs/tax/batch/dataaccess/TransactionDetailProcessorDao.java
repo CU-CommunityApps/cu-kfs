@@ -19,10 +19,10 @@ public interface TransactionDetailProcessorDao {
 
     VendorQueryResults getVendor(final Integer vendorHeaderId, final Integer vendorDetailId);
 
-    VendorAddressLite getHighestPriorityUSVendorAddress(final Integer vendorHeaderId,
+    List<VendorAddressLite> getPrioritizedUSVendorAddresses(final Integer vendorHeaderId,
             final Integer vendorDetailId);
 
-    VendorAddressLite getHighestPriorityForeignVendorAddress(final Integer vendorHeaderId,
+    List<VendorAddressLite> getPrioritizedForeignVendorAddresses(final Integer vendorHeaderId,
             final Integer vendorDetailId);
 
     List<NoteLite> getNotesByDocumentNumber(final String documentNumber);
