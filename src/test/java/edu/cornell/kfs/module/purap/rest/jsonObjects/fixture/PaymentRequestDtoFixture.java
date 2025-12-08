@@ -214,10 +214,10 @@ public enum PaymentRequestDtoFixture {
         return dto;
     }
 
-    private Date buildDate(String dateString) {
+    private LocalDate buildDate(String dateString) {
         try {
             LocalDate localDate = LocalDate.parse(dateString, DATE_FORMATTER_MMDDYYYY);
-            return Date.valueOf(localDate);
+            return localDate;
         } catch (Exception e) {
             return null;
         }

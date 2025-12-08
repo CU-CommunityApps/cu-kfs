@@ -1,6 +1,6 @@
 package edu.cornell.kfs.module.purap.rest.jsonObjects;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,8 +13,8 @@ import org.kuali.kfs.core.api.util.type.KualiDecimal;
 public class PaymentRequestDto {
     private String vendorNumber;
     private Integer poNumber;
-    private Date invoiceDate;
-    private Date receivedDate;
+    private LocalDate invoiceDate;
+    private LocalDate receivedDate;
     private String invoiceNumber;
     private KualiDecimal invoiceAmount;
     private String specialHandlingLine1;
@@ -54,19 +54,19 @@ public class PaymentRequestDto {
         this.poNumber = poNumber;
     }
 
-    public Date getInvoiceDate() {
+    public LocalDate getInvoiceDate() {
         return invoiceDate;
     }
 
-    public void setInvoiceDate(Date invoiceDate) {
+    public void setInvoiceDate(LocalDate invoiceDate) {
         this.invoiceDate = invoiceDate;
     }
 
-    public Date getReceivedDate() {
+    public LocalDate getReceivedDate() {
         return receivedDate;
     }
 
-    public void setReceivedDate(Date receivedDate) {
+    public void setReceivedDate(LocalDate receivedDate) {
         this.receivedDate = receivedDate;
     }
 

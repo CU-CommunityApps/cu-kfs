@@ -8,6 +8,7 @@ import com.google.gson.JsonParser;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.fixture.PaymentRequestDtoFixture;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.fixture.PaymentRequestResultsDtoFixture;
 import edu.cornell.kfs.sys.typeadapters.KualiDecimalTypeAdapter;
+import edu.cornell.kfs.sys.typeadapters.LocalDateTypeAdapter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,12 +21,14 @@ import org.kuali.kfs.sys.KFSConstants;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 
 public class PaymentRequestDtoTest {
     private static final Logger LOG = LogManager.getLogger();
     private static Gson gson = new GsonBuilder()
             .setDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT)
             .registerTypeAdapter(KualiDecimal.class, new KualiDecimalTypeAdapter())
+            .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT))
             .create();
 
     @ParameterizedTest

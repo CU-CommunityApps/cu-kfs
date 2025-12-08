@@ -53,7 +53,7 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
             results.getSuccessMessages().add("Successfully passed validation");
         }
 
-        LOG.debug("validatePaymentRequestDto, validation results: {}", results.toString());
+        LOG.debug("validatePaymentRequestDto, validation results: {}", results);
         return results;
     }
 
