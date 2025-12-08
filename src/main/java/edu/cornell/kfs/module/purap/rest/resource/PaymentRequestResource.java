@@ -21,8 +21,10 @@ import edu.cornell.kfs.module.purap.service.PaymentRequestDtoValidationService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.ApiAuthenticationService;
 import edu.cornell.kfs.sys.typeadapters.KualiDecimalTypeAdapter;
+import edu.cornell.kfs.sys.typeadapters.LocalDateTypeAdapter;
 
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +41,7 @@ public class PaymentRequestResource {
     private static Gson gson = new GsonBuilder()
             .setDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT)
             .registerTypeAdapter(KualiDecimal.class, new KualiDecimalTypeAdapter())
+            .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT))
             .create();
 
     @Context

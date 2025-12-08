@@ -45,7 +45,6 @@ public class KualiDecimalTypeAdapterTest {
         KualiDecimal decimal = new KualiDecimal(DECIMAL_STRING);
         adapter.write(jsonWriter, decimal);
         jsonWriter.flush();
-        // Should serialize as 12345.67 (no quotes, just the number)
         assertEquals(DECIMAL_STRING, writer.toString());
     }
 
