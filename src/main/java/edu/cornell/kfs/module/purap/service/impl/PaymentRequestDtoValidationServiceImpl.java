@@ -38,15 +38,16 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         validateRequiredFields(paymentRequestDto, results);
         if (results.isValid()) {
             validateVendorNumber(paymentRequestDto, results);
-            if (results.isValid()) {
-                validatePO(paymentRequestDto, results);
-            }
         }
+        if (results.isValid()) {
+            validatePO(paymentRequestDto, results);
+        }
+        
         /*
          * When we implement creating of the PO document, remove this statement
          * Also update
          * PaymentRequestDtoFixture.VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_GOOD_LINE
-         * to not have this is a succes message
+         * to not have this is a success message
          */
         if (results.isValid()) {
             results.getSuccessMessages().add("Successfully passed validation");
@@ -168,18 +169,18 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         if (poDoc == null) {
             results.setValid(false);
             String messageBase = configurationService
-                    .getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_INVALID_PO);
+                    .getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_INVALID_PO);
             results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumberString()));
         } else if (!StringUtils.equalsIgnoreCase(poDoc.getVendorNumber(), paymentRequestDto.getVendorNumber())) {
             results.setValid(false);
             String messageBase = configurationService
-                    .getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_PO_NOT_MATCH_VENDOR);
+                    .getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_NOT_MATCH_VENDOR);
             results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumberString(),
                     poDoc.getVendorNumber(), paymentRequestDto.getVendorNumber()));
         } else if (!StringUtils.equals(poDoc.getApplicationDocumentStatus(), PurchaseOrderStatuses.APPDOC_OPEN)) {
             results.setValid(false);
             String messageBase = configurationService
-                    .getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_PO_NOT_OPEN);
+                    .getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_NOT_OPEN);
             results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumberString(),
                     poDoc.getApplicationDocumentStatus()));
         } else {
@@ -194,7 +195,7 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
             if (ObjectUtils.isNull(item)) {
                 results.setValid(false);
                 String messageBase = configurationService
-                        .getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_PO_INVALID_LINE);
+                        .getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_INVALID_LINE);
                 results.getErrorMessages().add(MessageFormat.format(messageBase,
                         String.valueOf(paymentRequestDto.getPoNumber()), String.valueOf(line.getLineNumber())));
             }

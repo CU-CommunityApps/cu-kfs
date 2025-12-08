@@ -49,13 +49,13 @@ public class PaymentRequestDtoValidationServiceImplTest {
                 .thenReturn("At least one {0} must be entered.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_INVALID_VENDOR_NUMBER))
                 .thenReturn("Vendor Number {0} is not valid.");
-        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_INVALID_PO))
+        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_INVALID_PO))
                 .thenReturn("PO Number {0} is not valid.");
-        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_PO_NOT_MATCH_VENDOR))
+        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_NOT_MATCH_VENDOR))
                 .thenReturn("PO Number {0} has a vendor number {1} but the vendor number supplied was {2}.");
-        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_PO_NOT_OPEN))
+        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_NOT_OPEN))
                 .thenReturn("PO Number {0} is not open, it has a status of {1}.");
-        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERORR_PAYMENTREQUEST_PO_INVALID_LINE))
+        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_INVALID_LINE))
                 .thenReturn("PO Number {0} does not have a line number {1}.");
         return service;
     }

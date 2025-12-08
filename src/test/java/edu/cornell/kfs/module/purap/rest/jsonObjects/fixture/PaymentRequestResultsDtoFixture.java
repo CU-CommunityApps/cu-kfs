@@ -14,7 +14,7 @@ public enum PaymentRequestResultsDtoFixture {
             "/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestResults_valid_success_message.json",
             true, buildStringList("success message 1"), buildStringList()),
     INVALID_SUCCESS_AND_ERROR_MESSAGES(
-            "/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestResults_invalid_succes_and_error_messages.json",
+            "/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestResults_invalid_success_and_error_messages.json",
             false, buildStringList("success message 1", "success message 2"),
             buildStringList("error message 1", "error message 2")),
     INVALID_ERROR_MESSAGE(
