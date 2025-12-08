@@ -1,7 +1,10 @@
-package edu.cornell.kfs.coa.fixture;
+package edu.cornell.kfs.coa.rest.resource.fixture;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import org.apache.commons.lang3.Validate;
 import org.kuali.kfs.core.api.util.ClasspathOrFileResourceLoader;
@@ -13,13 +16,14 @@ import org.springframework.core.io.ResourceLoader;
 
 import edu.cornell.kfs.coa.CuCoaTestConstants;
 
+@Retention(RetentionPolicy.RUNTIME)
+@Target({})
 public @interface AccountAttachmentNoteFixture {
 
     long noteId();
     String noteText();
     boolean hasAttachment() default true;
     String attachmentId() default KFSConstants.EMPTY_STRING;
-    String attachmentType() default KFSConstants.EMPTY_STRING;
     String mimeType() default KFSConstants.EMPTY_STRING;
     String fileName() default KFSConstants.EMPTY_STRING;
 
@@ -38,13 +42,11 @@ public @interface AccountAttachmentNoteFixture {
         public static Attachment toAttachment(final AccountAttachmentNoteFixture fixture) {
             Validate.isTrue(fixture.hasAttachment(), "fixture does not have an attachment configured");
             Validate.notBlank(fixture.attachmentId(), "attachmentId cannot be blank");
-            Validate.notBlank(fixture.attachmentType(), "attachmentType cannot be blank");
             Validate.notBlank(fixture.mimeType(), "mimeType cannot be blank");
             Validate.notBlank(fixture.fileName(), "fileName cannot be blank");
             final Attachment attachment = new Attachment();
             attachment.setNoteIdentifier(fixture.noteId());
             attachment.setAttachmentIdentifier(fixture.attachmentId());
-            attachment.setAttachmentTypeCode(fixture.attachmentType());
             attachment.setAttachmentMimeTypeCode(fixture.mimeType());
             attachment.setAttachmentFileName(fixture.fileName());
             attachment.setAttachmentFileSize(getAttachmentFileSize(fixture));
