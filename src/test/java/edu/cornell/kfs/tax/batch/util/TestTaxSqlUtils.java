@@ -15,6 +15,7 @@ public final class TestTaxSqlUtils {
         public static final String PUR_VNDR_HDR_T = "KFS.PUR_VNDR_HDR_T";
         public static final String PUR_VNDR_DTL_T = "KFS.PUR_VNDR_DTL_T";
         public static final String PUR_VNDR_ADDR_T = "KFS.PUR_VNDR_ADDR_T";
+        public static final String PUR_VNDR_CNTCT_T = "KFS.PUR_VNDR_CNTCT_T";
         public static final String KRNS_NTE_T = "KFS.KRNS_NTE_T";
         public static final String FS_DOC_HEADER_T = "KFS.FS_DOC_HEADER_T";
     }
@@ -155,6 +156,26 @@ public final class TestTaxSqlUtils {
 
         final CuSqlQuery primaryKeyQuery = CuSqlQuery.of("ALTER TABLE ", TableNames.PUR_VNDR_ADDR_T,
                 " ADD CONSTRAINT PUR_VNDR_ADDR_TP1 PRIMARY KEY (VNDR_ADDR_GNRTD_ID)");
+
+        testDataHelperDao.execute(tableCreationQuery);
+        testDataHelperDao.execute(primaryKeyQuery);
+    }
+
+    public static void createAbridgedVendorContactTable(final TestDataHelperDao testDataHelperDao) {
+        final CuSqlQuery tableCreationQuery = CuSqlQuery.of(
+                "CREATE TEXT TABLE ", TableNames.PUR_VNDR_CNTCT_T, " (",
+                        "VNDR_CNTCT_GNRTD_ID NUMBER(10,0) NOT NULL, ",
+                        "VNDR_HDR_GNRTD_ID NUMBER(10,0) NOT NULL, ",
+                        "VNDR_DTL_ASND_ID NUMBER(10,0) NOT NULL, ",
+                        "VNDR_CNTCT_TYP_CD VARCHAR2(4 BYTE) NOT NULL, ",
+                        "VNDR_CNTCT_NM VARCHAR2(45 BYTE), ",
+                        "VNDR_CNTCT_EMAIL_ADDR VARCHAR2(90 BYTE), ",
+                        "DOBJ_MAINT_CD_ACTV_IND VARCHAR2(1 BYTE)",
+                ")"
+        );
+
+        final CuSqlQuery primaryKeyQuery = CuSqlQuery.of("ALTER TABLE ", TableNames.PUR_VNDR_CNTCT_T,
+                " ADD CONSTRAINT PUR_VNDR_CNTCT_TP1 PRIMARY KEY (VNDR_CNTCT_GNRTD_ID)");
 
         testDataHelperDao.execute(tableCreationQuery);
         testDataHelperDao.execute(primaryKeyQuery);

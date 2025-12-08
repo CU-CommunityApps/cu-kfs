@@ -2,8 +2,11 @@ package edu.cornell.kfs.tax.batch.service.impl;
 
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
@@ -17,6 +20,7 @@ import edu.cornell.kfs.tax.batch.TaxStatisticsHandler;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailProcessorDao;
 import edu.cornell.kfs.tax.batch.dto.TaxPayeeBase;
 import edu.cornell.kfs.tax.batch.dto.VendorAddressLite;
+import edu.cornell.kfs.tax.batch.dto.VendorContactLite;
 import edu.cornell.kfs.tax.batch.dto.VendorDetailLite;
 import edu.cornell.kfs.tax.batch.dto.VendorQueryResults;
 import edu.cornell.kfs.tax.batch.service.TaxPayeeHelperService;
@@ -163,10 +167,53 @@ public class TaxPayeeHelperServiceImpl implements TaxPayeeHelperService {
             statistics.increment(TaxStatType.NUM_NO_VENDOR_ADDRESS_FOREIGN);
         }
 
-        if (ObjectUtils.isNotNull(foreignAddress)) {
-            payee.setVendorEmailAddress(foreignAddress.getVendorAddressEmailAddress());
-        } else if (ObjectUtils.isNotNull(usAddress)) {
-            payee.setVendorEmailAddress(usAddress.getVendorAddressEmailAddress());
+        final String emailAddress = getHighestPriorityVendorContactEmail(vendor)
+                .orElseGet(() -> getHighestPriorityVendorAddressEmail(usAddresses, foreignAddresses));
+        if (StringUtils.isNotBlank(emailAddress)) {
+            payee.setVendorEmailAddress(emailAddress);
+        }
+    }
+
+    private Optional<String> getHighestPriorityVendorContactEmail(final VendorDetailLite vendor) {
+        final List<VendorContactLite> vendorContacts = transactionDetailProcessorDao.getPrioritizedVendorContactsWithEmails(
+                vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
+        return vendorContacts.stream()
+                .filter(vendorContact -> StringUtils.isNotBlank(vendorContact.getVendorContactEmailAddress()))
+                .map(VendorContactLite::getVendorContactEmailAddress)
+                .findFirst();
+    }
+
+    private String getHighestPriorityVendorAddressEmail(final List<VendorAddressLite> usAddresses,
+            final List<VendorAddressLite> foreignAddresses) {
+        return Stream.of(usAddresses, foreignAddresses)
+                .flatMap(List::stream)
+                .sorted(getAddressComparatorForEmailPrecedence())
+                .filter(address -> StringUtils.isNotBlank(address.getVendorAddressEmailAddress()))
+                .map(VendorAddressLite::getVendorAddressEmailAddress)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private Comparator<VendorAddressLite> getAddressComparatorForEmailPrecedence() {
+        return Comparator.comparing(VendorAddressLite::getVendorAddressTypeCode, Comparator.reverseOrder())
+                .thenComparing(this::compareBasedOnDomesticOrForeignType)
+                .thenComparing(VendorAddressLite::getVendorAddressGeneratedIdentifier, Comparator.reverseOrder());
+    }
+
+    private int compareBasedOnDomesticOrForeignType(final VendorAddressLite address1, final VendorAddressLite address2) {
+        final String country1 = StringUtils.defaultIfBlank(
+                address1.getVendorCountryCode(), KFSConstants.COUNTRY_CODE_UNITED_STATES);
+        final String country2 = StringUtils.defaultIfBlank(
+                address1.getVendorCountryCode(), KFSConstants.COUNTRY_CODE_UNITED_STATES);
+        final boolean address1IsDomestic = StringUtils.equals(country1, KFSConstants.COUNTRY_CODE_UNITED_STATES);
+        final boolean address2IsDomestic = StringUtils.equals(country2, KFSConstants.COUNTRY_CODE_UNITED_STATES);
+
+        if (address1IsDomestic) {
+            return address2IsDomestic ? 0 : -1;
+        } else if (address2IsDomestic) {
+            return 1;
+        } else {
+            return 0;
         }
     }
 

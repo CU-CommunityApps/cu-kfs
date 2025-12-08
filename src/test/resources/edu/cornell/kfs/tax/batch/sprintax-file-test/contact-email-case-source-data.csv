@@ -1,4 +1,8 @@
 /*
+ * Modified copy of multi-row-case-source-data.csv but with
+ * different vendor contacts. At least one contact per included vendor
+ * should be eligible for email handling.
+ *
  * Expected Transaction Detail Processing:
  *
  * 3159655 - Excluded due to doc type and income code and income sub-type
@@ -15,9 +19,6 @@
  * Consolidations of Transaction Details into Sprintax Payment Rows:
  * [ 3159845; 3159846; 3159847; 3159848 ]
  * [ 3159743; 3159744 ]
- *
- * The Vendor Contacts in this file are expected to be ineligible
- * for vendor email derivation.
  */
 
 <<<<START KFS.TX_TRANSACTION_DETAIL_T>>>>[[[[ENCRYPT VENDOR_TAX_NBR]]]]
@@ -62,9 +63,11 @@ VNDR_ADDR_GNRTD_ID,VNDR_HDR_GNRTD_ID,VNDR_DTL_ASND_ID,VNDR_ADDR_TYP_CD,VNDR_LN1_
 
 <<<<START KFS.PUR_VNDR_CNTCT_T>>>>
 VNDR_CNTCT_GNRTD_ID,VNDR_HDR_GNRTD_ID,VNDR_DTL_ASND_ID,VNDR_CNTCT_TYP_CD,VNDR_CNTCT_NM,VNDR_CNTCT_EMAIL_ADDR,DOBJ_MAINT_CD_ACTV_IND
-7901,134134,0,CS,Mary Smith,ms987@somewhere.com,Y
-7902,127127,0,SE,Don Doe,dd555@somewhere.edu,Y
-7903,127127,0,VI,Jack Smith,jacksmith77@somewhere.net,N
+7901,134134,0,VI,Mary Smith,ms987@somewhere.com,Y
+7902,127127,0,AR,Don Doe,dd555@somewhere.edu,Y
+7903,127127,0,AR,Daisy Doe,dd765@somewhere.edu,N
+7904,127127,0,CS,Jenny Smith,jennysmith88@somewhere.net,Y
+7905,127127,0,VI,Jack Smith,jacksmith77@somewhere.net,Y
 <<<<END>>>>
 
 <<<<START KFS.FS_DOC_HEADER_T>>>>

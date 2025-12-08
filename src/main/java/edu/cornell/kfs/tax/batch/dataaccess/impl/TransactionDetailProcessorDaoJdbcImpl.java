@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -20,6 +21,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.vnd.VendorConstants.AddressTypes;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
+import org.kuali.kfs.vnd.businessobject.VendorContact;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 
@@ -36,6 +38,8 @@ import edu.cornell.kfs.tax.batch.dto.NoteLite;
 import edu.cornell.kfs.tax.batch.dto.NoteLite.NoteField;
 import edu.cornell.kfs.tax.batch.dto.VendorAddressLite;
 import edu.cornell.kfs.tax.batch.dto.VendorAddressLite.VendorAddressField;
+import edu.cornell.kfs.tax.batch.dto.VendorContactLite;
+import edu.cornell.kfs.tax.batch.dto.VendorContactLite.VendorContactField;
 import edu.cornell.kfs.tax.batch.dto.VendorDetailLite;
 import edu.cornell.kfs.tax.batch.dto.VendorDetailLite.VendorField;
 import edu.cornell.kfs.tax.batch.dto.VendorQueryResults;
@@ -48,6 +52,7 @@ import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.QuerySort;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail.TransactionDetailField;
 import edu.cornell.kfs.vnd.CUVendorConstants.CUAddressTypes;
+import edu.cornell.kfs.vnd.CUVendorConstants.VendorContactTypeCodes;
 
 public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc
         implements TransactionDetailProcessorDao {
@@ -255,7 +260,7 @@ public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwa
                 .getDatabaseMappingMetadataForDto(VendorAddressField.class);
         final CuSqlQuery query = createVendorAddressQuery(vendorId, searchForUSAddresses, addressMetadata);
 
-        return queryForResults(query, resultSet -> readVendorAddressResults(resultSet, addressMetadata));
+        return queryForResults(query, resultSet -> readFullResults(resultSet, addressMetadata, VendorAddressLite::new));
     }
 
     private CuSqlQuery createVendorAddressQuery(final Pair<Integer, Integer> vendorId,
@@ -291,18 +296,35 @@ public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwa
                 .build();
     }
 
-    private List<VendorAddressLite> readVendorAddressResults(final ResultSet resultSet,
-            final TaxDtoDbMetadata addressMetadata) throws SQLException {
-        final TaxDtoRowMapper<VendorAddressLite> addressMapper = new TaxDtoRowMapperImpl<>(
-                VendorAddressLite::new, encryptionService, addressMetadata, resultSet);
-        final Stream.Builder<VendorAddressLite> addresses = Stream.builder();
-        while (addressMapper.moveToNextRow()) {
-            addresses.add(addressMapper.readCurrentRow());
-        }
-        return addresses.build().collect(Collectors.toUnmodifiableList());
+    @Override
+    public List<VendorContactLite> getPrioritizedVendorContactsWithEmails(final Integer vendorHeaderId,
+            final Integer vendorDetailId) {
+        final TaxDtoDbMetadata contactMetadata = taxTableMetadataLookupService
+                .getDatabaseMappingMetadataForDto(VendorContactField.class);
+        final CuSqlQuery query = createVendorContactQuery(vendorHeaderId, vendorDetailId, contactMetadata);
+        return queryForResults(query, resultSet -> readFullResults(resultSet, contactMetadata, VendorContactLite::new));
     }
 
-
+    private CuSqlQuery createVendorContactQuery(final Integer vendorHeaderId, final Integer vendorDetailId,
+            final TaxDtoDbMetadata contactMetadata) {
+        return new TaxQueryBuilder(contactMetadata)
+                .selectAllMappedFields()
+                .from(VendorContact.class)
+                .where(
+                        Criteria.equal(VendorContactField.vendorHeaderGeneratedIdentifier, Types.INTEGER,
+                                vendorHeaderId),
+                        Criteria.equal(VendorContactField.vendorDetailAssignedIdentifier, Types.INTEGER,
+                                vendorDetailId),
+                        Criteria.in(VendorContactField.vendorContactTypeCode, List.of(
+                                VendorContactTypeCodes.ACCOUNTS_RECEIVABLE,
+                                VendorContactTypeCodes.VENDOR_INFORMATION_FORM)),
+                        Criteria.isNotNull(VendorContactField.vendorContactEmailAddress),
+                        Criteria.equal(VendorContactField.active, KRADConstants.YES_INDICATOR_VALUE))
+                .orderBy(
+                        QuerySort.ascending(VendorContactField.vendorContactTypeCode),
+                        QuerySort.descending(VendorContactField.vendorContactGeneratedIdentifier))
+                .build();
+    }
 
     @Override
     public List<NoteLite> getNotesByDocumentNumber(final String documentNumber) {
@@ -311,7 +333,7 @@ public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwa
         final TaxDtoDbMetadata docHeaderMetadata = taxTableMetadataLookupService
                 .getDatabaseMappingMetadataForDto(DocumentHeaderField.class);
         final CuSqlQuery query = createNoteQuery(documentNumber, noteMetadata, docHeaderMetadata);
-        return queryForResults(query, resultSet -> readNoteResults(resultSet, noteMetadata));
+        return queryForResults(query, resultSet -> readFullResults(resultSet, noteMetadata, NoteLite::new));
     }
 
     private CuSqlQuery createNoteQuery(final String documentNumber, final TaxDtoDbMetadata noteMetadata,
@@ -329,15 +351,15 @@ public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwa
                 .build();
     }
 
-    private List<NoteLite> readNoteResults(final ResultSet resultSet,
-            final TaxDtoDbMetadata noteMetadata) throws SQLException {
-        final TaxDtoRowMapper<NoteLite> noteMapper = new TaxDtoRowMapperImpl<>(
-                NoteLite::new, encryptionService, noteMetadata, resultSet);
-        Stream.Builder<NoteLite> notes = Stream.builder();
-        while (noteMapper.moveToNextRow()) {
-            notes.add(noteMapper.readCurrentRow());
+    private <T> List<T> readFullResults(final ResultSet resultSet, final TaxDtoDbMetadata metadata,
+            final Supplier<T> dtoConstructor) throws SQLException {
+        final TaxDtoRowMapper<T> dtoMapper = new TaxDtoRowMapperImpl<>(
+                dtoConstructor, encryptionService, metadata, resultSet);
+        Stream.Builder<T> dtos = Stream.builder();
+        while (dtoMapper.moveToNextRow()) {
+            dtos.add(dtoMapper.readCurrentRow());
         }
-        return notes.build().collect(Collectors.toUnmodifiableList());
+        return dtos.build().collect(Collectors.toUnmodifiableList());
     }
 
 

@@ -44,6 +44,7 @@
                 <value>org.kuali.kfs.vnd.businessobject.VendorHeader</value>
                 <value>org.kuali.kfs.vnd.businessobject.VendorDetail</value>
                 <value>org.kuali.kfs.vnd.businessobject.VendorAddress</value>
+                <value>org.kuali.kfs.vnd.businessobject.VendorContact</value>
                 <value>edu.cornell.kfs.tax.businessobject.TransactionDetail</value>
             </set>
         </property>
