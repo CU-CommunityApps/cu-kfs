@@ -5,12 +5,40 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <import resource="classpath:org/kuali/kfs/sys/spring-sys.xml"/>
+    <import resource="classpath:org/kuali/kfs/coa/spring-coa.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-sys.xml"/>
+    <import resource="classpath:edu/cornell/kfs/coa/cu-spring-coa.xml"/>
     <import resource="classpath:edu/cornell/kfs/sys/cu-spring-base-test-beans.xml"/>
+
+    <bean id="accountService" class="${unit.test.classname}" factory-method="buildMockAccountService"/>
+
+    <bean id="businessObjectService" class="${unit.test.classname}" factory-method="buildMockBusinessObjectService"/>
+
+    <bean id="dataDictionaryService" class="${unit.test.classname}" factory-method="buildMockDataDictionaryService"/>
+
+    <bean id="configurationService" class="edu.cornell.kfs.sys.service.impl.TestConfigurationServiceImpl"
+          p:properties-ref="applicationResources"/>
+
+    <bean id="applicationResources" class="org.springframework.beans.factory.config.PropertiesFactoryBean"
+          p:location="classpath:org/kuali/kfs/krad/ApplicationResources.properties"/>
 
     <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
         <property name="beanWhitelist">
             <set merge="true">
-                <idref bean=""/>
+                <idref bean="accountAttachmentControllerHelperService"/>
+                <idref bean="accountAttachmentControllerHelperService-parentBean"/>
+                <idref bean="accountAttachmentAuthFilter"/>
+                <idref bean="accountService"/>
+                <idref bean="apiAuthenticationFilter-baseBean"/>
+                <idref bean="webApiPropertyValidationService"/>
+                <idref bean="webApiPropertyValidationService-parentBean"/>
+                <idref bean="apiAuthenticationService"/>
+                <idref bean="apiAuthenticationService-parentBean"/>
+                <idref bean="businessObjectService"/>
+                <idref bean="dataDictionaryService"/>
+                <idref bean="configurationService"/>
+                <idref bean="applicationResources"/>
             </set>
         </property>
     </bean>
