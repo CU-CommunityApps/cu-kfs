@@ -204,7 +204,7 @@ public class TaxPayeeHelperServiceImpl implements TaxPayeeHelperService {
         final String country1 = StringUtils.defaultIfBlank(
                 address1.getVendorCountryCode(), KFSConstants.COUNTRY_CODE_UNITED_STATES);
         final String country2 = StringUtils.defaultIfBlank(
-                address1.getVendorCountryCode(), KFSConstants.COUNTRY_CODE_UNITED_STATES);
+                address2.getVendorCountryCode(), KFSConstants.COUNTRY_CODE_UNITED_STATES);
         final boolean address1IsDomestic = StringUtils.equals(country1, KFSConstants.COUNTRY_CODE_UNITED_STATES);
         final boolean address2IsDomestic = StringUtils.equals(country2, KFSConstants.COUNTRY_CODE_UNITED_STATES);
 
