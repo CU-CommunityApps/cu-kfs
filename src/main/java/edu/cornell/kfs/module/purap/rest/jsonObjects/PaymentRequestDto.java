@@ -38,7 +38,7 @@ public class PaymentRequestDto {
         return vendorNumber;
     }
 
-    public void setVendorNumber(String vendorNumber) {
+    public void setVendorNumber(final String vendorNumber) {
         this.vendorNumber = vendorNumber;
     }
 
@@ -50,7 +50,7 @@ public class PaymentRequestDto {
         return poNumber != null ? String.valueOf(poNumber) : StringUtils.EMPTY;
     }
 
-    public void setPoNumber(Integer poNumber) {
+    public void setPoNumber(final Integer poNumber) {
         this.poNumber = poNumber;
     }
 
@@ -58,7 +58,7 @@ public class PaymentRequestDto {
         return invoiceDate;
     }
 
-    public void setInvoiceDate(LocalDate invoiceDate) {
+    public void setInvoiceDate(final LocalDate invoiceDate) {
         this.invoiceDate = invoiceDate;
     }
 
@@ -66,7 +66,7 @@ public class PaymentRequestDto {
         return receivedDate;
     }
 
-    public void setReceivedDate(LocalDate receivedDate) {
+    public void setReceivedDate(final LocalDate receivedDate) {
         this.receivedDate = receivedDate;
     }
 
@@ -74,7 +74,7 @@ public class PaymentRequestDto {
         return invoiceNumber;
     }
 
-    public void setInvoiceNumber(String invoiceNumber) {
+    public void setInvoiceNumber(final String invoiceNumber) {
         this.invoiceNumber = invoiceNumber;
     }
 
@@ -82,7 +82,7 @@ public class PaymentRequestDto {
         return invoiceAmount;
     }
 
-    public void setInvoiceAmount(KualiDecimal invoiceAmount) {
+    public void setInvoiceAmount(final KualiDecimal invoiceAmount) {
         this.invoiceAmount = invoiceAmount;
     }
 
@@ -90,7 +90,7 @@ public class PaymentRequestDto {
         return specialHandlingLine1;
     }
 
-    public void setSpecialHandlingLine1(String specialHandlingLine1) {
+    public void setSpecialHandlingLine1(final String specialHandlingLine1) {
         this.specialHandlingLine1 = specialHandlingLine1;
     }
 
@@ -98,7 +98,7 @@ public class PaymentRequestDto {
         return specialHandlingLine2;
     }
 
-    public void setSpecialHandlingLine2(String specialHandlingLine2) {
+    public void setSpecialHandlingLine2(final String specialHandlingLine2) {
         this.specialHandlingLine2 = specialHandlingLine2;
     }
 
@@ -106,7 +106,7 @@ public class PaymentRequestDto {
         return specialHandlingLine3;
     }
 
-    public void setSpecialHandlingLine3(String specialHandlingLine3) {
+    public void setSpecialHandlingLine3(final String specialHandlingLine3) {
         this.specialHandlingLine3 = specialHandlingLine3;
     }
 
@@ -114,15 +114,15 @@ public class PaymentRequestDto {
         return items;
     }
 
-    public void setItems(List<PaymentRequestLineItemDto> items) {
-        this.items = items;
+    public void setItems(final List<PaymentRequestLineItemDto> items) {
+        this.items = (items == null) ? new ArrayList<>() : items;
     }
 
     public KualiDecimal getFreightPrice() {
         return freightPrice;
     }
 
-    public void setFreightPrice(KualiDecimal freightPrice) {
+    public void setFreightPrice(final KualiDecimal freightPrice) {
         this.freightPrice = freightPrice;
     }
 
@@ -130,7 +130,7 @@ public class PaymentRequestDto {
         return freightDescription;
     }
 
-    public void setFreightDescription(String freightDescription) {
+    public void setFreightDescription(final String freightDescription) {
         this.freightDescription = freightDescription;
     }
 
@@ -138,7 +138,7 @@ public class PaymentRequestDto {
         return miscellaneousPrice;
     }
 
-    public void setMiscellaneousPrice(KualiDecimal miscellaneousPrice) {
+    public void setMiscellaneousPrice(final KualiDecimal miscellaneousPrice) {
         this.miscellaneousPrice = miscellaneousPrice;
     }
 
@@ -146,7 +146,7 @@ public class PaymentRequestDto {
         return miscellaneousDescription;
     }
 
-    public void setMiscellaneousDescription(String miscellaneousDescription) {
+    public void setMiscellaneousDescription(final String miscellaneousDescription) {
         this.miscellaneousDescription = miscellaneousDescription;
     }
 
@@ -154,7 +154,7 @@ public class PaymentRequestDto {
         return shippingPrice;
     }
 
-    public void setShippingPrice(KualiDecimal shippingPrice) {
+    public void setShippingPrice(final KualiDecimal shippingPrice) {
         this.shippingPrice = shippingPrice;
     }
 
@@ -162,7 +162,7 @@ public class PaymentRequestDto {
         return shippingDescription;
     }
 
-    public void setShippingDescription(String shippingDescription) {
+    public void setShippingDescription(final String shippingDescription) {
         this.shippingDescription = shippingDescription;
     }
 
@@ -170,8 +170,8 @@ public class PaymentRequestDto {
         return notes;
     }
 
-    public void setNotes(List<PaymentRequestNoteDto> notes) {
-        this.notes = notes;
+    public void setNotes(final List<PaymentRequestNoteDto> notes) {
+        this.notes = (notes == null) ? new ArrayList<>() : notes;
     }
 
     @Override

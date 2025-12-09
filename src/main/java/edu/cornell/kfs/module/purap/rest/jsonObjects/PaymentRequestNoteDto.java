@@ -12,7 +12,7 @@ public class PaymentRequestNoteDto {
         return noteText;
     }
 
-    public void setNoteText(String noteText) {
+    public void setNoteText(final String noteText) {
         this.noteText = noteText;
     }
 
@@ -20,7 +20,7 @@ public class PaymentRequestNoteDto {
         return noteType;
     }
 
-    public void setNoteType(String noteType) {
+    public void setNoteType(final String noteType) {
         this.noteType = noteType;
     }
 

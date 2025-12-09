@@ -61,6 +61,7 @@ public class PaymentRequestResource {
     @Path("/createpaymentrequest")
     @POST
     public Response createPaymentRequestDocument(InputStream requestBodyStream) {
+        LOG.info("createPaymentRequestDocument, entering");
         try (Scanner scanner = new Scanner(requestBodyStream, CUKFSConstants.CHAR_SET_UTF_8)
                 .useDelimiter(CUKFSConstants.FORM_DELIMITER_PATTERN);) {
             String jsonBody = scanner.hasNext() ? scanner.next() : "";
@@ -75,8 +76,10 @@ public class PaymentRequestResource {
             if (results.isValid()) {
                 results.getSuccessMessages().add("In follow up user stories, this endpoint will be updated" +
                         " to create a preq document using logged in user " + loggedInUser);
+                LOG.info("createPaymentRequestDocument, no validation errors, return success {}", results);
                 return Response.ok(gson.toJson(results)).build();
             } else {
+                LOG.info("createPaymentRequestDocument, there were validation errors, return false {}", results);
                 return Response.status(Status.BAD_REQUEST).entity(gson.toJson(results)).build();
             }
 

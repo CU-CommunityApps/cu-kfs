@@ -14,7 +14,7 @@ public class PaymentRequestLineItemDto {
         return lineNumber;
     }
 
-    public void setLineNumber(Integer lineNumber) {
+    public void setLineNumber(final Integer lineNumber) {
         this.lineNumber = lineNumber;
     }
 
@@ -22,7 +22,7 @@ public class PaymentRequestLineItemDto {
         return itemQuantity;
     }
 
-    public void setItemQuantity(KualiDecimal itemQuantity) {
+    public void setItemQuantity(final KualiDecimal itemQuantity) {
         this.itemQuantity = itemQuantity;
     }
 
@@ -30,7 +30,7 @@ public class PaymentRequestLineItemDto {
         return itemPrice;
     }
 
-    public void setItemPrice(KualiDecimal itemPrice) {
+    public void setItemPrice(final KualiDecimal itemPrice) {
         this.itemPrice = itemPrice;
     }
 
