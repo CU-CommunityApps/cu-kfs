@@ -19,7 +19,7 @@ public class CuDistributionOfIncomeAndExpenseDocumentPresentationController exte
         
         if (StringUtils.isNotBlank(docInError)) {
             final Boolean allowBlanketApproveNoRequest = getParameterService().getParameterValueAsBoolean(
-                    KFSConstants.CoreModuleNamespaces.KFS, KRADConstants.DetailTypes.DOCUMENT_DETAIL_TYPE,
+                    KFSConstants.CoreModuleNamespaces.WORKFLOW, KRADConstants.DetailTypes.ALL_DETAIL_TYPE,
                     KRADConstants.SystemGroupParameterNames.BLANKET_APPROVE_NO_REQUEST_IND);
             if (allowBlanketApproveNoRequest != null && allowBlanketApproveNoRequest.booleanValue()) {
                 documentActions.add(KRADConstants.KUALI_ACTION_CAN_BLANKET_APPROVE);
