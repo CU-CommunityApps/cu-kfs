@@ -97,6 +97,7 @@ public class TaxFileGenerationServiceSprintaxImplTest {
         TestTaxSqlUtils.createAbridgedVendorHeaderTable(helperDao);
         TestTaxSqlUtils.createAbridgedVendorDetailTable(helperDao);
         TestTaxSqlUtils.createAbridgedVendorAddressTable(helperDao);
+        TestTaxSqlUtils.createAbridgedVendorContactTable(helperDao);
         TestTaxSqlUtils.createAbridgedNoteTable(helperDao);
         TestTaxSqlUtils.createAbridgedDocumentHeaderTableForNoteLinkingOnly(helperDao);
     }
@@ -132,6 +133,7 @@ public class TaxFileGenerationServiceSprintaxImplTest {
                 TableNames.PUR_VNDR_HDR_T,
                 TableNames.PUR_VNDR_DTL_T,
                 TableNames.PUR_VNDR_ADDR_T,
+                TableNames.PUR_VNDR_CNTCT_T,
                 TableNames.KRNS_NTE_T,
                 TableNames.FS_DOC_HEADER_T
         ));
@@ -236,7 +238,9 @@ public class TaxFileGenerationServiceSprintaxImplTest {
         OVERRIDDEN_ROW_TEST("overridden-row-case-source-data.csv", "overridden-row-case-expected-transactions.csv",
                 "overridden-row-case-expected-demographic-file.csv", "overridden-row-case-expected-payment-file.csv"),
         MULTI_ROW_TEST("multi-row-case-source-data.csv", "multi-row-case-expected-transactions.csv",
-                "multi-row-case-expected-demographic-file.csv", "multi-row-case-expected-payment-file.csv");
+                "multi-row-case-expected-demographic-file.csv", "multi-row-case-expected-payment-file.csv"),
+        CONTACT_EMAIL_TEST("contact-email-case-source-data.csv", "contact-email-case-expected-transactions.csv",
+                "contact-email-case-expected-demographic-file.csv", "contact-email-case-expected-payment-file.csv");
 
         private final String sourceFileName;
         private final String expectedTransactionDataFileName;
