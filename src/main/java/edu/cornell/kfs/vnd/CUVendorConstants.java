@@ -87,6 +87,11 @@ public class CUVendorConstants {
         public static final String INDIVIDUAL_OR_SOLE_PROPRIETOR_OR_SMLLC = "ID";
     }
 
+    public static final class VendorContactTypeCodes {
+        public static final String ACCOUNTS_RECEIVABLE = "AR";
+        public static final String VENDOR_INFORMATION_FORM = "VI";
+    }
+
     public static final String VENDOR_EMPLOYEE_COMPARISON_RESULT_FILE_TYPE_ID = "vendorEmployeeComparisonResult_kfs";
 
     public static final String EMPLOYEE_COMPARISON_OUTBOUND_FILE_PREFIX = "empl_compare_";
