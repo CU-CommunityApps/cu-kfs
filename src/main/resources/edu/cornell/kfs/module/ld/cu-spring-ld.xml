@@ -26,28 +26,6 @@
 		</property>
 	</bean>
 
-
-	<bean id="laborScrubberJob" parent="scheduledJobDescriptor">
-		<property name="steps">
-			<list>
-				<ref bean="createLaborBackupGroupStep"/>
-				<ref bean="laborPreScrubberStep"/>
-				<ref bean="laborScrubberSortStep"/>
-				<ref bean="laborScrubberStep"/>
-				<ref bean="laborDemergerSortStep" />
-				<ref bean="laborDemergerStep" />
-				<ref bean="aggregateLaborScrubberReportsStep"/>
-			</list>
-		</property>
-		<property name="dependencies">
-			<map>
-                <entry key="laborEnterpriseFeedJob" 
-                       value="hardDependency" />
-				<entry key="laborNightlyOutJob" 
-                       value="hardDependency"/>
-			</map>
-		</property>
-	</bean>	
     
     <util:list id="laborScrubberJobSteps" value-type="org.kuali.kfs.kns.bo.Step">
         <ref bean="createLaborBackupGroupStep"/>
