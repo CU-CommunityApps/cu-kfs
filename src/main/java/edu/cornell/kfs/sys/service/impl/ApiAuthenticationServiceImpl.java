@@ -26,19 +26,28 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
     @Override
     public boolean isAuthorized(String endpointCode, HttpServletRequest request) {
         LOG.debug("isAuthorized: Checking authorization for endpoint code {} from request", endpointCode);
+
+        String credentials = getCredentials(request);
+        if (StringUtils.isBlank(credentials)) {
+            LOG.error("isAuthorized, no credentials found");
+            return false;
+        }
         
+        return isAuthorized(endpointCode, credentials);
+    }
+
+    private String getCredentials(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(CUKFSConstants.AUTHORIZATION_HEADER_KEY);
         if (StringUtils.isBlank(authorizationHeader) || 
                 !authorizationHeader.startsWith(CUKFSConstants.BASIC_AUTHENTICATION_STARTER)) {
-            LOG.warn("isAuthorized: Authorization header is missing or not using Basic authentication");
-            return false;
+            LOG.error("getCredentials: Authorization header is missing or not using Basic authentication");
+            return StringUtils.EMPTY;
         }
         
         String encodedCredentials = authorizationHeader.substring(CUKFSConstants.BASIC_AUTHENTICATION_STARTER.length());
         byte[] decodedBytes = Base64.decodeBase64(encodedCredentials);
         String credentials = new String(decodedBytes, StandardCharsets.UTF_8);
-        
-        return isAuthorized(endpointCode, credentials);
+        return credentials;
     }
 
     @Override
@@ -75,6 +84,15 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
         
         LOG.debug("isAuthorized: No matching credentials found for endpoint code {}", endpointCode);
         return false;
+    }
+
+    public String getAuthenticateUser(HttpServletRequest request) {
+        String credentials = getCredentials(request);
+        if (StringUtils.contains(credentials, CUKFSConstants.COLON)) {
+            String[] credentialSplit = StringUtils.split(credentials, CUKFSConstants.COLON);
+            return credentialSplit[0];
+        }
+        return StringUtils.EMPTY;
     }
     
     private ApiEndpointDescriptor getEndpointDescriptor(String endpointCode) {
