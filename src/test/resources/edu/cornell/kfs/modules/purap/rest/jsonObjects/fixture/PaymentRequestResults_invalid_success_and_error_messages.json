@@ -1,0 +1,11 @@
+{
+    "valid": false,
+    "successMessages": [
+        "success message 1",
+        "success message 2"
+    ],
+    "errorMessages": [
+        "error message 1",
+        "error message 2"
+    ]
+}
