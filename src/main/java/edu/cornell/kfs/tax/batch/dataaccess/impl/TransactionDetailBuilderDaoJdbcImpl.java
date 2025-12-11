@@ -54,6 +54,7 @@ import edu.cornell.kfs.tax.batch.dto.PdpSourceData;
 import edu.cornell.kfs.tax.batch.dto.PdpSourceData.PdpSourceDataField;
 import edu.cornell.kfs.tax.batch.dto.PrncSourceData;
 import edu.cornell.kfs.tax.batch.dto.PrncSourceData.PrncSourceDataField;
+import edu.cornell.kfs.tax.batch.dto.RouteHeaderLite;
 import edu.cornell.kfs.tax.batch.dto.SubQueryFields.DocumentTypeSubQueryField;
 import edu.cornell.kfs.tax.batch.dto.SubQueryFields.DvSubQueryField;
 import edu.cornell.kfs.tax.batch.dto.SubQueryFields.RouteHeaderSubQueryField;
@@ -181,6 +182,15 @@ public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAware
             default:
                 throw new IllegalStateException("Unrecognized tax type: " + config.getTaxType());
         }
+    }
+
+    @Override
+    public List<RouteHeaderLite> getBasicRouteHeaderData(List<String> documentIds) {
+        if (documentIds.isEmpty()) {
+            return List.of();
+        }
+        // TODO: Implement!
+        return null;
     }
 
     @Override
