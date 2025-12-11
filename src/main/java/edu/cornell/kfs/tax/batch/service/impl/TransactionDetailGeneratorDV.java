@@ -27,8 +27,7 @@ public class TransactionDetailGeneratorDV extends TransactionDetailGeneratorBase
 
     public TransactionDetailGeneratorDV(final TaxBatchConfig config, final TaxDtoRowMapper<DvSourceData> rowMapper,
             final TransactionDetailBuilderHelperService helperService) {
-        super(config, rowMapper, helperService, DisbursementVoucherConstants.DOCUMENT_TYPE_CODE,
-                getInitialZeroValueStats(config));
+        super(config, rowMapper, helperService, CUTaxConstants.TAX_SOURCE_DV, getInitialZeroValueStats(config));
     }
 
     private static TaxStatType[] getInitialZeroValueStats(final TaxBatchConfig config) {

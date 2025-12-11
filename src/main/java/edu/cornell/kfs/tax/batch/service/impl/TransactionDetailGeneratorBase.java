@@ -14,6 +14,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Organization;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -40,19 +42,19 @@ public abstract class TransactionDetailGeneratorBase<T> {
     protected final TaxStatistics statistics;
     protected final List<TransactionDetail> pendingBatchInserts;
     protected final RouteHeaderLite emptyRouteHeader;
-    protected final String docTypeCode;
+    protected final String taxSourceType;
 
     protected TransactionDetailGeneratorBase(final TaxBatchConfig config, final TaxDtoRowMapper<T> rowMapper,
-            final TransactionDetailBuilderHelperService helperService, final String docTypeCode,
+            final TransactionDetailBuilderHelperService helperService, final String taxSourceType,
             final TaxStatType... initialZeroValueStats) {
         Objects.requireNonNull(config, "config cannot be null");
         Objects.requireNonNull(rowMapper, "rowMapper cannot be null");
         Objects.requireNonNull(helperService, "helperService cannot be null");
-        Validate.notBlank(docTypeCode, "docTypeCode cannot be blank");
+        Validate.notBlank(taxSourceType, "taxSourceType cannot be blank");
         this.config = config;
         this.rowMapper = rowMapper;
         this.helperService = helperService;
-        this.docTypeCode = docTypeCode;
+        this.taxSourceType = taxSourceType;
         this.statistics = new TaxStatistics(initialZeroValueStats);
         this.pendingBatchInserts = new ArrayList<>(MAX_BATCH_INSERT_SIZE);
         this.emptyRouteHeader = new RouteHeaderLite();
@@ -174,23 +176,23 @@ public abstract class TransactionDetailGeneratorBase<T> {
         if (StringUtils.isBlank(incomeCode)) {
             if (shouldWithholdFederalTaxFor1042S(objectCode)) {
                 incomeCode = getNonReportableIncomeCode();
-                statistics.increment(TaxStatType.NUM_DETERMINED_FED_TAX_WITHHELD_INCOME_CODES, docTypeCode);
+                statistics.increment(TaxStatType.NUM_DETERMINED_FED_TAX_WITHHELD_INCOME_CODES, taxSourceType);
             } else {
                 statistics.increment(TaxStatType.NUM_UNDETERMINED_FED_TAX_WITHHELD_INCOME_CODES);
                 if (shouldWithholdStateIncomeTaxFor1042S(objectCode)) {
                     incomeCode = getNonReportableIncomeCode();
-                    statistics.increment(TaxStatType.NUM_DETERMINED_STATE_INC_TAX_WITHHELD_INCOME_CODES, docTypeCode);
+                    statistics.increment(TaxStatType.NUM_DETERMINED_STATE_INC_TAX_WITHHELD_INCOME_CODES, taxSourceType);
                 } else {
                     statistics.increment(TaxStatType.NUM_UNDETERMINED_STATE_INC_TAX_WITHHELD_INCOME_CODES);
                     incomeCode = getExcludedIncomeCode();
-                    statistics.increment(TaxStatType.NUM_EXCLUDED_ASSIGNED_INCOME_CODES, docTypeCode);
+                    statistics.increment(TaxStatType.NUM_EXCLUDED_ASSIGNED_INCOME_CODES, taxSourceType);
                 }
             }
         }
 
         if (StringUtils.isBlank(incomeCodeSubType)) {
             incomeCodeSubType = getExcludedIncomeCodeSubType();
-            statistics.increment(TaxStatType.NUM_EXCLUDED_ASSIGNED_INCOME_CODE_SUBTYPES, docTypeCode);
+            statistics.increment(TaxStatType.NUM_EXCLUDED_ASSIGNED_INCOME_CODE_SUBTYPES, taxSourceType);
         }
 
         detail.setIncomeCode(incomeCode);
@@ -236,6 +238,14 @@ public abstract class TransactionDetailGeneratorBase<T> {
     protected String getExcludedIncomeCodeSubType() {
         return helperService.getParameterValue(
                 CUTaxConstants.TAX_1042S_PARM_DETAIL, Tax1042SParameterNames.EXCLUDED_INCOME_CODE_SUB_TYPE);
+    }
+
+    protected Integer getKualiIntegerAsPlainInteger(final KualiInteger value) {
+        return value != null ? value.intValue() : null;
+    }
+
+    protected KualiDecimal defaultToZeroIfNull(final KualiDecimal value) {
+        return value != null ? value : KualiDecimal.ZERO;
     }
 
 }
