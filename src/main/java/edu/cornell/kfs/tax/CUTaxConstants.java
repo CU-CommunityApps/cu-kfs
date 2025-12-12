@@ -25,6 +25,7 @@ public final class CUTaxConstants {
     public static final String TAX_TYPE_1099 = "1099";
     public static final String TAX_TYPE_1042S = "1042S";
     public static final String TAX_TYPE_1042S_CREATE_TRANSACTION_ROWS_ONLY = "1042S_CREATE_TRANSACTION_ROWS_ONLY";
+    public static final String TAX_TYPE_1042S_CREATE_LEGACY_TRANSACTION_ROWS = "1042S_CREATE_LEGACY_TRANSACTION_ROWS";
     public static final String TAX_SOURCE_DV = "DV";
     public static final String TAX_SOURCE_PDP = "PDP";
     public static final String TAX_SOURCE_PRNC = "PRNC";

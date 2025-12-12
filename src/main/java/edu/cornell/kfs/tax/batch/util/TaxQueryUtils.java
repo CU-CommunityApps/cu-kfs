@@ -1,5 +1,6 @@
 package edu.cornell.kfs.tax.batch.util;
 
+import java.security.GeneralSecurityException;
 import java.sql.Types;
 import java.util.AbstractMap;
 import java.util.Collection;
@@ -7,6 +8,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.Validate;
+import org.kuali.kfs.core.api.encryption.EncryptionService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 
@@ -114,9 +116,22 @@ public final class TaxQueryUtils {
             return of(field, Types.VARCHAR, valueGetter);
         }
 
+        public static <T> FieldUpdate ofEncryptedField(final TaxDtoFieldEnum field,
+                final EncryptionService encryptionService, final Function<? super T, String> valueGetter) {
+            return of(field, Types.VARCHAR, valueGetter.andThen(value -> encrypt(encryptionService, value)));
+        }
+
         public static <T> FieldUpdate of(final TaxDtoFieldEnum field, final int sqlType,
                 final Function<? super T, ?> valueGetter) {
             return new FieldUpdate(field, sqlType, valueGetter);
+        }
+
+        private static String encrypt(final EncryptionService encryptionService, final String value) {
+            try {
+                return encryptionService.encrypt(value);
+            } catch (final GeneralSecurityException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         public static FieldUpdate ofNextSequenceValue(final TaxDtoFieldEnum field, final String sequenceName) {

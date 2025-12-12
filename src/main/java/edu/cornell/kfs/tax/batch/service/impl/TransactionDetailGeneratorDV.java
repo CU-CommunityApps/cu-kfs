@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
@@ -23,6 +25,7 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxStatType;
 
 public class TransactionDetailGeneratorDV extends TransactionDetailGeneratorBase<DvSourceData> {
 
+    private static final Logger LOG = LogManager.getLogger();
     private static final Pattern NON_PRINTABLE_CHARS = Pattern.compile("[^\\p{Graph}\\p{Space}]");
 
     public TransactionDetailGeneratorDV(final TaxBatchConfig config, final TaxDtoRowMapper<DvSourceData> rowMapper,
@@ -130,6 +133,9 @@ public class TransactionDetailGeneratorDV extends TransactionDetailGeneratorBase
                 statistics.increment(statToUpdate);
                 detail.setPaymentDate(routeHeader.getFinalizedDateAsSqlDate());
             } else {
+                LOG.debug("prepareTransactionDetailForInsertionIfPossible, Skipping transaction detail persistence: "
+                        + "Document {}, Line {}, Payment Method {}",
+                        detail.getDocumentNumber(), detail.getFinancialDocumentLineNumber(), paymentMethodCode);
                 final TaxStatType statToUpdate = isForeignDraft(paymentMethodCode)
                         ? TaxStatType.NUM_DV_FOREIGN_DRAFTS_IGNORED : TaxStatType.NUM_DV_WIRE_TRANSFERS_IGNORED;
                 statistics.increment(statToUpdate);

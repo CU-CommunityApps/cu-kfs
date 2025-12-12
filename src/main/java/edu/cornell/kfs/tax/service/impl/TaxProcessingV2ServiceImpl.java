@@ -19,6 +19,7 @@ import edu.cornell.kfs.tax.CUTaxConstants.TaxCommonParameterNames;
 import edu.cornell.kfs.tax.batch.TaxBatchConfig;
 import edu.cornell.kfs.tax.batch.TaxStatistics;
 import edu.cornell.kfs.tax.batch.service.TaxFileGenerationService;
+import edu.cornell.kfs.tax.batch.service.TransactionDetailBuilderService;
 import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxStatType;
 import edu.cornell.kfs.tax.service.TaxParameterService;
@@ -29,6 +30,7 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
     private static final Logger LOG = LogManager.getLogger();
 
     private TaxProcessingDao legacyTaxProcessingDao;
+    private TransactionDetailBuilderService transactionDetailBuilderService;
     private TaxFileGenerationService taxFileGenerationServiceFor1042S;
     private TaxFileGenerationService taxFileGenerationServiceForTransactionListPrinting;
     private TaxParameterService taxParameterService;
@@ -43,7 +45,7 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
             final TaxBatchConfig config = buildTaxBatchConfigFor1042S(processingStartDate);
 
             LOG.info("performTaxProcessingFor1042S, Finding transactions to process...");
-            createTransactionDetailRowsFor1042SUsingLegacyProcess(config);
+            createTransactionDetailRowsFor1042S(config);
 
             LOG.info("performTaxProcessingFor1042S, Generating 1042-S files...");
             final TaxStatistics sprintaxStatistics = taxFileGenerationServiceFor1042S.generateFiles(config);
@@ -57,6 +59,23 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
             LOG.error("performTaxProcessingFor1042S, Could not complete 1042-S processing", e);
             throw new RuntimeException(e);
         }
+    }
+
+    private TaxStatistics createTransactionDetailRowsFor1042S(final TaxBatchConfig config) {
+        if (shouldUseLegacyProcessForCreatingTransactionDetails()) {
+            LOG.info("createTransactionDetailRowsFor1042S, Using legacy code to create the Transaction Details; "
+                    + "the new code will still be used to generate the 1042-S files");
+            createTransactionDetailRowsFor1042SUsingLegacyProcess(config);
+            return new TaxStatistics();
+        } else {
+            return transactionDetailBuilderService.generateTransactionDetails(config);
+        }
+    }
+
+    private boolean shouldUseLegacyProcessForCreatingTransactionDetails() {
+        final String taxType = taxParameterService.getParameterValueAsString(
+                CUTaxConstants.TAX_PARM_DETAIL, TaxCommonParameterNames.TAX_TYPE);
+        return StringUtils.equalsIgnoreCase(taxType, CUTaxConstants.TAX_TYPE_1042S_CREATE_LEGACY_TRANSACTION_ROWS);
     }
 
     private void createTransactionDetailRowsFor1042SUsingLegacyProcess(final TaxBatchConfig config) {
@@ -177,6 +196,11 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
 
     public void setLegacyTaxProcessingDao(final TaxProcessingDao legacyTaxProcessingDao) {
         this.legacyTaxProcessingDao = legacyTaxProcessingDao;
+    }
+
+    public void setTransactionDetailBuilderService(
+            final TransactionDetailBuilderService transactionDetailBuilderService) {
+        this.transactionDetailBuilderService = transactionDetailBuilderService;
     }
 
     public void setTaxFileGenerationServiceFor1042S(final TaxFileGenerationService taxFileGenerationServiceFor1042S) {

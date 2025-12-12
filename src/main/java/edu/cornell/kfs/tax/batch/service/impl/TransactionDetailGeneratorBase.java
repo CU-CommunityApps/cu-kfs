@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
@@ -34,7 +36,9 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxStatType;
 
 public abstract class TransactionDetailGeneratorBase<T> {
 
-    public static final int MAX_BATCH_INSERT_SIZE = 75;
+    private static final Logger LOG = LogManager.getLogger();
+
+    public static final int MAX_BATCH_INSERT_SIZE = 100;
 
     protected final TaxBatchConfig config;
     protected final TaxDtoRowMapper<T> rowMapper;
@@ -43,6 +47,7 @@ public abstract class TransactionDetailGeneratorBase<T> {
     protected final List<TransactionDetail> pendingBatchInserts;
     protected final RouteHeaderLite emptyRouteHeader;
     protected final String taxSourceType;
+    protected int numTransactionDetailsInserted;
 
     protected TransactionDetailGeneratorBase(final TaxBatchConfig config, final TaxDtoRowMapper<T> rowMapper,
             final TransactionDetailBuilderHelperService helperService, final String taxSourceType,
@@ -51,6 +56,7 @@ public abstract class TransactionDetailGeneratorBase<T> {
         Objects.requireNonNull(rowMapper, "rowMapper cannot be null");
         Objects.requireNonNull(helperService, "helperService cannot be null");
         Validate.notBlank(taxSourceType, "taxSourceType cannot be blank");
+        Objects.requireNonNull(initialZeroValueStats, "initialZeroValueStats var-args cannot be null");
         this.config = config;
         this.rowMapper = rowMapper;
         this.helperService = helperService;
@@ -58,9 +64,11 @@ public abstract class TransactionDetailGeneratorBase<T> {
         this.statistics = new TaxStatistics(initialZeroValueStats);
         this.pendingBatchInserts = new ArrayList<>(MAX_BATCH_INSERT_SIZE);
         this.emptyRouteHeader = new RouteHeaderLite();
+        this.numTransactionDetailsInserted = 0;
     }
 
     public TaxStatistics generateAndInsertTransactionDetails() throws SQLException {
+        LOG.info("generateAndInsertTransactionDetails, Starting generation of {} transaction details", taxSourceType);
         while (rowMapper.moveToNextRow()) {
             final TransactionDetail detail = generateTransactionDetailFromCurrentSourceDataRow();
             pendingBatchInserts.add(detail);
@@ -73,10 +81,15 @@ public abstract class TransactionDetailGeneratorBase<T> {
             performBatchInserts();
         }
 
+        LOG.info("generateAndInsertTransactionDetails, Finished generation of {} {} transaction details",
+                numTransactionDetailsInserted, taxSourceType);
+
         return statistics;
     }
 
     protected void performBatchInserts() {
+        LOG.info("performBatchInserts, Preparing to insert next batch of {} {} transaction details",
+                pendingBatchInserts.size(), taxSourceType);
         final List<String> documentIds = getDocumentIdsFromPendingBatchInserts();
         final List<RouteHeaderLite> routeHeaders = helperService.getBasicRouteHeaderData(documentIds);
         final Map<String, RouteHeaderLite> routeHeadersMap = routeHeaders.stream()
@@ -87,7 +100,22 @@ public abstract class TransactionDetailGeneratorBase<T> {
                 .filter(ObjectUtils::isNotNull)
                 .collect(Collectors.toUnmodifiableList());
 
-        helperService.insertTransactionDetails(detailsToInsert, config);
+        if (detailsToInsert.isEmpty()) {
+            LOG.warn("performBatchInserts, None of the batch's {} {} transaction details are eligible for insertion",
+                    pendingBatchInserts.size(), taxSourceType);
+        } else if (detailsToInsert.size() < pendingBatchInserts.size()) {
+            LOG.warn("performBatchInserts, Only {} of the batch's {} {} transaction details are eligible for insertion",
+                    detailsToInsert.size(), pendingBatchInserts.size(), taxSourceType);
+            helperService.insertTransactionDetails(detailsToInsert, config);
+        }
+
+        if (!detailsToInsert.isEmpty()) {
+            helperService.insertTransactionDetails(detailsToInsert, config);
+            numTransactionDetailsInserted += detailsToInsert.size();
+            LOG.info("performBatchInserts, Successfully inserted batch of {} {} transaction details",
+                    detailsToInsert.size(), taxSourceType);
+        }
+
         pendingBatchInserts.clear();
     }
 

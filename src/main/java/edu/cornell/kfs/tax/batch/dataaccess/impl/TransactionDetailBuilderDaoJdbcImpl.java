@@ -15,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.function.FailableFunction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.core.api.encryption.EncryptionService;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
@@ -39,7 +38,6 @@ import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.kim.CuKimConstants;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
-import edu.cornell.kfs.sys.util.CuSqlQueryPlatformAwareDaoBaseJdbc;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants;
 import edu.cornell.kfs.tax.batch.TaxBatchConfig;
@@ -55,11 +53,11 @@ import edu.cornell.kfs.tax.batch.dto.PdpSourceData.PdpSourceDataField;
 import edu.cornell.kfs.tax.batch.dto.PrncSourceData;
 import edu.cornell.kfs.tax.batch.dto.PrncSourceData.PrncSourceDataField;
 import edu.cornell.kfs.tax.batch.dto.RouteHeaderLite;
+import edu.cornell.kfs.tax.batch.dto.RouteHeaderLite.RouteHeaderField;
 import edu.cornell.kfs.tax.batch.dto.SubQueryFields.DocumentTypeSubQueryField;
 import edu.cornell.kfs.tax.batch.dto.SubQueryFields.DvSubQueryField;
 import edu.cornell.kfs.tax.batch.dto.SubQueryFields.RouteHeaderSubQueryField;
 import edu.cornell.kfs.tax.batch.metadata.TaxDtoDbMetadata;
-import edu.cornell.kfs.tax.batch.service.TaxTableMetadataLookupService;
 import edu.cornell.kfs.tax.batch.util.TaxQueryBuilder;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.Criteria;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.FieldUpdate;
@@ -69,13 +67,10 @@ import edu.cornell.kfs.tax.businessobject.DvDisbursementView;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail.TransactionDetailField;
 
-public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc
+public class TransactionDetailBuilderDaoJdbcImpl extends TransactionDetailDaoJdbcBase
         implements TransactionDetailBuilderDao {
 
     private static final Logger LOG = LogManager.getLogger();
-
-    private TaxTableMetadataLookupService taxTableMetadataLookupService;
-    private EncryptionService encryptionService;
 
     @Override
     public void deleteTransactionDetailsForConfiguredTaxTypeAndYear(final TaxBatchConfig config) {
@@ -141,7 +136,7 @@ public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAware
                 FieldUpdate.of(TransactionDetailField.finObjectCode, TransactionDetail::getFinObjectCode),
                 FieldUpdate.of(TransactionDetailField.netPaymentAmount, Types.DECIMAL, TransactionDetail::getNetPaymentAmount),
                 FieldUpdate.of(TransactionDetailField.documentTitle, TransactionDetail::getDocumentTitle),
-                FieldUpdate.of(TransactionDetailField.vendorTaxNumber, TransactionDetail::getVendorTaxNumber),
+                FieldUpdate.ofEncryptedField(TransactionDetailField.vendorTaxNumber, encryptionService, TransactionDetail::getVendorTaxNumber),
                 FieldUpdate.of(TransactionDetailField.incomeCode, TransactionDetail::getIncomeCode),
                 FieldUpdate.of(TransactionDetailField.incomeCodeSubType, TransactionDetail::getIncomeCodeSubType),
                 FieldUpdate.of(TransactionDetailField.dvCheckStubText, TransactionDetail::getDvCheckStubText),
@@ -185,17 +180,28 @@ public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAware
     }
 
     @Override
-    public List<RouteHeaderLite> getBasicRouteHeaderData(List<String> documentIds) {
+    public List<RouteHeaderLite> getBasicRouteHeaderData(final List<String> documentIds) {
         if (documentIds.isEmpty()) {
             return List.of();
         }
-        // TODO: Implement!
-        return null;
+        final TaxDtoDbMetadata metadata = taxTableMetadataLookupService.getDatabaseMappingMetadataForDto(
+                RouteHeaderField.class);
+        final CuSqlQuery query = createRouteHeaderQuery(documentIds, metadata);
+        return queryForResults(query, resultSet -> readFullResults(resultSet, metadata, RouteHeaderLite::new));
+    }
+
+    private CuSqlQuery createRouteHeaderQuery(final List<String> documentIds, final TaxDtoDbMetadata metadata) {
+        return new TaxQueryBuilder(metadata)
+                .selectAllMappedFields()
+                .from(DocumentRouteHeaderValue.class)
+                .where(Criteria.in(RouteHeaderField.documentNumber, documentIds))
+                .build();
     }
 
     @Override
     public TaxStatistics createDvTransactionDetails(final TaxBatchConfig config,
             final TransactionSourceHandler<DvSourceData> dvSourceHandler) {
+        LOG.info("createDvTransactionDetails, Start querying and processing DV-sourced data");
         final TaxDtoDbMetadata metadata = taxTableMetadataLookupService.getDatabaseMappingMetadataForDto(
                 DvSourceDataField.class);
         final CuSqlQuery query = createDvSourceDataQuery(config, metadata);
@@ -339,6 +345,7 @@ public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAware
     @Override
     public TaxStatistics createPdpTransactionDetails(final TaxBatchConfig config,
             final TransactionSourceHandler<PdpSourceData> pdpSourceHandler) {
+        LOG.info("createPdpTransactionDetails, Start querying and processing PDP-sourced data");
         final TaxDtoDbMetadata metadata = taxTableMetadataLookupService.getDatabaseMappingMetadataForDto(
                 PdpSourceDataField.class);
         final CuSqlQuery query = createPdpSourceDataQuery(config, metadata);
@@ -398,6 +405,7 @@ public class TransactionDetailBuilderDaoJdbcImpl extends CuSqlQueryPlatformAware
     @Override
     public TaxStatistics createPrncTransactionDetails(final TaxBatchConfig config,
             final TransactionSourceHandler<PrncSourceData> prncSourceHandler) {
+        LOG.info("createPrncTransactionDetails, Start querying and processing PRNC-sourced data");
         final TaxDtoDbMetadata metadata = taxTableMetadataLookupService.getDatabaseMappingMetadataForDto(
                 PrncSourceDataField.class);
         final CuSqlQuery query = createPrncSourceDataQuery(config, metadata);
