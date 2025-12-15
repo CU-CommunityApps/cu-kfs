@@ -71,7 +71,9 @@
     </c:if>
 
     <c:if test="${not KualiForm.editingMode['displayInitTab']}">
+        <%-- CU Customization: Update tag to include FINP-11621 fix. --%>
         <purap:vendor
+                isPaymentRequest="true"
                 documentAttributes="${DataDictionary.PaymentRequestDocument.attributes}"
                 displayPurchaseOrderFields="false" displayPaymentRequestFields="true"/>
 
