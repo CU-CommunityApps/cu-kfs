@@ -20,6 +20,12 @@ public class TransactionDetailBuilderServiceImpl implements TransactionDetailBui
 
     private TransactionDetailBuilderDao transactionDetailBuilderDao;
 
+    public void deleteTransactionDetailsForConfiguredTaxTypeAndYear(final TaxBatchConfig config) {
+        LOG.info("deleteTransactionDetailsForConfiguredTaxTypeAndYear, Deleting {} transaction details for {} tax year",
+                config.getTaxType(), config.getReportYear());
+        transactionDetailBuilderDao.deleteTransactionDetailsForConfiguredTaxTypeAndYear(config);
+    }
+
     @Override
     public TaxStatistics generateTransactionDetails(final TaxBatchConfig config) {
         LOG.info("generateTransactionDetails, Starting transaction detail generation");

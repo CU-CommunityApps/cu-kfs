@@ -51,7 +51,7 @@ public class DvSourceData {
     private Date extractDate;
     private Date paidDate;
     // Fields from PUR_VNDR_HDR_T (VendorHeader)
-    private String vendorHeaderGeneratedIdentifier;
+    private Integer vendorHeaderGeneratedIdentifier;
     private String vendorTaxNumber;
     private String vendorTypeCode;
     private String vendorOwnershipCode;
@@ -279,11 +279,11 @@ public class DvSourceData {
         this.paidDate = paidDate;
     }
 
-    public String getVendorHeaderGeneratedIdentifier() {
+    public Integer getVendorHeaderGeneratedIdentifier() {
         return vendorHeaderGeneratedIdentifier;
     }
 
-    public void setVendorHeaderGeneratedIdentifier(final String vendorHeaderGeneratedIdentifier) {
+    public void setVendorHeaderGeneratedIdentifier(final Integer vendorHeaderGeneratedIdentifier) {
         this.vendorHeaderGeneratedIdentifier = vendorHeaderGeneratedIdentifier;
     }
 
@@ -370,7 +370,7 @@ public class DvSourceData {
         disbVchrPayeeCountryCode(DisbursementVoucherPayeeDetail.class),
         disbursementVoucherPayeeTypeCode(DisbursementVoucherPayeeDetail.class),
         // Fields from FP_DV_NRA_TAX_T (DisbursementVoucherNonresidentTax)
-        dvNraDocumentNumber(DisbursementVoucherNonresidentTax.class, KFSPropertyConstants.DOCUMENT_NUMBER),
+        nraDocumentNumber(DisbursementVoucherNonresidentTax.class, KFSPropertyConstants.DOCUMENT_NUMBER),
         federalIncomeTaxPercent(DisbursementVoucherNonresidentTax.class),
         incomeClassCode(DisbursementVoucherNonresidentTax.class),
         incomeTaxTreatyExemptCode(DisbursementVoucherNonresidentTax.class),

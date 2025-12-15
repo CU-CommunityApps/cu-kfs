@@ -45,14 +45,14 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
             final TaxBatchConfig config = buildTaxBatchConfigFor1042S(processingStartDate);
 
             LOG.info("performTaxProcessingFor1042S, Finding transactions to process...");
-            createTransactionDetailRowsFor1042S(config);
+            final TaxStatistics detailCreationStatistics = createTransactionDetailRowsFor1042S(config);
 
             LOG.info("performTaxProcessingFor1042S, Generating 1042-S files...");
             final TaxStatistics sprintaxStatistics = taxFileGenerationServiceFor1042S.generateFiles(config);
             final TaxStatistics plainOutputStatistics = generateFileContainingPlainTransactionDetails(config);
             LOG.info("performTaxProcessingFor1042S, Finished generating 1042-S files");
 
-            printStatistics(sprintaxStatistics, plainOutputStatistics);
+            printStatistics(detailCreationStatistics, sprintaxStatistics, plainOutputStatistics);
 
             LOG.info("performTaxProcessingFor1042S, Finished 1042-S tax processing");
         } catch (final Exception e) {
@@ -68,6 +68,7 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
             createTransactionDetailRowsFor1042SUsingLegacyProcess(config);
             return new TaxStatistics();
         } else {
+            transactionDetailBuilderService.deleteTransactionDetailsForConfiguredTaxTypeAndYear(config);
             return transactionDetailBuilderService.generateTransactionDetails(config);
         }
     }
@@ -170,7 +171,8 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
         }
     }
 
-    private void printStatistics(final TaxStatistics mainStatistics, final TaxStatistics plainOutputStatistics) {
+    private void printStatistics(final TaxStatistics detailCreationStatistics,
+            final TaxStatistics mainStatistics, final TaxStatistics plainOutputStatistics) {
         final int numMainTransactionRows = mainStatistics.getTransactionRowCountStatistic();
         final int numPlainOutputTransactionRows = plainOutputStatistics.getTransactionRowCountStatistic();
         if (numMainTransactionRows != numPlainOutputTransactionRows) {

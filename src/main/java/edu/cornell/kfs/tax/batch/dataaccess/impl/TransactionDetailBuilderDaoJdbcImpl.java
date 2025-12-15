@@ -74,8 +74,6 @@ public class TransactionDetailBuilderDaoJdbcImpl extends TransactionDetailDaoJdb
 
     @Override
     public void deleteTransactionDetailsForConfiguredTaxTypeAndYear(final TaxBatchConfig config) {
-        LOG.info("deleteTransactionDetailsForConfiguredTaxTypeAndYear, Deleting existing rows for tax type {} and year {}",
-                config.getTaxType(), config.getReportYear());
         final TaxDtoDbMetadata metadata = taxTableMetadataLookupService.getDatabaseMappingMetadataForDto(
                 TransactionDetailField.class);
         final TransactionDetailField taxBoxField = getTaxBoxFieldForCriteria(config);
@@ -108,7 +106,6 @@ public class TransactionDetailBuilderDaoJdbcImpl extends TransactionDetailDaoJdb
     @Override
     public void insertTransactionDetails(
             final List<TransactionDetail> transactionDetails, final TaxBatchConfig config) {
-        LOG.info("insertTransactionDetails, Preparing batch insert of transaction details");
         final CuSqlQuery insertQuery = createQueryForBatchInsertingTransactionDetails(config);
         final int[] insertCounts = executeBatchUpdate(insertQuery, transactionDetails);
 
@@ -119,7 +116,6 @@ public class TransactionDetailBuilderDaoJdbcImpl extends TransactionDetailDaoJdb
                         i, insertCounts[i]);
             }
         }
-        LOG.info("insertTransactionDetails, Inserted {} transaction details", transactionDetails.size());
     }
 
     private CuSqlQuery createQueryForBatchInsertingTransactionDetails(final TaxBatchConfig config) {
@@ -235,7 +231,7 @@ public class TransactionDetailBuilderDaoJdbcImpl extends TransactionDetailDaoJdb
                 .selectAllMappedFields()
                 .from(DisbursementVoucherPayeeDetail.class)
                 .join(DisbursementVoucherNonresidentTax.class, Criteria.equal(
-                        DvSourceDataField.payeeDetailDocumentNumber, DvSourceDataField.dvNraDocumentNumber))
+                        DvSourceDataField.payeeDetailDocumentNumber, DvSourceDataField.nraDocumentNumber))
                 .join(SourceAccountingLine.class, Criteria.equal(
                         DvSourceDataField.payeeDetailDocumentNumber, DvSourceDataField.accountingLineDocumentNumber))
                 .join(dvDocumentSubQuery, CuDisbursementVoucherDocument.class, Criteria.equal(

@@ -454,7 +454,7 @@ public class PdpSourceData {
         country(PaymentGroup.class),
         disbursementDate(PaymentGroup.class),
         disbursementNbr(PaymentGroup.class),
-        payeeIdTypeCode(PaymentGroup.class),
+        payeeIdTypeCode(PaymentGroup.class, PdpPropertyConstants.PaymentGroup.PAYMENT_GROUP_PAYEE_ID_TYPE_CODE),
         line1Address(PaymentGroup.class),
         nonresidentPayment(PaymentGroup.class),
         paymentStatusCode(PaymentGroup.class),

@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.kfs.krad.bo.BusinessObject;
 
+import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 import edu.cornell.kfs.tax.batch.annotation.HasNestedEnumWithDtoFieldListing;
 import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 
@@ -15,7 +16,7 @@ public class RouteHeaderLite {
     private String initiatorPrincipalId;
     private String docRouteStatus;
     private Timestamp finalizedDate;
-    private String title;
+    private String docTitle;
 
     public String getDocumentNumber() {
         return documentNumber;
@@ -53,24 +54,39 @@ public class RouteHeaderLite {
         this.finalizedDate = finalizedDate;
     }
 
-    public String getTitle() {
-        return title;
+    public String getDocTitle() {
+        return docTitle;
     }
 
-    public void setTitle(final String title) {
-        this.title = title;
+    public void setDocTitle(final String docTitle) {
+        this.docTitle = docTitle;
     }
 
     public enum RouteHeaderField implements TaxDtoFieldEnum {
-        documentNumber,
-        initiatorPrincipalId,
+        documentNumber(CUKFSPropertyConstants.DOCUMENT_ID),
+        initiatorPrincipalId(CUKFSPropertyConstants.INITIATOR_WORKFLOW_ID),
         docRouteStatus,
         finalizedDate,
-        title;
+        docTitle;
+
+        private final String boFieldName;
+
+        private RouteHeaderField() {
+            this.boFieldName = name();
+        }
+
+        private RouteHeaderField(final String boFieldName) {
+            this.boFieldName = boFieldName;
+        }
 
         @Override
         public Class<? extends BusinessObject> getMappedBusinessObjectClass() {
             return DocumentRouteHeaderValue.class;
+        }
+
+        @Override
+        public String getBusinessObjectFieldName() {
+            return boFieldName;
         }
     }
 

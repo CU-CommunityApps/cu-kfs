@@ -106,7 +106,6 @@ public abstract class TransactionDetailGeneratorBase<T> {
         } else if (detailsToInsert.size() < pendingBatchInserts.size()) {
             LOG.warn("performBatchInserts, Only {} of the batch's {} {} transaction details are eligible for insertion",
                     detailsToInsert.size(), pendingBatchInserts.size(), taxSourceType);
-            helperService.insertTransactionDetails(detailsToInsert, config);
         }
 
         if (!detailsToInsert.isEmpty()) {

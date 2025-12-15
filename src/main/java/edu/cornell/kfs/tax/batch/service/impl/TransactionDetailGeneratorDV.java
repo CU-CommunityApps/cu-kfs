@@ -146,7 +146,7 @@ public class TransactionDetailGeneratorDV extends TransactionDetailGeneratorBase
         final String initiatorPrincipalId = StringUtils.defaultIfBlank(
                 routeHeader.getInitiatorPrincipalId(), CUTaxConstants.NETID_IF_NOT_FOUND);
         final String docTitle = StringUtils.defaultIfBlank(
-                routeHeader.getTitle(), CUTaxConstants.DOC_TITLE_IF_NOT_FOUND);
+                routeHeader.getDocTitle(), CUTaxConstants.DOC_TITLE_IF_NOT_FOUND);
         final String initiatorPrincipalName = getPrincipalNameIfPresentForPerson(initiatorPrincipalId);
 
         checkForAccountAndOrganizationExistence(detail);
