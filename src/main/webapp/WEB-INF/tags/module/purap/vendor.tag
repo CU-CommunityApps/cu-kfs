@@ -26,6 +26,8 @@
 <%@ attribute name="displayPaymentRequestFields" required="false" description="Boolean to indicate if PREQ specific fields should be displayed" %>
 <%@ attribute name="displayCreditMemoFields" required="false" description="Boolean to indicate if CM specific fields should be displayed" %>
 <%@ attribute name="purchaseOrderAwarded" required="false" description="Boolean to indicate if this is a PO that has been awarded" %>
+<%-- CU Customization: Backport attribute from FINP-11621 fix. --%>
+<%@ attribute name="isPaymentRequest" required="false" description="Boolean to indicate if this is a vendor on a Payment Request" %>
 
 <c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}" />
 <c:set var="canEditVendor" value="${KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR]}" />
@@ -36,7 +38,8 @@
 <c:set var="currentUserCampusCode" value="${sessionScope['userSession'].person.campusCode}" />
 <c:set var="restrictFullEntry" value="${(not empty KualiForm.editingMode['restrictFullEntry'])}" />
 <c:set var="tabindexOverrideBase" value="30" />
-<c:set var="canEditVendorAddress" value="${not empty
+<%-- CU Customization: Update value to include FINP-11621 fix. --%>
+<c:set var="canEditVendorAddress" value="${not isPaymentRequest or not empty
 KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS]}" />
 
 <!--  this is a temporary workaround until release 3, where this is fixed more generally -->
