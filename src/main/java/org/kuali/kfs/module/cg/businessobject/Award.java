@@ -167,6 +167,7 @@ public class Award extends PersistableBusinessObjectBase implements Billable, Mu
     private LetterOfCreditFundGroup letterOfCreditFundGroup;
     private transient String invoiceLink;
     private transient ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType;
+    private transient boolean federalFinancialReportCreationRequested = false;
 
     public Award() {
         // Must use ArrayList because its get() method automatically grows the array for Struts.
@@ -1183,6 +1184,20 @@ public class Award extends PersistableBusinessObjectBase implements Billable, Mu
      */
     public void setCreationProcessType(ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
         this.creationProcessType = creationProcessType;
+    }
+
+    /*
+     * CU Customization (KFSPTS-33340)
+     */
+    public boolean isFederalFinancialReportCreationRequested() {
+        return federalFinancialReportCreationRequested;
+    }
+
+    /*
+     * CU Customization (KFSPTS-33340)
+     */
+    public void setFederalFinancialReportCreationRequested(boolean federalFinancialReportCreationRequested) {
+        this.federalFinancialReportCreationRequested = federalFinancialReportCreationRequested;
     }
 
 }
