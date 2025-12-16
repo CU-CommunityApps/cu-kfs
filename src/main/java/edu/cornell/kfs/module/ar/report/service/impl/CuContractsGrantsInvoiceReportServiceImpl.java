@@ -26,8 +26,11 @@ import edu.cornell.kfs.module.ar.service.CuContractsGrantsBillingUtilityService;
 import edu.cornell.kfs.module.ar.service.CuContractsGrantsInvoiceCreateDocumentService;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
-// Customized class created for KFSPTS-33340
-
+/* CUMod: KFSPTS-33340
+ * Customized class created to have the data in the generated Federal Financial Reports
+ * use the same calculations as the CINV processing by creating a CINV that is not saved
+ * and only used to obtain the required calculatd values for the report.
+ */
 public class CuContractsGrantsInvoiceReportServiceImpl extends ContractsGrantsInvoiceReportServiceImpl {
     
     protected CuContractsGrantsInvoiceCreateDocumentService contractsGrantsInvoiceCreateDocumentService;
@@ -41,8 +44,15 @@ public class CuContractsGrantsInvoiceReportServiceImpl extends ContractsGrantsIn
         return cashReceipt;
     }
     
+    /* CUMod: KFSPTS-33340
+     * Remove FINP-7466 by introducing CU custom Award transient attribute whose default value is
+     * not set (false) and is only set (true) just prior to method createCINVForFederalFinancialReport
+     * invocation as part of the Federal Financial Report generation process CU mod.
+     * 
+     * NOTE: This method was also highly customized due to a new FEDERAL_FINANCIAL_FORM_425.pdf
+     * template release that required data substitution changes from base code.
+     */
     @Override
-    //Cornell customization of base code method
     protected void populateListByAward(
             final Award award,
             final String reportingPeriod,
@@ -52,8 +62,10 @@ public class CuContractsGrantsInvoiceReportServiceImpl extends ContractsGrantsIn
         KualiDecimal cashDisbursement = KualiDecimal.ZERO;
         final SystemOptions systemOption = optionsService.getCurrentYearOptions();
         
-        //Cornell customization
-        ContractsGrantsInvoiceDocument cinv = contractsGrantsInvoiceCreateDocumentService.createCINVForReport(award);
+        /* CUMod: KFSPTS-33340 */
+        award.setFederalFinancialReportCreationRequested(true);
+        ContractsGrantsInvoiceDocument cinv = contractsGrantsInvoiceCreateDocumentService.createCINVForFederalFinancialReport(award);
+        award.setFederalFinancialReportCreationRequested(false);
 
         for (final AwardAccount awardAccount : award.getActiveAwardAccounts()) {
             int index = 0;

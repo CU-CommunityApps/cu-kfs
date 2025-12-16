@@ -84,13 +84,14 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         populateDocumentDescription(cgInvoiceDocument);
         return cgInvoiceDocument;
     }
+
     
     /*
      * CUMod: KFSPTS-33340
      */
-    public ContractsGrantsInvoiceDocument createCINVForReport(final Award awd) {
+    public ContractsGrantsInvoiceDocument createCINVForFederalFinancialReport(final Award awd) {
         final List<ErrorMessage> errorMessages = new ArrayList<>();
-        return generateContractsAndGrantsInvoiceDocumentForReport(awd, awd.getActiveAwardAccounts(), errorMessages,
+        return generateContractsAndGrantsInvoiceDocumentForFederalFinancialReport(awd, awd.getActiveAwardAccounts(), errorMessages,
                 ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL, null, null);
 
     }
@@ -98,7 +99,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     /*
      * CUMod: KFSPTS-33340
      */
-    protected ContractsGrantsInvoiceDocument generateContractsAndGrantsInvoiceDocumentForReport(final Award awd,
+    protected ContractsGrantsInvoiceDocument generateContractsAndGrantsInvoiceDocumentForFederalFinancialReport(final Award awd,
             final List<AwardAccount> validAwardAccounts, final List<ErrorMessage> errorMessages,
             final ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType,
             final List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, final String locCreationType) {
