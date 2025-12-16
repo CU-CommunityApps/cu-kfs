@@ -8,5 +8,5 @@ public interface CuContractsGrantsInvoiceCreateDocumentService extends Contracts
     public void populateDocumentDescription(ContractsGrantsInvoiceDocument cgInvoiceDocument);
     
     // KFSPTS-33340
-    ContractsGrantsInvoiceDocument createCINVForReport(final Award awd);
+    ContractsGrantsInvoiceDocument createCINVForFederalFinancialReport(final Award awd);
 }

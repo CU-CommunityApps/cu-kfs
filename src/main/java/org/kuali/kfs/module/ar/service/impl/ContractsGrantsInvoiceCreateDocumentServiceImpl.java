@@ -589,6 +589,12 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         return StringUtils.left(description, descriptionMaxLength);
     }
 
+    /* CUMod: KFSPTS-33340
+     * Remove FINP-7466 by introducing conditional check of CU custom Award transient
+     * attribute added for this customization. This attribute's default value is
+     * not set (false) and is only set (true) to prevent a stacktrace when this method
+     * is invoked as part of the Federal Financial Report generation process.
+     */
     /**
      * This method takes all the applicable attributes from the associated award object and sets those attributes into
      * their corresponding invoice attributes.
@@ -646,8 +652,11 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                     document.getInvoiceMilestones().clear();
                     document.getInvoiceMilestones().addAll(buildInvoiceMilestones(milestones));
 
-                    final Date billedDate = document.getInvoiceMilestones().stream().map(InvoiceMilestone::getMilestoneActualCompletionDate).max(Date::compareTo).get();
-                    invoiceGeneralDetail.setLastBilledDate(billedDate);
+                    /* CUMod: KFSPTS-33340 */
+                    if (!award.isFederalFinancialReportCreationRequested()) {
+                        final Date billedDate = document.getInvoiceMilestones().stream().map(InvoiceMilestone::getMilestoneActualCompletionDate).max(Date::compareTo).get();
+                        invoiceGeneralDetail.setLastBilledDate(billedDate);
+                    }
                 }
             } else if (ArConstants.BillingFrequencyValues.isPredeterminedBilling(docInvoiceGeneralDetail)) {
                 final AwardAccount awardAccount = awardAccounts.get(0);
@@ -658,8 +667,11 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                     document.getInvoiceBills().clear();
                     document.getInvoiceBills().addAll(buildInvoiceBills(bills));
 
-                    final Date billedDate = document.getInvoiceBills().stream().map(InvoiceBill::getBillDate).max(Date::compareTo).get();
-                    invoiceGeneralDetail.setLastBilledDate(billedDate);
+                    /* CUMod: KFSPTS-33340 */
+                    if (!award.isFederalFinancialReportCreationRequested()) {
+                        final Date billedDate = document.getInvoiceBills().stream().map(InvoiceBill::getBillDate).max(Date::compareTo).get();
+                        invoiceGeneralDetail.setLastBilledDate(billedDate);
+                    }
                 }
             }
 
@@ -1804,8 +1816,8 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                              */
                             award.setCreationProcessType(creationProcessType);
                             if (verifyBillingFrequencyService.validateBillingFrequency(award, checkGracePeriod)
-                                || ArConstants.BillingFrequencyValues.isMilestone(award)
-                                || ArConstants.BillingFrequencyValues.isPredeterminedBilling(award)) {
+                                    || ArConstants.BillingFrequencyValues.isMilestone(award)
+                                    || ArConstants.BillingFrequencyValues.isPredeterminedBilling(award)) {
                                 validateAward(errorList, award, creationProcessType);
                             } else {
                                 errorList.add(configurationService.getPropertyValueAsString(
