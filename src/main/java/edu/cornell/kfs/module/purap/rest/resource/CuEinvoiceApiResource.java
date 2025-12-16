@@ -77,7 +77,7 @@ public class CuEinvoiceApiResource {
     @Produces (MediaType.APPLICATION_JSON)
     public Response describeEinvoiceApiResource() {
         HashMap<String, String> apiDescription = new HashMap<>();
-        apiDescription.put("description", CUPurapConstants.Einvoice.EINVOICE_KFS_API_DESCRIPTION);
+        apiDescription.put(CUPurapConstants.Einvoice.DESCRIPTION, CUPurapConstants.Einvoice.EINVOICE_KFS_API_DESCRIPTION);
         return Response.ok(apiDescription).build();
     }
 
