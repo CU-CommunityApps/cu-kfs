@@ -21,6 +21,7 @@ import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.module.purap.PurapConstants.PurapDocTypeCodes;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.pdp.businessobject.CustomerProfile;
@@ -416,7 +417,7 @@ public class TransactionDetailBuilderDaoJdbcImpl extends TransactionDetailDaoJdb
     private CuSqlQuery createPrncSourceDataQuery(final TaxBatchConfig config, final TaxDtoDbMetadata metadata) {
         final TaxQueryBuilder documentsFilteredByFinalizedDateSubquery =
                 createRouteHeaderSubqueryFilteredByFinalizedDate(
-                        config, CuPaymentRequestDocument.DOCUMENT_TYPE_NON_CHECK, metadata);
+                        config, PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT, metadata);
 
         return new TaxQueryBuilder(metadata)
                 .selectAllMappedFields()
