@@ -35,7 +35,7 @@ public class CuLaborPendingEntryConverterServiceImplIntegTest extends KualiInteg
         
         GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
         LaborLedgerPendingEntry laborLedgerPendingEntry = ((CuLaborPendingEntryConverterServiceImpl) laborPendingEntryConverterService).
-                getBenefitClearingPendingEntry(document, sequenceHelper, "R704750", "IT", "MX", new KualiDecimal(6916.68), "5200");
+                getBenefitClearingPendingEntry(document, sequenceHelper, "R704750", "IT", "MX", new KualiDecimal(6916.68), "5600");
         assertEquals("1", laborLedgerPendingEntry.getEmplid());
     }
 
