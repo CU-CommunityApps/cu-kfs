@@ -212,5 +212,108 @@
       <inverse-foreignkey field-ref="documentNumber" />
     </collection-descriptor>
   </class-descriptor>
+  
+      <class-descriptor class="org.kuali.kfs.module.ld.businessobject.PositionObjectBenefit"
+                      table="LD_LBR_OBJ_BENE_T">
+        <field-descriptor name="universityFiscalYear"
+                          column="UNIV_FISCAL_YR"
+                          jdbc-type="INTEGER"
+                          primarykey="true"
+                          index="true"/>
+        <field-descriptor name="chartOfAccountsCode"
+                          column="FIN_COA_CD"
+                          jdbc-type="VARCHAR"
+                          primarykey="true"
+                          index="true"/>
+        <field-descriptor name="financialObjectCode"
+                          column="FIN_OBJECT_CD"
+                          jdbc-type="VARCHAR"
+                          primarykey="true"
+                          index="true"/>
+        <field-descriptor name="financialObjectBenefitsTypeCode"
+                          column="FINOBJ_BENE_TYP_CD"
+                          jdbc-type="VARCHAR"
+                          primarykey="true"
+                          index="true"/>
+        <field-descriptor name="objectId"
+                          column="OBJ_ID"
+                          jdbc-type="VARCHAR"
+                          index="true"/>
+        <field-descriptor name="versionNumber"
+                          column="VER_NBR"
+                          jdbc-type="BIGINT"
+                          locking="true"/>
+        <field-descriptor name="active"
+                          column="ACTV_IND"
+                          jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="lastUpdatedTimestamp"
+                          column="LAST_UPDT_TS"
+                          jdbc-type="TIMESTAMP"
+                          index="true"/>
+        <field-descriptor name="laborBenefitRateCategoryCode"
+                          column="LBR_BEN_RT_CAT_CD"
+                          jdbc-type="VARCHAR"
+                          primarykey="true"
+                          index="true"/>
+
+        <reference-descriptor name="benefitsCalculation"
+                              class-ref="org.kuali.kfs.module.ld.businessobject.BenefitsCalculation"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="universityFiscalYear"/>
+            <foreignkey field-ref="chartOfAccountsCode"/>
+            <foreignkey field-ref="financialObjectBenefitsTypeCode"/>
+            <foreignkey field-ref="laborBenefitRateCategoryCode"/>
+        </reference-descriptor>
+
+        <reference-descriptor name="laborBenefitRateCategory"
+                              class-ref="org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="laborBenefitRateCategoryCode"/>
+        </reference-descriptor>
+
+        <reference-descriptor name="financialObject"
+                              class-ref="org.kuali.kfs.coa.businessobject.ObjectCode"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="universityFiscalYear"/>
+            <foreignkey field-ref="chartOfAccountsCode"/>
+            <foreignkey field-ref="financialObjectCode"/>
+        </reference-descriptor>
+
+        <reference-descriptor name="financialObjectBenefitsType"
+                              class-ref="org.kuali.kfs.module.ld.businessobject.BenefitsType"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="financialObjectBenefitsTypeCode"/>
+        </reference-descriptor>
+
+        <reference-descriptor name="chartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="chartOfAccountsCode"/>
+        </reference-descriptor>
+
+        <reference-descriptor name="universityFiscal" class-ref="org.kuali.kfs.sys.businessobject.SystemOptions"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="universityFiscalYear"/>
+        </reference-descriptor>
+
+        <reference-descriptor name="laborObject" class-ref="org.kuali.kfs.module.ld.businessobject.LaborObject"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="universityFiscalYear"/>
+            <foreignkey field-ref="chartOfAccountsCode"/>
+            <foreignkey field-ref="financialObjectCode"/>
+        </reference-descriptor>
+    </class-descriptor>
 
 </descriptor-repository>
