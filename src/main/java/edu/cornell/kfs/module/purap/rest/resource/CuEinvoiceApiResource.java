@@ -74,8 +74,11 @@ public class CuEinvoiceApiResource {
     protected HttpServletResponse servletResponse;
 
     @GET
+    @Produces (MediaType.APPLICATION_JSON)
     public Response describeEinvoiceApiResource() {
-        return Response.ok(CUPurapConstants.Einvoice.EINVOICE_KFS_API_DESCRIPTION).build();
+        HashMap<String, String> apiDescription = new HashMap<>();
+        apiDescription.put(CUPurapConstants.Einvoice.DESCRIPTION, CUPurapConstants.Einvoice.EINVOICE_KFS_API_DESCRIPTION);
+        return Response.ok(apiDescription).build();
     }
 
     @POST
