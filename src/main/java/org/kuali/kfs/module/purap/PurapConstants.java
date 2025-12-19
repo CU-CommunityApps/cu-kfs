@@ -572,9 +572,9 @@ public final class PurapConstants {
         public static final String RECEIVING_THRESHOLD_DOCUMENT_TYPE = "THLD";
         public static final String REQUISITION_DOCUMENT_TYPE = "REQS";
 
-        //CU customization: Add PRNC to the list of Payment Request document types
+        //CU customization: Add PRNC and PRID to the list of Payment Request document types
         public static final Set<String> PAYMENT_REQUEST_DOCUMENT_TYPES =
-                Set.of(PAYMENT_REQUEST_DOCUMENT, PAYMENT_REQUEST_EXTERNAL, PAYMENT_REQUEST_WIRE_TRANSFER, CuPaymentRequestDocument.DOCUMENT_TYPE_NON_CHECK);
+                Set.of(PAYMENT_REQUEST_DOCUMENT, PAYMENT_REQUEST_EXTERNAL, PAYMENT_REQUEST_WIRE_TRANSFER, CuPaymentRequestDocument.DOCUMENT_TYPE_NON_CHECK, CuPaymentRequestDocument.DOCUMENT_TYPE_INTERNAL_BILLING);
     }
 
     public static class CapitalAssetTabStrings {
