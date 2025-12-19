@@ -48,4 +48,10 @@
     <bean id="capAssetInventoryDao" parent="platformAwareDao"
           class="edu.cornell.kfs.module.cam.dataaccess.impl.CuCapAssetInventoryDaoOjb"/>
 
+    <bean id="generalLedgerEntryLookupableHelperService"
+          parent="generalLedgerEntryLookupableHelperService-parentBean"
+          scope="prototype"
+		  p:dateTimeService-ref="dateTimeService"
+		  p:preqCutoffDate="${cam.preq.cutoff.date.for.gl.lookup}"/>
+
 </beans>
