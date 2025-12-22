@@ -99,5 +99,16 @@
    <import resource="document/validation/configuration/SalaryExpenseTransferValidations.xml" />
    <import resource="document/validation/configuration/CuYearEndBenefitExpenseTransferValidations.xml" />
    <import resource="document/validation/configuration/CuYearEndSalaryExpenseTransferValidations.xml" />
+   
+    <bean id="laborPendingEntryGeneratorService"
+          parent="laborPendingEntryGeneratorService-parentBean"/>
+    <bean abstract="true"
+          class="org.kuali.kfs.module.ld.document.service.impl.LaborPendingEntryGeneratorServiceImpl"
+          id="laborPendingEntryGeneratorService-parentBean"
+          c:businessObjectService-ref="businessObjectService"
+          c:laborBenefitsCalculationService-ref="laborBenefitsCalculationService"
+          c:laborPendingEntryConverterService-ref="laborPendingEntryConverterService"
+          c:laborPositionObjectBenefitService-ref="laborPositionObjectBenefitService"
+          c:parameterService-ref="parameterService"/>
     
 </beans>

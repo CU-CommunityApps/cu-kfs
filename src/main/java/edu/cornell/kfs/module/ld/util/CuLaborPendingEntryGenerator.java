@@ -36,6 +36,8 @@ import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import edu.cornell.kfs.module.ld.document.service.impl.CuLaborPendingEntryConverterServiceImpl;
 
 public class CuLaborPendingEntryGenerator {
+    
+    protected final LaborBenefitsCalculationService laborBenefitsCalculationService;
 	
     public static List<LaborLedgerPendingEntry> generateOffsetPendingEntries(List<LaborLedgerPendingEntry> expenseEntries, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         List<LaborLedgerPendingEntry> offsetPendingEntries = new ArrayList<LaborLedgerPendingEntry>();
@@ -71,7 +73,7 @@ public class CuLaborPendingEntryGenerator {
             String fringeBenefitObjectCode = retrieveFringeBenefitObjectCode(accountingLine, chartOfAccountsCode);
 
             final KualiDecimal benefitAmount = SpringContext.getBean(LaborBenefitsCalculationService.class).calculateFringeBenefit(positionObjectBenefit, accountingLine.getAmount(), accountingLine.getAccountNumber(), accountingLine.getSubAccountNumber());
-            if (benefitAmount.isNonZero() && positionObjectBenefit.getBenefitsCalculation().isActive()) {
+            if (benefitAmount.isNonZero() && getBenefitsCalculation(positionObjectBenefit).isActive()) {
 
                 final ParameterService parameterService = SpringContext.getBean(ParameterService.class);
                 final Boolean enableFringeBenefitCalculationByBenefitRate = parameterService.getParameterValueAsBoolean(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, LaborConstants.BenefitCalculation.ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY_PARAMETER);
