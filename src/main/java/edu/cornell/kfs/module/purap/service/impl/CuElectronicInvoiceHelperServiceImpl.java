@@ -177,7 +177,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             throw new RuntimeException(e);
         }
 
-        LOG.info("{} file(s) available for processing", filesToBeProcessed.length);
+        LOG.info("{} file(s) available for processing", () -> filesToBeProcessed.length);
         
         final StringBuilder emailMsg = new StringBuilder();
 

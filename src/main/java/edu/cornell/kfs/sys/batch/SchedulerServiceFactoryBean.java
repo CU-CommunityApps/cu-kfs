@@ -2,6 +2,7 @@ package edu.cornell.kfs.sys.batch;
 
 import java.util.List;
 
+import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.KualiModuleService;
@@ -29,6 +30,7 @@ public class SchedulerServiceFactoryBean implements FactoryBean<SchedulerService
     private KSBScheduledPool scheduledThreadPool;
     private JobDescriptor exceptionMessageJob;
     private JobDescriptor delayedAsyncCallJob;
+    private Environment environment;
     private boolean useQuartzScheduling;
 
     private volatile SchedulerService schedulerServiceInstance;
@@ -50,7 +52,7 @@ public class SchedulerServiceFactoryBean implements FactoryBean<SchedulerService
     }
 
     private SchedulerServiceImpl createBaseFinancialsSchedulerService() {
-        SchedulerServiceImpl schedulerService = new SchedulerServiceImpl();
+        SchedulerServiceImpl schedulerService = new SchedulerServiceImpl(environment);
         schedulerService.setScheduler(scheduler);
         schedulerService.setJobListener(jobListener);
         schedulerService.setKualiModuleService(kualiModuleService);
@@ -170,6 +172,14 @@ public class SchedulerServiceFactoryBean implements FactoryBean<SchedulerService
 
     public void setDelayedAsyncCallJob(JobDescriptor delayedAsyncCallJob) {
         this.delayedAsyncCallJob = delayedAsyncCallJob;
+    }
+
+    public Environment getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
     }
 
 }

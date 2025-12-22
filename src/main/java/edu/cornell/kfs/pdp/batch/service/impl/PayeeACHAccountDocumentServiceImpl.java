@@ -161,9 +161,7 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
         achAccount.setBankAccountNumber(achDetail.getBankAccountNumber());
         achAccount.setBankAccountTypeCode(getACHTransactionCode(achDetail.getBankAccountType()));
         achAccount.setStandardEntryClass(determineStandardEntryClass(achAccount.getBankAccountTypeCode()));
-        if (StringUtils.isNotBlank(payee.getName())) {
-            achAccount.setPayeeName(payee.getName());
-        }
+
         if (StringUtils.isNotBlank(payee.getEmailAddress())) {
             achAccount.setPayeeEmailAddress(payee.getEmailAddress());
         }

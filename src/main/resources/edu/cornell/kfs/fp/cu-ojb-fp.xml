@@ -70,6 +70,7 @@
     <field-descriptor name="disbVchrNonresidentPaymentCode" column="DV_ALIEN_PMT_IND" jdbc-type="CHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
     <field-descriptor name="disbVchrPayeeIdNumber" column="DV_PAYEE_ID_NBR" jdbc-type="VARCHAR" index="true" />
     <field-descriptor name="disbVchrPayeePersonName" column="DV_PAYEE_PRSN_NM" jdbc-type="VARCHAR" />
+    <field-descriptor name="disbVchrPayeeAddressTypeCode" column="DV_PAYEE_ADDR_TYP_CD" jdbc-type="VARCHAR"/>
     <field-descriptor name="disbVchrPayeeLine1Addr" column="DV_PAYEE_LN1_ADDR" jdbc-type="VARCHAR" />
     <field-descriptor name="disbVchrPayeeLine2Addr" column="DV_PAYEE_LN2_ADDR" jdbc-type="VARCHAR" />
     <field-descriptor name="disbVchrPayeeCityName" column="DV_PAYEE_CTY_NM" jdbc-type="VARCHAR" />

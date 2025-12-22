@@ -338,7 +338,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         } else {
             LOG.warn(
                     "Did not add note to payment detail build from Document #: {} because note was empty",
-                    StringUtils.isNotBlank(custPaymentDocNbr) ? custPaymentDocNbr : ""
+                    () -> StringUtils.isNotBlank(custPaymentDocNbr) ? custPaymentDocNbr : ""
             );
         }
     }

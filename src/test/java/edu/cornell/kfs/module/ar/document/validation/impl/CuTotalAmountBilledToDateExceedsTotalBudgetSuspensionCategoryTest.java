@@ -11,18 +11,19 @@ import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.mockito.Mockito;
 
+import edu.cornell.kfs.module.ar.document.service.impl.CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategoryServiceImpl;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
 public class CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategoryTest {
     
-    private CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory suspensionCategory;
+    private CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategoryServiceImpl suspensionCategory;
     private ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument;
     
     private static final KualiDecimal STANDARD_BUDGET_TOTAL = new KualiDecimal(50);
 
     @Before
     public void setUp() throws Exception {
-        suspensionCategory = new CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory();
+        suspensionCategory = new CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategoryServiceImpl();
     }
 
     @After

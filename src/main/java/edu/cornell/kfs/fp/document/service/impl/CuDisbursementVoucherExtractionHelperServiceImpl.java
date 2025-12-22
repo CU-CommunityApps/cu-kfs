@@ -152,6 +152,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         pg.setPayeeName(pd.getDisbVchrPayeePersonName());
         pg.setPayeeId(pd.getDisbVchrPayeeIdNumber());
         pg.setState(pd.getDisbVchrPayeeStateCode());
+        pg.setProvince(pd.getDisbVchrPayeeProvinceName());
         pg.setZipCd(pd.getDisbVchrPayeeZipCode());
         pg.setPaymentDate(document.getDisbursementVoucherDueDate());
         pg.setProcessImmediate(document.isImmediatePaymentIndicator());
