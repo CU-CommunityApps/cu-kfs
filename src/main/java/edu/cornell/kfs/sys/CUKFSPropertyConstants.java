@@ -78,6 +78,7 @@ public class CUKFSPropertyConstants {
 
     public static final String DOCUMENT_ID = "documentId";
     public static final String FINALIZED_DATE = "finalizedDate";
+    public static final String INITIATOR_WORKFLOW_ID = "initiatorWorkflowId";
 
     public static final String BUILDING_ROOM = "buildingRoom";
 

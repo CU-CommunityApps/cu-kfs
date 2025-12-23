@@ -20,14 +20,14 @@ import edu.cornell.kfs.tax.batch.dataaccess.TaxDtoFieldEnum;
 @HasNestedEnumWithDtoFieldListing
 public class PrncSourceData {
 
-    // Fields from AP_PMT_RQST_ACCT_T 
+    // Fields from AP_PMT_RQST_ACCT_T (PaymentRequestAccount)
     private Integer accountIdentifier;
     private Integer accountItemIdentifier;
     private KualiDecimal amount;
     private String chartOfAccountsCode;
     private String accountNumber;
     private String financialObjectCode;
-    // Fields from AP_PMT_RQST_ITM_T 
+    // Fields from AP_PMT_RQST_ITM_T (PaymentRequestItem)
     private Integer purapDocumentIdentifier;
     private Integer itemIdentifier;
     // Fields from AP_PMT_RQST_T (PaymentRequestDocument)
@@ -243,14 +243,14 @@ public class PrncSourceData {
     }
 
     public enum PrncSourceDataField implements TaxDtoFieldEnum {
-        // Fields from AP_PMT_RQST_ACCT_T 
+        // Fields from AP_PMT_RQST_ACCT_T (PaymentRequestAccount)
         accountIdentifier(PaymentRequestAccount.class),
         accountItemIdentifier(PaymentRequestAccount.class, PurapPropertyConstants.ITEM_IDENTIFIER),
         amount(PaymentRequestAccount.class),
         chartOfAccountsCode(PaymentRequestAccount.class),
         accountNumber(PaymentRequestAccount.class),
         financialObjectCode(PaymentRequestAccount.class),
-        // Fields from AP_PMT_RQST_ITM_T 
+        // Fields from AP_PMT_RQST_ITM_T (PaymentRequestItem)
         purapDocumentIdentifier(PaymentRequestItem.class),
         itemIdentifier(PaymentRequestItem.class),
         // Fields from AP_PMT_RQST_T (PaymentRequestDocument)

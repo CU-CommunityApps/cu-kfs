@@ -6,15 +6,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.core.api.encryption.EncryptionService;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
@@ -26,7 +22,6 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 
 import edu.cornell.kfs.sys.util.CuSqlQuery;
-import edu.cornell.kfs.sys.util.CuSqlQueryPlatformAwareDaoBaseJdbc;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.batch.TaxBatchConfig;
 import edu.cornell.kfs.tax.batch.TaxStatistics;
@@ -44,7 +39,6 @@ import edu.cornell.kfs.tax.batch.dto.VendorDetailLite;
 import edu.cornell.kfs.tax.batch.dto.VendorDetailLite.VendorField;
 import edu.cornell.kfs.tax.batch.dto.VendorQueryResults;
 import edu.cornell.kfs.tax.batch.metadata.TaxDtoDbMetadata;
-import edu.cornell.kfs.tax.batch.service.TaxTableMetadataLookupService;
 import edu.cornell.kfs.tax.batch.util.TaxQueryBuilder;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.Criteria;
 import edu.cornell.kfs.tax.batch.util.TaxQueryUtils.FieldUpdate;
@@ -54,13 +48,10 @@ import edu.cornell.kfs.tax.businessobject.TransactionDetail.TransactionDetailFie
 import edu.cornell.kfs.vnd.CUVendorConstants.CUAddressTypes;
 import edu.cornell.kfs.vnd.CUVendorConstants.VendorContactTypeCodes;
 
-public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc
+public class TransactionDetailProcessorDaoJdbcImpl extends TransactionDetailDaoJdbcBase
         implements TransactionDetailProcessorDao {
 
     private static final Logger LOG = LogManager.getLogger();
-
-    private TaxTableMetadataLookupService taxTableMetadataLookupService;
-    private EncryptionService encryptionService;
 
     @Override
     public TaxStatistics processTransactionDetails(final TaxBatchConfig config,
@@ -349,27 +340,6 @@ public class TransactionDetailProcessorDaoJdbcImpl extends CuSqlQueryPlatformAwa
                 .from(Note.class)
                 .where(Criteria.equal(NoteField.remoteObjectIdentifier, objectIdSubQuery))
                 .build();
-    }
-
-    private <T> List<T> readFullResults(final ResultSet resultSet, final TaxDtoDbMetadata metadata,
-            final Supplier<T> dtoConstructor) throws SQLException {
-        final TaxDtoRowMapper<T> dtoMapper = new TaxDtoRowMapperImpl<>(
-                dtoConstructor, encryptionService, metadata, resultSet);
-        Stream.Builder<T> dtos = Stream.builder();
-        while (dtoMapper.moveToNextRow()) {
-            dtos.add(dtoMapper.readCurrentRow());
-        }
-        return dtos.build().collect(Collectors.toUnmodifiableList());
-    }
-
-
-
-    public void setTaxTableMetadataLookupService(final TaxTableMetadataLookupService taxTableMetadataLookupService) {
-        this.taxTableMetadataLookupService = taxTableMetadataLookupService;
-    }
-
-    public void setEncryptionService(final EncryptionService encryptionService) {
-        this.encryptionService = encryptionService;
     }
 
 }

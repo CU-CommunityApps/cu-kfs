@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax;
 import org.kuali.kfs.krad.bo.BusinessObject;
@@ -62,14 +63,14 @@ public class PdpSourceData {
     private String accountDetailFinChartCode;
     private String accountNbr;
     private String finObjectCode;
-    private String accountNetAmount;
+    private KualiDecimal accountNetAmount;
     // Fields from PUR_VNDR_HDR_T (VendorHeader)
     private Integer vendorHeaderGeneratedIdentifier;
     private String vendorTaxNumber;
     private String vendorTypeCode;
     private String vendorOwnershipCode;
     private String vendorOwnershipCategoryCode;
-    private String vendorForeignIndicator;
+    private Boolean vendorForeignIndicator;
     // Fields from from AP_PMT_RQST_T (CuPaymentRequestDocument)
     private String preqDocumentNumber;
     private String taxClassificationCode;
@@ -335,11 +336,11 @@ public class PdpSourceData {
         this.finObjectCode = finObjectCode;
     }
 
-    public String getAccountNetAmount() {
+    public KualiDecimal getAccountNetAmount() {
         return accountNetAmount;
     }
 
-    public void setAccountNetAmount(String accountNetAmount) {
+    public void setAccountNetAmount(KualiDecimal accountNetAmount) {
         this.accountNetAmount = accountNetAmount;
     }
 
@@ -383,11 +384,11 @@ public class PdpSourceData {
         this.vendorOwnershipCategoryCode = vendorOwnershipCategoryCode;
     }
 
-    public String getVendorForeignIndicator() {
+    public Boolean getVendorForeignIndicator() {
         return vendorForeignIndicator;
     }
 
-    public void setVendorForeignIndicator(String vendorForeignIndicator) {
+    public void setVendorForeignIndicator(Boolean vendorForeignIndicator) {
         this.vendorForeignIndicator = vendorForeignIndicator;
     }
 
@@ -453,7 +454,7 @@ public class PdpSourceData {
         country(PaymentGroup.class),
         disbursementDate(PaymentGroup.class),
         disbursementNbr(PaymentGroup.class),
-        payeeIdTypeCode(PaymentGroup.class),
+        payeeIdTypeCode(PaymentGroup.class, PdpPropertyConstants.PaymentGroup.PAYMENT_GROUP_PAYEE_ID_TYPE_CODE),
         line1Address(PaymentGroup.class),
         nonresidentPayment(PaymentGroup.class),
         paymentStatusCode(PaymentGroup.class),
