@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2024 Kuali, Inc.
+ * Copyright 2005-2025 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,7 +32,7 @@ import org.kuali.kfs.module.ld.LaborParameterConstants;
 import org.kuali.kfs.module.ld.businessobject.ExpenseTransferAccountingLine;
 import org.kuali.kfs.module.ld.businessobject.LaborLedgerPendingEntry;
 import org.kuali.kfs.module.ld.businessobject.LateAdjustment;
-import org.kuali.kfs.module.ld.util.LaborPendingEntryGenerator;
+import org.kuali.kfs.module.ld.document.service.LaborPendingEntryGeneratorService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
@@ -57,6 +57,8 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
     private static final Logger LOG = LogManager.getLogger();
 
     private transient BusinessObjectDictionaryService businessObjectDictionaryService;
+    //access increased for Stevens
+    protected transient LaborPendingEntryGeneratorService laborPendingEntryGeneratorService;
     protected Map<String, KualiDecimal> approvalObjectCodeBalances;
     protected LateAdjustment lateAdjustment;
 
@@ -92,13 +94,13 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
         boolean isSuccessful = true;
         final ExpenseTransferAccountingLine expenseTransferAccountingLine = (ExpenseTransferAccountingLine) accountingLine;
 
-        final List<LaborLedgerPendingEntry> expensePendingEntries = LaborPendingEntryGenerator
+        final List<LaborLedgerPendingEntry> expensePendingEntries = getLaborPendingEntryGeneratorService()
                 .generateExpensePendingEntries(this, expenseTransferAccountingLine, sequenceHelper);
         if (expensePendingEntries != null && !expensePendingEntries.isEmpty()) {
             isSuccessful = getLaborLedgerPendingEntries().addAll(expensePendingEntries);
         }
 
-        final List<LaborLedgerPendingEntry> benefitPendingEntries = LaborPendingEntryGenerator
+        final List<LaborLedgerPendingEntry> benefitPendingEntries = getLaborPendingEntryGeneratorService()
                 .generateBenefitPendingEntries(this, expenseTransferAccountingLine, sequenceHelper);
         if (benefitPendingEntries != null && !benefitPendingEntries.isEmpty()) {
             isSuccessful &= getLaborLedgerPendingEntries().addAll(benefitPendingEntries);
@@ -120,7 +122,7 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
                 LaborParameterConstants.BENEFIT_CLEARING_ACCOUNT);
 
         final List<LaborLedgerPendingEntry> benefitClearingPendingEntries =
-                LaborPendingEntryGenerator.generateBenefitClearingPendingEntries(this, sequenceHelper, accountNumber,
+                getLaborPendingEntryGeneratorService().generateBenefitClearingPendingEntries(this, sequenceHelper, accountNumber,
                         chartOfAccountsCode);
 
         if (benefitClearingPendingEntries != null && !benefitClearingPendingEntries.isEmpty()) {
@@ -134,7 +136,7 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
     public boolean answerSplitNodeQuestion(final String nodeName) throws UnsupportedOperationException {
         // KFSMI-4606 added routeNode condition
         if (nodeName.equals(KFSConstants.REQUIRES_WORK_STUDY_REVIEW)) {
-            return checkOjbectCodeForWorkstudy();
+            return checkObjectCodeForWorkstudy();
         } else {
             return super.answerSplitNodeQuestion(nodeName);
         }
@@ -145,7 +147,7 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
      *
      * @return boolean
      */
-    protected boolean checkOjbectCodeForWorkstudy() {
+    protected boolean checkObjectCodeForWorkstudy() {
         final Collection<String> workstudyRouteObjectcodes = SpringContext.getBean(ParameterService.class)
                 .getParameterValuesAsString(KfsParameterConstants.FINANCIAL_SYSTEM_DOCUMENT.class,
                         KFSConstants.WORK_STUDY_ROUTE_OBJECT_CODES_PARAM_NM);
@@ -218,5 +220,12 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
                 || StringUtils.isNotBlank(lateAdjustment.getLateAdjustmentDescription())
                 || StringUtils.isNotBlank(lateAdjustment.getLateAdjustmentReason())
                 || StringUtils.isNotBlank(lateAdjustment.getLateAdjustmentActionDescription());
+    }
+
+    private LaborPendingEntryGeneratorService getLaborPendingEntryGeneratorService() {
+        if (laborPendingEntryGeneratorService == null) {
+            laborPendingEntryGeneratorService = SpringContext.getBean(LaborPendingEntryGeneratorService.class);
+        }
+        return laborPendingEntryGeneratorService;
     }
 }
