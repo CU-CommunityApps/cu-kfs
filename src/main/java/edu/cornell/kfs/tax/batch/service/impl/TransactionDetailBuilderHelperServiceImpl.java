@@ -9,6 +9,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.coa.service.AccountService;
@@ -16,6 +19,8 @@ import org.kuali.kfs.coa.service.OrganizationService;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.identity.Person;
 
+import edu.cornell.kfs.tax.CUTaxConstants;
+import edu.cornell.kfs.tax.CUTaxConstants.TaxCommonParameterNames;
 import edu.cornell.kfs.tax.batch.TaxBatchConfig;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailBuilderDao;
 import edu.cornell.kfs.tax.batch.dto.RouteHeaderLite;
@@ -30,7 +35,10 @@ import edu.cornell.kfs.tax.service.TaxParameterService;
  */
 public class TransactionDetailBuilderHelperServiceImpl implements TransactionDetailBuilderHelperService {
 
+    private static final Logger LOG = LogManager.getLogger();
+
     private static final int MAX_AUTO_TAXNUM_DIGITS = 8;
+    private static final int DEFAULT_BATCH_INSERTION_SIZE = 100;
 
     private final DecimalFormat taxIdFormat;
     private final Map<String, String> taxIdsByPayeeId;
@@ -86,6 +94,27 @@ public class TransactionDetailBuilderHelperServiceImpl implements TransactionDet
     @Override
     public Person getPerson(final String principalId) {
         return personService.getPerson(principalId);
+    }
+
+    @Override
+    public int getBatchInsertionSize() {
+        int batchInsertionSize = -1;
+        final String insertionSizeParamValue = getParameterValue(CUTaxConstants.TAX_PARM_DETAIL,
+                TaxCommonParameterNames.TRANSACTION_DETAIL_BATCH_INSERTION_SIZE);
+        if (StringUtils.isNotBlank(insertionSizeParamValue)) {
+            try {
+                batchInsertionSize = Integer.parseInt(insertionSizeParamValue);
+            } catch (final NumberFormatException e) {
+                batchInsertionSize = -1;
+            }
+        }
+
+        if (batchInsertionSize <= 0) {
+            LOG.error("getBatchInsertionSize, parameter {} has a missing or invalid value; using default value of {}",
+                    TaxCommonParameterNames.TRANSACTION_DETAIL_BATCH_INSERTION_SIZE, DEFAULT_BATCH_INSERTION_SIZE);
+            batchInsertionSize = DEFAULT_BATCH_INSERTION_SIZE;
+        }
+        return batchInsertionSize;
     }
 
     @Override

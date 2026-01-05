@@ -152,6 +152,7 @@ public final class CUTaxConstants {
      */
     public static final class TaxCommonParameterNames {
         public static final String TAX_TYPE = "TAX_TYPE";
+        public static final String TRANSACTION_DETAIL_BATCH_INSERTION_SIZE = "TRANSACTION_DETAIL_BATCH_INSERTION_SIZE";
         
         public static final String DATES_TO_PROCESS_PARAMETER_SUFFIX = "_DATES_TO_PROCESS";
         public static final String EXCLUDE_BY_VENDOR_TYPE_PARAMETER_SUFFIX = "_EXCLUDE_BY_VENDOR_TYPE";

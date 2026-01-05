@@ -38,8 +38,6 @@ public abstract class TransactionDetailGeneratorBase<T> {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    public static final int MAX_BATCH_INSERT_SIZE = 100;
-
     protected final TaxBatchConfig config;
     protected final TaxDtoRowMapper<T> rowMapper;
     protected final TransactionDetailBuilderHelperService helperService;
@@ -62,17 +60,18 @@ public abstract class TransactionDetailGeneratorBase<T> {
         this.helperService = helperService;
         this.taxSourceType = taxSourceType;
         this.statistics = new TaxStatistics(initialZeroValueStats);
-        this.pendingBatchInserts = new ArrayList<>(MAX_BATCH_INSERT_SIZE);
+        this.pendingBatchInserts = new ArrayList<>(helperService.getBatchInsertionSize());
         this.emptyRouteHeader = new RouteHeaderLite();
         this.numTransactionDetailsInserted = 0;
     }
 
     public TaxStatistics generateAndInsertTransactionDetails() throws SQLException {
         LOG.info("generateAndInsertTransactionDetails, Starting generation of {} transaction details", taxSourceType);
+        final int maxBatchInsertSize = helperService.getBatchInsertionSize();
         while (rowMapper.moveToNextRow()) {
             final TransactionDetail detail = generateTransactionDetailFromCurrentSourceDataRow();
             pendingBatchInserts.add(detail);
-            if (pendingBatchInserts.size() >= MAX_BATCH_INSERT_SIZE) {
+            if (pendingBatchInserts.size() >= maxBatchInsertSize) {
                 performBatchInserts();
             }
         }

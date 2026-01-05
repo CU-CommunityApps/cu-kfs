@@ -8,6 +8,8 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.encryption.EncryptionService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
@@ -73,6 +75,8 @@ public final class TaxQueryUtils {
 
         private static final long serialVersionUID = 1L;
 
+        private static final Logger LOG = LogManager.getLogger();
+
         private static final Pattern SEQUENCE_NAME_PATTERN = Pattern.compile("^\\w+$");
 
         private final int sqlType;
@@ -130,6 +134,7 @@ public final class TaxQueryUtils {
             try {
                 return encryptionService.encrypt(value);
             } catch (final GeneralSecurityException e) {
+                LOG.error("encrypt, Failed to encrypt value", e);
                 throw new RuntimeException(e);
             }
         }

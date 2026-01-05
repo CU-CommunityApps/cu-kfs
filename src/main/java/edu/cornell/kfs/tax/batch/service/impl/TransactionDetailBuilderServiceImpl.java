@@ -30,7 +30,7 @@ public class TransactionDetailBuilderServiceImpl implements TransactionDetailBui
     public TaxStatistics generateTransactionDetails(final TaxBatchConfig config) {
         LOG.info("generateTransactionDetails, Starting transaction detail generation");
         final TransactionDetailBuilderHelperService helperService =
-                getNewTransactionDetailBuilderHelperServiceFromPrototype();
+                getNewInstanceOfTransactionDetailBuilderHelperService();
         final TaxStatistics dvStatistics = transactionDetailBuilderDao.createDvTransactionDetails(
                 config, (taxConfig, rowMapper) -> generateDvTransactionDetails(taxConfig, rowMapper, helperService));
         final TaxStatistics pdpStatistics = transactionDetailBuilderDao.createPdpTransactionDetails(
@@ -65,7 +65,7 @@ public class TransactionDetailBuilderServiceImpl implements TransactionDetailBui
         return detailGenerator.generateAndInsertTransactionDetails();
     }
 
-    private TransactionDetailBuilderHelperService getNewTransactionDetailBuilderHelperServiceFromPrototype() {
+    private TransactionDetailBuilderHelperService getNewInstanceOfTransactionDetailBuilderHelperService() {
         return SpringContext.getBean(TransactionDetailBuilderHelperService.class);
     }
 

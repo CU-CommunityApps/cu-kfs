@@ -27,6 +27,8 @@ public interface TransactionDetailBuilderHelperService {
 
     Person getPerson(final String principalId);
 
+    int getBatchInsertionSize();
+
     Map<String, String> getSubParameters(final String componentCode, final String parameterName);
 
     Set<String> getParameterValues(final String componentCode, final String parameterName);
