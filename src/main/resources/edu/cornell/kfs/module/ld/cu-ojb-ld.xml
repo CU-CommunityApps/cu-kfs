@@ -257,18 +257,6 @@
                           primarykey="true"
                           index="true"/>
 
-        <reference-descriptor name="benefitsCalculation"
-                              class-ref="org.kuali.kfs.module.ld.businessobject.BenefitsCalculation"
-                              auto-retrieve="true"
-                              auto-update="none"
-                              auto-delete="none"
-                              proxy="true">
-            <foreignkey field-ref="universityFiscalYear"/>
-            <foreignkey field-ref="chartOfAccountsCode"/>
-            <foreignkey field-ref="financialObjectBenefitsTypeCode"/>
-            <foreignkey field-ref="laborBenefitRateCategoryCode"/>
-        </reference-descriptor>
-
         <reference-descriptor name="laborBenefitRateCategory"
                               class-ref="org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory"
                               auto-retrieve="true"
