@@ -31,6 +31,7 @@ public class TaxDtoRowMapperImpl<T> implements TaxDtoRowMapper<T> {
             Map.entry(Integer.class, TaxDtoRowMapperImpl::getInteger),
             Map.entry(Long.class, TaxDtoRowMapperImpl::getLong),
             Map.entry(java.sql.Date.class, TaxDtoRowMapperImpl::getDate),
+            Map.entry(java.sql.Timestamp.class, TaxDtoRowMapperImpl::getTimestamp),
             Map.entry(Boolean.class, TaxDtoRowMapperImpl::getBoolean),
             Map.entry(boolean.class, TaxDtoRowMapperImpl::getOrDefaultBoolean),
             Map.entry(KualiDecimal.class, TaxDtoRowMapperImpl::getKualiDecimal),
@@ -101,6 +102,10 @@ public class TaxDtoRowMapperImpl<T> implements TaxDtoRowMapper<T> {
 
     private java.sql.Date getDate(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
         return resultSet.getDate(getColumnAlias(fieldDefinition));
+    }
+
+    private java.sql.Timestamp getTimestamp(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
+        return resultSet.getTimestamp(getColumnAlias(fieldDefinition));
     }
 
     private String getAndDecryptString(final TaxDtoFieldEnum fieldDefinition) throws SQLException {
