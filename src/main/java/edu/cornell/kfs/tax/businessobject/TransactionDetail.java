@@ -81,6 +81,8 @@ public class TransactionDetail extends TransientBusinessObjectBase {
     private String disbursementTypeCode;
     private String ledgerDocumentTypeCode;
 
+    private transient String paymentMethodCode;
+
     public String getTransactionDetailId() {
         return transactionDetailId;
     }
@@ -535,6 +537,14 @@ public class TransactionDetail extends TransientBusinessObjectBase {
 
     public void setLedgerDocumentTypeCode(String ledgerDocumentTypeCode) {
         this.ledgerDocumentTypeCode = ledgerDocumentTypeCode;
+    }
+
+    public String getPaymentMethodCode() {
+        return paymentMethodCode;
+    }
+
+    public void setPaymentMethodCode(final String paymentMethodCode) {
+        this.paymentMethodCode = paymentMethodCode;
     }
 
     @Override

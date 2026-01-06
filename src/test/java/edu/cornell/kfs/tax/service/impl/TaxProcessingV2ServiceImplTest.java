@@ -40,6 +40,7 @@ import edu.cornell.kfs.tax.CuTaxTestConstants.TaxSpringBeans;
 import edu.cornell.kfs.tax.batch.TaxBatchConfig;
 import edu.cornell.kfs.tax.batch.TaxStatistics;
 import edu.cornell.kfs.tax.batch.service.TaxFileGenerationService;
+import edu.cornell.kfs.tax.batch.service.TransactionDetailBuilderService;
 import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxStatType;
 import edu.cornell.kfs.tax.fixture.TaxConfigTestCase;
@@ -106,6 +107,15 @@ public class TaxProcessingV2ServiceImplTest {
     @SpringXmlTestBeanFactoryMethod
     public static AtomicReference<TaxBatchConfig> buildTaxConfigHolder() {
         return new AtomicReference<>();
+    }
+
+    @SpringXmlTestBeanFactoryMethod
+    public static TransactionDetailBuilderService buildMockTransactionDetailBuilderService() {
+        return new CuMockBuilder<>(TransactionDetailBuilderService.class)
+                .withAnswer(
+                        service -> service.generateTransactionDetails(Mockito.any()),
+                        invocation -> new TaxStatistics())
+                .build();
     }
 
     @SpringXmlTestBeanFactoryMethod

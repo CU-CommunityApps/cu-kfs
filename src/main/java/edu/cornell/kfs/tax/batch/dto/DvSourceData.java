@@ -4,6 +4,7 @@ import java.sql.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.krad.bo.BusinessObject;
@@ -21,7 +22,7 @@ public class DvSourceData {
     // Fields from FP_DV_PAYEE_DTL_T (DisbursementVoucherPayeeDetail)
     private String payeeDetailDocumentNumber;
     private String disbVchrPaymentReasonCode;
-    private String disbVchrNonresidentPaymentCode;
+    private Boolean disbVchrNonresidentPaymentCode;
     private String disbVchrPayeeIdNumber;
     private String disbVchrPayeePersonName;
     private String disbVchrPayeeLine1Addr;
@@ -50,7 +51,7 @@ public class DvSourceData {
     private Date extractDate;
     private Date paidDate;
     // Fields from PUR_VNDR_HDR_T (VendorHeader)
-    private String vendorHeaderGeneratedIdentifier;
+    private Integer vendorHeaderGeneratedIdentifier;
     private String vendorTaxNumber;
     private String vendorTypeCode;
     private String vendorOwnershipCode;
@@ -58,7 +59,7 @@ public class DvSourceData {
     private Boolean vendorForeignIndicator;
     // Fields from TX_DV_DISBURSEMENT_V (Disbursement Fields)
     private String custPaymentDocNbr;
-    private String disbursementNbr;
+    private KualiInteger disbursementNbr;
     private String paymentStatusCode;
     private String disbursementTypeCode;
 
@@ -78,11 +79,11 @@ public class DvSourceData {
         this.disbVchrPaymentReasonCode = disbVchrPaymentReasonCode;
     }
 
-    public String getDisbVchrNonresidentPaymentCode() {
+    public Boolean getDisbVchrNonresidentPaymentCode() {
         return disbVchrNonresidentPaymentCode;
     }
 
-    public void setDisbVchrNonresidentPaymentCode(final String disbVchrNonresidentPaymentCode) {
+    public void setDisbVchrNonresidentPaymentCode(final Boolean disbVchrNonresidentPaymentCode) {
         this.disbVchrNonresidentPaymentCode = disbVchrNonresidentPaymentCode;
     }
 
@@ -278,11 +279,11 @@ public class DvSourceData {
         this.paidDate = paidDate;
     }
 
-    public String getVendorHeaderGeneratedIdentifier() {
+    public Integer getVendorHeaderGeneratedIdentifier() {
         return vendorHeaderGeneratedIdentifier;
     }
 
-    public void setVendorHeaderGeneratedIdentifier(final String vendorHeaderGeneratedIdentifier) {
+    public void setVendorHeaderGeneratedIdentifier(final Integer vendorHeaderGeneratedIdentifier) {
         this.vendorHeaderGeneratedIdentifier = vendorHeaderGeneratedIdentifier;
     }
 
@@ -334,11 +335,11 @@ public class DvSourceData {
         this.custPaymentDocNbr = custPaymentDocNbr;
     }
 
-    public String getDisbursementNbr() {
+    public KualiInteger getDisbursementNbr() {
         return disbursementNbr;
     }
 
-    public void setDisbursementNbr(final String disbursementNbr) {
+    public void setDisbursementNbr(final KualiInteger disbursementNbr) {
         this.disbursementNbr = disbursementNbr;
     }
 
@@ -369,7 +370,7 @@ public class DvSourceData {
         disbVchrPayeeCountryCode(DisbursementVoucherPayeeDetail.class),
         disbursementVoucherPayeeTypeCode(DisbursementVoucherPayeeDetail.class),
         // Fields from FP_DV_NRA_TAX_T (DisbursementVoucherNonresidentTax)
-        dvNraDocumentNumber(DisbursementVoucherNonresidentTax.class, KFSPropertyConstants.DOCUMENT_NUMBER),
+        nraDocumentNumber(DisbursementVoucherNonresidentTax.class, KFSPropertyConstants.DOCUMENT_NUMBER),
         federalIncomeTaxPercent(DisbursementVoucherNonresidentTax.class),
         incomeClassCode(DisbursementVoucherNonresidentTax.class),
         incomeTaxTreatyExemptCode(DisbursementVoucherNonresidentTax.class),

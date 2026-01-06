@@ -7,6 +7,7 @@ import edu.cornell.kfs.tax.batch.TaxStatistics;
 import edu.cornell.kfs.tax.batch.dto.DvSourceData;
 import edu.cornell.kfs.tax.batch.dto.PdpSourceData;
 import edu.cornell.kfs.tax.batch.dto.PrncSourceData;
+import edu.cornell.kfs.tax.batch.dto.RouteHeaderLite;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail;
 
 public interface TransactionDetailBuilderDao {
@@ -15,6 +16,8 @@ public interface TransactionDetailBuilderDao {
 
     void insertTransactionDetails(
             final List<TransactionDetail> transactionDetails, final TaxBatchConfig config);
+
+    List<RouteHeaderLite> getBasicRouteHeaderData(final List<String> documentIds);
 
     TaxStatistics createDvTransactionDetails(final TaxBatchConfig config,
             final TransactionSourceHandler<DvSourceData> dvSourceHandler);

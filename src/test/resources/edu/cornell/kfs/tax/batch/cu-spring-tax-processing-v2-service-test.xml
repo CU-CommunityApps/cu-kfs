@@ -15,6 +15,9 @@
     <bean id="testTaxConfigHolderForTransactionListPrinting" class="${unit.test.classname}"
           factory-method="buildTaxConfigHolder"/>
 
+    <bean id="transactionDetailBuilderService" class="${unit.test.classname}"
+          factory-method="buildMockTransactionDetailBuilderService"/>
+
     <bean id="taxFileGenerationServiceFor1042S" class="${unit.test.classname}"
           factory-method="buildMockTaxFileGenerationService"
           c:configHolder-ref="testTaxConfigHolderFor1042S"/>
@@ -39,6 +42,7 @@
                 <idref bean="taxProcessingV2Service"/>
                 <idref bean="taxProcessingV2Service-parentBean"/>
                 <idref bean="taxProcessingDao"/>
+                <idref bean="transactionDetailBuilderService"/>
                 <idref bean="taxFileGenerationServiceFor1042S"/>
                 <idref bean="taxFileGenerationServiceForTransactionListPrinting"/>
                 <idref bean="taxParameterService"/>
