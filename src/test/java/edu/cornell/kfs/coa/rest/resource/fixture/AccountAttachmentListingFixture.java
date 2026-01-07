@@ -4,8 +4,14 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.krad.bo.Note;
+
+import edu.cornell.kfs.sys.util.CuMockBuilder;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -18,9 +24,21 @@ public @interface AccountAttachmentListingFixture {
 
     public static final class Utils {
 
-        public static Account toAccount(final AccountAttachmentListingFixture fixture) {
+        public static Account toAccountWithNotesList(final AccountAttachmentListingFixture fixture) {
             final Account account = new Account();
-            return account;
+            account.setChartOfAccountsCode(fixture.chartOfAccountsCode());
+            account.setAccountNumber(fixture.accountNumber());
+            account.setAccountName(fixture.accountName());
+
+            return new CuMockBuilder<>(account)
+                    .withAnswer(Account::getBoNotes, invocation -> toBoNotesList(fixture))
+                    .build();
+        }
+
+        public static List<Note> toBoNotesList(final AccountAttachmentListingFixture fixture) {
+            return Arrays.stream(fixture.notes())
+                    .map(AccountAttachmentNoteFixture.Utils::toNote)
+                    .collect(Collectors.toUnmodifiableList());
         }
 
     }

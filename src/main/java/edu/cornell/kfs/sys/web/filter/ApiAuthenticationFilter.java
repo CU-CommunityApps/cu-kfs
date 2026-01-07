@@ -28,7 +28,7 @@ import edu.cornell.kfs.sys.service.ApiAuthenticationService;
  * its own Spring-managed instance of this class for authentication handling.
  * 
  * As per the DelegatingFilterProxy documentation, if you want CuDelegatingFilterProxy to invoke
- * this instance properly, then the proxy's "web.xml" configuration should do one of the following:
+ * this instance properly, then the proxy's "web.xml" configuration should do ONE of the following:
  * 
  * [1] Have the proxy's "filter-name" correspond to the bean name (or a bean alias) of this instance.
  * [2] Specify an "init-param" named "targetBeanName" that contains the appropriate bean name.
@@ -84,7 +84,7 @@ public class ApiAuthenticationFilter implements Filter, InitializingBean {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().println(createJsonResponseForUnauthorizedRequest());
             }
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             LOG.error("checkAuthorization, Unexpected error", ex);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().println(createJsonResponseForUnauthorizedRequest());

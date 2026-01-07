@@ -4,6 +4,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Modifier;
 
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.krad.datadictionary.validation.ValidationPattern;
@@ -29,12 +30,17 @@ public @interface AttributeDefinitionFixture {
                 attribute.setMaxLength(fixture.maxLength());
             }
 
-            ValidationPattern pattern = ValidationPatternFixture.Utils.toValidationPattern(fixture.validationPattern());
-            if (pattern != null) {
+            if (shouldCreateValidationPattern(fixture)) {
+                final ValidationPattern pattern = ValidationPatternFixture.Utils.toValidationPattern(fixture.validationPattern());
                 attribute.setValidationPattern(pattern);
             }
 
             return attribute;
+        }
+
+        private static boolean shouldCreateValidationPattern(final AttributeDefinitionFixture fixture) {
+            final Class<? extends ValidationPattern> validationPatternType = fixture.validationPattern().type();
+            return !Modifier.isAbstract(validationPatternType.getModifiers());
         }
 
     }

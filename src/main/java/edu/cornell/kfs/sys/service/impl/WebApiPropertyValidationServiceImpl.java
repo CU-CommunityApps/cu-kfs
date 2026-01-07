@@ -70,9 +70,10 @@ public class WebApiPropertyValidationServiceImpl implements WebApiPropertyValida
         }
 
         if (!validationPattern.matches(propertyValue)) {
+            final String messageKey = validationPattern.getValidationErrorMessageKey();
             final String[] stringParms = validationPattern.getValidationErrorMessageParameters(attribute.getLabel());
-            final Object[] errorParms = Arrays.stream(stringParms).toArray();
-            errors.add(createErrorMessage(validationPattern.getValidationErrorMessageKey(), errorParms));
+            final Object[] errorParms = Arrays.copyOf(stringParms, stringParms.length, Object[].class);
+            errors.add(createErrorMessage(messageKey, errorParms));
         }
 
         return errors.build();

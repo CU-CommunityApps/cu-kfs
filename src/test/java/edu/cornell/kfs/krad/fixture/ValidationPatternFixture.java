@@ -3,7 +3,6 @@ package edu.cornell.kfs.krad.fixture;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -37,9 +36,6 @@ public @interface ValidationPatternFixture {
 
         public static ValidationPattern toValidationPattern(final ValidationPatternFixture fixture) {
             Objects.requireNonNull(fixture, "fixture cannot be null");
-            if (Modifier.isAbstract(fixture.type().getModifiers())) {
-                return null;
-            }
             Validate.isTrue(PATTERN_FACTORIES.containsKey(fixture.type()),
                     "Unsupported ValidationPattern implementation: " + fixture.type());
             return PATTERN_FACTORIES.get(fixture.type()).apply(fixture);

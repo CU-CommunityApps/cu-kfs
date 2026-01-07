@@ -80,7 +80,7 @@ import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 /*
  * CU Customization:
  * 
- * -- Re-included removed scheduledThreadPool, which is needed for our local customization of CuSchedulerServiceImpl
+ * -- Re-included scheduledThreadPool, which is needed for our local customization of CuSchedulerServiceImpl
  *    to allow certain processes to run without Quartz.
  * 
  * -- Separated KualiCo's Spring MVC Controller initialization into a child Spring context;

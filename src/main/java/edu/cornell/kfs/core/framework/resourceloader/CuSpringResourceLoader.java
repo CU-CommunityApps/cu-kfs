@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang3.Validate;
 import org.kuali.kfs.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.kfs.core.framework.resourceloader.SpringResourceLoader;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
@@ -20,9 +21,8 @@ public class CuSpringResourceLoader extends SpringResourceLoader {
 
     @Override
     public void start() {
-        if (!GlobalResourceLoader.isInitialized()) {
-            throw new IllegalStateException("The main KFS Spring context has not been initialized yet");
-        }
+        Validate.validState(GlobalResourceLoader.isInitialized(),
+                "The main KFS Spring context has not been initialized yet");
         super.start();
     }
 
