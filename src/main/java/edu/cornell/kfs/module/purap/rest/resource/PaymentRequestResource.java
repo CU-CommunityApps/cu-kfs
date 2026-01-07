@@ -5,9 +5,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
+import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.krad.UserSession;
+import org.kuali.kfs.krad.exception.ValidationException;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 
@@ -52,6 +58,7 @@ public class PaymentRequestResource {
 
     private PaymentRequestDtoValidationService paymentRequestDtoValidationService;
     private ApiAuthenticationService apiAuthenticationService;
+    private CuPaymentRequestService cuPaymentRequestService;
 
     @GET
     public Response describePaymentRequestResource() {
@@ -74,9 +81,24 @@ public class PaymentRequestResource {
             PaymentRequestResultsDto results = getPaymentRequestDtoValidationService()
                     .validatePaymentRequestDto(paymentRequestDto);
             if (results.isValid()) {
-                results.getSuccessMessages().add("In follow up user stories, this endpoint will be updated" +
-                        " to create a preq document using logged in user " + loggedInUser);
+
                 LOG.info("createPaymentRequestDocument, no validation errors, return success {}", results);
+
+                try {
+                    UserSession userSession = createUserSessionForAiPaymentRequestUser(loggedInUser);
+                    LOG.info("createPaymentRequestDocument userSession created for user {}, name {}",
+                            loggedInUser, userSession.getPrincipalName());
+
+
+                    GlobalVariables.doInNewGlobalVariables(userSession,
+                            () -> getCuPaymentRequestService().createPaymentRequestDocumentFromDto(paymentRequestDto));
+
+                } catch (Exception e) {
+                    LOG.error("createPaymentRequestDocument, Unexpected error occurred while creating Usersession for user {}",
+                            loggedInUser, e);;
+                    return Response.status(500).build();
+                }
+
                 return Response.ok(gson.toJson(results)).build();
             } else {
                 LOG.info("createPaymentRequestDocument, there were validation errors, return false {}", results);
@@ -88,6 +110,35 @@ public class PaymentRequestResource {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(CUKFSConstants.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    private UserSession createUserSessionForAiPaymentRequestUser(String loggedInUser) {
+        return new UserSession(loggedInUser);
+    }
+
+//    private PaymentRequestDocument createPaymentRequestDocumentFromDto(PaymentRequestDto paymentRequestDto) {
+//        LOG.info("createPaymentRequestDocument");
+//
+//        CuPaymentRequestDocument paymentRequestDocument = null;
+//
+//        try {
+//            paymentRequestDocument = new CuPaymentRequestDocument();
+//
+//
+//
+////            if (ObjectUtils.isNull(paymentRequestDocument)) {
+////                return new RecurringDisbursementVoucherDocumentRoutingReportItem(
+////                        recurringDvDocumentNumber, spawnedDvDocumentNumber, NONEXISTING_DV_MESSAGE);
+////            } else if (!documentWasInitiatedBySystemUser(paymentRequestDocument)) {
+////                return new RecurringDisbursementVoucherDocumentRoutingReportItem(
+////                        recurringDvDocumentNumber, spawnedDvDocumentNumber, WRONG_INITIATOR_MESSAGE);
+////            }
+////            addAutoApprovalNoteToDv(paymentRequestDocument);
+////            documentService.blanketApproveDocument(paymentRequestDocument, BLANKET_APPROVE_ANNOTATION, null);
+//        } catch (ValidationException e) {
+//            LOG.error("createPaymentRequestDocument, Encountered errors while creating PaymentRequestDocument", e);
+//        }
+//        return paymentRequestDocument;
+//    }
 
     private PaymentRequestDtoValidationService getPaymentRequestDtoValidationService() {
         if (paymentRequestDtoValidationService == null) {
@@ -101,5 +152,12 @@ public class PaymentRequestResource {
             apiAuthenticationService = SpringContext.getBean(ApiAuthenticationService.class);
         }
         return apiAuthenticationService;
+    }
+
+    private CuPaymentRequestService getCuPaymentRequestService() {
+        if (cuPaymentRequestService == null) {
+            cuPaymentRequestService = SpringContext.getBean(CuPaymentRequestService.class);
+        }
+        return cuPaymentRequestService;
     }
 }
