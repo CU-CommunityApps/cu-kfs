@@ -247,6 +247,7 @@ public class CUKFSConstants {
     public static final String ACCESS_CONTROL_HEADER_NAME = "Access-Control-Allow-Methods";
 
     public static final class EndpointCodes {
+        public static final String ACCOUNT_ATTACHMENTS = "accountAttachments";
         public static final String CONCUR_ACCOUNT_DETAIL = "concurAccountDetails";
         public static final String EINVOICE = "eInvoice";
         public static final String PURCHASE_ORDER_DETAILS = "poDetail";
