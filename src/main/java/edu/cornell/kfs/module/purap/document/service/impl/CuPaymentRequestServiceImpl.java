@@ -10,9 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestNoteDto;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
@@ -27,6 +31,8 @@ import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.impl.PaymentRequestServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
+import org.kuali.kfs.vnd.businessobject.ShippingSpecialCondition;
+import org.kuali.kfs.vnd.businessobject.ShippingTitle;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
@@ -41,6 +47,7 @@ import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
+import org.springframework.util.AutoPopulatingList;
 
 public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl implements CuPaymentRequestService {
     private static final Logger LOG = LogManager.getLogger();
@@ -456,5 +463,100 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         return !isPRNCDocument(document) && purchaseOrderForPaymentRequestIsWithinAutoApproveAmountLimit(document)
                 && super.isEligibleForAutoApproval(document, defaultMinimumLimit);
     }
+
+    public PaymentRequestDocument createPaymentRequestDocumentFromDto(PaymentRequestDto preqDto) {
+
+        LOG.info("Creating PaymentRequestDocument from DTO for PO: {}", preqDto.getPoNumber());
+
+        try {
+
+            PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(preqDto.getPoNumber());
+            if (ObjectUtils.isNull(poDoc)) {
+                throw new Exception("Purchase Order Document not found for PO #" + preqDto.getPoNumber());
+            }
+
+            CuPaymentRequestDocument preqDoc = (CuPaymentRequestDocument) documentService.getNewDocument("PREQ");
+
+            preqDoc.getDocumentHeader().setDocumentDescription("Payflow auto Invoice # " + preqDto.getInvoiceNumber());
+            preqDoc.setInvoiceDate(Date.valueOf(preqDto.getInvoiceDate()));
+            preqDoc.setAccountsPayableProcessorIdentifier("Payflow");
+
+            preqDoc.populatePaymentRequestFromPurchaseOrder(poDoc, new HashMap<>());
+
+            preqDoc.setVendorNumber(preqDto.getVendorNumber());
+            preqDoc.setInvoiceReceivedDate(Date.valueOf(preqDto.getReceivedDate()));
+
+            ShippingTitle shippingTitle = new ShippingTitle();
+            shippingTitle.setVendorShippingTitleCode(preqDto.getShippingPrice().toString());
+            shippingTitle.setVendorShippingTitleDescription(preqDto.getShippingDescription());
+
+            ShippingSpecialCondition shippingSpecialCondition = new ShippingSpecialCondition();
+            shippingSpecialCondition.setVendorShippingSpecialConditionDescription(preqDto.getShippingDescription());
+
+//            private List<PaymentRequestLineItemDto> items;
+//            private KualiDecimal freightPrice;
+//            private String freightDescription;
+//            private KualiDecimal miscellaneousPrice;
+//            private String miscellaneousDescription;
+//            private KualiDecimal shippingPrice;
+//            private String shippingDescription;
+
+            preqDoc.setInvoiceNumber(preqDto.getInvoiceNumber());
+            preqDoc.setInvoiceDate(java.sql.Date.valueOf(preqDto.getInvoiceDate()));
+            preqDoc.setVendorInvoiceAmount(preqDto.getInvoiceAmount());
+            preqDoc.setSpecialHandlingInstructionLine1Text(preqDto.getSpecialHandlingLine1());
+            preqDoc.setSpecialHandlingInstructionLine2Text(preqDto.getSpecialHandlingLine2());
+            preqDoc.setSpecialHandlingInstructionLine3Text(preqDto.getSpecialHandlingLine3());
+
+            if (CollectionUtils.isNotEmpty(preqDto.getNotes())) {
+                for (PaymentRequestNoteDto noteDto : preqDto.getNotes()) {
+                    if (org.apache.commons.lang3.ObjectUtils.equals(noteDto.getNoteType(), "ATTACH")) { //todo
+                        // add attachment
+                    } else {
+                        documentService.createNoteFromDocument(preqDoc, noteDto.getNoteText());
+                    }
+                }
+            }
+
+//            preqDoc.setItems(createPreqItemsFromPreqDto(preqDto));
+
+            documentService.saveDocument(preqDoc);
+
+            return preqDoc;
+
+        } catch (Exception e) {
+            LOG.error("Error creating PaymentRequestDocument from DTO", e);
+            Map<String, AutoPopulatingList<ErrorMessage>> errorMessages = GlobalVariables.getMessageMap().getErrorMessages();
+
+            for (Map.Entry<String, AutoPopulatingList<ErrorMessage>> entry : errorMessages.entrySet()) {
+                AutoPopulatingList<ErrorMessage> errors = entry.getValue();
+
+                for (ErrorMessage error : errors) {
+                    LOG.error("createPaymentRequestDocumentFromDto, error {} message {}", entry.getKey(), error.toString());
+                }
+            }
+
+            throw new RuntimeException("Failed to create PREQ", e);
+        }
+    }
+
+//    private List<PaymentRequestItem> createPreqItemsFromPreqDto(PaymentRequestDto preqDto, PaymentRequestDocument preqDocument) {
+//        List<PaymentRequestItem> paymentRequestItems = new ArrayList<>();
+//
+//        for (PaymentRequestLineItemDto preqItemDto : preqDto.getItems()) {
+//            PaymentRequestItem paymentRequestItem = new PaymentRequestItem();
+//            paymentRequestItem.setItemTypeCode(ItemTypeCodes.ITEM_TYPE_ITEM_CODE);
+//
+//            paymentRequestItem.setItemUnitPrice(preqItemDto.getItemPrice().bigDecimalValue());
+//            paymentRequestItem.setItemQuantity(preqItemDto.getItemQuantity());
+//            paymentRequestItem.setItemDescription(preqItemDto.getItemDescription());
+//            paymentRequestItem.setExtendedPrice(discountValueToUse);
+//            paymentRequestItem.setPurapDocument(preqDocument);
+//
+//        }
+
+//          populateMiscItems()
+
+//     }
 
 }
