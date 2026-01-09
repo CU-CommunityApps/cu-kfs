@@ -16,6 +16,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
@@ -46,6 +47,7 @@ import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
+import org.springframework.util.AutoPopulatingList;
 
 public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl implements CuPaymentRequestService {
     private static final Logger LOG = LogManager.getLogger();
@@ -475,11 +477,14 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
             CuPaymentRequestDocument preqDoc = (CuPaymentRequestDocument) documentService.getNewDocument("PREQ");
 
+            preqDoc.getDocumentHeader().setDocumentDescription("Payflow auto Invoice # " + preqDto.getInvoiceNumber());
+            preqDoc.setInvoiceDate(Date.valueOf(preqDto.getInvoiceDate()));
+            preqDoc.setAccountsPayableProcessorIdentifier("Payflow");
+
             preqDoc.populatePaymentRequestFromPurchaseOrder(poDoc, new HashMap<>());
 
             preqDoc.setVendorNumber(preqDto.getVendorNumber());
             preqDoc.setInvoiceReceivedDate(Date.valueOf(preqDto.getReceivedDate()));
-            preqDoc.setInvoiceReceivedDate(Date.valueOf(preqDto.getInvoiceDate()));
 
             ShippingTitle shippingTitle = new ShippingTitle();
             shippingTitle.setVendorShippingTitleCode(preqDto.getShippingPrice().toString());
@@ -521,6 +526,16 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
         } catch (Exception e) {
             LOG.error("Error creating PaymentRequestDocument from DTO", e);
+            Map<String, AutoPopulatingList<ErrorMessage>> errorMessages = GlobalVariables.getMessageMap().getErrorMessages();
+
+            for (Map.Entry<String, AutoPopulatingList<ErrorMessage>> entry : errorMessages.entrySet()) {
+                AutoPopulatingList<ErrorMessage> errors = entry.getValue();
+
+                for (ErrorMessage error : errors) {
+                    LOG.error("createPaymentRequestDocumentFromDto, error {} message {}", entry.getKey(), error.toString());
+                }
+            }
+
             throw new RuntimeException("Failed to create PREQ", e);
         }
     }
