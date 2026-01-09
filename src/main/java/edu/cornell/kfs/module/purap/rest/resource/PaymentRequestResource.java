@@ -5,13 +5,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
+import com.google.gson.JsonElement;
 import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.UserSession;
-import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.sys.KFSConstants;
@@ -31,6 +30,7 @@ import edu.cornell.kfs.sys.typeadapters.LocalDateTypeAdapter;
 
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import javax.servlet.http.HttpServletRequest;
@@ -74,8 +74,8 @@ public class PaymentRequestResource {
             String jsonBody = scanner.hasNext() ? scanner.next() : "";
             PaymentRequestDto paymentRequestDto = gson.fromJson(jsonBody, PaymentRequestDto.class);
 
-            String loggedInUser = getApiAuthenticationService().getAuthenticateUser(servletRequest);
-            LOG.info("createPaymentRequestDocument, logged in user: {} and the paymentRequestDto: {}", loggedInUser,
+            String loggedInPrincipalName = getApiAuthenticationService().getAuthenticateUser(servletRequest);
+            LOG.info("createPaymentRequestDocument, logged in user: {} and the paymentRequestDto: {}", loggedInPrincipalName,
                     paymentRequestDto);
 
             PaymentRequestResultsDto results = getPaymentRequestDtoValidationService()
@@ -85,21 +85,22 @@ public class PaymentRequestResource {
                 LOG.info("createPaymentRequestDocument, no validation errors, return success {}", results);
 
                 try {
-                    UserSession userSession = createUserSessionForAiPaymentRequestUser(loggedInUser);
-                    LOG.info("createPaymentRequestDocument userSession created for user {}, name {}",
-                            loggedInUser, userSession.getPrincipalName());
+                    UserSession userSession = createUserSessionForAiPaymentRequestUser(loggedInPrincipalName);
 
-
-                    GlobalVariables.doInNewGlobalVariables(userSession,
+                    PaymentRequestDocument doc = GlobalVariables.doInNewGlobalVariables(userSession,
                             () -> getCuPaymentRequestService().createPaymentRequestDocumentFromDto(paymentRequestDto));
 
+                    LOG.info("createPaymentRequestDocument, PREQ Document #{} Created", doc.getDocumentNumber());
+
+                    HashMap<String, Object> responseBody = new HashMap<>();
+                    responseBody.put("document", doc);
+                    responseBody.put("documentNumber", doc.getDocumentNumber());
+                    return Response.ok(gson.toJson(results)).entity(responseBody).build();
+
                 } catch (Exception e) {
-                    LOG.error("createPaymentRequestDocument, Unexpected error occurred while creating Usersession for user {}",
-                            loggedInUser, e);;
+                    LOG.error("createPaymentRequestDocument, Unexpected error occurred while creating PREQ Document", e);
                     return Response.status(500).build();
                 }
-
-                return Response.ok(gson.toJson(results)).build();
             } else {
                 LOG.info("createPaymentRequestDocument, there were validation errors, return false {}", results);
                 return Response.status(Status.BAD_REQUEST).entity(gson.toJson(results)).build();
@@ -111,34 +112,20 @@ public class PaymentRequestResource {
         }
     }
 
-    private UserSession createUserSessionForAiPaymentRequestUser(String loggedInUser) {
-        return new UserSession(loggedInUser);
-    }
+    private UserSession createUserSessionForAiPaymentRequestUser(String loggedInPrincipalName) throws Exception {
+        try {
 
-//    private PaymentRequestDocument createPaymentRequestDocumentFromDto(PaymentRequestDto paymentRequestDto) {
-//        LOG.info("createPaymentRequestDocument");
-//
-//        CuPaymentRequestDocument paymentRequestDocument = null;
-//
-//        try {
-//            paymentRequestDocument = new CuPaymentRequestDocument();
-//
-//
-//
-////            if (ObjectUtils.isNull(paymentRequestDocument)) {
-////                return new RecurringDisbursementVoucherDocumentRoutingReportItem(
-////                        recurringDvDocumentNumber, spawnedDvDocumentNumber, NONEXISTING_DV_MESSAGE);
-////            } else if (!documentWasInitiatedBySystemUser(paymentRequestDocument)) {
-////                return new RecurringDisbursementVoucherDocumentRoutingReportItem(
-////                        recurringDvDocumentNumber, spawnedDvDocumentNumber, WRONG_INITIATOR_MESSAGE);
-////            }
-////            addAutoApprovalNoteToDv(paymentRequestDocument);
-////            documentService.blanketApproveDocument(paymentRequestDocument, BLANKET_APPROVE_ANNOTATION, null);
-//        } catch (ValidationException e) {
-//            LOG.error("createPaymentRequestDocument, Encountered errors while creating PaymentRequestDocument", e);
-//        }
-//        return paymentRequestDocument;
-//    }
+            UserSession userSession = new UserSession(loggedInPrincipalName);
+            LOG.info("createPaymentRequestDocument userSession created for user {}, name {}",
+                    loggedInPrincipalName, userSession.getPrincipalName());
+            return userSession;
+
+        } catch (Exception e) {
+            LOG.error("createPaymentRequestDocument, Unexpected error occurred while creating PREQ Document Session for user {}",
+                    loggedInPrincipalName, e);
+            throw e;
+        }
+    }
 
     private PaymentRequestDtoValidationService getPaymentRequestDtoValidationService() {
         if (paymentRequestDtoValidationService == null) {

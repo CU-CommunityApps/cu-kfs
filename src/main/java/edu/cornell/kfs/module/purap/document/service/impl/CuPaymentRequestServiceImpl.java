@@ -470,8 +470,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
             PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(preqDto.getPoNumber());
             if (ObjectUtils.isNull(poDoc)) {
-                LOG.error("Purchase Order not found for number: {}", preqDto.getPoNumber());
-                return null;
+                throw new Exception("Purchase Order Document not found for PO #" + preqDto.getPoNumber());
             }
 
             CuPaymentRequestDocument preqDoc = (CuPaymentRequestDocument) documentService.getNewDocument("PREQ");
