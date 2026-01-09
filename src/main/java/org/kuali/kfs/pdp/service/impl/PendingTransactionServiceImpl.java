@@ -19,6 +19,7 @@
 package org.kuali.kfs.pdp.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
@@ -33,15 +34,14 @@ import org.kuali.kfs.datadictionary.legacy.BusinessObjectDictionaryService;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.fp.FPKeyConstants;
 import org.kuali.kfs.kns.datadictionary.BusinessObjectEntry;
-import org.kuali.kfs.fp.FPKeyConstants;
-import org.kuali.kfs.datadictionary.legacy.BusinessObjectDictionaryService;
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
 import org.kuali.kfs.krad.datadictionary.mask.MaskFormatterLiteral;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants;
+import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.GlPendingTransaction;
 import org.kuali.kfs.pdp.businessobject.PaymentAccountDetail;
@@ -62,6 +62,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 @Transactional
 public class PendingTransactionServiceImpl implements PendingTransactionService {
@@ -85,39 +86,77 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
     private OffsetDefinitionService offsetDefinitionService;
     private FlexibleOffsetAccountService flexibleOffsetAccountService;
 
-    public PendingTransactionServiceImpl() {
-        super();
-    }
-
     @Override
     public void generatePaymentGeneralLedgerPendingEntry(final PaymentGroup paymentGroup) {
         populatePaymentGeneralLedgerPendingEntry(
                 paymentGroup,
-                GeneratePdpGlpeState.forProcess());
+                PdpGlpeGenerationDetail.forProcess());
     }
 
     @Override
     public void generateCancellationGeneralLedgerPendingEntry(final PaymentGroup paymentGroup) {
         populatePaymentGeneralLedgerPendingEntry(
                 paymentGroup,
-                GeneratePdpGlpeState.forCancel());
+                PdpGlpeGenerationDetail.forCancel());
     }
 
     @Override
     public void generateCancelReissueGeneralLedgerPendingEntry(final PaymentGroup paymentGroup) {
         populatePaymentGeneralLedgerPendingEntry(
                 paymentGroup,
-                GeneratePdpGlpeState.forCancelReissue());
+                PdpGlpeGenerationDetail.forCancelReissue());
     }
 
     @Override
     public void generateReissueGeneralLedgerPendingEntries(final PaymentGroup paymentGroup) {
         populatePaymentGeneralLedgerPendingEntry(
                 paymentGroup,
-                GeneratePdpGlpeState.forReissue());
+                PdpGlpeGenerationDetail.forReissue());
         populatePaymentGeneralLedgerPendingEntry(
                 paymentGroup,
-                GeneratePdpGlpeState.forReissueReverse());
+                PdpGlpeGenerationDetail.forReissueReverse());
+    }
+
+    @Override
+    public boolean clearUnextractedTransactions(
+            final PaymentGroup paymentGroup,
+            final Set<String> financialDocumentTypeCodes
+    ) {
+        LOG.debug(
+                "clearUnextractedTransactions(...) - Enter : paymentGroup={}; financialDocumentTypeCodes={}",
+                paymentGroup,
+                financialDocumentTypeCodes);
+        Validate.isTrue(paymentGroup.getDisbursementNbr() != null, "Payment group disbursement number cannot be null");
+        final Iterator<GlPendingTransaction> pendingTransactions =
+                glPendingTransactionDao.getUnextractedTransactions(String.valueOf(paymentGroup.getDisbursementNbr()));
+        final List<GlPendingTransaction> transactionsToDelete = new ArrayList<>();
+        while (pendingTransactions.hasNext()) {
+            final GlPendingTransaction pendingTransaction = pendingTransactions.next();
+            if (!financialDocumentTypeCodes.contains(pendingTransaction.getFinancialDocumentTypeCode())) {
+                LOG.error(
+                        "clearUnextractedTransactions(...) - Pending transaction does not have required financial "
+                            + "document type : financialDocumentTypeCode={}; pendingTransaction.id={}; "
+                            + "financialDocumentTypeCodes={}",
+                        pendingTransaction::getFinancialDocumentTypeCode,
+                        pendingTransaction::getId,
+                        () -> financialDocumentTypeCodes);
+                GlobalVariables.getMessageMap().putError(
+                        KFSConstants.GLOBAL_ERRORS,
+                        PdpKeyConstants.PaymentDetail.ErrorMessages.ERROR_DISBURSEMENT_DOC_TYPE_TO_REISSUE,
+                        String.valueOf(pendingTransaction.getId()),
+                        pendingTransaction.getFinancialDocumentTypeCode(),
+                        String.join(", ", financialDocumentTypeCodes));
+                LOG.debug("clearUnextractedTransactions(...) - Exit unsuccessfully");
+                return false;
+            }
+            LOG.debug(
+                    "clearUnextractedTransactions(...) - Deleting pending transaction : pendingTransaction={}",
+                    pendingTransaction);
+            transactionsToDelete.add(pendingTransaction);
+        }
+        businessObjectService.delete(transactionsToDelete);
+        LOG.debug("clearUnextractedTransactions(...) - Exit successfully");
+        return true;
     }
 
     /**
@@ -127,7 +166,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
      */
     private void populatePaymentGeneralLedgerPendingEntry(
             final PaymentGroup paymentGroup,
-            final GeneratePdpGlpeState state
+            final PdpGlpeGenerationDetail state
     ) {
         final List<PaymentAccountDetail> accountListings = new ArrayList<>();
         for (final PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
@@ -242,7 +281,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
      * @param glPendingTransaction to be updated
      */
     private void updateGeneralLedgerPendingEntryAsExpenseOrLiability(
-            final GeneratePdpGlpeState state,
+            final PdpGlpeGenerationDetail state,
             final PaymentAccountDetail paymentAccountDetail,
             final GlPendingTransaction glPendingTransaction
     ) {
@@ -282,7 +321,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
     private void updateGeneralLedgerPendingEntryAsPayment(
             final String disbursementType,
             final KualiInteger disbursementNbr,
-            final GeneratePdpGlpeState state,
+            final PdpGlpeGenerationDetail state,
             final PaymentAccountDetail paymentAccountDetail,
             final GlPendingTransaction glPendingTransaction
     ) {

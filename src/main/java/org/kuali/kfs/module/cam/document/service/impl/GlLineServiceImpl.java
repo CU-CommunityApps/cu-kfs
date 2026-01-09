@@ -25,8 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.service.ObjectTypeService;
-import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
-import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.businessobject.CapitalAccountingLines;
@@ -36,7 +34,6 @@ import org.kuali.kfs.fp.businessobject.CapitalAssetInformationDetail;
 import org.kuali.kfs.fp.document.dataaccess.CapitalAssetInformationDao;
 import org.kuali.kfs.gl.GLParameterConstants;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentHeaderService;
@@ -62,6 +59,7 @@ import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
+import org.kuali.kfs.sys.document.service.FinancialSystemDocumentTypeService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,14 +73,14 @@ public class GlLineServiceImpl implements GlLineService {
 	private static final Logger LOG = LogManager.getLogger(GlLineServiceImpl.class);
     private static final String CAB_DESC_PREFIX = "CAB created for FP ";
 
-    protected BusinessObjectService businessObjectService;
     protected AssetGlobalService assetGlobalService;
-    protected ObjectTypeService objectTypeService;
-    protected DocumentService documentService;
-    protected ParameterService parameterService;
-    protected ParameterEvaluatorService parameterEvaluatorService;
-    protected DocumentHeaderService documentHeaderService;
+    protected BusinessObjectService businessObjectService;
     protected CapitalAssetInformationDao capitalAssetInformationDao;
+    protected DocumentHeaderService documentHeaderService;
+    protected DocumentService documentService;
+    private FinancialSystemDocumentTypeService financialSystemDocumentTypeService;
+    protected ObjectTypeService objectTypeService;
+    protected ParameterService parameterService;
 
     @Override
     public Document createAssetGlobalDocument(final GeneralLedgerEntry primary, final Integer capitalAssetLineNumber) {
@@ -527,12 +525,7 @@ public class GlLineServiceImpl implements GlLineService {
 
         //year end changes
         final String docType = DocumentTypeName.ASSET_ADD_GLOBAL;
-        final ParameterEvaluator evaluator = parameterEvaluatorService
-                .getParameterEvaluator(KFSConstants.CoreModuleNamespaces.KFS,
-                        KfsParameterConstants.YEAR_END_ACCOUNTING_PERIOD_PARAMETER_NAMES.DETAIL_PARAMETER_TYPE,
-                        KfsParameterConstants.YEAR_END_ACCOUNTING_PERIOD_PARAMETER_NAMES.FISCAL_PERIOD_DOCUMENT_TYPES,
-                        docType);
-        if (evaluator.evaluationSucceeds()) {
+        if (financialSystemDocumentTypeService.isFiscalPeriodEntryEnabledForDocumentType(docType)) {
             final Integer closingYear = Integer.valueOf(parameterService
                     .getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class,
                             GLParameterConstants.ANNUAL_CLOSING_FISCAL_YEAR));
@@ -960,35 +953,35 @@ public class GlLineServiceImpl implements GlLineService {
         return ++nextAccountingLineNumber;
     }
 
-    public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
-        this.businessObjectService = businessObjectService;
-    }
-
     public void setAssetGlobalService(final AssetGlobalService assetGlobalService) {
         this.assetGlobalService = assetGlobalService;
     }
 
-    public void setObjectTypeService(final ObjectTypeService objectTypeService) {
-        this.objectTypeService = objectTypeService;
+    public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
     }
 
-    public void setDocumentService(final DocumentService documentService) {
-        this.documentService = documentService;
-    }
-
-    public void setParameterService(final ParameterService parameterService) {
-        this.parameterService = parameterService;
-    }
-
-    public void setParameterEvaluatorService(final ParameterEvaluatorService parameterEvaluatorService) {
-        this.parameterEvaluatorService = parameterEvaluatorService;
+    public void setCapitalAssetInformationDao(final CapitalAssetInformationDao dao) {
+        capitalAssetInformationDao = dao;
     }
 
     public void setDocumentHeaderService(final DocumentHeaderService documentHeaderService) {
         this.documentHeaderService = documentHeaderService;
     }
 
-    public void setCapitalAssetInformationDao(final CapitalAssetInformationDao dao) {
-        capitalAssetInformationDao = dao;
+    public void setDocumentService(final DocumentService documentService) {
+        this.documentService = documentService;
+    }
+
+    public void setFinancialSystemDocumentTypeService(final FinancialSystemDocumentTypeService financialSystemDocumentTypeService) {
+        this.financialSystemDocumentTypeService = financialSystemDocumentTypeService;
+    }
+
+    public void setObjectTypeService(final ObjectTypeService objectTypeService) {
+        this.objectTypeService = objectTypeService;
+    }
+
+    public void setParameterService(final ParameterService parameterService) {
+        this.parameterService = parameterService;
     }
 }

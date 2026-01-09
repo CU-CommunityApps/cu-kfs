@@ -42,6 +42,7 @@ import org.kuali.kfs.sys.businessobject.service.exception.ForbiddenException;
 import org.kuali.kfs.sys.businessobject.service.exception.NotAllowedException;
 import org.kuali.kfs.sys.util.DateRangeUtil;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StopWatch;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,6 +51,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class BatchFileSearchService extends SearchService {
@@ -61,16 +63,47 @@ public class BatchFileSearchService extends SearchService {
     @Override
     public Pair<Collection<? extends BusinessObjectBase>, Integer> getSearchResults(
             final Class<? extends BusinessObjectBase> businessObjectClass,
-            final MultiValueMap<String, String> fieldValues, final int skip, final int limit, final String sortField, final boolean sortAscending) {
+            final MultiValueMap<String, String> fieldValues,
+            final int skip,
+            final int limit,
+            final String sortField,
+            final boolean sortAscending
+    ) {
+        final StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        LOG.info(
+                "getSearchResults(...) - Enter : businessObjectClass={}, fieldValues={}, skip={}, limit={}, "
+                + "sortField={}, sortAscending={}",
+                businessObjectClass::getSimpleName,
+                () -> fieldValues,
+                () -> skip,
+                () -> limit,
+                () -> sortField,
+                () -> sortAscending
+        );
 
         final List<BatchFile> allFiles = getFiles(fieldValues);
         final Stream<BatchFile> stream = allFiles.stream();
 
         final BusinessObjectSorter boSorter = new BusinessObjectSorter();
-        final List<BusinessObjectBase> sortedAndSliced = boSorter.sort(businessObjectClass, skip, limit, sortField,
-                sortAscending, stream);
+        final List<BusinessObjectBase> sortedAndSliced =
+                boSorter.sort(
+                        businessObjectClass,
+                        skip,
+                        limit,
+                        sortField,
+                        sortAscending,
+                        stream
+                );
 
-        return Pair.of(sortedAndSliced, allFiles.size());
+        final Pair<Collection<? extends BusinessObjectBase>, Integer> pair = Pair.of(sortedAndSliced, allFiles.size());
+        stopWatch.stop();
+        LOG.info(
+                "getSearchResults(...) - Exit : pair={}; elapsedMillis={}",
+                () -> pair,
+                stopWatch::getTotalTimeMillis
+        );
+        return pair;
     }
 
     @Override
@@ -98,6 +131,10 @@ public class BatchFileSearchService extends SearchService {
     }
 
     private List<BatchFile> getFiles(final MultiValueMap<String, String> fieldValues) {
+        final StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        LOG.info("getFiles(...) - Enter");
+
         final List<BatchFile> results = new ArrayList<>();
 
         IOFileFilter filter = FileFilterUtils.fileFileFilter();
@@ -116,9 +153,16 @@ public class BatchFileSearchService extends SearchService {
 
         final List<String> pathPatterns = fieldValues.get("path");
         final List<File> directories = getDirectoriesToSearch(pathPatterns);
-        final BatchFileSearchService.BatchFileFinder finder = new BatchFileSearchService.BatchFileFinder(
-                results, filter);
+        final BatchFileSearchService.BatchFileFinder finder =
+                new BatchFileSearchService.BatchFileFinder(results, filter);
         finder.find(directories);
+
+        stopWatch.stop();
+        LOG.info(
+                "getFiles(...) - Exit : results.size={}; elapsedMillis={}",
+                results::size,
+                stopWatch::getTotalTimeMillis
+        );
         return results;
     }
 
@@ -150,6 +194,10 @@ public class BatchFileSearchService extends SearchService {
      * 
      */
     protected List<File> getDirectoriesToSearch(final List<String> selectedPaths) {
+        final StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        LOG.info("getDirectoriesToSearch(...) - Enter : selectedPaths={}", selectedPaths);
+
         final List<String> searchPaths = getPathsToSearch(selectedPaths);
 
         List<File> directories = new ArrayList<>();
@@ -164,23 +212,42 @@ public class BatchFileSearchService extends SearchService {
             directories = BatchFileUtils.retrieveBatchFileLookupRootDirectories();
         }
 
+        stopWatch.stop();
+        LOG.info(
+                "getDirectoriesToSearch(...) - Exit : directories.size={}; elapsedMillis={}",
+                directories::size,
+                stopWatch::getTotalTimeMillis
+        );
         return directories;
     }
 
     private List<String> getPathsToSearch(final List<String> selectedPaths) {
+        final StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        LOG.info("getPathsToSearch(...) - Enter : selectedPaths={}", selectedPaths);
+
         if (CollectionUtils.isEmpty(selectedPaths)) {
+            LOG.info("getPathsToSearch(...) - Exit : selectedPaths is empty");
             return selectedPaths;
         }
 
         // Ignore redundant child paths
         final List<String> searchPaths = new ArrayList<>();
-        selectedPaths.stream().sorted(Comparator.comparingInt(String::length)).forEach(selectedPath -> {
-            final String[] searchPathsStringArray = searchPaths.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
-            if (!StringUtils.startsWithAny(selectedPath, searchPathsStringArray)) {
-                searchPaths.add(selectedPath);
-            }
-        });
+        selectedPaths.stream()
+                .sorted(Comparator.comparingInt(String::length))
+                .forEach(selectedPath -> {
+                    final String[] searchPathsStringArray = searchPaths.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
+                    if (!StringUtils.startsWithAny(selectedPath, searchPathsStringArray)) {
+                        searchPaths.add(selectedPath);
+                    }
+                });
 
+        stopWatch.stop();
+        LOG.info(
+                "getPathsToSearch(...) - Exit : searchPaths.size={}; elapsedMillis={}",
+                searchPaths::size,
+                stopWatch::getTotalTimeMillis
+        );
         return searchPaths;
     }
 
@@ -189,7 +256,9 @@ public class BatchFileSearchService extends SearchService {
         this.businessObjectDictionaryService = businessObjectDictionaryService;
     }
 
-    protected class BatchFileFinder extends DirectoryWalker {
+    static final class BatchFileFinder extends DirectoryWalker {
+        private static final Logger LOG = LogManager.getLogger();
+
         private final List<BatchFile> results;
 
         BatchFileFinder(final List<BatchFile> results, final IOFileFilter fileFilter) {
@@ -197,7 +266,11 @@ public class BatchFileSearchService extends SearchService {
             this.results = results;
         }
 
-        public void find(final Collection<File> rootDirectories) {
+        void find(final Collection<File> rootDirectories) {
+            final StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+            LOG.info("find(...) - Enter : rootDirectories={}", rootDirectories);
+
             try {
                 for (final File rootDirectory : rootDirectories) {
                     walk(rootDirectory, null);
@@ -205,6 +278,13 @@ public class BatchFileSearchService extends SearchService {
             } catch (final IOException e) {
                 throw new RuntimeException("Error performing lookup", e);
             }
+
+            stopWatch.stop();
+            LOG.info(
+                    "find(...) - Exit : results.size={}; elapsedMillis={}",
+                    results::size,
+                    stopWatch::getTotalTimeMillis
+            );
         }
 
         /**
@@ -212,9 +292,24 @@ public class BatchFileSearchService extends SearchService {
          */
         @Override
         protected void handleFile(final File file, final int depth, final Collection results) throws IOException {
+            final StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+            LOG.info(
+                    "handleFile(...) - Enter : file={}; results.size={}",
+                    () -> file,
+                    () -> Objects.requireNonNullElseGet(results, List::of).size()
+            );
+
             super.handleFile(file, depth, results);
             final BatchFile batchFile = new BatchFile(file);
             this.results.add(batchFile);
+
+            stopWatch.stop();
+            LOG.info(
+                    "handleFile(...) - Exit : results.size={}; elapsedMillis={}",
+                    () -> Objects.requireNonNullElseGet(results, List::of).size(),
+                    stopWatch::getTotalTimeMillis
+            );
         }
     }
 

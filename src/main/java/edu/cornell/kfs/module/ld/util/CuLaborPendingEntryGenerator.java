@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.COAParameterConstants;
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -36,6 +37,8 @@ import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import edu.cornell.kfs.module.ld.document.service.impl.CuLaborPendingEntryConverterServiceImpl;
 
 public class CuLaborPendingEntryGenerator {
+    
+    private static LaborBenefitsCalculationService laborBenefitsCalculationService;
 	
     public static List<LaborLedgerPendingEntry> generateOffsetPendingEntries(List<LaborLedgerPendingEntry> expenseEntries, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         List<LaborLedgerPendingEntry> offsetPendingEntries = new ArrayList<LaborLedgerPendingEntry>();
@@ -71,7 +74,7 @@ public class CuLaborPendingEntryGenerator {
             String fringeBenefitObjectCode = retrieveFringeBenefitObjectCode(accountingLine, chartOfAccountsCode);
 
             final KualiDecimal benefitAmount = SpringContext.getBean(LaborBenefitsCalculationService.class).calculateFringeBenefit(positionObjectBenefit, accountingLine.getAmount(), accountingLine.getAccountNumber(), accountingLine.getSubAccountNumber());
-            if (benefitAmount.isNonZero() && positionObjectBenefit.getBenefitsCalculation().isActive()) {
+            if (benefitAmount.isNonZero() && getLaborBenefitsCalculationService().getBenefitsCalculation(positionObjectBenefit).isActive()) {
 
                 final ParameterService parameterService = SpringContext.getBean(ParameterService.class);
                 final Boolean enableFringeBenefitCalculationByBenefitRate = parameterService.getParameterValueAsBoolean(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, LaborConstants.BenefitCalculation.ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY_PARAMETER);
@@ -171,7 +174,7 @@ public class CuLaborPendingEntryGenerator {
 
 
         //refresh nonupdateable references for financial object...
-        LaborPendingEntryGenerator.refreshObjectCodeNonUpdateableReferences(benefitClearingPendingEntries);   
+        refreshObjectCodeNonUpdateableReferences(benefitClearingPendingEntries);   
         
         return benefitClearingPendingEntries;
     }
@@ -199,7 +202,7 @@ public class CuLaborPendingEntryGenerator {
         	final String tmpLaborBenefitRateCategoryCode = accountingLine.getAccount().getLaborBenefitRateCategoryCode();
 
             positionObjectBenefit.setLaborBenefitRateCategoryCode(tmpLaborBenefitRateCategoryCode);
-            final BenefitsCalculation benefitsCalculation = positionObjectBenefit.getBenefitsCalculation();
+            final BenefitsCalculation benefitsCalculation = getLaborBenefitsCalculationService().getBenefitsCalculation(positionObjectBenefit);;
             if (ObjectUtils.isNull(benefitsCalculation)) {
                 continue;
             }
@@ -228,14 +231,39 @@ public class CuLaborPendingEntryGenerator {
 
         for (final PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
             final String tmpLaborBenefitRateCategoryCode = accountingLine.getAccount().getLaborBenefitRateCategoryCode();
-            final BenefitsCalculation benefitsCalculation = positionObjectBenefit.getBenefitsCalculation();
+            final BenefitsCalculation benefitsCalculation = getLaborBenefitsCalculationService().getBenefitsCalculation(positionObjectBenefit);
             if (ObjectUtils.isNull(benefitsCalculation)) {
                 continue;
             }
-            positionObjectBenefit.setLaborLedgerBenefitsCalculation(benefitsCalculation);
+            //positionObjectBenefit.setLaborLedgerBenefitsCalculation(benefitsCalculation);
             positionObjectBenefit.setLaborBenefitRateCategoryCode(tmpLaborBenefitRateCategoryCode);
-            fringeBenefitObjectCode = positionObjectBenefit.getBenefitsCalculation().getPositionFringeBenefitObjectCode();
+            fringeBenefitObjectCode = getLaborBenefitsCalculationService().getBenefitsCalculation(positionObjectBenefit).getPositionFringeBenefitObjectCode();
         }
         return fringeBenefitObjectCode;
+    }
+    
+    /**
+     * refreshes labor ledger pending entry's object codes.
+     *
+     * @param llpes list of LaborLedgerPendingEntries to refresh object codes for
+     */
+    public static void refreshObjectCodeNonUpdateableReferences(List<LaborLedgerPendingEntry> llpes) {
+        BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+
+        //refresh nonupdateable references for financial object...
+        Map<String, String> primaryKeys = new HashMap<>();
+
+        for (LaborLedgerPendingEntry llpe : llpes) {
+            primaryKeys.put("financialObjectCode", llpe.getFinancialObjectCode());
+            ObjectCode objectCode = bos.findByPrimaryKey(ObjectCode.class, primaryKeys);
+            llpe.setFinancialObject(objectCode);
+        }
+    }
+    
+    private static LaborBenefitsCalculationService getLaborBenefitsCalculationService() {
+        if (laborBenefitsCalculationService == null) {
+            laborBenefitsCalculationService = SpringContext.getBean(LaborBenefitsCalculationService.class);
+        }
+        return laborBenefitsCalculationService;
     }
 }

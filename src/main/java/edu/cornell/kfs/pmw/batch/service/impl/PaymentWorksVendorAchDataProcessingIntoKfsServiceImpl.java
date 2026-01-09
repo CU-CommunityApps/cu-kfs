@@ -128,7 +128,6 @@ public class PaymentWorksVendorAchDataProcessingIntoKfsServiceImpl implements Pa
         achAccount.setBankAccountNumber(newPayeeAchAccount.getBankAccountNumber());
         achAccount.setBankAccountTypeCode(newPayeeAchAccount.getBankAccountTypeCode());
         achAccount.setStandardEntryClass(newPayeeAchAccount.getStandardEntryClass());
-        achAccount.setPayeeName(newPayeeAchAccount.getPayeeName());
         achAccount.setPayeeEmailAddress(newPayeeAchAccount.getPayeeEmailAddress());
         achAccount.setAchTransactionType(newPayeeAchAccount.getAchTransactionType());
         achAccount.setActive(newPayeeAchAccount.isActive());
