@@ -114,6 +114,12 @@ public class CUKFSPropertyConstants {
     public static final String DESCRIPTION = "description";
     public static final String ADDITIONAL_SCRIPT_FILE_PREFIX = "additionalScriptFile";
 
+    public static final String CU_SPRING_MVC_SOURCE_FILE_KEY = "cu.spring.mvc.source.file";
+    public static final String KUALICO_SPRING_MVC_SOURCE_FILE_KEY = "kualico.spring.mvc.source.file";
+
+    public static final String STATUS = "status";
+    public static final String ERRORS = "errors";
+
     /*
      * The following constants are used by our code but were removed by the 2024-03-06 financials patch,
      * so we had to copy them here.

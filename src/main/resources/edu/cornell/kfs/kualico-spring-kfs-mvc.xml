@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    CU-specific bean XML file for performing the KualiCo Controller class initialization
+    in a child Spring context. This makes it easier to separate Cornell-specific Spring
+    MVC web services from KualiCo's.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- Need to re-import the beans that enable property placeholder resolution. -->
+    <import resource="classpath:spring-additional-beans.xml"/>
+
+    <!-- Look for Spring-annotated Controller classes, plus the class that's annotated with @EnableWebMvc -->
+    <context:component-scan base-package="org.kuali.kfs">
+        <context:include-filter type="annotation"
+                                expression="org.springframework.stereotype.Controller"/>
+        <context:include-filter type="annotation"
+                                expression="org.springframework.web.servlet.config.annotation.EnableWebMvc"/>
+    </context:component-scan>
+
+</beans>
