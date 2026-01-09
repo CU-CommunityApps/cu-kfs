@@ -59,7 +59,7 @@ public enum AccountAttachmentControllerTestData {
             @AccountAttachmentNoteFixture(
                 noteId = 3011L,
                 noteText = "Other Info",
-                attachmentId = "11111111-aaaa-2222-bbbb-3c3c3c3c3c3c",
+                attachmentId = "11111111-zzzz-2222-yyyy-3c3c3c3c3c3c",
                 mimeType = "text/plain",
                 fileName = "other-info.txt"
             )
@@ -68,8 +68,8 @@ public enum AccountAttachmentControllerTestData {
     ACCOUNT_WITH_MULTIPLE_ATTACHMENTS,
 
     @AccountAttachmentListingFixture(
-        chartOfAccountsCode = "EO",
-        accountNumber = "EIEI000",
+        chartOfAccountsCode = "IT",
+        accountNumber = "5656565",
         accountName = "Account with mixed notes",
         notes = {
             @AccountAttachmentNoteFixture(

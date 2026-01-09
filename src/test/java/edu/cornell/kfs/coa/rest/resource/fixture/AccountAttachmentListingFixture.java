@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.krad.bo.Note;
 
+import edu.cornell.kfs.coa.rest.jsonObjects.AccountAttachmentListItemDto;
+import edu.cornell.kfs.coa.rest.jsonObjects.AccountAttachmentListingDto;
 import edu.cornell.kfs.sys.util.CuMockBuilder;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -38,6 +40,24 @@ public @interface AccountAttachmentListingFixture {
         public static List<Note> toBoNotesList(final AccountAttachmentListingFixture fixture) {
             return Arrays.stream(fixture.notes())
                     .map(AccountAttachmentNoteFixture.Utils::toNote)
+                    .collect(Collectors.toUnmodifiableList());
+        }
+
+        public static AccountAttachmentListingDto toAccountAttachmentListingDto(
+                final AccountAttachmentListingFixture fixture) {
+            final AccountAttachmentListingDto dto = new AccountAttachmentListingDto();
+            dto.setChartOfAccountsCode(fixture.chartOfAccountsCode());
+            dto.setAccountNumber(fixture.accountNumber());
+            dto.setAccountName(fixture.accountName());
+            dto.setAttachments(createListOfAccountAttachmentDtos(fixture));
+            return dto;
+        }
+
+        private static List<AccountAttachmentListItemDto> createListOfAccountAttachmentDtos(
+                final AccountAttachmentListingFixture fixture) {
+            return Arrays.stream(fixture.notes())
+                    .filter(AccountAttachmentNoteFixture::hasAttachment)
+                    .map(AccountAttachmentNoteFixture.Utils::toAccountAttachmentListItemDto)
                     .collect(Collectors.toUnmodifiableList());
         }
 

@@ -17,6 +17,8 @@
 
     <bean id="dataDictionaryService" class="${unit.test.classname}" factory-method="buildMockDataDictionaryService"/>
 
+    <bean id="attachmentService" class="${unit.test.classname}" factory-method="buildMockAttachmentService"/>
+
     <bean id="configurationService" class="edu.cornell.kfs.sys.service.impl.TestConfigurationServiceImpl"
           p:properties-ref="applicationResources"/>
 
@@ -37,6 +39,7 @@
                 <idref bean="apiAuthenticationService-parentBean"/>
                 <idref bean="businessObjectService"/>
                 <idref bean="dataDictionaryService"/>
+                <idref bean="attachmentService"/>
                 <idref bean="configurationService"/>
                 <idref bean="applicationResources"/>
             </set>
