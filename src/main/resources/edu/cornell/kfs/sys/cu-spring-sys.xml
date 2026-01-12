@@ -480,10 +480,10 @@
           class="edu.cornell.kfs.sys.web.filter.ApiAuthenticationFilter"
           p:apiAuthenticationService-ref="apiAuthenticationService"/>
 
-    <bean id="webApiPropertyValidationService" parent="webApiPropertyValidationService-parentBean"/>
-    <bean id="webApiPropertyValidationService-parentBean"
+    <bean id="webApiParameterValidationService" parent="webApiParameterValidationService-parentBean"/>
+    <bean id="webApiParameterValidationService-parentBean"
           abstract="true"
-          class="edu.cornell.kfs.sys.service.impl.WebApiPropertyValidationServiceImpl"
+          class="edu.cornell.kfs.sys.service.impl.WebApiParameterValidationServiceImpl"
           p:dataDictionaryService-ref="dataDictionaryService"
           p:configurationService-ref="configurationService"/>
 

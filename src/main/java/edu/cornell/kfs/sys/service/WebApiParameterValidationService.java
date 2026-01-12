@@ -2,7 +2,7 @@ package edu.cornell.kfs.sys.service;
 
 import java.util.List;
 
-import edu.cornell.kfs.sys.util.WebApiProperty;
+import edu.cornell.kfs.sys.util.WebApiParameter;
 
 /**
  * Shared helper service for validating simple data inputs on web service endpoints,
@@ -10,10 +10,10 @@ import edu.cornell.kfs.sys.util.WebApiProperty;
  * 
  * The default implementation uses the Data Dictionary to validate the inputs.
  */
-public interface WebApiPropertyValidationService {
+public interface WebApiParameterValidationService {
 
-    List<String> validateProperties(final WebApiProperty... properties);
+    List<String> validateParameters(final WebApiParameter... parameters);
 
-    List<String> validateProperties(final List<WebApiProperty> properties);
+    List<String> validateParameters(final List<WebApiParameter> parameters);
 
 }

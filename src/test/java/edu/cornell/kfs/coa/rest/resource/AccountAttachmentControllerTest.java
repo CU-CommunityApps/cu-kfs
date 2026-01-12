@@ -25,6 +25,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.core.api.util.ClasspathOrFileResourceLoader;
@@ -52,9 +53,9 @@ import edu.cornell.kfs.coa.rest.resource.fixture.AccountAttachmentControllerTest
 import edu.cornell.kfs.coa.rest.resource.fixture.AccountAttachmentControllerTestData;
 import edu.cornell.kfs.coa.rest.resource.fixture.AccountAttachmentListingFixture;
 import edu.cornell.kfs.coa.rest.resource.fixture.AccountAttachmentNoteFixture;
-import edu.cornell.kfs.coa.service.AccountAttachmentControllerHelperService;
+import edu.cornell.kfs.coa.service.AccountAttachmentService;
 import edu.cornell.kfs.coa.service.CuAccountService;
-import edu.cornell.kfs.coa.service.impl.AccountAttachmentControllerHelperServiceImpl;
+import edu.cornell.kfs.coa.service.impl.AccountAttachmentServiceImpl;
 import edu.cornell.kfs.krad.fixture.AttributeDefinitionFixture;
 import edu.cornell.kfs.krad.fixture.BusinessObjectEntryFixture;
 import edu.cornell.kfs.sys.CUKFSConstants.EndpointCodes;
@@ -73,10 +74,12 @@ public class AccountAttachmentControllerTest {
 
     private static final String TEST_CREDENTIALS = "testuser1:testpass1";
     private static final String BAD_CREDENTIALS = "baduser1:badpass1";
-    private static final String ATTACHMENT_LISTING_URL
-            = "/coa/account-attachments/api/get-attachment-list/{chart}/{account}";
-    private static final String ATTACHMENT_CONTENTS_URL
-            = "/coa/account-attachments/api/get-attachment-contents/{chartCode}/{accountNumber}/{attachmentId}";
+    private static final String BASE_ATTACHMENT_LISTING_URL = "/coa/account-attachments/api/get-attachment-list";
+    private static final String ATTACHMENT_LISTING_URL = BASE_ATTACHMENT_LISTING_URL
+            + "?chartCode={chartCode}&accountNumber={accountNumber}";
+    private static final String BASE_ATTACHMENT_CONTENTS_URL = "/coa/account-attachments/api/get-attachment-contents";
+    private static final String ATTACHMENT_CONTENTS_URL = BASE_ATTACHMENT_CONTENTS_URL
+            + "?chartCode={chartCode}&accountNumber={accountNumber}&attachmentId={attachmentId}";
 
     @RegisterExtension
     static TestSpringContextExtension springContextExtension = TestSpringContextExtension.forClassPathSpringXmlFile(
@@ -210,9 +213,9 @@ public class AccountAttachmentControllerTest {
 
     @BeforeAll
     static void performFirstTimeInitialization() throws Exception {
-        final AccountAttachmentControllerHelperService helperService = springContextExtension.getBean(
-                CoaTestBeanNames.ACCOUNT_ATTACHMENT_CONTROLLER_HELPER_SERVICE,
-                AccountAttachmentControllerHelperService.class);
+        final AccountAttachmentService helperService = springContextExtension.getBean(
+                CoaTestBeanNames.ACCOUNT_ATTACHMENT_SERVICE,
+                AccountAttachmentService.class);
         final AttachmentService attachmentService = springContextExtension.getBean(
                 CoaTestBeanNames.ATTACHMENT_SERVICE, AttachmentService.class);
         final ApiAuthenticationFilter filter = springContextExtension.getBean(
@@ -295,6 +298,9 @@ public class AccountAttachmentControllerTest {
 
     @ParameterizedTest
     @CsvSource({
+        ",",
+        ",G123456",
+        "IT,",
         "T,G123456",
         "ITT,G123456",
         "IT,G12345",
@@ -382,6 +388,10 @@ public class AccountAttachmentControllerTest {
 
     @ParameterizedTest
     @CsvSource({
+        ",,",
+        ",EIEI000,11111111-zzzz-2222-yyyy-3c3c3c3c3c3c",
+        "EO,,11111111-zzzz-2222-yyyy-3c3c3c3c3c3c",
+        "EO,EIEI000,",
         "E,EIEI000,11111111-zzzz-2222-yyyy-3c3c3c3c3c3c",
         "EOO,EIEI000,11111111-zzzz-2222-yyyy-3c3c3c3c3c3c",
         "EO,EIEI00,11111111-zzzz-2222-yyyy-3c3c3c3c3c3c",
@@ -398,22 +408,38 @@ public class AccountAttachmentControllerTest {
                 ATTACHMENT_CONTENTS_URL, chartOfAccountsCode, accountNumber, attachmentId);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {
+        BASE_ATTACHMENT_LISTING_URL,
+        BASE_ATTACHMENT_LISTING_URL + "?chartCode=IT",
+        BASE_ATTACHMENT_LISTING_URL + "?accountNumber=G123456",
+        BASE_ATTACHMENT_LISTING_URL + "?otherParam=TESTING",
+        BASE_ATTACHMENT_CONTENTS_URL,
+        BASE_ATTACHMENT_CONTENTS_URL + "?chartCode=IT&attachmentId=11111111-zzzz-2222-yyyy-3c3c3c3c3c3c",
+        BASE_ATTACHMENT_CONTENTS_URL + "?accountNumber=G123456&attachmentId=11111111-zzzz-2222-yyyy-3c3c3c3c3c3c",
+        BASE_ATTACHMENT_CONTENTS_URL + "?chartCode=IT&accountNumber=G123456",
+        BASE_ATTACHMENT_CONTENTS_URL + "?otherParam=TESTING"
+    })
+    void testCannotInvokeEndpointsWithMissingParameters(final String url) throws Exception {
+        assertInvocationReturnsErrorResponseWithJsonErrorMessageList(HttpStatus.BAD_REQUEST, url);
+    }
+
     private void assertInvocationReturns500InternalServerErrorWhenServerHasBadState(
             final String uri, final Object... uriVariables) {
         final AccountService accountService = springContextExtension.getBean(
                 CoaTestBeanNames.ACCOUNT_SERVICE, AccountService.class);
-        final AccountAttachmentControllerHelperServiceImpl helperService = springContextExtension.getBean(
-                CoaTestBeanNames.ACCOUNT_ATTACHMENT_CONTROLLER_HELPER_SERVICE,
-                AccountAttachmentControllerHelperServiceImpl.class);
+        final AccountAttachmentServiceImpl accountAttachmentService = springContextExtension.getBean(
+                CoaTestBeanNames.ACCOUNT_ATTACHMENT_SERVICE,
+                AccountAttachmentServiceImpl.class);
         assertNotNull(accountService, "Could not find AccountService");
-        assertNotNull(helperService, "Could not find AccountAttachmentControllerHelperServiceImpl");
+        assertNotNull(accountAttachmentService, "Could not find AccountAttachmentServiceImpl");
 
         try {
-            helperService.setAccountService(null);
+            accountAttachmentService.setAccountService(null);
             assertInvocationReturnsErrorResponseWithJsonErrorMessageList(
                     HttpStatus.INTERNAL_SERVER_ERROR, uri, uriVariables);
         } finally {
-            helperService.setAccountService(accountService);
+            accountAttachmentService.setAccountService(accountService);
         }
     }
 
@@ -437,7 +463,7 @@ public class AccountAttachmentControllerTest {
         for (final String errorMessage : responseBody.getErrors()) {
             assertTrue(StringUtils.isNotBlank(errorMessage),
                     "Found an unexpected blank error message at index " + i);
-            i++;System.out.println("Message: " + errorMessage);
+            i++;
         }
     }
 

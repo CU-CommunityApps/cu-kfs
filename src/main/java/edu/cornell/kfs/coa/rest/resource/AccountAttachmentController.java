@@ -17,16 +17,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import edu.cornell.kfs.coa.rest.jsonObjects.AccountAttachmentErrorResponseDto;
 import edu.cornell.kfs.coa.rest.jsonObjects.AccountAttachmentListingDto;
-import edu.cornell.kfs.coa.service.AccountAttachmentControllerHelperService;
+import edu.cornell.kfs.coa.service.AccountAttachmentService;
 import edu.cornell.kfs.sys.web.CuResponseStatusException;
 import edu.cornell.kfs.sys.web.LazyInputStreamResource;
 
@@ -36,40 +37,40 @@ public class AccountAttachmentController {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private final AccountAttachmentControllerHelperService accountAttachmentControllerHelperService;
+    private final AccountAttachmentService accountAttachmentService;
     private final AttachmentService attachmentService;
 
     @Autowired
     public AccountAttachmentController(
-            final AccountAttachmentControllerHelperService accountAttachmentControllerHelperService,
+            final AccountAttachmentService accountAttachmentService,
             final AttachmentService attachmentService) {
-        Objects.requireNonNull(accountAttachmentControllerHelperService,
-                "accountAttachmentControllerHelperService cannot be null");
+        Objects.requireNonNull(accountAttachmentService,
+                "accountAttachmentService cannot be null");
         Objects.requireNonNull(attachmentService, "attachmentService cannot be null");
-        this.accountAttachmentControllerHelperService = accountAttachmentControllerHelperService;
+        this.accountAttachmentService = accountAttachmentService;
         this.attachmentService = attachmentService;
     }
 
-    @GetMapping(path = "get-attachment-list/{chartCode}/{accountNumber}")
+    @GetMapping(path = "get-attachment-list")
     public ResponseEntity<AccountAttachmentListingDto> getAttachmentMetadataForAccount(
-            @PathVariable("chartCode") final String chartCode,
-            @PathVariable("accountNumber") final String accountNumber
+            @RequestParam("chartCode") final String chartCode,
+            @RequestParam("accountNumber") final String accountNumber
     ) {
         LOG.debug("getAttachmentMetadataForAccount, Chart: <{}>, Account: <{}>", chartCode, accountNumber);
-        final AccountAttachmentListingDto attachmentListing = accountAttachmentControllerHelperService
+        final AccountAttachmentListingDto attachmentListing = accountAttachmentService
                 .getAccountAttachmentListing(chartCode, accountNumber);
         return ResponseEntity.ok(attachmentListing);
     }
 
-    @GetMapping(path = "get-attachment-contents/{chartCode}/{accountNumber}/{attachmentId}")
+    @GetMapping(path = "get-attachment-contents")
     public ResponseEntity<Resource> getAccountAttachment(
-            @PathVariable("chartCode") final String chartCode,
-            @PathVariable("accountNumber") final String accountNumber,
-            @PathVariable("attachmentId") final String attachmentId
+            @RequestParam("chartCode") final String chartCode,
+            @RequestParam("accountNumber") final String accountNumber,
+            @RequestParam("attachmentId") final String attachmentId
     ) {
         LOG.debug("getAccountAttachment, Chart: <{}>, Account: <{}>, Attachment ID: <{}>",
                 chartCode, accountNumber, attachmentId);
-        final Attachment attachment = accountAttachmentControllerHelperService.getAccountAttachment(
+        final Attachment attachment = accountAttachmentService.getAccountAttachment(
                 chartCode, accountNumber, attachmentId);
         final Resource attachmentResource = new LazyInputStreamResource(
                 () -> attachmentService.retrieveAttachmentContents(attachment),
@@ -112,6 +113,14 @@ public class AccountAttachmentController {
         }
         final List<String> errorMessages = StringUtils.isNotBlank(e.getReason()) ? List.of(e.getReason()) : List.of();
         return createErrorResponse(e.getStatus(), errorMessages);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<AccountAttachmentErrorResponseDto> handleException(
+            final MissingServletRequestParameterException e) {
+        LOG.error("handleException, Operation failed due to one or more missing request parameters", e);
+        final List<String> errors = List.of("Required parameter is missing: " + e.getParameterName());
+        return createErrorResponse(HttpStatus.BAD_REQUEST, errors);
     }
 
     @ExceptionHandler

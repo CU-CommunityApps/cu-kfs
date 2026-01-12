@@ -17,22 +17,22 @@ import org.springframework.web.server.ResponseStatusException;
 import edu.cornell.kfs.coa.rest.jsonObjects.AccountAttachmentErrorResponseDto;
 import edu.cornell.kfs.coa.rest.jsonObjects.AccountAttachmentListItemDto;
 import edu.cornell.kfs.coa.rest.jsonObjects.AccountAttachmentListingDto;
-import edu.cornell.kfs.coa.service.AccountAttachmentControllerHelperService;
+import edu.cornell.kfs.coa.service.AccountAttachmentService;
 import edu.cornell.kfs.krad.CUKRADPropertyConstants;
-import edu.cornell.kfs.sys.service.WebApiPropertyValidationService;
-import edu.cornell.kfs.sys.util.WebApiProperty;
+import edu.cornell.kfs.sys.service.WebApiParameterValidationService;
+import edu.cornell.kfs.sys.util.WebApiParameter;
 import edu.cornell.kfs.sys.web.CuResponseStatusException;
 
-public class AccountAttachmentControllerHelperServiceImpl implements AccountAttachmentControllerHelperService {
+public class AccountAttachmentServiceImpl implements AccountAttachmentService {
 
     private AccountService accountService;
-    private WebApiPropertyValidationService webApiPropertyValidationService;
+    private WebApiParameterValidationService webApiParameterValidationService;
 
     @Override
     public AccountAttachmentListingDto getAccountAttachmentListing(final String chartCode, final String accountNumber) {
-        validatePropertyValues(
-                WebApiProperty.required(Account.class, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartCode),
-                WebApiProperty.required(Account.class, KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber));
+        validateInputs(
+                WebApiParameter.required(Account.class, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartCode),
+                WebApiParameter.required(Account.class, KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber));
 
         final Account account = getExistingAccount(chartCode, accountNumber);
         return createAccountAttachmentListing(account);
@@ -54,12 +54,16 @@ public class AccountAttachmentControllerHelperServiceImpl implements AccountAtta
     
         final List<Note> accountNotes = account.getBoNotes();
         final List<AccountAttachmentListItemDto> attachments = accountNotes.stream()
-                .filter(note -> ObjectUtils.isNotNull(note.getAttachment()))
+                .filter(this::noteHasAttachment)
                 .map(this::createAccountAttachmentListItem)
                 .collect(Collectors.toUnmodifiableList());
         attachmentListing.setAttachments(attachments);
 
         return attachmentListing;
+    }
+
+    private boolean noteHasAttachment(final Note note) {
+        return ObjectUtils.isNotNull(note.getAttachment());
     }
 
     private AccountAttachmentListItemDto createAccountAttachmentListItem(final Note note) {
@@ -79,16 +83,16 @@ public class AccountAttachmentControllerHelperServiceImpl implements AccountAtta
     @Override
     public Attachment getAccountAttachment(final String chartCode, final String accountNumber,
             final String attachmentId) {
-        validatePropertyValues(
-                WebApiProperty.required(Account.class, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartCode),
-                WebApiProperty.required(Account.class, KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber),
-                WebApiProperty.required(Attachment.class, CUKRADPropertyConstants.ATTACHMENT_IDENTIFIER, attachmentId));
+        validateInputs(
+                WebApiParameter.required(Account.class, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartCode),
+                WebApiParameter.required(Account.class, KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber),
+                WebApiParameter.required(Attachment.class, CUKRADPropertyConstants.ATTACHMENT_IDENTIFIER, attachmentId));
 
         final Account account = getExistingAccount(chartCode, accountNumber);
         final List<Note> accountNotes = account.getBoNotes();
         final Attachment matchingAttachment = accountNotes.stream()
+                .filter(this::noteHasAttachment)
                 .map(Note::getAttachment)
-                .filter(ObjectUtils::isNotNull)
                 .filter(attachment -> StringUtils.equals(attachment.getAttachmentIdentifier(), attachmentId))
                 .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attachment not found"));
@@ -96,8 +100,8 @@ public class AccountAttachmentControllerHelperServiceImpl implements AccountAtta
         return matchingAttachment;
     }
 
-    private void validatePropertyValues(final WebApiProperty... properties) {
-        final List<String> errors = webApiPropertyValidationService.validateProperties(properties);
+    private void validateInputs(final WebApiParameter... parameters) {
+        final List<String> errors = webApiParameterValidationService.validateParameters(parameters);
         if (!errors.isEmpty()) {
             throw new CuResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid search parameters",
                     AccountAttachmentErrorResponseDto.of(errors));
@@ -108,9 +112,9 @@ public class AccountAttachmentControllerHelperServiceImpl implements AccountAtta
         this.accountService = accountService;
     }
 
-    public void setWebApiPropertyValidationService(
-            final WebApiPropertyValidationService webApiPropertyValidationService) {
-        this.webApiPropertyValidationService = webApiPropertyValidationService;
+    public void setWebApiParameterValidationService(
+            final WebApiParameterValidationService webApiParameterValidationService) {
+        this.webApiParameterValidationService = webApiParameterValidationService;
     }
 
 }

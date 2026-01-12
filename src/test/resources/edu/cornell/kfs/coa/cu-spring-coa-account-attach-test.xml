@@ -28,13 +28,13 @@
     <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
         <property name="beanWhitelist">
             <set merge="true">
-                <idref bean="accountAttachmentControllerHelperService"/>
-                <idref bean="accountAttachmentControllerHelperService-parentBean"/>
+                <idref bean="accountAttachmentService"/>
+                <idref bean="accountAttachmentService-parentBean"/>
                 <idref bean="accountAttachmentAuthFilter"/>
                 <idref bean="accountService"/>
                 <idref bean="apiAuthenticationFilter-baseBean"/>
-                <idref bean="webApiPropertyValidationService"/>
-                <idref bean="webApiPropertyValidationService-parentBean"/>
+                <idref bean="webApiParameterValidationService"/>
+                <idref bean="webApiParameterValidationService-parentBean"/>
                 <idref bean="apiAuthenticationService"/>
                 <idref bean="apiAuthenticationService-parentBean"/>
                 <idref bean="businessObjectService"/>

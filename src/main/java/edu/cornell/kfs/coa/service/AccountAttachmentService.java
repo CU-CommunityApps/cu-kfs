@@ -4,7 +4,7 @@ import org.kuali.kfs.krad.bo.Attachment;
 
 import edu.cornell.kfs.coa.rest.jsonObjects.AccountAttachmentListingDto;
 
-public interface AccountAttachmentControllerHelperService {
+public interface AccountAttachmentService {
 
     AccountAttachmentListingDto getAccountAttachmentListing(final String chartCode, final String accountNumber);
 

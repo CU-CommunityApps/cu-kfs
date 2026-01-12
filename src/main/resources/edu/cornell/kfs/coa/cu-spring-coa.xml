@@ -270,12 +270,12 @@
           parent="platformAwareDaoJdbc"
           class="edu.cornell.kfs.coa.batch.dataaccess.impl.CopyLegacyAccountAttachmentsDaoJdbc"/>
 
-    <bean id="accountAttachmentControllerHelperService" parent="accountAttachmentControllerHelperService-parentBean"/>
-    <bean id="accountAttachmentControllerHelperService-parentBean"
+    <bean id="accountAttachmentService" parent="accountAttachmentService-parentBean"/>
+    <bean id="accountAttachmentService-parentBean"
           abstract="true"
-          class="edu.cornell.kfs.coa.service.impl.AccountAttachmentControllerHelperServiceImpl"
+          class="edu.cornell.kfs.coa.service.impl.AccountAttachmentServiceImpl"
           p:accountService-ref="accountService"
-          p:webApiPropertyValidationService-ref="webApiPropertyValidationService"/>
+          p:webApiParameterValidationService-ref="webApiParameterValidationService"/>
 
     <bean id="accountAttachmentAuthFilter"
           parent="apiAuthenticationFilter-baseBean"

@@ -16,53 +16,53 @@ import org.kuali.kfs.krad.datadictionary.validation.CharacterLevelValidationPatt
 import org.kuali.kfs.krad.datadictionary.validation.ValidationPattern;
 import org.kuali.kfs.sys.KFSKeyConstants;
 
-import edu.cornell.kfs.sys.service.WebApiPropertyValidationService;
-import edu.cornell.kfs.sys.util.WebApiProperty;
+import edu.cornell.kfs.sys.service.WebApiParameterValidationService;
+import edu.cornell.kfs.sys.util.WebApiParameter;
 
 @SuppressWarnings("deprecation")
-public class WebApiPropertyValidationServiceImpl implements WebApiPropertyValidationService {
+public class WebApiParameterValidationServiceImpl implements WebApiParameterValidationService {
 
     private DataDictionaryService dataDictionaryService;
     private ConfigurationService configurationService;
 
     @Override
-    public List<String> validateProperties(final WebApiProperty... properties) {
-        Objects.requireNonNull(properties, "properties var-arg array cannot be null");
-        return validateProperties(List.of(properties));
+    public List<String> validateParameters(final WebApiParameter... parameters) {
+        Objects.requireNonNull(parameters, "parameters var-arg array cannot be null");
+        return validateParameters(List.of(parameters));
     }
 
     @Override
-    public List<String> validateProperties(final List<WebApiProperty> properties) {
-        Objects.requireNonNull(properties, "properties list cannot be null");
-        Validate.isTrue(!properties.isEmpty(), "properties list cannot be empty");
-        List<String> errors = properties.stream()
-                .flatMap(this::validatePropertyValue)
+    public List<String> validateParameters(final List<WebApiParameter> parameters) {
+        Objects.requireNonNull(parameters, "parameters list cannot be null");
+        Validate.isTrue(!parameters.isEmpty(), "parameters list cannot be empty");
+        List<String> errors = parameters.stream()
+                .flatMap(this::validateParameterValue)
                 .collect(Collectors.toUnmodifiableList());
         return errors;
     }
 
-    private Stream<String> validatePropertyValue(final WebApiProperty property) {
+    private Stream<String> validateParameterValue(final WebApiParameter parameter) {
         final Stream.Builder<String> errors = Stream.builder();
-        Objects.requireNonNull(property, "Unexpected null WebApiProperty instance detected");
+        Objects.requireNonNull(parameter, "Unexpected null WebApiParameter instance detected");
         final AttributeDefinition attribute = dataDictionaryService.getAttributeDefinition(
-                property.getBusinessObjectClass().getSimpleName(), property.getPropertyName());
+                parameter.getEntryName(), parameter.getAttributeName());
         Objects.requireNonNull(attribute,
-                "Unexpected null data dictionary attribute for " + property);
-        final String propertyValue = property.getValue();
+                "Unexpected null data dictionary attribute for " + parameter);
+        final String propertyValue = parameter.getValue();
 
         if (StringUtils.isBlank(propertyValue)) {
-            if (property.isRequired()) {
+            if (parameter.isRequired()) {
                 errors.add(createErrorMessage(KFSKeyConstants.ERROR_REQUIRED, attribute.getLabel()));
             }
             return errors.build();
         }
 
         final ValidationPattern validationPattern = attribute.getValidationPattern();
-        Objects.requireNonNull(validationPattern, "Unexpected null validation pattern for " + property);
+        Objects.requireNonNull(validationPattern, "Unexpected null validation pattern for " + parameter);
         final boolean patternEnforcesLength = doesValidationPatternEnforceLengthRequirements(validationPattern);
         final Integer maxLength = attribute.getMaxLength();
         Validate.validState(maxLength != null || patternEnforcesLength,
-                "No attribute-level or pattern-level length checks exist for " + property);
+                "No attribute-level or pattern-level length checks exist for " + parameter);
 
         if (!patternEnforcesLength && propertyValue.length() > attribute.getMaxLength()) {
             errors.add(createErrorMessage(KFSKeyConstants.ERROR_MAX_LENGTH,
