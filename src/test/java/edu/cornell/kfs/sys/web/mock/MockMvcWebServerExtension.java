@@ -305,8 +305,10 @@ public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTest
                     : ContentType.create(contentMimeType);
         }
 
-        ByteArrayEntity entity = new ByteArrayEntity(responseContent, contentType, false);
-        response.setEntity(entity);
+        if (responseContent.length > 0) {
+            ByteArrayEntity entity = new ByteArrayEntity(responseContent, contentType, false);
+            response.setEntity(entity);
+        }
     }
 
     private String getBareContentMimeTypeFromServletResponse(MockHttpServletResponse servletResponse) {
