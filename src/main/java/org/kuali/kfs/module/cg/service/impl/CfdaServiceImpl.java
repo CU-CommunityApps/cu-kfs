@@ -153,7 +153,7 @@ public class CfdaServiceImpl implements CfdaService {
                         new CFDA(record[1], trimProgramTitleName(record[0]),
                             CatalogOfFederalDomesticAssistanceMaintenanceTypeIdFinder.CFDA_MAINTENANCE_AUTOMATIC_TYPE_ID, true)
                     )
-                    .filter(cfda -> !NOT_APPLICABLE_CFDA_NBR_VALUE.equals(cfda.getCfdaNumber()))
+                    .filter(cfda -> !NOT_APPLICABLE_CFDA_NBR_VALUE.equalsIgnoreCase(cfda.getCfdaNumber()))
                     .collect(Collectors.toMap(CFDA::getCfdaNumber, value -> value));
             } catch (final CsvException | IOException e) {
                 throw new RuntimeException("The file could not be retrieved from " + govURL, e);
