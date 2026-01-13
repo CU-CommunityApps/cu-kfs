@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ErrorMessage;
+import org.kuali.kfs.krad.util.NoteType;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
@@ -510,15 +511,16 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
             if (CollectionUtils.isNotEmpty(preqDto.getNotes())) {
                 for (PaymentRequestNoteDto noteDto : preqDto.getNotes()) {
-                    if (org.apache.commons.lang3.ObjectUtils.equals(noteDto.getNoteType(), "ATTACH")) { //todo
-                        // add attachment
-                    } else {
-                        documentService.createNoteFromDocument(preqDoc, noteDto.getNoteText());
-                    }
+                    LOG.info(preqDoc.getNoteType().getCode());
+                    documentService.createNoteFromDocument(preqDoc, noteDto.getNoteText());
                 }
             }
 
+            // do we need this since items are created from populatePaymentRequestFromPurchaseOrder?
 //            preqDoc.setItems(createPreqItemsFromPreqDto(preqDto));
+
+            // do we need this method?
+//            preqDoc.setItems(createMiscPreqItemsFromPreqDto(preqDto));
 
             documentService.saveDocument(preqDoc);
 
