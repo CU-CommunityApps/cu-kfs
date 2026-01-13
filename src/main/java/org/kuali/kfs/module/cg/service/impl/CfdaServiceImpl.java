@@ -19,6 +19,7 @@
 package org.kuali.kfs.module.cg.service.impl;
 
 import com.opencsv.CSVParser;
+
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
@@ -47,7 +48,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-// CU customization to fix how getGovCodes method processes "Not Applicable" duplicate keys
+
+// CU customization to fix how getGovCodes method handles "Not Applicable" keys
 public class CfdaServiceImpl implements CfdaService {
     private static final String NOT_APPLICABLE_CFDA_NBR_VALUE = "Not Applicable";
     
@@ -126,7 +128,7 @@ public class CfdaServiceImpl implements CfdaService {
         return businessObjectService.findBySinglePrimaryKey(CFDA.class, cfdaNumber.trim());
     }
 
-    // CU customization to fix duplicate "Not Applicable" keys
+    // CU customization to fix handling of "Not Applicable" codes
     public Map<String, CFDA> getGovCodes() {
         final String govURL = parameterService.getParameterValueAsString(CfdaBatchStep.class, KFSConstants.SOURCE_URL_PARAMETER);
 
