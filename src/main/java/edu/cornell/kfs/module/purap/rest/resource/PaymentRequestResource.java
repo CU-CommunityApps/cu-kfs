@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.UserSession;
+import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.sys.KFSConstants;
@@ -73,7 +74,7 @@ public class PaymentRequestResource {
             String jsonBody = scanner.hasNext() ? scanner.next() : "";
             PaymentRequestDto paymentRequestDto = gson.fromJson(jsonBody, PaymentRequestDto.class);
 
-            String loggedInPrincipalName = "kfs"; // getApiAuthenticationService().getAuthenticateUser(servletRequest);
+            String loggedInPrincipalName = getApiAuthenticationService().getAuthenticateUser(servletRequest);
             LOG.info("createPaymentRequestDocument, logged in user: {} and the paymentRequestDto: {}", loggedInPrincipalName,
                     paymentRequestDto);
 
@@ -86,13 +87,13 @@ public class PaymentRequestResource {
                 try {
                     UserSession userSession = createUserSessionForAiPaymentRequestUser(loggedInPrincipalName);
 
-                    PaymentRequestDocument doc = GlobalVariables.doInNewGlobalVariables(userSession,
+                    Document doc = GlobalVariables.doInNewGlobalVariables(userSession,
                             () -> getCuPaymentRequestService().createPaymentRequestDocumentFromDto(paymentRequestDto));
 
                     LOG.info("createPaymentRequestDocument, PREQ Document #{} Created", doc.getDocumentNumber());
 
                     HashMap<String, Object> responseBody = new HashMap<>();
-                    responseBody.put("document", doc);
+                    responseBody.put("documentHeader", doc.getDocumentHeader());
                     responseBody.put("documentNumber", doc.getDocumentNumber());
                     return Response.ok(gson.toJson(results)).entity(responseBody).build();
 

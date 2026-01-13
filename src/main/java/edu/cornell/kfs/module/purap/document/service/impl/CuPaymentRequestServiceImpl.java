@@ -10,14 +10,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestDto;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestNoteDto;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.ErrorMessage;
-import org.kuali.kfs.krad.util.NoteType;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
@@ -32,7 +33,6 @@ import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.impl.PaymentRequestServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
-import org.kuali.kfs.vnd.businessobject.ShippingSpecialCondition;
 import org.kuali.kfs.vnd.businessobject.ShippingTitle;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
@@ -487,27 +487,16 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             preqDoc.setVendorNumber(preqDto.getVendorNumber());
             preqDoc.setInvoiceReceivedDate(Date.valueOf(preqDto.getReceivedDate()));
 
-            ShippingTitle shippingTitle = new ShippingTitle();
-            shippingTitle.setVendorShippingTitleCode(preqDto.getShippingPrice().toString());
-            shippingTitle.setVendorShippingTitleDescription(preqDto.getShippingDescription());
-
-            ShippingSpecialCondition shippingSpecialCondition = new ShippingSpecialCondition();
-            shippingSpecialCondition.setVendorShippingSpecialConditionDescription(preqDto.getShippingDescription());
-
-//            private List<PaymentRequestLineItemDto> items;
-//            private KualiDecimal freightPrice;
-//            private String freightDescription;
-//            private KualiDecimal miscellaneousPrice;
-//            private String miscellaneousDescription;
-//            private KualiDecimal shippingPrice;
-//            private String shippingDescription;
-
             preqDoc.setInvoiceNumber(preqDto.getInvoiceNumber());
             preqDoc.setInvoiceDate(java.sql.Date.valueOf(preqDto.getInvoiceDate()));
             preqDoc.setVendorInvoiceAmount(preqDto.getInvoiceAmount());
             preqDoc.setSpecialHandlingInstructionLine1Text(preqDto.getSpecialHandlingLine1());
             preqDoc.setSpecialHandlingInstructionLine2Text(preqDto.getSpecialHandlingLine2());
             preqDoc.setSpecialHandlingInstructionLine3Text(preqDto.getSpecialHandlingLine3());
+
+            ShippingTitle shippingTitle = new ShippingTitle();
+            shippingTitle.setVendorShippingTitleCode(preqDto.getShippingPrice().toString());
+            shippingTitle.setVendorShippingTitleDescription(preqDto.getShippingDescription());
 
             if (CollectionUtils.isNotEmpty(preqDto.getNotes())) {
                 for (PaymentRequestNoteDto noteDto : preqDto.getNotes()) {
@@ -519,12 +508,14 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             // do we need this since items are created from populatePaymentRequestFromPurchaseOrder?
 //            preqDoc.setItems(createPreqItemsFromPreqDto(preqDto));
 
-            // do we need this method?
-//            preqDoc.setItems(createMiscPreqItemsFromPreqDto(preqDto));
+            // do we need to add the misc items?
+            List<PaymentRequestItem> preqMiscItems = createMiscPreqItemsFromPreqDto(preqDto, preqDoc);
+            preqDoc.getItems().add(preqMiscItems);
 
             documentService.saveDocument(preqDoc);
+            Document routedPreqDoc = documentService.routeDocument(preqDoc, CUPurapConstants.Payflow.PAYFLOW_DOCUMENT_ANNOTATION, null);
 
-            return preqDoc;
+            return (PaymentRequestDocument) routedPreqDoc;
 
         } catch (Exception e) {
             LOG.error("Error creating PaymentRequestDocument from DTO", e);
@@ -556,9 +547,34 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 //            paymentRequestItem.setPurapDocument(preqDocument);
 //
 //        }
-
-//          populateMiscItems()
-
+//
 //     }
+
+    private List<PaymentRequestItem> createMiscPreqItemsFromPreqDto(PaymentRequestDto preqDto, PaymentRequestDocument preqDocument) {
+        List<PaymentRequestItem> paymentRequestItems = new ArrayList<>();
+
+        PaymentRequestItem shippingItem = new PaymentRequestItem();
+        if (ObjectUtils.isNotNull(preqDto.getShippingPrice())) {
+            shippingItem.setItemUnitPrice(preqDto.getShippingPrice().bigDecimalValue());
+            shippingItem.setItemDescription(preqDto.getShippingDescription());
+        }
+        paymentRequestItems.add(shippingItem);
+
+        PaymentRequestItem freightItem = new PaymentRequestItem();
+        if (ObjectUtils.isNotNull(preqDto.getFreightPrice())) {
+            freightItem.setItemUnitPrice(preqDto.getFreightPrice().bigDecimalValue());
+            freightItem.setItemDescription(preqDto.getFreightDescription());
+        }
+        paymentRequestItems.add(freightItem);
+
+        PaymentRequestItem miscItem = new PaymentRequestItem();
+        if (ObjectUtils.isNotNull(preqDto.getMiscellaneousPrice())) {
+            miscItem.setItemUnitPrice(preqDto.getMiscellaneousPrice().bigDecimalValue());
+            miscItem.setItemDescription(preqDto.getMiscellaneousDescription());
+        }
+        paymentRequestItems.add(miscItem);
+
+        return paymentRequestItems;
+     }
 
 }
