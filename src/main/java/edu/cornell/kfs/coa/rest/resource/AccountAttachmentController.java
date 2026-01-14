@@ -79,9 +79,11 @@ public class AccountAttachmentController {
                 Optional.of(attachment.getAttachmentFileSize()),
                 attachment.getAttachmentFileName());
 
+        MediaType contentType = determineAttachmentContentType(attachment);
+
         // Header setup derived from base financials BatchFileController.getBusinessObjectBatchFile() method.
         final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentType(contentType);
         headers.setExpires(0L);
         headers.setCacheControl("no-cache, no-store, must-revalidate");
         headers.setPragma("no-cache");
@@ -90,6 +92,17 @@ public class AccountAttachmentController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(attachmentResource);
+    }
+
+    private MediaType determineAttachmentContentType(final Attachment attachment) {
+        try {
+            return MediaType.valueOf(attachment.getAttachmentMimeTypeCode());
+        } catch (final RuntimeException e) {
+            LOG.error("determineAttachmentContentType, MIME type for attachment {} could not be mapped to "
+                    + "a MediaType instance; defaulting to {} so that download can still proceed",
+                    attachment.getAttachmentIdentifier(), MediaType.APPLICATION_OCTET_STREAM_VALUE, e);
+            return MediaType.APPLICATION_OCTET_STREAM;
+        }
     }
 
     private ContentDisposition createAttachmentContentDisposition(final Attachment attachment) {

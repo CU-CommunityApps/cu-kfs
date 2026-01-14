@@ -1,5 +1,6 @@
 package edu.cornell.kfs.coa.rest.resource;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -224,8 +225,7 @@ public class AccountAttachmentControllerTest {
         resourceLoader = new ClasspathOrFileResourceLoader();
         controller = new AccountAttachmentController(helperService, attachmentService);
 
-        webServerExtension.initializeStandaloneMockMvcWithControllersAndFilters(
-                new Object[] {controller}, new Filter[] {filter});
+        webServerExtension.initializeStandaloneMockMvc(new Object[] {controller}, new Filter[] {filter});
 
         testClient = webServerExtension.createWebTestClient();
     }
@@ -248,6 +248,7 @@ public class AccountAttachmentControllerTest {
     void testGetAccountAttachmentListing(final AccountAttachmentListingFixture listingFixture) throws Exception {
         final AccountAttachmentListingDto expectedResponseBody = AccountAttachmentListingFixture.Utils
                 .toAccountAttachmentListingDto(listingFixture);
+        final MediaType expectedContentType = new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8);
 
         testClient.get()
                 .uri(ATTACHMENT_LISTING_URL, listingFixture.chartOfAccountsCode(), listingFixture.accountNumber())
@@ -255,7 +256,7 @@ public class AccountAttachmentControllerTest {
                 .headers(this::setBasicAuthorizationHeaderWithValidCredentials)
                 .exchange()
                 .expectStatus().isOk()
-                .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+                .expectHeader().contentType(expectedContentType)
                 .expectBody(AccountAttachmentListingDto.class).isEqualTo(expectedResponseBody);
     }
 
@@ -334,6 +335,8 @@ public class AccountAttachmentControllerTest {
     void testGetAccountAttachmentContents(final String chartOfAccountsCode, final String accountNumber,
             final AccountAttachmentNoteFixture noteFixture) throws Exception {
         final byte[] expectedContents = AccountAttachmentNoteFixture.Utils.getAttachmentContents(noteFixture);
+        final MediaType attachmentMimeType = MediaType.valueOf(noteFixture.mimeType());
+        final MediaType expectedContentType = new MediaType(attachmentMimeType, StandardCharsets.UTF_8);
         final ContentDisposition expectedContentDispositionHeader = ContentDisposition.attachment()
                 .filename(noteFixture.fileName(), StandardCharsets.UTF_8)
                 .build();
@@ -344,9 +347,10 @@ public class AccountAttachmentControllerTest {
                 .headers(this::setBasicAuthorizationHeaderWithValidCredentials)
                 .exchange()
                 .expectStatus().isOk()
-                .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_OCTET_STREAM)
+                .expectHeader().contentType(expectedContentType)
                 .expectHeader().contentDisposition(expectedContentDispositionHeader)
-                .expectBody(byte[].class).isEqualTo(expectedContents);
+                .expectBody(byte[].class).value(actualContents ->
+                        assertArrayEquals(expectedContents, actualContents, "Wrong attachment contents returned"));
     }
 
     @ParameterizedTest

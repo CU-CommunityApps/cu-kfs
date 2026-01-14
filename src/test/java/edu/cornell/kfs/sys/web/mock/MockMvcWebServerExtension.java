@@ -67,8 +67,9 @@ import edu.cornell.kfs.sys.CUKFSConstants;
  * "@BeforeEach" method (for an instance-level extension) or its "@BeforeAll" method
  * (for a class-level extension). The simplest way to perform the initialization is by calling
  * the initializeStandaloneMockMvcWithControllers() method and passing in the MVC Controllers
- * that you want to use. Alternatively, you can use the setMockMvc() method if you need
- * finer control over the MockMvc instance's configuration.
+ * that you want to use. Alternatively, you can use either the setMockMvc() method or the
+ * initializeStandaloneMockMvc() method if you need finer control over the MockMvc
+ * instance's configuration.
  * 
  * To retrieve the HTTP server's URL, call the getServerUrl() method from within your test class's
  * "@BeforeEach"-annotated or "@BeforeAll"-annotated method(s). The returned URL will *not* contain
@@ -140,11 +141,10 @@ public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTest
     }
 
     public void initializeStandaloneMockMvcWithControllers(final Object... controllers) {
-        initializeStandaloneMockMvcWithControllersAndFilters(controllers, new Filter[0]);
+        initializeStandaloneMockMvc(controllers, new Filter[0]);
     }
 
-    public void initializeStandaloneMockMvcWithControllersAndFilters(final Object[] controllers,
-            final Filter[] filters) {
+    public void initializeStandaloneMockMvc(final Object[] controllers, final Filter[] filters) {
         if (staticExtension) {
             this.resettableControllers = Stream.of(controllers)
                     .filter(controller -> controller instanceof ResettableController)
