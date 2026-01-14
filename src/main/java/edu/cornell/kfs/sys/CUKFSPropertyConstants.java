@@ -120,6 +120,8 @@ public class CUKFSPropertyConstants {
     public static final String STATUS = "status";
     public static final String ERRORS = "errors";
 
+    public static final String ATTACHMENT_ID = "attachmentId";
+
     /*
      * The following constants are used by our code but were removed by the 2024-03-06 financials patch,
      * so we had to copy them here.

@@ -76,10 +76,10 @@ public class AccountAttachmentControllerTest {
     private static final String BAD_CREDENTIALS = "baduser1:badpass1";
     private static final String BASE_ATTACHMENT_LISTING_URL = "/coa/account-attachments/api/get-attachment-list";
     private static final String ATTACHMENT_LISTING_URL = BASE_ATTACHMENT_LISTING_URL
-            + "?chartCode={chartCode}&accountNumber={accountNumber}";
+            + "?chartOfAccountsCode={chartOfAccountsCode}&accountNumber={accountNumber}";
     private static final String BASE_ATTACHMENT_CONTENTS_URL = "/coa/account-attachments/api/get-attachment-contents";
     private static final String ATTACHMENT_CONTENTS_URL = BASE_ATTACHMENT_CONTENTS_URL
-            + "?chartCode={chartCode}&accountNumber={accountNumber}&attachmentId={attachmentId}";
+            + "?chartOfAccountsCode={chartOfAccountsCode}&accountNumber={accountNumber}&attachmentId={attachmentId}";
 
     @RegisterExtension
     static TestSpringContextExtension springContextExtension = TestSpringContextExtension.forClassPathSpringXmlFile(
@@ -411,13 +411,13 @@ public class AccountAttachmentControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {
         BASE_ATTACHMENT_LISTING_URL,
-        BASE_ATTACHMENT_LISTING_URL + "?chartCode=IT",
+        BASE_ATTACHMENT_LISTING_URL + "?chartOfAccountsCode=IT",
         BASE_ATTACHMENT_LISTING_URL + "?accountNumber=G123456",
         BASE_ATTACHMENT_LISTING_URL + "?otherParam=TESTING",
         BASE_ATTACHMENT_CONTENTS_URL,
-        BASE_ATTACHMENT_CONTENTS_URL + "?chartCode=IT&attachmentId=11111111-zzzz-2222-yyyy-3c3c3c3c3c3c",
+        BASE_ATTACHMENT_CONTENTS_URL + "?chartOfAccountsCode=IT&attachmentId=11111111-zzzz-2222-yyyy-3c3c3c3c3c3c",
         BASE_ATTACHMENT_CONTENTS_URL + "?accountNumber=G123456&attachmentId=11111111-zzzz-2222-yyyy-3c3c3c3c3c3c",
-        BASE_ATTACHMENT_CONTENTS_URL + "?chartCode=IT&accountNumber=G123456",
+        BASE_ATTACHMENT_CONTENTS_URL + "?chartOfAccountsCode=IT&accountNumber=G123456",
         BASE_ATTACHMENT_CONTENTS_URL + "?otherParam=TESTING"
     })
     void testCannotInvokeEndpointsWithMissingParameters(final String url) throws Exception {

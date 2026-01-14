@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.service.AttachmentService;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ContentDisposition;
@@ -28,6 +29,7 @@ import org.springframework.web.server.ResponseStatusException;
 import edu.cornell.kfs.coa.rest.jsonObjects.AccountAttachmentErrorResponseDto;
 import edu.cornell.kfs.coa.rest.jsonObjects.AccountAttachmentListingDto;
 import edu.cornell.kfs.coa.service.AccountAttachmentService;
+import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 import edu.cornell.kfs.sys.web.CuResponseStatusException;
 import edu.cornell.kfs.sys.web.LazyInputStreamResource;
 
@@ -53,25 +55,25 @@ public class AccountAttachmentController {
 
     @GetMapping(path = "get-attachment-list")
     public ResponseEntity<AccountAttachmentListingDto> getAttachmentMetadataForAccount(
-            @RequestParam("chartCode") final String chartCode,
-            @RequestParam("accountNumber") final String accountNumber
+            @RequestParam(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE) final String chartOfAccountsCode,
+            @RequestParam(KFSPropertyConstants.ACCOUNT_NUMBER) final String accountNumber
     ) {
-        LOG.debug("getAttachmentMetadataForAccount, Chart: <{}>, Account: <{}>", chartCode, accountNumber);
+        LOG.debug("getAttachmentMetadataForAccount, Chart: <{}>, Account: <{}>", chartOfAccountsCode, accountNumber);
         final AccountAttachmentListingDto attachmentListing = accountAttachmentService
-                .getAccountAttachmentListing(chartCode, accountNumber);
+                .getAccountAttachmentListing(chartOfAccountsCode, accountNumber);
         return ResponseEntity.ok(attachmentListing);
     }
 
     @GetMapping(path = "get-attachment-contents")
     public ResponseEntity<Resource> getAccountAttachment(
-            @RequestParam("chartCode") final String chartCode,
-            @RequestParam("accountNumber") final String accountNumber,
-            @RequestParam("attachmentId") final String attachmentId
+            @RequestParam(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE) final String chartOfAccountsCode,
+            @RequestParam(KFSPropertyConstants.ACCOUNT_NUMBER) final String accountNumber,
+            @RequestParam(CUKFSPropertyConstants.ATTACHMENT_ID) final String attachmentId
     ) {
         LOG.debug("getAccountAttachment, Chart: <{}>, Account: <{}>, Attachment ID: <{}>",
-                chartCode, accountNumber, attachmentId);
+                chartOfAccountsCode, accountNumber, attachmentId);
         final Attachment attachment = accountAttachmentService.getAccountAttachment(
-                chartCode, accountNumber, attachmentId);
+                chartOfAccountsCode, accountNumber, attachmentId);
         final Resource attachmentResource = new LazyInputStreamResource(
                 () -> attachmentService.retrieveAttachmentContents(attachment),
                 Optional.of(attachment.getAttachmentFileSize()),

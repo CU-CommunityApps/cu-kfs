@@ -29,17 +29,18 @@ public class AccountAttachmentServiceImpl implements AccountAttachmentService {
     private WebApiParameterValidationService webApiParameterValidationService;
 
     @Override
-    public AccountAttachmentListingDto getAccountAttachmentListing(final String chartCode, final String accountNumber) {
+    public AccountAttachmentListingDto getAccountAttachmentListing(
+            final String chartOfAccountsCode, final String accountNumber) {
         validateInputs(
-                WebApiParameter.required(Account.class, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartCode),
+                WebApiParameter.required(Account.class, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartOfAccountsCode),
                 WebApiParameter.required(Account.class, KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber));
 
-        final Account account = getExistingAccount(chartCode, accountNumber);
+        final Account account = getExistingAccount(chartOfAccountsCode, accountNumber);
         return createAccountAttachmentListing(account);
     }
 
-    private Account getExistingAccount(final String chartCode, final String accountNumber) {
-        final Account account = accountService.getByPrimaryId(chartCode, accountNumber);
+    private Account getExistingAccount(final String chartOfAccountsCode, final String accountNumber) {
+        final Account account = accountService.getByPrimaryId(chartOfAccountsCode, accountNumber);
         if (ObjectUtils.isNull(account)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
         }
@@ -81,14 +82,14 @@ public class AccountAttachmentServiceImpl implements AccountAttachmentService {
     }
 
     @Override
-    public Attachment getAccountAttachment(final String chartCode, final String accountNumber,
+    public Attachment getAccountAttachment(final String chartOfAccountsCode, final String accountNumber,
             final String attachmentId) {
         validateInputs(
-                WebApiParameter.required(Account.class, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartCode),
+                WebApiParameter.required(Account.class, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartOfAccountsCode),
                 WebApiParameter.required(Account.class, KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber),
                 WebApiParameter.required(Attachment.class, CUKRADPropertyConstants.ATTACHMENT_IDENTIFIER, attachmentId));
 
-        final Account account = getExistingAccount(chartCode, accountNumber);
+        final Account account = getExistingAccount(chartOfAccountsCode, accountNumber);
         final List<Note> accountNotes = account.getBoNotes();
         final Attachment matchingAttachment = accountNotes.stream()
                 .filter(this::noteHasAttachment)

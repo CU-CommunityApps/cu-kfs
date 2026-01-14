@@ -6,8 +6,10 @@ import edu.cornell.kfs.coa.rest.jsonObjects.AccountAttachmentListingDto;
 
 public interface AccountAttachmentService {
 
-    AccountAttachmentListingDto getAccountAttachmentListing(final String chartCode, final String accountNumber);
+    AccountAttachmentListingDto getAccountAttachmentListing(
+            final String chartOfAccountsCode, final String accountNumber);
 
-    Attachment getAccountAttachment(final String chartCode, final String accountNumber, final String attachmentId);
+    Attachment getAccountAttachment(
+            final String chartOfAccountsCode, final String accountNumber, final String attachmentId);
 
 }
