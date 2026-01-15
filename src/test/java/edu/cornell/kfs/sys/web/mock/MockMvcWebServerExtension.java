@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.servlet.Filter;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +43,7 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -64,12 +67,16 @@ import edu.cornell.kfs.sys.CUKFSConstants;
  * "@BeforeEach" method (for an instance-level extension) or its "@BeforeAll" method
  * (for a class-level extension). The simplest way to perform the initialization is by calling
  * the initializeStandaloneMockMvcWithControllers() method and passing in the MVC Controllers
- * that you want to use. Alternatively, you can use the setMockMvc() method if you need
- * finer control over the MockMvc instance's configuration.
+ * that you want to use. Alternatively, you can use either the setMockMvc() method or the
+ * initializeStandaloneMockMvc() method if you need finer control over the MockMvc
+ * instance's configuration.
  * 
  * To retrieve the HTTP server's URL, call the getServerUrl() method from within your test class's
  * "@BeforeEach"-annotated or "@BeforeAll"-annotated method(s). The returned URL will *not* contain
  * a trailing slash.
+ * 
+ * To create a WebTestClient instance that's bound to the local HTTP server, call the createWebTestClient()
+ * method from within your test class's "@BeforeEach"-annotated or "@BeforeAll"-annotated method(s).
  * 
  * If the extension is set up at the class level, the test server will be initialized prior to
  * running the class's test suite and will be shut down after running the suite. If the configured
@@ -127,7 +134,17 @@ public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTest
         return serverUrl;
     }
 
-    public void initializeStandaloneMockMvcWithControllers(Object... controllers) {
+    public WebTestClient createWebTestClient() {
+        return WebTestClient.bindToServer()
+                .baseUrl(getServerUrl())
+                .build();
+    }
+
+    public void initializeStandaloneMockMvcWithControllers(final Object... controllers) {
+        initializeStandaloneMockMvc(controllers, new Filter[0]);
+    }
+
+    public void initializeStandaloneMockMvc(final Object[] controllers, final Filter[] filters) {
         if (staticExtension) {
             this.resettableControllers = Stream.of(controllers)
                     .filter(controller -> controller instanceof ResettableController)
@@ -137,8 +154,10 @@ public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTest
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(controllers)
                 .defaultResponseCharacterEncoding(StandardCharsets.UTF_8)
+                .addFilters(filters)
                 .addInterceptors(new ForceUTF8TestResponseInterceptor())
                 .setMessageConverters(getDefaultMessageConverters())
+                .setAsyncRequestTimeout(15000L)
                 .build();
     }
 
@@ -273,24 +292,22 @@ public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTest
             MockHttpServletResponse servletResponse) {
         String contentMimeType = getBareContentMimeTypeFromServletResponse(servletResponse);
         String charset = servletResponse.getCharacterEncoding();
-        
+
         byte[] responseContent = servletResponse.getContentAsByteArray();
         if (responseContent == null) {
             responseContent = new byte[0];
         }
-        
+
         ContentType contentType = null;
         if (StringUtils.isNotBlank(contentMimeType)) {
             contentType = StringUtils.isNotBlank(charset)
                     ? ContentType.create(contentMimeType, charset)
                     : ContentType.create(contentMimeType);
         }
-        
-        if (contentType != null) {
+
+        if (responseContent.length > 0) {
             ByteArrayEntity entity = new ByteArrayEntity(responseContent, contentType, false);
             response.setEntity(entity);
-        } else if (responseContent.length > 0) {
-            throw new IllegalStateException("Response had non-empty content but had no Content-Type defined");
         }
     }
 
