@@ -50,6 +50,11 @@ import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
 import org.springframework.util.AutoPopulatingList;
 
+import static edu.cornell.kfs.module.purap.CUPurapConstants.Payflow.PAYFLOW;
+import static org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes.ITEM_TYPE_FREIGHT_CODE;
+import static org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes.ITEM_TYPE_MISC_CODE;
+import static org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes.ITEM_TYPE_SHIP_AND_HAND_CODE;
+
 public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl implements CuPaymentRequestService {
     private static final Logger LOG = LogManager.getLogger();
     
@@ -476,45 +481,9 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
                 throw new Exception("Purchase Order Document not found for PO #" + preqDto.getPoNumber());
             }
 
-            CuPaymentRequestDocument preqDoc = (CuPaymentRequestDocument) documentService.getNewDocument("PREQ");
-
-            preqDoc.getDocumentHeader().setDocumentDescription("Payflow auto Invoice # " + preqDto.getInvoiceNumber());
-            preqDoc.setInvoiceDate(Date.valueOf(preqDto.getInvoiceDate()));
-            preqDoc.setAccountsPayableProcessorIdentifier("Payflow");
-            preqDoc.setProcessingCampusCode(poDoc.getDeliveryCampusCode());
-
-            preqDoc.populatePaymentRequestFromPurchaseOrder(poDoc, new HashMap<>());
-
-            preqDoc.setVendorNumber(preqDto.getVendorNumber());
-            preqDoc.setInvoiceReceivedDate(Date.valueOf(preqDto.getReceivedDate()));
-
-            preqDoc.setInvoiceNumber(preqDto.getInvoiceNumber());
-            preqDoc.setInvoiceDate(java.sql.Date.valueOf(preqDto.getInvoiceDate()));
-            preqDoc.setVendorInvoiceAmount(preqDto.getInvoiceAmount());
-            preqDoc.setSpecialHandlingInstructionLine1Text(preqDto.getSpecialHandlingLine1());
-            preqDoc.setSpecialHandlingInstructionLine2Text(preqDto.getSpecialHandlingLine2());
-            preqDoc.setSpecialHandlingInstructionLine3Text(preqDto.getSpecialHandlingLine3());
-
-            ShippingTitle shippingTitle = new ShippingTitle();
-            shippingTitle.setVendorShippingTitleCode(preqDto.getShippingPrice().toString());
-            shippingTitle.setVendorShippingTitleDescription(preqDto.getShippingDescription());
-
-            if (CollectionUtils.isNotEmpty(preqDto.getNotes())) {
-                for (PaymentRequestNoteDto noteDto : preqDto.getNotes()) {
-                    LOG.info(preqDoc.getNoteType().getCode());
-                    documentService.createNoteFromDocument(preqDoc, noteDto.getNoteText());
-                }
-            }
-
-            // do we need this since items are created from populatePaymentRequestFromPurchaseOrder?
-//            preqDoc.setItems(createPreqItemsFromPreqDto(preqDto));
-
-            // do we need to add the misc items?
-            createMiscPreqItemsFromPreqDto(preqDto, preqDoc);
-
+            CuPaymentRequestDocument preqDoc = generateNewPaymentRequestDocument(poDoc, preqDto);
             documentService.saveDocument(preqDoc);
             Document routedPreqDoc = documentService.routeDocument(preqDoc, CUPurapConstants.Payflow.PAYFLOW_DOCUMENT_ANNOTATION, null);
-
             return (PaymentRequestDocument) routedPreqDoc;
 
         } catch (Exception e) {
@@ -531,6 +500,46 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
             throw new RuntimeException("Failed to create PREQ", e);
         }
+    }
+
+    private CuPaymentRequestDocument generateNewPaymentRequestDocument(PurchaseOrderDocument poDoc, PaymentRequestDto preqDto) {
+        CuPaymentRequestDocument preqDoc = (CuPaymentRequestDocument) documentService.getNewDocument("PREQ");
+
+        preqDoc.getDocumentHeader().setDocumentDescription("Payflow auto Invoice # " + preqDto.getInvoiceNumber());
+        preqDoc.setInvoiceDate(Date.valueOf(preqDto.getInvoiceDate()));
+        preqDoc.setAccountsPayableProcessorIdentifier(PAYFLOW);
+        preqDoc.setProcessingCampusCode(poDoc.getDeliveryCampusCode());
+
+        preqDoc.populatePaymentRequestFromPurchaseOrder(poDoc, new HashMap<>());
+
+        preqDoc.setVendorNumber(preqDto.getVendorNumber());
+        preqDoc.setInvoiceReceivedDate(Date.valueOf(preqDto.getReceivedDate()));
+
+        preqDoc.setInvoiceNumber(preqDto.getInvoiceNumber());
+        preqDoc.setInvoiceDate(java.sql.Date.valueOf(preqDto.getInvoiceDate()));
+        preqDoc.setVendorInvoiceAmount(preqDto.getInvoiceAmount());
+        preqDoc.setSpecialHandlingInstructionLine1Text(preqDto.getSpecialHandlingLine1());
+        preqDoc.setSpecialHandlingInstructionLine2Text(preqDto.getSpecialHandlingLine2());
+        preqDoc.setSpecialHandlingInstructionLine3Text(preqDto.getSpecialHandlingLine3());
+
+        ShippingTitle shippingTitle = new ShippingTitle();
+        shippingTitle.setVendorShippingTitleCode(preqDto.getShippingPrice().toString());
+        shippingTitle.setVendorShippingTitleDescription(preqDto.getShippingDescription());
+
+        if (CollectionUtils.isNotEmpty(preqDto.getNotes())) {
+            for (PaymentRequestNoteDto noteDto : preqDto.getNotes()) {
+                LOG.info(preqDoc.getNoteType().getCode());
+                documentService.createNoteFromDocument(preqDoc, noteDto.getNoteText());
+            }
+        }
+
+        // do we need this since items are created from populatePaymentRequestFromPurchaseOrder?
+//            preqDoc.setItems(createPreqItemsFromPreqDto(preqDto));
+
+        // do we need to add the misc items?
+        createMiscPreqItemsFromPreqDto(preqDto, preqDoc);
+
+        return preqDoc;
     }
 
 //    private List<PaymentRequestItem> createPreqItemsFromPreqDto(PaymentRequestDto preqDto, PaymentRequestDocument preqDocument) {
@@ -554,21 +563,21 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         List<PaymentRequestItem> paymentRequestMiscItems = new ArrayList<>();
 
         if (ObjectUtils.isNotNull(preqDto.getShippingPrice()) && preqDto.getShippingPrice().isGreaterThan(new KualiDecimal(0))) {
-            PaymentRequestItem shippingItem = getOrCreateMiscLine(preqDocument, "SPHD");
+            PaymentRequestItem shippingItem = getOrCreateMiscLine(preqDocument, ITEM_TYPE_SHIP_AND_HAND_CODE);
             shippingItem.setItemUnitPrice(preqDto.getShippingPrice().bigDecimalValue());
             shippingItem.setItemDescription(preqDto.getShippingDescription());
             paymentRequestMiscItems.add(shippingItem);
         }
 
         if (ObjectUtils.isNotNull(preqDto.getFreightPrice()) && preqDto.getFreightPrice().isGreaterThan(new KualiDecimal(0))) {
-            PaymentRequestItem freightItem = getOrCreateMiscLine(preqDocument, "FRHT");
+            PaymentRequestItem freightItem = getOrCreateMiscLine(preqDocument, ITEM_TYPE_FREIGHT_CODE);
             freightItem.setItemUnitPrice(preqDto.getFreightPrice().bigDecimalValue());
             freightItem.setItemDescription(preqDto.getFreightDescription());
             paymentRequestMiscItems.add(freightItem);
         }
 
         if (ObjectUtils.isNotNull(preqDto.getMiscellaneousPrice()) && preqDto.getMiscellaneousPrice().isGreaterThan(new KualiDecimal(0))) {
-            PaymentRequestItem miscItem = getOrCreateMiscLine(preqDocument, "MISC");
+            PaymentRequestItem miscItem = getOrCreateMiscLine(preqDocument, ITEM_TYPE_MISC_CODE);
             miscItem.setItemUnitPrice(preqDto.getMiscellaneousPrice().bigDecimalValue());
             miscItem.setItemDescription(preqDto.getMiscellaneousDescription());
             paymentRequestMiscItems.add(miscItem);
@@ -585,7 +594,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
                     return preqItem;
                 }
             } catch (Exception e) {
-                LOG.error("getMiscLine for itemTypeCode {} failed", itemTypeCode);
+                LOG.error("getOrCreateMiscLine for itemTypeCode {} failed", itemTypeCode);
             }
         }
 
