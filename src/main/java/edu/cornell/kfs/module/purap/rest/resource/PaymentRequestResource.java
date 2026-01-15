@@ -5,6 +5,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.google.gson.JsonObject;
 import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +15,7 @@ import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import com.google.gson.Gson;
@@ -87,14 +89,13 @@ public class PaymentRequestResource {
                 try {
                     UserSession userSession = createUserSessionForAiPaymentRequestUser(loggedInPrincipalName);
 
-                    Document doc = GlobalVariables.doInNewGlobalVariables(userSession,
+                    PaymentRequestDocument preqDoc = GlobalVariables.doInNewGlobalVariables(userSession,
                             () -> getCuPaymentRequestService().createPaymentRequestDocumentFromDto(paymentRequestDto));
 
-                    LOG.info("createPaymentRequestDocument, PREQ Document #{} Created", doc.getDocumentNumber());
+                    LOG.info("createPaymentRequestDocument, PREQ Document #{} Created", preqDoc.getDocumentNumber());
 
-                    HashMap<String, Object> responseBody = new HashMap<>();
-                    responseBody.put("documentHeader", doc.getDocumentHeader());
-                    responseBody.put("documentNumber", doc.getDocumentNumber());
+                    HashMap<String, Object> responseBody = buildResponseBody(preqDoc);
+
                     return Response.ok(gson.toJson(results)).entity(responseBody).build();
 
                 } catch (Exception e) {
@@ -110,6 +111,19 @@ public class PaymentRequestResource {
             LOG.error("createPaymentRequestDocument, an error occurred", e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(CUKFSConstants.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    private HashMap<String, Object> buildResponseBody(PaymentRequestDocument preqDoc) {
+        HashMap<String, Object> responseBody = new HashMap<>();
+        responseBody.put("documentNumber", preqDoc.getDocumentNumber());
+        responseBody.put("workflowDocumentStatusCode", preqDoc.getDocumentHeader().getWorkflowDocumentStatusCode());
+        responseBody.put("financialDocumentStatusCode", preqDoc.getDocumentHeader().getFinancialDocumentStatusCode());
+        responseBody.put("documentDescription", preqDoc.getDocumentHeader().getDocumentDescription());
+        responseBody.put("explanation", preqDoc.getDocumentHeader().getExplanation());
+        responseBody.put("paymentMethodCode", preqDoc.getPaymentMethodCode());
+        responseBody.put("financialDocumentTotalAmount", preqDoc.getDocumentHeader().getFinancialDocumentTotalAmount());
+        responseBody.put("documentTitle", preqDoc.getDocumentTitle());
+        return responseBody;
     }
 
     private UserSession createUserSessionForAiPaymentRequestUser(String loggedInPrincipalName) throws Exception {

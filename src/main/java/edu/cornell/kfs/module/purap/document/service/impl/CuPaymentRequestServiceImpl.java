@@ -481,6 +481,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             preqDoc.getDocumentHeader().setDocumentDescription("Payflow auto Invoice # " + preqDto.getInvoiceNumber());
             preqDoc.setInvoiceDate(Date.valueOf(preqDto.getInvoiceDate()));
             preqDoc.setAccountsPayableProcessorIdentifier("Payflow");
+            preqDoc.setProcessingCampusCode(poDoc.getDeliveryCampusCode());
 
             preqDoc.populatePaymentRequestFromPurchaseOrder(poDoc, new HashMap<>());
 
@@ -509,8 +510,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 //            preqDoc.setItems(createPreqItemsFromPreqDto(preqDto));
 
             // do we need to add the misc items?
-            List<PaymentRequestItem> preqMiscItems = createMiscPreqItemsFromPreqDto(preqDto, preqDoc);
-            preqDoc.getItems().add(preqMiscItems);
+            createMiscPreqItemsFromPreqDto(preqDto, preqDoc);
 
             documentService.saveDocument(preqDoc);
             Document routedPreqDoc = documentService.routeDocument(preqDoc, CUPurapConstants.Payflow.PAYFLOW_DOCUMENT_ANNOTATION, null);
@@ -551,30 +551,49 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 //     }
 
     private List<PaymentRequestItem> createMiscPreqItemsFromPreqDto(PaymentRequestDto preqDto, PaymentRequestDocument preqDocument) {
-        List<PaymentRequestItem> paymentRequestItems = new ArrayList<>();
+        List<PaymentRequestItem> paymentRequestMiscItems = new ArrayList<>();
 
-        PaymentRequestItem shippingItem = new PaymentRequestItem();
-        if (ObjectUtils.isNotNull(preqDto.getShippingPrice())) {
+        if (ObjectUtils.isNotNull(preqDto.getShippingPrice()) && preqDto.getShippingPrice().isGreaterThan(new KualiDecimal(0))) {
+            PaymentRequestItem shippingItem = getOrCreateMiscLine(preqDocument, "SPHD");
             shippingItem.setItemUnitPrice(preqDto.getShippingPrice().bigDecimalValue());
             shippingItem.setItemDescription(preqDto.getShippingDescription());
+            paymentRequestMiscItems.add(shippingItem);
         }
-        paymentRequestItems.add(shippingItem);
 
-        PaymentRequestItem freightItem = new PaymentRequestItem();
-        if (ObjectUtils.isNotNull(preqDto.getFreightPrice())) {
+        if (ObjectUtils.isNotNull(preqDto.getFreightPrice()) && preqDto.getFreightPrice().isGreaterThan(new KualiDecimal(0))) {
+            PaymentRequestItem freightItem = getOrCreateMiscLine(preqDocument, "FRHT");
             freightItem.setItemUnitPrice(preqDto.getFreightPrice().bigDecimalValue());
             freightItem.setItemDescription(preqDto.getFreightDescription());
+            paymentRequestMiscItems.add(freightItem);
         }
-        paymentRequestItems.add(freightItem);
 
-        PaymentRequestItem miscItem = new PaymentRequestItem();
-        if (ObjectUtils.isNotNull(preqDto.getMiscellaneousPrice())) {
+        if (ObjectUtils.isNotNull(preqDto.getMiscellaneousPrice()) && preqDto.getMiscellaneousPrice().isGreaterThan(new KualiDecimal(0))) {
+            PaymentRequestItem miscItem = getOrCreateMiscLine(preqDocument, "MISC");
             miscItem.setItemUnitPrice(preqDto.getMiscellaneousPrice().bigDecimalValue());
             miscItem.setItemDescription(preqDto.getMiscellaneousDescription());
+            paymentRequestMiscItems.add(miscItem);
         }
-        paymentRequestItems.add(miscItem);
 
-        return paymentRequestItems;
+        return paymentRequestMiscItems;
+     }
+
+     private PaymentRequestItem getOrCreateMiscLine(PaymentRequestDocument preqDoc, String itemTypeCode) {
+        for (Object item : preqDoc.getItems()) {
+            try {
+                PaymentRequestItem preqItem = (PaymentRequestItem) item;
+                if (StringUtils.equals(preqItem.getItemTypeCode(), itemTypeCode)) {
+                    return preqItem;
+                }
+            } catch (Exception e) {
+                LOG.error("getMiscLine for itemTypeCode {} failed", itemTypeCode);
+            }
+        }
+
+        PaymentRequestItem paymentRequestItem = new PaymentRequestItem();
+        paymentRequestItem.setItemTypeCode(itemTypeCode);
+        preqDoc.addItem(paymentRequestItem);
+
+        return paymentRequestItem;
      }
 
 }
