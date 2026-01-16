@@ -147,6 +147,7 @@ public class ActionListFilterAction extends KualiAction {
                 actionListSrv.findUserPrimaryDelegations(getUserSession().getPrincipalId())));
         if (!filterForm.getMethodToCall().equalsIgnoreCase("clear")) {
             filterForm.validateDates();
+            filterForm.validateDocType();
         }
         if (StringUtils.isNotBlank(filterForm.getBackLocation())) {
             final String actionListUrl = SpringContext.getBean(ConfigurationService.class)

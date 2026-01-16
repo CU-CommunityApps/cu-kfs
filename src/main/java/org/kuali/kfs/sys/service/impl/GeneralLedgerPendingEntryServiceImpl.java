@@ -34,8 +34,6 @@ import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.coa.service.ObjectTypeService;
 import org.kuali.kfs.coa.service.OffsetDefinitionService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
-import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
@@ -61,6 +59,7 @@ import org.kuali.kfs.sys.businessobject.UniversityDate;
 import org.kuali.kfs.sys.dataaccess.GeneralLedgerPendingEntryDao;
 import org.kuali.kfs.sys.document.GeneralLedgerPendingEntrySource;
 import org.kuali.kfs.sys.document.GeneralLedgerPostingDocument;
+import org.kuali.kfs.sys.document.service.FinancialSystemDocumentTypeService;
 import org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseConstants;
 import org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseConstants.GENERAL_LEDGER_PENDING_ENTRY_CODE;
 import org.kuali.kfs.sys.service.FlexibleOffsetAccountService;
@@ -88,26 +87,26 @@ public class GeneralLedgerPendingEntryServiceImpl implements GeneralLedgerPendin
 
     private static final Logger LOG = LogManager.getLogger();
 
-    protected GeneralLedgerPendingEntryDao generalLedgerPendingEntryDao;
-    protected KualiRuleService kualiRuleService;
-    protected ChartService chartService;
-    protected OptionsService optionsService;
-    protected ParameterService parameterService;
-    protected BalanceTypeService balanceTypeService;
-    protected DateTimeService dateTimeService;
-    protected DataDictionaryService dataDictionaryService;
-    protected PersistenceStructureService persistenceStructureService;
-    protected UniversityDateService universityDateService;
     protected AccountService accountService;
-    protected SufficientFundsService sufficientFundsService;
-    protected FlexibleOffsetAccountService flexibleOffsetAccountService;
-    protected OffsetDefinitionService offsetDefinitionService;
-    protected ObjectTypeService objectTypeService;
+    protected BalanceTypeService balanceTypeService;
     private BusinessObjectService businessObjectService;
+    protected ChartService chartService;
+    protected DataDictionaryService dataDictionaryService;
+    protected DateTimeService dateTimeService;
+    private FinancialSystemDocumentTypeService financialSystemDocumentTypeService;
+    protected FlexibleOffsetAccountService flexibleOffsetAccountService;
+    protected GeneralLedgerPendingEntryDao generalLedgerPendingEntryDao;
     // access relaxed for Cornell
     protected HomeOriginationService homeOriginationService;
+    protected KualiRuleService kualiRuleService;
     private ObjectCodeService objectCodeService;
-    private ParameterEvaluatorService parameterEvaluatorService;
+    protected ObjectTypeService objectTypeService;
+    protected OffsetDefinitionService offsetDefinitionService;
+    protected OptionsService optionsService;
+    protected ParameterService parameterService;
+    protected PersistenceStructureService persistenceStructureService;
+    protected SufficientFundsService sufficientFundsService;
+    protected UniversityDateService universityDateService;
 
     @Override
     public KualiDecimal getExpenseSummary(
@@ -391,12 +390,7 @@ public class GeneralLedgerPendingEntryServiceImpl implements GeneralLedgerPendin
 
     private boolean isFiscalPeriodEnabledForThisDoc(final GeneralLedgerPendingEntrySource glpeSource) {
         final String docType = glpeSource.getDocumentHeader().getWorkflowDocument().getDocumentTypeName();
-        final ParameterEvaluator evaluator = parameterEvaluatorService.getParameterEvaluator(
-                KFSConstants.CoreModuleNamespaces.KFS,
-                KfsParameterConstants.YEAR_END_ACCOUNTING_PERIOD_PARAMETER_NAMES.DETAIL_PARAMETER_TYPE,
-                KfsParameterConstants.YEAR_END_ACCOUNTING_PERIOD_PARAMETER_NAMES.FISCAL_PERIOD_DOCUMENT_TYPES,
-                docType);
-        return evaluator.evaluationSucceeds();
+        return financialSystemDocumentTypeService.isFiscalPeriodEntryEnabledForDocumentType(docType);
     }
 
     // CU customization: change method access from private to protected
@@ -956,50 +950,6 @@ public class GeneralLedgerPendingEntryServiceImpl implements GeneralLedgerPendin
         }
     }
 
-    public void setBalanceTypeService(final BalanceTypeService balanceTypeService) {
-        this.balanceTypeService = balanceTypeService;
-    }
-
-    public void setChartService(final ChartService chartService) {
-        this.chartService = chartService;
-    }
-
-    public void setGeneralLedgerPendingEntryDao(final GeneralLedgerPendingEntryDao generalLedgerPendingEntryDao) {
-        this.generalLedgerPendingEntryDao = generalLedgerPendingEntryDao;
-    }
-
-    public void setParameterService(final ParameterService parameterService) {
-        this.parameterService = parameterService;
-    }
-
-    public void setKualiRuleService(final KualiRuleService kualiRuleService) {
-        this.kualiRuleService = kualiRuleService;
-    }
-
-    public void setOptionsService(final OptionsService optionsService) {
-        this.optionsService = optionsService;
-    }
-
-    public void setDateTimeService(final DateTimeService dateTimeService) {
-        this.dateTimeService = dateTimeService;
-    }
-
-    public void setDataDictionaryService(final DataDictionaryService dataDictionaryService) {
-        this.dataDictionaryService = dataDictionaryService;
-    }
-
-    public PersistenceStructureService getPersistenceStructureService() {
-        return persistenceStructureService;
-    }
-
-    public void setPersistenceStructureService(final PersistenceStructureService persistenceStructureService) {
-        this.persistenceStructureService = persistenceStructureService;
-    }
-
-    public void setUniversityDateService(final UniversityDateService universityDateService) {
-        this.universityDateService = universityDateService;
-    }
-
     public AccountService getAccountService() {
         return accountService;
     }
@@ -1008,12 +958,32 @@ public class GeneralLedgerPendingEntryServiceImpl implements GeneralLedgerPendin
         this.accountService = accountService;
     }
 
-    public SufficientFundsService getSufficientFundsService() {
-        return sufficientFundsService;
+    public void setBalanceTypeService(final BalanceTypeService balanceTypeService) {
+        this.balanceTypeService = balanceTypeService;
     }
 
-    public void setSufficientFundsService(final SufficientFundsService sufficientFundsService) {
-        this.sufficientFundsService = sufficientFundsService;
+    public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
+    }
+
+    public void setChartService(final ChartService chartService) {
+        this.chartService = chartService;
+    }
+
+    public void setDataDictionaryService(final DataDictionaryService dataDictionaryService) {
+        this.dataDictionaryService = dataDictionaryService;
+    }
+
+    public void setDateTimeService(final DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
+    }
+
+    public void setGeneralLedgerPendingEntryDao(final GeneralLedgerPendingEntryDao generalLedgerPendingEntryDao) {
+        this.generalLedgerPendingEntryDao = generalLedgerPendingEntryDao;
+    }
+
+    public void setFinancialSystemDocumentTypeService(final FinancialSystemDocumentTypeService financialSystemDocumentTypeService) {
+        this.financialSystemDocumentTypeService = financialSystemDocumentTypeService;
     }
 
     public FlexibleOffsetAccountService getFlexibleOffsetAccountService() {
@@ -1024,12 +994,16 @@ public class GeneralLedgerPendingEntryServiceImpl implements GeneralLedgerPendin
         this.flexibleOffsetAccountService = flexibleOffsetAccountService;
     }
 
-    public OffsetDefinitionService getOffsetDefinitionService() {
-        return offsetDefinitionService;
+    public void setHomeOriginationService(final HomeOriginationService homeOriginationService) {
+        this.homeOriginationService = homeOriginationService;
     }
 
-    public void setOffsetDefinitionService(final OffsetDefinitionService offsetDefinitionService) {
-        this.offsetDefinitionService = offsetDefinitionService;
+    public void setKualiRuleService(final KualiRuleService kualiRuleService) {
+        this.kualiRuleService = kualiRuleService;
+    }
+
+    public void setObjectCodeService(final ObjectCodeService objectCodeService) {
+        this.objectCodeService = objectCodeService;
     }
 
     public ObjectTypeService getObjectTypeService() {
@@ -1040,20 +1014,39 @@ public class GeneralLedgerPendingEntryServiceImpl implements GeneralLedgerPendin
         this.objectTypeService = objectTypeService;
     }
 
-    public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
-        this.businessObjectService = businessObjectService;
+    public OffsetDefinitionService getOffsetDefinitionService() {
+        return offsetDefinitionService;
     }
 
-    public void setHomeOriginationService(final HomeOriginationService homeOriginationService) {
-        this.homeOriginationService = homeOriginationService;
+    public void setOffsetDefinitionService(final OffsetDefinitionService offsetDefinitionService) {
+        this.offsetDefinitionService = offsetDefinitionService;
     }
 
-    public void setObjectCodeService(final ObjectCodeService objectCodeService) {
-        this.objectCodeService = objectCodeService;
+    public void setOptionsService(final OptionsService optionsService) {
+        this.optionsService = optionsService;
     }
 
-    public void setParameterEvaluatorService(
-            final ParameterEvaluatorService parameterEvaluatorService) {
-        this.parameterEvaluatorService = parameterEvaluatorService;
+    public void setParameterService(final ParameterService parameterService) {
+        this.parameterService = parameterService;
+    }
+
+    public PersistenceStructureService getPersistenceStructureService() {
+        return persistenceStructureService;
+    }
+
+    public void setPersistenceStructureService(final PersistenceStructureService persistenceStructureService) {
+        this.persistenceStructureService = persistenceStructureService;
+    }
+
+    public SufficientFundsService getSufficientFundsService() {
+        return sufficientFundsService;
+    }
+
+    public void setSufficientFundsService(final SufficientFundsService sufficientFundsService) {
+        this.sufficientFundsService = sufficientFundsService;
+    }
+
+    public void setUniversityDateService(final UniversityDateService universityDateService) {
+        this.universityDateService = universityDateService;
     }
 }

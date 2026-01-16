@@ -18,14 +18,21 @@
  */
 package org.kuali.kfs.kew.actionlist.web;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kew.actionlist.ActionListFilter;
+import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.kns.web.struts.form.KualiForm;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ====
@@ -41,6 +48,7 @@ public class ActionListFilterForm extends KualiForm {
     private static final long serialVersionUID = -1149636352016711445L;
     private static final String CREATE_DATE_FROM = "createDateFrom";
     private static final String CREATE_DATE_TO = "createDateTo";
+    private static final String DOC_TYPE_FULL_NAME = "docTypeFullName";
     private static final String LAST_ASSIGNED_DATE_FROM = "lastAssignedDateFrom";
     private static final String LAST_ASSIGNED_DATE_TO = "lastAssignedDateTo";
     private ActionListFilter filter;
@@ -60,6 +68,8 @@ public class ActionListFilterForm extends KualiForm {
     private static String LAST_MODIFIED_DATE_TO = "lastModifiedDateTo";
     private String lastModifiedDateTo;
     private String lastModifiedDateFrom;
+
+    private transient BusinessObjectService businessObjectService;
 
     public ActionListFilterForm() {
         filter = new ActionListFilter();
@@ -84,7 +94,7 @@ public class ActionListFilterForm extends KualiForm {
             this.createDateTo = createDateTo.trim();
         }
     }
-    
+
     public String getLastAssignedDateFrom() {
         return lastAssignedDateFrom;
     }
@@ -117,7 +127,7 @@ public class ActionListFilterForm extends KualiForm {
         if (createDate == null) {
             createDate = "";
         } else {
-            this.createDateFrom = createDate.trim();
+            createDateFrom = createDate.trim();
         }
     }
 
@@ -165,7 +175,7 @@ public class ActionListFilterForm extends KualiForm {
         if (lastAssignedDate == null) {
             lastAssignedDate = "";
         } else {
-            this.lastAssignedDateTo = lastAssignedDate.trim();
+            lastAssignedDateTo = lastAssignedDate.trim();
         }
     }
     
@@ -228,6 +238,19 @@ public class ActionListFilterForm extends KualiForm {
             } catch (final ParseException e1) {
                 GlobalVariables.getMessageMap()
                         .putError(LAST_MODIFIED_DATE_TO, "general.error.fieldinvalid", "Date Last Modified To");
+            }
+        }
+    }
+    
+    void validateDocType() {
+        if (StringUtils.isNotBlank(docTypeFullName)) {
+            final Collection<DocumentType> documentTypes = getBusinessObjectService().findMatching(
+                    DocumentType.class,
+                    Map.of(KRADPropertyConstants.NAME, docTypeFullName)
+            );
+            if (CollectionUtils.isEmpty(documentTypes)) {
+                GlobalVariables.getMessageMap()
+                        .putError(DOC_TYPE_FULL_NAME, "general.error.fieldinvalid", "Document Type");
             }
         }
     }
@@ -300,6 +323,13 @@ public class ActionListFilterForm extends KualiForm {
 
     public void setCssFile(final String cssFile) {
         this.cssFile = cssFile;
+    }
+
+    private BusinessObjectService getBusinessObjectService() {
+        if (businessObjectService == null) {
+            businessObjectService = SpringContext.getBean(BusinessObjectService.class);
+        }
+        return businessObjectService;
     }
 
 }
