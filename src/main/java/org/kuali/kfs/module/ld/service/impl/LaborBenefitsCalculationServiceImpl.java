@@ -50,6 +50,7 @@ import java.util.Map;
 /**
  * To provide its clients with access to the benefit calculation.
  */
+// CU customization: backport FINP-12883
 @Transactional
 public class LaborBenefitsCalculationServiceImpl implements LaborBenefitsCalculationService {
 

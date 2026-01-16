@@ -54,6 +54,7 @@ import java.util.Set;
 /**
  * This class is used to help generating pending entries for the given labor documents
  */
+// CU customization: backport FINP-12883
 public class LaborPendingEntryGeneratorServiceImpl implements LaborPendingEntryGeneratorService {
 
     private final LaborPendingEntryConverterService laborPendingEntryConverterService;

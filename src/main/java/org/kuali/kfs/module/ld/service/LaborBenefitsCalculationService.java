@@ -28,6 +28,7 @@ import org.kuali.kfs.module.ld.businessobject.PositionObjectBenefit;
  *
  * @see org.kuali.kfs.module.ld.businessobject.BenefitsCalculation
  */
+// CU customization: backport FINP-12883
 public interface LaborBenefitsCalculationService {
     
     public BenefitsCalculation getBenefitsCalculation(final PositionObjectBenefit positionObjectBenefit);
