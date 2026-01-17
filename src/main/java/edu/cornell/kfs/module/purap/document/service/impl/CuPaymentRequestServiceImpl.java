@@ -10,10 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestDto;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestNoteDto;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,6 +50,7 @@ import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
 import org.springframework.util.AutoPopulatingList;
 
 import static edu.cornell.kfs.module.purap.CUPurapConstants.Payflow.PAYFLOW;
+import static edu.cornell.kfs.pdp.CUPdpConstants.PdpDocumentTypes.PAYMENT_REQUEST;
 import static org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes.ITEM_TYPE_FREIGHT_CODE;
 import static org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes.ITEM_TYPE_MISC_CODE;
 import static org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes.ITEM_TYPE_SHIP_AND_HAND_CODE;
@@ -482,9 +482,8 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             }
 
             CuPaymentRequestDocument preqDoc = generateNewPaymentRequestDocument(poDoc, preqDto);
-            documentService.saveDocument(preqDoc);
-            Document routedPreqDoc = documentService.routeDocument(preqDoc, CUPurapConstants.Payflow.PAYFLOW_DOCUMENT_ANNOTATION, null);
-            return (PaymentRequestDocument) routedPreqDoc;
+            Document savedPreqDoc = documentService.saveDocument(preqDoc);
+            return (PaymentRequestDocument) savedPreqDoc;
 
         } catch (Exception e) {
             LOG.error("Error creating PaymentRequestDocument from DTO", e);
@@ -498,46 +497,48 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
                 }
             }
 
-            throw new RuntimeException("Failed to create PREQ", e);
+            throw new RuntimeException("createPaymentRequestDocumentFromDto, Failed to create PREQ", e);
         }
     }
 
     private CuPaymentRequestDocument generateNewPaymentRequestDocument(PurchaseOrderDocument poDoc, PaymentRequestDto preqDto) {
-        CuPaymentRequestDocument preqDoc = (CuPaymentRequestDocument) documentService.getNewDocument("PREQ");
+        CuPaymentRequestDocument preqDoc = (CuPaymentRequestDocument) documentService.getNewDocument(PAYMENT_REQUEST);
 
-        preqDoc.getDocumentHeader().setDocumentDescription("Payflow auto Invoice # " + preqDto.getInvoiceNumber());
-        preqDoc.setInvoiceDate(Date.valueOf(preqDto.getInvoiceDate()));
-        preqDoc.setAccountsPayableProcessorIdentifier(PAYFLOW);
-        preqDoc.setProcessingCampusCode(poDoc.getDeliveryCampusCode());
+        preqDoc.setAccountsPayablePurchasingDocumentLinkIdentifier(poDoc.getAccountsPayablePurchasingDocumentLinkIdentifier());
 
-        preqDoc.populatePaymentRequestFromPurchaseOrder(poDoc, new HashMap<>());
+        populateAndSavePaymentRequest(preqDoc); // This does not seem to populate items, other fields?
 
-        preqDoc.setVendorNumber(preqDto.getVendorNumber());
-        preqDoc.setInvoiceReceivedDate(Date.valueOf(preqDto.getReceivedDate()));
-
+        // These fields are required for the next method to work
+        preqDoc.setPurchaseOrderDocument(poDoc);
         preqDoc.setInvoiceNumber(preqDto.getInvoiceNumber());
         preqDoc.setInvoiceDate(java.sql.Date.valueOf(preqDto.getInvoiceDate()));
+        preqDoc.setVendorInvoiceAmount(preqDto.getInvoiceAmount());
+
+        // populatePaymentRequest is called when continue is clicked (prepareForSave && event instanceof AttributedContinuePurapEvent))
+        populatePaymentRequest(preqDoc); //this populates vendor info, items, and many other fields
+
+        preqDoc.setAccountsPayableProcessorIdentifier(PAYFLOW);
+        preqDoc.setProcessingCampusCode(poDoc.getDeliveryCampusCode());
+        preqDoc.setInvoiceReceivedDate(Date.valueOf(preqDto.getReceivedDate()));
+
         preqDoc.setVendorInvoiceAmount(preqDto.getInvoiceAmount());
         preqDoc.setSpecialHandlingInstructionLine1Text(preqDto.getSpecialHandlingLine1());
         preqDoc.setSpecialHandlingInstructionLine2Text(preqDto.getSpecialHandlingLine2());
         preqDoc.setSpecialHandlingInstructionLine3Text(preqDto.getSpecialHandlingLine3());
 
-        ShippingTitle shippingTitle = new ShippingTitle();
-        shippingTitle.setVendorShippingTitleCode(preqDto.getShippingPrice().toString());
-        shippingTitle.setVendorShippingTitleDescription(preqDto.getShippingDescription());
-
         if (CollectionUtils.isNotEmpty(preqDto.getNotes())) {
             for (PaymentRequestNoteDto noteDto : preqDto.getNotes()) {
-                LOG.info(preqDoc.getNoteType().getCode());
                 documentService.createNoteFromDocument(preqDoc, noteDto.getNoteText());
             }
         }
+//
+//        // do we need this since items are created from populatePaymentRequestFromPurchaseOrder?
+////            preqDoc.setItems(createPreqItemsFromPreqDto(preqDto));
 
-        // do we need this since items are created from populatePaymentRequestFromPurchaseOrder?
-//            preqDoc.setItems(createPreqItemsFromPreqDto(preqDto));
-
-        // do we need to add the misc items?
-        createMiscPreqItemsFromPreqDto(preqDto, preqDoc);
+        // populate items
+//
+//        // do we need to add the misc items?
+//        createMiscPreqItemsFromPreqDto(preqDto, preqDoc);
 
         return preqDoc;
     }

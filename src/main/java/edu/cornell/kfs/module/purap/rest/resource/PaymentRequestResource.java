@@ -5,17 +5,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import com.google.gson.JsonObject;
 import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.UserSession;
-import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import com.google.gson.Gson;
@@ -100,7 +97,7 @@ public class PaymentRequestResource {
 
                 } catch (Exception e) {
                     LOG.error("createPaymentRequestDocument, Unexpected error occurred while creating PREQ Document", e);
-                    return Response.status(500).build();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).build();
                 }
             } else {
                 LOG.info("createPaymentRequestDocument, there were validation errors, return false {}", results);
