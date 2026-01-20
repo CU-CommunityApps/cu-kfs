@@ -25,6 +25,7 @@ import edu.cornell.kfs.module.ar.CuArPropertyConstants;
 import edu.cornell.kfs.module.ar.service.CuContractsGrantsBillingUtilityService;
 import edu.cornell.kfs.module.ar.service.CuContractsGrantsInvoiceCreateDocumentService;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 /* CUMod: KFSPTS-33340
  * Customized class created to have the data in the generated Federal Financial Reports
@@ -257,42 +258,6 @@ public class CuContractsGrantsInvoiceReportServiceImpl extends ContractsGrantsIn
                 ArPropertyConstants.FederalFormReportFields.FEDERAL_SHARE_OF_UNLIQUIDATED_OBLIGATION,
                 contractsGrantsBillingUtilityService.formatForCurrency(KualiDecimal.ZERO, false)
         );
-        
-        // Cornell customization
-        contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
-                CuArPropertyConstants.CuFederalFormReportFields.AWARD_COST_SHARE_AMT,
-                contractsGrantsBillingUtilityService.formatForCurrency(KualiDecimal.ZERO, false)
-        );
-        // Cornell customization
-        contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
-                CuArPropertyConstants.CuFederalFormReportFields.CINV_COST_SHARE_AMT,
-                contractsGrantsBillingUtilityService.formatForCurrency(KualiDecimal.ZERO, false)
-        );
-        // Cornell customization
-        contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
-                CuArPropertyConstants.CuFederalFormReportFields.REMAINING_COST_SHARE_AMT,
-                contractsGrantsBillingUtilityService.formatForCurrency(KualiDecimal.ZERO, false)
-        );
-        //Cornell customization
-        contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
-                CuArPropertyConstants.CuFederalFormReportFields.TOTAL_FEDERAL_INCOME_EARNED,
-                contractsGrantsBillingUtilityService.formatForCurrency(KualiDecimal.ZERO, false)
-        );
-        //Cornell customization
-        contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
-                CuArPropertyConstants.CuFederalFormReportFields.INCOME_EXPENDED_DEDUCATION_ALTERNATIVE,
-                contractsGrantsBillingUtilityService.formatForCurrency(KualiDecimal.ZERO, false)
-        );
-        //Cornell customization
-        contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
-                CuArPropertyConstants.CuFederalFormReportFields.INCOME_EXPENDED_ADDITION_ALTERNATIVE,
-                contractsGrantsBillingUtilityService.formatForCurrency(KualiDecimal.ZERO, false)
-        );
-        //Cornell customization
-        contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
-                ArPropertyConstants.FederalFormReportFields.UNEXPECTED_PROGRAM_INCOME,
-                contractsGrantsBillingUtilityService.formatForCurrency(KualiDecimal.ZERO, false)
-        );
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                 ArPropertyConstants.FederalFormReportFields.NAME,
                 KFSConstants.EMPTY_STRING
@@ -302,8 +267,8 @@ public class CuContractsGrantsInvoiceReportServiceImpl extends ContractsGrantsIn
                 KFSConstants.EMPTY_STRING
         );
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
-                ArPropertyConstants.FederalFormReportFields.EMAIL_ADDRESS,
-                KFSConstants.EMPTY_STRING
+                CuArPropertyConstants.CuFederalFormReportFields.EMAIL_ADDRESS,
+                award.getAwardPrimaryFundManager().getFundManager().getEmailAddress() //KFSConstants.EMPTY_STRING
         );
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                 ArPropertyConstants.FederalFormReportFields.DATE_REPORT_SUBMITTED,
@@ -312,26 +277,26 @@ public class CuContractsGrantsInvoiceReportServiceImpl extends ContractsGrantsIn
         if (ArConstants.QUARTER1.equals(reportingPeriod) || ArConstants.QUARTER2.equals(reportingPeriod)
             || ArConstants.QUARTER3.equals(reportingPeriod) || ArConstants.QUARTER4.equals(reportingPeriod)) {
             contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
-                    ArPropertyConstants.FederalFormReportFields.QUARTERLY,
-                    KFSConstants.OptionLabels.YES
+                    CuArPropertyConstants.CuFederalFormReportFields.QUARTERLY,
+                    CUKFSConstants.OptionLabels.ON
             );
         }
         if (ArConstants.SEMI_ANNUAL.equals(reportingPeriod)) {
             contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
-                    ArPropertyConstants.FederalFormReportFields.SEMI_ANNUAL,
-                    KFSConstants.OptionLabels.YES
+                    CuArPropertyConstants.CuFederalFormReportFields.SEMI_ANNUAL,
+                    CUKFSConstants.OptionLabels.ON
             );
         }
         if (ArConstants.ANNUAL.equals(reportingPeriod)) {
             contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
-                    ArPropertyConstants.FederalFormReportFields.ANNUAL,
-                    KFSConstants.OptionLabels.YES
+                    CuArPropertyConstants.CuFederalFormReportFields.ANNUAL,
+                    CUKFSConstants.OptionLabels.ON
             );
         }
         if (ArConstants.FINAL.equals(reportingPeriod)) {
             contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
-                    ArPropertyConstants.FederalFormReportFields.FINAL,
-                    KFSConstants.OptionLabels.YES
+                    CuArPropertyConstants.CuFederalFormReportFields.FINAL,
+                    CUKFSConstants.OptionLabels.ON
             );
         }
         final String accountingBasis = parameterService.getParameterValueAsString(ArConstants.AR_NAMESPACE_CODE,
