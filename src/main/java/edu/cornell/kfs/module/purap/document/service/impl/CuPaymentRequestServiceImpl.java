@@ -513,7 +513,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         preqDoc.setInvoiceReceivedDate(Date.valueOf(preqDto.getReceivedDate()));
         preqDoc.setAccountsPayableProcessorIdentifier(PAYFLOW);
 
-        populateAndSavePaymentRequest(preqDoc); // This does not seem to populate items, other fields?
+//        populateAndSavePaymentRequest(preqDoc); // This does not seem to populate items, other fields?
 
         // populatePaymentRequest is called when continue is clicked (prepareForSave && event instanceof AttributedContinuePurapEvent))
         populatePaymentRequest(preqDoc); //this populates vendor info, items, and many other fields

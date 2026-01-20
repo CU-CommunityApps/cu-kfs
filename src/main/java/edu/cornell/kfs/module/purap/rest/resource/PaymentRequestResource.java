@@ -94,8 +94,8 @@ public class PaymentRequestResource {
 
                     LOG.info("createPaymentRequestDocument, PREQ Document #{} Created", preqDoc.getDocumentNumber());
                     results.getSuccessMessages().add(String.format("Created PREQ Document %s", preqDoc.getDocumentNumber()));
-                    results.setDocumentNumber(preqDoc.getDocumentNumber());
 
+                    results.setDocumentNumber(preqDoc.getDocumentNumber());
                     return Response.ok(gson.toJson(results)).build();
 
                 } catch (Exception e) {
