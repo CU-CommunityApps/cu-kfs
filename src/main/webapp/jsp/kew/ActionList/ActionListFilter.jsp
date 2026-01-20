@@ -51,7 +51,6 @@
 
 <html-el:hidden property="lookupableImplServiceName" />
 <html-el:hidden property="lookupType" />
-<html-el:hidden property="docTypeFullName" />
     <div id="workarea">
         <div class="tab-container" align="center">
             <table class="datatable-80 custom-filter" style="align:center" cellspacing="0" align="center">

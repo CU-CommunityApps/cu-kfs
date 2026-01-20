@@ -31,8 +31,7 @@ public class CuAREmailServiceImpl extends AREmailServiceImpl {
             Award award = invoice.getInvoiceGeneralDetail().getAward();
             message = MessageFormat.format(subject, invoice.getDocumentNumber(), 
                     award.getGrantNumber(), 
-                    award.getProposalNumber(),
-                    award.getAwardPrimaryProjectDirector().getProjectDirector().getName());
+                    award.getProposalNumber());
         }
         return message;
     }

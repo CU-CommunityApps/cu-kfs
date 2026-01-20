@@ -656,13 +656,6 @@
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.kfs.module.ar.businessobject.SystemInformation</class>
-            <pattern>
-                <match>creditCardObjectCode</match>
-                <replacement/>
-            </pattern>
-        </pattern>
-        <pattern>
             <class>org.kuali.kfs.module.cam.businessobject.AssetLocation</class>
             <pattern>
                 <match>assetLocationContact</match>
@@ -745,6 +738,10 @@
             <class>org.kuali.kfs.module.ar.businessobject.SystemInformation</class>
             <pattern>
                 <match>financialDocumentInitiator</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>creditCardObjectCode</match>
                 <replacement/>
             </pattern>
         </pattern>
