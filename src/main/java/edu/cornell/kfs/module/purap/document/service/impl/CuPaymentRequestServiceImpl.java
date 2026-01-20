@@ -34,7 +34,6 @@ import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.impl.PaymentRequestServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
-import org.kuali.kfs.vnd.businessobject.ShippingTitle;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
@@ -494,6 +493,9 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
                     results.getErrorMessages().add(error.toString());
                 }
             }
+
+            results.getErrorMessages().add(e.toString());
+
             return null;
         }
     }
@@ -501,22 +503,22 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     private CuPaymentRequestDocument generateNewPaymentRequestDocument(PurchaseOrderDocument poDoc, PaymentRequestDto preqDto) {
         CuPaymentRequestDocument preqDoc = (CuPaymentRequestDocument) documentService.getNewDocument(PAYMENT_REQUEST);
 
+        // These fields are required for the next methods to work
         preqDoc.setAccountsPayablePurchasingDocumentLinkIdentifier(poDoc.getAccountsPayablePurchasingDocumentLinkIdentifier());
-
-        populateAndSavePaymentRequest(preqDoc); // This does not seem to populate items, other fields?
-
-        // These fields are required for the next method to work
         preqDoc.setPurchaseOrderDocument(poDoc);
         preqDoc.setInvoiceNumber(preqDto.getInvoiceNumber());
         preqDoc.setInvoiceDate(java.sql.Date.valueOf(preqDto.getInvoiceDate()));
         preqDoc.setVendorInvoiceAmount(preqDto.getInvoiceAmount());
+        preqDoc.setPurchaseOrderIdentifier(poDoc.getPurapDocumentIdentifier());
+        preqDoc.setInvoiceReceivedDate(Date.valueOf(preqDto.getReceivedDate()));
+        preqDoc.setAccountsPayableProcessorIdentifier(PAYFLOW);
+
+        populateAndSavePaymentRequest(preqDoc); // This does not seem to populate items, other fields?
 
         // populatePaymentRequest is called when continue is clicked (prepareForSave && event instanceof AttributedContinuePurapEvent))
         populatePaymentRequest(preqDoc); //this populates vendor info, items, and many other fields
 
-        preqDoc.setAccountsPayableProcessorIdentifier(PAYFLOW);
         preqDoc.setProcessingCampusCode(poDoc.getDeliveryCampusCode());
-        preqDoc.setInvoiceReceivedDate(Date.valueOf(preqDto.getReceivedDate()));
 
         preqDoc.setVendorInvoiceAmount(preqDto.getInvoiceAmount());
         preqDoc.setSpecialHandlingInstructionLine1Text(preqDto.getSpecialHandlingLine1());
