@@ -37,24 +37,23 @@ public class CuArPropertyConstants {
                 + KFSConstants.DELIMITER + KIMPropertyConstants.Principal.PRINCIPAL_NAME;
     }
 
-    // KFSPTS-33340
     public static class CuFederalFormReportFields {
-        // The String values for these constants are defined as data substitution markers on 
-        // base code form template FEDERAL_FINANCIAL_FORM_425.pdf but there are no constants defined 
-        // with these String values in class ArPropertyConstants in base code. 
-        public static final String AWARD_COST_SHARE_AMT = "awd_cost_share_amt";
-        public static final String CINV_COST_SHARE_AMT = "cinv_cost_share_amt";
-        public static final String REMAINING_COST_SHARE_AMT = "remaining_cost_share_amt";
-        public static final String CG_MANAGER_FIRST_NAME = "cg_manager_first_name";
-        public static final String CG_MANAGER_MIDDLE_NAME = "cg_manager_middle_name";
-        public static final String CG_MANAGER_LAST_NAME = "cg_manager_last_name";
+        /* CUMod: KFSPTS-33340
+         * During the fall of 2025, the federal government released a new Federal Financial Report with an
+         * expiration date of 06/30/2028. That version of the template changed the way "Report Type" was
+         * defined on the report  as well as what data value set or cleared an element. These field name
+         * changes as well as new CUKFSConstant OptionLabel values were needed to retain current functionality.
+         */
+        public static final String QUARTERLY = "Quarterly";
+        public static final String SEMI_ANNUAL = "SemiAnnual";
+        public static final String ANNUAL = "Annual";
+        public static final String FINAL = "Final";
         
-        // These constants are defined in base code class ArPropertyConstants but their string
-        // values do not match place holder strings on base code form template FEDERAL_FINANCIAL_FORM_425.pdf.
-        // Redefining String value here to get the form value substitution to work correctly.
-        public static final String TOTAL_FEDERAL_INCOME_EARNED = "total_federal_program_income";
-        public static final String INCOME_EXPENDED_DEDUCATION_ALTERNATIVE = "income_expended_in_accordance_with_deduction";
-        public static final String INCOME_EXPENDED_ADDITION_ALTERNATIVE = "income_expended_in_accordnace_with_addition";
+        /* CUMod: KFSPTS-33340
+         * Box 13d Email Address had substitution place holder changed on the new fall 2025 template.
+         * Redefining here so data can be placed on the form.
+         */
+        public static final String EMAIL_ADDRESS = "award.primaryFundManager.email";
     }
 
 }

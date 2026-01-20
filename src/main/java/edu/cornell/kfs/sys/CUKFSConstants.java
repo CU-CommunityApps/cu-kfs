@@ -282,5 +282,16 @@ public class CUKFSConstants {
             return DECIMAL_FORMAT.get();
         }
     }
+    
+    /* CUMod: KFSPTS-33340
+     * During the fall of 2025, the federal government released a new Federal Financial Report with an
+     * expiration date of 06/30/2028. That version of the template changed the way "Report Type" was
+     * defined as well as what data value set or cleared an element. These OptionLabel values along with
+     * new CuArPropertyConstants CuFederalFormReportFields were needed to retain current functionality.
+     */
+    public static class OptionLabels {
+        public static final String ON = "On";
+        public static final String OFF = "Off";
+    }
 
 }
