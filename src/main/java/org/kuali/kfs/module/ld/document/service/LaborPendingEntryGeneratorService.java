@@ -19,6 +19,7 @@
 package org.kuali.kfs.module.ld.document.service;
 
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
+
 import org.kuali.kfs.module.ld.businessobject.ExpenseTransferAccountingLine;
 import org.kuali.kfs.module.ld.businessobject.LaborLedgerPendingEntry;
 import org.kuali.kfs.module.ld.document.LaborLedgerPostingDocument;
@@ -26,6 +27,7 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 
 import java.util.List;
 
+// CU customization: needed for the backport of FINP-12883
 public interface LaborPendingEntryGeneratorService {
     /**
      * generate the expense pending entries based on the given document, accounting line and sequence helper
