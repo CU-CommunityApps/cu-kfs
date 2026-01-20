@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap.document.service;
 
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestResultsDto;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.service.PaymentRequestService;
 
@@ -29,6 +30,6 @@ public interface CuPaymentRequestService extends PaymentRequestService {
      */
     boolean purchaseOrderForPaymentRequestIsWithinAutoApproveAmountLimit(PaymentRequestDocument document);
 
-    PaymentRequestDocument createPaymentRequestDocumentFromDto(PaymentRequestDto paymentRequestDto);
+    PaymentRequestDocument createPaymentRequestDocumentFromDto(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results);
 
 }

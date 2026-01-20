@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestLineItemDto;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestNoteDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestResultsDto;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -470,34 +472,29 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
                 && super.isEligibleForAutoApproval(document, defaultMinimumLimit);
     }
 
-    public PaymentRequestDocument createPaymentRequestDocumentFromDto(PaymentRequestDto preqDto) {
+    public PaymentRequestDocument createPaymentRequestDocumentFromDto(PaymentRequestDto preqDto, PaymentRequestResultsDto results) {
 
         LOG.info("Creating PaymentRequestDocument from DTO for PO: {}", preqDto.getPoNumber());
 
         try {
 
             PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(preqDto.getPoNumber());
-            if (ObjectUtils.isNull(poDoc)) {
-                throw new Exception("Purchase Order Document not found for PO #" + preqDto.getPoNumber());
-            }
 
             CuPaymentRequestDocument preqDoc = generateNewPaymentRequestDocument(poDoc, preqDto);
+
             Document savedPreqDoc = documentService.saveDocument(preqDoc);
             return (PaymentRequestDocument) savedPreqDoc;
-
         } catch (Exception e) {
-            LOG.error("Error creating PaymentRequestDocument from DTO", e);
             Map<String, AutoPopulatingList<ErrorMessage>> errorMessages = GlobalVariables.getMessageMap().getErrorMessages();
-
             for (Map.Entry<String, AutoPopulatingList<ErrorMessage>> entry : errorMessages.entrySet()) {
                 AutoPopulatingList<ErrorMessage> errors = entry.getValue();
 
                 for (ErrorMessage error : errors) {
                     LOG.error("createPaymentRequestDocumentFromDto, error {} message {}", entry.getKey(), error.toString());
+                    results.getErrorMessages().add(error.toString());
                 }
             }
-
-            throw new RuntimeException("createPaymentRequestDocumentFromDto, Failed to create PREQ", e);
+            return null;
         }
     }
 
@@ -531,16 +528,29 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
                 documentService.createNoteFromDocument(preqDoc, noteDto.getNoteText());
             }
         }
-//
-//        // do we need this since items are created from populatePaymentRequestFromPurchaseOrder?
-////            preqDoc.setItems(createPreqItemsFromPreqDto(preqDto));
 
-        // populate items
-//
-//        // do we need to add the misc items?
-//        createMiscPreqItemsFromPreqDto(preqDto, preqDoc);
+        for (PaymentRequestLineItemDto dtoItem : preqDto.getItems()) {
+            PaymentRequestItem paymentRequestItem = findPaymentRequestItem(dtoItem, preqDoc);
+            paymentRequestItem.setItemQuantity(dtoItem.getItemQuantity());
+        }
+
+        addMiscPreqItemsFromPreqDto(preqDto, preqDoc);
 
         return preqDoc;
+    }
+
+    private PaymentRequestItem findPaymentRequestItem(PaymentRequestLineItemDto itemDto, PaymentRequestDocument preqDocument) {
+        for (Object paymentRequestItemObj : preqDocument.getItems()) {
+            if (paymentRequestItemObj instanceof PaymentRequestItem) {
+                PaymentRequestItem paymentRequestItem = (PaymentRequestItem) paymentRequestItemObj;
+
+                if (itemDto.getLineNumber().equals(paymentRequestItem.getItemLineNumber())) {
+                    return paymentRequestItem;
+                }
+            }
+        }
+
+        return null;
     }
 
 //    private List<PaymentRequestItem> createPreqItemsFromPreqDto(PaymentRequestDto preqDto, PaymentRequestDocument preqDocument) {
@@ -560,25 +570,25 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 //
 //     }
 
-    private List<PaymentRequestItem> createMiscPreqItemsFromPreqDto(PaymentRequestDto preqDto, PaymentRequestDocument preqDocument) {
+    private List<PaymentRequestItem> addMiscPreqItemsFromPreqDto(PaymentRequestDto preqDto, PaymentRequestDocument preqDocument) {
         List<PaymentRequestItem> paymentRequestMiscItems = new ArrayList<>();
 
         if (ObjectUtils.isNotNull(preqDto.getShippingPrice()) && preqDto.getShippingPrice().isGreaterThan(new KualiDecimal(0))) {
-            PaymentRequestItem shippingItem = getOrCreateMiscLine(preqDocument, ITEM_TYPE_SHIP_AND_HAND_CODE);
+            PaymentRequestItem shippingItem = findMiscItem(preqDocument, ITEM_TYPE_SHIP_AND_HAND_CODE);
             shippingItem.setItemUnitPrice(preqDto.getShippingPrice().bigDecimalValue());
             shippingItem.setItemDescription(preqDto.getShippingDescription());
             paymentRequestMiscItems.add(shippingItem);
         }
 
         if (ObjectUtils.isNotNull(preqDto.getFreightPrice()) && preqDto.getFreightPrice().isGreaterThan(new KualiDecimal(0))) {
-            PaymentRequestItem freightItem = getOrCreateMiscLine(preqDocument, ITEM_TYPE_FREIGHT_CODE);
+            PaymentRequestItem freightItem = findMiscItem(preqDocument, ITEM_TYPE_FREIGHT_CODE);
             freightItem.setItemUnitPrice(preqDto.getFreightPrice().bigDecimalValue());
             freightItem.setItemDescription(preqDto.getFreightDescription());
             paymentRequestMiscItems.add(freightItem);
         }
 
         if (ObjectUtils.isNotNull(preqDto.getMiscellaneousPrice()) && preqDto.getMiscellaneousPrice().isGreaterThan(new KualiDecimal(0))) {
-            PaymentRequestItem miscItem = getOrCreateMiscLine(preqDocument, ITEM_TYPE_MISC_CODE);
+            PaymentRequestItem miscItem = findMiscItem(preqDocument, ITEM_TYPE_MISC_CODE);
             miscItem.setItemUnitPrice(preqDto.getMiscellaneousPrice().bigDecimalValue());
             miscItem.setItemDescription(preqDto.getMiscellaneousDescription());
             paymentRequestMiscItems.add(miscItem);
@@ -587,7 +597,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         return paymentRequestMiscItems;
      }
 
-     private PaymentRequestItem getOrCreateMiscLine(PaymentRequestDocument preqDoc, String itemTypeCode) {
+     private PaymentRequestItem findMiscItem(PaymentRequestDocument preqDoc, String itemTypeCode) {
         for (Object item : preqDoc.getItems()) {
             try {
                 PaymentRequestItem preqItem = (PaymentRequestItem) item;
@@ -599,11 +609,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             }
         }
 
-        PaymentRequestItem paymentRequestItem = new PaymentRequestItem();
-        paymentRequestItem.setItemTypeCode(itemTypeCode);
-        preqDoc.addItem(paymentRequestItem);
-
-        return paymentRequestItem;
+        return null;
      }
 
 }
