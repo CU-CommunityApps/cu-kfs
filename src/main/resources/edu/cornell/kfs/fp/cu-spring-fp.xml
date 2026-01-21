@@ -260,7 +260,10 @@
 		</property>
 	</bean>
 	
-	<bean id="disbursementPayeeLookupableHelperService" parent="disbursementPayeeLookupableHelperService-parentBean" class="edu.cornell.kfs.fp.businessobject.lookup.CuDisbursementPayeeLookupableHelperServiceImpl" > 
+	<bean id="disbursementPayeeLookupableHelperService" 
+          scope="prototype"
+          parent="disbursementPayeeLookupableHelperService-parentBean" 
+          class="edu.cornell.kfs.fp.businessobject.lookup.CuDisbursementPayeeLookupableHelperServiceImpl" > 
 		
 		<property name="disbursementVoucherPaymentReasonService">
 			<ref bean="disbursementVoucherPaymentReasonService" />	

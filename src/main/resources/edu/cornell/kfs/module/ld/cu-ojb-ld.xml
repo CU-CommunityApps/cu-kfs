@@ -213,7 +213,7 @@
     </collection-descriptor>
   </class-descriptor>
   
-      <class-descriptor class="org.kuali.kfs.module.ld.businessobject.PositionObjectBenefit"
+    <class-descriptor class="org.kuali.kfs.module.ld.businessobject.PositionObjectBenefit"
                       table="LD_LBR_OBJ_BENE_T">
         <field-descriptor name="universityFiscalYear"
                           column="UNIV_FISCAL_YR"

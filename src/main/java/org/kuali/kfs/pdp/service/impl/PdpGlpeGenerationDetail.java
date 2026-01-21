@@ -27,8 +27,8 @@ import java.util.Map;
 /**
  * Holds state and options when generating GLPEs for PDP in {@link PendingTransactionServiceImpl}.
  */
-// CU customization: copied to cu-kfs project and changed access to public so that it can be accessed from CuPendingTransactionServiceImpl
-public class GeneratePdpGlpeState {
+//CU customization: copied to cu-kfs project and changed access to public so that it can be accessed from CuPendingTransactionServiceImpl
+public class PdpGlpeGenerationDetail {
 
     /** Mapping of disbursement type codes to document type codes when processing a payment. */
     private static final Map<String, String> TYPE_MAP_PROCESS = Map.of(
@@ -75,7 +75,7 @@ public class GeneratePdpGlpeState {
     private boolean relieveLiabilities;
     private String transactionDescription;
 
-    GeneratePdpGlpeState(
+    PdpGlpeGenerationDetail(
             final boolean reversal,
             final boolean expenseOrLiability,
             final Map<String, String> documentTypeMap
@@ -88,53 +88,53 @@ public class GeneratePdpGlpeState {
     /**
      * @return a state object with the correct options defined for processing a payment.
      */
-    static GeneratePdpGlpeState forProcess() {
-        return new GeneratePdpGlpeState(false, false, TYPE_MAP_PROCESS);
+    static PdpGlpeGenerationDetail forProcess() {
+        return new PdpGlpeGenerationDetail(false, false, TYPE_MAP_PROCESS);
     }
 
     /**
      * @return a state object with the correct options defined for cancelling a payment.
      */
     // CU customization changed to public
-    public static GeneratePdpGlpeState forCancel() {
-        return new GeneratePdpGlpeState(true, false, TYPE_MAP_CANCEL);
+    public static PdpGlpeGenerationDetail forCancel() {
+        return new PdpGlpeGenerationDetail(true, false, TYPE_MAP_CANCEL);
     }
     
     /**
      * @return a state object with the correct options defined for stale check.
      */
     // CU customization for stale checks
-    public static GeneratePdpGlpeState forStale() {
-        return new GeneratePdpGlpeState(true, false, TYPE_MAP_STALE);
+    public static PdpGlpeGenerationDetail forStale() {
+        return new PdpGlpeGenerationDetail(true, false, TYPE_MAP_STALE);
     }
     
     /**
      * @return a state object with the correct options defined for a stopped payment.
      */
     // CU customization for stopped payments
-    public static GeneratePdpGlpeState forStop() {
-        return new GeneratePdpGlpeState(true, false, TYPE_MAP_STOP);
+    public static PdpGlpeGenerationDetail forStop() {
+        return new PdpGlpeGenerationDetail(true, false, TYPE_MAP_STOP);
     }
 
     /**
      * @return a state object with the correct options defined for cancelling and reissuing a payment in one operation.
      */
-    static GeneratePdpGlpeState forCancelReissue() {
-        return new GeneratePdpGlpeState(true, false, TYPE_MAP_CANCEL_REISSUE);
+    static PdpGlpeGenerationDetail forCancelReissue() {
+        return new PdpGlpeGenerationDetail(true, false, TYPE_MAP_CANCEL_REISSUE);
     }
 
     /**
      * @return a state object with the correct options defined for reissuing a payment which has already been processed.
      */
-    static GeneratePdpGlpeState forReissue() {
-        return new GeneratePdpGlpeState(false, true, Map.of());
+    static PdpGlpeGenerationDetail forReissue() {
+        return new PdpGlpeGenerationDetail(false, true, Map.of());
     }
 
     /**
      * @return a state object with the correct options defined for reversing a processed payment which is being reissued
      */
-    static GeneratePdpGlpeState forReissueReverse() {
-        return new GeneratePdpGlpeState(true, true, Map.of());
+    static PdpGlpeGenerationDetail forReissueReverse() {
+        return new PdpGlpeGenerationDetail(true, true, Map.of());
     }
 
     /**
@@ -145,6 +145,7 @@ public class GeneratePdpGlpeState {
         return documentTypeMap.get(disbursementTypeCode);
     }
 
+    // CU customization changed to public
     public boolean isReversal() {
         return reversal;
     }

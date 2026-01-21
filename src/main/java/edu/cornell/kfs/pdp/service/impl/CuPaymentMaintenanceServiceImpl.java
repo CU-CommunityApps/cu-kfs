@@ -27,24 +27,30 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
     private static final Logger LOG = LogManager.getLogger();
     
     @Override
-    public boolean cancelDisbursement(final Integer paymentGroupId, final Integer paymentDetailId, final String note, final Person user) {
-        LOG.debug("cancelDisbursement() started");
+    public boolean cancelDisbursement(
+            final Integer paymentGroupId,
+            final Integer paymentDetailId,
+            final String note,
+            final Person user
+    ) {
+        LOG.debug("cancelDisbursement(...) - Enter");
 
         // All actions must be performed on entire group not individual detail record
 
         if (!pdpAuthorizationService.hasCancelPaymentPermission(user.getPrincipalId())) {
             LOG.warn(
-                    "cancelDisbursement() User {} does not have rights to cancel payments. This should not happen unless user is URL spoofing.",
+                    "cancelDisbursement(...) - User does not have rights to cancel payments. This should not "
+                        + "happen unless user is URL spoofing : user.principalId={}",
                     user::getPrincipalId
             );
-            throw new RuntimeException("cancelDisbursement() User " + user.getPrincipalId() +
+            throw new RuntimeException("User " + user.getPrincipalId() +
                     " does not have rights to cancel payments. This should not happen unless user is URL spoofing.");
         }
 
         final PaymentGroup paymentGroup = paymentGroupService.get(paymentGroupId);
 
         if (paymentGroup == null) {
-            LOG.debug("cancelDisbursement() Disbursement not found; throw exception.");
+            LOG.debug("cancelDisbursement(...) - Disbursement not found; throw exception.");
             GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS,
                     PdpKeyConstants.PaymentDetail.ErrorMessages.ERROR_DISBURSEMENT_NOT_FOUND);
             return false;
@@ -62,7 +68,7 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
             if (PdpConstants.PaymentStatusCodes.EXTRACTED.equals(paymentStatus)
                 && ObjectUtils.isNotNull(paymentGroup.getDisbursementDate())
                 || PdpConstants.PaymentStatusCodes.PENDING_ACH.equals(paymentStatus)) {
-                LOG.debug("cancelDisbursement() Payment status is {}; continue with cancel.", paymentStatus);
+                LOG.debug("cancelDisbursement(...) - Continue with cancel : paymentStatus={}", paymentStatus);
 
                 final List<PaymentGroup> allDisbursementPaymentGroups = paymentGroupService.getByDisbursementNumber(
                         paymentGroup.getDisbursementNbr().intValue());
@@ -76,14 +82,14 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
                     final PaymentGroupHistory pgh = new PaymentGroupHistory();
 
                     if (!element.getPaymentDetails().get(0).isDisbursementActionAllowed()) {
-                        LOG.warn("cancelDisbursement() Payment does not allow disbursement action. This should " +
+                        LOG.warn("cancelDisbursement(...) - Payment does not allow disbursement action. This should " +
                                 "not happen unless user is URL spoofing.");
-                        throw new RuntimeException("cancelDisbursement() Payment does not allow disbursement action. " +
+                        throw new RuntimeException("Payment does not allow disbursement action. " +
                                 "This should not happen unless user is URL spoofing.");
                     }
 
                     if (ObjectUtils.isNotNull(element.getDisbursementType())
-                            && element.getDisbursementType().getCode().equals(PdpConstants.DisbursementTypeCodes.CHECK)) {
+                        && element.getDisbursementType().getCode().equals(PdpConstants.DisbursementTypeCodes.CHECK)) {
                         pgh.setPmtCancelExtractStat(Boolean.FALSE);
                     }
 
@@ -98,10 +104,13 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
                     // these payment details will be canceled when running processPdpCancelAndPaidJOb
                     final Map<String, KualiInteger> primaryKeys = new HashMap<>();
 
-                    primaryKeys.put(PdpPropertyConstants.PaymentDetail.PAYMENT_DETAIL_PAYMENT_GROUP_ID, element.getId());
+                    primaryKeys.put(
+                            PdpPropertyConstants.PaymentDetail.PAYMENT_DETAIL_PAYMENT_GROUP_ID,
+                            element.getId());
 
                     // cancel all  payment details for payment group
-                    final List<PaymentDetail> pds = (List<PaymentDetail>) businessObjectService.findMatching(PaymentDetail.class, primaryKeys);
+                    final List<PaymentDetail> pds = (List<PaymentDetail>)
+                            businessObjectService.findMatching(PaymentDetail.class, primaryKeys);
                     if (pds != null && !pds.isEmpty()) {
                         for (final PaymentDetail pd : pds) {
                             pd.setPrimaryCancelledPayment(Boolean.TRUE);
@@ -113,7 +122,8 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
                 LOG.debug("cancelDisbursement() Disbursement cancelled; exit method.");
             } else {
                 LOG.debug(
-                        "cancelDisbursement() Payment status is {} and disbursement date is {}; cannot cancel payment in this status",
+                        "cancelDisbursement(...) - Cannot cancel payment in this status : paymentStatus={}; "
+                            + "paymentGroup.disbursementDate={}",
                         () -> paymentStatus,
                         paymentGroup::getDisbursementDate
                 );
@@ -123,7 +133,7 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
                 return false;
             }
         } else {
-            LOG.debug("cancelDisbursement() Disbursement has already been cancelled; exit method.");
+            LOG.debug("cancelDisbursement(...) - Disbursement has already been cancelled; exit method.");
         }
         return true;
     }
