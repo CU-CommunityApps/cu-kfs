@@ -556,23 +556,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         return null;
     }
 
-//    private List<PaymentRequestItem> createPreqItemsFromPreqDto(PaymentRequestDto preqDto, PaymentRequestDocument preqDocument) {
-//        List<PaymentRequestItem> paymentRequestItems = new ArrayList<>();
-//
-//        for (PaymentRequestLineItemDto preqItemDto : preqDto.getItems()) {
-//            PaymentRequestItem paymentRequestItem = new PaymentRequestItem();
-//            paymentRequestItem.setItemTypeCode(ItemTypeCodes.ITEM_TYPE_ITEM_CODE);
-//
-//            paymentRequestItem.setItemUnitPrice(preqItemDto.getItemPrice().bigDecimalValue());
-//            paymentRequestItem.setItemQuantity(preqItemDto.getItemQuantity());
-//            paymentRequestItem.setItemDescription(preqItemDto.getItemDescription());
-//            paymentRequestItem.setExtendedPrice(discountValueToUse);
-//            paymentRequestItem.setPurapDocument(preqDocument);
-//
-//        }
-//
-//     }
-
     private List<PaymentRequestItem> addMiscPreqItemsFromPreqDto(PaymentRequestDto preqDto, PaymentRequestDocument preqDocument) {
         List<PaymentRequestItem> paymentRequestMiscItems = new ArrayList<>();
 
