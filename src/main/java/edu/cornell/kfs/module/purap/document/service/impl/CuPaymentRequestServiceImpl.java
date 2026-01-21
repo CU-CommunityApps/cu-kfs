@@ -18,6 +18,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.UserSessionUtils;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.module.purap.PurapConstants;
@@ -476,13 +477,13 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         LOG.info("Creating PaymentRequestDocument from DTO for PO: {}", preqDto.getPoNumber());
 
         try {
-
             PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(preqDto.getPoNumber());
 
             CuPaymentRequestDocument preqDoc = generateNewPaymentRequestDocument(poDoc, preqDto);
 
             Document savedPreqDoc = documentService.saveDocument(preqDoc);
             return (PaymentRequestDocument) savedPreqDoc;
+
         } catch (Exception e) {
             Map<String, AutoPopulatingList<ErrorMessage>> errorMessages = GlobalVariables.getMessageMap().getErrorMessages();
             for (Map.Entry<String, AutoPopulatingList<ErrorMessage>> entry : errorMessages.entrySet()) {
@@ -502,6 +503,8 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
     private CuPaymentRequestDocument generateNewPaymentRequestDocument(PurchaseOrderDocument poDoc, PaymentRequestDto preqDto) {
         CuPaymentRequestDocument preqDoc = (CuPaymentRequestDocument) documentService.getNewDocument(PAYMENT_REQUEST);
+        UserSessionUtils.addWorkflowDocument(GlobalVariables.getUserSession(), preqDoc.getDocumentHeader().getWorkflowDocument());
+        preqDoc.initiateDocument();
 
         // These fields are required for the next methods to work
         preqDoc.setAccountsPayablePurchasingDocumentLinkIdentifier(poDoc.getAccountsPayablePurchasingDocumentLinkIdentifier());
@@ -513,10 +516,8 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         preqDoc.setInvoiceReceivedDate(Date.valueOf(preqDto.getReceivedDate()));
         preqDoc.setAccountsPayableProcessorIdentifier(PAYFLOW);
 
-//        populateAndSavePaymentRequest(preqDoc); // This does not seem to populate items, other fields?
-
         // populatePaymentRequest is called when continue is clicked (prepareForSave && event instanceof AttributedContinuePurapEvent))
-        populatePaymentRequest(preqDoc); //this populates vendor info, items, and many other fields
+        populatePaymentRequest(preqDoc);
 
         preqDoc.setProcessingCampusCode(poDoc.getDeliveryCampusCode());
 
