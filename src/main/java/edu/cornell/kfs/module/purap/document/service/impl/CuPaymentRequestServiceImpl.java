@@ -505,6 +505,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         CuPaymentRequestDocument preqDoc = (CuPaymentRequestDocument) documentService.getNewDocument(PAYMENT_REQUEST);
         UserSessionUtils.addWorkflowDocument(GlobalVariables.getUserSession(), preqDoc.getDocumentHeader().getWorkflowDocument());
         preqDoc.initiateDocument();
+        preqDoc.setApplicationDocumentStatus(PurapConstants.LineItemReceivingStatuses.APPDOC_IN_PROCESS);
 
         // These fields are required for the next methods to work
         preqDoc.setAccountsPayablePurchasingDocumentLinkIdentifier(poDoc.getAccountsPayablePurchasingDocumentLinkIdentifier());
