@@ -379,7 +379,7 @@ public class RassReportServiceImplTest extends SpringEnabledMicroTestBase {
             RassBusinessObjectUpdateResultGrouping<Proposal> proposalResults,
             RassBusinessObjectUpdateResultGrouping<Award> awardResults) {
         String xmlFileName = addXmlExtensionToBaseFileName(fileName);
-        return new RassXmlFileProcessingResult(xmlFileName, agencyResults, proposalResults, awardResults);
+        return new RassXmlFileProcessingResult(xmlFileName, agencyResults, awardResults);
     }
 
     private RassBusinessObjectUpdateResultGrouping<Agency> emptyAgencyResults() {

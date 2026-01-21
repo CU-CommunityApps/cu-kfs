@@ -14,7 +14,6 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
-import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
@@ -173,8 +172,6 @@ public class RassReportServiceImpl implements RassReportService {
         reportWriterService.writeNewLines(1);
         writeAgencySummaryToReport(fileResult);
         reportWriterService.writeNewLines(1);
-        writeProposalSummaryToReport(fileResult);
-        reportWriterService.writeNewLines(1);
         writeAwardSummaryToReport(fileResult);
         reportWriterService.writeNewLines(1);
         reportWriterService.writeSubTitle("*** End of Report Summary ***");
@@ -185,12 +182,6 @@ public class RassReportServiceImpl implements RassReportService {
         RassBusinessObjectUpdateResultGrouping<Agency> agencyResultGrouping = fileResult.getAgencyResults();
         List<RassBusinessObjectUpdateResult<Agency>> agencyResults = agencyResultGrouping.getObjectResults();
         writeBOResultsSummaryToReport(agencyResults, Agency.class);
-    }
-
-    private void writeProposalSummaryToReport(RassXmlFileProcessingResult fileResult) {
-        RassBusinessObjectUpdateResultGrouping<Proposal> proposalResultGrouping = fileResult.getProposalResults();
-        List<RassBusinessObjectUpdateResult<Proposal>> proposalResults = proposalResultGrouping.getObjectResults();
-        writeBOResultsSummaryToReport(proposalResults, Proposal.class);
     }
 
     private void writeAwardSummaryToReport(RassXmlFileProcessingResult fileResult) {
@@ -222,7 +213,7 @@ public class RassReportServiceImpl implements RassReportService {
                 resultMessage = " created";
                 break;
             case SUCCESS_EDIT:
-                resultMessage = Proposal.class.isAssignableFrom(businessObjectClass)
+                resultMessage = Award.class.isAssignableFrom(businessObjectClass)
                         ? " with updates to Grant Number" : " updated";
                 break;
             case ERROR:
@@ -246,8 +237,6 @@ public class RassReportServiceImpl implements RassReportService {
         reportWriterService.writeNewLines(1);
         writeAgencyDetailsToReport(fileResult);
         reportWriterService.writeNewLines(1);
-        writeProposalDetailsToReport(fileResult);
-        reportWriterService.writeNewLines(1);
         writeAwardDetailsToReport(fileResult);
         reportWriterService.writeNewLines(1);
         reportWriterService.writeSubTitle("*** End of Report Details ***");
@@ -258,12 +247,6 @@ public class RassReportServiceImpl implements RassReportService {
         RassBusinessObjectUpdateResultGrouping<Agency> agencyResultGrouping = fileResult.getAgencyResults();
         List<RassBusinessObjectUpdateResult<Agency>> agencyResults = agencyResultGrouping.getObjectResults();
         writeResultsDetailsToReport(agencyResults, Agency.class);
-    }
-
-    private void writeProposalDetailsToReport(RassXmlFileProcessingResult fileResult) {
-        RassBusinessObjectUpdateResultGrouping<Proposal> proposalResultGrouping = fileResult.getProposalResults();
-        List<RassBusinessObjectUpdateResult<Proposal>> proposalResults = proposalResultGrouping.getObjectResults();
-        writeResultsDetailsToReport(proposalResults, Proposal.class);
     }
 
     private void writeAwardDetailsToReport(RassXmlFileProcessingResult fileResult) {
@@ -300,7 +283,7 @@ public class RassReportServiceImpl implements RassReportService {
                 header = "** " + objectName + " objects successfully created:";
                 break;
             case SUCCESS_EDIT:
-                updateMessageSuffix = Proposal.class.isAssignableFrom(businessObjectClass)
+                updateMessageSuffix = Award.class.isAssignableFrom(businessObjectClass)
                         ? " objects with successful updates to Grant Number:" : " objects successfully updated:";
                 header = "** " + objectName + updateMessageSuffix;
                 break;

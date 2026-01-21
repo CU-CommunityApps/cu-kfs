@@ -7,13 +7,8 @@ Number of Agency objects updated: 0.
 Number of Agency objects that resulted in error: 0.
 Number of Agency objects skipped: 0.
 
-Number of Proposal objects created: 0.
-Number of Proposal objects with updates to Grant Number: 0.
-Number of Proposal objects that resulted in error: 0.
-Number of Proposal objects skipped: 0.
-
 Number of Award objects created: 0.
-Number of Award objects updated: 0.
+Number of Award objects with updates to Grant Number: 0.
 Number of Award objects that resulted in error: 0.
 Number of Award objects skipped: 0.
 
@@ -32,18 +27,9 @@ Number of Award objects skipped: 0.
 ** Agency objects that were skipped:
 
 
-** Proposal objects successfully created:
-
-** Proposal objects with successful updates to Grant Number:
-
-** Proposal objects that had errors:
-
-** Proposal objects that were skipped:
-
-
 ** Award objects successfully created:
 
-** Award objects successfully updated:
+** Award objects with successful updates to Grant Number:
 
 ** Award objects that had errors:
 

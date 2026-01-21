@@ -66,7 +66,6 @@
 			p:fileStorageService-ref="fileStorageService"
 			p:rassUpdateService-ref="rassUpdateService"
 			p:agencyDefinition-ref="agencyDefinition"
-			p:proposalDefinition-ref="proposalDefinition"
 			p:awardDefinition-ref="awardDefinition"
 			p:rassSortService-ref="rassSortService"/>
 			
@@ -140,8 +139,6 @@
 			p:parameterService-ref="parameterService"/>	
 	<bean id="rassAgencyTypeConverter" class="edu.cornell.kfs.rass.batch.RassAgencyTypeConverter"
 			p:parameterService-ref="parameterService"/>
-	<bean id="rassProposalStatusConverter" class="edu.cornell.kfs.rass.batch.RassProposalStatusConverter"
-			p:parameterService-ref="parameterService"/>
 	<bean id="rassGrantDescriptionConverter" class="edu.cornell.kfs.rass.batch.RassGrantDescriptionConverter"
 			p:parameterService-ref="parameterService"/>
 			
@@ -175,38 +172,6 @@
     <bean id="rassProposalProperty" abstract="true" parent="rassProperty" p:skipForObjectEdit="true"/>
     <bean id="rassProposalListPropertyWithProposalNumberMapping" abstract="true"
             parent="rassListPropertyWithProposalNumberMapping" p:skipForObjectEdit="true"/>
-
-	<bean id="proposalDefinition" parent="proposalDefinition-parentBean"/>
-	<bean id="proposalDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.ProposalTranslationDefinition"
-			p:businessObjectService-ref="businessObjectService"
-			p:rootXmlObjectListPropertyName="awards"
-			p:dateTimeService-ref="dateTimeService"
-			p:parameterService-ref="parameterService"
-			p:documentTypeName="PRPL">
-		<property name="propertyMappings">
-			<list>
-				<bean parent="rassProposalProperty" p:xmlPropertyName="proposalNumber" p:boPropertyName="proposalNumber" p:required="true"/>
-				<bean parent="rassProposalProperty" p:xmlPropertyName="status" p:boPropertyName="proposalStatusCode" p:required="false" p:valueConverter-ref="rassProposalStatusConverter"/>
-				<bean parent="rassProposalProperty" p:xmlPropertyName="agencyNumber" p:boPropertyName="agencyNumber" p:required="true"/>
-				<bean parent="rassProposalProperty" p:xmlPropertyName="projectTitle" p:boPropertyName="proposalProjectTitle" p:required="false" p:truncateWithEllipsis="true"/>
-				<bean parent="rassProposalProperty" p:xmlPropertyName="startDate" p:boPropertyName="proposalBeginningDate" p:required="false"/>
-				<bean parent="rassProposalProperty" p:xmlPropertyName="stopDate" p:boPropertyName="proposalEndingDate" p:required="false"/>
-				<bean parent="rassProposalProperty" p:xmlPropertyName="directCostAmount" p:boPropertyName="proposalDirectCostAmount" p:required="true"/>
-				<bean parent="rassProposalProperty" p:xmlPropertyName="indirectCostAmount" p:boPropertyName="proposalIndirectCostAmount" p:required="true"/>
-				<bean parent="rassProposalProperty" p:xmlPropertyName="totalAmount" p:boPropertyName="proposalTotalProjectAmount" p:required="true"/>
-				<bean parent="rassProposalProperty" p:xmlPropertyName="purpose" p:boPropertyName="proposalPurposeCode" p:required="false" p:valueConverter-ref="rassPurposeCodeConverter"/>
-				<bean parent="rassProposalProperty" p:xmlPropertyName="grantNumber" p:boPropertyName="grantNumber" p:required="false" p:skipForObjectEdit="false"/>
-				<bean parent="rassProposalProperty" p:xmlPropertyName="federalPassThrough" p:boPropertyName="proposalFederalPassThroughIndicator" p:required="false"
-						p:valueConverter-ref="rassBooleanConverter"/>
-				<bean parent="rassProposalProperty" p:xmlPropertyName="federalPassThroughAgencyNumber" p:boPropertyName="federalPassThroughAgencyNumber" p:required="false"/>
-				<bean parent="rassProposalListPropertyWithProposalNumberMapping" p:xmlPropertyName="organizationCode" p:boPropertyName="proposalOrganizations" p:required="false"
-						p:valueConverter-ref="rassProposalOrganizationConverter" p:subObjectDefinition-ref="proposalOrganizationDefinition" p:skipForObjectEdit="false"/>
-				<bean parent="rassProposalProperty" p:xmlPropertyName="finalReportDueDate" p:boPropertyName="proposalDueDate" p:required="false"/>
-				<bean parent="rassProposalListPropertyWithProposalNumberMapping" p:xmlPropertyName="principalAndCoPrincipalInvestigators" p:boPropertyName="proposalProjectDirectors"
-						p:required="false" p:valueConverter-ref="rassProposalProjectDirectorConverter" p:subObjectDefinition-ref="proposalProjectDirectorDefinition" p:skipForObjectEdit="false"/>
-			</list>
-		</property>
-	</bean>
 
 	<bean id="proposalOrganizationDefinition" parent="proposalOrganizationDefinition-parentBean"/>
 	<bean id="proposalOrganizationDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.RassSubObjectDefinition"
