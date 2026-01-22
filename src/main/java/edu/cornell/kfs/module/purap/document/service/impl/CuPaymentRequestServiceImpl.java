@@ -530,7 +530,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         if (CollectionUtils.isNotEmpty(preqDto.getNotes())) {
             for (PaymentRequestNoteDto noteDto : preqDto.getNotes()) {
                 Note n = documentService.createNoteFromDocument(preqDoc, noteDto.getNoteText());
-                n.setNoteTypeCode(preqDoc.getNoteType().getCode());
                 preqDoc.addNote(n);
             }
         }
@@ -538,13 +537,16 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         for (PaymentRequestLineItemDto dtoItem : preqDto.getItems()) {
             PaymentRequestItem paymentRequestItem = findPaymentRequestItem(dtoItem, preqDoc);
 
-            if (ObjectUtils.isNotNull(dtoItem)) {
+            if (ObjectUtils.isNotNull(paymentRequestItem)) {
                 paymentRequestItem.setItemQuantity(dtoItem.getItemQuantity());
                 paymentRequestItem.setItemUnitPrice(dtoItem.getItemPrice().bigDecimalValue());
             } else {
-                LOG.error("generateNewPaymentRequestDocument, Could not find PREQ Line #{}", dtoItem.getLineNumber());
+                LOG.error("generateNewPaymentRequestDocument, Could not find an eligible PREQ item for Line #{}", dtoItem.getLineNumber());
+                throw new RuntimeException(String.format("Could not find Item Line #%s", dtoItem.getLineNumber()));
             }
         }
+
+        preqDoc.updateExtendedPriceOnItems();
 
         addMiscPreqItemsFromPreqDto(preqDto, preqDoc);
 
