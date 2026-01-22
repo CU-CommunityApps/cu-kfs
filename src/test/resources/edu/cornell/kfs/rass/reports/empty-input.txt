@@ -8,7 +8,7 @@ Number of Agency objects that resulted in error: 0.
 Number of Agency objects skipped: 0.
 
 Number of Award objects created: 0.
-Number of Award objects with updates to Grant Number: 0.
+Number of Award objects updated: 0.
 Number of Award objects that resulted in error: 0.
 Number of Award objects skipped: 0.
 
@@ -29,7 +29,7 @@ Number of Award objects skipped: 0.
 
 ** Award objects successfully created:
 
-** Award objects with successful updates to Grant Number:
+** Award objects successfully updated:
 
 ** Award objects that had errors:
 

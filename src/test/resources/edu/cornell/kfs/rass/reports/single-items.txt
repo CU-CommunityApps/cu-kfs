@@ -8,7 +8,7 @@ Number of Agency objects that resulted in error: 0.
 Number of Agency objects skipped: 0.
 
 Number of Award objects created: 0.
-Number of Award objects with updates to Grant Number: 1.
+Number of Award objects updated: 1.
 Number of Award objects that resulted in error: 0.
 Number of Award objects skipped: 0.
 
@@ -30,7 +30,7 @@ Agency #: 12457 created by document #: 1501
 
 ** Award objects successfully created:
 
-** Award objects with successful updates to Grant Number:
+** Award objects successfully updated:
 Award #: 98765 updated by document #: 1502
 
 ** Award objects that had errors:

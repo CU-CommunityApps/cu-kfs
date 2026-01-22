@@ -213,8 +213,7 @@ public class RassReportServiceImpl implements RassReportService {
                 resultMessage = " created";
                 break;
             case SUCCESS_EDIT:
-                resultMessage = Award.class.isAssignableFrom(businessObjectClass)
-                        ? " with updates to Grant Number" : " updated";
+                resultMessage = " updated";
                 break;
             case ERROR:
                 resultMessage = " that resulted in error";
@@ -283,8 +282,7 @@ public class RassReportServiceImpl implements RassReportService {
                 header = "** " + objectName + " objects successfully created:";
                 break;
             case SUCCESS_EDIT:
-                updateMessageSuffix = Award.class.isAssignableFrom(businessObjectClass)
-                        ? " objects with successful updates to Grant Number:" : " objects successfully updated:";
+                updateMessageSuffix = " objects successfully updated:";
                 header = "** " + objectName + updateMessageSuffix;
                 break;
             case ERROR:
