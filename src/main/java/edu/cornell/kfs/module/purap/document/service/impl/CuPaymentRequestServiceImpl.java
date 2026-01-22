@@ -529,13 +529,21 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
         if (CollectionUtils.isNotEmpty(preqDto.getNotes())) {
             for (PaymentRequestNoteDto noteDto : preqDto.getNotes()) {
-                documentService.createNoteFromDocument(preqDoc, noteDto.getNoteText());
+                Note n = documentService.createNoteFromDocument(preqDoc, noteDto.getNoteText());
+                n.setNoteTypeCode(preqDoc.getNoteType().getCode());
+                preqDoc.addNote(n);
             }
         }
 
         for (PaymentRequestLineItemDto dtoItem : preqDto.getItems()) {
             PaymentRequestItem paymentRequestItem = findPaymentRequestItem(dtoItem, preqDoc);
-            paymentRequestItem.setItemQuantity(dtoItem.getItemQuantity());
+
+            if (ObjectUtils.isNotNull(dtoItem)) {
+                paymentRequestItem.setItemQuantity(dtoItem.getItemQuantity());
+                paymentRequestItem.setItemUnitPrice(dtoItem.getItemPrice().bigDecimalValue());
+            } else {
+                LOG.error("generateNewPaymentRequestDocument, Could not find PREQ Line #{}", dtoItem.getLineNumber());
+            }
         }
 
         addMiscPreqItemsFromPreqDto(preqDto, preqDoc);
