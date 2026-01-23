@@ -5,9 +5,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.krad.UserSession;
+import org.kuali.kfs.krad.util.ErrorMessage;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 
@@ -22,9 +27,12 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.ApiAuthenticationService;
 import edu.cornell.kfs.sys.typeadapters.KualiDecimalTypeAdapter;
 import edu.cornell.kfs.sys.typeadapters.LocalDateTypeAdapter;
+import org.springframework.util.AutoPopulatingList;
 
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +60,7 @@ public class PaymentRequestResource {
 
     private PaymentRequestDtoValidationService paymentRequestDtoValidationService;
     private ApiAuthenticationService apiAuthenticationService;
+    private CuPaymentRequestService cuPaymentRequestService;
 
     @GET
     public Response describePaymentRequestResource() {
@@ -67,17 +76,33 @@ public class PaymentRequestResource {
             String jsonBody = scanner.hasNext() ? scanner.next() : "";
             PaymentRequestDto paymentRequestDto = gson.fromJson(jsonBody, PaymentRequestDto.class);
 
-            String loggedInUser = getApiAuthenticationService().getAuthenticateUser(servletRequest);
-            LOG.info("createPaymentRequestDocument, logged in user: {} and the paymentRequestDto: {}", loggedInUser,
+            String loggedInPrincipalName = getApiAuthenticationService().getAuthenticateUser(servletRequest);
+            LOG.info("createPaymentRequestDocument, logged in user: {} and the paymentRequestDto: {}", loggedInPrincipalName,
                     paymentRequestDto);
 
             PaymentRequestResultsDto results = getPaymentRequestDtoValidationService()
                     .validatePaymentRequestDto(paymentRequestDto);
             if (results.isValid()) {
-                results.getSuccessMessages().add("In follow up user stories, this endpoint will be updated" +
-                        " to create a preq document using logged in user " + loggedInUser);
+
                 LOG.info("createPaymentRequestDocument, no validation errors, return success {}", results);
-                return Response.ok(gson.toJson(results)).build();
+
+                try {
+                    UserSession userSession = createUserSessionForAiPaymentRequestUser(loggedInPrincipalName);
+
+                    PaymentRequestDocument preqDoc = GlobalVariables.doInNewGlobalVariables(userSession,
+                            () -> getCuPaymentRequestService().createPaymentRequestDocumentFromDto(paymentRequestDto, results));
+
+                    LOG.info("createPaymentRequestDocument, PREQ Document #{} Created", preqDoc.getDocumentNumber());
+                    results.getSuccessMessages().add(String.format("Created PREQ Document %s", preqDoc.getDocumentNumber()));
+
+                    results.setDocumentNumber(preqDoc.getDocumentNumber());
+                    return Response.ok(gson.toJson(results)).build();
+
+                } catch (Exception e) {
+                    LOG.error("createPaymentRequestDocument, Unexpected error occurred while creating PREQ Document", e);
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(gson.toJson(results)).build();
+                }
+
             } else {
                 LOG.info("createPaymentRequestDocument, there were validation errors, return false {}", results);
                 return Response.status(Status.BAD_REQUEST).entity(gson.toJson(results)).build();
@@ -85,7 +110,23 @@ public class PaymentRequestResource {
 
         } catch (Exception e) {
             LOG.error("createPaymentRequestDocument, an error occurred", e);
+
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(CUKFSConstants.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    private UserSession createUserSessionForAiPaymentRequestUser(String loggedInPrincipalName) throws Exception {
+        try {
+
+            UserSession userSession = new UserSession(loggedInPrincipalName);
+            LOG.info("createPaymentRequestDocument userSession created for user {}, name {}",
+                    loggedInPrincipalName, userSession.getPrincipalName());
+            return userSession;
+
+        } catch (Exception e) {
+            LOG.error("createPaymentRequestDocument, Unexpected error occurred while creating PREQ Document Session for user {}",
+                    loggedInPrincipalName, e);
+            throw e;
         }
     }
 
@@ -101,5 +142,12 @@ public class PaymentRequestResource {
             apiAuthenticationService = SpringContext.getBean(ApiAuthenticationService.class);
         }
         return apiAuthenticationService;
+    }
+
+    private CuPaymentRequestService getCuPaymentRequestService() {
+        if (cuPaymentRequestService == null) {
+            cuPaymentRequestService = SpringContext.getBean(CuPaymentRequestService.class);
+        }
+        return cuPaymentRequestService;
     }
 }

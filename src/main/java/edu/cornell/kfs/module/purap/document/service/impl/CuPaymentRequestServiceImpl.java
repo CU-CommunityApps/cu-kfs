@@ -10,9 +10,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestLineItemDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestNoteDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestResultsDto;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.UserSessionUtils;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
@@ -41,6 +49,13 @@ import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
+import org.springframework.util.AutoPopulatingList;
+
+import static edu.cornell.kfs.module.purap.CUPurapConstants.Payflow.PAYFLOW;
+import static edu.cornell.kfs.pdp.CUPdpConstants.PdpDocumentTypes.PAYMENT_REQUEST;
+import static org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes.ITEM_TYPE_FREIGHT_CODE;
+import static org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes.ITEM_TYPE_MISC_CODE;
+import static org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes.ITEM_TYPE_SHIP_AND_HAND_CODE;
 
 public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl implements CuPaymentRequestService {
     private static final Logger LOG = LogManager.getLogger();
@@ -456,5 +471,142 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         return !isPRNCDocument(document) && purchaseOrderForPaymentRequestIsWithinAutoApproveAmountLimit(document)
                 && super.isEligibleForAutoApproval(document, defaultMinimumLimit);
     }
+
+    public PaymentRequestDocument createPaymentRequestDocumentFromDto(PaymentRequestDto preqDto, PaymentRequestResultsDto results) {
+
+        LOG.info("Creating PaymentRequestDocument from DTO for PO: {}", preqDto.getPoNumber());
+
+        try {
+            PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(preqDto.getPoNumber());
+
+            CuPaymentRequestDocument preqDoc = generateNewPaymentRequestDocument(poDoc, preqDto);
+
+            Document savedPreqDoc = documentService.saveDocument(preqDoc);
+            return (PaymentRequestDocument) savedPreqDoc;
+
+        } catch (Exception e) {
+            Map<String, AutoPopulatingList<ErrorMessage>> errorMessages = GlobalVariables.getMessageMap().getErrorMessages();
+            for (Map.Entry<String, AutoPopulatingList<ErrorMessage>> entry : errorMessages.entrySet()) {
+                AutoPopulatingList<ErrorMessage> errors = entry.getValue();
+
+                for (ErrorMessage error : errors) {
+                    LOG.error("createPaymentRequestDocumentFromDto, error {} message {}", entry.getKey(), error.toString());
+                    results.getErrorMessages().add(error.toString());
+                }
+            }
+
+            results.getErrorMessages().add(e.toString());
+
+            return null;
+        }
+    }
+
+    private CuPaymentRequestDocument generateNewPaymentRequestDocument(PurchaseOrderDocument poDoc, PaymentRequestDto preqDto) {
+        CuPaymentRequestDocument preqDoc = (CuPaymentRequestDocument) documentService.getNewDocument(PAYMENT_REQUEST);
+        UserSessionUtils.addWorkflowDocument(GlobalVariables.getUserSession(), preqDoc.getDocumentHeader().getWorkflowDocument());
+        preqDoc.initiateDocument();
+        preqDoc.setApplicationDocumentStatus(PurapConstants.LineItemReceivingStatuses.APPDOC_IN_PROCESS);
+
+        // These fields are required for the next methods to work
+        preqDoc.setAccountsPayablePurchasingDocumentLinkIdentifier(poDoc.getAccountsPayablePurchasingDocumentLinkIdentifier());
+        preqDoc.setPurchaseOrderDocument(poDoc);
+        preqDoc.setInvoiceNumber(preqDto.getInvoiceNumber());
+        preqDoc.setInvoiceDate(java.sql.Date.valueOf(preqDto.getInvoiceDate()));
+        preqDoc.setVendorInvoiceAmount(preqDto.getInvoiceAmount());
+        preqDoc.setPurchaseOrderIdentifier(poDoc.getPurapDocumentIdentifier());
+        preqDoc.setInvoiceReceivedDate(Date.valueOf(preqDto.getReceivedDate()));
+        preqDoc.setAccountsPayableProcessorIdentifier(PAYFLOW);
+
+        // populatePaymentRequest is called when continue is clicked (prepareForSave && event instanceof AttributedContinuePurapEvent))
+        populatePaymentRequest(preqDoc);
+
+        preqDoc.setProcessingCampusCode(poDoc.getDeliveryCampusCode());
+
+        preqDoc.setVendorInvoiceAmount(preqDto.getInvoiceAmount());
+        preqDoc.setSpecialHandlingInstructionLine1Text(preqDto.getSpecialHandlingLine1());
+        preqDoc.setSpecialHandlingInstructionLine2Text(preqDto.getSpecialHandlingLine2());
+        preqDoc.setSpecialHandlingInstructionLine3Text(preqDto.getSpecialHandlingLine3());
+
+        if (CollectionUtils.isNotEmpty(preqDto.getNotes())) {
+            for (PaymentRequestNoteDto noteDto : preqDto.getNotes()) {
+                Note n = documentService.createNoteFromDocument(preqDoc, noteDto.getNoteText());
+                preqDoc.addNote(n);
+            }
+        }
+
+        for (PaymentRequestLineItemDto dtoItem : preqDto.getItems()) {
+            PaymentRequestItem paymentRequestItem = findPaymentRequestItem(dtoItem, preqDoc);
+
+            if (ObjectUtils.isNotNull(paymentRequestItem)) {
+                paymentRequestItem.setItemQuantity(dtoItem.getItemQuantity());
+                paymentRequestItem.setItemUnitPrice(dtoItem.getItemPrice().bigDecimalValue());
+            } else {
+                LOG.error("generateNewPaymentRequestDocument, Could not find an eligible PREQ item for Line #{}", dtoItem.getLineNumber());
+                throw new RuntimeException(String.format("Could not find Item Line #%s", dtoItem.getLineNumber()));
+            }
+        }
+
+        preqDoc.updateExtendedPriceOnItems();
+
+        addMiscPreqItemsFromPreqDto(preqDto, preqDoc);
+
+        return preqDoc;
+    }
+
+    private PaymentRequestItem findPaymentRequestItem(PaymentRequestLineItemDto itemDto, PaymentRequestDocument preqDocument) {
+        for (Object paymentRequestItemObj : preqDocument.getItems()) {
+            if (paymentRequestItemObj instanceof PaymentRequestItem) {
+                PaymentRequestItem paymentRequestItem = (PaymentRequestItem) paymentRequestItemObj;
+
+                if (itemDto.getLineNumber().equals(paymentRequestItem.getItemLineNumber())) {
+                    return paymentRequestItem;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private List<PaymentRequestItem> addMiscPreqItemsFromPreqDto(PaymentRequestDto preqDto, PaymentRequestDocument preqDocument) {
+        List<PaymentRequestItem> paymentRequestMiscItems = new ArrayList<>();
+
+        if (ObjectUtils.isNotNull(preqDto.getShippingPrice()) && preqDto.getShippingPrice().isGreaterThan(new KualiDecimal(0))) {
+            PaymentRequestItem shippingItem = findMiscItem(preqDocument, ITEM_TYPE_SHIP_AND_HAND_CODE);
+            shippingItem.setItemUnitPrice(preqDto.getShippingPrice().bigDecimalValue());
+            shippingItem.setItemDescription(preqDto.getShippingDescription());
+            paymentRequestMiscItems.add(shippingItem);
+        }
+
+        if (ObjectUtils.isNotNull(preqDto.getFreightPrice()) && preqDto.getFreightPrice().isGreaterThan(new KualiDecimal(0))) {
+            PaymentRequestItem freightItem = findMiscItem(preqDocument, ITEM_TYPE_FREIGHT_CODE);
+            freightItem.setItemUnitPrice(preqDto.getFreightPrice().bigDecimalValue());
+            freightItem.setItemDescription(preqDto.getFreightDescription());
+            paymentRequestMiscItems.add(freightItem);
+        }
+
+        if (ObjectUtils.isNotNull(preqDto.getMiscellaneousPrice()) && preqDto.getMiscellaneousPrice().isGreaterThan(new KualiDecimal(0))) {
+            PaymentRequestItem miscItem = findMiscItem(preqDocument, ITEM_TYPE_MISC_CODE);
+            miscItem.setItemUnitPrice(preqDto.getMiscellaneousPrice().bigDecimalValue());
+            miscItem.setItemDescription(preqDto.getMiscellaneousDescription());
+            paymentRequestMiscItems.add(miscItem);
+        }
+
+        return paymentRequestMiscItems;
+     }
+
+     private PaymentRequestItem findMiscItem(PaymentRequestDocument preqDoc, String itemTypeCode) {
+        for (Object item : preqDoc.getItems()) {
+            try {
+                PaymentRequestItem preqItem = (PaymentRequestItem) item;
+                if (StringUtils.equals(preqItem.getItemTypeCode(), itemTypeCode)) {
+                    return preqItem;
+                }
+            } catch (Exception e) {
+                LOG.error("getOrCreateMiscLine for itemTypeCode {} failed", itemTypeCode);
+            }
+        }
+
+        return null;
+     }
 
 }

@@ -11,6 +11,7 @@ public class PaymentRequestResultsDto {
     private boolean valid;
     private List<String> successMessages;
     private List<String> errorMessages;
+    private String documentNumber;
 
     public PaymentRequestResultsDto() {
         successMessages = new ArrayList<>();
@@ -31,6 +32,14 @@ public class PaymentRequestResultsDto {
 
     public void setSuccessMessages(List<String> successMessages) {
         this.successMessages = successMessages;
+    }
+
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
     }
 
     public List<String> getErrorMessages() {
