@@ -18,14 +18,14 @@ public class CuAREmailServiceImpl extends AREmailServiceImpl {
     
     @Override
     protected String getSubject(final ContractsGrantsInvoiceDocument invoice) {
-        final String grantNumber = invoice.getInvoiceGeneralDetail().getAward().getProposalNumber();
+        final String grantNumber = invoice.getInvoiceGeneralDetail().getAward().getGrantNumber();
         String subject;
         String message;
         if (StringUtils.isBlank(grantNumber)) {
             subject = kualiConfigurationService.getPropertyValueAsString(
                     ArKeyConstants.CGINVOICE_EMAIL_SUBJECT_NO_GRANT_NUMBER);
             message = MessageFormat.format(subject, invoice.getDocumentNumber(), 
-                    invoice.getInvoiceGeneralDetail().getAward().getProposal().getProposalNumber());
+                    invoice.getInvoiceGeneralDetail().getAward().getProposalNumber());
         } else {
             subject = kualiConfigurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_EMAIL_SUBJECT);
             Award award = invoice.getInvoiceGeneralDetail().getAward();

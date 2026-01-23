@@ -73,12 +73,6 @@
                 <idref bean="rassInstrumentTypeCodeConverter"/>
                 <idref bean="agencyDefinition"/>
                 <idref bean="agencyDefinition-parentBean"/>
-                <idref bean="rassProposalProperty"/>
-                <idref bean="rassProposalListPropertyWithProposalNumberMapping"/>
-                <idref bean="proposalOrganizationDefinition"/>
-                <idref bean="proposalOrganizationDefinition-parentBean"/>
-                <idref bean="proposalProjectDirectorDefinition"/>
-                <idref bean="proposalProjectDirectorDefinition-parentBean"/>
                 <idref bean="awardDefinition"/>
                 <idref bean="awardDefinition-parentBean"/>
                 <idref bean="awardOrganizationDefinition"/>

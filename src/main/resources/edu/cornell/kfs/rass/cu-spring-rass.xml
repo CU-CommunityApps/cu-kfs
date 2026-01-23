@@ -169,47 +169,6 @@
 		</property>
 	</bean>
 
-    <bean id="rassProposalProperty" abstract="true" parent="rassProperty" p:skipForObjectEdit="true"/>
-    <bean id="rassProposalListPropertyWithProposalNumberMapping" abstract="true"
-            parent="rassListPropertyWithProposalNumberMapping" p:skipForObjectEdit="true"/>
-
-	<bean id="proposalOrganizationDefinition" parent="proposalOrganizationDefinition-parentBean"/>
-	<bean id="proposalOrganizationDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.RassSubObjectDefinition"
-			p:subObjectClass="org.kuali.kfs.module.cg.businessobject.ProposalOrganization"
-			p:primaryIndicatorPropertyName="proposalPrimaryOrganizationIndicator">
-		<property name="primaryKeyPropertyNames">
-			<list>
-				<value>chartOfAccountsCode</value>
-				<value>organizationCode</value>
-				<value>proposalNumber</value>
-			</list>
-		</property>
-		<property name="nonKeyPropertyNames">
-			<list>
-				<value>proposalPrimaryOrganizationIndicator</value>
-				<value>active</value>
-			</list>
-		</property>
-	</bean>
-
-	<bean id="proposalProjectDirectorDefinition" parent="proposalProjectDirectorDefinition-parentBean"/>
-	<bean id="proposalProjectDirectorDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.RassSubObjectDefinition"
-			p:subObjectClass="org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector"
-			p:primaryIndicatorPropertyName="proposalPrimaryProjectDirectorIndicator">
-		<property name="primaryKeyPropertyNames">
-			<list>
-				<value>principalId</value>
-				<value>proposalNumber</value>
-			</list>
-		</property>
-		<property name="nonKeyPropertyNames">
-			<list>
-				<value>proposalPrimaryProjectDirectorIndicator</value>
-				<value>active</value>
-			</list>
-		</property>
-	</bean>
-
 	<bean id="awardDefinition" parent="awardDefinition-parentBean"/>
 	<bean id="awardDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.AwardTranslationDefinition"
 			p:businessObjectService-ref="businessObjectService"
