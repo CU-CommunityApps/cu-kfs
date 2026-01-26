@@ -83,7 +83,6 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
         addPrimaryFundManager(xmlAward, newAward);
         updateAwardLastUpdateDate(newAward);
         
-        refreshReferenceObject(newAward, KFSPropertyConstants.PROPOSAL);
         refreshReferenceObject(newAward, KFSPropertyConstants.AGENCY);
     }
 
@@ -147,7 +146,6 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
     @Override
     public void processCustomTranslationForBusinessObjectEdit(
             RassXmlAwardEntry xmlAward, Award oldAward, Award newAward) {
-        refreshReferenceObject(newAward, KFSPropertyConstants.PROPOSAL);
         refreshReferenceObject(newAward, KFSPropertyConstants.AGENCY);
         refreshReferenceObject(newAward, CuCGPropertyConstants.AWARD_STATUS);
         refreshReferenceObject(newAward, CuCGPropertyConstants.AWARD_PURPOSE);

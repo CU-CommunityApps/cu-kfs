@@ -108,6 +108,7 @@ import com.rsmart.kuali.kfs.cr.CRConstants;
     "line4Address",
     "city",
     "state",
+    "province",
     "zipCd",
     "country",
     "campusAddress",
@@ -185,6 +186,11 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     private String state;
+
+    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
+    private String province;
 
     @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
@@ -513,6 +519,14 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
 
     public void setState(final String state) {
         this.state = state;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(final String province) {
+        this.province = province;
     }
 
     public String getAchBankRoutingNbr() {

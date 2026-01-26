@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2024 Kuali, Inc.
+ * Copyright 2005-2025 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kuali.kfs.module.ld.util;
+package org.kuali.kfs.module.ld.document.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.COAParameterConstants;
@@ -27,7 +27,6 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ld.LaborConstants;
-import org.kuali.kfs.module.ld.LaborParameterConstants;
 import org.kuali.kfs.module.ld.LaborPropertyConstants;
 import org.kuali.kfs.module.ld.businessobject.BenefitsCalculation;
 import org.kuali.kfs.module.ld.businessobject.ExpenseTransferAccountingLine;
@@ -37,12 +36,11 @@ import org.kuali.kfs.module.ld.businessobject.LaborLedgerPendingEntry;
 import org.kuali.kfs.module.ld.businessobject.PositionObjectBenefit;
 import org.kuali.kfs.module.ld.document.LaborLedgerPostingDocument;
 import org.kuali.kfs.module.ld.document.service.LaborPendingEntryConverterService;
+import org.kuali.kfs.module.ld.document.service.LaborPendingEntryGeneratorService;
 import org.kuali.kfs.module.ld.service.LaborBenefitsCalculationService;
 import org.kuali.kfs.module.ld.service.LaborPositionObjectBenefitService;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 
 import java.util.ArrayList;
@@ -56,60 +54,46 @@ import java.util.Set;
 /**
  * This class is used to help generating pending entries for the given labor documents
  */
-public final class LaborPendingEntryGenerator {
+// CU customization: backport FINP-12883
+public class LaborPendingEntryGeneratorServiceImpl implements LaborPendingEntryGeneratorService {
 
-    /**
-     * Private Constructor since this is a util class that should never be instantiated.
-     */
-    private LaborPendingEntryGenerator() {
+    private final LaborPendingEntryConverterService laborPendingEntryConverterService;
+    private final ParameterService parameterService;
+    private final LaborPositionObjectBenefitService laborPositionObjectBenefitService;
+    //access increased for Stevens
+    protected final LaborBenefitsCalculationService laborBenefitsCalculationService;
+    private final BusinessObjectService businessObjectService;
+
+    public LaborPendingEntryGeneratorServiceImpl(
+            final LaborPendingEntryConverterService laborPendingEntryConverterService,
+            final ParameterService parameterService,
+            final LaborPositionObjectBenefitService laborPositionObjectBenefitService,
+            final LaborBenefitsCalculationService laborBenefitsCalculationService,
+            final BusinessObjectService businessObjectService
+    ) {
+        this.laborPendingEntryConverterService = laborPendingEntryConverterService;
+        this.parameterService = parameterService;
+        this.laborPositionObjectBenefitService = laborPositionObjectBenefitService;
+        this.laborBenefitsCalculationService = laborBenefitsCalculationService;
+        this.businessObjectService = businessObjectService;
     }
 
-    /**
-     * generate the expense pending entries based on the given document and accounting line
-     *
-     * @param document       the given accounting document
-     * @param accountingLine the given accounting line
-     * @param sequenceHelper the given sequence helper
-     * @return a set of expense pending entries
-     */
-    public static List<LaborLedgerPendingEntry> generateExpensePendingEntries(
+    @Override
+    public List<LaborLedgerPendingEntry> generateExpensePendingEntries(
             final LaborLedgerPostingDocument document,
             final ExpenseTransferAccountingLine accountingLine, final GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         final List<LaborLedgerPendingEntry> expensePendingEntries = new ArrayList<>();
-        final LaborPendingEntryConverterService laborPendingEntryConverterService =
-                SpringContext.getBean(LaborPendingEntryConverterService.class);
         final LaborLedgerPendingEntry expensePendingEntry = laborPendingEntryConverterService
                 .getExpensePendingEntry(document, accountingLine, sequenceHelper);
         expensePendingEntries.add(expensePendingEntry);
-
-        final boolean generateA2Entries = SpringContext.getBean(ParameterService.class)
-                .getParameterValueAsBoolean(KFSConstants.OptionalModuleNamespaces.LABOR_DISTRIBUTION,
-                        KfsParameterConstants.DOCUMENT_COMPONENT, LaborParameterConstants.A2_ENTRIES_IND
-                );
-        if (generateA2Entries) {
-            final LaborLedgerPendingEntry expenseA21PendingEntry = laborPendingEntryConverterService
-                    .getExpenseA21PendingEntry(document, accountingLine, sequenceHelper);
-            expensePendingEntries.add(expenseA21PendingEntry);
-
-            final LaborLedgerPendingEntry expenseA21ReversalPendingEntry = laborPendingEntryConverterService
-                    .getExpenseA21ReversalPendingEntry(document, accountingLine, sequenceHelper);
-            expensePendingEntries.add(expenseA21ReversalPendingEntry);
-        }
 
         refreshObjectCodeNonUpdateableReferences(expensePendingEntries);
 
         return expensePendingEntries;
     }
 
-    /**
-     * generate the benefit pending entries based on the given document and accounting line
-     *
-     * @param document       the given accounting document
-     * @param accountingLine the given accounting line
-     * @param sequenceHelper the given sequence helper
-     * @return a set of benefit pending entries
-     */
-    public static List<LaborLedgerPendingEntry> generateBenefitPendingEntries(
+    @Override
+    public List<LaborLedgerPendingEntry> generateBenefitPendingEntries(
             final LaborLedgerPostingDocument document,
             final ExpenseTransferAccountingLine accountingLine, final GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         accountingLine.refreshReferenceObject(KFSPropertyConstants.LABOR_OBJECT);
@@ -125,26 +109,28 @@ public final class LaborPendingEntryGenerator {
         final Integer payrollFiscalYear = accountingLine.getPayrollEndDateFiscalYear();
         final String chartOfAccountsCode = accountingLine.getChartOfAccountsCode();
         final String objectCode = accountingLine.getFinancialObjectCode();
+        String laborBenefitRateCategoryCode = accountingLine.getAccount().getLaborBenefitRateCategoryCode();
+
         final Collection<PositionObjectBenefit> positionObjectBenefits =
-                SpringContext.getBean(LaborPositionObjectBenefitService.class).getActivePositionObjectBenefits(
+                laborPositionObjectBenefitService.getActivePositionObjectBenefits(
                         payrollFiscalYear, chartOfAccountsCode, objectCode);
 
         final List<LaborLedgerPendingEntry> benefitPendingEntries = new ArrayList<>();
         for (final PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
-            positionObjectBenefit.setLaborBenefitRateCategoryCode(accountingLine.getAccount()
-                    .getLaborBenefitRateCategoryCode());
-            final BenefitsCalculation benefitsCalculation = positionObjectBenefit.getBenefitsCalculation();
+
+            final BenefitsCalculation benefitsCalculation =
+                    laborBenefitsCalculationService.getBenefitsCalculation(positionObjectBenefit);
+
             if (ObjectUtils.isNull(benefitsCalculation)) {
                 continue;
             }
             String fringeBenefitObjectCode = benefitsCalculation.getPositionFringeBenefitObjectCode();
 
-            final KualiDecimal benefitAmount = SpringContext.getBean(LaborBenefitsCalculationService.class)
+            final KualiDecimal benefitAmount = laborBenefitsCalculationService
                     .calculateFringeBenefit(positionObjectBenefit, accountingLine.getAmount(),
                             accountingLine.getAccountNumber(), accountingLine.getSubAccountNumber());
             if (benefitAmount.isNonZero() && benefitsCalculation.isActive()) {
 
-                final ParameterService parameterService = SpringContext.getBean(ParameterService.class);
                 final Boolean enableFringeBenefitCalculationByBenefitRate = parameterService.getParameterValueAsBoolean(
                         KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class,
                         LaborConstants.BenefitCalculation.ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY_PARAMETER);
@@ -152,7 +138,6 @@ public final class LaborPendingEntryGenerator {
                 //If fringeBenefitObjectCode is empty and its enable to use calculation by benefit rate
                 if (StringUtils.isEmpty(fringeBenefitObjectCode) && enableFringeBenefitCalculationByBenefitRate) {
 
-                    String laborBenefitRateCategoryCode = positionObjectBenefit.getLaborBenefitRateCategoryCode();
                     // Use parameter default if labor benefit rate category code is blank
                     if (StringUtils.isBlank(laborBenefitRateCategoryCode)) {
                         laborBenefitRateCategoryCode = parameterService.getParameterValueAsString(Account.class,
@@ -169,7 +154,7 @@ public final class LaborPendingEntryGenerator {
                             positionObjectBenefit.getFinancialObjectBenefitsTypeCode());
                     fieldValues.put(LaborPropertyConstants.LABOR_BENEFIT_RATE_CATEGORY_CODE,
                             laborBenefitRateCategoryCode);
-                    final BenefitsCalculation bc = SpringContext.getBean(BusinessObjectService.class)
+                    final BenefitsCalculation bc = businessObjectService
                             .findByPrimaryKey(BenefitsCalculation.class, fieldValues);
 
                     fringeBenefitObjectCode = bc.getPositionFringeBenefitObjectCode();
@@ -184,61 +169,24 @@ public final class LaborPendingEntryGenerator {
         return benefitPendingEntries;
     }
 
-    /**
-     * generate the benefit pending entries with the given benefit amount and finge benefit object code based on the
-     * given document and accounting line
-     *
-     * @param document                the given accounting document
-     * @param accountingLine          the given accounting line
-     * @param sequenceHelper          the given sequence helper
-     * @param benefitAmount           the given benefit amount
-     * @param fringeBenefitObjectCode the given fringe benefit object code
-     * @return a set of benefit pending entries with the given benefit amount and fringe benefit object code
-     */
-    public static List<LaborLedgerPendingEntry> generateBenefitPendingEntries(
+    @Override
+    public List<LaborLedgerPendingEntry> generateBenefitPendingEntries(
             final LaborLedgerPostingDocument document,
             final ExpenseTransferAccountingLine accountingLine, final GeneralLedgerPendingEntrySequenceHelper sequenceHelper,
             final KualiDecimal benefitAmount, final String fringeBenefitObjectCode) {
         final List<LaborLedgerPendingEntry> benefitPendingEntries = new ArrayList<>();
-        final LaborPendingEntryConverterService laborPendingEntryConverterService =
-                SpringContext.getBean(LaborPendingEntryConverterService.class);
         final LaborLedgerPendingEntry benefitPendingEntry = laborPendingEntryConverterService
                 .getBenefitPendingEntry(document, accountingLine, sequenceHelper, benefitAmount,
                         fringeBenefitObjectCode);
         benefitPendingEntries.add(benefitPendingEntry);
-
-        final boolean generateA2Entries = SpringContext.getBean(ParameterService.class)
-                .getParameterValueAsBoolean(KFSConstants.OptionalModuleNamespaces.LABOR_DISTRIBUTION,
-                        KfsParameterConstants.DOCUMENT_COMPONENT, LaborParameterConstants.A2_ENTRIES_IND
-                );
-        if (generateA2Entries) {
-            final LaborLedgerPendingEntry benefitA21PendingEntry = laborPendingEntryConverterService
-                    .getBenefitA21PendingEntry(document, accountingLine, sequenceHelper, benefitAmount,
-                            fringeBenefitObjectCode);
-            benefitPendingEntries.add(benefitA21PendingEntry);
-
-            final LaborLedgerPendingEntry benefitA21ReversalPendingEntry =
-                    laborPendingEntryConverterService.getBenefitA21ReversalPendingEntry(document, accountingLine,
-                            sequenceHelper, benefitAmount, fringeBenefitObjectCode);
-            benefitPendingEntries.add(benefitA21ReversalPendingEntry);
-        }
 
         refreshObjectCodeNonUpdateableReferences(benefitPendingEntries);
 
         return benefitPendingEntries;
     }
 
-    /**
-     * generate the benefit clearing pending entries with the given benefit amount and fringe benefit object code
-     * based on the given document and accounting line
-     *
-     * @param document            the given accounting document
-     * @param sequenceHelper      the given sequence helper
-     * @param accountNumber       the given clearing account number
-     * @param chartOfAccountsCode the given clearing chart of accounts code
-     * @return a set of benefit clearing pending entries
-     */
-    public static List<LaborLedgerPendingEntry> generateBenefitClearingPendingEntries(
+    @Override
+    public List<LaborLedgerPendingEntry> generateBenefitClearingPendingEntries(
             final LaborLedgerPostingDocument document, final GeneralLedgerPendingEntrySequenceHelper sequenceHelper,
             final String accountNumber, final String chartOfAccountsCode) {
         final List<LaborLedgerPendingEntry> benefitClearingPendingEntries = new ArrayList<>();
@@ -255,25 +203,25 @@ public final class LaborPendingEntryGenerator {
             updateBenefitAmountSum(targetLineBenefitAmountSum, accountingLine);
         }
 
-        final Set<String> benefitTypeCodes = new HashSet<>(targetLineBenefitAmountSum.keySet());
-        benefitTypeCodes.addAll(sourceLineBenefitAmountSum.keySet());
+        final Set<String> benefitObjectCodes = new HashSet<>(targetLineBenefitAmountSum.keySet());
+        benefitObjectCodes.addAll(sourceLineBenefitAmountSum.keySet());
 
-        for (final String benefitTypeCode : benefitTypeCodes) {
+        for (final String benefitObjectCode : benefitObjectCodes) {
             KualiDecimal targetAmount = KualiDecimal.ZERO;
-            if (targetLineBenefitAmountSum.containsKey(benefitTypeCode)) {
-                targetAmount = targetLineBenefitAmountSum.get(benefitTypeCode);
+            if (targetLineBenefitAmountSum.containsKey(benefitObjectCode)) {
+                targetAmount = targetLineBenefitAmountSum.get(benefitObjectCode);
             }
 
             KualiDecimal sourceAmount = KualiDecimal.ZERO;
-            if (sourceLineBenefitAmountSum.containsKey(benefitTypeCode)) {
-                sourceAmount = sourceLineBenefitAmountSum.get(benefitTypeCode);
+            if (sourceLineBenefitAmountSum.containsKey(benefitObjectCode)) {
+                sourceAmount = sourceLineBenefitAmountSum.get(benefitObjectCode);
             }
 
             final KualiDecimal clearingAmount = sourceAmount.subtract(targetAmount);
-            if (clearingAmount.isNonZero() && ObjectUtils.isNotNull(benefitTypeCode)) {
-                benefitClearingPendingEntries.add(SpringContext.getBean(LaborPendingEntryConverterService.class)
+            if (clearingAmount.isNonZero() && ObjectUtils.isNotNull(benefitObjectCode)) {
+                benefitClearingPendingEntries.add(laborPendingEntryConverterService
                         .getBenefitClearingPendingEntry(document, sequenceHelper, accountNumber, chartOfAccountsCode,
-                                benefitTypeCode, clearingAmount));
+                                benefitObjectCode, clearingAmount));
             }
         }
 
@@ -289,7 +237,7 @@ public final class LaborPendingEntryGenerator {
      * @param benefitAmountSumByBenefitType the given benefit amount summary map
      * @param accountingLine                the given accounting line
      */
-    protected static void updateBenefitAmountSum(
+    protected void updateBenefitAmountSum(
             final Map<String, KualiDecimal> benefitAmountSumByBenefitType,
             final ExpenseTransferAccountingLine accountingLine) {
         accountingLine.refreshReferenceObject(KFSPropertyConstants.LABOR_OBJECT);
@@ -305,26 +253,33 @@ public final class LaborPendingEntryGenerator {
         final Integer payrollFiscalYear = accountingLine.getPayrollEndDateFiscalYear();
         final String chartOfAccountsCode = accountingLine.getChartOfAccountsCode();
         final String objectCode = accountingLine.getFinancialObjectCode();
+        final String laborBenefitRateCategoryCode = accountingLine.getAccount().getLaborBenefitRateCategoryCode();
 
         final Collection<PositionObjectBenefit> positionObjectBenefits =
-                SpringContext.getBean(LaborPositionObjectBenefitService.class).getActivePositionObjectBenefits(
+                laborPositionObjectBenefitService.getActivePositionObjectBenefits(
                         payrollFiscalYear, chartOfAccountsCode, objectCode);
         for (final PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
-            positionObjectBenefit.setLaborBenefitRateCategoryCode(accountingLine.getAccount()
-                    .getLaborBenefitRateCategoryCode());
-            final BenefitsCalculation benefitsCalculation = positionObjectBenefit.getBenefitsCalculation();
+
+            final BenefitsCalculation benefitsCalculation =
+                    laborBenefitsCalculationService.getBenefitsCalculation(
+                            payrollFiscalYear,
+                            accountingLine.getChartOfAccountsCode(),
+                            positionObjectBenefit.getFinancialObjectBenefitsTypeCode(),
+                            laborBenefitRateCategoryCode
+                    );
             if (ObjectUtils.isNull(benefitsCalculation)) {
                 continue;
             }
-            final String benefitTypeCode = benefitsCalculation.getPositionBenefitTypeCode();
+            final String benefitObjectCode =
+                    benefitsCalculation.getPositionFringeBenefitObjectCode();
 
-            KualiDecimal benefitAmount = SpringContext.getBean(LaborBenefitsCalculationService.class)
+            KualiDecimal benefitAmount = laborBenefitsCalculationService
                     .calculateFringeBenefit(positionObjectBenefit, accountingLine.getAmount(),
                             accountingLine.getAccountNumber(), accountingLine.getSubAccountNumber());
-            if (benefitAmountSumByBenefitType.containsKey(benefitTypeCode)) {
-                benefitAmount = benefitAmount.add(benefitAmountSumByBenefitType.get(benefitTypeCode));
+            if (benefitAmountSumByBenefitType.containsKey(benefitObjectCode)) {
+                benefitAmount = benefitAmount.add(benefitAmountSumByBenefitType.get(benefitObjectCode));
             }
-            benefitAmountSumByBenefitType.put(benefitTypeCode, benefitAmount);
+            benefitAmountSumByBenefitType.put(benefitObjectCode, benefitAmount);
         }
     }
 
@@ -333,15 +288,13 @@ public final class LaborPendingEntryGenerator {
      *
      * @param llpes list of LaborLedgerPendingEntries to refresh object codes for
      */
-    public static void refreshObjectCodeNonUpdateableReferences(final List<LaborLedgerPendingEntry> llpes) {
-        final BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
-
+    protected void refreshObjectCodeNonUpdateableReferences(final List<LaborLedgerPendingEntry> llpes) {
         //refresh nonupdateable references for financial object...
         final Map<String, String> primaryKeys = new HashMap<>();
 
         for (final LaborLedgerPendingEntry llpe : llpes) {
             primaryKeys.put("financialObjectCode", llpe.getFinancialObjectCode());
-            final ObjectCode objectCode = bos.findByPrimaryKey(ObjectCode.class, primaryKeys);
+            final ObjectCode objectCode = businessObjectService.findByPrimaryKey(ObjectCode.class, primaryKeys);
             llpe.setFinancialObject(objectCode);
         }
     }

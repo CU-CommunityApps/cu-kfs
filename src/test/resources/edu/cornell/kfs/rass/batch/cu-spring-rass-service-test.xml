@@ -25,8 +25,6 @@
 
     <bean id="agencyDefinition" parent="agencyDefinition-parentBean" class="edu.cornell.kfs.rass.batch.TestAgencyTranslationDefinition"/>
     
-    <bean id="proposalDefinition" parent="proposalDefinition-parentBean" class="edu.cornell.kfs.rass.batch.TestProposalTranslationDefinition"/>
-    
     <bean id="awardDefinition" parent="awardDefinition-parentBean" class="edu.cornell.kfs.rass.batch.TestAwardTranslationDefinition"/>
     
     <bean id="testServiceFactory" class="edu.cornell.kfs.rass.batch.service.impl.RassMockServiceFactory"/>
@@ -71,19 +69,10 @@
                 <idref bean="rassAwardProjectDirectorConverter"/>
                 <idref bean="rassPurposeCodeConverter"/>
                 <idref bean="rassAgencyTypeConverter"/>
-                <idref bean="rassProposalStatusConverter"/>
                 <idref bean="rassGrantDescriptionConverter"/>
                 <idref bean="rassInstrumentTypeCodeConverter"/>
                 <idref bean="agencyDefinition"/>
                 <idref bean="agencyDefinition-parentBean"/>
-                <idref bean="rassProposalProperty"/>
-                <idref bean="rassProposalListPropertyWithProposalNumberMapping"/>
-                <idref bean="proposalDefinition"/>
-                <idref bean="proposalDefinition-parentBean"/>
-                <idref bean="proposalOrganizationDefinition"/>
-                <idref bean="proposalOrganizationDefinition-parentBean"/>
-                <idref bean="proposalProjectDirectorDefinition"/>
-                <idref bean="proposalProjectDirectorDefinition-parentBean"/>
                 <idref bean="awardDefinition"/>
                 <idref bean="awardDefinition-parentBean"/>
                 <idref bean="awardOrganizationDefinition"/>

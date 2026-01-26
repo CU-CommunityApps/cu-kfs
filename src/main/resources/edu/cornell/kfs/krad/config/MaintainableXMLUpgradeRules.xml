@@ -515,6 +515,10 @@
                 <match>userLookupRoleName</match>
                 <replacement/>
             </pattern>
+            <pattern>
+                <match>statusCode</match>
+                <replacement />
+            </pattern>
         </pattern>
         <pattern>
             <class>proposal</class>
@@ -524,6 +528,17 @@
             </pattern>
             <pattern>
                 <match>userLookupRoleName</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>statusCode</match>
+                <replacement />
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.module.cg.businessobject.ProposalResearchRisk</class>
+            <pattern>
+                <match>researchRiskType</match>
                 <replacement/>
             </pattern>
         </pattern>
@@ -723,6 +738,10 @@
             <class>org.kuali.kfs.module.ar.businessobject.SystemInformation</class>
             <pattern>
                 <match>financialDocumentInitiator</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>creditCardObjectCode</match>
                 <replacement/>
             </pattern>
         </pattern>

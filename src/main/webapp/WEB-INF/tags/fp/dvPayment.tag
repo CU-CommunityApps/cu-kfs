@@ -134,18 +134,35 @@
               	<div align="right"><kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbVchrPayeeLine1Addr}"/></div>
               </th>
               <td class="datacell">
+                <c:set var="expectedMask"
+                       value="${fn:substring(KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK, 0, fn:length(KualiForm.disbVchrPayeeLine1AddrMaskedIfNecessary))}"/>
+                <c:set var="isMasked"
+                       value="${KualiForm.disbVchrPayeeLine1AddrMaskedIfNecessary eq expectedMask}" />
                 <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrPayeeLine1Addr}"
-                                          property="document.dvPayeeDetail.disbVchrPayeeLine1Addr"
-                                          readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress}"/>
+                                          property="disbVchrPayeeLine1AddrMaskedIfNecessary"
+                                          readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress || isMasked}"/>
+                <c:if test="${(fullEntryMode || payeeEntryMode) && !isMasked && canEditPayeeAddress &&
+                              KualiForm.document.dvPayeeDetail.vendor &&
+	          	              not empty KualiForm.document.dvPayeeDetail.disbVchrVendorHeaderIdNumber &&
+	          	              not empty KualiForm.document.dvPayeeDetail.disbVchrVendorDetailAssignedIdNumber}">
+                  <kul:lookup boClassName="org.kuali.kfs.vnd.businessobject.VendorAddress"
+                              fieldConversions="vendorLine1Address:document.dvPayeeDetail.disbVchrPayeeLine1Addr,vendorLine2Address:document.dvPayeeDetail.disbVchrPayeeLine2Addr,vendorCityName:document.dvPayeeDetail.disbVchrPayeeCityName,vendorStateCode:document.dvPayeeDetail.disbVchrPayeeStateCode,vendorZipCode:document.dvPayeeDetail.disbVchrPayeeZipCode,vendorCountryCode:document.dvPayeeDetail.disbVchrPayeeCountryCode,vendorAddressInternationalProvinceName:document.dvPayeeDetail.disbVchrPayeeProvinceName"
+                              lookupParameters="document.dvPayeeDetail.disbVchrVendorHeaderIdNumber:vendorHeaderGeneratedIdentifier,document.dvPayeeDetail.disbVchrVendorDetailAssignedIdNumber:vendorDetailAssignedIdentifier"
+                  />
+                </c:if>
               </td>
 
               <th class="bord-l-b">
               	<div align="right"><kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbVchrPayeeLine2Addr}"/></div>
               </th>
               <td class="datacell">
+                <c:set var="expectedMask"
+                       value="${fn:substring(KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK, 0, fn:length(KualiForm.disbVchrPayeeLine2AddrMaskedIfNecessary))}"/>
+                <c:set var="isMasked"
+                       value="${KualiForm.disbVchrPayeeLine2AddrMaskedIfNecessary eq expectedMask}" />
                 <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrPayeeLine2Addr}"
-                                          property="document.dvPayeeDetail.disbVchrPayeeLine2Addr"
-                                          readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress}"/>
+                                          property="disbVchrPayeeLine2AddrMaskedIfNecessary"
+                                          readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress || isMasked}"/>
               </td>
             </tr>
 
@@ -154,19 +171,27 @@
 			  	<div align="right"><kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbVchrPayeeCityName}"/></div>
               </th>
               <td class="datacell">
+                <c:set var="expectedMask"
+                       value="${fn:substring(KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK, 0, fn:length(KualiForm.disbVchrPayeeCityNameMaskedIfNecessary))}"/>
+                <c:set var="isMasked"
+                       value="${KualiForm.disbVchrPayeeCityNameMaskedIfNecessary eq expectedMask}" />
                 <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrPayeeCityName}"
-                                          property="document.dvPayeeDetail.disbVchrPayeeCityName"
-                                          readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress}"/>
+                                          property="disbVchrPayeeCityNameMaskedIfNecessary"
+                                          readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress || isMasked}"/>
               </td>
 
 			  <th class="bord-l-b">
 			  	<div align="right"><kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbVchrPayeeStateCode}"/></div>
               </th>
               <td class="datacell">
+                <c:set var="expectedMask"
+                       value="${fn:substring(KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK, 0, fn:length(KualiForm.disbVchrPayeeStateCodeMaskedIfNecessary))}"/>
+                <c:set var="isMasked"
+                     value="${KualiForm.disbVchrPayeeStateCodeMaskedIfNecessary eq expectedMask}" />
                 <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrPayeeStateCode}"
-                                          property="document.dvPayeeDetail.disbVchrPayeeStateCode"
-                                          readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress}"/>
-                <c:if test="${fullEntryMode || payeeEntryMode}">
+                                          property="disbVchrPayeeStateCodeMaskedIfNecessary"
+                                          readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress || isMasked}"/>
+                <c:if test="${!isMasked && (fullEntryMode || payeeEntryMode) && canEditPayeeAddress}">
               		<kul:lookup boClassName="org.kuali.kfs.sys.businessobject.State"
                                 fieldConversions="countryCode:document.dvPayeeDetail.disbVchrPayeeCountryCode,code:document.dvPayeeDetail.disbVchrPayeeStateCode"
               		            lookupParameters="document.dvPayeeDetail.disbVchrPayeeCountryCode:countryCode" />
@@ -179,9 +204,14 @@
                 <div align="right"><kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbVchrPayeeProvinceName}"/></div>
               </th>
               <td class="datacell">
+                <c:set var="expectedMask"
+                       value="${fn:substring(KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK, 0, fn:length(KualiForm.disbVchrPayeeProvinceNameMaskedIfNecessary))}"/>
+                <c:set var="isMasked"
+                       value="${KualiForm.disbVchrPayeeProvinceNameMaskedIfNecessary eq expectedMask}" />
                  <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrPayeeProvinceName}"
-                                           property="document.dvPayeeDetail.disbVchrPayeeProvinceName"
-                                           readOnly="${!fullEntryMode && !payeeEntryMode}"/>
+                                           property="disbVchrPayeeProvinceNameMaskedIfNecessary"
+                                           readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress ||
+                                           isMasked}"/>
               </td>
             </tr>
 
@@ -190,19 +220,27 @@
               	<div align="right"><kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbVchrPayeeCountryCode}"/></div>
               </th>
               <td class="datacell">
+                <c:set var="expectedMask"
+                       value="${fn:substring(KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK, 0, fn:length(KualiForm.disbVchrPayeeCountryCodeMaskedIfNecessary))}"/>
+                <c:set var="isMasked"
+                       value="${KualiForm.disbVchrPayeeCountryCodeMaskedIfNecessary eq expectedMask}" />
                 <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrPayeeCountryCode}"
-                                          property="document.dvPayeeDetail.disbVchrPayeeCountryCode"
-                                          readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress}"/>
+                                          property="disbVchrPayeeCountryCodeMaskedIfNecessary"
+                                          readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress || isMasked}"/>
               </td>
 
               <th class="bord-l-b">
               	<div align="right"><kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbVchrPayeeZipCode}"/></div>
               </th>
               <td class="datacell">
+                <c:set var="expectedMask"
+                       value="${fn:substring(KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK, 0, fn:length(KualiForm.disbVchrPayeeZipCodeMaskedIfNecessary))}"/>
+                <c:set var="isMasked"
+                       value="${KualiForm.disbVchrPayeeZipCodeMaskedIfNecessary eq expectedMask}" />
                 <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrPayeeZipCode}"
-                                          property="document.dvPayeeDetail.disbVchrPayeeZipCode"
-                                          readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress}"/>
-                <c:if test="${fullEntryMode || payeeEntryMode}">
+                                          property="disbVchrPayeeZipCodeMaskedIfNecessary"
+                                          readOnly="${!fullEntryMode && !payeeEntryMode || !canEditPayeeAddress || isMasked}"/>
+                <c:if test="${!isMasked && (fullEntryMode || payeeEntryMode) && canEditPayeeAddress}">
               		<kul:lookup boClassName="org.kuali.kfs.sys.businessobject.PostalCode"
                                 fieldConversions="code:document.dvPayeeDetail.disbVchrPayeeZipCode,countryCode:document.dvPayeeDetail.disbVchrPayeeCountryCode,stateCode:document.dvPayeeDetail.disbVchrPayeeStateCode,cityName:document.dvPayeeDetail.disbVchrPayeeCityName"
               		            lookupParameters="document.dvPayeeDetail.disbVchrPayeeCountryCode:countryCode,document.dvPayeeDetail.disbVchrPayeeZipCode:code,document.dvPayeeDetail.disbVchrPayeeStateCode:stateCode,document.dvPayeeDetail.disbVchrPayeeCityName:cityName" />

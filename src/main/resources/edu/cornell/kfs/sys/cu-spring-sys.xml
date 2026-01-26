@@ -384,6 +384,7 @@
           p:scheduledThreadPool-ref="rice.ksb.scheduledThreadPool"
           p:exceptionMessageJob-ref="exceptionMessageJob"
           p:delayedAsyncCallJob-ref="delayedAsyncCallJob"
+          p:environment-ref="environment"
           p:useQuartzScheduling="${use.quartz.scheduling}"/>
 
     <bean id="messageServiceExecutorJobListener"

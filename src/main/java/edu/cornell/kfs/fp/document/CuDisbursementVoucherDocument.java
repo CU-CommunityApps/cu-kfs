@@ -115,6 +115,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             return;
         }
 
+        // needed for address field unmasking permission check on INITIATED doc
+        dvPayeeDetail.setDocumentNumber(documentNumber);
+        
         dvPayeeDetail.setDisbursementVoucherPayeeTypeCode(KFSConstants.PaymentPayeeTypes.EMPLOYEE);
         if (StringUtils.isNotBlank(employee.getEmployeeId())) {
             dvPayeeDetail.setDisbVchrPayeeIdNumber(employee.getEmployeeId());
@@ -129,6 +132,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
 
         dvPayeeDetail.setDisbVchrPayeePersonName(employee.getName());
 
+        dvPayeeDetail.setDisbVchrPayeeAddressTypeCode(employee.getAddressTypeCode());
         dvPayeeDetail.setDisbVchrPayeeLine1Addr(employee.getAddressLine1());
         dvPayeeDetail.setDisbVchrPayeeLine2Addr(employee.getAddressLine2());
         dvPayeeDetail.setDisbVchrPayeeCityName(employee.getAddressCity());
@@ -562,11 +566,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
                 if (!isZeroDollarWireCharge(wireCharge)) {
 
                 //KFSPTS-764: only generate GLPE entries when wire charges are NOT zero dollars.
-                // generate debits
-                final GeneralLedgerPendingEntry chargeEntry = getPaymentSourceHelperService().processWireChargeDebitEntries(this, sequenceHelper, wireCharge);
-
-                // generate credits
-                getPaymentSourceHelperService().processWireChargeCreditEntries(this, sequenceHelper, wireCharge, chargeEntry);
+                getPaymentSourceHelperService().processWireChargeEntries(this, sequenceHelper, wireCharge);
             }
         }
 

@@ -23,9 +23,6 @@
         <property name="defaultExistenceChecks">
             <list>
                 <bean parent="ReferenceDefinition" 
-                      p:attributeName="proposal"
-                      p:attributeToHighlightOnFail="proposalNumber"/>
-                <bean parent="ReferenceDefinition" 
                       p:attributeName="proposalAwardType"
                       p:attributeToHighlightOnFail="proposalAwardTypeCode"/>
                 <bean parent="ReferenceDefinition" 

@@ -18,7 +18,6 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.util.ObjectPropertyUtils;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
-import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
@@ -52,7 +51,6 @@ public class RassServiceImpl implements RassService {
     protected FileStorageService fileStorageService;
     protected RassUpdateService rassUpdateService;
     protected RassObjectTranslationDefinition<RassXmlAgencyEntry, Agency> agencyDefinition;
-    protected RassObjectTranslationDefinition<RassXmlAwardEntry, Proposal> proposalDefinition;
     protected RassObjectTranslationDefinition<RassXmlAwardEntry, Award> awardDefinition;
     protected RassSortService rassSortService;
 
@@ -114,27 +112,23 @@ public class RassServiceImpl implements RassService {
         
         Map<String, RassBusinessObjectUpdateResultGrouping<Agency>> agencyResults = updateBOs(
                 successfullyParsedFiles, agencyDefinition, documentTracker);
-        Map<String, RassBusinessObjectUpdateResultGrouping<Proposal>> proposalResults = updateBOs(
-                successfullyParsedFiles, proposalDefinition, documentTracker);
         Map<String, RassBusinessObjectUpdateResultGrouping<Award>> awardResults = updateBOs(
                 successfullyParsedFiles, awardDefinition, documentTracker);
-        LOG.debug("updateKFS, NOTE: Proposal and Award processing still needs to be implemented!");
         
         rassUpdateService.waitForRemainingGeneratedDocumentsToFinish(documentTracker);
         
-        return buildProcessingResults(successfullyParsedFiles, agencyResults, proposalResults, awardResults);
+        return buildProcessingResults(successfullyParsedFiles, agencyResults, awardResults);
     }
 
     protected Map<String, RassXmlFileProcessingResult> buildProcessingResults(
             List<RassXmlFileParseResult> parseResults,
             Map<String, RassBusinessObjectUpdateResultGrouping<Agency>> agencyResults,
-            Map<String, RassBusinessObjectUpdateResultGrouping<Proposal>> proposalResults,
             Map<String, RassBusinessObjectUpdateResultGrouping<Award>> awardResults) {
         return parseResults.stream()
                 .map(RassXmlFileParseResult::getRassXmlFileName)
                 .map(xmlFileName -> new RassXmlFileProcessingResult(
                         xmlFileName, agencyResults.get(xmlFileName),
-                        proposalResults.get(xmlFileName), awardResults.get(xmlFileName)))
+                        awardResults.get(xmlFileName)))
                 .collect(
                         Collectors.toMap(RassXmlFileProcessingResult::getRassXmlFileName, Function.identity()));
     }
@@ -231,10 +225,6 @@ public class RassServiceImpl implements RassService {
 
     public void setAgencyDefinition(RassObjectTranslationDefinition<RassXmlAgencyEntry, Agency> agencyDefinition) {
         this.agencyDefinition = agencyDefinition;
-    }
-
-    public void setProposalDefinition(RassObjectTranslationDefinition<RassXmlAwardEntry, Proposal> proposalDefinition) {
-        this.proposalDefinition = proposalDefinition;
     }
 
     public void setAwardDefinition(RassObjectTranslationDefinition<RassXmlAwardEntry, Award> awardDefinition) {
