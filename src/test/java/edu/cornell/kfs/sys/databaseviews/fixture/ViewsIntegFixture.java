@@ -5,6 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 
 public enum ViewsIntegFixture {
+    CA_OBJECT_CODE_V(
+            "SELECT UNIV_FISCAL_YR, FIN_COA_CD, FIN_OBJECT_CD, FIN_OBJ_CD_NM, FIN_OBJ_CD_SHRT_NM, FIN_OBJ_LEVEL_CD, RPTS_TO_FIN_COA_CD, RPTS_TO_FIN_OBJ_CD, FIN_OBJ_TYP_CD, FIN_OBJ_SUB_TYP_CD, HIST_FIN_OBJECT_CD, FIN_OBJ_ACTIVE_CD, FOBJ_BDGT_AGGR_CD, FOBJ_MNXFR_ELIM_CD, FIN_FED_FUNDED_CD, NXT_YR_FIN_OBJ_CD, RSCH_BDGT_CTGRY_CD, RSCH_OBJ_CD_DESC, RSCH_ON_CMP_IND FROM KFS.CA_OBJECT_CODE_V WHERE FIN_COA_CD = 'IT' AND FIN_OBJECT_CD = '6550'",
+            createExpectedResults_CA_OBJECT_CODE_V()),
+    
+    CA_SUB_OBJECT_CD_V(
+            "SELECT UNIV_FISCAL_YR, FIN_COA_CD, ACCOUNT_NBR, FIN_OBJECT_CD, FIN_SUB_OBJ_CD, FIN_SUB_OBJ_CD_NM, FIN_SUBOBJ_SHRT_NM, FIN_SUBOBJ_ACTV_CD FROM KFS.CA_SUB_OBJECT_CD_V WHERE ACCOUNT_NBR = 'A403002' AND FIN_COA_CD = 'IT' AND FIN_OBJECT_CD = '6550'",
+            createExpectedResults_CA_SUB_OBJECT_CD_V()),
+    
     COLLEGE_ORG_HRCY_V(
             "SELECT FIN_COA_CD, ORG_CD, ORG_NM, COLLEGE_FIN_COA_CD, COLLEGE_ORG_CD, COLLEGE_ORG_NM FROM KFS.COLLEGE_ORG_HRCY_V WHERE ORG_CD = '0100'",
             createExpectedResults_COLLEGE_ORG_HRCY_V()),
@@ -48,6 +56,63 @@ public enum ViewsIntegFixture {
     PURCHASE_DETAILS_V_INCOMPLETE_DATA(
             "SELECT NET_ID, PRINCIPAL_ID, DOCUMENT_ID, DOC_TITLE, STATUS_CODE, CREATE_DATE, FINALIZATION_DATE, DOC_TYPE_ID, TOTAL_AMOUNT, DOC_TYPE_NAME, DOCUMENT_LABEL, REQS_VENDOR_NAME, IWANT_VENDOR_NAME, VENDOR_NAME FROM KFS.PURCHASE_DETAILS_V WHERE NET_ID = 'jdh34'",
             createExpectedResults_PURCHASE_DETAILS_V_INCOMPLETE_DATA());
+    
+    private static List<HashMap<String, String>> createExpectedResults_CA_OBJECT_CODE_V() {
+        // NOTE: Enum ViewsIntegDynamicFixture.CURRENT_UNIV_FISCAL_YR will obtain the "UNIV_FISCAL_YR"
+        // as seen by the system when the unit test runs. The actual unit test will combine that dynamic
+        // value with this static result set to create the complete result set that will ultimately be
+        // used by the unit test for validation.
+        List<HashMap<String, String>> expectedResultSetList = new ArrayList<>();
+        HashMap<String, String>  expectedResultSetItem_1 = new HashMap<String, String>();
+        expectedResultSetItem_1.put("FIN_COA_CD", "IT");
+        expectedResultSetItem_1.put("FIN_OBJECT_CD", "6550");
+        expectedResultSetItem_1.put("FIN_OBJ_CD_NM", "Supplies - Office");
+        expectedResultSetItem_1.put("FIN_OBJ_CD_SHRT_NM", "Office");
+        expectedResultSetItem_1.put("FIN_OBJ_LEVEL_CD", "SMAT");
+        expectedResultSetItem_1.put("RPTS_TO_FIN_COA_CD", "CU");
+        expectedResultSetItem_1.put("RPTS_TO_FIN_OBJ_CD", "E370");
+        expectedResultSetItem_1.put("FIN_OBJ_TYP_CD", "EX");
+        expectedResultSetItem_1.put("FIN_OBJ_SUB_TYP_CD", "OE");
+        expectedResultSetItem_1.put("HIST_FIN_OBJECT_CD", "666*");
+        expectedResultSetItem_1.put("FIN_OBJ_ACTIVE_CD", "Y");
+        expectedResultSetItem_1.put("FOBJ_BDGT_AGGR_CD", "O");
+        expectedResultSetItem_1.put("FOBJ_MNXFR_ELIM_CD", "N");
+        expectedResultSetItem_1.put("FIN_FED_FUNDED_CD", "N");
+        expectedResultSetItem_1.put("NXT_YR_FIN_OBJ_CD", null);
+        expectedResultSetItem_1.put("RSCH_BDGT_CTGRY_CD", null);
+        expectedResultSetItem_1.put("RSCH_OBJ_CD_DESC", null);
+        expectedResultSetItem_1.put("RSCH_ON_CMP_IND", null);
+        expectedResultSetList.add(expectedResultSetItem_1);
+        return expectedResultSetList;
+    }
+    
+    private static List<HashMap<String, String>> createExpectedResults_CA_SUB_OBJECT_CD_V() {
+        // NOTE: Enum ViewsIntegDynamicFixture.CURRENT_UNIV_FISCAL_YR will obtain the "UNIV_FISCAL_YR"
+        // as seen by the system when the unit test runs. The actual unit test will combine that dynamic
+        // value with this static result set to create the complete result set that will ultimately be
+        // used by the unit test for validation.
+        List<HashMap<String, String>> expectedResultSetList = new ArrayList<>();
+        HashMap<String, String> expectedResultSetItem_1 = new HashMap<String, String>();
+        expectedResultSetItem_1.put("FIN_COA_CD", "IT");
+        expectedResultSetItem_1.put("ACCOUNT_NBR", "A403002");
+        expectedResultSetItem_1.put("FIN_OBJECT_CD", "6550");
+        expectedResultSetItem_1.put("FIN_SUB_OBJ_CD", "603");
+        expectedResultSetItem_1.put("FIN_SUB_OBJ_CD_NM", "COPIES");
+        expectedResultSetItem_1.put("FIN_SUBOBJ_SHRT_NM", "COPIES");
+        expectedResultSetItem_1.put("FIN_SUBOBJ_ACTV_CD", "Y");
+        expectedResultSetList.add(expectedResultSetItem_1);
+        
+        HashMap<String, String> expectedResultSetItem_2 = new HashMap<String, String>();
+        expectedResultSetItem_2.put("FIN_COA_CD", "IT");
+        expectedResultSetItem_2.put("ACCOUNT_NBR", "A403002");
+        expectedResultSetItem_2.put("FIN_OBJECT_CD", "6550");
+        expectedResultSetItem_2.put("FIN_SUB_OBJ_CD", "604");
+        expectedResultSetItem_2.put("FIN_SUB_OBJ_CD_NM", "SUPPLY");
+        expectedResultSetItem_2.put("FIN_SUBOBJ_SHRT_NM", "SUPPLY");
+        expectedResultSetItem_2.put("FIN_SUBOBJ_ACTV_CD", "Y");
+        expectedResultSetList.add(expectedResultSetItem_2);
+        return expectedResultSetList;
+    }
     
     private static List<HashMap<String, String>> createExpectedResults_COLLEGE_ORG_HRCY_V() {
         List<HashMap<String, String>> expectedResultSetList = new ArrayList<>();

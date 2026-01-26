@@ -5,6 +5,8 @@ import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +22,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.dataaccess.IntegTestSqlDao;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.databaseviews.fixture.ViewsIntegDynamicFixture;
 import edu.cornell.kfs.sys.databaseviews.fixture.ViewsIntegFixture;
 
 @ConfigureContext(session = ccs1)
@@ -36,6 +39,16 @@ public class CuViewsIntegTest extends KualiIntegTestBase {
         integTestSqlDao = SpringContext.getBean(IntegTestSqlDao.class);
     }
     
+    @Test
+    public void testObjectCodeCurrentView() {
+        runUnitTest(ViewsIntegFixture.CA_OBJECT_CODE_V, ViewsIntegDynamicFixture.CURRENT_UNIV_FISCAL_YR);
+    }
+    
+    @Test
+    public void testSubObjectCodeCurrentView() {
+        runUnitTest(ViewsIntegFixture.CA_SUB_OBJECT_CD_V, ViewsIntegDynamicFixture.CURRENT_UNIV_FISCAL_YR);
+    }
+
     @Test
     public void testCollegeOrgHierarchyView() {
         runUnitTest(ViewsIntegFixture.COLLEGE_ORG_HRCY_V);
@@ -76,11 +89,57 @@ public class CuViewsIntegTest extends KualiIntegTestBase {
     }
 
 
-    private void runUnitTest(ViewsIntegFixture dataFixtureForTest) {
-        List queryResultsReturned =  integTestSqlDao.sqlSelect(dataFixtureForTest.getQuery());
-        assertTrue(actualResultsMatchExpectedResults(dataFixtureForTest.name(), queryResultsReturned, dataFixtureForTest.getExpectedResults()));
 
+    private void runUnitTest(ViewsIntegFixture dataFixtureForTest) {
+        List queryResultsReturned = integTestSqlDao.sqlSelect(dataFixtureForTest.getQuery());
+        assertTrue(actualResultsMatchExpectedResults(dataFixtureForTest.name(), queryResultsReturned, dataFixtureForTest.getExpectedResults()));
     }
+
+
+
+    private void runUnitTest(ViewsIntegFixture staticDataFixtureForTest, ViewsIntegDynamicFixture dynamicDataFixtureForTest) {
+        //view being tested will return static and dynamic data, combine these values into a single list of hash map pairs
+        List dynamicQueryResultsReturned = integTestSqlDao.sqlSelect(dynamicDataFixtureForTest.getQuery());
+        if (dynamicQueryResultsReturned.isEmpty() || dynamicQueryResultsReturned.size() != 1) {
+            fail("Dynamic data query did not return one row of data as expected: " + dynamicDataFixtureForTest.getQuery());
+        }
+        
+        //View being tested needs to take into consideration both static and dynamic data results.
+        //Combine these hash map pairs into a single list.
+        List<HashMap<String, String>> combinedExpectedResultList = new ArrayList<>();
+        addStaticExpectedResultsToCombinedList(combinedExpectedResultList, staticDataFixtureForTest.getExpectedResults());
+        HashMap<String, Object> dynamicQuerySingleDataRowReturned = (HashMap<String, Object>) dynamicQueryResultsReturned.get(0);
+        addDynamicExpectedResultsToExistingResultsInCombinedList(combinedExpectedResultList, dynamicQuerySingleDataRowReturned);
+        
+        List queryResultsReturned = integTestSqlDao.sqlSelect(staticDataFixtureForTest.getQuery());
+        assertTrue(actualResultsMatchExpectedResults(staticDataFixtureForTest.name(), queryResultsReturned, combinedExpectedResultList));
+    }
+    
+    
+    
+    private void addStaticExpectedResultsToCombinedList(List<HashMap<String, String>> combinedExpectedResultList, List<HashMap<String, String>> rowsOfStaticDataExpectedResultsList) {
+        for (Map<String, String> staticExpectedDataRow : rowsOfStaticDataExpectedResultsList) {
+            HashMap<String, String>  combinedStaticMap = new HashMap<String, String>();
+            for (Map.Entry<String, String> staticExpectedDataItem : staticExpectedDataRow.entrySet()) {
+                String key = new String(staticExpectedDataItem.getKey());
+                String value = (staticExpectedDataItem.getValue() == null ? null : new String(staticExpectedDataItem.getValue()));
+                combinedStaticMap.put(key, value);
+            }
+            combinedExpectedResultList.add(combinedStaticMap);
+        }
+    }
+    
+    
+    
+    private void addDynamicExpectedResultsToExistingResultsInCombinedList(List<HashMap<String, String>> combinedExpectedResultList, HashMap<String, Object> singleRowOfDynamicDataExpectedResult) {
+        for (HashMap<String, String> combinedExpectedDataRow : combinedExpectedResultList) {
+            for (HashMap.Entry<String, Object> dynamicExpectedDataItem : singleRowOfDynamicDataExpectedResult.entrySet()) {
+                String value = transformDataIntoCorrectType((dynamicExpectedDataItem.getValue()).getClass(), dynamicExpectedDataItem.getValue());
+                combinedExpectedDataRow.put(dynamicExpectedDataItem.getKey(), value);
+            }
+        }
+    }
+
 
 
     private boolean actualResultsMatchExpectedResults(String identifierForViewAndDataBeingTested, List rowsOfActualResults, List rowsOfExpectedResults) {
@@ -140,7 +199,6 @@ public class CuViewsIntegTest extends KualiIntegTestBase {
             int queryRowElementIndex = 0;
             LOG.debug("validateReturnedQueryDataRowIsInExpectedResults: Validating   expectedResultsRow  = {} which has {} column,value pairs", expectedResultsRow.toString(), expectedResultsRow.size());
             LOG.debug("validateReturnedQueryDataRowIsInExpectedResults: against actualRowOfDataFromQuery = {} which has {} column,value pairs", actualRowOfDataFromQuery.toString(), actualRowOfDataFromQuery.size());
-            
             
             for (Map.Entry<String, String> queryRowItem : actualRowOfDataFromQuery.entrySet()) {
                 String queryColumnName = queryRowItem.getKey();
