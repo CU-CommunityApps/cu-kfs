@@ -7,11 +7,6 @@ Number of Agency objects updated: 2.
 Number of Agency objects that resulted in error: 0.
 Number of Agency objects skipped: 2.
 
-Number of Proposal objects created: 2.
-Number of Proposal objects with updates to Grant Number: 1.
-Number of Proposal objects that resulted in error: 1.
-Number of Proposal objects skipped: 2.
-
 Number of Award objects created: 1.
 Number of Award objects updated: 1.
 Number of Award objects that resulted in error: 3.
@@ -37,22 +32,6 @@ Agency #: 89899 updated by document #: 3105
 ** Agency objects that were skipped:
 Agency #: 70005 skipped.
 Agency #: 70023 skipped.
-
-
-** Proposal objects successfully created:
-Proposal #: 44567 created by document #: 3106
-Proposal #: 45599 created by document #: 3107
-
-** Proposal objects with successful updates to Grant Number:
-Proposal #: 35791 updated by document #: 3108
-
-** Proposal objects that had errors:
-Proposal #: 44556 error: Invalid Purpose Code
-
-
-** Proposal objects that were skipped:
-Proposal #: 98765 skipped.
-Proposal #: 38333 skipped.
 
 
 ** Award objects successfully created:

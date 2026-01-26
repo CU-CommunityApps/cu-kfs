@@ -35,7 +35,6 @@ import org.kuali.kfs.module.cg.businessobject.AwardFundManager;
 import org.kuali.kfs.module.cg.businessobject.AwardOrganization;
 import org.kuali.kfs.module.cg.businessobject.CGProjectDirector;
 import org.kuali.kfs.module.cg.businessobject.Primaryable;
-import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.businessobject.ProposalOrganization;
 import org.kuali.kfs.module.cg.service.AgencyService;
 import org.kuali.kfs.sys.KFSConstants;
@@ -73,8 +72,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
 
     private Map<String, List<Maintainable>> agencyUpdates;
     private List<Maintainable> agencyUpdatesForCurrentFile;
-    private Map<String, List<Maintainable>> proposalUpdates;
-    private List<Maintainable> proposalUpdatesForCurrentFile;
     private Map<String, List<Maintainable>> awardUpdates;
     private List<Maintainable> awardUpdatesForCurrentFile;
 
@@ -84,7 +81,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         super.setUp();
         
         agencyUpdates = new HashMap<>();
-        proposalUpdates = new HashMap<>();
         awardUpdates = new HashMap<>();
         mockAgencyService = springContext.getBean(RassTestConstants.AGENCY_SERVICE_BEAN_NAME, AgencyService.class);
         mockBusinessObjectService = springContext.getBean(RassTestConstants.BUSINESS_OBJECT_SERVICE_BEAN_NAME, BusinessObjectService.class);
@@ -112,7 +108,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_EMPTY_FILE,
                         emptyAgencyResults(),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -123,7 +118,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -134,7 +128,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -146,7 +139,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -157,7 +149,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_AGENCY_UPDATE_LENGTH_TRUNCATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.DoS_LONG_DESC, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -168,7 +159,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_AGENCY_UPDATE_MISSING_FIELD_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.ERROR,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2_MISSING_REQ_FIELD, RassObjectUpdateResultCode.ERROR)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -179,7 +169,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_LONG_AGENCY_NUMBER_CREATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.LONG_KEY, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -190,7 +179,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_EXISTING_AGENCY_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME, RassObjectUpdateResultCode.SKIPPED)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -201,13 +189,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE_V2,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SKIPPED)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -218,13 +204,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE_V2,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SKIPPED)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -236,19 +220,16 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SKIPPED)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.FIJI_DOT, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -262,13 +243,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE_V2,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SKIPPED)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -283,13 +262,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(        
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -304,13 +281,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.ERROR,
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.ERROR)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -326,7 +301,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         agencies(RassObjectGroupingUpdateResultCode.ERROR,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.ERROR)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -340,13 +314,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.ERROR,
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.ERROR)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -360,19 +332,16 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.ERROR,
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.ERROR)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_ANOTHER_SINGLE_AGENCY_CREATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.ERROR,
                                 agency(RassXmlAgencyEntryFixture.UNLIMITED_LTD, RassObjectUpdateResultCode.ERROR)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -386,19 +355,16 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.ERROR,
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.ERROR)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.FIJI_DOT, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -412,13 +378,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.FIJI_DOT, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -433,13 +397,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.FIJI_DOT, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -453,13 +415,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.FIJI_DOT, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -470,13 +430,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_AGENCY_UPDATE_MISSING_FIELD_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.ERROR,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2_MISSING_REQ_FIELD, RassObjectUpdateResultCode.ERROR)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -486,15 +444,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_CREATE_MISSING_FIELD_FILE,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.ERROR,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_MISSING_REQ_FIELD, RassObjectUpdateResultCode.ERROR)),
                         awards(RassObjectGroupingUpdateResultCode.ERROR,
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_MISSING_REQ_FIELD, RassObjectUpdateResultCode.ERROR))),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_CREATE_FILE,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW))));
     }
@@ -505,15 +459,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_UPDATE_MISSING_FIELD_FILE,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.ERROR,
                                 award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_MISSING_REQ_FIELD, RassObjectUpdateResultCode.ERROR))),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_UPDATE_FILE,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_V2, RassObjectUpdateResultCode.SUCCESS_EDIT))));
     }
@@ -529,13 +479,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_AFTER_CREATE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD_UPDATE, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -549,13 +497,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_SUBSEQUENT_UPDATE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V3, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -566,19 +512,15 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_AGENCY_UPDATE_MISSING_FIELD_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.ERROR,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2_MISSING_REQ_FIELD, RassObjectUpdateResultCode.ERROR)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_SUBSEQUENT_UPDATE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V3, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_CREATE_FILE,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW))));
     }
@@ -590,12 +532,10 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        emptyProposalResults(),
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_FORCE_AGENCY_GROUP_ERROR_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.ERROR, agency(RassXmlAgencyEntryFixture.FORCE_ERROR, RassObjectUpdateResultCode.ERROR)),
-                        emptyProposalResults(),
                         emptyAwardResults()));
     }
 
@@ -605,8 +545,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_CREATE_FILE,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW))));
     }
@@ -617,8 +555,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_UPDATE_FILE,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_V2, RassObjectUpdateResultCode.SUCCESS_EDIT))));
     }
@@ -629,8 +565,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_ORG_UPDATE_FILE,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_V3_ORG_CHANGE, RassObjectUpdateResultCode.SUCCESS_EDIT))));
     }
@@ -641,8 +575,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_DIRECTOR_UPDATE_FILE,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_V4_DIRECTOR_CHANGE, RassObjectUpdateResultCode.SUCCESS_EDIT))));
     }
@@ -653,8 +585,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_DIRECTOR_UPDATE_FILE2,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_V5_DIRECTOR_CHANGE2, RassObjectUpdateResultCode.SUCCESS_EDIT))));
     }
@@ -665,8 +595,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_UNCHANGED_AWARD_FILE,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED))));
     }
@@ -677,9 +605,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_DUPLICATED_NEW_AWARD_FILE,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW),
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW),
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SKIPPED))));
@@ -691,8 +616,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_CREATE_MISSING_FIELD_FILE,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.ERROR,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_MISSING_REQ_FIELD, RassObjectUpdateResultCode.ERROR)),
                         awards(RassObjectGroupingUpdateResultCode.ERROR,
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_MISSING_REQ_FIELD, RassObjectUpdateResultCode.ERROR))));
     }
@@ -705,9 +628,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW),
-                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW),
                                 award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_V2, RassObjectUpdateResultCode.SUCCESS_EDIT))));
@@ -719,8 +639,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_EXISTS_AWARD_EXISTS, 
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_EXISTS_AWARD_EXISTS, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_EXISTS_AWARD_EXISTS, RassObjectUpdateResultCode.SUCCESS_EDIT))));
     }
@@ -731,8 +649,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_EXISTS_AWARD_NOT_EXISTS, 
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_EXISTS_AWARD_NOT_EXISTS, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_EXISTS_AWARD_NOT_EXISTS, RassObjectUpdateResultCode.SUCCESS_NEW))));
     }
@@ -743,8 +659,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_ZERO_AMOUNT_COST_SHARE_NO_PROPOSAL_EXISTS_AWARD_EXISTS, 
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_NO_PROPOSAL_EXISTS_AWARD_EXISTS, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_NO_PROPOSAL_EXISTS_AWARD_EXISTS, RassObjectUpdateResultCode.SUCCESS_EDIT))));
     }
@@ -755,8 +669,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST_AWARD_EXISTS, 
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST_AWARD_EXISTS, RassObjectUpdateResultCode.SUCCESS_NEW)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST_AWARD_EXISTS, RassObjectUpdateResultCode.SUCCESS_EDIT))));
     }
@@ -767,8 +679,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST_AWARD_NOT_EXISTS, 
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST_AWARD_NOT_EXISTS, RassObjectUpdateResultCode.SUCCESS_NEW)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST_AWARD_NOT_EXISTS, RassObjectUpdateResultCode.SUCCESS_NEW))));
     }
@@ -779,8 +689,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_ZERO_AMOUNT_COST_SHARE_NO_PROPOSAL_DOES_NOT_EXIST, 
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_NO_PROPOSAL_DOES_NOT_EXIST, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_NO_PROPOSAL_DOES_NOT_EXIST, RassObjectUpdateResultCode.SKIPPED))));
     }
@@ -791,8 +699,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_WITH_VARIOUS_NULL_FIELDS,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW))));
     }
@@ -803,8 +709,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_SKIP_DUE_TO_NULLS,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS, RassObjectUpdateResultCode.SKIPPED))));
     }
@@ -815,8 +719,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_SKIP_DUE_TO_NULLS_V2,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V2, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V2, RassObjectUpdateResultCode.SKIPPED))));
     }
@@ -827,8 +729,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_SKIP_DUE_TO_NULLS_V3,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V3, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V3, RassObjectUpdateResultCode.SKIPPED))));
     }
@@ -839,15 +739,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_WITH_VARIOUS_NULL_FIELDS,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW))),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_SKIP_DUE_TO_NULLS,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.ERROR,
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS, RassObjectUpdateResultCode.ERROR))));
     }
@@ -858,15 +754,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_WITH_VARIOUS_NULL_FIELDS,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW))),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_SKIP_DUE_TO_NULLS_V2,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V2, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.ERROR,
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V2, RassObjectUpdateResultCode.ERROR))));
     }
@@ -877,15 +769,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_WITH_VARIOUS_NULL_FIELDS,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW))),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_SKIP_DUE_TO_NULLS_V3,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V3, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.ERROR,
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V3, RassObjectUpdateResultCode.ERROR))));
     }
@@ -896,8 +784,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_GRANT_NUM_UPDATE_FILE,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE, RassObjectUpdateResultCode.SUCCESS_EDIT)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE, RassObjectUpdateResultCode.SUCCESS_EDIT))));
     }
@@ -908,9 +794,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_MULTI_CHANGE_GRANT_NUM_FILE,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CLEAR, RassObjectUpdateResultCode.SUCCESS_EDIT),
-                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE, RassObjectUpdateResultCode.SUCCESS_EDIT)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CLEAR, RassObjectUpdateResultCode.SUCCESS_EDIT),
                                 award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE, RassObjectUpdateResultCode.SUCCESS_EDIT))));
@@ -922,24 +805,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_GRANT_NUM_UPDATE_FILE2,
                         emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE2, RassObjectUpdateResultCode.SUCCESS_EDIT))));
-    }
-
-    @Test
-    public void testScopeOfProposalFieldUpdatesForGrantNumberChange() throws Exception {
-        modifyExistingProposalForTestingProposalUpdateScope(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT);
-        
-        assertXmlContentsPerformExpectedObjectUpdates(
-                fileWithResults(
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_GRANT_NUM_UPDATE_FILE,
-                        emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE_ALT, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE, RassObjectUpdateResultCode.SUCCESS_EDIT))));
     }
 
     private void assertXmlContentsPerformExpectedObjectUpdates(
@@ -977,7 +844,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
             assertNotNull("No results were found for filename key: " + xmlFileName, actualFileResult);
             assertEquals("Wrong filename for file result entry", xmlFileName, actualFileResult.getRassXmlFileName());
             assertAgenciesWereUpdatedAndReportedAsExpected(expectedFileResult, actualFileResult);
-            assertProposalsWereUpdatedAndReportedAsExpected(expectedFileResult, actualFileResult);
             assertAwardsWereUpdatedAndReportedAsExpected(expectedFileResult, actualFileResult);
         }
     }
@@ -994,20 +860,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         assertCorrectObjectResultsWereReported(expectedAgencyResultGrouping, actualAgencyResultGrouping);
         assertObjectsWereUpdatedAsExpected(expectedAgencyResultGrouping, agencyUpdatesToCheck,
                 this::assertAgencyWasUpdatedAsExpected);
-    }
-
-    private void assertProposalsWereUpdatedAndReportedAsExpected(
-            FileWithExpectedResults expectedFileResult, RassXmlFileProcessingResult actualFileResult) {
-        ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Proposal> expectedProposalResultGrouping =
-                expectedFileResult.getExpectedProposalResults();
-        RassBusinessObjectUpdateResultGrouping<Proposal> actualProposalResultGrouping =
-                actualFileResult.getProposalResults();
-        List<Maintainable> proposalUpdatesToCheck = proposalUpdates.getOrDefault(
-                expectedFileResult.getExpectedXmlFileName(), Collections.emptyList());
-        
-        assertCorrectObjectResultsWereReported(expectedProposalResultGrouping, actualProposalResultGrouping);
-        assertObjectsWereUpdatedAsExpected(expectedProposalResultGrouping, proposalUpdatesToCheck,
-                this::assertProposalWasUpdatedAsExpected);
     }
 
     private void assertAwardsWereUpdatedAndReportedAsExpected(
@@ -1095,34 +947,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         assertEqualsOrBothBlank("Wrong common name at index " + i,
                 expectedAgency.getTruncatedCommonName(), actualExtension.getAgencyCommonName());
         assertEqualsOrBothBlank("Wrong origin code at index " + i, expectedAgency.agencyOrigin, actualExtension.getAgencyOriginCode());
-    }
-
-    private void assertProposalWasUpdatedAsExpected(RassXmlAwardEntryFixture expectedProposal, Proposal actualProposal, int i) {
-        List<ProposalOrganization> proposalOrganizations = actualProposal.getProposalOrganizations();
-        assertEquals("Wrong number of proposal organizations at index " + i, 1, proposalOrganizations.size());
-        ProposalOrganization proposalOrganization = proposalOrganizations.get(0);
-        assertNotNull("Proposal organization should not have been null at index " + i, proposalOrganization);
-        
-        assertEquals("Wrong proposal/award type at index " + i,
-                RassTestConstants.DEFAULT_PROPOSAL_AWARD_TYPE, actualProposal.getProposalAwardTypeCode());
-        assertEqualsOrBothBlank("Wrong proposal number at index " + i, expectedProposal.proposalNumber, actualProposal.getProposalNumber());
-        assertEqualsOrBothBlank("Wrong proposal status at index " + i, expectedProposal.status, actualProposal.getProposalStatusCode());
-        assertEqualsOrBothBlank("Wrong agency number at index " + i, expectedProposal.agencyNumber, actualProposal.getAgencyNumber());
-        assertEqualsOrBothBlank("Wrong project title at index " + i, expectedProposal.projectTitle, actualProposal.getProposalProjectTitle());
-        assertEquals("Wrong start date at index " + i, expectedProposal.getStartDateAsSqlDate(), actualProposal.getProposalBeginningDate());
-        assertEquals("Wrong stop date at index " + i, expectedProposal.getStopDateAsSqlDate(), actualProposal.getProposalEndingDate());
-        assertEquals("Wrong direct cost amount at index " + i, expectedProposal.directCostAmount, actualProposal.getProposalDirectCostAmount());
-        assertEquals("Wrong indirect cost amount at index " + i, expectedProposal.indirectCostAmount, actualProposal.getProposalIndirectCostAmount());
-        assertEqualsOrBothBlank("Wrong proposal purpose at index " + i, expectedProposal.purpose, actualProposal.getProposalPurposeCode());
-        assertEqualsOrBothBlank("Wrong grant number at index " + i, expectedProposal.grantNumber, actualProposal.getGrantNumber());
-        assertEquals("Wrong federal pass-through indicator at index " + i,
-                expectedProposal.getNullSafeFederalPassThrough(), actualProposal.getProposalFederalPassThroughIndicator());
-        assertEqualsOrBothBlank("Wrong federal pass-through agency number at index " + i,
-                expectedProposal.federalPassThroughAgencyNumber, actualProposal.getFederalPassThroughAgencyNumber());
-        assertEqualsOrBothBlank("Wrong organization code at index " + i,
-                expectedProposal.organizationCode, proposalOrganization.getOrganizationCode());
-        
-        assertProjectDirectorsWereUpdatedAsExpected(expectedProposal, actualProposal.getProposalProjectDirectors(), i);
     }
 
     private void assertAwardWasUpdatedAsExpected(RassXmlAwardEntryFixture expectedAward, Award actualAward, int i) {
@@ -1252,8 +1076,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     private void handleStartOfFileProcessing(String xmlFileName, Class<?> businessObjectClass) {
         if (Agency.class.isAssignableFrom(businessObjectClass)) {
             agencyUpdatesForCurrentFile = agencyUpdates.computeIfAbsent(xmlFileName, key -> new ArrayList<>());
-        } else if (Proposal.class.isAssignableFrom(businessObjectClass)) {
-            proposalUpdatesForCurrentFile = proposalUpdates.computeIfAbsent(xmlFileName, key -> new ArrayList<>());
         } else if (Award.class.isAssignableFrom(businessObjectClass)) {
             awardUpdatesForCurrentFile = awardUpdates.computeIfAbsent(xmlFileName, key -> new ArrayList<>());
         } else {
@@ -1270,9 +1092,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         if (businessObject instanceof Agency) {
             objectKey = ((Agency) businessObject).getAgencyNumber();
             recordModifiedAgencyAndUpdateAgencyService(maintainable);
-        } else if (businessObject instanceof Proposal) {
-            objectKey = ((Proposal) businessObject).getProposalNumber();
-            recordModifiedProposalAndUpdateBusinessObjectService(maintainable);
         } else if (businessObject instanceof Award) {
             objectKey = ((Award) businessObject).getProposalNumber();
             recordModifiedAwardAndUpdateAwardService(maintainable);
@@ -1301,15 +1120,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 .when(mockAgencyService).getByPrimaryId(agencyNumber);
     }
 
-    private void recordModifiedProposalAndUpdateBusinessObjectService(Maintainable proposalMaintainable) {
-        Proposal proposal = (Proposal) proposalMaintainable.getDataObject();
-        Map<String, Object> proposalPrimaryKeys = Collections.singletonMap(
-                KFSPropertyConstants.PROPOSAL_NUMBER, proposal.getProposalNumber());
-        proposalUpdatesForCurrentFile.add(proposalMaintainable);
-        Mockito.doReturn(proposal)
-                .when(mockBusinessObjectService).findByPrimaryKey(Proposal.class, proposalPrimaryKeys);
-    }
-
     private void recordModifiedAwardAndUpdateAwardService(Maintainable awardMaintainable) {
         Award award = (Award) awardMaintainable.getDataObject();
         String proposalNumber = award.getProposalNumber();
@@ -1334,31 +1144,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         valuesToReturn.when(routeHeaderService).getDocumentStatus(Mockito.eq(documentNumber));
     }
 
-    private void modifyExistingProposalForTestingProposalUpdateScope(RassXmlAwardEntryFixture fixture) {
-        Map<String, Object> proposalPrimaryKeys = Collections.singletonMap(
-                KFSPropertyConstants.PROPOSAL_NUMBER, fixture.proposalNumber);
-        Proposal proposal = mockBusinessObjectService.findByPrimaryKey(Proposal.class, proposalPrimaryKeys);
-        setValuesForOtherFieldsThatWillBeUpdatedForGrantNumberChange(proposal);
-        setValueForSampleFieldThatWillNotUpdateForGrantNumberChange(proposal);
-        Mockito.doReturn(proposal)
-                .when(mockBusinessObjectService).findByPrimaryKey(Proposal.class, proposalPrimaryKeys);
-    }
-
-    private void setValuesForOtherFieldsThatWillBeUpdatedForGrantNumberChange(Proposal proposal) {
-        proposal.setProposalOrganizations(new ArrayList<>());
-        proposal.setProposalProjectDirectors(new ArrayList<>());
-    }
-
-    private void setValueForSampleFieldThatWillNotUpdateForGrantNumberChange(Proposal proposal) {
-        proposal.setProposalStatusCode(RassTestConstants.PROPOSAL_AWARDED_STATUS);
-    }
-
     private FileWithExpectedResults fileWithResults(
             RassXmlDocumentWrapperFixture fileFixture,
             ExpectedObjectUpdateResultGrouping<RassXmlAgencyEntryFixture, Agency> expectedAgencies,
-            ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Proposal> expectedProposals,
             ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Award> expectedAwards) {
-        return new FileWithExpectedResults(fileFixture, expectedAgencies, expectedProposals, expectedAwards);
+        return new FileWithExpectedResults(fileFixture, expectedAgencies, expectedAwards);
     }
 
     private ExpectedObjectUpdateResultGrouping<RassXmlAgencyEntryFixture, Agency> emptyAgencyResults() {
@@ -1373,16 +1163,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
 
     private ExpectedObjectUpdateResult<RassXmlAgencyEntryFixture> agency(RassXmlAgencyEntryFixture agencyFixture, RassObjectUpdateResultCode resultCode) {
         return new ExpectedObjectUpdateResult<>(agencyFixture, resultCode, fixture -> fixture.number);
-    }
-
-    private ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Proposal> emptyProposalResults() {
-        return proposals(RassObjectGroupingUpdateResultCode.SUCCESS);
-    }
-
-    @SafeVarargs
-    private final ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Proposal> proposals(
-            RassObjectGroupingUpdateResultCode resultCode, ExpectedObjectUpdateResult<RassXmlAwardEntryFixture>... expectedProposals) {
-        return new ExpectedObjectUpdateResultGrouping<>(Proposal.class, resultCode, expectedProposals);
     }
 
     private ExpectedObjectUpdateResult<RassXmlAwardEntryFixture> proposal(RassXmlAwardEntryFixture awardFixture, RassObjectUpdateResultCode resultCode) {

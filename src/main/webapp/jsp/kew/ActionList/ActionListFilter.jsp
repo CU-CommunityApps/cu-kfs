@@ -51,7 +51,6 @@
 
 <html-el:hidden property="lookupableImplServiceName" />
 <html-el:hidden property="lookupType" />
-<html-el:hidden property="docTypeFullName" />
     <div id="workarea">
         <div class="tab-container" align="center">
             <table class="datatable-80 custom-filter" style="align:center" cellspacing="0" align="center">
@@ -155,10 +154,8 @@
                 </tr>
                 <tr>
                     <th><span class="thnormal"><bean-el:message key="actionList.ActionListFilter.filter.label.documentType"/></span></th>
-                    <td class="datacell">
-                      <span id="docTypeElementId">
-                        <c:out value="${ActionListFilterForm.docTypeFullName}" />
-                      </span>
+                    <td class="datacell filter-input">
+                      <html-el:text property="docTypeFullName"/>
                       <kul:lookup boClassName="org.kuali.kfs.kew.doctype.bo.DocumentType" fieldConversions="name:docTypeFullName"/>
                     </td>
                     <td>

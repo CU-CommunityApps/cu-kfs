@@ -57,7 +57,7 @@ import org.kuali.kfs.pdp.businessobject.GlPendingTransaction;
 import org.kuali.kfs.pdp.businessobject.PaymentAccountDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
-import org.kuali.kfs.pdp.service.impl.GeneratePdpGlpeState;
+import org.kuali.kfs.pdp.service.impl.PdpGlpeGenerationDetail;
 import org.kuali.kfs.pdp.service.impl.PendingTransactionServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
@@ -103,7 +103,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
         }
         populatePaymentGeneralLedgerPendingEntry(
                                  paymentGroup,
-                                 GeneratePdpGlpeState.forCancel());
+                                 PdpGlpeGenerationDetail.forCancel());
     }
 
     /**
@@ -117,7 +117,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             // Need to reverse the payment document's GL entries if the check is stopped or cancelled
             reverseSourceDocumentsEntries(paymentDetail, sequenceHelper);
         }
-        populatePaymentGeneralLedgerPendingEntry(paymentGroup, GeneratePdpGlpeState.forStop());
+        populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpGlpeGenerationDetail.forStop());
     }
     
     
@@ -127,7 +127,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      */
     @Override
     public void generateStaleGeneralLedgerPendingEntry(final PaymentGroup paymentGroup) {
-        populatePaymentGeneralLedgerPendingEntry(paymentGroup, GeneratePdpGlpeState.forStale());
+        populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpGlpeGenerationDetail.forStale());
     }
     
     /**
@@ -142,7 +142,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      // of the method with the same name and arguments from base code 
      private void populatePaymentGeneralLedgerPendingEntry(
              final PaymentGroup paymentGroup,
-             final GeneratePdpGlpeState state
+             final PdpGlpeGenerationDetail state
      ) {
         final List<PaymentAccountDetail> accountListings = new ArrayList<PaymentAccountDetail>();
         final GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();

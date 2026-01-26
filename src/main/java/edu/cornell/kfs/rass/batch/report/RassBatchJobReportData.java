@@ -9,9 +9,6 @@ public class RassBatchJobReportData {
     protected int numberOfAgenciesWithBusinessRuleFailures;
     protected List<String> agenciesInRASSfeedNotRequiringUpdatingInKFS;
 
-    protected int numberOfProposalsCreated;
-    protected int numberOfProposalsWithBusinessRuleFailures;
-
     protected int numberOfAwardsCreated;
     protected int numberOfAwardsUpdated;
     protected int numberOfAwardsWithBusinessRuleFailures;
@@ -19,8 +16,6 @@ public class RassBatchJobReportData {
 
     protected Map<String, List<String>> agenciesErrorMessages;
     protected Map<String, String> successfullyProcessedAgenciesDocumentNumbers;
-    protected Map<String, List<String>> proposalErrorMessages;
-    protected Map<String, String> successfullyProcessedProposalsDocumentNumbers;
     protected Map<String, List<String>> awardErrorMessages;
     protected Map<String, String> successfullyProcessedAwardsDocumentNumbers;
 
@@ -54,22 +49,6 @@ public class RassBatchJobReportData {
 
     public void setAgenciesInRASSfeedNotRequiringUpdatingInKFS(List<String> agenciesInRASSfeedNotRequiringUpdatingInKFS) {
         this.agenciesInRASSfeedNotRequiringUpdatingInKFS = agenciesInRASSfeedNotRequiringUpdatingInKFS;
-    }
-
-    public int getNumberOfProposalsCreated() {
-        return numberOfProposalsCreated;
-    }
-
-    public void setNumberOfProposalsCreated(int numberOfProposalsCreated) {
-        this.numberOfProposalsCreated = numberOfProposalsCreated;
-    }
-
-    public int getNumberOfProposalsWithBusinessRuleFailures() {
-        return numberOfProposalsWithBusinessRuleFailures;
-    }
-
-    public void setNumberOfProposalsWithBusinessRuleFailures(int numberOfProposalsWithBusinessRuleFailures) {
-        this.numberOfProposalsWithBusinessRuleFailures = numberOfProposalsWithBusinessRuleFailures;
     }
 
     public int getNumberOfAwardsCreated() {
@@ -118,22 +97,6 @@ public class RassBatchJobReportData {
 
     public void setSuccessfullyProcessedAgenciesDocumentNumbers(Map<String, String> successfullyProcessedAgenciesDocumentNumbers) {
         this.successfullyProcessedAgenciesDocumentNumbers = successfullyProcessedAgenciesDocumentNumbers;
-    }
-
-    public Map<String, List<String>> getProposalErrorMessages() {
-        return proposalErrorMessages;
-    }
-
-    public void setProposalErrorMessages(Map<String, List<String>> proposalErrorMessages) {
-        this.proposalErrorMessages = proposalErrorMessages;
-    }
-
-    public Map<String, String> getSuccessfullyProcessedProposalsDocumentNumbers() {
-        return successfullyProcessedProposalsDocumentNumbers;
-    }
-
-    public void setSuccessfullyProcessedProposalsDocumentNumbers(Map<String, String> successfullyProcessedProposalsDocumentNumbers) {
-        this.successfullyProcessedProposalsDocumentNumbers = successfullyProcessedProposalsDocumentNumbers;
     }
 
     public Map<String, List<String>> getAwardErrorMessages() {

@@ -12,17 +12,14 @@ public final class FileWithExpectedResults {
 
     private final RassXmlDocumentWrapperFixture fileFixture;
     private final ExpectedObjectUpdateResultGrouping<RassXmlAgencyEntryFixture, Agency> expectedAgencyResults;
-    private final ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Proposal> expectedProposalResults;
     private final ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Award> expectedAwardResults;
 
     public FileWithExpectedResults(
             RassXmlDocumentWrapperFixture fileFixture,
             ExpectedObjectUpdateResultGrouping<RassXmlAgencyEntryFixture, Agency> expectedAgencyResults,
-            ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Proposal> expectedProposalResults,
             ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Award> expectedAwardResults) {
         this.fileFixture = fileFixture;
         this.expectedAgencyResults = expectedAgencyResults;
-        this.expectedProposalResults = expectedProposalResults;
         this.expectedAwardResults = expectedAwardResults;
     }
 
@@ -36,10 +33,6 @@ public final class FileWithExpectedResults {
 
     public ExpectedObjectUpdateResultGrouping<RassXmlAgencyEntryFixture, Agency> getExpectedAgencyResults() {
         return expectedAgencyResults;
-    }
-
-    public ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Proposal> getExpectedProposalResults() {
-        return expectedProposalResults;
     }
 
     public ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Award> getExpectedAwardResults() {

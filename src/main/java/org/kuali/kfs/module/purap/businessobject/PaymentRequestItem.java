@@ -155,8 +155,8 @@ public class PaymentRequestItem extends AccountsPayableItemBase {
                 LOG.debug(
                         "getPurchaseOrderItem() Returning null because PurchaseOrderItem object for line "
                         + "number{}or itemType {} is null",
-                        () -> getItemLineNumber(),
-                        () -> getItemTypeCode()
+                        this::getItemLineNumber,
+                        this::getItemTypeCode
                 );
                 return null;
             }
@@ -286,14 +286,14 @@ public class PaymentRequestItem extends AccountsPayableItemBase {
             return false;
         }
 
-        ItemType poiType = poi.getItemType();
+        final ItemType poiType = poi.getItemType();
 
         if (poiType.isQuantityBasedGeneralLedgerIndicator()) {
             if (poi.getItemQuantity().isGreaterThan(poi.getItemInvoicedTotalQuantity())) {
                 return true;
             } else {
-                return ObjectUtils.isNotNull(this.getItemQuantity())
-                        && this.getItemQuantity().isGreaterThan(KualiDecimal.ZERO);
+                return ObjectUtils.isNotNull(getItemQuantity())
+                        && getItemQuantity().isGreaterThan(KualiDecimal.ZERO);
             }
         } else {
             // not quantity based
