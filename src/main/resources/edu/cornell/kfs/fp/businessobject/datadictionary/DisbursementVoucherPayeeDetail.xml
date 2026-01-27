@@ -20,9 +20,10 @@
 
 -->
 
-  <bean id="DisbursementVoucherPayeeDetail" parent="DisbursementVoucherPayeeDetail-parentBean">
-  <property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail"/>
-  </bean>
+  <bean id="DisbursementVoucherPayeeDetail"
+        parent="DisbursementVoucherPayeeDetail-parentBean"
+        p:businessObjectClass="edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail"
+        p:baseBusinessObjectClass="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail"/>
 
   <bean id="DisbursementVoucherPayeeDetail-disbursementVoucherPayeeTypeName" parent="DisbursementVoucherPayeeDetail-disbursementVoucherPayeeTypeName-parentBean">
     <property name="maxLength" value="85"/>
