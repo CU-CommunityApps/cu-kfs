@@ -1113,6 +1113,8 @@ div.inquiry table.datatable th {
 
 .MuiBox-root.css-rn556 > .MuiDataGrid-root {
     border-right-style: none !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
 }
 
 .MuiBox-root.css-rn556 .MuiDataGrid-main.css-jdaxyo {
@@ -1148,7 +1150,7 @@ div.inquiry table.datatable th {
 
 /* Change the "sticky" vertical positioning of the lookup results header to prevent the page header from hiding it. */
 
-.MuiBox-root.css-rn556 .MuiDataGrid-topContainer.css-1oudwrl {
+.MuiBox-root.css-rn556 .MuiDataGrid-topContainer.css-2sp4oa {
     top: 68px !important;
 }
 
