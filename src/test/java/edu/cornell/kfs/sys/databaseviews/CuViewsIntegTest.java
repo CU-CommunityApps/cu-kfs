@@ -121,9 +121,8 @@ public class CuViewsIntegTest extends KualiIntegTestBase {
         for (Map<String, String> staticExpectedDataRow : rowsOfStaticDataExpectedResultsList) {
             HashMap<String, String>  combinedStaticMap = new HashMap<String, String>();
             for (Map.Entry<String, String> staticExpectedDataItem : staticExpectedDataRow.entrySet()) {
-                String key = new String(staticExpectedDataItem.getKey());
                 String value = (staticExpectedDataItem.getValue() == null ? null : new String(staticExpectedDataItem.getValue()));
-                combinedStaticMap.put(key, value);
+                combinedStaticMap.put(staticExpectedDataItem.getKey(), value);
             }
             combinedExpectedResultList.add(combinedStaticMap);
         }
@@ -134,7 +133,8 @@ public class CuViewsIntegTest extends KualiIntegTestBase {
     private void addDynamicExpectedResultsToExistingResultsInCombinedList(List<HashMap<String, String>> combinedExpectedResultList, HashMap<String, Object> singleRowOfDynamicDataExpectedResult) {
         for (HashMap<String, String> combinedExpectedDataRow : combinedExpectedResultList) {
             for (HashMap.Entry<String, Object> dynamicExpectedDataItem : singleRowOfDynamicDataExpectedResult.entrySet()) {
-                String value = transformDataIntoCorrectType((dynamicExpectedDataItem.getValue()).getClass(), dynamicExpectedDataItem.getValue());
+                String value = (dynamicExpectedDataItem.getValue() == null 
+                        ? null : transformDataIntoCorrectType((dynamicExpectedDataItem.getValue()).getClass(), dynamicExpectedDataItem.getValue()));
                 combinedExpectedDataRow.put(dynamicExpectedDataItem.getKey(), value);
             }
         }
