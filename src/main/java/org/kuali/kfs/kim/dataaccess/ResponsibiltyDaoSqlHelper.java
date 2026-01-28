@@ -246,7 +246,7 @@ public class ResponsibiltyDaoSqlHelper extends RoleMemberDaoSqlHelper {
         private static final String ALIAS = "GRANTED_TO_ROLES_CTE";
         private static final String SELECT =
                 "SELECT RSP_ID, "
-                + "UPPER(NMSPC_CD ' ' ROLE_NM) AS GRANTED_TO_ROLE, "
+                + "UPPER(NMSPC_CD || ' ' || ROLE_NM) AS GRANTED_TO_ROLE, "
                 + "KRIM_ROLE_T.ROLE_ID AS GRANTED_TO_ROLE_ID "
                 + "FROM KRIM_ROLE_T "
                 + "JOIN KRIM_ROLE_RSP_T ON KRIM_ROLE_T.ROLE_ID = KRIM_ROLE_RSP_T.ROLE_ID "
