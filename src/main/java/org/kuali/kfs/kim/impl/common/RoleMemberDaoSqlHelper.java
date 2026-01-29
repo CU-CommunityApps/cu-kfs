@@ -39,7 +39,7 @@ import java.util.Map;
 //     LIMIT x OFFSET y
 //   With:
 //     OFFSET y ROWS FETCH NEXT x ROWS ONLY
-// - Replace references to MySQL's NOW() function with references to Oracle SYSDATE (or SYSTIMESTAMP) instead
+// - Replace references to MySQL's NOW() function with references to Oracle SYSDATE
 public abstract class RoleMemberDaoSqlHelper {
     protected final Map<String, Object> parameters = new HashMap<>();
     protected final Map<String, String> fieldValues;
