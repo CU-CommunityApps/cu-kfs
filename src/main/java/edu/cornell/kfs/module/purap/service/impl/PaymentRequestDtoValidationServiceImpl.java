@@ -1,8 +1,10 @@
 package edu.cornell.kfs.module.purap.service.impl;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,6 +20,7 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestDto;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestLineItemDto;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestNoteDto;
@@ -30,6 +33,7 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
     private ConfigurationService configurationService;
     private VendorService vendorService;
     private PurchaseOrderService purchaseOrderService;
+    private CuPaymentRequestDao paymentRequestDao;
 
     @Override
     public PaymentRequestResultsDto validatePaymentRequestDto(PaymentRequestDto paymentRequestDto) {
@@ -42,15 +46,9 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         if (results.isValid()) {
             validatePO(paymentRequestDto, results);
         }
-        
-        /*
-         * When we implement creating of the PO document, remove this statement
-         * Also update
-         * PaymentRequestDtoFixture.VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_GOOD_LINE
-         * to not have this is a success message
-         */
+
         if (results.isValid()) {
-            results.getSuccessMessages().add("Successfully passed validation");
+            validatePOandInvoiceUnique(paymentRequestDto, results);
         }
 
         LOG.debug("validatePaymentRequestDto, validation results: {}", results);
@@ -202,6 +200,22 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         }
     }
 
+    private void validatePOandInvoiceUnique(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results) {
+        final Integer poNumber = paymentRequestDto.getPoNumber();
+        final String invoiceNumber = paymentRequestDto.getInvoiceNumber();
+        final List<String> documentNumbers = paymentRequestDao
+                .getDocumentNumbersForPurchaseOrderInvoiceNumberNotCanceled(poNumber, invoiceNumber);
+        if (CollectionUtils.isNotEmpty(documentNumbers)) {
+            results.setValid(false);
+            final String docNumber = IterableUtils.first(documentNumbers);
+            
+            String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_INVOICE_ALREADY_USED);
+            LOG.info("validatePOandInvoiceUnique, messageBase: " + messageBase);
+
+            results.getErrorMessages().add(MessageFormat.format(messageBase, String.valueOf(poNumber), invoiceNumber, docNumber));
+        }
+    }
+
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
     }
@@ -212,6 +226,10 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
 
     public void setPurchaseOrderService(PurchaseOrderService purchaseOrderService) {
         this.purchaseOrderService = purchaseOrderService;
+    }
+
+    public void setPaymentRequestDao(CuPaymentRequestDao paymentRequestDao) {
+        this.paymentRequestDao = paymentRequestDao;
     }
 
 }

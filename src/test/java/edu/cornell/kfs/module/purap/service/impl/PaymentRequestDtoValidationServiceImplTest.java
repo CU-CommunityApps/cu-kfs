@@ -22,6 +22,7 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.mockito.Mockito;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestResultsDto;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.fixture.PaymentRequestDtoFixture;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.fixture.PaymentRequestLineItemDtoFixture;
@@ -38,6 +39,7 @@ public class PaymentRequestDtoValidationServiceImplTest {
         validationService.setConfigurationService(buildMockConfigurationService());
         validationService.setVendorService(buildMockVendorService());
         validationService.setPurchaseOrderService(buildMockPurchaseOrderService());
+        validationService.setPaymentRequestDao(buildMockCuPaymentRequestDao());
     }
 
     private ConfigurationService buildMockConfigurationService() {
@@ -100,6 +102,11 @@ public class PaymentRequestDtoValidationServiceImplTest {
         Mockito.when(doc.getVendorNumber()).thenReturn(vendorNumber);
         Mockito.when(doc.getApplicationDocumentStatus()).thenReturn(appDocStatus);
         return doc;
+    }
+
+    private CuPaymentRequestDao buildMockCuPaymentRequestDao() {
+        CuPaymentRequestDao dao = Mockito.mock(CuPaymentRequestDao.class);
+        return dao;
     }
 
     @AfterEach

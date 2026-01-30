@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.UserSession;
-import org.kuali.kfs.krad.util.ErrorMessage;
+import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.sys.KFSConstants;
@@ -27,12 +27,9 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.ApiAuthenticationService;
 import edu.cornell.kfs.sys.typeadapters.KualiDecimalTypeAdapter;
 import edu.cornell.kfs.sys.typeadapters.LocalDateTypeAdapter;
-import org.springframework.util.AutoPopulatingList;
 
 import java.io.InputStream;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,6 +58,7 @@ public class PaymentRequestResource {
     private PaymentRequestDtoValidationService paymentRequestDtoValidationService;
     private ApiAuthenticationService apiAuthenticationService;
     private CuPaymentRequestService cuPaymentRequestService;
+    private DocumentService documentService;
 
     @GET
     public Response describePaymentRequestResource() {
@@ -96,6 +94,14 @@ public class PaymentRequestResource {
                     results.getSuccessMessages().add(String.format("Created PREQ Document %s", preqDoc.getDocumentNumber()));
 
                     results.setDocumentNumber(preqDoc.getDocumentNumber());
+
+                    if (false) {
+                        /* Note we will want to cancel the saved preq if we can't submit the preq due to further business rule errors
+                         * Adding this code now to help during the testing process
+                         */
+                        cancelPreq(userSession, preqDoc);
+                    }
+
                     return Response.ok(gson.toJson(results)).build();
 
                 } catch (Exception e) {
@@ -130,6 +136,11 @@ public class PaymentRequestResource {
         }
     }
 
+    private void cancelPreq(final UserSession userSession, PaymentRequestDocument preqDoc) throws Exception {
+        GlobalVariables.doInNewGlobalVariables(userSession,
+                            () -> getDocumentService().cancelDocument(preqDoc, "Canceled with the payment request endpoint"));
+    }
+
     private PaymentRequestDtoValidationService getPaymentRequestDtoValidationService() {
         if (paymentRequestDtoValidationService == null) {
             paymentRequestDtoValidationService = SpringContext.getBean(PaymentRequestDtoValidationService.class);
@@ -150,4 +161,12 @@ public class PaymentRequestResource {
         }
         return cuPaymentRequestService;
     }
+
+    public DocumentService getDocumentService() {
+        if (documentService == null) {
+            documentService = SpringContext.getBean(DocumentService.class);
+        }
+        return documentService;
+    }
+
 }

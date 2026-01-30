@@ -109,7 +109,7 @@ public enum PaymentRequestDtoFixture {
             null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
             StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), true,
-            buildMessageList("Successfully passed validation"), buildMessageList());
+            buildMessageList(), buildMessageList());
 
     private static final DateTimeFormatter DATE_FORMATTER_MMDDYYYY = DateTimeFormatter.ofPattern(
             KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
