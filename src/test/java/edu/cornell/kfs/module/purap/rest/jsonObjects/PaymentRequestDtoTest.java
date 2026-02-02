@@ -36,7 +36,7 @@ public class PaymentRequestDtoTest {
             .create();
 
     @ParameterizedTest
-    @MethodSource("jsonParseFixtures")
+    @MethodSource("readJsonToPaymentRequestDtoFixtures")
     public void testReadJsonToPaymentRequestDto(PaymentRequestDtoFixture paymentRequestDtoFixture) throws IOException {
         String actualJsonString = readFileToString(paymentRequestDtoFixture.jsonFileName);
         PaymentRequestDto actualDto = gson.fromJson(actualJsonString, PaymentRequestDto.class);
@@ -48,19 +48,24 @@ public class PaymentRequestDtoTest {
         Assertions.assertEquals(expectedDto, actualDto);
     }
 
-    private static java.util.stream.Stream<PaymentRequestDtoFixture> jsonParseFixtures() {
+    private static java.util.stream.Stream<PaymentRequestDtoFixture> readJsonToPaymentRequestDtoFixtures() {
         return java.util.Arrays.stream(PaymentRequestDtoFixture.values())
-                .filter(dto -> dto.name().startsWith("JSON_PARSE_"));
+                .filter(dto -> dto.name().startsWith("JSON_PARSE_") && dto.name().contains("READ"));
     }
 
     @ParameterizedTest
-    @MethodSource("jsonParseFixtures")
+    @MethodSource("writePaymentRequestDtoToJsonFixtures")
     public void testWritePaymentRequestDtoToJson(PaymentRequestDtoFixture paymentRequestDtoFixture) throws IOException, JSONException {
         String expectedJsonString = readFileToString(paymentRequestDtoFixture.jsonFileName);
         String actualJsonString = gson.toJson(paymentRequestDtoFixture.toPaymentRequestDto());
 
         JSONAssert.assertEquals(expectedJsonString, actualJsonString, JSONCompareMode.STRICT);
 
+    }
+
+    private static java.util.stream.Stream<PaymentRequestDtoFixture> writePaymentRequestDtoToJsonFixtures() {
+        return java.util.Arrays.stream(PaymentRequestDtoFixture.values())
+                .filter(dto -> dto.name().startsWith("JSON_PARSE_") && dto.name().contains("WRITE"));
     }
 
     @ParameterizedTest

@@ -8,6 +8,7 @@ public enum PaymentRequestLineItemDtoFixture {
     ITEM_1_5_200("1", "5", "200"),
     ITEM_2_3_400("2", "3", "400"),
     ITEM_3_2_500("3", "2", "500"),
+    ITEM_LEGACY("1", "42", "100.23"),
     EMPTY_ITEM(null, null, null);
 
     public final String lineNumber;
