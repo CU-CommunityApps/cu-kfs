@@ -474,7 +474,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
     public PaymentRequestDocument createPaymentRequestDocumentFromDto(PaymentRequestDto preqDto, PaymentRequestResultsDto results) {
 
-        LOG.info("Creating PaymentRequestDocument from DTO for PO: {}", preqDto.getPoNumber());
+        LOG.info("Creating PaymentRequestDocument from DTO for PO: {}", preqDto.getPoNumberAsInteger());
 
         try {
             PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(preqDto.getPoNumberAsInteger());

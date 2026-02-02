@@ -162,7 +162,6 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
     }
 
     private void validatePO(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results) {
-        paymentRequestDto.getPoNumber();
         PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(paymentRequestDto.getPoNumberAsInteger());
         if (poDoc == null) {
             results.setValid(false);
@@ -195,7 +194,7 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
                 String messageBase = configurationService
                         .getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_INVALID_LINE);
                 results.getErrorMessages().add(MessageFormat.format(messageBase,
-                        String.valueOf(paymentRequestDto.getPoNumber()), String.valueOf(line.getLineNumber())));
+                        String.valueOf(paymentRequestDto.getPoNumber()), line.getLineNumber()));
             }
         }
     }
