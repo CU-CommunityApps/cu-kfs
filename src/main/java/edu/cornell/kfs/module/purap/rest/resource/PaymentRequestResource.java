@@ -49,6 +49,13 @@ public class PaymentRequestResource {
             .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT))
             .create();
 
+    /*
+    This can be remvoed after payflow is fully implemented.  
+    This should be false when pushed to develop / master.
+    Note: when we implement routing of payment request documents, if there is an error on submission, we will need to cancel the preq
+     */
+    private static final boolean AUTO_CANCEL_PO_FOR_TESTING = true;
+
     @Context
     protected HttpServletRequest servletRequest;
 
@@ -81,9 +88,6 @@ public class PaymentRequestResource {
             PaymentRequestResultsDto results = getPaymentRequestDtoValidationService()
                     .validatePaymentRequestDto(paymentRequestDto);
             if (results.isValid()) {
-
-                LOG.info("createPaymentRequestDocument, no validation errors, return success {}", results);
-
                 try {
                     UserSession userSession = createUserSessionForAiPaymentRequestUser(loggedInPrincipalName);
 
@@ -95,7 +99,7 @@ public class PaymentRequestResource {
 
                     results.setDocumentNumber(preqDoc.getDocumentNumber());
 
-                    if (false) {
+                    if (AUTO_CANCEL_PO_FOR_TESTING) {
                         /* Note we will want to cancel the saved preq if we can't submit the preq due to further business rule errors
                          * Adding this code now to help during the testing process
                          */

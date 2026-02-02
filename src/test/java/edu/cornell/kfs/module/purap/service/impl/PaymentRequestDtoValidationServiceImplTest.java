@@ -81,16 +81,17 @@ public class PaymentRequestDtoValidationServiceImplTest {
                 PurchaseOrderStatuses.APPDOC_AWAIT_PURCHASING_REVIEW);
         Mockito.when(service.getCurrentPurchaseOrder(98767)).thenReturn(docForPo98767);
 
+        Integer lineNumber = Integer.valueOf(PaymentRequestLineItemDtoFixture.ITEM_1_10_100.lineNumber);
         PurchaseOrderDocument docForPo98768 = buildMockPurchaseOrderDocument("1234-1",
                 PurchaseOrderStatuses.APPDOC_OPEN);
-        Mockito.when(docForPo98768.getItemByLineNumber(PaymentRequestLineItemDtoFixture.ITEM_1_10_100.lineNumber))
+        Mockito.when(docForPo98768.getItemByLineNumber(lineNumber))
                 .thenReturn(null);
         Mockito.when(service.getCurrentPurchaseOrder(98768)).thenReturn(docForPo98768);
 
         PurchaseOrderDocument docForPo98769 = buildMockPurchaseOrderDocument("1234-1",
                 PurchaseOrderStatuses.APPDOC_OPEN);
         PurApItem item = Mockito.mock(PurApItem.class);
-        Mockito.when(docForPo98769.getItemByLineNumber(PaymentRequestLineItemDtoFixture.ITEM_1_10_100.lineNumber))
+        Mockito.when(docForPo98769.getItemByLineNumber(lineNumber))
                 .thenReturn(item);
         Mockito.when(service.getCurrentPurchaseOrder(98769)).thenReturn(docForPo98769);
 

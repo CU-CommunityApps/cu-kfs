@@ -60,15 +60,15 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.VENDOR_NUMBER, results);
         }
 
-        if (paymentRequestDto.getPoNumber() == null) {
+        if (StringUtils.isBlank(paymentRequestDto.getPoNumber())) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.PO_NUMBER, results);
         }
 
-        if (paymentRequestDto.getInvoiceDate() == null) {
+        if (StringUtils.isBlank(paymentRequestDto.getInvoiceDate())) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.INVOICE_DATE, results);
         }
 
-        if (paymentRequestDto.getReceivedDate() == null) {
+        if (StringUtils.isBlank(paymentRequestDto.getReceivedDate())) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.RECEIVED_DATE, results);
         }
 
@@ -76,7 +76,7 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.INVOICE_NUMBER, results);
         }
 
-        if (paymentRequestDto.getInvoiceAmount() == null) {
+        if (StringUtils.isBlank(paymentRequestDto.getInvoiceAmount())) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.INVOICE_AMOUNT, results);
         }
 
@@ -163,23 +163,23 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
 
     private void validatePO(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results) {
         paymentRequestDto.getPoNumber();
-        PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(paymentRequestDto.getPoNumber());
+        PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(paymentRequestDto.getPoNumberAsInteger());
         if (poDoc == null) {
             results.setValid(false);
             String messageBase = configurationService
                     .getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_INVALID_PO);
-            results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumberString()));
+            results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumber()));
         } else if (!StringUtils.equalsIgnoreCase(poDoc.getVendorNumber(), paymentRequestDto.getVendorNumber())) {
             results.setValid(false);
             String messageBase = configurationService
                     .getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_NOT_MATCH_VENDOR);
-            results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumberString(),
+            results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumber(),
                     poDoc.getVendorNumber(), paymentRequestDto.getVendorNumber()));
         } else if (!StringUtils.equals(poDoc.getApplicationDocumentStatus(), PurchaseOrderStatuses.APPDOC_OPEN)) {
             results.setValid(false);
             String messageBase = configurationService
                     .getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_NOT_OPEN);
-            results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumberString(),
+            results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumber(),
                     poDoc.getApplicationDocumentStatus()));
         } else {
             validatePoLine(paymentRequestDto, results, poDoc);
@@ -189,7 +189,7 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
     private void validatePoLine(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results,
             PurchaseOrderDocument poDoc) {
         for (PaymentRequestLineItemDto line : paymentRequestDto.getItems()) {
-            PurApItem item = poDoc.getItemByLineNumber(line.getLineNumber());
+            PurApItem item = poDoc.getItemByLineNumber(line.getLineNumberAsInteger());
             if (ObjectUtils.isNull(item)) {
                 results.setValid(false);
                 String messageBase = configurationService
@@ -201,7 +201,7 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
     }
 
     private void validatePOandInvoiceUnique(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results) {
-        final Integer poNumber = paymentRequestDto.getPoNumber();
+        final Integer poNumber = paymentRequestDto.getPoNumberAsInteger();
         final String invoiceNumber = paymentRequestDto.getInvoiceNumber();
         final List<String> documentNumbers = paymentRequestDao
                 .getDocumentNumbersForPurchaseOrderInvoiceNumberNotCanceled(poNumber, invoiceNumber);

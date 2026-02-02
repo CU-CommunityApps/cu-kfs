@@ -12,6 +12,7 @@ import edu.cornell.kfs.sys.typeadapters.LocalDateTypeAdapter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -22,6 +23,9 @@ import org.kuali.kfs.sys.KFSConstants;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 public class PaymentRequestDtoTest {
     private static final Logger LOG = LogManager.getLogger();
@@ -51,14 +55,12 @@ public class PaymentRequestDtoTest {
 
     @ParameterizedTest
     @MethodSource("jsonParseFixtures")
-    public void testWritePaymentRequestDtoToJson(PaymentRequestDtoFixture paymentRequestDtoFixture) throws IOException {
+    public void testWritePaymentRequestDtoToJson(PaymentRequestDtoFixture paymentRequestDtoFixture) throws IOException, JSONException {
         String expectedJsonString = readFileToString(paymentRequestDtoFixture.jsonFileName);
-        JsonElement expectedJsonObject = JsonParser.parseString(expectedJsonString);
-
         String actualJsonString = gson.toJson(paymentRequestDtoFixture.toPaymentRequestDto());
-        JsonElement actualJsonObject = JsonParser.parseString(actualJsonString);
 
-        Assertions.assertEquals(expectedJsonObject, actualJsonObject);
+        JSONAssert.assertEquals(expectedJsonString, actualJsonString, JSONCompareMode.STRICT);
+
     }
 
     @ParameterizedTest
