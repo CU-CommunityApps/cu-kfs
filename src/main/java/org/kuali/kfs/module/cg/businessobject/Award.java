@@ -84,7 +84,7 @@ public class Award extends PersistableBusinessObjectBase implements Billable, Mu
     private KualiDecimal federalFundedAmount;
     private Timestamp awardCreateTimestamp;
     private Date awardClosingDate;
-    private String proposalAwardTypeCode;
+    private String awardTypeCode;
     private String awardStatusCode;
     private String letterOfCreditFundCode;
     private String grantDescriptionCode;
@@ -98,6 +98,7 @@ public class Award extends PersistableBusinessObjectBase implements Billable, Mu
     private String grantNumber;
     private boolean active;
     private String kimGroupNames;
+    private String researchAwardId;
     private List<AwardProjectDirector> awardProjectDirectors;
     private AwardProjectDirector awardPrimaryProjectDirector;
     private List<AwardFundManager> awardFundManagers;
@@ -107,7 +108,7 @@ public class Award extends PersistableBusinessObjectBase implements Billable, Mu
     private List<AwardOrganization> awardOrganizations;
 
     private Proposal proposal;
-    private ProposalAwardType proposalAwardType;
+    private AwardType awardType;
     private AwardStatus awardStatus;
     protected LetterOfCreditFund letterOfCreditFund;
     private GrantDescription grantDescription;
@@ -239,7 +240,7 @@ public class Award extends PersistableBusinessObjectBase implements Billable, Mu
             setAwardProjectTitle(proposal.getProposalProjectTitle());
             setAwardDirectCostAmount(proposal.getProposalDirectCostAmount());
             setAwardIndirectCostAmount(proposal.getProposalIndirectCostAmount());
-            setProposalAwardTypeCode(proposal.getProposalAwardTypeCode());
+            setAwardTypeCode(proposal.getAwardTypeCode());
             setFederalPassThroughIndicator(proposal.getProposalFederalPassThroughIndicator());
             setFederalPassThroughAgencyNumber(proposal.getFederalPassThroughAgencyNumber());
             setAwardPurposeCode(proposal.getProposalPurposeCode());
@@ -511,12 +512,12 @@ public class Award extends PersistableBusinessObjectBase implements Billable, Mu
         this.awardClosingDate = awardClosingDate;
     }
 
-    public String getProposalAwardTypeCode() {
-        return proposalAwardTypeCode;
+    public String getAwardTypeCode() {
+        return awardTypeCode;
     }
 
-    public void setProposalAwardTypeCode(final String proposalAwardTypeCode) {
-        this.proposalAwardTypeCode = proposalAwardTypeCode;
+    public void setAwardTypeCode(final String awardTypeCode) {
+        this.awardTypeCode = awardTypeCode;
     }
 
     public String getAwardStatusCode() {
@@ -609,6 +610,14 @@ public class Award extends PersistableBusinessObjectBase implements Billable, Mu
         this.active = active;
     }
 
+    public String getResearchAwardId() {
+        return researchAwardId;
+    }
+
+    public void setResearchAwardId(final String researchAwardId) {
+        this.researchAwardId = researchAwardId;
+    }
+
     public Proposal getProposal() {
         return proposal;
     }
@@ -625,20 +634,20 @@ public class Award extends PersistableBusinessObjectBase implements Billable, Mu
         this.proposal = proposal;
     }
 
-    public ProposalAwardType getProposalAwardType() {
-        return proposalAwardType;
+    public AwardType getAwardType() {
+        return awardType;
     }
 
     /**
-     * Sets the proposalAwardType attribute.
+     * Sets the awardType attribute.
      *
      * Setter is required by OJB, but should not be used to modify this attribute. This attribute is set on the initial
      * creation of the object and should not be changed.
      *
-     * @param proposalAwardType The proposalAwardType to set.
+     * @param awardType The awardType to set.
      */
-    public void setProposalAwardType(final ProposalAwardType proposalAwardType) {
-        this.proposalAwardType = proposalAwardType;
+    public void setAwardType(final AwardType awardType) {
+        this.awardType = awardType;
     }
 
     public AwardStatus getAwardStatus() {

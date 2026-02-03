@@ -21,7 +21,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.permission.PermissionService;
-import org.kuali.kfs.krad.bo.KualiCode;
+import org.kuali.kfs.krad.bo.CodedBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -109,7 +109,7 @@ public class RecurringDisbursementVoucherPaymentMaintenanceServiceImpl implement
         }
 
         PaymentGroupHistory paymentGroupHistory = new PaymentGroupHistory();
-        KualiCode cd = businessObjectService.findBySinglePrimaryKey(PaymentChangeCode.class, changeStatus);
+        CodedBase cd = businessObjectService.findBySinglePrimaryKey(PaymentChangeCode.class, changeStatus);
         paymentGroupHistory.setPaymentChange((PaymentChangeCode) cd);
         paymentGroupHistory.setOrigPaymentStatus(paymentGroup.getPaymentStatus());
         paymentGroupHistory.setChangeUser(user);
@@ -119,7 +119,7 @@ public class RecurringDisbursementVoucherPaymentMaintenanceServiceImpl implement
 
         this.businessObjectService.save(paymentGroupHistory);
 
-        KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, newPaymentStatus);
+        CodedBase code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, newPaymentStatus);
         paymentGroup.setPaymentStatus((PaymentStatus) code);
         this.businessObjectService.save(paymentGroup);
         LOG.debug("changeStatus() Status has been changed; exit method.");
