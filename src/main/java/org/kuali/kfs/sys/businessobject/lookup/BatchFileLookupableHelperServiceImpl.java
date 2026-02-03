@@ -42,6 +42,7 @@ import org.kuali.kfs.krad.bo.BusinessObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -82,7 +83,7 @@ public class BatchFileLookupableHelperServiceImpl extends AbstractLookupableHelp
         }
 
         BatchFileFinder finder = new BatchFileFinder(results, filter);
-        List<File> rootDirectories = BatchFileUtils.retrieveBatchFileLookupRootDirectories();
+        List<Path> rootDirectories = BatchFileUtils.retrieveBatchFileLookupRootDirectories();
         finder.find(rootDirectories);
 
         return results;
