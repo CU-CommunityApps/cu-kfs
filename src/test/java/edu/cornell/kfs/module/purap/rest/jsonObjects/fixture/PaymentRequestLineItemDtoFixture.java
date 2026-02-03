@@ -9,6 +9,7 @@ public enum PaymentRequestLineItemDtoFixture {
     ITEM_2_3_400("2", "3", "400"),
     ITEM_3_2_500("3", "2", "500"),
     ITEM_LEGACY("1", "42", "100.23"),
+    ITEM_FORMAT_ERRORS("1X", "42X", "100.23X"),
     EMPTY_ITEM(null, null, null);
 
     public final String lineNumber;

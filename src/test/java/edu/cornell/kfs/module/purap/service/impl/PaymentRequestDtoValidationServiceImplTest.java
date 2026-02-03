@@ -59,6 +59,12 @@ public class PaymentRequestDtoValidationServiceImplTest {
                 .thenReturn("PO Number {0} is not open, it has a status of {1}.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_INVALID_LINE))
                 .thenReturn("PO Number {0} does not have a line number {1}.");
+        Mockito.when(service.getPropertyValueAsString(KFSKeyConstants.ERROR_INTEGER))
+                .thenReturn("{0} is not a valid integer");
+        Mockito.when(service.getPropertyValueAsString(KFSKeyConstants.ERROR_BIG_DECIMAL))
+                .thenReturn("{0} is not a valid decimal.");
+        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_DATE_BAD_FORMAT))
+                .thenReturn("{0} must be in the format of MM/DD/YYYY.");
         return service;
     }
 

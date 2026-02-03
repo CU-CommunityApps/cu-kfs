@@ -1,7 +1,10 @@
 package edu.cornell.kfs.module.purap.service.impl;
 
 import java.text.MessageFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
@@ -9,12 +12,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
@@ -30,6 +35,8 @@ import edu.cornell.kfs.module.purap.util.PaymentRequestUtil.PaymentRequestDtoFie
 
 public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDtoValidationService {
     private static final Logger LOG = LogManager.getLogger();
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
+
     private ConfigurationService configurationService;
     private VendorService vendorService;
     private PurchaseOrderService purchaseOrderService;
@@ -62,14 +69,20 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
 
         if (StringUtils.isBlank(paymentRequestDto.getPoNumber())) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.PO_NUMBER, results);
+        } else { 
+            validateIntegerString(paymentRequestDto.getPoNumber(), PaymentRequestDtoFields.PO_NUMBER, results);
         }
 
         if (StringUtils.isBlank(paymentRequestDto.getInvoiceDate())) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.INVOICE_DATE, results);
+        } else {
+            validateDateString(paymentRequestDto.getInvoiceDate(), PaymentRequestDtoFields.INVOICE_DATE, results);
         }
 
         if (StringUtils.isBlank(paymentRequestDto.getReceivedDate())) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.RECEIVED_DATE, results);
+        } else {
+            validateDateString(paymentRequestDto.getReceivedDate(), PaymentRequestDtoFields.RECEIVED_DATE, results);
         }
 
         if (StringUtils.isBlank(paymentRequestDto.getInvoiceNumber())) {
@@ -78,6 +91,8 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
 
         if (StringUtils.isBlank(paymentRequestDto.getInvoiceAmount())) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.INVOICE_AMOUNT, results);
+        } else {
+            validateDecimalString(paymentRequestDto.getInvoiceAmount(), PaymentRequestDtoFields.INVOICE_NUMBER, results);
         }
 
         if (CollectionUtils.isEmpty(paymentRequestDto.getItems())) {
@@ -107,6 +122,39 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         return MessageFormat.format(messageBase, fieldName);
     }
 
+    private void validateIntegerString(String integerString, PaymentRequestDtoFields field, PaymentRequestResultsDto results) {
+        try {
+            Integer intVal = Integer.valueOf(integerString);
+            LOG.debug("validateIntegerString found integer value {} for field {}", intVal.toString(), field.friendlyName);
+        } catch (Exception e) {
+            results.setValid(false);
+            String messageBase = configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_INTEGER);
+            results.getErrorMessages().add(MessageFormat.format(messageBase, field.friendlyName));
+        }
+    }
+
+    private void validateDateString(String dateString, PaymentRequestDtoFields field, PaymentRequestResultsDto results) {
+        try {
+            LocalDate date = LocalDate.parse(dateString, DATE_FORMATTER);
+            LOG.debug("validateDateString found date value {} for field {}", date, field.friendlyName);
+        } catch (Exception e) {
+            results.setValid(false);
+            String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_DATE_BAD_FORMAT);
+            results.getErrorMessages().add(MessageFormat.format(messageBase, field.friendlyName));
+        }
+    }
+
+    private void validateDecimalString(String decimalString, PaymentRequestDtoFields field, PaymentRequestResultsDto results) {
+        try {
+            KualiDecimal amount = new KualiDecimal(decimalString);
+            LOG.debug("validateDecimalString found amount value {} for field {}", amount, field.friendlyName);
+        } catch (Exception e) {
+            results.setValid(false);
+            String messageBase = configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_BIG_DECIMAL);
+            results.getErrorMessages().add(MessageFormat.format(messageBase, field.friendlyName));
+        }
+    }
+
     private String buildAtLeastOneElementError(String fieldName) {
         String messageBase = configurationService
                 .getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_AT_LEAST_ONE_MUST_BE_ENTERED);
@@ -117,14 +165,20 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
             PaymentRequestResultsDto results) {
         if (itemDto.getItemPrice() == null) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.ITEM_PRICE, results);
+        } else {
+            validateDecimalString(itemDto.getItemPrice(), PaymentRequestDtoFields.ITEM_PRICE, results);
         }
 
         if (itemDto.getItemQuantity() == null) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.ITEM_QUANTITY, results);
+        } else {
+            validateDecimalString(itemDto.getItemQuantity(), PaymentRequestDtoFields.ITEM_QUANTITY, results);
         }
 
         if (itemDto.getLineNumber() == null) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.ITEM_LINE_NUMBER, results);
+        } else {
+            validateIntegerString(itemDto.getLineNumber(), PaymentRequestDtoFields.ITEM_LINE_NUMBER, results);
         }
 
     }
