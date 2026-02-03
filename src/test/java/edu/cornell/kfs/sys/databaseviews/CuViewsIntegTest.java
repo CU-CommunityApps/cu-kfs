@@ -67,7 +67,8 @@ public class CuViewsIntegTest extends KualiIntegTestBase {
 
     @Test
     public void testPcardUserInfoView() {
-       runUnitTest(ViewsIntegFixture.PCARD_USER_INFO_V_INCOMPLETE_DATA);
+       runUnitTest(ViewsIntegFixture.PCARD_USER_INFO_V_FULL_NAME_INCOMPLETE_DATA);
+       runUnitTest(ViewsIntegFixture.PCARD_USER_INFO_V_NAME_AS_PIECES_INCOMPLETE_DATA);
     }
 
     @Test
