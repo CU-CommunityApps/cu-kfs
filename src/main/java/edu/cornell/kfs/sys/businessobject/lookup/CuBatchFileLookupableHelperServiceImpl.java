@@ -1,6 +1,7 @@
 package edu.cornell.kfs.sys.businessobject.lookup;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class CuBatchFileLookupableHelperServiceImpl extends BatchFileLookupableH
         BatchFileFinder finder = new BatchFileFinder(results, filter);
         List<File> selectedDirectories = getSelectedDirectories(getSelectedPaths());
         if (selectedDirectories.isEmpty()) {
-            List<File> rootDirectories = retrieveRootDirectories();
+            List<Path> rootDirectories = retrieveRootDirectories();
             finder.find(rootDirectories);
         } else {
             finder.find(selectedDirectories);
@@ -44,7 +45,7 @@ public class CuBatchFileLookupableHelperServiceImpl extends BatchFileLookupableH
         return results;
     }
 
-    protected List<File> retrieveRootDirectories() {
+    protected List<Path> retrieveRootDirectories() {
         return BatchFileUtils.retrieveBatchFileLookupRootDirectories();
     }
 

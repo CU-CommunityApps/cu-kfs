@@ -83,7 +83,7 @@ public class BatchFileLookupableHelperServiceImpl extends AbstractLookupableHelp
         }
 
         BatchFileFinder finder = new BatchFileFinder(results, filter);
-        List<Path> rootDirectories = BatchFileUtils.retrieveBatchFileLookupRootDirectories();
+        List<File> rootDirectories = BatchFileUtils.retrieveBatchFileLookupRootDirectories();
         finder.find(rootDirectories);
 
         return results;
@@ -316,4 +316,5 @@ public class BatchFileLookupableHelperServiceImpl extends AbstractLookupableHelp
     public void setBatchFileAdminAuthorizationService(BatchFileAdminAuthorizationService batchFileAdminAuthorizationService) {
         this.batchFileAdminAuthorizationService = batchFileAdminAuthorizationService;
     }
+
 }
