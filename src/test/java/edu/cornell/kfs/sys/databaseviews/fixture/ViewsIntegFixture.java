@@ -29,9 +29,13 @@ public enum ViewsIntegFixture {
             "SELECT DOCUMENT_ID, TRANSACTION_DATE, TOTAL_AMOUNT, TOTAL_AMOUNT_FORMATTED, HOLDER_NAME, HOLDER_NET_ID, VENDOR_NAME FROM KFS.PCDO_INFO_V WHERE DOCUMENT_ID = '132868'",
             createExpectedResults_PCDO_INFO_V()),
     
-    PCARD_USER_INFO_V_INCOMPLETE_DATA(
+    PCARD_USER_INFO_V_FULL_NAME_INCOMPLETE_DATA(
             "SELECT FULL_NAME, NET_ID, DEPARTMENT_ORG_CD, DEPARTMENT_ORG_NAME, COLLEGE_ORG_CD, COLLEGE_ORG_NAME, CARD_ACCOUNT_NBR, EMPLOYEE_ID, CARD_ACCOUNT_STATUS, CYCLE_START_DATE, SUMMARY_AMOUNT, LOAD_DATE, HAS_ESHOP FROM KFS.PCARD_USER_INFO_V WHERE NET_ID = 'jdh34'",
-            createExpectedResults_PCARD_USER_INFO_V_INCOMPLETE_DATA()),
+            createExpectedResults_PCARD_USER_INFO_V_FULL_NAME_INCOMPLETE_DATA()),
+    
+    PCARD_USER_INFO_V_NAME_AS_PIECES_INCOMPLETE_DATA(
+            "SELECT LAST_NAME, FIRST_NAME, MIDDLE_NAME, NET_ID, DEPARTMENT_ORG_CD, DEPARTMENT_ORG_NAME, COLLEGE_ORG_CD, COLLEGE_ORG_NAME, CARD_ACCOUNT_NBR, EMPLOYEE_ID, CARD_ACCOUNT_STATUS, CYCLE_START_DATE, SUMMARY_AMOUNT, LOAD_DATE, HAS_ESHOP FROM KFS.PCARD_USER_INFO_V WHERE NET_ID = 'jdh34'",
+            createExpectedResults_PCARD_USER_INFO_V_NAME_AS_PIECES_INCOMPLETE_DATA()),
     
     PERSON_ESHOP_ROLE_V_COMPLETE_DATA(
             "SELECT NET_ID, ESHOP_ROLE_COUNT FROM KFS.PERSON_ESHOP_ROLE_V WHERE NET_ID = 'tjh265'",
@@ -179,10 +183,32 @@ public enum ViewsIntegFixture {
         return expectedResultSetList;
     }
     
-    private static List<HashMap<String, String>> createExpectedResults_PCARD_USER_INFO_V_INCOMPLETE_DATA() {
+    private static List<HashMap<String, String>> createExpectedResults_PCARD_USER_INFO_V_FULL_NAME_INCOMPLETE_DATA() {
         List<HashMap<String, String>> expectedResultSetList = new ArrayList<>();
         HashMap<String, String>  expectedResultSetItem = new HashMap<String, String>();
         expectedResultSetItem.put("FULL_NAME", "Hulslander Jay D.");
+        expectedResultSetItem.put("NET_ID", "jdh34");
+        expectedResultSetItem.put("DEPARTMENT_ORG_CD", "3807");
+        expectedResultSetItem.put("DEPARTMENT_ORG_NAME", "CIT Infrastructure");
+        expectedResultSetItem.put("COLLEGE_ORG_CD", "3800");
+        expectedResultSetItem.put("COLLEGE_ORG_NAME", "Information Technologies");
+        expectedResultSetItem.put("CARD_ACCOUNT_NBR", null);
+        expectedResultSetItem.put("EMPLOYEE_ID", null);
+        expectedResultSetItem.put("CARD_ACCOUNT_STATUS", null);
+        expectedResultSetItem.put("CYCLE_START_DATE", null);
+        expectedResultSetItem.put("SUMMARY_AMOUNT", null);
+        expectedResultSetItem.put("LOAD_DATE", null);
+        expectedResultSetItem.put("HAS_ESHOP", "0");
+        expectedResultSetList.add(expectedResultSetItem);
+        return expectedResultSetList;
+    }
+    
+    private static List<HashMap<String, String>> createExpectedResults_PCARD_USER_INFO_V_NAME_AS_PIECES_INCOMPLETE_DATA() {
+        List<HashMap<String, String>> expectedResultSetList = new ArrayList<>();
+        HashMap<String, String>  expectedResultSetItem = new HashMap<String, String>();
+        expectedResultSetItem.put("LAST_NAME", "Hulslander");
+        expectedResultSetItem.put("FIRST_NAME", "Jay");
+        expectedResultSetItem.put("MIDDLE_NAME", "D.");
         expectedResultSetItem.put("NET_ID", "jdh34");
         expectedResultSetItem.put("DEPARTMENT_ORG_CD", "3807");
         expectedResultSetItem.put("DEPARTMENT_ORG_NAME", "CIT Infrastructure");
