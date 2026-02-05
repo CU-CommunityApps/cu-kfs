@@ -37,6 +37,7 @@ import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
 import org.kuali.kfs.sys.batch.service.BatchFileAdminAuthorizationService;
 import org.kuali.kfs.sys.util.KfsDateUtils;
+import org.kuali.kfs.sys.web.struts.KualiBatchFileAdminAction;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.bo.BusinessObject;
 
@@ -51,6 +52,7 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /*
  * Cornell Customization: Add old batch file lookup to support lookups on Create Disencumbrance page. This should be removed once the new batch file lookup will support return from lookup.
@@ -83,7 +85,7 @@ public class BatchFileLookupableHelperServiceImpl extends AbstractLookupableHelp
         }
 
         BatchFileFinder finder = new BatchFileFinder(results, filter);
-        List<File> rootDirectories = BatchFileUtils.retrieveBatchFileLookupRootDirectories();
+        List<File> rootDirectories = BatchFileUtils.retrieveBatchFileLookupRootDirectories().stream().map(Path::toFile).collect(Collectors.toList());
         finder.find(rootDirectories);
 
         return results;
@@ -301,7 +303,7 @@ public class BatchFileLookupableHelperServiceImpl extends AbstractLookupableHelp
         if (selectedPaths != null) {
             for (String selectedPath : selectedPaths) {
                 String resolvedPath = BatchFileUtils.resolvePathToAbsolutePath(selectedPath);
-                if (!BatchFileUtils.isDirectoryAccessible(resolvedPath)) {
+                if (!KualiBatchFileAdminAction.isDirectoryAccessible(resolvedPath)) {
                     throw new RuntimeException("Can't access path " + selectedPath);
                 }
             }
