@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -36,7 +37,7 @@ public class CuBatchFileLookupableHelperServiceImpl extends BatchFileLookupableH
         BatchFileFinder finder = new BatchFileFinder(results, filter);
         List<File> selectedDirectories = getSelectedDirectories(getSelectedPaths());
         if (selectedDirectories.isEmpty()) {
-            List<Path> rootDirectories = retrieveRootDirectories();
+            List<File> rootDirectories = retrieveRootDirectories().stream().map(Path::toFile).collect(Collectors.toList());
             finder.find(rootDirectories);
         } else {
             finder.find(selectedDirectories);
