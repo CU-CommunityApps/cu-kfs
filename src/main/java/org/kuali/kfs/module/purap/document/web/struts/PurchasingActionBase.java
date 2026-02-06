@@ -468,7 +468,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 
     public ActionForward useOffCampusAssetLocationBuildingByDocument(
             final ActionMapping mapping, final ActionForm form,
-            final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+            final HttpServletRequest request, final HttpServletResponse response) {
         final PurchasingFormBase baseForm = (PurchasingFormBase) form;
         final PurchasingDocument document = (PurchasingDocument) baseForm.getDocument();
 
@@ -1666,8 +1666,10 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
      * the user clicks on the approve button.
      */
     @Override
-    public ActionForward approve(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-    	final PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
+    public ActionForward approve(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
         final PurchasingDocument purDoc = (PurchasingDocument) purchasingForm.getDocument();
 		if (isAttachmentSizeExceedSqLimit(form, "approve") || isReasonToChangeRequired(form)) {
 			return mapping.findForward(KFSConstants.MAPPING_BASIC);
@@ -1692,7 +1694,9 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
     }
 
     @Override
-    public ActionForward blanketApprove(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ActionForward blanketApprove(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
         final PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
         final PurchasingDocument purDoc = (PurchasingDocument) purchasingForm.getDocument();
 		if (isAttachmentSizeExceedSqLimit(form, "blanket approve") || isReasonToChangeRequired(form)) {
@@ -1974,14 +1978,18 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         return requiresCalculate;
     }
 
-    public ActionForward populateBuilding(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ActionForward populateBuilding(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) {
         final PurchasingFormBase purForm = (PurchasingFormBase) form;
         final PurchasingDocumentBase document = (PurchasingDocumentBase) purForm.getDocument();
         updateAssetBuildingLocations(purForm, request, document);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
-    
-    public ActionForward populateDeliveryBuilding(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+    public ActionForward populateDeliveryBuilding(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) {
         final PurchasingFormBase purForm = (PurchasingFormBase) form;
         final PurchasingDocumentBase document = (PurchasingDocumentBase) purForm.getDocument();
         updateDeliveryBuilding(request, document);
