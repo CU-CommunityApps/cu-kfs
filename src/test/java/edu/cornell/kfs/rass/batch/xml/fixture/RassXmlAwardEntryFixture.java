@@ -283,7 +283,7 @@ public enum RassXmlAwardEntryFixture {
     public Proposal toProposal() {
         Proposal proposal = new Proposal();
         
-        proposal.setProposalAwardTypeCode(RassTestConstants.DEFAULT_PROPOSAL_AWARD_TYPE);
+        proposal.setAwardTypeCode(RassTestConstants.DEFAULT_PROPOSAL_AWARD_TYPE);
         proposal.setProposalNumber(defaultToNullIfBlank(proposalNumber));
         proposal.setProposalStatusCode(defaultToNullIfBlank(status));
         proposal.setAgencyNumber(defaultToNullIfBlank(agencyNumber));
@@ -338,7 +338,7 @@ public enum RassXmlAwardEntryFixture {
     public Award toAward() {
         Award award = new Award();
         
-        award.setProposalAwardTypeCode(RassTestConstants.DEFAULT_PROPOSAL_AWARD_TYPE);
+        award.setAwardTypeCode(RassTestConstants.DEFAULT_PROPOSAL_AWARD_TYPE);
         award.setProposalNumber(defaultToNullIfBlank(proposalNumber));
         award.setAwardStatusCode(defaultToNullIfBlank(status));
         award.setAgencyNumber(defaultToNullIfBlank(agencyNumber));

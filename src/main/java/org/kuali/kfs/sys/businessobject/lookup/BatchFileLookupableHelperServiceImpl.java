@@ -44,6 +44,7 @@ import org.kuali.kfs.krad.bo.BusinessObject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -92,13 +93,13 @@ public class BatchFileLookupableHelperServiceImpl extends AbstractLookupableHelp
     }
 
     protected IOFileFilter getPathBasedFileFilter() {
-        List<File> selectedFiles = getSelectedDirectories(getSelectedPaths());
+        List<Path> selectedFiles = getSelectedDirectories(getSelectedPaths());
         if (selectedFiles.isEmpty()) {
             return null;
         }
         IOFileFilter fileFilter = null;
-        for (File selectedFile : selectedFiles) {
-            IOFileFilter subFilter = new SubDirectoryFileFilter(selectedFile);
+        for (Path selectedFile : selectedFiles) {
+            IOFileFilter subFilter = new SubDirectoryFileFilter(selectedFile.toFile());
             if (fileFilter == null) {
                 fileFilter = subFilter;
             } else {
@@ -142,12 +143,12 @@ public class BatchFileLookupableHelperServiceImpl extends AbstractLookupableHelp
         throw new RuntimeException("Unable to perform search using last modified date " + lastModifiedDatePattern);
     }
 
-    protected List<File> getSelectedDirectories(String[] selectedPaths) {
-        List<File> directories = new ArrayList<File>();
+    protected List<Path> getSelectedDirectories(String[] selectedPaths) {
+        List<Path> directories = new ArrayList<Path>();
         if (selectedPaths != null) {
             for (String selectedPath : selectedPaths) {
-                File directory = new File(BatchFileUtils.resolvePathToAbsolutePath(selectedPath));
-                if (!directory.exists()) {
+                Path directory = Paths.get(BatchFileUtils.resolvePathToAbsolutePath(selectedPath)).toAbsolutePath();
+                if (!directory.toFile().exists()) {
                     throw new RuntimeException("Non existent directory " + BatchFileUtils.resolvePathToAbsolutePath(selectedPath));
                 }
                 directories.add(directory);

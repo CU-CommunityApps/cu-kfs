@@ -17,7 +17,7 @@ public class YearEndJournalVoucherAction extends JournalVoucherAction {
 	@Override
 	protected ActionForward processRouteOutOfBalanceDocumentConfirmationQuestion(
 			ActionMapping mapping, ActionForm form, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
+			HttpServletResponse response) {
 		// we return null as we don't want pre rule to check if doc is out of balance, BR is going to check if doc is out of balance
 		return null;
 	}
