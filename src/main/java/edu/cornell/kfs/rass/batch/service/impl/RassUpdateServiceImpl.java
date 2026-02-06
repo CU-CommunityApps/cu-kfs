@@ -34,6 +34,7 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.kfs.core.web.format.FormatException;
 import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.routeheader.service.RouteHeaderService;
@@ -114,7 +115,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
     protected void materializeProxiedCollectionsOnExistingObject(Object existingObject) {
         try {
             ObjectUtils.materializeUpdateableCollections(existingObject);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        } catch (FormatException e) {
             throw new RuntimeException(e);
         }
     }

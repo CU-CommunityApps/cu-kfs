@@ -35,12 +35,12 @@ public class CuBatchFileLookupableHelperServiceImpl extends BatchFileLookupableH
         }
 
         BatchFileFinder finder = new BatchFileFinder(results, filter);
-        List<File> selectedDirectories = getSelectedDirectories(getSelectedPaths());
+        List<Path> selectedDirectories = getSelectedDirectories(getSelectedPaths());
         if (selectedDirectories.isEmpty()) {
             List<File> rootDirectories = retrieveRootDirectories().stream().map(Path::toFile).collect(Collectors.toList());
             finder.find(rootDirectories);
         } else {
-            finder.find(selectedDirectories);
+            finder.find(selectedDirectories.stream().map(Path::toFile).collect(Collectors.toList()));
         }
 
         return results;

@@ -54,7 +54,7 @@ public class CuRequisitionAction extends RequisitionAction {
     @Override
     public ActionForward addItem(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, 
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
         PurApItem item = purchasingForm.getNewPurchasingItemLine();
         final RequisitionItem requisitionItem = (RequisitionItem) item;
@@ -62,7 +62,7 @@ public class CuRequisitionAction extends RequisitionAction {
         
         if (StringUtils.isBlank(requisitionItem.getPurchasingCommodityCode())) {
             final boolean commCodeParam = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(
-                    CuRequisitionDocument.class, PurapParameterConstants.ENABLE_DEFAULT_VENDOR_COMMODITY_CODE_IND);
+                    CuRequisitionDocument.class, PurapParameterConstants.COMMODITY_CODE_TO_LINE_ITEM_IND);
 
             if (commCodeParam && purchasingForm instanceof RequisitionForm) {
                 final CuRequisitionDocument reqs = (CuRequisitionDocument) purchasingForm.getDocument();
@@ -95,7 +95,7 @@ public class CuRequisitionAction extends RequisitionAction {
     
     public ActionForward clearVendor(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, 
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final PurchasingFormBase baseForm = (PurchasingFormBase) form;
         final CuRequisitionDocument document = (CuRequisitionDocument) baseForm.getDocument();
 

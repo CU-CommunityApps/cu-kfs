@@ -29,7 +29,7 @@ public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl
     private static final Logger LOG = LogManager.getLogger();
     
     @Override
-    protected boolean runAssetDepreciation() throws ParseException {
+    protected boolean runAssetDepreciation() {
         return true;
     }
     

@@ -43,7 +43,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     @Override
     public ActionForward prorateBill(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final ContractsGrantsInvoiceDocumentForm contractsGrantsInvoiceDocumentForm = (ContractsGrantsInvoiceDocumentForm) form;
         KualiDecimal budgetTotalAmount = findAwardBudgetTotal(contractsGrantsInvoiceDocumentForm);
         
@@ -208,7 +208,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     protected ActionForward promptForSuspensionCategories(
             final ActionMapping mapping, final ActionForm form,
             final HttpServletRequest request, final HttpServletResponse response,
-            final ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument, final String caller) throws Exception {
+            final ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument, final String caller) {
         ActionForward forward = null;
 
         if (CollectionUtils.size(contractsGrantsInvoiceDocument.getInvoiceSuspensionCategories()) > 0) {

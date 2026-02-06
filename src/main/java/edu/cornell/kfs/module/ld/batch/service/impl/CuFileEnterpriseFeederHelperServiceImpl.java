@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,6 +35,7 @@ import org.kuali.kfs.module.ld.businessobject.BenefitsCalculation;
 import org.kuali.kfs.module.ld.businessobject.LaborOriginEntry;
 import org.kuali.kfs.module.ld.businessobject.PositionObjectBenefit;
 import org.kuali.kfs.module.ld.report.EnterpriseFeederReportData;
+import org.kuali.kfs.module.ld.util.BenefitOffsetKey;
 import org.kuali.kfs.module.ld.util.LaborOriginEntryFileIterator;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -89,6 +91,9 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
             if (reconciliationProcessSucceeded(errorMessages)) {
                 String line;
                 int count = 0;
+                
+                // placeholder of all generated offset entries
+                final Map<BenefitOffsetKey, List<LaborOriginEntry>> salaryBenefitOffsets = new LinkedHashMap<>();
                     
                 Collection<String> offsetDocTypes = parameterService.getParameterValuesAsString(
                         LaborEnterpriseFeedStep.class, LaborParameterConstants.BENEFITS_DOCUMENT_TYPES);
@@ -108,7 +113,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
                         feederReportData.incrementNumberOfRecordsWritten();
                         feederReportData.addToTotalAmountWritten(tempEntry.getTransactionLedgerEntryAmount());
                         
-                        final List<LaborOriginEntry> benefitEntries = generateBenefits(tempEntry, errorStatisticsReport, feederReportData);
+                        final List<LaborOriginEntry> benefitEntries = generateBenefits(tempEntry, errorStatisticsReport, feederReportData, salaryBenefitOffsets);
                         KualiDecimal benefitTotal = new KualiDecimal (0);
                         KualiDecimal offsetTotal = new KualiDecimal (0);
                         

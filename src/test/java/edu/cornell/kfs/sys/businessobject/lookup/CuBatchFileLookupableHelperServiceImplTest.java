@@ -10,6 +10,8 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +26,7 @@ public class CuBatchFileLookupableHelperServiceImplTest {
     public static final String FIXTURE_SUB2_PATH = "edu/cornell/kfs/sys/businessobject/lookup/fixture/sub2";
 
     private LookupableHelperService cuLookupableHelperService;
-    private List<File> rootDirectories;
+    private List<Path> rootDirectories;
     private List<String> fileNames;
     private String userDir;
     private String fileSeparator;
@@ -41,11 +43,11 @@ public class CuBatchFileLookupableHelperServiceImplTest {
         fileNames = setupFileNames(rootDirectories);
     }
 
-    private List<String> setupFileNames(List<File> rootDirectories) throws IOException {
+    private List<String> setupFileNames(List<Path> rootDirectories) throws IOException {
         List<String> fileNames = new ArrayList<>();
 
-        for (File rootDirectory : rootDirectories) {
-            for (String fileName: FileUtils.getFileNames(rootDirectory, null, null, true)) {
+        for (Path rootDirectory : rootDirectories) {
+            for (String fileName: FileUtils.getFileNames(rootDirectory.toFile(), null, null, true)) {
 
                 final int lastIndexOfFileSeparator = fileName.lastIndexOf(fileSeparator);
                 if (lastIndexOfFileSeparator > 0) {
@@ -108,21 +110,21 @@ public class CuBatchFileLookupableHelperServiceImplTest {
         public static final String SYS_PATH = "edu/cornell/kfs/sys";
         private String[] selectedPaths;
 
-        protected List<File> retrieveRootDirectories() {
-            List<File> rootDirectories = new ArrayList<>();
+        protected List<Path> retrieveRootDirectories() {
+            List<Path> rootDirectories = new ArrayList<>();
 
-            rootDirectories.add(new File(filePrefix + FP_PATH));
-            rootDirectories.add(new File(filePrefix + SYS_PATH));
+            rootDirectories.add(Paths.get(filePrefix + FP_PATH).toAbsolutePath());
+            rootDirectories.add(Paths.get(filePrefix + SYS_PATH).toAbsolutePath());
             
             return rootDirectories;
         }
 
-        protected List<File> getSelectedDirectories(String[] selectedPaths) {
-            List<File> selectedDirectories = new ArrayList<>();
+        protected List<Path> getSelectedDirectories(String[] selectedPaths) {
+            List<Path> selectedDirectories = new ArrayList<>();
 
             if (ObjectUtils.isNotNull(getSelectedPaths())) {
                 for (String selectedPath: getSelectedPaths()) {
-                    selectedDirectories.add(new File(filePrefix + selectedPath));
+                    selectedDirectories.add(Paths.get(filePrefix + selectedPath).toAbsolutePath());
                 }
             }
 
