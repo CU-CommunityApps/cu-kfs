@@ -90,10 +90,9 @@ public class FormatAction extends KualiAction {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     public ActionForward start(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+            HttpServletResponse response) {
         FormatForm formatForm = (FormatForm) form;
 
         Person kualiUser = GlobalVariables.getUserSession().getPerson();
@@ -176,10 +175,9 @@ public class FormatAction extends KualiAction {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     public ActionForward continueFormat(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+            HttpServletResponse response) {
         FormatForm formatForm = (FormatForm) form;
         KualiInteger processId = formatForm.getFormatProcessSummary().getProcessId();
 
@@ -203,10 +201,9 @@ public class FormatAction extends KualiAction {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     public ActionForward clear(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+            HttpServletResponse response) {
         FormatForm formatForm = (FormatForm) form;
 
         List<CustomerProfile> customers = formatForm.getCustomers();
@@ -227,10 +224,9 @@ public class FormatAction extends KualiAction {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     public ActionForward cancel(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+            HttpServletResponse response) {
         FormatForm formatForm = (FormatForm) form;
 
         KualiInteger processId = formatForm.getFormatProcessSummary().getProcessId();
@@ -250,10 +246,9 @@ public class FormatAction extends KualiAction {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     public ActionForward clearUnfinishedFormat(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+            HttpServletResponse response) {
         String processIdParam = request.getParameter(PdpConstants.PROCESS_ID);
         Integer processId = Integer.parseInt(processIdParam);
 
