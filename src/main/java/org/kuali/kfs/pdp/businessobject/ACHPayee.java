@@ -24,7 +24,6 @@ import org.kuali.kfs.fp.businessobject.DisbursementPayee;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 
 //Cornell customization: this was overlayed to add the principalName.
 public class ACHPayee extends DisbursementPayee implements MutableInactivatable {

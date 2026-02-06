@@ -112,7 +112,7 @@ public class KFSConfigurer implements DisposableBean, InitializingBean, ServletC
     }
 
     @Override
-    public final void afterPropertiesSet() throws Exception {
+    public final void afterPropertiesSet() {
         validateConfigurerState();
         ensureServletContext();
         initializeResourceLoaders();
@@ -158,7 +158,7 @@ public class KFSConfigurer implements DisposableBean, InitializingBean, ServletC
     }
 
     @Override
-    public final void destroy() throws Exception {
+    public final void destroy() {
         doAdditionalModuleStopLogic();
         // CU Customization: Shut down child Spring contexts.
         if (cuMvcEndpointsLoader != null) {
@@ -211,7 +211,7 @@ public class KFSConfigurer implements DisposableBean, InitializingBean, ServletC
         return parsedFiles;
     }
 
-    private void initializeResourceLoaders() throws Exception {
+    private void initializeResourceLoaders() {
         GlobalResourceLoader.initialize(servletContext, getPrimarySpringFiles());
         GlobalResourceLoader.start();
 
