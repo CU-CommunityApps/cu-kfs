@@ -26,6 +26,7 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.Constant;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.gl.businessobject.AccountBalance;
+import org.kuali.kfs.gl.dataaccess.GeneralLedgerSqlHelper;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
@@ -33,12 +34,11 @@ import org.kuali.kfs.sys.businessobject.SystemOptions;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,7 +47,7 @@ import java.util.stream.Stream;
  */
 // Exposing for overriding in UConn
 // CU customization: adjust code to be Oracle compliant
-public class AccountBalanceDaoSqlHelper {
+public class AccountBalanceDaoSqlHelper extends GeneralLedgerSqlHelper<AccountBalance> {
     private static final Logger LOG = LogManager.getLogger();
     private static final String ORGANIZATION_CODE_CRITERIA = "account.organizationCode";
 
@@ -82,8 +82,6 @@ public class AccountBalanceDaoSqlHelper {
     );
 
     // Exposing for accessing in UConn
-    protected final Map<String, Object> parameters = new HashMap<>();
-    protected final Map<String, String> fieldValues;
     protected final boolean isConsolidated;
     protected final String pendingEntryOption;
     protected final boolean excludeTransfers;
@@ -101,7 +99,7 @@ public class AccountBalanceDaoSqlHelper {
             final ParameterService parameterService,
             final SystemOptions systemOptions
     ) {
-        this.fieldValues = fieldValues;
+        super(fieldValues);
         this.isConsolidated = isConsolidated;
         // Need to default here due to overlays using old UI do not pass this value if unchanged
         pendingEntryOption = fieldValues.getOrDefault(Constant.PENDING_ENTRY_OPTION, Constant.NO_PENDING_ENTRY);
@@ -128,9 +126,8 @@ public class AccountBalanceDaoSqlHelper {
     }
 
     // Exposing for overriding in UConn
-    protected AccountBalance mapResultSetToAccountBalance(
-            final ResultSet rs
-    ) throws SQLException {
+    @Override
+    protected AccountBalance mapResultSetToObject(final Supplier<AccountBalance> supplier, final ResultSet rs) throws SQLException {
         final AccountBalance accountBalance = new AccountBalance();
         accountBalance.setAccountNumber(rs.getString("ACCOUNT_NBR"));
         accountBalance.setChartOfAccountsCode(rs.getString("FIN_COA_CD"));
@@ -151,33 +148,9 @@ public class AccountBalanceDaoSqlHelper {
         return accountBalance;
     }
 
-    private String addSortAndLimitSql(
-            final String baseSql
-    ) {
-        String orderedAndLimited = baseSql;
-        final int limit = Integer.parseInt(fieldValues.getOrDefault(KFSConstants.Search.LIMIT, "100"));
-        final int skip = Integer.parseInt(fieldValues.getOrDefault(KFSConstants.Search.SKIP, "0"));
-        final String sort = fieldValues.get(KFSConstants.Search.SORT);
-        if (StringUtils.isNotBlank(sort)) {
-            final boolean sortDescending = sort.startsWith("-");
-            final String sortField = sort.substring(sortDescending ? 1 : 0);
-            final Map<String, String> sortMap = isConsolidated ? CONSOLIDATED_SORT_MAP : UNCONSOLIDATED_SORT_MAP;
-            if (sortMap.containsKey(sortField)) {
-                orderedAndLimited += " ORDER BY " + sortMap.get(sortField) + (sortDescending ? " DESC " : " ASC ");
-            }
-        }
-        // CU customization: replace MySql specific syntax 'LIMIT x OFFSET y' with Oracle compliant 'OFFSET y ROWS FETCH NEXT x ROWS ONLY'
-        orderedAndLimited += " OFFSET " + skip + " ROWS FETCH NEXT " + limit + " ROWS ONLY";
-        return orderedAndLimited;
-    }
-
     // Exposing for override in Overlays
     protected String addSearchCriteria() {
-        String searchCriteria = CRITERIA_MAP.entrySet()
-                .stream()
-                .map(entry -> addCondition(parameters, fieldValues, entry.getKey(), entry.getValue()))
-                .filter(StringUtils::isNotBlank)
-                .collect(Collectors.joining(" AND "));
+        String searchCriteria = addSearchCriteria(CRITERIA_MAP);
         if (excludeTransfers) {
             final Collection<String> transferExclusions =
                     parameterService.getParameterValuesAsString(AccountBalance.class,
@@ -206,14 +179,17 @@ public class AccountBalanceDaoSqlHelper {
     }
 
     // Exposing for accessing in Overlays
+    @Override
     protected String addCondition(
             final Map<? super String, ? super Object> parameters,
-            final Map<String, String> fieldValues,
             final String fieldValueKey,
             final String sqlField
     ) {
+        if (!StringUtils.equals(fieldValueKey, KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR)) {
+            return super.addCondition(parameters, fieldValueKey, sqlField);
+        }
         String condition = "";
-        String fieldValue = fieldValues.get(fieldValueKey);
+        final String fieldValue = fieldValues.get(fieldValueKey);
         if (StringUtils.isNotBlank(fieldValue)) {
             if (StringUtils.equals(fieldValueKey, KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR)
                 && !excludePriorYearBalances) {
@@ -224,19 +200,14 @@ public class AccountBalanceDaoSqlHelper {
                 condition = sqlField + " IN (:" + fieldValueKey + ") ";
                 parameters.put(fieldValueKey, List.of(fieldValue, Integer.parseInt(fieldValue) - 1));
             } else {
-                fieldValue = fieldValue.replace("*", "%");
-                parameters.put(fieldValueKey, fieldValue);
-                if (fieldValue.contains("%")) {
-                    condition = sqlField + " LIKE :" + fieldValueKey + " ";
-                } else {
-                    condition = sqlField + " = :" + fieldValueKey + " ";
-                }
+                return super.addCondition(parameters, fieldValueKey, sqlField);
             }
         }
         return condition;
     }
 
-    String buildCountSql() {
+    @Override
+    protected String buildCountSql() {
         final String countSql;
         if (StringUtils.equals(Constant.NO_PENDING_ENTRY, pendingEntryOption)) {
             countSql = wrap(buildFinalSql());
@@ -247,15 +218,16 @@ public class AccountBalanceDaoSqlHelper {
         return "SELECT COUNT(*) FROM (" + countSql + ") BALANCE_COUNT";
     }
 
-    Map<String, ?> getParameters() {
-        return Collections.unmodifiableMap(parameters);
-    }
-
-    String buildSql() {
+    @Override
+    protected String buildSql() {
         if (!StringUtils.equals(Constant.NO_PENDING_ENTRY, pendingEntryOption)) {
-            return addSortAndLimitSql(buildPendingEntrySql());
+            return addSortAndLimitSql(buildPendingEntrySql(),
+                    isConsolidated ? CONSOLIDATED_SORT_MAP : UNCONSOLIDATED_SORT_MAP
+            );
         }
-        return addSortAndLimitSql(wrap(buildFinalSql()));
+        return addSortAndLimitSql(wrap(buildFinalSql()),
+                isConsolidated ? CONSOLIDATED_SORT_MAP : UNCONSOLIDATED_SORT_MAP
+        );
     }
 
     private String buildPendingEntrySql() {
