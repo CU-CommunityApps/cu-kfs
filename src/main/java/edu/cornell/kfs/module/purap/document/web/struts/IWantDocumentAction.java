@@ -928,7 +928,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     @Override
     public ActionForward promptBeforeValidation(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response, final String methodToCall) throws Exception {
+            final HttpServletResponse response, final String methodToCall) {
         final IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         if (!StringUtils.equalsIgnoreCase(iWantDocForm.getStep(), CUPurapConstants.IWantDocumentSteps.REGULAR)) {
             return null;
