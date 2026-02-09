@@ -237,11 +237,10 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
      * @param request
      * @param response
      * @return ActionForward
-     * @throws Exception
      */
     public ActionForward deleteTargetLine(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final KualiAccountingDocumentFormBase financialDocumentForm = (KualiAccountingDocumentFormBase) form;
 
         final int deleteIndex = getLineToDelete(request);
@@ -432,11 +431,10 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
      * @param request
      * @param response
      * @return ActionForward
-     * @throws Exception
      */
     public ActionForward insertTargetLine(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final KualiAccountingDocumentFormBase financialDocumentForm = (KualiAccountingDocumentFormBase) form;
         final TargetAccountingLine line = financialDocumentForm.getNewTargetLine();
 
@@ -562,11 +560,10 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
      * @param request
      * @param response
      * @return ActionForward
-     * @throws Exception
      */
     public ActionForward showDetails(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final KualiAccountingDocumentFormBase tmpForm = (KualiAccountingDocumentFormBase) form;
         tmpForm.setHideDetails(false);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
@@ -581,11 +578,10 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
      * @param request
      * @param response
      * @return ActionForward
-     * @throws Exception
      */
     public ActionForward hideDetails(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final KualiAccountingDocumentFormBase tmpForm = (KualiAccountingDocumentFormBase) form;
         tmpForm.setHideDetails(true);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
@@ -600,11 +596,10 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
      * @param request
      * @param response
      * @return ActionForward
-     * @throws Exception
      */
     public ActionForward performBalanceInquiryForSourceLine(
             final ActionMapping mapping, final ActionForm form,
-            final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+            final HttpServletRequest request, final HttpServletResponse response) {
         final SourceAccountingLine line = getSourceAccountingLine(form, request);
         return performBalanceInquiryForAccountingLine(mapping, form, request, line);
     }
@@ -618,11 +613,10 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
      * @param request
      * @param response
      * @return ActionForward
-     * @throws Exception
      */
     public ActionForward performBalanceInquiryForTargetLine(
             final ActionMapping mapping, final ActionForm form,
-            final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+            final HttpServletRequest request, final HttpServletResponse response) {
         final TargetAccountingLine line = getTargetAccountingLine(form, request);
         return performBalanceInquiryForAccountingLine(mapping, form, request, line);
     }
