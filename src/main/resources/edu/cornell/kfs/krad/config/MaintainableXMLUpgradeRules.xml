@@ -508,16 +508,24 @@
         <pattern>
             <class>org.kuali.kfs.module.cg.businessobject.Proposal</class>
             <pattern>
-                <match>userLookupRoleNamespaceCode</match>
-                <replacement/>
+                <match>proposalAwardType</match>
+                <replacement>awardType</replacement>
+            </pattern>
+            <pattern>
+                <match>proposalAwardTypeCode</match>
+                <replacement>awardTypeCode</replacement>
+            </pattern>
+            <pattern>
+                <match>statusCode</match>
+                <replacement />
             </pattern>
             <pattern>
                 <match>userLookupRoleName</match>
                 <replacement/>
             </pattern>
             <pattern>
-                <match>statusCode</match>
-                <replacement />
+                <match>userLookupRoleNamespaceCode</match>
+                <replacement/>
             </pattern>
         </pattern>
         <pattern>
@@ -1224,7 +1232,7 @@
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kns.bo.KualiCodeBase</match>
-                <replacement>org.kuali.kfs.krad.bo.KualiCodeBase</replacement>
+                <replacement>org.kuali.kfs.krad.bo.CodedBase</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.krad.bo.KualiCodeBase</match>
@@ -1606,6 +1614,43 @@
             <pattern>
                 <match>group</match>
                 <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.module.ld.businessobject.LaborObject</class>
+            <pattern>
+                <match>detailPositionRequiredIndicator</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>financialObjectHoursRequiredIndicator</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>financialObjectPayTypeCode</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.module.cg.businessobject.AwardType</class>
+            <pattern>
+                <match>proposalAwardTypeCode</match>
+                <replacement>awardTypeCode</replacement>
+            </pattern>
+            <pattern>
+                <match>proposalAwardTypeDescription</match>
+                <replacement>awardTypeDescription</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.module.cg.businessobject.Award</class>
+            <pattern>
+                <match>proposalAwardType</match>
+                <replacement>awardType</replacement>
+            </pattern>
+            <pattern>
+                <match>proposalAwardTypeCode</match>
+                <replacement>awardTypeCode</replacement>
             </pattern>
         </pattern>
     </rule>
