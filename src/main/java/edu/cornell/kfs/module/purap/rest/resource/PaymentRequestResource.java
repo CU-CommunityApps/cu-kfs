@@ -43,6 +43,7 @@ import javax.ws.rs.Produces;
 @Produces(MediaType.APPLICATION_JSON)
 public class PaymentRequestResource {
     private static final Logger LOG = LogManager.getLogger();
+    private static final String CANCEL_PREQ_ANNOTATION_MESSAGE = "Canceled with the payment request endpoint";
     private static Gson gson = new GsonBuilder()
             .setDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT)
             .registerTypeAdapter(KualiDecimal.class, new KualiDecimalTypeAdapter())
@@ -54,7 +55,7 @@ public class PaymentRequestResource {
     This should be false when pushed to develop / master.
     Note: when we implement routing of payment request documents, if there is an error on submission, we will need to cancel the preq
      */
-    private static final boolean AUTO_CANCEL_PO_FOR_TESTING = true;
+    private static final boolean AUTO_CANCEL_PO_FOR_TESTING = false;
 
     @Context
     protected HttpServletRequest servletRequest;
@@ -142,7 +143,7 @@ public class PaymentRequestResource {
 
     private void cancelPreq(final UserSession userSession, PaymentRequestDocument preqDoc) throws Exception {
         GlobalVariables.doInNewGlobalVariables(userSession,
-                            () -> getDocumentService().cancelDocument(preqDoc, "Canceled with the payment request endpoint"));
+                            () -> getDocumentService().cancelDocument(preqDoc, CANCEL_PREQ_ANNOTATION_MESSAGE));
     }
 
     private PaymentRequestDtoValidationService getPaymentRequestDtoValidationService() {

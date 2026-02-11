@@ -20,10 +20,7 @@ public class PaymentRequestLineItemDto {
     }
 
     public Integer getLineNumberAsInteger() {
-        if (StringUtils.isBlank(lineNumber)) {
-            return null;
-        }
-        return Integer.valueOf(lineNumber);
+        return StringUtils.isNotBlank(lineNumber) ? Integer.valueOf(lineNumber) : null;
     }
 
     public String getItemQuantity() {
@@ -35,10 +32,7 @@ public class PaymentRequestLineItemDto {
     }
 
     public KualiDecimal getItemQuantityAsKualiDecimal() {
-        if (StringUtils.isBlank(itemQuantity)) {
-            return null;
-        }
-        return new KualiDecimal(itemQuantity);
+        return StringUtils.isNotBlank(itemQuantity) ? new KualiDecimal(itemQuantity) : null;
     }
 
     public String getItemPrice() {
@@ -50,10 +44,7 @@ public class PaymentRequestLineItemDto {
     }
 
     public KualiDecimal getItemPriceAsKualiDecimal() {
-        if (StringUtils.isBlank(itemPrice)) {
-            return null;
-        }
-        return new KualiDecimal(itemPrice);
+        return StringUtils.isNotBlank(itemPrice) ? new KualiDecimal(itemPrice) : null;
     }
 
     @Override
