@@ -158,7 +158,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
 
     public ActionForward deleteNonArLine(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final PaymentApplicationForm paymentApplicationForm = (PaymentApplicationForm) form;
         final PaymentApplicationDocument paymentApplicationDocument = paymentApplicationForm.getPaymentApplicationDocument();
 
@@ -204,14 +204,14 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
 
     public ActionForward applyAllAmounts(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         doApplicationOfFunds((PaymentApplicationForm) form);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
     public ActionForward clearUnapplied(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final PaymentApplicationForm payAppForm = (PaymentApplicationForm) form;
         final PaymentApplicationDocument payAppDoc = payAppForm.getPaymentApplicationDocument();
         final NonAppliedHolding nonAppliedHolding = payAppDoc.getNonAppliedHolding();
@@ -592,11 +592,10 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     public ActionForward loadInvoices(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final PaymentApplicationForm pform = (PaymentApplicationForm) form;
         loadInvoices(pform, pform.getEnteredInvoiceDocumentNumber());
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
@@ -814,11 +813,10 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     public ActionForward goToInvoice(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final PaymentApplicationForm payAppForm = (PaymentApplicationForm) form;
         loadInvoices(payAppForm, payAppForm.getSelectedInvoiceDocumentNumber());
         if (!payAppForm.getPaymentApplicationDocument().isFinal()) {
@@ -835,11 +833,10 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     public ActionForward goToNextInvoice(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final PaymentApplicationForm payAppForm = (PaymentApplicationForm) form;
         loadInvoices(payAppForm, payAppForm.getNextInvoiceDocumentNumber());
         if (!payAppForm.getPaymentApplicationDocument().isFinal()) {
@@ -856,11 +853,10 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     public ActionForward goToPreviousInvoice(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final PaymentApplicationForm payAppForm = (PaymentApplicationForm) form;
         loadInvoices(payAppForm, payAppForm.getPreviousInvoiceDocumentNumber());
         if (!payAppForm.getPaymentApplicationDocument().isFinal()) {

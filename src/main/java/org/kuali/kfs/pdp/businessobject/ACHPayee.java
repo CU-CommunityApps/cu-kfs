@@ -18,12 +18,12 @@
  */
 package org.kuali.kfs.pdp.businessobject;
 
+import org.kuali.kfs.core.api.mo.common.Coded;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
 import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.krad.bo.KualiCode;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 
 //Cornell customization: this was overlayed to add the principalName.
 public class ACHPayee extends DisbursementPayee implements MutableInactivatable {
@@ -46,7 +46,7 @@ public class ACHPayee extends DisbursementPayee implements MutableInactivatable 
 
     @Override
     public String getPayeeTypeDescription() {
-        final KualiCode payeeType = SpringContext.getBean(BusinessObjectService.class).findBySinglePrimaryKey(
+        final Coded payeeType = SpringContext.getBean(BusinessObjectService.class).findBySinglePrimaryKey(
                 PayeeType.class, getPayeeTypeCode());
         return payeeType.getName();
     }

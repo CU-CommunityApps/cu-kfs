@@ -594,7 +594,7 @@ public class VendorDaoImpl implements VendorDao, CuVendorDao {
                     .append(sortAscending ? " ASC " : " DESC ");
         }
 
-        // CU Customization: Backport FINP-11585
+        // CU Customization: update SQL for Oracle compatibility
         orderedAndLimited.append("OFFSET ").append(skip).append(" ROWS FETCH NEXT ").append(limit).append(" ROWS ONLY ");
         return orderedAndLimited.toString();
     }

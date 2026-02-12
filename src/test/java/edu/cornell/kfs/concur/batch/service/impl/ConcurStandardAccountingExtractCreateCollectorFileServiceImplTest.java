@@ -375,11 +375,6 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
      */
     public static class TestBatchFileLookupSearchServiceImpl extends BatchFileSearchService {
         private static final long serialVersionUID = 1L;
-
-        @Override
-        protected List<File> getDirectoriesToSearch(List<String> selectedPaths) {
-            return Collections.singletonList(new File(COLLECTOR_OUTPUT_DIRECTORY_PATH).getAbsoluteFile());
-        }
     }
 
 }

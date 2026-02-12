@@ -86,6 +86,7 @@ public final class PurapConstants {
     public static final String IMAGE_FILES_INDICATOR = "IMAGE_FILES_IND";
     public static final String IMAGE_TEMP_PATH = "PDF_IMAGE_TEMP_PATH";
     public static final String LOGO_FILE_EXTENSION = "LOGO_FILE_EXTENSION";
+    public static final String LOGO_FILE_IND = "LOGO_FILE_IND";
     public static final String LOGO_FILE_PREFIX = "LOGO_FILE_PREFIX";
     public static final String STATUS_URL = "STATUS_URL";
     public static final String TEMPORARY_FILE_DIRECTORY = "TEMPORARY_FILE_DIRECTORY";

@@ -37,7 +37,7 @@
   <awardIndirectCostAmount>
     <value>0.00</value>
   </awardIndirectCostAmount>
-  <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+  <awardTypeCode>Z</awardTypeCode>
   <awardStatusCode>SP</awardStatusCode>
   <grantDescriptionCode>GRT</grantDescriptionCode>
   <agencyNumber>5111</agencyNumber>
@@ -197,7 +197,7 @@
     <proposalSubmissionDate>2016-10-31</proposalSubmissionDate>
     <proposalFederalPassThroughIndicator>false</proposalFederalPassThroughIndicator>
     <grantNumber>III-1234567</grantNumber>
-    <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+    <awardTypeCode>Z</awardTypeCode>
     <agencyNumber>5151</agencyNumber>
     <proposalStatusCode>A</proposalStatusCode>
     <proposalPurposeCode>R</proposalPurposeCode>
@@ -613,7 +613,7 @@
     <proposalSubmissionDate>2016-10-31</proposalSubmissionDate>
     <proposalFederalPassThroughIndicator>false</proposalFederalPassThroughIndicator>
     <grantNumber>III-1234567</grantNumber>
-    <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+    <awardTypeCode>Z</awardTypeCode>
     <agencyNumber>5151</agencyNumber>
     <proposalStatusCode>A</proposalStatusCode>
     <proposalPurposeCode>R</proposalPurposeCode>
@@ -705,7 +705,7 @@
   <awardIndirectCostAmount>
     <value>0.00</value>
   </awardIndirectCostAmount>
-  <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+  <awardTypeCode>Z</awardTypeCode>
   <awardStatusCode>SP</awardStatusCode>
   <grantDescriptionCode>GRT</grantDescriptionCode>
   <agencyNumber>5111</agencyNumber>
@@ -862,7 +862,7 @@
     <proposalSubmissionDate>2016-10-31</proposalSubmissionDate>
     <proposalFederalPassThroughIndicator>false</proposalFederalPassThroughIndicator>
     <grantNumber>III-1234567</grantNumber>
-    <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+    <awardTypeCode>Z</awardTypeCode>
     <agencyNumber>5151</agencyNumber>
     <proposalStatusCode>A</proposalStatusCode>
     <proposalPurposeCode>R</proposalPurposeCode>
@@ -933,7 +933,7 @@
   <awardIndirectCostAmount>
     <value>300000.00</value>
   </awardIndirectCostAmount>
-  <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+  <awardTypeCode>Z</awardTypeCode>
   <awardStatusCode>SP</awardStatusCode>
   <grantDescriptionCode>GRT</grantDescriptionCode>
   <agencyNumber>5111</agencyNumber>
@@ -1093,7 +1093,7 @@
     <proposalSubmissionDate>2016-10-31</proposalSubmissionDate>
     <proposalFederalPassThroughIndicator>false</proposalFederalPassThroughIndicator>
     <grantNumber>III-1234567</grantNumber>
-    <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+    <awardTypeCode>Z</awardTypeCode>
     <agencyNumber>5151</agencyNumber>
     <proposalStatusCode>A</proposalStatusCode>
     <proposalPurposeCode>R</proposalPurposeCode>

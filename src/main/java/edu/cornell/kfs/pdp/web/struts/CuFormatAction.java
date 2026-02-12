@@ -36,7 +36,7 @@ public class CuFormatAction extends FormatAction {
     @Override
     public ActionForward start(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final CuFormatForm formatForm = (CuFormatForm) form;
         
         final Person kualiUser = GlobalVariables.getUserSession().getPerson();

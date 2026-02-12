@@ -49,6 +49,7 @@ import org.kuali.kfs.krad.comparator.StringValueComparator;
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.krad.datadictionary.PrimitiveAttributeDefinition;
 import org.kuali.kfs.krad.datadictionary.RelationshipDefinition;
+import org.kuali.kfs.krad.datadictionary.validation.ValidationUtils;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.KRADServiceLocator;
 import org.kuali.kfs.krad.util.ErrorMessage;
@@ -349,7 +350,9 @@ public class DataDictionaryTypeServiceBase implements KimTypeService {
                         // not a super-awesome fallback strategy, but...
                         attributeValue = value;
                     }
-                    propertyDescriptor.getWriteMethod().invoke(componentObject, attributeValue);
+                    if (!ValidationUtils.isNullOrEmpty(attributeValue)) {
+                        propertyDescriptor.getWriteMethod().invoke(componentObject, attributeValue);
+                    }
                     return validateDataDictionaryAttribute(attr.getKimTypeId(),
                             attr.getKimAttribute().getComponentName(), componentObject, propertyDescriptor);
                 }

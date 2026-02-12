@@ -19,13 +19,8 @@
 package org.kuali.kfs.sys.businessobject.service.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.DirectoryWalker;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOCase;
-import org.apache.commons.io.filefilter.AbstractFileFilter;
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -42,16 +37,18 @@ import org.kuali.kfs.sys.businessobject.service.exception.ForbiddenException;
 import org.kuali.kfs.sys.businessobject.service.exception.NotAllowedException;
 import org.kuali.kfs.sys.util.DateRangeUtil;
 import org.springframework.util.MultiValueMap;
-import org.springframework.util.StopWatch;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BatchFileSearchService extends SearchService {
@@ -69,9 +66,7 @@ public class BatchFileSearchService extends SearchService {
             final String sortField,
             final boolean sortAscending
     ) {
-        final StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        LOG.info(
+        LOG.trace(
                 "getSearchResults(...) - Enter : businessObjectClass={}, fieldValues={}, skip={}, limit={}, "
                 + "sortField={}, sortAscending={}",
                 businessObjectClass::getSimpleName,
@@ -97,11 +92,16 @@ public class BatchFileSearchService extends SearchService {
                 );
 
         final Pair<Collection<? extends BusinessObjectBase>, Integer> pair = Pair.of(sortedAndSliced, allFiles.size());
-        stopWatch.stop();
-        LOG.info(
-                "getSearchResults(...) - Exit : pair={}; elapsedMillis={}",
-                () -> pair,
-                stopWatch::getTotalTimeMillis
+        LOG.trace(
+                "getSearchResults(...) - Exit : businessObjectClass={}; fieldValues={}; skip={}; limit={}; "
+                + "sortField={}; sortAscending={}; pair={}",
+                businessObjectClass::getSimpleName,
+                () -> fieldValues,
+                () -> skip,
+                () -> limit,
+                () -> sortField,
+                () -> sortAscending,
+                () -> pair
         );
         return pair;
     }
@@ -130,62 +130,169 @@ public class BatchFileSearchService extends SearchService {
         }
     }
 
-    private List<BatchFile> getFiles(final MultiValueMap<String, String> fieldValues) {
-        final StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        LOG.info("getFiles(...) - Enter");
+    private static List<BatchFile> getFiles(final MultiValueMap<String, String> fieldValues) {
+        LOG.trace("getFiles(...) - Enter : fieldValues={}", fieldValues);
 
-        final List<BatchFile> results = new ArrayList<>();
-
-        IOFileFilter filter = FileFilterUtils.fileFileFilter();
-
-        final String fileNamePattern = fieldValues.getFirst("fileName");
-        final IOFileFilter fileNameBasedFilter = getFileNameBasedFilter(fileNamePattern);
-        if (fileNameBasedFilter != null) {
-            filter = FileFilterUtils.and(filter, fileNameBasedFilter);
-        }
+        final String fileNameWildcard = fieldValues.getFirst("fileName");
 
         final String lastModifiedDate = fieldValues.getFirst("lastModifiedDate");
-        final IOFileFilter lastModifiedDateBasedFilter = getLastModifiedDateBasedFilter(lastModifiedDate);
-        if (lastModifiedDateBasedFilter != null) {
-            filter = FileFilterUtils.and(filter, lastModifiedDateBasedFilter);
+        final DateRangeUtil lastModifiedDateRangeUtil = getLastModifierDateRangeUtil(lastModifiedDate);
+        Instant startInstant = null;
+        Instant endInstant = null;
+        if (lastModifiedDateRangeUtil != null) {
+            final Date lowerDate = lastModifiedDateRangeUtil.getLowerDate();
+            if (lowerDate != null) {
+                startInstant = lowerDate.toInstant();
+            }
+            final Date upperDate = lastModifiedDateRangeUtil.getUpperDate();
+            if (upperDate != null) {
+                endInstant = upperDate.toInstant();
+            }
         }
 
-        final List<String> pathPatterns = fieldValues.get("path");
-        final List<File> directories = getDirectoriesToSearch(pathPatterns);
-        final BatchFileSearchService.BatchFileFinder finder =
-                new BatchFileSearchService.BatchFileFinder(results, filter);
-        finder.find(directories);
+        final List<Path> userSelectedPaths =
+                Optional.ofNullable(fieldValues.get("path"))
+                        .map(paths -> paths.stream().map(Path::of).collect(Collectors.toList()))
+                        .orElseGet(List::of);
+        final List<Path> directoriesToSearch = getDirectoriesToSearch(userSelectedPaths);
 
-        stopWatch.stop();
-        LOG.info(
-                "getFiles(...) - Exit : results.size={}; elapsedMillis={}",
-                results::size,
-                stopWatch::getTotalTimeMillis
+        final List<BatchFile> results = new ArrayList<>();
+        for (final Path directory : directoriesToSearch) {
+            results.addAll(searchDirectory(directory, fileNameWildcard, startInstant, endInstant));
+        }
+
+        LOG.trace(
+                "getFiles(...) - Exit : fieldValues={}; results.size={}",
+                () -> fieldValues,
+                results::size
         );
         return results;
     }
 
-    private IOFileFilter getFileNameBasedFilter(final String fileNamePattern) {
-        if (StringUtils.isNotBlank(fileNamePattern)) {
-            return new WildcardFileFilter(fileNamePattern, IOCase.INSENSITIVE);
+    private static Collection<? extends BatchFile> searchDirectory(
+            final Path directory,
+            final String fileNameWildcard,
+            final Instant startInstant,
+            final Instant endInstant
+    ) {
+        LOG.trace(
+                "searchDirectory(...) - Enter : directory={}; fileNameWildcard={}; startInstant={}; endInstant={}",
+                directory::toString,
+                () -> fileNameWildcard,
+                () -> startInstant,
+                () -> endInstant
+        );
+
+        try (Stream<Path> paths = Files.walk(directory)) {
+            final List<BatchFile> batchFiles =
+                    paths.filter(Files::isRegularFile)
+                            .filter(file -> matchesCriteria(file, fileNameWildcard, startInstant, endInstant))
+                            .map(Path::toFile)
+                            .map(BatchFile::new)
+                            .collect(Collectors.toList());
+            LOG.trace("searchDirectory(...) - Exit : directory={}; fileNameWildcard={}; startInstant={}; "
+                     + "endInstant={}; batchFiles.size={}",
+                    directory::toString,
+                    () -> fileNameWildcard,
+                    () -> startInstant,
+                    () -> endInstant,
+                    batchFiles::size
+            );
+            return batchFiles;
+        } catch (final IOException e) {
+            LOG.atError()
+                    .withThrowable(e)
+                    .log("searchDirectory(...) - Error accessing directory : directory={}", directory);
+            return List.of();
         }
-        return null;
     }
 
-    private IOFileFilter getLastModifiedDateBasedFilter(final String lastModifiedDatePattern) {
+    private static boolean matchesCriteria(
+            final Path file,
+            final String fileNameWildcard,
+            final Instant startInstant,
+            final Instant endInstant
+    ) {
+        return nameMatchesWildcard(file, fileNameWildcard)
+               && lastModificationInDesiredRange(file, startInstant, endInstant);
+    }
+
+    private static boolean nameMatchesWildcard(final Path file, final String fileNameWildcard) {
+        LOG.trace(
+                "nameMatchesWildcard(...) - Enter : file={}; fileNameWildcard={}",
+                file::toString,
+                () -> fileNameWildcard
+        );
+
+        if (StringUtils.isBlank(fileNameWildcard)) {
+            return true;
+        }
+
+        final boolean match =
+                FilenameUtils.wildcardMatch(file.getFileName().toString(), fileNameWildcard, IOCase.INSENSITIVE);
+        LOG.trace(
+                "nameMatchesWildcard(...) - Exit : file={}; fileNameWildcard={}; match={}",
+                file::toString,
+                () -> fileNameWildcard,
+                () -> match
+        );
+        return match;
+    }
+
+    private static boolean lastModificationInDesiredRange(
+            final Path file,
+            final Instant startInstant,
+            final Instant endInstant
+    ) {
+        LOG.trace(
+                "lastModificationInDesiredRange(...) - Enter : file={}; startInstant={}; endInstant={}",
+                file::toString,
+                () -> startInstant,
+                () -> endInstant
+        );
+
+        if (startInstant == null && endInstant == null) {
+            return true;
+        }
+
+        try {
+            final Instant lastModifiedInstant = Files.getLastModifiedTime(file).toInstant();
+
+            final boolean inRange =
+                    (startInstant == null || !startInstant.isAfter(lastModifiedInstant))
+                    && (endInstant == null || !endInstant.isBefore(lastModifiedInstant));
+            LOG.trace(
+                    "lastModificationInDesiredRange(...) - Exit : file={}; startInstant={}; endInstant={}; inRange={}",
+                    file::toString,
+                    () -> startInstant,
+                    () -> endInstant,
+                    () -> inRange
+            );
+            return inRange;
+        } catch (final IOException e) {
+            LOG.atError().withThrowable(e).log(
+                    "lastModificationInDesiredRange(...) - Error reading file attributes: file={}",
+                    file
+            );
+            return false;
+        }
+    }
+
+    private static DateRangeUtil getLastModifierDateRangeUtil(final String lastModifiedDatePattern) {
+        LOG.trace("getLastModifierDateRangeUtil(...) - Enter : lastModifiedDatePattern={}", lastModifiedDatePattern);
+
         if (StringUtils.isBlank(lastModifiedDatePattern)) {
             return null;
         }
 
         final DateRangeUtil dateRange = new DateRangeUtil();
         dateRange.setDateStringWithLongValues(lastModifiedDatePattern);
-        if (!dateRange.isEmpty()) {
-            return new BatchFileSearchService.LastModifiedDateFileFilter(dateRange.getLowerDate(),
-                    dateRange.getUpperDate());
-        } else {
+
+        if (dateRange.isEmpty()) {
             throw new RuntimeException("Unable to perform search using last modified date " + lastModifiedDatePattern);
         }
+        LOG.trace("getLastModifierDateRangeUtil(...) - Exit : lastModifiedDatePattern={}", lastModifiedDatePattern);
+        return dateRange;
     }
 
     /*
@@ -193,62 +300,51 @@ public class BatchFileSearchService extends SearchService {
      * that it can be overridden in unit test
      * 
      */
-    protected List<File> getDirectoriesToSearch(final List<String> selectedPaths) {
-        final StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        LOG.info("getDirectoriesToSearch(...) - Enter : selectedPaths={}", selectedPaths);
+    protected static List<Path> getDirectoriesToSearch(final List<Path> userSelectedPaths) {
+        LOG.trace("getDirectoriesToSearch(...) - Enter : userSelectedPaths={}", userSelectedPaths);
 
-        final List<String> searchPaths = getPathsToSearch(selectedPaths);
+        final List<Path> uniqueSelectedDirectories = getUniqueSelectedDirectories(userSelectedPaths);
 
-        List<File> directories = new ArrayList<>();
-        if (selectedPaths != null) {
-            for (final String searchPath : searchPaths) {
-                final File directory = new File(BatchFileUtils.resolvePathToAbsolutePath(searchPath));
-                if (directory.exists()) {
-                    directories.add(directory);
+        List<Path> directoriesToSearch = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(userSelectedPaths)) {
+            for (final Path uniqueSelectedDirectory : uniqueSelectedDirectories) {
+                final Path directory = BatchFileUtils.resolvePathToAbsolutePath(uniqueSelectedDirectory);
+                if (Files.exists(directory)) {
+                    directoriesToSearch.add(directory);
                 }
             }
         } else {
-            directories = BatchFileUtils.retrieveBatchFileLookupRootDirectories();
+            directoriesToSearch = BatchFileUtils.retrieveBatchFileLookupRootDirectories();
         }
 
-        stopWatch.stop();
-        LOG.info(
-                "getDirectoriesToSearch(...) - Exit : directories.size={}; elapsedMillis={}",
-                directories::size,
-                stopWatch::getTotalTimeMillis
+        LOG.trace(
+                "getDirectoriesToSearch(...) - Exit : userSelectedPaths={}; directoriesToSearch.size={}",
+                () -> userSelectedPaths,
+                directoriesToSearch::size
         );
-        return directories;
+        return directoriesToSearch;
     }
 
-    private List<String> getPathsToSearch(final List<String> selectedPaths) {
-        final StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        LOG.info("getPathsToSearch(...) - Enter : selectedPaths={}", selectedPaths);
+    // Ignore redundant child paths
+    private static List<Path> getUniqueSelectedDirectories(final List<Path> userSelectedDirectories) {
+        LOG.trace("getUniqueSelectedDirectories(...) - Enter : userSelectedDirectories={}", userSelectedDirectories);
 
-        if (CollectionUtils.isEmpty(selectedPaths)) {
-            LOG.info("getPathsToSearch(...) - Exit : selectedPaths is empty");
-            return selectedPaths;
+        final List<Path> uniqueSelectedDirectories = new LinkedList<>(userSelectedDirectories);
+
+        for (final Path path1 : userSelectedDirectories) {
+            for (final Path path2 : userSelectedDirectories) {
+                if (!path1.equals(path2) && path2.startsWith(path1)) {
+                    uniqueSelectedDirectories.remove(path2);
+                }
+            }
         }
 
-        // Ignore redundant child paths
-        final List<String> searchPaths = new ArrayList<>();
-        selectedPaths.stream()
-                .sorted(Comparator.comparingInt(String::length))
-                .forEach(selectedPath -> {
-                    final String[] searchPathsStringArray = searchPaths.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
-                    if (!StringUtils.startsWithAny(selectedPath, searchPathsStringArray)) {
-                        searchPaths.add(selectedPath);
-                    }
-                });
-
-        stopWatch.stop();
-        LOG.info(
-                "getPathsToSearch(...) - Exit : searchPaths.size={}; elapsedMillis={}",
-                searchPaths::size,
-                stopWatch::getTotalTimeMillis
+        LOG.trace(
+                "getUniqueSelectedDirectories(...) - Exit : userSelectedDirectories={}; uniqueSelectedDirectories={}",
+                userSelectedDirectories,
+                uniqueSelectedDirectories
         );
-        return searchPaths;
+        return uniqueSelectedDirectories;
     }
 
     public void setBusinessObjectDictionaryService(
@@ -256,79 +352,4 @@ public class BatchFileSearchService extends SearchService {
         this.businessObjectDictionaryService = businessObjectDictionaryService;
     }
 
-    static final class BatchFileFinder extends DirectoryWalker {
-        private static final Logger LOG = LogManager.getLogger();
-
-        private final List<BatchFile> results;
-
-        BatchFileFinder(final List<BatchFile> results, final IOFileFilter fileFilter) {
-            super(null, fileFilter, -1);
-            this.results = results;
-        }
-
-        void find(final Collection<File> rootDirectories) {
-            final StopWatch stopWatch = new StopWatch();
-            stopWatch.start();
-            LOG.info("find(...) - Enter : rootDirectories={}", rootDirectories);
-
-            try {
-                for (final File rootDirectory : rootDirectories) {
-                    walk(rootDirectory, null);
-                }
-            } catch (final IOException e) {
-                throw new RuntimeException("Error performing lookup", e);
-            }
-
-            stopWatch.stop();
-            LOG.info(
-                    "find(...) - Exit : results.size={}; elapsedMillis={}",
-                    results::size,
-                    stopWatch::getTotalTimeMillis
-            );
-        }
-
-        /**
-         * @see org.apache.commons.io.DirectoryWalker#handleFile(java.io.File, int, java.util.Collection)
-         */
-        @Override
-        protected void handleFile(final File file, final int depth, final Collection results) throws IOException {
-            final StopWatch stopWatch = new StopWatch();
-            stopWatch.start();
-            LOG.info(
-                    "handleFile(...) - Enter : file={}; results.size={}",
-                    () -> file,
-                    () -> Objects.requireNonNullElseGet(results, List::of).size()
-            );
-
-            super.handleFile(file, depth, results);
-            final BatchFile batchFile = new BatchFile(file);
-            this.results.add(batchFile);
-
-            stopWatch.stop();
-            LOG.info(
-                    "handleFile(...) - Exit : results.size={}; elapsedMillis={}",
-                    () -> Objects.requireNonNullElseGet(results, List::of).size(),
-                    stopWatch::getTotalTimeMillis
-            );
-        }
-    }
-
-    protected class LastModifiedDateFileFilter extends AbstractFileFilter {
-        private final Date fromDate;
-        private final Date toDate;
-
-        LastModifiedDateFileFilter(final Date fromDate, final Date toDate) {
-            this.fromDate = fromDate;
-            this.toDate = toDate;
-        }
-
-        @Override
-        public boolean accept(final File file) {
-            final Date lastModifiedDate = new Date(file.lastModified());
-            if (fromDate != null && fromDate.after(lastModifiedDate)) {
-                return false;
-            }
-            return toDate == null || !toDate.before(lastModifiedDate);
-        }
-    }
 }

@@ -161,7 +161,6 @@ import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 public class Iso20022FormatExtractor {
 
     private static final Logger LOG = LogManager.getLogger();
-
     private static final String CURRENCY_USD = "USD";
     private static final int REF_MAX_LENGTH = 30;
 

@@ -242,7 +242,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      *
      * @return the String with the HTML for the title cell
      */
-    protected String buildTitleCell() throws JspException {
+    protected String buildTitleCell() {
         final StringBuilder titleCell = new StringBuilder();
         int colSpan = titleCellSpan;
 
@@ -276,7 +276,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
         return titleCell.toString();
     }
 
-    protected String buildBlankCell() throws JspException {
+    protected String buildBlankCell() {
         final StringBuilder titleCell = new StringBuilder();
         titleCell.append("<th style=\"visibility:hidden;\"></th>");
         return titleCell.toString();

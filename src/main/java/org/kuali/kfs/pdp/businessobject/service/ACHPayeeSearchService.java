@@ -148,6 +148,7 @@ public class ACHPayeeSearchService extends DefaultSearchService {
         return achPayee;
     }
 
+    @Override
     public void validateSearchParameters(final Map<String, String> fieldValues) {
         final String vendorName = fieldValues.get(KFSPropertyConstants.VENDOR_NAME);
         final String vendorNumber = fieldValues.get(KFSPropertyConstants.VENDOR_NUMBER);
@@ -223,7 +224,7 @@ public class ACHPayeeSearchService extends DefaultSearchService {
         return payeeList;
     }
 
-    private ACHPayee getPayeeFromVendor(final VendorDetail vendorDetail) {
+    private static ACHPayee getPayeeFromVendor(final VendorDetail vendorDetail) {
         final String addressPattern = "{0}, {1}, {2} {3}";
 
         final VendorAddress vendorAddress = vendorDetail.getVendorAddresses().get(0);

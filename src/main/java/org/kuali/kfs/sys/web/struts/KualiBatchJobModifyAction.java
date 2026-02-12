@@ -204,7 +204,7 @@ public class KualiBatchJobModifyAction extends KualiAction {
 
     public ActionForward start(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final KualiBatchJobModifyForm batchModifyForm = (KualiBatchJobModifyForm) form;
 
         request.setAttribute("job", batchModifyForm.getJob());
@@ -219,7 +219,7 @@ public class KualiBatchJobModifyAction extends KualiAction {
 
     public ActionForward runJob(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final KualiBatchJobModifyForm batchModifyForm = (KualiBatchJobModifyForm) form;
 
         checkJobAuthorization(batchModifyForm, "runJob");
@@ -264,7 +264,7 @@ public class KualiBatchJobModifyAction extends KualiAction {
 
     public ActionForward stopJob(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final KualiBatchJobModifyForm batchModifyForm = (KualiBatchJobModifyForm) form;
 
         checkJobAuthorization(batchModifyForm, "stopJob");
@@ -276,7 +276,7 @@ public class KualiBatchJobModifyAction extends KualiAction {
 
     public ActionForward schedule(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final KualiBatchJobModifyForm batchModifyForm = (KualiBatchJobModifyForm) form;
 
         checkJobAuthorization(batchModifyForm, "schedule");
@@ -288,7 +288,7 @@ public class KualiBatchJobModifyAction extends KualiAction {
 
     public ActionForward unschedule(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final KualiBatchJobModifyForm batchModifyForm = (KualiBatchJobModifyForm) form;
 
         checkJobAuthorization(batchModifyForm, "unschedule");

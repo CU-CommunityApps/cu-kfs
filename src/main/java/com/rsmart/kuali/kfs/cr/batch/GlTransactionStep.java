@@ -33,7 +33,7 @@ import org.kuali.kfs.pdp.service.PendingTransactionService;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.krad.bo.KualiCode;
+import org.kuali.kfs.core.api.mo.common.Coded;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
@@ -107,7 +107,7 @@ public class GlTransactionStep extends AbstractStep {
                         
                         //glTransactionService.generateGlPendingTransactionStop(paymentGroup);
                         
-                        KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
+                        Coded code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
                         if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
                             paymentGroup.setPaymentStatus((PaymentStatus) code);
                         }
@@ -155,7 +155,7 @@ public class GlTransactionStep extends AbstractStep {
                     	glPendingTransactionService.generateCRCancellationGeneralLedgerPendingEntry(paymentGroup);
                         //glTransactionService.generateGlPendingTransactionCancel(paymentGroup);
                     
-                        KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
+                        Coded code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
                         if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
                             paymentGroup.setPaymentStatus((PaymentStatus) code);
                         }
@@ -218,7 +218,7 @@ public class GlTransactionStep extends AbstractStep {
 
 //                        glTransactionService.generateGlPendingTransactionStop(paymentGroup);
                     
-                        KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
+                        Coded code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
                         if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
                             paymentGroup.setPaymentStatus((PaymentStatus) code);
                         }
@@ -271,7 +271,7 @@ public class GlTransactionStep extends AbstractStep {
                     	 glPendingTransactionService.generateStaleGeneralLedgerPendingEntry(paymentGroup);
                          //glPendingTransactionService.g .generateStaleGeneralLedgerPendingEntry(paymentGroup);
                     
-                         KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
+                         Coded code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
                          if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
                              paymentGroup.setPaymentStatus((PaymentStatus) code);
                          }

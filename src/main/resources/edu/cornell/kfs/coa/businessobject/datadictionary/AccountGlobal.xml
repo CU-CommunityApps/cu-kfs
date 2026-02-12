@@ -29,7 +29,6 @@
         <ref bean="AccountGlobal-contractControlFinCoaCode"/>
         <ref bean="AccountGlobal-contractControlAccountNumber"/>
         <ref bean="AccountGlobal-acctIndirectCostRcvyTypeCd"/>
-        <ref bean="AccountGlobal-contractsAndGrantsAccountResponsibilityId"/>
         <ref bean="AccountGlobal-invoiceFrequencyCode"/>
         <ref bean="AccountGlobal-invoiceTypeCode"/>
         <ref bean="AccountGlobal-costShareForProjectNumber"/>
@@ -155,11 +154,6 @@
 	<bean id="AccountGlobal-acctIndirectCostRcvyTypeCd" parent="AccountGlobal-acctIndirectCostRcvyTypeCd-parentBean" />
 	<bean id="AccountGlobal-acctIndirectCostRcvyTypeCd-parentBean" abstract="true"
 		parent="Account-acctIndirectCostRcvyTypeCd">
-	</bean>
-	
-	<bean id="AccountGlobal-contractsAndGrantsAccountResponsibilityId" parent="AccountGlobal-contractsAndGrantsAccountResponsibilityId-parentBean" />
-	<bean id="AccountGlobal-contractsAndGrantsAccountResponsibilityId-parentBean" abstract="true"
-		parent="Account-contractsAndGrantsAccountResponsibilityId">
 	</bean>
 	
 	<bean id="AccountGlobal-invoiceFrequencyCode" parent="AccountGlobal-invoiceFrequencyCode-parentBean" />
