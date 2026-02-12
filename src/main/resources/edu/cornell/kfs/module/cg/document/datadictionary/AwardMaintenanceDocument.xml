@@ -84,6 +84,15 @@
         <property name="beanName" value="AwardMaintenanceDocument-AwardMaintenance"/>
         <property name="fieldOverrides">
             <list>
+                <bean parent="FieldOverrideForListElementReplace">
+                    <property name="propertyName" value="maintainableItems"/>
+                    <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:lookupReadOnly="true" p:name="proposalNumber"/>
+                    </property>
+                    <property name="replaceWith">
+                        <bean parent="MaintainableFieldDefinition" p:name="proposalNumber" p:required="true"/>
+                    </property>
+                </bean>
                 <bean parent="FieldOverrideForListElementInsert">
                     <property name="propertyName" value="maintainableItems"/>
                     <property name="element">
