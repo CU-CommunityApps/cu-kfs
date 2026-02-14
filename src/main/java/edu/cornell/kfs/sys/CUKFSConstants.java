@@ -180,6 +180,8 @@ public class CUKFSConstants {
     public static final String REGEX_WILDCARD = ".";
     public static final String REGEX_ZERO_OR_MORE_SYMBOL = "*";
 
+    public static final String EMPTY_JSON_ARRAY = "[]";
+
     public static final String DOCUMENT_ID = "documentId";
     
     public static final String XML_FILE_EXTENSION = ".xml";
