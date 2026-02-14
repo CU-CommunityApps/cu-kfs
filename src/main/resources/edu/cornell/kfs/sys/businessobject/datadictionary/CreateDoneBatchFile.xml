@@ -53,7 +53,7 @@
 
     <bean id="CreateDoneBatchFile-path" parent="CreateDoneBatchFile-path-parentBean"/>
     <bean id="CreateDoneBatchFile-path-parentBean" abstract="true" parent="AttributeDefinition" p:name="path"
-          p:forceUppercase="false" p:label="File Path" p:shortLabel="Path" p:type="OTHER">
+          p:forceUppercase="false" p:label="File Path" p:shortLabel="Path" p:type="OTHER" p:defaultValue="[]">
         <property name="control">
             <bean parent="MultiselectControlDefinition" p:size="15" p:hierarchical="true"
                   p:hierarchicalControlValuesFinder-ref="batchFileDirectoryPathHierarchicalControlValuesFinder"/>
