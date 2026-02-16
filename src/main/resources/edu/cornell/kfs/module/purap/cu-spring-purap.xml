@@ -373,6 +373,7 @@
         p:configurationService-ref="configurationService"
         p:vendorService-ref="vendorService"
         p:purchaseOrderService-ref="purchaseOrderService"
-        p:paymentRequestDao-ref="paymentRequestDao"/>
+        p:paymentRequestDao-ref="paymentRequestDao"
+        p:dataDictionaryService-ref="dataDictionaryService"/>
     
 </beans>

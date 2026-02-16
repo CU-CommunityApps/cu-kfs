@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
@@ -13,6 +14,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
@@ -41,6 +46,7 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
     private VendorService vendorService;
     private PurchaseOrderService purchaseOrderService;
     private CuPaymentRequestDao paymentRequestDao;
+    private DataDictionaryService dataDictionaryService;
 
     @Override
     public PaymentRequestResultsDto validatePaymentRequestDto(PaymentRequestDto paymentRequestDto) {
@@ -202,6 +208,17 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
             PaymentRequestResultsDto results) {
         if (StringUtils.isBlank(noteDto.getNoteText())) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.NOTE_TEXT, results);
+        } else {
+            AttributeDefinition accountAttributeDefinition = dataDictionaryService.getAttributeDefinition(Note.class.getName(), KRADConstants.NOTE_TEXT_PROPERTY_NAME);
+            Integer noteTextMaxLength = accountAttributeDefinition.getMaxLength();
+
+            if (noteDto.getNoteText().length() > noteTextMaxLength) {
+                results.setValid(false);
+                String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_NOTE_TOO_LONG);
+                String formattedMessage = MessageFormat.format(messageBase, String.valueOf(noteTextMaxLength), String.valueOf(noteDto.getNoteText().length()));
+
+                results.getErrorMessages().add(formattedMessage);
+            } 
         }
 
         if (!isValidNoteType(noteDto.getNoteType())) {
@@ -299,6 +316,10 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
 
     public void setPaymentRequestDao(CuPaymentRequestDao paymentRequestDao) {
         this.paymentRequestDao = paymentRequestDao;
+    }
+
+    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
+        this.dataDictionaryService = dataDictionaryService;
     }
 
 }
