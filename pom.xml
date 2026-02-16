@@ -81,6 +81,15 @@
         <log4j.version>2.25.3</log4j.version>
         <cxf.version>3.5.11</cxf.version>
         <wss4j.version>2.4.3</wss4j.version>
+        <!--
+            We're using Apache POI for Excel file generation, so we're also forcibly upgrading
+            certain conflicting dependencies to the same or newer versions that POI uses.
+        -->
+        <poi.version>5.5.1</poi.version>
+        <commons-codec.version>1.21.0</commons-codec.version>
+        <commons-collections4.version>4.5.0</commons-collections4.version>
+        <commons-io.version>2.21.0</commons-io.version>
+        <commons-lang3.version>3.18.0</commons-lang3.version>
     </properties>
     <profiles>
         <profile>
@@ -243,6 +252,10 @@
                             <excludes>
                                 <exclude>WEB-INF/lib/log4j-*-2.*.jar</exclude>
                                 <exclude>WEB-INF/lib/httpclient-4.5.5.jar</exclude>
+                                <exclude>WEB-INF/lib/commons-codec-*.jar</exclude>
+                                <exclude>WEB-INF/lib/commons-collections4-*.jar</exclude>
+                                <exclude>WEB-INF/lib/commons-io-*.jar</exclude>
+                                <exclude>WEB-INF/lib/commons-lang3-*.jar</exclude>
                                 <exclude>WEB-INF/lib/commons-logging-*.jar</exclude>
                                 <exclude>WEB-INF/lib/gson-*.jar</exclude>
                                 <exclude>WEB-INF/lib/pw-iso20022-*.jar</exclude>
@@ -1784,6 +1797,55 @@
         </dependency>
         <!--
             End of JAX-RS dependencies.
+         -->
+
+        <!--
+            Start of Apache POI dependencies (and forced upgrades of transitive dependencies).
+         -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poi.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>${commons-collections4.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+        <!--
+            End of Apache POI dependencies.
          -->
 
         <dependency>
