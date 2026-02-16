@@ -1,5 +1,7 @@
 package edu.cornell.kfs.module.purap.service.impl;
 
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 
 import org.apache.logging.log4j.Level;
@@ -12,6 +14,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
@@ -40,6 +46,7 @@ public class PaymentRequestDtoValidationServiceImplTest {
         validationService.setVendorService(buildMockVendorService());
         validationService.setPurchaseOrderService(buildMockPurchaseOrderService());
         validationService.setPaymentRequestDao(buildMockCuPaymentRequestDao());
+        validationService.setDataDictionaryService(buildMockDataDictionaryService());
     }
 
     private ConfigurationService buildMockConfigurationService() {
@@ -65,6 +72,8 @@ public class PaymentRequestDtoValidationServiceImplTest {
                 .thenReturn("{0} is not a valid decimal.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_DATE_BAD_FORMAT))
                 .thenReturn("{0} must be in the format of MM/DD/YYYY.");
+        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_NOTE_TOO_LONG))
+                .thenReturn("The maximum size of a note is {0} characters, the note provided was {1} characters long.");
         return service;
     }
 
@@ -114,6 +123,14 @@ public class PaymentRequestDtoValidationServiceImplTest {
     private CuPaymentRequestDao buildMockCuPaymentRequestDao() {
         CuPaymentRequestDao dao = Mockito.mock(CuPaymentRequestDao.class);
         return dao;
+    }
+
+    private DataDictionaryService buildMockDataDictionaryService() {
+        DataDictionaryService service = Mockito.mock(DataDictionaryService.class);
+        AttributeDefinition definition = Mockito.mock(AttributeDefinition.class);
+        Mockito.when(definition.getMaxLength()).thenReturn(15);
+        Mockito.when(service.getAttributeDefinition(Note.class.getName(), KRADConstants.NOTE_TEXT_PROPERTY_NAME)).thenReturn(definition);
+        return service;
     }
 
     @AfterEach
