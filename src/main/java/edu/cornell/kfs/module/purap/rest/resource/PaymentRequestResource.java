@@ -89,30 +89,30 @@ public class PaymentRequestResource {
             PaymentRequestResultsDto results = getPaymentRequestDtoValidationService()
                     .validatePaymentRequestDto(paymentRequestDto);
             if (results.isValid()) {
-                try {
                     UserSession userSession = createUserSessionForAiPaymentRequestUser(loggedInPrincipalName);
 
                     PaymentRequestDocument preqDoc = GlobalVariables.doInNewGlobalVariables(userSession,
                             () -> getCuPaymentRequestService().createPaymentRequestDocumentFromDto(paymentRequestDto, results));
 
-                    LOG.info("createPaymentRequestDocument, PREQ Document #{} Created", preqDoc.getDocumentNumber());
-                    results.getSuccessMessages().add(String.format("Created PREQ Document %s", preqDoc.getDocumentNumber()));
+                    
+                    if (preqDoc != null) {
+                        LOG.info("createPaymentRequestDocument, PREQ Document #{} Created", preqDoc.getDocumentNumber());
+                        results.getSuccessMessages().add(String.format("Created PREQ Document %s", preqDoc.getDocumentNumber()));
 
-                    results.setDocumentNumber(preqDoc.getDocumentNumber());
+                        results.setDocumentNumber(preqDoc.getDocumentNumber());
 
-                    if (AUTO_CANCEL_PO_FOR_TESTING) {
-                        /* Note we will want to cancel the saved preq if we can't submit the preq due to further business rule errors
-                         * Adding this code now to help during the testing process
-                         */
-                        cancelPreq(userSession, preqDoc);
+                        if (AUTO_CANCEL_PO_FOR_TESTING) {
+                            /* Note we will want to cancel the saved preq if we can't submit the preq due to further business rule errors
+                            * Adding this code now to help during the testing process
+                            */
+                            cancelPreq(userSession, preqDoc);
+                        } 
+                        return Response.ok(gson.toJson(results)).build();
+                        
+                    } else {
+                        LOG.info("createPaymentRequestDocument, unable to save preq, return false {}", results);
+                        return Response.status(Status.BAD_REQUEST).entity(gson.toJson(results)).build();   
                     }
-
-                    return Response.ok(gson.toJson(results)).build();
-
-                } catch (Exception e) {
-                    LOG.error("createPaymentRequestDocument, Unexpected error occurred while creating PREQ Document", e);
-                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(gson.toJson(results)).build();
-                }
 
             } else {
                 LOG.info("createPaymentRequestDocument, there were validation errors, return false {}", results);
