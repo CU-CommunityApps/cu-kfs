@@ -10,7 +10,7 @@ import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestDto;
 
 public enum PaymentRequestDtoFixture {
 
-    JSON_PARSE_READ_WRITE_EXAMPLE_FILE_1("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestDtoTest1.json",
+    JSON_PARSE_READ_WRITE_BASIC_EXAMPLE_FILE("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestDtoTest_basicExample.json",
             "V12345", "98765", "11/01/2025", "11/02/2025",
             "INV-2025-001", "1000", "Line1", "Line2",
             "Line3",
@@ -18,13 +18,13 @@ public enum PaymentRequestDtoFixture {
             "75", "Express Shipping",
             buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_GENERAL)),
-    JSON_PARSE_READ_WRITE_FILE_2("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestDtoTest2.json",
+    JSON_PARSE_READ_WRITE_EMPTY_LISTS_EXAMPLE_FILE("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestDtoTest_emptyLists.json",
             "V54321", "98765", "12/15/2025", "12/16/2025",
             "INV-2025-002", "500", "No items", "No notes",
             StringUtils.EMPTY, 
             "0", StringUtils.EMPTY, "0", StringUtils.EMPTY,
             "0", StringUtils.EMPTY, buildItems(), buildNotes()),
-    JSON_PARSE_READ_WRITE_FILE_3("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestDtoTest3.json",
+    JSON_PARSE_READ_WRITE_MULTIPLE_LISTS_EXAMPLE_FILE("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestDtoTest_multipleLists.json",
             "V67890", "98765", "10/05/2025", "10/06/2025",
             "INV-2025-003", "2500", "Multiple items", "Multiple notes",
             "Extra handling",
@@ -120,7 +120,8 @@ public enum PaymentRequestDtoFixture {
             buildMessageList(), 
             buildMessageList("PO Number is not a valid integer", "Invoice Date must be in the format of MM/DD/YYYY.",
                 "Received Date must be in the format of MM/DD/YYYY.", "Invoice Number is not a valid decimal.",
-                "Item Price is not a valid decimal.", "Item Quantity is not a valid decimal.", "Item Line Number is not a valid integer"));
+                "Item Price is not a valid decimal.", "Item Quantity is not a valid decimal.", "Item Line Number is not a valid integer",
+                "Freight Price is not a valid decimal.", "Shipping Price is not a valid decimal.", "Miscellaneous Price is not a valid decimal."));
 
     public final String jsonFileName;
     public final String vendorNumber;

@@ -570,21 +570,21 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     private List<PaymentRequestItem> addMiscPreqItemsFromPreqDto(PaymentRequestDto preqDto, PaymentRequestDocument preqDocument) {
         List<PaymentRequestItem> paymentRequestMiscItems = new ArrayList<>();
 
-        if (shouldAddExtraItemAount(preqDto.getShippingPriceAsKualiDecimal())) {
+        if (shouldAddExtraItemAmount(preqDto.getShippingPriceAsKualiDecimal())) {
             PaymentRequestItem shippingItem = findMiscItem(preqDocument, ITEM_TYPE_SHIP_AND_HAND_CODE);
             shippingItem.setItemUnitPrice(preqDto.getShippingPriceAsKualiDecimal().bigDecimalValue());
             shippingItem.setItemDescription(preqDto.getShippingDescription());
             paymentRequestMiscItems.add(shippingItem);
         }
 
-        if (shouldAddExtraItemAount(preqDto.getFreightPriceAsKualiDecimal())) {
+        if (shouldAddExtraItemAmount(preqDto.getFreightPriceAsKualiDecimal())) {
             PaymentRequestItem freightItem = findMiscItem(preqDocument, ITEM_TYPE_FREIGHT_CODE);
             freightItem.setItemUnitPrice(preqDto.getFreightPriceAsKualiDecimal().bigDecimalValue());
             freightItem.setItemDescription(preqDto.getFreightDescription());
             paymentRequestMiscItems.add(freightItem);
         }
 
-        if (shouldAddExtraItemAount(preqDto.getMiscellaneousPriceAsKualiDecimal())) {
+        if (shouldAddExtraItemAmount(preqDto.getMiscellaneousPriceAsKualiDecimal())) {
             PaymentRequestItem miscItem = findMiscItem(preqDocument, ITEM_TYPE_MISC_CODE);
             miscItem.setItemUnitPrice(preqDto.getMiscellaneousPriceAsKualiDecimal().bigDecimalValue());
             miscItem.setItemDescription(preqDto.getMiscellaneousDescription());
@@ -594,7 +594,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         return paymentRequestMiscItems;
      }
 
-     private boolean shouldAddExtraItemAount(final KualiDecimal itemAmount) {
+     private boolean shouldAddExtraItemAmount(final KualiDecimal itemAmount) {
         return ObjectUtils.isNotNull(itemAmount) && itemAmount.isGreaterThan(KualiDecimal.ZERO);
      }
 

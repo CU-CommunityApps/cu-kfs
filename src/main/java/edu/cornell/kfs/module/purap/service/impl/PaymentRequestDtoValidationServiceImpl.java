@@ -47,6 +47,7 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         PaymentRequestResultsDto results = new PaymentRequestResultsDto();
         results.setValid(true);
         validateRequiredFields(paymentRequestDto, results);
+        validateAdditionalFields(paymentRequestDto, results);
         if (results.isValid()) {
             validateVendorNumber(paymentRequestDto, results);
         }
@@ -55,7 +56,7 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         }
 
         if (results.isValid()) {
-            validatePOandInvoiceUnique(paymentRequestDto, results);
+        validatePoandInvoiceUnique(paymentRequestDto, results);
         }
 
         LOG.debug("validatePaymentRequestDto, validation results: {}", results);
@@ -109,6 +110,20 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         } else {
             paymentRequestDto.getNotes().stream()
                     .forEach(noteDto -> validatePaymentRequestNoteDtoRequiredFields(noteDto, results));
+        }
+    }
+
+    private void validateAdditionalFields(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results) {
+        if (StringUtils.isNotBlank(paymentRequestDto.getFreightPrice())) {
+            validateDecimalString(paymentRequestDto.getFreightPrice(), PaymentRequestDtoFields.FREIGHT_PRICE, results);
+        }
+
+        if (StringUtils.isNotBlank(paymentRequestDto.getShippingPrice())) {
+            validateDecimalString(paymentRequestDto.getShippingPrice(), PaymentRequestDtoFields.SHIPPING_PRICE, results);
+        }
+
+        if (StringUtils.isNotBlank(paymentRequestDto.getMiscellaneousPrice())) {
+            validateDecimalString(paymentRequestDto.getMiscellaneousPrice(), PaymentRequestDtoFields.MISC_PRICE, results);
         }
     }
 
@@ -253,7 +268,7 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         }
     }
 
-    private void validatePOandInvoiceUnique(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results) {
+    private void validatePoandInvoiceUnique(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results) {
         final Integer poNumber = paymentRequestDto.getPoNumberAsInteger();
         final String invoiceNumber = paymentRequestDto.getInvoiceNumber();
         final List<String> documentNumbers = paymentRequestDao
@@ -263,9 +278,10 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
             final String docNumber = IterableUtils.first(documentNumbers);
             
             String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_INVOICE_ALREADY_USED);
-            LOG.info("validatePOandInvoiceUnique, messageBase: " + messageBase);
+            String formattedMessage = MessageFormat.format(messageBase, String.valueOf(poNumber), invoiceNumber, docNumber);
+            LOG.info("validatePoandInvoiceUnique, formattedMessage: {}", formattedMessage);
 
-            results.getErrorMessages().add(MessageFormat.format(messageBase, String.valueOf(poNumber), invoiceNumber, docNumber));
+            results.getErrorMessages().add(formattedMessage);
         }
     }
 
