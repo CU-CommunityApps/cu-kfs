@@ -1,23 +1,36 @@
 package edu.cornell.kfs.module.purap.service.impl;
 
 import java.text.MessageFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestDto;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestLineItemDto;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestNoteDto;
@@ -27,30 +40,29 @@ import edu.cornell.kfs.module.purap.util.PaymentRequestUtil.PaymentRequestDtoFie
 
 public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDtoValidationService {
     private static final Logger LOG = LogManager.getLogger();
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
+
     private ConfigurationService configurationService;
     private VendorService vendorService;
     private PurchaseOrderService purchaseOrderService;
+    private CuPaymentRequestDao paymentRequestDao;
+    private DataDictionaryService dataDictionaryService;
 
     @Override
     public PaymentRequestResultsDto validatePaymentRequestDto(PaymentRequestDto paymentRequestDto) {
         PaymentRequestResultsDto results = new PaymentRequestResultsDto();
         results.setValid(true);
         validateRequiredFields(paymentRequestDto, results);
+        validateAdditionalFields(paymentRequestDto, results);
         if (results.isValid()) {
             validateVendorNumber(paymentRequestDto, results);
         }
         if (results.isValid()) {
             validatePO(paymentRequestDto, results);
         }
-        
-        /*
-         * When we implement creating of the PO document, remove this statement
-         * Also update
-         * PaymentRequestDtoFixture.VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_GOOD_LINE
-         * to not have this is a success message
-         */
+
         if (results.isValid()) {
-            results.getSuccessMessages().add("Successfully passed validation");
+        validatePoandInvoiceUnique(paymentRequestDto, results);
         }
 
         LOG.debug("validatePaymentRequestDto, validation results: {}", results);
@@ -62,24 +74,32 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.VENDOR_NUMBER, results);
         }
 
-        if (paymentRequestDto.getPoNumber() == null) {
+        if (StringUtils.isBlank(paymentRequestDto.getPoNumber())) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.PO_NUMBER, results);
+        } else { 
+            validateIntegerString(paymentRequestDto.getPoNumber(), PaymentRequestDtoFields.PO_NUMBER, results);
         }
 
-        if (paymentRequestDto.getInvoiceDate() == null) {
+        if (StringUtils.isBlank(paymentRequestDto.getInvoiceDate())) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.INVOICE_DATE, results);
+        } else {
+            validateDateString(paymentRequestDto.getInvoiceDate(), PaymentRequestDtoFields.INVOICE_DATE, results);
         }
 
-        if (paymentRequestDto.getReceivedDate() == null) {
+        if (StringUtils.isBlank(paymentRequestDto.getReceivedDate())) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.RECEIVED_DATE, results);
+        } else {
+            validateDateString(paymentRequestDto.getReceivedDate(), PaymentRequestDtoFields.RECEIVED_DATE, results);
         }
 
         if (StringUtils.isBlank(paymentRequestDto.getInvoiceNumber())) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.INVOICE_NUMBER, results);
         }
 
-        if (paymentRequestDto.getInvoiceAmount() == null) {
+        if (StringUtils.isBlank(paymentRequestDto.getInvoiceAmount())) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.INVOICE_AMOUNT, results);
+        } else {
+            validateDecimalString(paymentRequestDto.getInvoiceAmount(), PaymentRequestDtoFields.INVOICE_NUMBER, results);
         }
 
         if (CollectionUtils.isEmpty(paymentRequestDto.getItems())) {
@@ -99,6 +119,20 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         }
     }
 
+    private void validateAdditionalFields(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results) {
+        if (StringUtils.isNotBlank(paymentRequestDto.getFreightPrice())) {
+            validateDecimalString(paymentRequestDto.getFreightPrice(), PaymentRequestDtoFields.FREIGHT_PRICE, results);
+        }
+
+        if (StringUtils.isNotBlank(paymentRequestDto.getShippingPrice())) {
+            validateDecimalString(paymentRequestDto.getShippingPrice(), PaymentRequestDtoFields.SHIPPING_PRICE, results);
+        }
+
+        if (StringUtils.isNotBlank(paymentRequestDto.getMiscellaneousPrice())) {
+            validateDecimalString(paymentRequestDto.getMiscellaneousPrice(), PaymentRequestDtoFields.MISC_PRICE, results);
+        }
+    }
+
     private void updateResultsWithRequiredFieldError(PaymentRequestDtoFields field, PaymentRequestResultsDto results) {
         results.setValid(false);
         results.getErrorMessages().add(buildRequiredFieldError(field.friendlyName));
@@ -107,6 +141,39 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
     private String buildRequiredFieldError(String fieldName) {
         String messageBase = configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED);
         return MessageFormat.format(messageBase, fieldName);
+    }
+
+    private void validateIntegerString(String integerString, PaymentRequestDtoFields field, PaymentRequestResultsDto results) {
+        try {
+            Integer intVal = Integer.valueOf(integerString);
+            LOG.debug("validateIntegerString found integer value {} for field {}", intVal.toString(), field.friendlyName);
+        } catch (Exception e) {
+            results.setValid(false);
+            String messageBase = configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_INTEGER);
+            results.getErrorMessages().add(MessageFormat.format(messageBase, field.friendlyName));
+        }
+    }
+
+    private void validateDateString(String dateString, PaymentRequestDtoFields field, PaymentRequestResultsDto results) {
+        try {
+            LocalDate date = LocalDate.parse(dateString, DATE_FORMATTER);
+            LOG.debug("validateDateString found date value {} for field {}", date, field.friendlyName);
+        } catch (Exception e) {
+            results.setValid(false);
+            String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_DATE_BAD_FORMAT);
+            results.getErrorMessages().add(MessageFormat.format(messageBase, field.friendlyName));
+        }
+    }
+
+    private void validateDecimalString(String decimalString, PaymentRequestDtoFields field, PaymentRequestResultsDto results) {
+        try {
+            KualiDecimal amount = new KualiDecimal(decimalString);
+            LOG.debug("validateDecimalString found amount value {} for field {}", amount, field.friendlyName);
+        } catch (Exception e) {
+            results.setValid(false);
+            String messageBase = configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_BIG_DECIMAL);
+            results.getErrorMessages().add(MessageFormat.format(messageBase, field.friendlyName));
+        }
     }
 
     private String buildAtLeastOneElementError(String fieldName) {
@@ -119,14 +186,20 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
             PaymentRequestResultsDto results) {
         if (itemDto.getItemPrice() == null) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.ITEM_PRICE, results);
+        } else {
+            validateDecimalString(itemDto.getItemPrice(), PaymentRequestDtoFields.ITEM_PRICE, results);
         }
 
         if (itemDto.getItemQuantity() == null) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.ITEM_QUANTITY, results);
+        } else {
+            validateDecimalString(itemDto.getItemQuantity(), PaymentRequestDtoFields.ITEM_QUANTITY, results);
         }
 
         if (itemDto.getLineNumber() == null) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.ITEM_LINE_NUMBER, results);
+        } else {
+            validateIntegerString(itemDto.getLineNumber(), PaymentRequestDtoFields.ITEM_LINE_NUMBER, results);
         }
 
     }
@@ -135,6 +208,17 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
             PaymentRequestResultsDto results) {
         if (StringUtils.isBlank(noteDto.getNoteText())) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.NOTE_TEXT, results);
+        } else {
+            AttributeDefinition accountAttributeDefinition = dataDictionaryService.getAttributeDefinition(Note.class.getName(), KRADConstants.NOTE_TEXT_PROPERTY_NAME);
+            Integer noteTextMaxLength = accountAttributeDefinition.getMaxLength();
+
+            if (noteDto.getNoteText().length() > noteTextMaxLength) {
+                results.setValid(false);
+                String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_NOTE_TOO_LONG);
+                String formattedMessage = MessageFormat.format(messageBase, String.valueOf(noteTextMaxLength), String.valueOf(noteDto.getNoteText().length()));
+
+                results.getErrorMessages().add(formattedMessage);
+            } 
         }
 
         if (!isValidNoteType(noteDto.getNoteType())) {
@@ -164,24 +248,23 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
     }
 
     private void validatePO(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results) {
-        paymentRequestDto.getPoNumber();
-        PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(paymentRequestDto.getPoNumber());
+        PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(paymentRequestDto.getPoNumberAsInteger());
         if (poDoc == null) {
             results.setValid(false);
             String messageBase = configurationService
                     .getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_INVALID_PO);
-            results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumberString()));
+            results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumber()));
         } else if (!StringUtils.equalsIgnoreCase(poDoc.getVendorNumber(), paymentRequestDto.getVendorNumber())) {
             results.setValid(false);
             String messageBase = configurationService
                     .getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_NOT_MATCH_VENDOR);
-            results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumberString(),
+            results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumber(),
                     poDoc.getVendorNumber(), paymentRequestDto.getVendorNumber()));
         } else if (!StringUtils.equals(poDoc.getApplicationDocumentStatus(), PurchaseOrderStatuses.APPDOC_OPEN)) {
             results.setValid(false);
             String messageBase = configurationService
                     .getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_NOT_OPEN);
-            results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumberString(),
+            results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumber(),
                     poDoc.getApplicationDocumentStatus()));
         } else {
             validatePoLine(paymentRequestDto, results, poDoc);
@@ -191,14 +274,31 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
     private void validatePoLine(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results,
             PurchaseOrderDocument poDoc) {
         for (PaymentRequestLineItemDto line : paymentRequestDto.getItems()) {
-            PurApItem item = poDoc.getItemByLineNumber(line.getLineNumber());
+            PurApItem item = poDoc.getItemByLineNumber(line.getLineNumberAsInteger());
             if (ObjectUtils.isNull(item)) {
                 results.setValid(false);
                 String messageBase = configurationService
                         .getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_INVALID_LINE);
                 results.getErrorMessages().add(MessageFormat.format(messageBase,
-                        String.valueOf(paymentRequestDto.getPoNumber()), String.valueOf(line.getLineNumber())));
+                        String.valueOf(paymentRequestDto.getPoNumber()), line.getLineNumber()));
             }
+        }
+    }
+
+    private void validatePoandInvoiceUnique(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results) {
+        final Integer poNumber = paymentRequestDto.getPoNumberAsInteger();
+        final String invoiceNumber = paymentRequestDto.getInvoiceNumber();
+        final List<String> documentNumbers = paymentRequestDao
+                .getDocumentNumbersForPurchaseOrderInvoiceNumberNotCanceled(poNumber, invoiceNumber);
+        if (CollectionUtils.isNotEmpty(documentNumbers)) {
+            results.setValid(false);
+            final String docNumber = IterableUtils.first(documentNumbers);
+            
+            String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_INVOICE_ALREADY_USED);
+            String formattedMessage = MessageFormat.format(messageBase, String.valueOf(poNumber), invoiceNumber, docNumber);
+            LOG.info("validatePoandInvoiceUnique, formattedMessage: {}", formattedMessage);
+
+            results.getErrorMessages().add(formattedMessage);
         }
     }
 
@@ -212,6 +312,14 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
 
     public void setPurchaseOrderService(PurchaseOrderService purchaseOrderService) {
         this.purchaseOrderService = purchaseOrderService;
+    }
+
+    public void setPaymentRequestDao(CuPaymentRequestDao paymentRequestDao) {
+        this.paymentRequestDao = paymentRequestDao;
+    }
+
+    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
+        this.dataDictionaryService = dataDictionaryService;
     }
 
 }
