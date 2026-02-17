@@ -55,7 +55,7 @@ public class PaymentRequestResource {
     This should be false when pushed to develop / master.
     Note: when we implement routing of payment request documents, if there is an error on submission, we will need to cancel the preq
      */
-    private static final boolean AUTO_CANCEL_PO_FOR_TESTING = true;
+    private static final boolean AUTO_CANCEL_PO_FOR_TESTING = false;
 
     @Context
     protected HttpServletRequest servletRequest;
