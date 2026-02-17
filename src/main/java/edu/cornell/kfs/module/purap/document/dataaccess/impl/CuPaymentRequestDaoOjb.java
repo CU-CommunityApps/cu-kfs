@@ -1,7 +1,6 @@
 package edu.cornell.kfs.module.purap.document.dataaccess.impl;
 
 import java.sql.Date;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -14,7 +13,6 @@ import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
 import org.apache.ojb.broker.query.ReportQueryByCriteria;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
-import org.kuali.kfs.kew.api.document.DocumentStatus;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
@@ -159,20 +157,6 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
         final Class<? extends Document> paymentRequestDocumentClass = dataDictionaryService.getDocumentClassByTypeName(
                 PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT);
         return paymentRequestDocumentClass != null ? paymentRequestDocumentClass : PaymentRequestDocument.class;
-    }
-
-    @Override
-    public List<String> getDocumentNumbersForPurchaseOrderInvoiceNumberNotCanceled(final Integer poNumber, final String invoiceNumber) {
-        final Criteria criteria = new Criteria();
-        criteria.addEqualTo(PurapPropertyConstants.PURCHASE_ORDER_IDENTIFIER, poNumber);
-        criteria.addEqualTo(PurapPropertyConstants.INVOICE_NUMBER, invoiceNumber);
-
-        final Collection<String> workflowNotActiveStatuses = Arrays.asList(DocumentStatus.CANCELED.getCode(),
-                DocumentStatus.EXCEPTION.getCode(), DocumentStatus.DISAPPROVED.getCode());
-        criteria.addNotIn(KFSPropertyConstants.DOCUMENT_HEADER + "." +
-                KFSPropertyConstants.WORKFLOW_DOCUMENT_STATUS_CODE, workflowNotActiveStatuses);
-
-        return getDocumentNumbersOfPaymentRequestByCriteria(criteria, false);
     }
     
     public void setDataDictionaryService(final DataDictionaryService dataDictionaryService) {

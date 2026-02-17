@@ -1,36 +1,31 @@
 package edu.cornell.kfs.module.purap.rest.jsonObjects;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.sys.KFSConstants;
 
 public class PaymentRequestDto {
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
-    
     private String vendorNumber;
-    private String poNumber;
-    private String invoiceDate;
-    private String receivedDate;
+    private Integer poNumber;
+    private LocalDate invoiceDate;
+    private LocalDate receivedDate;
     private String invoiceNumber;
-    private String invoiceAmount;
+    private KualiDecimal invoiceAmount;
     private String specialHandlingLine1;
     private String specialHandlingLine2;
     private String specialHandlingLine3;
     private List<PaymentRequestLineItemDto> items;
-    private String freightPrice;
+    private KualiDecimal freightPrice;
     private String freightDescription;
-    private String miscellaneousPrice;
+    private KualiDecimal miscellaneousPrice;
     private String miscellaneousDescription;
-    private String shippingPrice;
+    private KualiDecimal shippingPrice;
     private String shippingDescription;
     private List<PaymentRequestNoteDto> notes;
 
@@ -47,39 +42,31 @@ public class PaymentRequestDto {
         this.vendorNumber = vendorNumber;
     }
 
-    public String getPoNumber() {
+    public Integer getPoNumber() {
         return poNumber;
     }
 
-    public Integer getPoNumberAsInteger() {
-        return StringUtils.isNotBlank(poNumber) ? Integer.valueOf(poNumber) : null;
+    public String getPoNumberString() {
+        return poNumber != null ? String.valueOf(poNumber) : StringUtils.EMPTY;
     }
 
-    public void setPoNumber(final String poNumber) {
+    public void setPoNumber(final Integer poNumber) {
         this.poNumber = poNumber;
     }
 
-    public String getInvoiceDate() {
+    public LocalDate getInvoiceDate() {
         return invoiceDate;
     }
 
-    public LocalDate getInvoiceDateAsLocalDate() {
-        return StringUtils.isNotBlank(invoiceDate) ? LocalDate.parse(invoiceDate, DATE_FORMATTER) : null;
-    }
-
-    public void setInvoiceDate(final String invoiceDate) {
+    public void setInvoiceDate(final LocalDate invoiceDate) {
         this.invoiceDate = invoiceDate;
     }
 
-    public String getReceivedDate() {
+    public LocalDate getReceivedDate() {
         return receivedDate;
     }
 
-    public LocalDate getReceivedDateAsLocalDate() {
-        return StringUtils.isNotBlank(receivedDate) ? LocalDate.parse(receivedDate, DATE_FORMATTER) : null;
-    }
-
-    public void setReceivedDate(final String receivedDate) {
+    public void setReceivedDate(final LocalDate receivedDate) {
         this.receivedDate = receivedDate;
     }
 
@@ -91,15 +78,11 @@ public class PaymentRequestDto {
         this.invoiceNumber = invoiceNumber;
     }
 
-    public String getInvoiceAmount() {
+    public KualiDecimal getInvoiceAmount() {
         return invoiceAmount;
     }
 
-    public KualiDecimal getInvoiceAmountAsKualiDecimal() {
-        return StringUtils.isNotBlank(invoiceAmount) ? new KualiDecimal(invoiceAmount) : null;
-    }
-
-    public void setInvoiceAmount(final String invoiceAmount) {
+    public void setInvoiceAmount(final KualiDecimal invoiceAmount) {
         this.invoiceAmount = invoiceAmount;
     }
 
@@ -135,15 +118,11 @@ public class PaymentRequestDto {
         this.items = (items == null) ? new ArrayList<>() : items;
     }
 
-    public String getFreightPrice() {
+    public KualiDecimal getFreightPrice() {
         return freightPrice;
     }
 
-    public KualiDecimal getFreightPriceAsKualiDecimal() {
-        return StringUtils.isNotBlank(freightPrice) ? new KualiDecimal(freightPrice) : null;
-    }
-
-    public void setFreightPrice(final String freightPrice) {
+    public void setFreightPrice(final KualiDecimal freightPrice) {
         this.freightPrice = freightPrice;
     }
 
@@ -155,15 +134,11 @@ public class PaymentRequestDto {
         this.freightDescription = freightDescription;
     }
 
-    public String getMiscellaneousPrice() {
+    public KualiDecimal getMiscellaneousPrice() {
         return miscellaneousPrice;
     }
 
-    public KualiDecimal getMiscellaneousPriceAsKualiDecimal() {
-        return StringUtils.isNotBlank(miscellaneousPrice) ? new KualiDecimal(miscellaneousPrice) : null;
-    }
-
-    public void setMiscellaneousPrice(final String miscellaneousPrice) {
+    public void setMiscellaneousPrice(final KualiDecimal miscellaneousPrice) {
         this.miscellaneousPrice = miscellaneousPrice;
     }
 
@@ -175,15 +150,11 @@ public class PaymentRequestDto {
         this.miscellaneousDescription = miscellaneousDescription;
     }
 
-    public String getShippingPrice() {
+    public KualiDecimal getShippingPrice() {
         return shippingPrice;
     }
 
-    public KualiDecimal getShippingPriceAsKualiDecimal() {
-        return StringUtils.isNotBlank(shippingPrice) ? new KualiDecimal(shippingPrice) : null;
-    }
-
-    public void setShippingPrice(final String shippingPrice) {
+    public void setShippingPrice(final KualiDecimal shippingPrice) {
         this.shippingPrice = shippingPrice;
     }
 

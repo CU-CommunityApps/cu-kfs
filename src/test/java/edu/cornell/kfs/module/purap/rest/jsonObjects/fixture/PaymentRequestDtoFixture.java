@@ -1,46 +1,45 @@
 package edu.cornell.kfs.module.purap.rest.jsonObjects.fixture;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestDto;
 
 public enum PaymentRequestDtoFixture {
 
-    JSON_PARSE_READ_WRITE_BASIC_EXAMPLE_FILE("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestDtoTest_basicExample.json",
-            "V12345", "98765", "11/01/2025", "11/02/2025",
-            "INV-2025-001", "1000", "Line1", "Line2",
+    JSON_PARSE_EXAMPLE_FILE_1("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestDtoTest1.json",
+            "V12345", Integer.valueOf(98765), "11/01/2025", "11/02/2025",
+            "INV-2025-001", new KualiDecimal(1000), "Line1", "Line2",
             "Line3",
-            "50", "Standard Freight", "25", "Misc Fee",
-            "75", "Express Shipping",
+            new KualiDecimal(50), "Standard Freight", new KualiDecimal(25), "Misc Fee",
+            new KualiDecimal(75), "Express Shipping",
             buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_GENERAL)),
-    JSON_PARSE_READ_WRITE_EMPTY_LISTS_EXAMPLE_FILE("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestDtoTest_emptyLists.json",
-            "V54321", "98765", "12/15/2025", "12/16/2025",
-            "INV-2025-002", "500", "No items", "No notes",
-            StringUtils.EMPTY, 
-            "0", StringUtils.EMPTY, "0", StringUtils.EMPTY,
-            "0", StringUtils.EMPTY, buildItems(), buildNotes()),
-    JSON_PARSE_READ_WRITE_MULTIPLE_LISTS_EXAMPLE_FILE("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestDtoTest_multipleLists.json",
-            "V67890", "98765", "10/05/2025", "10/06/2025",
-            "INV-2025-003", "2500", "Multiple items", "Multiple notes",
+    JSON_PARSE_EXAMPLE_FILE_2("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestDtoTest2.json",
+            "V54321", Integer.valueOf(98765), "12/15/2025", "12/16/2025",
+            "INV-2025-002", new KualiDecimal(500), "No items", "No notes",
+            StringUtils.EMPTY,
+            new KualiDecimal(0), StringUtils.EMPTY, new KualiDecimal(0), StringUtils.EMPTY,
+            new KualiDecimal(0), StringUtils.EMPTY, buildItems(), buildNotes()),
+    JSON_PARSE_EXAMPLE_FILE_3("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestDtoTest3.json",
+            "V67890", Integer.valueOf(98765), "10/05/2025", "10/06/2025",
+            "INV-2025-003", new KualiDecimal(2500), "Multiple items", "Multiple notes",
             "Extra handling",
-            "100", "Bulk Freight", "75", "Service Fee",
-            "150", "Overnight Shipping",
+            new KualiDecimal(100), "Bulk Freight", new KualiDecimal(75), "Service Fee",
+            new KualiDecimal(150), "Overnight Shipping",
             buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_5_200, PaymentRequestLineItemDtoFixture.ITEM_2_3_400,
                     PaymentRequestLineItemDtoFixture.ITEM_3_2_500),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_FIRST, PaymentRequestNoteDtoFixture.NOTE_SECOND,
                     PaymentRequestNoteDtoFixture.NOTE_THIRD)),
-    JSON_PARSE_READ_FILE_4("/edu/cornell/kfs/modules/purap/rest/jsonObjects/fixture/PaymentRequestDtoTest_LegacyVersion.json",
-           "73371-1", "1808975", "12/01/2025", "12/02/2025", 
-           "123460", "67.89", "line 1", "line 2", "line 3",
-           "10", "freight", "20", "misc", 
-           "11", "shipping",
-           buildItems(PaymentRequestLineItemDtoFixture.ITEM_LEGACY),
-           buildNotes(PaymentRequestNoteDtoFixture.LEGACY_NOTE_1, PaymentRequestNoteDtoFixture.LEGACY_NOTE_2)),
     VALIDATION_TEST_EMPTY_NO_ITEMS_NO_NOTES(StringUtils.EMPTY, StringUtils.EMPTY, null, StringUtils.EMPTY,
             StringUtils.EMPTY,
             StringUtils.EMPTY, null, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
@@ -62,102 +61,87 @@ public enum PaymentRequestDtoFixture {
                     "Invoice Amount is a required field.", "Item Price is a required field.",
                     "Item Quantity is a required field.",
                     "Item Line Number is a required field.", "Note Text is a required field.")),
-    VALIDATION_TEST_FULL_VALUE_BAD_NOTE_TYPE(StringUtils.EMPTY, "vendNumber", "98765",
+    VALIDATION_TEST_FULL_VALUE_BAD_NOTE_TYPE(StringUtils.EMPTY, "vendNumber", Integer.valueOf(98765),
             "11/25/2025", "11/26/2025",
-            "invoiceNumber", "50", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+            "invoiceNumber", new KualiDecimal(50), StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
             null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
             StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_FIRST), false, buildMessageList(),
             buildMessageList("If a note type is entered, it must be 'Other' or 'Invoice Image'.")),
-    VALIDATION_TEST_BAD_VENDOR(StringUtils.EMPTY, "13245-1", "98765",
+    VALIDATION_TEST_BAD_VENDOR(StringUtils.EMPTY, "13245-1", Integer.valueOf(98765),
             "11/25/2025", "11/26/2025",
-            "invoiceNumber", "50", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+            "invoiceNumber", new KualiDecimal(50), StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
             null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
             StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), false, buildMessageList(),
             buildMessageList("Vendor Number 13245-1 is not valid.")),
-    VALIDATION_TEST_GOOD_VENDOR_BAD_PO(StringUtils.EMPTY, "1234-1", "98765",
+    VALIDATION_TEST_GOOD_VENDOR_BAD_PO(StringUtils.EMPTY, "1234-1", Integer.valueOf(98765),
             "11/25/2025", "11/26/2025",
-            "invoiceNumber", "50", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+            "invoiceNumber", new KualiDecimal(50), StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
             null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
             StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), false, buildMessageList(),
             buildMessageList("PO Number 98765 is not valid.")),
-    VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_BAD_VENDOR(StringUtils.EMPTY, "1234-1", "98766",
+    VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_BAD_VENDOR(StringUtils.EMPTY, "1234-1", Integer.valueOf(98766),
             "11/25/2025", "11/26/2025",
-            "invoiceNumber", "50", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+            "invoiceNumber", new KualiDecimal(50), StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
             null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
             StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), false, buildMessageList(),
             buildMessageList("PO Number 98766 has a vendor number 987-32 but the vendor number supplied was 1234-1.")),
-    VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_NOT_OPEN(StringUtils.EMPTY, "1234-1", "98767",
+    VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_NOT_OPEN(StringUtils.EMPTY, "1234-1", Integer.valueOf(98767),
             "11/25/2025", "11/26/2025",
-            "invoiceNumber", "50", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+            "invoiceNumber", new KualiDecimal(50), StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
             null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
             StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), false, buildMessageList(),
             buildMessageList("PO Number 98767 is not open, it has a status of Awaiting Purchasing Approval.")),
-    VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_BAD_LINE(StringUtils.EMPTY, "1234-1", "98768",
+    VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_BAD_LINE(StringUtils.EMPTY, "1234-1", Integer.valueOf(98768),
             "11/25/2025", "11/26/2025",
-            "invoiceNumber", "50", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+            "invoiceNumber", new KualiDecimal(50), StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
             null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
             StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), false, buildMessageList(),
             buildMessageList("PO Number 98768 does not have a line number 1.")),
-    VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_GOOD_LINE_BAD_NOTE(StringUtils.EMPTY, "1234-1", "98769",
+    VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_GOOD_LINE(StringUtils.EMPTY, "1234-1", Integer.valueOf(98769),
             "11/25/2025", "11/26/2025",
-            "invoiceNumber", "50", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-            null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
-            StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
-            buildNotes(PaymentRequestNoteDtoFixture.TOO_LONG_NOTE), false,
-            buildMessageList(), buildMessageList("The maximum size of a note is 15 characters, the note provided was 77 characters long.")),
-    VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_GOOD_LINE(StringUtils.EMPTY, "1234-1", "98769",
-            "11/25/2025", "11/26/2025",
-            "invoiceNumber", "50", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+            "invoiceNumber", new KualiDecimal(50), StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
             null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
             StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), true,
-            buildMessageList(), buildMessageList()),
-    VALIDATION_TEST_FORMAT_ERRORS(StringUtils.EMPTY, "1234-1", "98769A",
-            "11/25/2025X", "111/26/2025",
-            "invoiceNumber", "50.Y", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-            "29-", StringUtils.EMPTY, "$13.00", StringUtils.EMPTY, "abcd",
-            StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_FORMAT_ERRORS),
-            buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), false,
-            buildMessageList(), 
-            buildMessageList("PO Number is not a valid integer", "Invoice Date must be in the format of MM/DD/YYYY.",
-                "Received Date must be in the format of MM/DD/YYYY.", "Invoice Number is not a valid decimal.",
-                "Item Price is not a valid decimal.", "Item Quantity is not a valid decimal.", "Item Line Number is not a valid integer",
-                "Freight Price is not a valid decimal.", "Shipping Price is not a valid decimal.", "Miscellaneous Price is not a valid decimal."));
+            buildMessageList("Successfully passed validation"), buildMessageList());
+
+    private static final DateTimeFormatter DATE_FORMATTER_MMDDYYYY = DateTimeFormatter.ofPattern(
+            KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
 
     public final String jsonFileName;
     public final String vendorNumber;
-    public final String poNumber;
+    public final Integer poNumber;
     public final String invoiceDate;
     public final String receivedDate;
     public final String invoiceNumber;
-    public final String invoiceAmount;
+    public final KualiDecimal invoiceAmount;
     public final String specialHandlingLine1;
     public final String specialHandlingLine2;
     public final String specialHandlingLine3;
     public final List<PaymentRequestLineItemDtoFixture> items;
-    public final String freightPrice;
+    public final KualiDecimal freightPrice;
     public final String freightDescription;
-    public final String miscellaneousPrice;
+    public final KualiDecimal miscellaneousPrice;
     public final String miscellaneousDescription;
-    public final String shippingPrice;
+    public final KualiDecimal shippingPrice;
     public final String shippingDescription;
     public final List<PaymentRequestNoteDtoFixture> notes;
     public boolean expectedValidation;
     public List<String> expectedSuccessMessages;
     public List<String> expectedErrorMessages;
 
-    private PaymentRequestDtoFixture(String jsonFileName, String vendorNumber, String poNumber, String invoiceDate,
-            String receivedDate, String invoiceNumber, String invoiceAmount, String specialHandlingLine1,
+    private PaymentRequestDtoFixture(String jsonFileName, String vendorNumber, Integer poNumber, String invoiceDate,
+            String receivedDate, String invoiceNumber, KualiDecimal invoiceAmount, String specialHandlingLine1,
             String specialHandlingLine2,
-            String specialHandlingLine3, String freightPrice, String freightDescription,
-            String miscellaneousPrice,
-            String miscellaneousDescription, String shippingPrice, String shippingDescription,
+            String specialHandlingLine3, KualiDecimal freightPrice, String freightDescription,
+            KualiDecimal miscellaneousPrice,
+            String miscellaneousDescription, KualiDecimal shippingPrice, String shippingDescription,
             List<PaymentRequestLineItemDtoFixture> items, List<PaymentRequestNoteDtoFixture> notes) {
         this(jsonFileName, vendorNumber, poNumber, invoiceDate, receivedDate, invoiceNumber, invoiceAmount,
                 specialHandlingLine1, specialHandlingLine2, specialHandlingLine3, freightPrice, freightDescription,
@@ -165,12 +149,12 @@ public enum PaymentRequestDtoFixture {
                 false, null, null);
     }
 
-    private PaymentRequestDtoFixture(String jsonFileName, String vendorNumber, String poNumber, String invoiceDate,
-            String receivedDate, String invoiceNumber, String invoiceAmount, String specialHandlingLine1,
+    private PaymentRequestDtoFixture(String jsonFileName, String vendorNumber, Integer poNumber, String invoiceDate,
+            String receivedDate, String invoiceNumber, KualiDecimal invoiceAmount, String specialHandlingLine1,
             String specialHandlingLine2,
-            String specialHandlingLine3, String freightPrice, String freightDescription,
-            String miscellaneousPrice,
-            String miscellaneousDescription, String shippingPrice, String shippingDescription,
+            String specialHandlingLine3, KualiDecimal freightPrice, String freightDescription,
+            KualiDecimal miscellaneousPrice,
+            String miscellaneousDescription, KualiDecimal shippingPrice, String shippingDescription,
             List<PaymentRequestLineItemDtoFixture> items, List<PaymentRequestNoteDtoFixture> notes,
             boolean expectedValidation, List<String> expectedSuccessMessages, List<String> expectedErrorMessages) {
         this.jsonFileName = jsonFileName;
@@ -212,8 +196,8 @@ public enum PaymentRequestDtoFixture {
         PaymentRequestDto dto = new PaymentRequestDto();
         dto.setVendorNumber(vendorNumber);
         dto.setPoNumber(poNumber);
-        dto.setInvoiceDate(invoiceDate);
-        dto.setReceivedDate(receivedDate);
+        dto.setInvoiceDate(buildDate(invoiceDate));
+        dto.setReceivedDate(buildDate(receivedDate));
         dto.setInvoiceNumber(invoiceNumber);
         dto.setInvoiceAmount(invoiceAmount);
         dto.setSpecialHandlingLine1(specialHandlingLine1);
@@ -228,5 +212,14 @@ public enum PaymentRequestDtoFixture {
         items.stream().forEach(item -> dto.getItems().add(item.toPaymentRequestLineItemDto()));
         notes.stream().forEach(note -> dto.getNotes().add(note.toPaymentRequestNoteDto()));
         return dto;
+    }
+
+    private LocalDate buildDate(String dateString) {
+        try {
+            LocalDate localDate = LocalDate.parse(dateString, DATE_FORMATTER_MMDDYYYY);
+            return localDate;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

@@ -474,10 +474,10 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
     public PaymentRequestDocument createPaymentRequestDocumentFromDto(PaymentRequestDto preqDto, PaymentRequestResultsDto results) {
 
-        LOG.info("Creating PaymentRequestDocument from DTO for PO: {}", preqDto.getPoNumberAsInteger());
+        LOG.info("Creating PaymentRequestDocument from DTO for PO: {}", preqDto.getPoNumber());
 
         try {
-            PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(preqDto.getPoNumberAsInteger());
+            PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(preqDto.getPoNumber());
 
             CuPaymentRequestDocument preqDoc = generateNewPaymentRequestDocument(poDoc, preqDto);
 
@@ -511,10 +511,10 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         preqDoc.setAccountsPayablePurchasingDocumentLinkIdentifier(poDoc.getAccountsPayablePurchasingDocumentLinkIdentifier());
         preqDoc.setPurchaseOrderDocument(poDoc);
         preqDoc.setInvoiceNumber(preqDto.getInvoiceNumber());
-        preqDoc.setInvoiceDate(java.sql.Date.valueOf(preqDto.getInvoiceDateAsLocalDate()));
-        preqDoc.setVendorInvoiceAmount(preqDto.getInvoiceAmountAsKualiDecimal());
+        preqDoc.setInvoiceDate(java.sql.Date.valueOf(preqDto.getInvoiceDate()));
+        preqDoc.setVendorInvoiceAmount(preqDto.getInvoiceAmount());
         preqDoc.setPurchaseOrderIdentifier(poDoc.getPurapDocumentIdentifier());
-        preqDoc.setInvoiceReceivedDate(Date.valueOf(preqDto.getReceivedDateAsLocalDate()));
+        preqDoc.setInvoiceReceivedDate(Date.valueOf(preqDto.getReceivedDate()));
         preqDoc.setAccountsPayableProcessorIdentifier(PAYFLOW);
 
         // populatePaymentRequest is called when continue is clicked (prepareForSave && event instanceof AttributedContinuePurapEvent))
@@ -522,7 +522,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
         preqDoc.setProcessingCampusCode(poDoc.getDeliveryCampusCode());
 
-        preqDoc.setVendorInvoiceAmount(preqDto.getInvoiceAmountAsKualiDecimal());
+        preqDoc.setVendorInvoiceAmount(preqDto.getInvoiceAmount());
         preqDoc.setSpecialHandlingInstructionLine1Text(preqDto.getSpecialHandlingLine1());
         preqDoc.setSpecialHandlingInstructionLine2Text(preqDto.getSpecialHandlingLine2());
         preqDoc.setSpecialHandlingInstructionLine3Text(preqDto.getSpecialHandlingLine3());
@@ -538,8 +538,8 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             PaymentRequestItem paymentRequestItem = findPaymentRequestItem(dtoItem, preqDoc);
 
             if (ObjectUtils.isNotNull(paymentRequestItem)) {
-                paymentRequestItem.setItemQuantity(dtoItem.getItemQuantityAsKualiDecimal());
-                paymentRequestItem.setItemUnitPrice(dtoItem.getItemPriceAsKualiDecimal().bigDecimalValue());
+                paymentRequestItem.setItemQuantity(dtoItem.getItemQuantity());
+                paymentRequestItem.setItemUnitPrice(dtoItem.getItemPrice().bigDecimalValue());
             } else {
                 LOG.error("generateNewPaymentRequestDocument, Could not find an eligible PREQ item for Line #{}", dtoItem.getLineNumber());
                 throw new RuntimeException(String.format("Could not find Item Line #%s", dtoItem.getLineNumber()));
@@ -558,7 +558,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             if (paymentRequestItemObj instanceof PaymentRequestItem) {
                 PaymentRequestItem paymentRequestItem = (PaymentRequestItem) paymentRequestItemObj;
 
-                if (itemDto.getLineNumberAsInteger().equals(paymentRequestItem.getItemLineNumber())) {
+                if (itemDto.getLineNumber().equals(paymentRequestItem.getItemLineNumber())) {
                     return paymentRequestItem;
                 }
             }
@@ -570,32 +570,28 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     private List<PaymentRequestItem> addMiscPreqItemsFromPreqDto(PaymentRequestDto preqDto, PaymentRequestDocument preqDocument) {
         List<PaymentRequestItem> paymentRequestMiscItems = new ArrayList<>();
 
-        if (shouldAddExtraItemAmount(preqDto.getShippingPriceAsKualiDecimal())) {
+        if (ObjectUtils.isNotNull(preqDto.getShippingPrice()) && preqDto.getShippingPrice().isGreaterThan(new KualiDecimal(0))) {
             PaymentRequestItem shippingItem = findMiscItem(preqDocument, ITEM_TYPE_SHIP_AND_HAND_CODE);
-            shippingItem.setItemUnitPrice(preqDto.getShippingPriceAsKualiDecimal().bigDecimalValue());
+            shippingItem.setItemUnitPrice(preqDto.getShippingPrice().bigDecimalValue());
             shippingItem.setItemDescription(preqDto.getShippingDescription());
             paymentRequestMiscItems.add(shippingItem);
         }
 
-        if (shouldAddExtraItemAmount(preqDto.getFreightPriceAsKualiDecimal())) {
+        if (ObjectUtils.isNotNull(preqDto.getFreightPrice()) && preqDto.getFreightPrice().isGreaterThan(new KualiDecimal(0))) {
             PaymentRequestItem freightItem = findMiscItem(preqDocument, ITEM_TYPE_FREIGHT_CODE);
-            freightItem.setItemUnitPrice(preqDto.getFreightPriceAsKualiDecimal().bigDecimalValue());
+            freightItem.setItemUnitPrice(preqDto.getFreightPrice().bigDecimalValue());
             freightItem.setItemDescription(preqDto.getFreightDescription());
             paymentRequestMiscItems.add(freightItem);
         }
 
-        if (shouldAddExtraItemAmount(preqDto.getMiscellaneousPriceAsKualiDecimal())) {
+        if (ObjectUtils.isNotNull(preqDto.getMiscellaneousPrice()) && preqDto.getMiscellaneousPrice().isGreaterThan(new KualiDecimal(0))) {
             PaymentRequestItem miscItem = findMiscItem(preqDocument, ITEM_TYPE_MISC_CODE);
-            miscItem.setItemUnitPrice(preqDto.getMiscellaneousPriceAsKualiDecimal().bigDecimalValue());
+            miscItem.setItemUnitPrice(preqDto.getMiscellaneousPrice().bigDecimalValue());
             miscItem.setItemDescription(preqDto.getMiscellaneousDescription());
             paymentRequestMiscItems.add(miscItem);
         }
 
         return paymentRequestMiscItems;
-     }
-
-     private boolean shouldAddExtraItemAmount(final KualiDecimal itemAmount) {
-        return ObjectUtils.isNotNull(itemAmount) && itemAmount.isGreaterThan(KualiDecimal.ZERO);
      }
 
      private PaymentRequestItem findMiscItem(PaymentRequestDocument preqDoc, String itemTypeCode) {
