@@ -1,50 +1,37 @@
 package edu.cornell.kfs.module.purap.rest.jsonObjects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 public class PaymentRequestLineItemDto {
-    private String lineNumber;
-    private String itemQuantity;
-    private String itemPrice;
+    private Integer lineNumber;
+    private KualiDecimal itemQuantity;
+    private KualiDecimal itemPrice;
 
-    public String getLineNumber() {
+    public Integer getLineNumber() {
         return lineNumber;
     }
 
-    public void setLineNumber(final String lineNumber) {
+    public void setLineNumber(final Integer lineNumber) {
         this.lineNumber = lineNumber;
     }
 
-    public Integer getLineNumberAsInteger() {
-        return StringUtils.isNotBlank(lineNumber) ? Integer.valueOf(lineNumber) : null;
-    }
-
-    public String getItemQuantity() {
+    public KualiDecimal getItemQuantity() {
         return itemQuantity;
     }
 
-    public void setItemQuantity(final String itemQuantity) {
+    public void setItemQuantity(final KualiDecimal itemQuantity) {
         this.itemQuantity = itemQuantity;
     }
 
-    public KualiDecimal getItemQuantityAsKualiDecimal() {
-        return StringUtils.isNotBlank(itemQuantity) ? new KualiDecimal(itemQuantity) : null;
-    }
-
-    public String getItemPrice() {
+    public KualiDecimal getItemPrice() {
         return itemPrice;
     }
 
-    public void setItemPrice(final String itemPrice) {
+    public void setItemPrice(final KualiDecimal itemPrice) {
         this.itemPrice = itemPrice;
-    }
-
-    public KualiDecimal getItemPriceAsKualiDecimal() {
-        return StringUtils.isNotBlank(itemPrice) ? new KualiDecimal(itemPrice) : null;
     }
 
     @Override

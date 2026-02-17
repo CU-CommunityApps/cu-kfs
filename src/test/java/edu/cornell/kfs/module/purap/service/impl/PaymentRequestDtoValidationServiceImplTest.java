@@ -1,7 +1,5 @@
 package edu.cornell.kfs.module.purap.service.impl;
 
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 
 import org.apache.logging.log4j.Level;
@@ -14,10 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
-import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
@@ -28,7 +22,6 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.mockito.Mockito;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
-import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestResultsDto;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.fixture.PaymentRequestDtoFixture;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.fixture.PaymentRequestLineItemDtoFixture;
@@ -45,8 +38,6 @@ public class PaymentRequestDtoValidationServiceImplTest {
         validationService.setConfigurationService(buildMockConfigurationService());
         validationService.setVendorService(buildMockVendorService());
         validationService.setPurchaseOrderService(buildMockPurchaseOrderService());
-        validationService.setPaymentRequestDao(buildMockCuPaymentRequestDao());
-        validationService.setDataDictionaryService(buildMockDataDictionaryService());
     }
 
     private ConfigurationService buildMockConfigurationService() {
@@ -66,14 +57,6 @@ public class PaymentRequestDtoValidationServiceImplTest {
                 .thenReturn("PO Number {0} is not open, it has a status of {1}.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_INVALID_LINE))
                 .thenReturn("PO Number {0} does not have a line number {1}.");
-        Mockito.when(service.getPropertyValueAsString(KFSKeyConstants.ERROR_INTEGER))
-                .thenReturn("{0} is not a valid integer");
-        Mockito.when(service.getPropertyValueAsString(KFSKeyConstants.ERROR_BIG_DECIMAL))
-                .thenReturn("{0} is not a valid decimal.");
-        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_DATE_BAD_FORMAT))
-                .thenReturn("{0} must be in the format of MM/DD/YYYY.");
-        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_NOTE_TOO_LONG))
-                .thenReturn("The maximum size of a note is {0} characters, the note provided was {1} characters long.");
         return service;
     }
 
@@ -96,17 +79,16 @@ public class PaymentRequestDtoValidationServiceImplTest {
                 PurchaseOrderStatuses.APPDOC_AWAIT_PURCHASING_REVIEW);
         Mockito.when(service.getCurrentPurchaseOrder(98767)).thenReturn(docForPo98767);
 
-        Integer lineNumber = Integer.valueOf(PaymentRequestLineItemDtoFixture.ITEM_1_10_100.lineNumber);
         PurchaseOrderDocument docForPo98768 = buildMockPurchaseOrderDocument("1234-1",
                 PurchaseOrderStatuses.APPDOC_OPEN);
-        Mockito.when(docForPo98768.getItemByLineNumber(lineNumber))
+        Mockito.when(docForPo98768.getItemByLineNumber(PaymentRequestLineItemDtoFixture.ITEM_1_10_100.lineNumber))
                 .thenReturn(null);
         Mockito.when(service.getCurrentPurchaseOrder(98768)).thenReturn(docForPo98768);
 
         PurchaseOrderDocument docForPo98769 = buildMockPurchaseOrderDocument("1234-1",
                 PurchaseOrderStatuses.APPDOC_OPEN);
         PurApItem item = Mockito.mock(PurApItem.class);
-        Mockito.when(docForPo98769.getItemByLineNumber(lineNumber))
+        Mockito.when(docForPo98769.getItemByLineNumber(PaymentRequestLineItemDtoFixture.ITEM_1_10_100.lineNumber))
                 .thenReturn(item);
         Mockito.when(service.getCurrentPurchaseOrder(98769)).thenReturn(docForPo98769);
 
@@ -118,19 +100,6 @@ public class PaymentRequestDtoValidationServiceImplTest {
         Mockito.when(doc.getVendorNumber()).thenReturn(vendorNumber);
         Mockito.when(doc.getApplicationDocumentStatus()).thenReturn(appDocStatus);
         return doc;
-    }
-
-    private CuPaymentRequestDao buildMockCuPaymentRequestDao() {
-        CuPaymentRequestDao dao = Mockito.mock(CuPaymentRequestDao.class);
-        return dao;
-    }
-
-    private DataDictionaryService buildMockDataDictionaryService() {
-        DataDictionaryService service = Mockito.mock(DataDictionaryService.class);
-        AttributeDefinition definition = Mockito.mock(AttributeDefinition.class);
-        Mockito.when(definition.getMaxLength()).thenReturn(15);
-        Mockito.when(service.getAttributeDefinition(Note.class.getName(), KRADConstants.NOTE_TEXT_PROPERTY_NAME)).thenReturn(definition);
-        return service;
     }
 
     @AfterEach
