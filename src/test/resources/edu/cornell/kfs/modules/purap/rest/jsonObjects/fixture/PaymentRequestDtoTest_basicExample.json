@@ -1,25 +1,25 @@
 {
   "vendorNumber": "V12345",
-  "poNumber": 98765,
+  "poNumber": "98765",
   "invoiceDate": "11/01/2025",
   "receivedDate": "11/02/2025",
   "invoiceNumber": "INV-2025-001",
-  "invoiceAmount": 1000,
+  "invoiceAmount": "1000",
   "specialHandlingLine1": "Line1",
   "specialHandlingLine2": "Line2",
   "specialHandlingLine3": "Line3",
   "items": [
     {
-      "lineNumber": 1,
-      "itemQuantity": 10,
-      "itemPrice": 100
+      "lineNumber": "1",
+      "itemQuantity": "10",
+      "itemPrice": "100"
     }
   ],
-  "freightPrice": 50,
+  "freightPrice": "50",
   "freightDescription": "Standard Freight",
-  "miscellaneousPrice": 25,
+  "miscellaneousPrice": "25",
   "miscellaneousDescription": "Misc Fee",
-  "shippingPrice": 75,
+  "shippingPrice": "75",
   "shippingDescription": "Express Shipping",
   "notes": [
     {

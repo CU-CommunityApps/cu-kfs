@@ -12,6 +12,7 @@ import edu.cornell.kfs.sys.typeadapters.LocalDateTypeAdapter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -23,6 +24,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+
 public class PaymentRequestDtoTest {
     private static final Logger LOG = LogManager.getLogger();
     private static Gson gson = new GsonBuilder()
@@ -32,7 +36,7 @@ public class PaymentRequestDtoTest {
             .create();
 
     @ParameterizedTest
-    @MethodSource("jsonParseFixtures")
+    @MethodSource("readJsonToPaymentRequestDtoFixtures")
     public void testReadJsonToPaymentRequestDto(PaymentRequestDtoFixture paymentRequestDtoFixture) throws IOException {
         String actualJsonString = readFileToString(paymentRequestDtoFixture.jsonFileName);
         PaymentRequestDto actualDto = gson.fromJson(actualJsonString, PaymentRequestDto.class);
@@ -44,21 +48,24 @@ public class PaymentRequestDtoTest {
         Assertions.assertEquals(expectedDto, actualDto);
     }
 
-    private static java.util.stream.Stream<PaymentRequestDtoFixture> jsonParseFixtures() {
+    private static java.util.stream.Stream<PaymentRequestDtoFixture> readJsonToPaymentRequestDtoFixtures() {
         return java.util.Arrays.stream(PaymentRequestDtoFixture.values())
-                .filter(dto -> dto.name().startsWith("JSON_PARSE_"));
+                .filter(dto -> dto.name().startsWith("JSON_PARSE_") && dto.name().contains("READ"));
     }
 
     @ParameterizedTest
-    @MethodSource("jsonParseFixtures")
-    public void testWritePaymentRequestDtoToJson(PaymentRequestDtoFixture paymentRequestDtoFixture) throws IOException {
+    @MethodSource("writePaymentRequestDtoToJsonFixtures")
+    public void testWritePaymentRequestDtoToJson(PaymentRequestDtoFixture paymentRequestDtoFixture) throws IOException, JSONException {
         String expectedJsonString = readFileToString(paymentRequestDtoFixture.jsonFileName);
-        JsonElement expectedJsonObject = JsonParser.parseString(expectedJsonString);
-
         String actualJsonString = gson.toJson(paymentRequestDtoFixture.toPaymentRequestDto());
-        JsonElement actualJsonObject = JsonParser.parseString(actualJsonString);
 
-        Assertions.assertEquals(expectedJsonObject, actualJsonObject);
+        JSONAssert.assertEquals(expectedJsonString, actualJsonString, JSONCompareMode.STRICT);
+
+    }
+
+    private static java.util.stream.Stream<PaymentRequestDtoFixture> writePaymentRequestDtoToJsonFixtures() {
+        return java.util.Arrays.stream(PaymentRequestDtoFixture.values())
+                .filter(dto -> dto.name().startsWith("JSON_PARSE_") && dto.name().contains("WRITE"));
     }
 
     @ParameterizedTest

@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.UserSession;
-import org.kuali.kfs.krad.util.ErrorMessage;
+import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.sys.KFSConstants;
@@ -27,12 +27,9 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.ApiAuthenticationService;
 import edu.cornell.kfs.sys.typeadapters.KualiDecimalTypeAdapter;
 import edu.cornell.kfs.sys.typeadapters.LocalDateTypeAdapter;
-import org.springframework.util.AutoPopulatingList;
 
 import java.io.InputStream;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,11 +43,19 @@ import javax.ws.rs.Produces;
 @Produces(MediaType.APPLICATION_JSON)
 public class PaymentRequestResource {
     private static final Logger LOG = LogManager.getLogger();
+    private static final String CANCEL_PREQ_ANNOTATION_MESSAGE = "Canceled with the payment request endpoint";
     private static Gson gson = new GsonBuilder()
             .setDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT)
             .registerTypeAdapter(KualiDecimal.class, new KualiDecimalTypeAdapter())
             .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT))
             .create();
+
+    /*
+    This can be remvoed after payflow is fully implemented.  
+    This should be false when pushed to develop / master.
+    Note: when we implement routing of payment request documents, if there is an error on submission, we will need to cancel the preq
+     */
+    private static final boolean AUTO_CANCEL_PO_FOR_TESTING = false;
 
     @Context
     protected HttpServletRequest servletRequest;
@@ -61,6 +66,7 @@ public class PaymentRequestResource {
     private PaymentRequestDtoValidationService paymentRequestDtoValidationService;
     private ApiAuthenticationService apiAuthenticationService;
     private CuPaymentRequestService cuPaymentRequestService;
+    private DocumentService documentService;
 
     @GET
     public Response describePaymentRequestResource() {
@@ -83,25 +89,30 @@ public class PaymentRequestResource {
             PaymentRequestResultsDto results = getPaymentRequestDtoValidationService()
                     .validatePaymentRequestDto(paymentRequestDto);
             if (results.isValid()) {
-
-                LOG.info("createPaymentRequestDocument, no validation errors, return success {}", results);
-
-                try {
                     UserSession userSession = createUserSessionForAiPaymentRequestUser(loggedInPrincipalName);
 
                     PaymentRequestDocument preqDoc = GlobalVariables.doInNewGlobalVariables(userSession,
                             () -> getCuPaymentRequestService().createPaymentRequestDocumentFromDto(paymentRequestDto, results));
 
-                    LOG.info("createPaymentRequestDocument, PREQ Document #{} Created", preqDoc.getDocumentNumber());
-                    results.getSuccessMessages().add(String.format("Created PREQ Document %s", preqDoc.getDocumentNumber()));
+                    
+                    if (preqDoc != null) {
+                        LOG.info("createPaymentRequestDocument, PREQ Document #{} Created", preqDoc.getDocumentNumber());
+                        results.getSuccessMessages().add(String.format("Created PREQ Document %s", preqDoc.getDocumentNumber()));
 
-                    results.setDocumentNumber(preqDoc.getDocumentNumber());
-                    return Response.ok(gson.toJson(results)).build();
+                        results.setDocumentNumber(preqDoc.getDocumentNumber());
 
-                } catch (Exception e) {
-                    LOG.error("createPaymentRequestDocument, Unexpected error occurred while creating PREQ Document", e);
-                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(gson.toJson(results)).build();
-                }
+                        if (AUTO_CANCEL_PO_FOR_TESTING) {
+                            /* Note we will want to cancel the saved preq if we can't submit the preq due to further business rule errors
+                            * Adding this code now to help during the testing process
+                            */
+                            cancelPreq(userSession, preqDoc);
+                        } 
+                        return Response.ok(gson.toJson(results)).build();
+
+                    } else {
+                        LOG.info("createPaymentRequestDocument, unable to save preq, return false {}", results);
+                        return Response.status(Status.BAD_REQUEST).entity(gson.toJson(results)).build();   
+                    }
 
             } else {
                 LOG.info("createPaymentRequestDocument, there were validation errors, return false {}", results);
@@ -130,6 +141,11 @@ public class PaymentRequestResource {
         }
     }
 
+    private void cancelPreq(final UserSession userSession, PaymentRequestDocument preqDoc) throws Exception {
+        GlobalVariables.doInNewGlobalVariables(userSession,
+                            () -> getDocumentService().cancelDocument(preqDoc, CANCEL_PREQ_ANNOTATION_MESSAGE));
+    }
+
     private PaymentRequestDtoValidationService getPaymentRequestDtoValidationService() {
         if (paymentRequestDtoValidationService == null) {
             paymentRequestDtoValidationService = SpringContext.getBean(PaymentRequestDtoValidationService.class);
@@ -150,4 +166,12 @@ public class PaymentRequestResource {
         }
         return cuPaymentRequestService;
     }
+
+    public DocumentService getDocumentService() {
+        if (documentService == null) {
+            documentService = SpringContext.getBean(DocumentService.class);
+        }
+        return documentService;
+    }
+
 }
