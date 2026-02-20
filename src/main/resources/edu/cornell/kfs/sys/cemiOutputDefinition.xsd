@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:element name="cemiOutputDefinition" type="cemiOutputDefinitionType"/>
+
+    <xsd:complexType name="cemiOutputDefinitionType">
+        <xsd:sequence>
+            <xsd:element name="sheet" type="cemiSheetType" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="cemiSheetType">
+        <xsd:sequence>
+            <xsd:element name="field" type="cemiFieldType" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+        <xsd:attribute name="num-header-rows" type="xsd:integer" use="required"/>
+        <xsd:attribute name="start-column-index" type="xsd:integer" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="cemiFieldType">
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+        <xsd:attribute name="type" type="xsd:string" use="required"/>
+        <xsd:attribute name="max-length" type="xsd:integer" use="optional"/>
+        <xsd:attribute name="key" type="xsd:string" use="optional"/>
+        <xsd:attribute name="value" type="xsd:string" use="optional"/>
+        <xsd:attribute name="mask" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+
+</xsd:schema>
