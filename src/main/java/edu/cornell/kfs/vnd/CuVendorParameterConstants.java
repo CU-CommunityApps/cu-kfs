@@ -12,4 +12,6 @@ public class CuVendorParameterConstants {
     public static final String WORKDAY_WEBSERVICE_CREDENTIAL_GROUP_CODE = "WORKDAYAPI";
     public static final String WORKDAY_WEBSERVICE_CREDENTIAL_KEY = "workdayemployeessn-usernamepassword";
 
+    public static final String CEMI_SUPPLIER_EXTRACT_DATE_RANGE = "CEMI_SUPPLIER_EXTRACT_DATE_RANGE";
+
 }

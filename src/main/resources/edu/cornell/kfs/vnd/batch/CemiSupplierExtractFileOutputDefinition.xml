@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cemiOutputDefinition>
+    <sheet name="Supplier" num-header-rows="6" start-column-index="1">
+        <field name="Supplier_ID" type="STRING" key="supplierId"/>
+        <field name="Supplier_Reference_ID" type="STRING" key="supplierReferenceId"/>
+        <field name="Supplier_Name" type="STRING" key="vendorDetail.vendorName"/>
+        <field name="Tax_Authority_Form_Type" type="STRING" key="taxAuthorityFormType"/>
+        <field name="IRS_1099_Supplier" type="STRING" key="irs1099SupplierFlag"/>
+        <field name="Report_1099_with_Parent" type="STATIC" value=""/>
+    </sheet>
+</cemiOutputDefinition>

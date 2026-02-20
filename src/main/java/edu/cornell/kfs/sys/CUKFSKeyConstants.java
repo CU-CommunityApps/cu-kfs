@@ -229,6 +229,8 @@ public class CUKFSKeyConstants {
     public static final String ERROR_BANK_REQUIRED_PER_PAYMENT_METHOD = "error.document.withBanking.bank.required";
     public static final String ERROR_BANK_INVALID = "error.document.withBanking.bank.invalid";
 
+    public static final String MESSAGE_BATCH_UPLOAD_TITLE_CEMI_OUTPUT_DEFINITION = "message.batchUpload.title.cemiOutputDefinition";
+
     // NOTE: The following set of constants can be removed if KualiCo adds variants that are more publicly visible.
     public static final String ERROR_UPLOADFILE_EMPTY = "error.uploadFile.empty";
     public static final String ERROR_DOCUMENT_INVALID_VALUE_ALLOWED_VALUES_PARAMETER =

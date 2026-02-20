@@ -488,4 +488,15 @@
           p:dataDictionaryService-ref="dataDictionaryService"
           p:configurationService-ref="configurationService"/>
 
+    <bean id="cemiOutputDefinitionFileType" parent="cemiOutputDefinitionFileType-parentBean"/>
+    <bean id="cemiOutputDefinitionFileType-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.sys.batch.CemiOutputDefinitionFileType"
+          p:directoryPath="${staging.directory}/sys"
+          p:fileExtension="xml"
+          p:fileNamePrefix="NOT_USED_"
+          p:schemaLocation="classpath:edu/cornell/kfs/sys/batch/cemiOutputDefinition.xsd"
+          p:outputClass="edu.cornell.kfs.sys.batch.xml.CemiOutputDefinition"
+          p:dateTimeService-ref="dateTimeService"/>
+
 </beans>
