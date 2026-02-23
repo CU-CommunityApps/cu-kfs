@@ -35,8 +35,8 @@ import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSConstants.FileExtensions;
 import edu.cornell.kfs.sys.batch.CemiOutputDefinitionFileType;
+import edu.cornell.kfs.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.sys.batch.xml.CemiOutputDefinition;
-import edu.cornell.kfs.sys.service.impl.CemiFileWriter;
 import edu.cornell.kfs.vnd.CemiVendorConstants;
 import edu.cornell.kfs.vnd.CuVendorParameterConstants;
 import edu.cornell.kfs.vnd.batch.CreateCemiSupplierExtractStep;
@@ -60,6 +60,7 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
     @Override
     public void resetState() {
         LOG.info("resetState, Deleting the list of extractable Vendors from the previous run (if present)...");
+        cemiVendorDao.clearExistingListOfBaseVendorData();
         cemiVendorDao.clearExistingListOfExtractableVendorIds();
     }
 
@@ -93,9 +94,41 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
+    public void populateListOfBaseVendorData() {
+        LOG.info("populateListOfBaseVendorData, Preparing base Vendor data needed for subsequent Vendor query...");
+        cemiVendorDao.prepareBaseVendorDataNeededForMainVendorIdQuery();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
     public void populateListOfInScopeVendors() {
         LOG.info("populateListOfInScopeVendors, Querying and storing the list of extractable Vendors...");
         cemiVendorDao.queryAndStoreVendorIdsForSupplierExtract();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public void generateIntermediateSupplierExtractData() {
+        LOG.info("generateIntermediateSupplierExtractData, Generating data rows for Supplier spreadsheet "
+                + "and placing in intermediate storage...");
+        try {
+            final CemiOutputDefinition outputDefinition = getOutputDefinitionForSupplierExtract();
+            generateSupplierExtractData(outputDefinition);
+        } catch (final Exception e) {
+            LOG.error("generateIntermediateSupplierExtractData, Creation of Supplier Extract data failed", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void generateSupplierExtractData(final CemiOutputDefinition outputDefinition) throws IOException {
+        try (
+            final CemiSupplierDataBuilderCsvImpl dataBuilder = new CemiSupplierDataBuilderCsvImpl(
+                    getOutputDefinitionForSupplierExtract(), supplierFileCreationDirectory, false);
+            final Stream<VendorDetail> vendors = cuVendorDao.getVendorsForCemiSupplierExtractAsCloseableStream();
+        ) {
+            final Iterator<VendorDetail> vendorsIterator = vendors.iterator();
+            dataBuilder.writeSupplierDataToIntermediateStorage(vendorsIterator);
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -153,14 +186,12 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
         final CemiOutputDefinition outputDefinition = getOutputDefinitionForSupplierExtract();
 
         try (
-            final CemiFileWriter writer = new CemiFileWriter(outputDefinition, file, false);
-            final Stream<VendorDetail> vendors = cuVendorDao.getVendorsForCemiSupplierExtractAsCloseableStream();
+            final CemiExcelWriter writer = new CemiExcelWriter(outputDefinition, file);
         ) {
-            final Iterator<VendorDetail> vendorsIterator = vendors.iterator();
-            final CemiSupplierFileAppender supplierFileAppender = new CemiSupplierFileAppender(writer, vendorsIterator);
-            supplierFileAppender.writeVendorsToFile();
-            LOG.info("updateSupplierExtractFile, Wrote {} Vendors to the Supplier Extract file",
-                    supplierFileAppender.getVendorCount());
+            final CemiSupplierFileAppenderCsvImpl supplierFileAppender = new CemiSupplierFileAppenderCsvImpl(
+                outputDefinition, supplierFileCreationDirectory);
+            supplierFileAppender.populateSupplierFileFromIntermediateDataStorage(writer);
+            supplierFileAppender.cleanUpIntermediateStorage();
         }
     }
 

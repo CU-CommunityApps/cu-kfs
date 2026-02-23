@@ -6,7 +6,11 @@ public interface CemiSupplierExtractService {
 
     void initializeVendorActivityDateRangeSettings();
 
+    void populateListOfBaseVendorData();
+
     void populateListOfInScopeVendors();
+
+    void generateIntermediateSupplierExtractData();
 
     void generateSupplierExtractFile();
 

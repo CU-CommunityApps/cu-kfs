@@ -1,4 +1,4 @@
-package edu.cornell.kfs.sys.service.impl;
+package edu.cornell.kfs.sys.batch.service.impl;
 
 import java.io.Closeable;
 import java.io.File;
@@ -22,18 +22,15 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.sys.batch.xml.CemiFieldDefinition;
 import edu.cornell.kfs.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.sys.batch.xml.CemiSheetDefinition;
 
-public class CemiFileWriter implements Closeable {
+public class CemiExcelWriter implements Closeable {
 
     private static final Logger LOG = LogManager.getLogger();
 
     private final Map<String, CemiSheet> sheets;
-    private final boolean maskSensitiveData;
 
     private FileInputStream fileInputStream;
     private OPCPackage opcPackage;
@@ -42,8 +39,8 @@ public class CemiFileWriter implements Closeable {
     private FileOutputStream fileOutputStream;
     private boolean committed;
 
-    public CemiFileWriter(final CemiOutputDefinition outputDefinition, final File templateFile,
-            final boolean maskSensitiveData) throws IOException, InvalidFormatException {
+    public CemiExcelWriter(final CemiOutputDefinition outputDefinition, final File templateFile)
+            throws IOException, InvalidFormatException {
         Validate.notNull(outputDefinition, "outputDefinition cannot be null");
         Validate.notNull(templateFile, "templateFile cannot be null");
         boolean setupSucceeded = false;
@@ -57,7 +54,6 @@ public class CemiFileWriter implements Closeable {
             fileOutputStream = new FileOutputStream(templateFile);
 
             this.sheets = createSheetsMap(outputDefinition, streamedWorkbook);
-            this.maskSensitiveData = maskSensitiveData;
             committed = false;
             setupSucceeded = true;
         } finally {
@@ -93,42 +89,27 @@ public class CemiFileWriter implements Closeable {
                 ));
     }
 
-    public void writeRow(final String sheetName, final Object rowObject) {
+    public void writeRow(final String sheetName, final String[] rowData) {
         Validate.notBlank(sheetName, "sheetName cannot be blank");
-        Validate.notNull(rowObject, "rowObject cannot be null");
+        Validate.notNull(rowData, "rowData cannot be null");
 
         final CemiSheet sheet = sheets.get(sheetName);
         Validate.validState(sheet != null, "Sheet not found: %s", sheetName);
+        final int rowDataLength = sheet.sheetDefinition.getFields().size();
+        Validate.validState(rowDataLength == rowData.length,
+                "rowData for sheet %s should have had %s elements, but it actually had %s elements",
+                sheetName, rowDataLength, rowData.length);
 
         final int nextRowIndex = sheet.workbookSheet.getLastRowNum() + 1;
         final SXSSFRow row = sheet.workbookSheet.createRow(nextRowIndex);
+        final int columnOffset = sheet.sheetDefinition.getStartColumnIndex();
 
-        int columnIndex = sheet.sheetDefinition.getStartColumnIndex();
-        for (final CemiFieldDefinition field : sheet.sheetDefinition.getFields()) {
-            final String fieldValue = getFieldValue(field, rowObject);
-            final SXSSFCell cell = row.createCell(columnIndex);
+        for (int i = 0; i < rowDataLength; i++) {
+            final String fieldValue = rowData[i];
+            final SXSSFCell cell = row.createCell(i + columnOffset);
             if (StringUtils.isNotBlank(fieldValue)) {
                 cell.setCellValue(fieldValue);
             }
-            columnIndex++;
-        }
-    }
-
-    private String getFieldValue(final CemiFieldDefinition field, final Object rowObject) {
-        switch (field.getType()) {
-            case STATIC:
-                return field.getValue();
-
-            case STRING:
-                return (String) ObjectUtils.getPropertyValue(rowObject, field.getKey());
-
-            case SENSITIVE_STRING:
-                return maskSensitiveData
-                        ? field.getMask()
-                        : (String) ObjectUtils.getPropertyValue(rowObject, field.getKey());
-
-            default:
-                throw new IllegalStateException("Unknown field type: " + field.getType());
         }
     }
 

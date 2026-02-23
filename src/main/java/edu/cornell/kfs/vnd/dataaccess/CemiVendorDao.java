@@ -4,10 +4,14 @@ import java.time.LocalDate;
 
 public interface CemiVendorDao {
 
+    void clearExistingListOfBaseVendorData();
+
     void clearExistingListOfExtractableVendorIds();
 
     void updateSupplierExtractQuerySettings(final LocalDate fromDate, final LocalDate toDate);
 
-    public void queryAndStoreVendorIdsForSupplierExtract();
+    void prepareBaseVendorDataNeededForMainVendorIdQuery();
+
+    void queryAndStoreVendorIdsForSupplierExtract();
 
 }

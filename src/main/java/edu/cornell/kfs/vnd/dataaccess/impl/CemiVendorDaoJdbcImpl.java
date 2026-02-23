@@ -24,6 +24,12 @@ public class CemiVendorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc im
     private DateTimeService dateTimeService;
 
     @Override
+    public void clearExistingListOfBaseVendorData() {
+        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.CU_CEMI_VNDR_BASE_DATA_T");
+        executeUpdate(query);
+    }
+
+    @Override
     public void clearExistingListOfExtractableVendorIds() {
         final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.CU_CEMI_SPLR_EXTR_VNDR_T");
         executeUpdate(query);
@@ -58,6 +64,20 @@ public class CemiVendorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc im
                     numRowsUpdated);
             throw new RuntimeException("Failed to update settings for ID: " + CemiQuerySettingsIds.SUPPLIERS);
         }
+    }
+
+    @Override
+    public void prepareBaseVendorDataNeededForMainVendorIdQuery() {
+        final CuSqlQuery query = new CuSqlChunk()
+                .append("INSERT INTO KFS.KFS.CU_CEMI_VNDR_BASE_DATA_T ")
+                .append("(VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, PAYEE_ID, VNDR_PARENT_IND, LAST_UPDT_TS) ")
+                .append("SELECT ")
+                .append("VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, PAYEE_ID, VNDR_PARENT_IND, LAST_UPDT_TS ")
+                .append("FROM KFS.CU_CEMI_VNDR_BASE_DATA_SRC_V")
+                .toQuery();
+
+        final int numRowsInserted = executeUpdate(query);
+        LOG.info("prepareBaseVendorDataNeededForMainVendorIdQuery, Found {} vendors for main query", numRowsInserted);
     }
 
     @Override
