@@ -33,7 +33,10 @@ public class CuCurrentAccountBalanceLookupableHelperServiceImpl extends CurrentA
      * org.kuali.kfs.gl.businessobject.CurrentAccountBalance, org.kuali.kfs.gl.businessobject.Balance, java.lang.String)
      */
     @Override
-    protected void updateCurrentBalance(final CurrentAccountBalance currentBalance, final Balance balance, final String fiscalPeriod) {
+    protected void updateCurrentBalance(
+            final CurrentAccountBalance currentBalance, 
+            final Balance balance, 
+            final String fiscalPeriod) {
         new BalanceUpdaterHelper(currentBalance, balance, fiscalPeriod)
                 .updateCurrentBalance();
     }

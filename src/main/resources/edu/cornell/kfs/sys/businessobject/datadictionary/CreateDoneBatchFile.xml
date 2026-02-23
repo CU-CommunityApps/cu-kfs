@@ -46,9 +46,6 @@
         </property>
     </bean>
 
-    <bean id="batchFileDirectoryPathValuesFinder"
-          class="org.kuali.kfs.sys.businessobject.options.BatchFileDirectoryPathValuesFinder"/>
-
     <!-- Attribute Definitions -->
 
     <bean id="CreateDoneBatchFile-path" parent="CreateDoneBatchFile-path-parentBean"/>

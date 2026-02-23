@@ -54,7 +54,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
-import org.kuali.kfs.krad.bo.KualiCode;
+import org.kuali.kfs.core.api.mo.common.Coded;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.pdp.PdpConstants.PaymentStatusCodes;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
@@ -1170,7 +1170,7 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
                 defaultStatus = statusMap.get(cr.getStatus());
                 oldStatus = paymentGroup.getPaymentStatusCode();
                 // Update PDP status and save
-                KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, defaultStatus);
+                Coded code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, defaultStatus);
                 if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
                     paymentGroup.setPaymentStatus((PaymentStatus) code);
                     paymentGroup.setLastUpdatedTimestamp(new Timestamp(cr.getStatusChangeDate().getTime()));

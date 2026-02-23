@@ -220,6 +220,9 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
             }
             preq.generateDocumentGeneralLedgerPendingEntries(sequenceHelper);
             // End: Cornell Customization: KFSPTS-1891
+        } else if (MODIFY_PAYMENT_REQUEST.equals(processType) && itemsChanged(preq.getItems())) {
+            purapAccountRevisionService.savePaymentRequestAccountRevisions(preq.getItems(),
+                    preq.getPostingYearFromPendingGLEntries(), preq.getPostingPeriodCodeFromPendingGLEntries());
         }
 
         // Manually save GL entries for Payment Request and encumbrances

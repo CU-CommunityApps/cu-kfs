@@ -42,7 +42,7 @@
 	    <field-descriptor name="federalFundedAmount" column="CG_FED_FNDED_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" />
 	    <field-descriptor name="awardCreateTimestamp" column="CGAWD_CREATE_TS" jdbc-type="TIMESTAMP" />
 	    <field-descriptor name="awardClosingDate" column="CGAWD_CLOSING_DT" jdbc-type="DATE" />
-	    <field-descriptor name="proposalAwardTypeCode" column="CGPRPSL_AWD_TYP_CD" jdbc-type="VARCHAR" index="true" />
+	    <field-descriptor name="awardTypeCode" column="CG_AWD_TYP_CD" jdbc-type="VARCHAR" index="true"/>
 	    <field-descriptor name="awardStatusCode" column="CGAWD_STAT_CD" jdbc-type="VARCHAR" index="true" />
 		<field-descriptor name="letterOfCreditFundGroupCode" column="CG_LTRCR_FNDGRP_CD" jdbc-type="VARCHAR" index="true" />
 	    <field-descriptor name="letterOfCreditFundCode" column="CG_LTRCR_FND_CD" jdbc-type="VARCHAR" index="true" />
@@ -76,9 +76,12 @@
 		<field-descriptor name="stopWorkReason" column="STOP_WRK_REASON_TXT" jdbc-type="VARCHAR" />
 		<field-descriptor name="customerNumber" column="CUST_NBR" jdbc-type="VARCHAR"/>
         <field-descriptor name="customerAddressIdentifier" column="CUST_ADDR_ID" jdbc-type="INTEGER"/>
-	    <reference-descriptor name="proposalAwardType" class-ref="org.kuali.kfs.module.cg.businessobject.ProposalAwardType" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-	        <foreignkey field-ref="proposalAwardTypeCode" />
-	    </reference-descriptor>
+        <field-descriptor name="researchAwardId" column="RSRCH_AWD_ID" jdbc-type="VARCHAR"/>
+	    <reference-descriptor name="awardType"
+                              class-ref="org.kuali.kfs.module.cg.businessobject.AwardType"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="awardTypeCode"/>
+        </reference-descriptor>
 	    <reference-descriptor name="awardStatus" class-ref="org.kuali.kfs.module.cg.businessobject.AwardStatus" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
 	        <foreignkey field-ref="awardStatusCode" />
 	    </reference-descriptor>

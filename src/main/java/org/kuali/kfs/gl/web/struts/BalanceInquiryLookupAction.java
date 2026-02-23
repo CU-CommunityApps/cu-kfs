@@ -116,7 +116,7 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
     @Override
     public ActionForward search(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final BalanceInquiryLookupForm lookupForm = (BalanceInquiryLookupForm) form;
         final Lookupable lookupable = lookupForm.getLookupable();
 

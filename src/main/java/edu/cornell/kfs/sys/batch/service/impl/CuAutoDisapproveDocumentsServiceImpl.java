@@ -337,7 +337,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     }
 
     protected void autoDisapprovalYearEndDocument(final Document document,
-            final String annotationForAutoDisapprovalDocument)  throws Exception {
+            final String annotationForAutoDisapprovalDocument) {
         final Person systemUser = getPersonService().getPersonByPrincipalName(KFSConstants.SYSTEM_USER);      
         
         final Note approveNote = getNoteService().createNote(new Note(), document.getDocumentHeader(), systemUser.getPrincipalId());

@@ -39,7 +39,7 @@ public class ErrorHandlerAction extends Action {
     private static final Logger LOG = LogManager.getLogger();
 
     @Override
-    public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) {
         LOG.debug("execute() started");
 
         final Exception exception = (Exception) request.getAttribute(Globals.EXCEPTION_KEY);

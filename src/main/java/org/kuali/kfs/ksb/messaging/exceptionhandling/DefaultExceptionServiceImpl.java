@@ -73,7 +73,7 @@ public class DefaultExceptionServiceImpl implements ExceptionRoutingService {
     }
 
     @Override
-    public void placeInExceptionRoutingLastDitchEffort(final Throwable throwable, final PersistedMessage message) throws Exception {
+    public void placeInExceptionRoutingLastDitchEffort(final Throwable throwable, final PersistedMessage message) {
         LOG.error(
                 "Exception caught processing message {} {}: {}",
                 message::getRouteQueueId,

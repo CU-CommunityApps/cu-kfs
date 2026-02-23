@@ -39,7 +39,14 @@ public class CuJobListener extends JobListener  {
             mailMessage.setMessage(messageText);
             if (mailMessage.getToAddresses().size() > 0) {
                 mailMessage.setSubject(mailMessageSubject.toString());
-                emailService.sendMessage(mailMessage, false);
+                if (SchedulerService.FAILED_JOB_STATUS_CODE.equals(jobStatus)
+                        || SchedulerService.CANCELLED_JOB_STATUS_CODE.equals(jobStatus)
+                ) {
+                    // Send the message synchronously as the transaction will (likely) be rolled back
+                    emailService.transportMessage(mailMessage, false);
+                } else {
+                    emailService.sendMessage(mailMessage, false);
+                }
             }
         } catch (final Exception iae) {
             LOG.error(

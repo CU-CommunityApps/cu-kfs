@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CuPurchaseOrderActionListAttribute extends PurchaseOrderActionListAttribute {
     @Override
-    public ActionSet getLegalActions(final String principalId, final ActionItem actionItem) throws Exception {
+    public ActionSet getLegalActions(final String principalId, final ActionItem actionItem) {
         final List<String> actionSetList = new ArrayList<>();
         actionSetList.add(KewApiConstants.ACTION_TAKEN_FYI_CD);        
         return new ActionSet(actionSetList);
