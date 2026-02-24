@@ -154,6 +154,7 @@ public class ResourceLoginFilter extends LoginFilterBase {
         if (StringUtils.isNotBlank(authorizationHeader)) {
             user = getPrincipalNameFromHeader(authorizationHeader, userSession);
         } else if (isUserSessionEstablished(request)) {
+            // CU customization: backported FINP-11480 changes
             user = Optional.of(userSession.getActualPerson().getPrincipalName());
         }
 
