@@ -24,7 +24,6 @@
         <xsd:attribute name="max-length" type="xsd:integer" use="optional"/>
         <xsd:attribute name="key" type="xsd:string" use="optional"/>
         <xsd:attribute name="value" type="xsd:string" use="optional"/>
-        <xsd:attribute name="mask" type="xsd:string" use="optional"/>
     </xsd:complexType>
 
 </xsd:schema>

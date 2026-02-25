@@ -280,6 +280,13 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao, Platfor
         final Criteria criteria = new Criteria();
         criteria.addSql(vendorIdCondition);
 
+        /*
+         * NOTE: The sort order below is crucial to simplify processing the Vendors in a streaming manner.
+         * When iterating over the Vendors below, a parent Vendor will be immediately followed
+         * by its children BEFORE the next parent Vendor is encountered. That way, when the processing code,
+         * iterates over the data but needs to populate child Vendor data based on what's in its parent,
+         * only a single parent Vendor needs its reference kept short-term.
+         */
         final QueryByCriteria query = new QueryByCriteria(VendorDetail.class, criteria);
         query.addOrderByAscending(KFSPropertyConstants.VENDOR_HEADER_GENERATED_ID);
         query.addOrderByDescending(VendorPropertyConstants.VENDOR_PARENT_INDICATOR);

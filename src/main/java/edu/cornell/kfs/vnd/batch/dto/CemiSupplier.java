@@ -22,6 +22,16 @@ public class CemiSupplier {
     private final String taxIdType;
     private final String taxIdValue;
 
+    /*
+     * For POJO properties that need to go into the spreadsheet (and the future temp table),
+     * either create a related getter, or retrieve it from a Vendor Header/Detail getter.
+     * When using the latter, specify a nested "vendorHeader.propName" or "vendorDetail.propName"
+     * property in the XML definition.
+     * 
+     * This particular POJO populates derived values via static methods and keeps such values immutable.
+     * If necessary, this object can be modified into a mutable one and/or a different mechanism could
+     * be implemented to compute the derived values.
+     */
     public CemiSupplier(final VendorDetail vendorDetail, final String supplierId) {
         this.vendorDetail = vendorDetail;
         this.supplierId = supplierId;
@@ -33,8 +43,8 @@ public class CemiSupplier {
 
     private static String buildSupplierReferenceId(final VendorDetail vendor) {
         return MessageFormat.format(CemiVendorConstants.SUPPLIER_REFERENCE_ID_FORMAT,
-                vendor.getVendorHeaderGeneratedIdentifier(),
-                vendor.getVendorDetailAssignedIdentifier());
+                Integer.toString(vendor.getVendorHeaderGeneratedIdentifier()),
+                Integer.toString(vendor.getVendorDetailAssignedIdentifier()));
     }
 
     private static String determineTaxAuthorityFormType(final VendorDetail vendor) {

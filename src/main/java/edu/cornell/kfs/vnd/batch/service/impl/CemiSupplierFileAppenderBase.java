@@ -50,6 +50,8 @@ public abstract class CemiSupplierFileAppenderBase implements CemiSupplierFileAp
         }
     }
 
+    // This is what needs to be implemented in a subclass when switching storage from CSV to temp table.
+    // JDBCTemplate and/or CuOjbUtils should have methods for returning DB data as a stream.
     protected abstract Stream<String[]> getCloseableSheetDataStreamFromIntermediateStorage(
             final CemiSheetDefinition sheetDefinition) throws IOException;
 

@@ -24,6 +24,7 @@ public class CemiFieldDefinition {
     @XmlAttribute(name = "type", required = true)
     private CemiFieldDefinitionType type;
 
+    // Currently not in use; verify if we need this.
     @XmlAttribute(name = "max-length")
     private int maxLength;
 
@@ -32,9 +33,6 @@ public class CemiFieldDefinition {
 
     @XmlAttribute(name = "value")
     private String value;
-
-    @XmlAttribute(name = "mask")
-    private String mask;
 
     public CemiFieldDefinition() {
         this.maxLength = -1;
@@ -80,14 +78,6 @@ public class CemiFieldDefinition {
         this.value = value;
     }
 
-    public String getMask() {
-        return mask;
-    }
-
-    public void setMask(final String mask) {
-        this.mask = mask;
-    }
-
     @Override
     public boolean equals(final Object obj) {
         return EqualsBuilder.reflectionEquals(obj, this);
@@ -113,10 +103,6 @@ public class CemiFieldDefinition {
             } else if (type == CemiFieldDefinitionType.STATIC) {
                 throw new IllegalStateException(
                         "'field' tags that specify the 'key' attribute must not set 'type' to STATIC");
-            } else if ((type == CemiFieldDefinitionType.SENSITIVE_STRING) != StringUtils.isNotBlank(mask)) {
-                throw new IllegalStateException(
-                        "On 'field' tags, the 'mask' attribute must be non-blank for SENSITIVE_STRING types "
-                                + "and blank/unset for all other types");
             }
         } else if (StringUtils.isNotBlank(value)) {
             if (type != CemiFieldDefinitionType.STATIC) {

@@ -121,6 +121,7 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
     private void generateSupplierExtractData(final CemiOutputDefinition outputDefinition,
             final LocalDateTime jobRunDate) throws IOException {
         try (
+            // Replace this builder with a temp table implementation when ready.
             final CemiSupplierDataBuilderCsvImpl dataBuilder = new CemiSupplierDataBuilderCsvImpl(
                     getOutputDefinitionForSupplierExtract(), jobRunDate, supplierFileCreationDirectory, false);
             final Stream<VendorDetail> vendors = cuVendorDao.getVendorsForCemiSupplierExtractAsCloseableStream();
@@ -179,6 +180,7 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
         try (
             final CemiExcelWriter writer = new CemiExcelWriter(outputDefinition, file);
         ) {
+            // Replace this appender with a temp table implementation when ready.
             final CemiSupplierFileAppenderCsvImpl supplierFileAppender = new CemiSupplierFileAppenderCsvImpl(
                 outputDefinition, jobRunDate, supplierFileCreationDirectory);
             supplierFileAppender.populateSupplierFileFromIntermediateDataStorage(writer);

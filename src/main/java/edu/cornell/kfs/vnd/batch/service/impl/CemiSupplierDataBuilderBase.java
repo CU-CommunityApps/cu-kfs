@@ -39,6 +39,10 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
         this.supplierIdFormatter = new DecimalFormat(CemiVendorConstants.SUPPLIER_ID_FORMAT);
     }
 
+    /*
+     * NOTE: It is assumed that when the iterator returns a parent vendor, the subsequent iterations
+     * will return ALL of its child vendors (if any) BEFORE returning the next unrelated parent vendor.
+     */
     @Override
     public void writeSupplierDataToIntermediateStorage(final Iterator<VendorDetail> vendors) throws IOException {
         for (final VendorDetail vendor : IteratorUtils.asIterable(vendors)) {
@@ -57,9 +61,15 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
         writeDataToIntermediateStorage(SupplierExtractSheets.SUPPLIER, supplier);
     }
 
+    /*
+     * The subclass that writes the vendor data to the temp tables needs to implement this method.
+     * If desired, the implementation can keep connections/files/etc. open until close() is called.
+     * See the CSV implementation for an example.
+     */
     protected abstract void writeDataToIntermediateStorage(
             final String sheetName, final Object rowObject) throws IOException;
 
+    // The temp table implementation can use (or override) this method to retrieve the column value to be inserted.
     protected String getFieldValue(final CemiFieldDefinition field, final Object rowObject) {
         switch (field.getType()) {
             case STATIC:
@@ -67,11 +77,6 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
 
             case STRING:
                 return (String) ObjectUtils.getPropertyValue(rowObject, field.getKey());
-
-            case SENSITIVE_STRING:
-                return maskSensitiveData
-                        ? field.getMask()
-                        : (String) ObjectUtils.getPropertyValue(rowObject, field.getKey());
 
             default:
                 throw new IllegalStateException("Unknown field type: " + field.getType());

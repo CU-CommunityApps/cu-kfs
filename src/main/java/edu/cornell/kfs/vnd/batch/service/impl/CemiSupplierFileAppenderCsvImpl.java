@@ -53,6 +53,7 @@ public class CemiSupplierFileAppenderCsvImpl extends CemiSupplierFileAppenderBas
         }
     }
 
+    // Not necessarily needed; can be left empty in the temp table implementation.
     @Override
     public void cleanUpIntermediateStorage() throws IOException {
         

@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This is the main file for defining how the Vendor data will map to the Supplier spreadsheet/workbook.
+
+    Each "sheet" element should correspond to one of the sheets/tabs in the workbook.
+
+    There are two main types of "field" elements:
+
+    [1] POJO-derived value - Has the "STRING" type and uses the "key" attribute to specify the POJO property.
+    [2] Literal value - Has the "STATIC" type and uses the "value" attribute to specify the literal. Can be empty.
+
+    NOTE: This XML file doesn't keep track of POJO classes; it only needs to know POJO property names/paths.
+ -->
 <cemiOutputDefinition>
 
     <sheet name="Supplier" num-header-rows="6" start-column-index="1">
@@ -8,8 +20,9 @@
         <field name="Tax_Authority_Form_Type" type="STRING" key="taxAuthorityFormType"/>
         <field name="IRS_1099_Supplier" type="STRING" key="irs1099SupplierFlag"/>
         <field name="Report_1099_with_Parent" type="STATIC" value=""/>
-        <!--<field name="Tax_ID_Type" type="STRING" key="taxIdType"/>
-        <field name="Tax_ID_Text" type="SENSITIVE_STRING" key="taxIdValue"/>
+        <!--
+        <field name="Tax_ID_Type" type="STRING" key="taxIdType"/>
+        <field name="Tax_ID_Text" type="STRING" key="taxIdValue"/>
         <field name="Transaction_Tax_ID" type="STRING" key="transactionTaxId"/>
         <field name="Default_Withholding_Tax_Code" type="STATIC" value=""/>
         <field name="Primary_Tax_ID" type="STATIC" value="TRUE"/>
@@ -52,7 +65,8 @@
         <field name="Alternate_Name_Business_Entity_1" type="STRING" key="alias[0].name"/>
         <field name="Alternate_Name_Usage_Business_Entity_1" type="STRING" key="alias[0].usage"/>
         <field name="Alternate_Name_Business_Entity_2" type="STRING" key="alias[1].name"/>
-        <field name="Alternate_Name_Usage_Business_Entity_2" type="STRING" key="alias[1].usage"/>-->
+        <field name="Alternate_Name_Usage_Business_Entity_2" type="STRING" key="alias[1].usage"/>
+        -->
     </sheet>
 
     <!--
@@ -77,11 +91,14 @@
         <field name="Address_Use_Tenanted_4" type="STATIC" value=""/>
         <field name="Comments" type="STATIC" value=""/>
     </sheet>
+    -->
 
+    <!--
     <sheet name="Children" num-header-rows="6" start-column-index="1">
-        <field name="Supplier_ID" type="STATIC" value=""/>
-        <field name="Included_Children" type="STATIC" value=""/>
+        <field name="Supplier_ID" type="STRING" key="supplierId"/>
+        <field name="Included_Children" type="STRING" key="childSupplierId"/>
     </sheet>
     -->
+    
 
 </cemiOutputDefinition>

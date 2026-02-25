@@ -6,8 +6,7 @@ public final class CemiBaseConstants {
 
     public enum CemiFieldDefinitionType {
         STATIC,
-        STRING,
-        SENSITIVE_STRING;
+        STRING;
     }
 
 }
