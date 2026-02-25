@@ -274,6 +274,30 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao, Platfor
     }
 
     @Override
+    public Stream<VendorDetail> getVendorsForCemiSupplierExtractAsCloseableStream() {
+        final String vendorIdCondition = "(A0.VNDR_HDR_GNRTD_ID, A0.VNDR_DTL_ASND_ID) IN ("
+                + "SELECT VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID FROM KFS.CU_CEMI_SPLR_EXTR_VNDR_T)";
+        final Criteria criteria = new Criteria();
+        criteria.addSql(vendorIdCondition);
+
+        /*
+         * NOTE: The sort order below is crucial to simplify processing the Vendors in a streaming manner.
+         * When iterating over the Vendors below, a parent Vendor will be immediately followed
+         * by its children BEFORE the next parent Vendor is encountered. That way, when the processing code,
+         * iterates over the data but needs to populate child Vendor data based on what's in its parent,
+         * only a single parent Vendor needs its reference kept short-term.
+         */
+        final QueryByCriteria query = new QueryByCriteria(VendorDetail.class, criteria);
+        query.addOrderByAscending(KFSPropertyConstants.VENDOR_HEADER_GENERATED_ID);
+        query.addOrderByDescending(VendorPropertyConstants.VENDOR_PARENT_INDICATOR);
+        query.addOrderByAscending(KFSPropertyConstants.VENDOR_DETAIL_ASSIGNED_ID);
+
+        return CuOjbUtils.buildCloseableStreamForQueryResults(
+                VendorDetail.class,
+                () -> getPersistenceBrokerTemplate().getIteratorByQuery(query));
+    }
+
+    @Override
     public DatabasePlatform getDbPlatform() {
         return dbPlatform;
     }
