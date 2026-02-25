@@ -182,6 +182,7 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
             final CemiSupplierFileAppenderCsvImpl supplierFileAppender = new CemiSupplierFileAppenderCsvImpl(
                 outputDefinition, jobRunDate, supplierFileCreationDirectory);
             supplierFileAppender.populateSupplierFileFromIntermediateDataStorage(writer);
+            writer.commit();
             supplierFileAppender.cleanUpIntermediateStorage();
         }
     }
