@@ -1,6 +1,7 @@
 package edu.cornell.kfs.vnd.batch.service.impl;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -16,15 +17,16 @@ import edu.cornell.kfs.sys.batch.service.impl.CemiCsvWriter;
 import edu.cornell.kfs.sys.batch.xml.CemiFieldDefinition;
 import edu.cornell.kfs.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.sys.batch.xml.CemiSheetDefinition;
+import edu.cornell.kfs.sys.util.CemiUtils;
 
 public class CemiSupplierDataBuilderCsvImpl extends CemiSupplierDataBuilderBase {
 
     private final Map<String, CemiCsvWriter> csvWriters;
     private final Map<String, CemiSheetDefinition> sheetDefinitions;
 
-    public CemiSupplierDataBuilderCsvImpl(final CemiOutputDefinition outputDefinition,
+    public CemiSupplierDataBuilderCsvImpl(final CemiOutputDefinition outputDefinition, final LocalDateTime jobRunDate,
             final String baseFileDirectory, final boolean maskSensitiveData) throws IOException {
-        super(outputDefinition, maskSensitiveData);
+        super(outputDefinition, jobRunDate, maskSensitiveData);
         Validate.notBlank(baseFileDirectory, "baseFileDirectory cannot be blank");
 
         this.sheetDefinitions = outputDefinition.getSheets().stream()
@@ -37,9 +39,10 @@ public class CemiSupplierDataBuilderCsvImpl extends CemiSupplierDataBuilderBase 
         try {
             for (final CemiSheetDefinition sheetDefinition : outputDefinition.getSheets()) {
                 final String sheetName = sheetDefinition.getName();
-                final String fileName = StringUtils.join(
-                        baseFileDirectory, CUKFSConstants.SLASH, sheetName, FileExtensions.CSV);
-                nextWriter = new CemiCsvWriter(fileName);
+                final String fileName = CemiUtils.generateFileNameContainingDateTime(
+                        jobRunDate, sheetName + CUKFSConstants.UNDERSCORE, FileExtensions.CSV);
+                final String fileNameWithPath = StringUtils.join(baseFileDirectory, CUKFSConstants.SLASH, fileName);
+                nextWriter = new CemiCsvWriter(fileNameWithPath);
                 writers.put(sheetName, nextWriter);
                 nextWriter = null;
             }

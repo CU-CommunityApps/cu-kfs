@@ -12,11 +12,8 @@ import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
@@ -37,6 +34,7 @@ import edu.cornell.kfs.sys.CUKFSConstants.FileExtensions;
 import edu.cornell.kfs.sys.batch.CemiOutputDefinitionFileType;
 import edu.cornell.kfs.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.sys.batch.xml.CemiOutputDefinition;
+import edu.cornell.kfs.sys.util.CemiUtils;
 import edu.cornell.kfs.vnd.CemiVendorConstants;
 import edu.cornell.kfs.vnd.CuVendorParameterConstants;
 import edu.cornell.kfs.vnd.batch.CreateCemiSupplierExtractStep;
@@ -108,22 +106,23 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public void generateIntermediateSupplierExtractData() {
+    public void generateIntermediateSupplierExtractData(final LocalDateTime jobRunDate) {
         LOG.info("generateIntermediateSupplierExtractData, Generating data rows for Supplier spreadsheet "
                 + "and placing in intermediate storage...");
         try {
             final CemiOutputDefinition outputDefinition = getOutputDefinitionForSupplierExtract();
-            generateSupplierExtractData(outputDefinition);
+            generateSupplierExtractData(outputDefinition, jobRunDate);
         } catch (final Exception e) {
             LOG.error("generateIntermediateSupplierExtractData, Creation of Supplier Extract data failed", e);
             throw new RuntimeException(e);
         }
     }
 
-    private void generateSupplierExtractData(final CemiOutputDefinition outputDefinition) throws IOException {
+    private void generateSupplierExtractData(final CemiOutputDefinition outputDefinition,
+            final LocalDateTime jobRunDate) throws IOException {
         try (
             final CemiSupplierDataBuilderCsvImpl dataBuilder = new CemiSupplierDataBuilderCsvImpl(
-                    getOutputDefinitionForSupplierExtract(), supplierFileCreationDirectory, false);
+                    getOutputDefinitionForSupplierExtract(), jobRunDate, supplierFileCreationDirectory, false);
             final Stream<VendorDetail> vendors = cuVendorDao.getVendorsForCemiSupplierExtractAsCloseableStream();
         ) {
             final Iterator<VendorDetail> vendorsIterator = vendors.iterator();
@@ -133,10 +132,11 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public void generateSupplierExtractFile() {
+    public void generateSupplierExtractFile(final LocalDateTime jobRunDate) {
         try {
             LOG.info("generateSupplierExtractFile, Starting creation of CEMI Supplier Extract file...");
-            final String newFileName = generateSupplierExtractFileName();
+            final String newFileName = CemiUtils.generateFileNameContainingDateTime(
+                    jobRunDate, CemiVendorConstants.SUPPLIER_EXTRACT_FILENAME_PREFIX, FileExtensions.XLSX);
             final File tempFile = qualifyAndGetFilePath(supplierFileCreationDirectory, newFileName);
             final File finalFile = qualifyAndGetFilePath(supplierFileExportDirectory, newFileName);
             Validate.validState(!tempFile.exists(), "Temporary file already exists: %s", newFileName);
@@ -146,7 +146,7 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
             copyTemplateFileTo(tempFile);
 
             LOG.info("generateSupplierExtractFile, Updating copied template with supplier data...");
-            updateSupplierExtractFile(tempFile);
+            updateSupplierExtractFile(tempFile, jobRunDate);
 
             LOG.info("generateSupplierExtractFile, Moving file to export folder...");
             moveSupplierExtractFileToExportDirectory(tempFile, finalFile);
@@ -156,16 +156,6 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
             LOG.error("generateSupplierExtractFile, Creation of Supplier Extract file failed", e);
             throw new RuntimeException(e);
         }
-    }
-
-    private String generateSupplierExtractFileName() {
-        final LocalDateTime currentDateTime = dateTimeService.getLocalDateTimeNow();
-        final DateTimeFormatter dateFormatter = DateTimeFormatter
-                .ofPattern(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmss, Locale.US)
-                .withZone(ZoneId.of(CUKFSConstants.TIME_ZONE_US_EASTERN));
-        final String currentDateString = dateFormatter.format(currentDateTime);
-        return StringUtils.join(CemiVendorConstants.SUPPLIER_EXTRACT_FILENAME_PREFIX, currentDateString,
-                FileExtensions.XLSX);
     }
 
     private File qualifyAndGetFilePath(final String prefix, final String fileName) {
@@ -182,14 +172,15 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
         }
     }
 
-    private void updateSupplierExtractFile(final File file) throws IOException, InvalidFormatException {
+    private void updateSupplierExtractFile(final File file, final LocalDateTime jobRunDate)
+            throws IOException, InvalidFormatException {
         final CemiOutputDefinition outputDefinition = getOutputDefinitionForSupplierExtract();
 
         try (
             final CemiExcelWriter writer = new CemiExcelWriter(outputDefinition, file);
         ) {
             final CemiSupplierFileAppenderCsvImpl supplierFileAppender = new CemiSupplierFileAppenderCsvImpl(
-                outputDefinition, supplierFileCreationDirectory);
+                outputDefinition, jobRunDate, supplierFileCreationDirectory);
             supplierFileAppender.populateSupplierFileFromIntermediateDataStorage(writer);
             supplierFileAppender.cleanUpIntermediateStorage();
         }

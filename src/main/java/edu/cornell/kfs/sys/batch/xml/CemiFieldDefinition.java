@@ -5,7 +5,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import edu.cornell.kfs.sys.CemiBaseConstants.CemiFieldType;
+import edu.cornell.kfs.sys.CemiBaseConstants.CemiFieldDefinitionType;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -22,7 +22,7 @@ public class CemiFieldDefinition {
     private String name;
 
     @XmlAttribute(name = "type", required = true)
-    private CemiFieldType type;
+    private CemiFieldDefinitionType type;
 
     @XmlAttribute(name = "max-length")
     private int maxLength;
@@ -48,11 +48,11 @@ public class CemiFieldDefinition {
         this.name = name;
     }
 
-    public CemiFieldType getType() {
+    public CemiFieldDefinitionType getType() {
         return type;
     }
 
-    public void setType(final CemiFieldType type) {
+    public void setType(final CemiFieldDefinitionType type) {
         this.type = type;
     }
 
@@ -110,20 +110,20 @@ public class CemiFieldDefinition {
             } else if (StringUtils.isBlank(key)) {
                 throw new IllegalStateException(
                         "'field' tags that specify the 'key' attribute must not set a blank key");
-            } else if (type == CemiFieldType.STATIC) {
+            } else if (type == CemiFieldDefinitionType.STATIC) {
                 throw new IllegalStateException(
                         "'field' tags that specify the 'key' attribute must not set 'type' to STATIC");
-            } else if ((type == CemiFieldType.SENSITIVE_STRING) != StringUtils.isNotBlank(mask)) {
+            } else if ((type == CemiFieldDefinitionType.SENSITIVE_STRING) != StringUtils.isNotBlank(mask)) {
                 throw new IllegalStateException(
                         "On 'field' tags, the 'mask' attribute must be non-blank for SENSITIVE_STRING types "
                                 + "and blank/unset for all other types");
             }
         } else if (StringUtils.isNotBlank(value)) {
-            if (type != CemiFieldType.STATIC) {
+            if (type != CemiFieldDefinitionType.STATIC) {
                 throw new IllegalStateException(
                         "'field' tags that specify the 'value' attribute must set 'type' to STATIC");
             }
-        } else if (type == CemiFieldType.STATIC) {
+        } else if (type == CemiFieldDefinitionType.STATIC) {
             if (value == null) {
                 throw new IllegalStateException("'field' tags with 'type' of STATIC that are meant to have empty data "
                         + "must specify an empty 'value' attribute");

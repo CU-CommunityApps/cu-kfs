@@ -1,6 +1,7 @@
 package edu.cornell.kfs.vnd.batch.service.impl;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
@@ -19,10 +20,13 @@ public abstract class CemiSupplierFileAppenderBase implements CemiSupplierFileAp
     private static final Logger LOG = LogManager.getLogger();
 
     protected final CemiOutputDefinition outputDefinition;
+    protected final LocalDateTime jobRunDate;
 
-    protected CemiSupplierFileAppenderBase(final CemiOutputDefinition outputDefinition) {
+    protected CemiSupplierFileAppenderBase(final CemiOutputDefinition outputDefinition, final LocalDateTime jobRunDate) {
         Validate.notNull(outputDefinition, "outputDefinition cannot be null");
+        Validate.notNull(jobRunDate, "jobRunDate cannot be null");
         this.outputDefinition = outputDefinition;
+        this.jobRunDate = jobRunDate;
     }
 
     @Override

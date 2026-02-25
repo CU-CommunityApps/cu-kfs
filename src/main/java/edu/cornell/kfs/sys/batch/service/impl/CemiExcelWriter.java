@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -100,7 +101,7 @@ public class CemiExcelWriter implements Closeable {
                 "rowData for sheet %s should have had %s elements, but it actually had %s elements",
                 sheetName, rowDataLength, rowData.length);
 
-        final int nextRowIndex = sheet.workbookSheet.getLastRowNum() + 1;
+        final int nextRowIndex = sheet.nextRowIndex.getAndAdd(1);
         final SXSSFRow row = sheet.workbookSheet.createRow(nextRowIndex);
         final int columnOffset = sheet.sheetDefinition.getStartColumnIndex();
 
@@ -131,6 +132,7 @@ public class CemiExcelWriter implements Closeable {
     private static final class CemiSheet {
         private final CemiSheetDefinition sheetDefinition;
         private final SXSSFSheet workbookSheet;
+        private final MutableInt nextRowIndex;
 
         private CemiSheet(final CemiSheetDefinition sheetDefinition, final SXSSFSheet workbookSheet) {
             Validate.notNull(sheetDefinition, "sheetDefinition cannot be null");
@@ -138,6 +140,7 @@ public class CemiExcelWriter implements Closeable {
                     sheetDefinition.getName());
             this.sheetDefinition = sheetDefinition;
             this.workbookSheet = workbookSheet;
+            this.nextRowIndex = new MutableInt(sheetDefinition.getNumHeaderRows());
         }
     }
 

@@ -2,6 +2,7 @@ package edu.cornell.kfs.vnd.batch.service.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
@@ -16,14 +17,15 @@ import edu.cornell.kfs.sys.CUKFSConstants.FileExtensions;
 import edu.cornell.kfs.sys.batch.service.impl.CemiCsvReader;
 import edu.cornell.kfs.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.sys.batch.xml.CemiSheetDefinition;
+import edu.cornell.kfs.sys.util.CemiUtils;
 
 public class CemiSupplierFileAppenderCsvImpl extends CemiSupplierFileAppenderBase {
 
     private final String baseFilePath;
 
     public CemiSupplierFileAppenderCsvImpl(final CemiOutputDefinition outputDefinition,
-            final String baseFilePath) {
-        super(outputDefinition);
+            final LocalDateTime jobRunDate, final String baseFilePath) {
+        super(outputDefinition, jobRunDate);
         Validate.notBlank(baseFilePath, "baseFilePath cannot be blank");
         this.baseFilePath = baseFilePath;
     }
@@ -57,9 +59,10 @@ public class CemiSupplierFileAppenderCsvImpl extends CemiSupplierFileAppenderBas
     }
 
     private final File getFileForIntermediateDataStorage(final String sheetName) {
-        final String fullFileName = StringUtils.join(baseFilePath, CUKFSConstants.SLASH, sheetName,
-                FileExtensions.CSV);
-        return new File(fullFileName);
+        final String fileName = CemiUtils.generateFileNameContainingDateTime(
+                jobRunDate, sheetName + CUKFSConstants.UNDERSCORE, FileExtensions.CSV);
+        final String fileNameWithPath = StringUtils.join(baseFilePath, CUKFSConstants.SLASH, fileName);
+        return new File(fileNameWithPath);
     }
 
 }

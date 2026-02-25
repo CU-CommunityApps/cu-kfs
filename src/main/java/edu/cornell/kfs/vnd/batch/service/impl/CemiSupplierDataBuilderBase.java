@@ -2,6 +2,7 @@ package edu.cornell.kfs.vnd.batch.service.impl;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.Iterator;
 
 import org.apache.commons.collections4.IteratorUtils;
@@ -23,20 +24,23 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     private static final Logger LOG = LogManager.getLogger();
 
     protected final CemiOutputDefinition outputDefinition;
+    protected final LocalDateTime jobRunDate;
     protected final boolean maskSensitiveData;
     protected final DecimalFormat supplierIdFormatter;
     protected int vendorCount;
 
     protected CemiSupplierDataBuilderBase(final CemiOutputDefinition outputDefinition,
-            final boolean maskSensitiveData) {
+            final LocalDateTime jobRunDate, final boolean maskSensitiveData) {
         Validate.notNull(outputDefinition, "outputDefinition cannot be null");
+        Validate.notNull(jobRunDate, "jobRunDate cannot be null");
         this.outputDefinition = outputDefinition;
+        this.jobRunDate = jobRunDate;
         this.maskSensitiveData = maskSensitiveData;
         this.supplierIdFormatter = new DecimalFormat(CemiVendorConstants.SUPPLIER_ID_FORMAT);
     }
 
     @Override
-    public void writeSupplierDataToIntermediateStorage(Iterator<VendorDetail> vendors) throws IOException {
+    public void writeSupplierDataToIntermediateStorage(final Iterator<VendorDetail> vendors) throws IOException {
         for (final VendorDetail vendor : IteratorUtils.asIterable(vendors)) {
             vendorCount++;
             if (vendorCount % 1000 == 0) {

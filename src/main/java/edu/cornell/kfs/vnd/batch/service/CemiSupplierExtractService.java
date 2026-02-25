@@ -1,5 +1,7 @@
 package edu.cornell.kfs.vnd.batch.service;
 
+import java.time.LocalDateTime;
+
 public interface CemiSupplierExtractService {
 
     void resetState();
@@ -10,8 +12,8 @@ public interface CemiSupplierExtractService {
 
     void populateListOfInScopeVendors();
 
-    void generateIntermediateSupplierExtractData();
+    void generateIntermediateSupplierExtractData(final LocalDateTime jobRunDate);
 
-    void generateSupplierExtractFile();
+    void generateSupplierExtractFile(final LocalDateTime jobRunDate);
 
 }

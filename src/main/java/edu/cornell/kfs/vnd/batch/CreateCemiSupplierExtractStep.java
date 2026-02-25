@@ -14,8 +14,10 @@ public class CreateCemiSupplierExtractStep extends AbstractStep {
     public boolean execute(final String jobName, final LocalDateTime jobRunDate) throws InterruptedException {
         cemiSupplierExtractService.resetState();
         cemiSupplierExtractService.initializeVendorActivityDateRangeSettings();
+        cemiSupplierExtractService.populateListOfBaseVendorData();
         cemiSupplierExtractService.populateListOfInScopeVendors();
-        cemiSupplierExtractService.generateSupplierExtractFile();
+        cemiSupplierExtractService.generateIntermediateSupplierExtractData(jobRunDate);
+        cemiSupplierExtractService.generateSupplierExtractFile(jobRunDate);
         return true;
     }
 

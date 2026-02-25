@@ -43,7 +43,7 @@ public class CemiVendorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc im
         final ZonedDateTime fromDateTime = ZonedDateTime.of(
                 fromDate, LocalTime.of(0, 0, 0, 0), easternTimeZone);
         final ZonedDateTime toDateTime = ZonedDateTime.of(
-                toDate, LocalTime.of(23, 59, 59, 999999999), easternTimeZone);
+                toDate, LocalTime.of(23, 59, 59, 0), easternTimeZone);
         final ZonedDateTime startOfYear = ZonedDateTime.of(
                 LocalDate.of(currentDate.getYear(), 1, 1), LocalTime.of(0, 0, 0, 0), easternTimeZone);
         final ZonedDateTime september1stOfPriorYear = ZonedDateTime.of(
@@ -69,7 +69,7 @@ public class CemiVendorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc im
     @Override
     public void prepareBaseVendorDataNeededForMainVendorIdQuery() {
         final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO KFS.KFS.CU_CEMI_VNDR_BASE_DATA_T ")
+                .append("INSERT INTO KFS.CU_CEMI_VNDR_BASE_DATA_T ")
                 .append("(VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, PAYEE_ID, VNDR_PARENT_IND, LAST_UPDT_TS) ")
                 .append("SELECT ")
                 .append("VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, PAYEE_ID, VNDR_PARENT_IND, LAST_UPDT_TS ")

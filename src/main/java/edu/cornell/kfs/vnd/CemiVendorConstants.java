@@ -3,6 +3,7 @@ package edu.cornell.kfs.vnd;
 import java.util.List;
 import java.util.Map;
 
+import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.VendorConstants.AddressTypes;
 
 import edu.cornell.kfs.vnd.CUVendorConstants.CUAddressTypes;
@@ -24,6 +25,9 @@ public final class CemiVendorConstants {
     public static final String DEFAULT_NAME_USAGE = "Reference";
     public static final String DEFAULT_ADDRESS_TYPE = "BUSINESS";
 
+    public static final String USA_EIN_TAX_TYPE = "USA-EIN";
+    public static final String USA_SSN_TAX_TYPE = "USA-SSN";
+
     public static final Map<String, List<String>> ADDRESS_USES = Map.ofEntries(
             Map.entry(AddressTypes.PURCHASE_ORDER, List.of("PROCUREMENT", "SHIPPING")),
             Map.entry(AddressTypes.REMIT, List.of("REMIT")),
@@ -35,6 +39,10 @@ public final class CemiVendorConstants {
             Map.entry(AddressTypes.REMIT, List.of("Remit_To")),
             Map.entry(CUAddressTypes.TAX, List.of("Tax"))
     );
+
+    public static final Map<String, String> TAX_ID_TYPES = Map.ofEntries(
+            Map.entry(VendorConstants.TAX_TYPE_FEIN, USA_EIN_TAX_TYPE),
+            Map.entry(VendorConstants.TAX_TYPE_SSN, USA_SSN_TAX_TYPE));
 
     public static final class CemiQuerySettingsIds {
         public static final String SUPPLIERS = "SUPPLIERS";

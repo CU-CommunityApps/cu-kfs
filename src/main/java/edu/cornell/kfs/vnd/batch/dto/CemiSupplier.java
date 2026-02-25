@@ -19,12 +19,16 @@ public class CemiSupplier {
     private final String supplierId;
     private final String supplierReferenceId;
     private final String taxAuthorityFormType;
+    private final String taxIdType;
+    private final String taxIdValue;
 
     public CemiSupplier(final VendorDetail vendorDetail, final String supplierId) {
         this.vendorDetail = vendorDetail;
         this.supplierId = supplierId;
         this.supplierReferenceId = buildSupplierReferenceId(vendorDetail);
         this.taxAuthorityFormType = determineTaxAuthorityFormType(vendorDetail);
+        this.taxIdType = determineTaxIdType(vendorDetail);
+        this.taxIdValue = "TODO";
     }
 
     private static String buildSupplierReferenceId(final VendorDetail vendor) {
@@ -42,6 +46,11 @@ public class CemiSupplier {
         } else {
             return KFSConstants.EMPTY_STRING;
         }
+    }
+
+    private static String determineTaxIdType(final VendorDetail vendor) {
+        final String kfsTaxType = StringUtils.defaultString(vendor.getVendorHeader().getVendorTaxTypeCode());
+        return CemiVendorConstants.TAX_ID_TYPES.get(kfsTaxType);
     }
 
     public VendorDetail getVendorDetail() {
@@ -67,6 +76,20 @@ public class CemiSupplier {
     public String getIrs1099SupplierFlag() {
         return CemiUtils.convertToBooleanValueForFileExtract(
                 StringUtils.equals(taxAuthorityFormType, TaxAuthorityFormTypes.FORM_1099_MISC));
+    }
+
+    public String getTaxIdType() {
+        return taxIdType;
+    }
+
+    public String getTaxIdValue() {
+        return taxIdValue;
+    }
+
+    public String getTransactionTaxId() {
+        return CemiUtils.convertToBooleanValueForFileExtract(
+                StringUtils.isNoneBlank(taxIdType, taxIdValue)
+                        && !StringUtils.equals(taxIdType, CemiVendorConstants.USA_SSN_TAX_TYPE));
     }
 
 }
