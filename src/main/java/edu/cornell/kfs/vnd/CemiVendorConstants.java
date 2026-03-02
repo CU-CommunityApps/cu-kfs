@@ -10,6 +10,8 @@ import edu.cornell.kfs.vnd.CUVendorConstants.CUAddressTypes;
 
 public final class CemiVendorConstants {
 
+    public static final String EMPTY_STRING = "";
+    
     public static final String SUPPLIER_ID_FORMAT = "'SUP'000000";
     public static final String SUPPLIER_REFERENCE_ID_FORMAT = "ITH_{0}-{1}";
     public static final String ADDRESS_ID_FORMAT = "{0}_{1}_{2}";
@@ -50,11 +52,14 @@ public final class CemiVendorConstants {
 
     public static final class SupplierExtractSheets {
         public static final String SUPPLIER = "Supplier";
+        public static final String ADDRESSES = "Addresses";
     }
 
     public static final class TaxAuthorityFormTypes {
         public static final String FORM_1099_MISC = "1099_MISC";
         public static final String FORM_1042S = "1042-S";
     }
+    
+    public static final String RESTRICT_COUNTRY_TO_US = "US";
 
 }

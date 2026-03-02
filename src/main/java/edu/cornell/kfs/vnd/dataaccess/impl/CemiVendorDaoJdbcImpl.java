@@ -25,6 +25,7 @@ public class CemiVendorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc im
 
     @Override
     public void clearExistingListOfBaseVendorData() {
+        LOG.info("clearExistingListOfBaseVendorData was executed.");
         final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.CU_CEMI_VNDR_BASE_DATA_T");
         executeUpdate(query);
         LOG.info("clearExistingListOfBaseVendorData was executed.");
@@ -32,6 +33,7 @@ public class CemiVendorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc im
 
     @Override
     public void clearExistingListOfExtractableVendorIds() {
+        LOG.info("clearExistingListOfExtractableVendorIds was called.");
         final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.CU_CEMI_SPLR_EXTR_VNDR_T");
         executeUpdate(query);
         LOG.info("clearExistingListOfExtractableVendorIds was executed.");

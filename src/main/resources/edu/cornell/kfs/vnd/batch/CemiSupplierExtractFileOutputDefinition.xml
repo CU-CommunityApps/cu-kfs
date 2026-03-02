@@ -69,29 +69,27 @@
         -->
     </sheet>
 
-    <!--
     <sheet name="Addresses" num-header-rows="6" start-column-index="1">
-        <field name="Supplier_ID" type="STATIC" value=""/>
-        <field name="Address_ID" type="STATIC" value=""/>
-        <field name="Country_For_Address" type="STATIC" value=""/>
-        <field name="Address_Line_1" type="STATIC" value=""/>
-        <field name="Address_Line_2" type="STATIC" value=""/>
-        <field name="City" type="STATIC" value=""/>
-        <field name="State" type="STATIC" value=""/>
-        <field name="Zip_Code" type="STATIC" value=""/>
-        <field name="Address_Primary" type="STATIC" value=""/>
-        <field name="Address_Type" type="STATIC" value=""/>
-        <field name="Address_Use" type="STATIC" value=""/>
-        <field name="Address_Use_2" type="STATIC" value=""/>
-        <field name="Address_Use_3" type="STATIC" value=""/>
-        <field name="Address_Use_4" type="STATIC" value=""/>
-        <field name="Address_Use_Tenanted" type="STATIC" value=""/>
-        <field name="Address_Use_Tenanted_2" type="STATIC" value=""/>
-        <field name="Address_Use_Tenanted_3" type="STATIC" value=""/>
-        <field name="Address_Use_Tenanted_4" type="STATIC" value=""/>
-        <field name="Comments" type="STATIC" value=""/>
+        <field name="Supplier_ID" type="STRING" key="supplierId"/>
+        <field name="Address_ID" type="STRING" key="addressId"/>
+        <field name="Country_For_Address" type="STRING" key="country"/>
+        <field name="Address_Line_1" type="STRING" key="line1"/>
+        <field name="Address_Line_2" type="STRING" key="line2"/>
+        <field name="City" type="STRING" key="city"/>
+        <field name="State" type="STRING" key="stateCode"/>
+        <field name="Zip_Code" type="STRING" key="zipCode"/>
+        <field name="Address_Primary" type="STRING" key="addressPrimary"/>
+        <field name="Address_Type" type="STRING" key="addressType"/>
+        <field name="Address_Use" type="STRING" key="addressUse"/>
+        <field name="Address_Use_2" type="STRING" key="addressUse2"/>
+        <field name="Address_Use_3" type="STRING" key="addressUse3"/>
+        <field name="Address_Use_4" type="STRING" key="addressUse4"/>
+        <field name="Address_Use_Tenanted" type="STRING" key="addressUseTenanted"/>
+        <field name="Address_Use_Tenanted_2" type="STRING" key="addressUseTenanted2"/>
+        <field name="Address_Use_Tenanted_3" type="STRING" key="addressUseTenanted3"/>
+        <field name="Address_Use_Tenanted_4" type="STRING" key="addressUseTenanted4"/>
+        <field name="Comments" type="STRING" key="comments"/>
     </sheet>
-    -->
 
     <!--
     <sheet name="Children" num-header-rows="6" start-column-index="1">
