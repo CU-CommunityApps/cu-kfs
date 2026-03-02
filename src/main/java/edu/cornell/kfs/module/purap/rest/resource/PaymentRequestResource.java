@@ -111,12 +111,12 @@ public class PaymentRequestResource {
 
                     } else {
                         LOG.info("createPaymentRequestDocument, unable to save preq, return false {}", results);
-                        return Response.status(Status.BAD_REQUEST).entity(gson.toJson(results)).build();   
+                        return Response.status(results.getErrorStatus()).entity(gson.toJson(results)).build();   
                     }
 
             } else {
                 LOG.info("createPaymentRequestDocument, there were validation errors, return false {}", results);
-                return Response.status(Status.BAD_REQUEST).entity(gson.toJson(results)).build();
+                return Response.status(results.getErrorStatus()).entity(gson.toJson(results)).build();
             }
 
         } catch (Exception e) {
