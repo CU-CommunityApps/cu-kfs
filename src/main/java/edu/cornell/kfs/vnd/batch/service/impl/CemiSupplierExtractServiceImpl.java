@@ -47,7 +47,7 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
     private static final Logger LOG = LogManager.getLogger();
 
     private String supplierFileCreationDirectory;
-    private String supplierFileExportDirectory;
+    private String supplierFileOutboundDirectory;
     private CuVendorDao cuVendorDao;
     private CemiVendorDao cemiVendorDao;
     private CemiOutputDefinitionFileType cemiOutputDefinitionFileType;
@@ -139,9 +139,9 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
             final String newFileName = CemiUtils.generateFileNameContainingDateTime(
                     jobRunDate, CemiVendorConstants.SUPPLIER_EXTRACT_FILENAME_PREFIX, FileExtensions.XLSX);
             final File tempFile = qualifyAndGetFilePath(supplierFileCreationDirectory, newFileName);
-            final File finalFile = qualifyAndGetFilePath(supplierFileExportDirectory, newFileName);
+            final File finalFile = qualifyAndGetFilePath(
+                    supplierFileOutboundDirectory, CemiVendorConstants.SUPPLIER_EXTRACT_PLAIN_FILENAME);
             Validate.validState(!tempFile.exists(), "Temporary file already exists: %s", newFileName);
-            Validate.validState(!finalFile.exists(), "Final file already exists: %s", newFileName);
 
             LOG.info("generateSupplierExtractFile, Copying template file...");
             copyTemplateFileTo(tempFile);
@@ -149,8 +149,13 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
             LOG.info("generateSupplierExtractFile, Updating copied template with supplier data...");
             updateSupplierExtractFile(tempFile, jobRunDate);
 
-            LOG.info("generateSupplierExtractFile, Moving file to export folder...");
-            moveSupplierExtractFileToExportDirectory(tempFile, finalFile);
+            if (shouldCopySupplierExtractFileToOutboundDirectory()) {
+                LOG.info("generateSupplierExtractFile, Copying file to outbound folder under the Supplier.xlsx name...");
+                copySupplierExtractFileToOutboundDirectory(tempFile, finalFile);
+            } else {
+                LOG.info("generateSupplierExtractFile, Copying of the file to the outbound folder has been disabled. "
+                        + "The copying operation will be skipped.");
+            }
 
             LOG.info("generateSupplierExtractFile, Success! Created the following extract file: {}", newFileName);
         } catch (final Exception e) {
@@ -199,13 +204,18 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
         }
     }
 
-    private void moveSupplierExtractFileToExportDirectory(final File sourceFile, final File targetFile) {
+    private boolean shouldCopySupplierExtractFileToOutboundDirectory() {
+        return parameterService.getParameterValueAsBoolean(
+                CreateCemiSupplierExtractStep.class, CuVendorParameterConstants.COPY_CEMI_SUPPLIER_FILE_TO_OUTBOUND_FOLDER);
+    }
+
+    private void copySupplierExtractFileToOutboundDirectory(final File sourceFile, final File targetFile) {
         try {
             final Path creationFilePath = sourceFile.toPath();
-            final Path exportFilePath = targetFile.toPath();
-            Files.move(creationFilePath, exportFilePath, StandardCopyOption.ATOMIC_MOVE);
+            final Path outboundFilePath = targetFile.toPath();
+            Files.copy(creationFilePath, outboundFilePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            LOG.error("moveSupplierExtractFileToExportDirectory, Failed to move file to export directory", e);
+            LOG.error("copySupplierExtractFileToOutboundDirectory, Failed to copy file to outbound directory", e);
             throw new UncheckedIOException(e);
         }
     }
@@ -214,8 +224,8 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
         this.supplierFileCreationDirectory = supplierFileCreationDirectory;
     }
 
-    public void setSupplierFileExportDirectory(final String supplierFileExportDirectory) {
-        this.supplierFileExportDirectory = supplierFileExportDirectory;
+    public void setSupplierFileOutboundDirectory(final String supplierFileOutboundDirectory) {
+        this.supplierFileOutboundDirectory = supplierFileOutboundDirectory;
     }
 
     public void setCuVendorDao(final CuVendorDao cuVendorDao) {

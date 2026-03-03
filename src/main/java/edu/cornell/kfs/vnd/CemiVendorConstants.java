@@ -18,6 +18,7 @@ public final class CemiVendorConstants {
     public static final String SUPPLIER_OUTPUT_DEFINITION_FILE_PATH = "classpath:edu/cornell/kfs/vnd/batch/CemiSupplierExtractFileOutputDefinition.xml";
     public static final String SUPPLIER_TEMPLATE_FILE_PATH = "classpath:edu/cornell/kfs/vnd/batch/Supplier.xlsx";
     public static final String SUPPLIER_EXTRACT_FILENAME_PREFIX = "Supplier_ITH_";
+    public static final String SUPPLIER_EXTRACT_PLAIN_FILENAME = "Supplier.xlsx";
 
     public static final String DEFAULT_SUPPLIER_CATEGORY = "Foundation_Default";
     public static final String DEFAULT_PAYMENT_TYPE = "Check";

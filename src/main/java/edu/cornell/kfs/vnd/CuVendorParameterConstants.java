@@ -13,5 +13,6 @@ public class CuVendorParameterConstants {
     public static final String WORKDAY_WEBSERVICE_CREDENTIAL_KEY = "workdayemployeessn-usernamepassword";
 
     public static final String CEMI_SUPPLIER_EXTRACT_DATE_RANGE = "CEMI_SUPPLIER_EXTRACT_DATE_RANGE";
+    public static final String COPY_CEMI_SUPPLIER_FILE_TO_OUTBOUND_FOLDER = "COPY_CEMI_SUPPLIER_FILE_TO_OUTBOUND_FOLDER";
 
 }
