@@ -42,6 +42,7 @@
 		<property name="batchFileDirectories">
 			<list merge="true">
 				<value>${staging.directory}/sys</value>
+                <value>${staging.directory}/cemi/conversions/outbound</value>
 			</list>
 		</property>
 	</bean>

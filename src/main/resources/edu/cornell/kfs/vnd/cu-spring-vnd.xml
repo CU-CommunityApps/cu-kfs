@@ -43,8 +43,7 @@
             <value>${staging.directory}/vnd/emplCompareWorkday/outbound</value>
             <value>${staging.directory}/vnd/emplCompareWorkday/outbound/being-written</value>
             <value>${staging.directory}/vnd/emplCompareWorkday/result</value>
-			<value>${staging.directory}/vnd/cemiSupplierExtract/outbound</value>
-			<value>${staging.directory}/vnd/cemiSupplierExtract/outbound/being-written</value>
+			<value>${staging.directory}/vnd/cemiSupplierExtract</value>
           </list>
         </property>
 	</bean>
@@ -291,8 +290,8 @@
     <bean id="cemiSupplierExtractService-parentBean"
           abstract="true"
           class="edu.cornell.kfs.vnd.batch.service.impl.CemiSupplierExtractServiceImpl"
-		  p:supplierFileCreationDirectory="${staging.directory}/vnd/cemiSupplierExtract/outbound/being-written"
-		  p:supplierFileExportDirectory="${staging.directory}/vnd/cemiSupplierExtract/outbound"
+		  p:supplierFileCreationDirectory="${staging.directory}/vnd/cemiSupplierExtract"
+		  p:supplierFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
 		  p:cuVendorDao-ref="vendorDao"
 		  p:cemiVendorDao-ref="cemiVendorDao"
           p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
