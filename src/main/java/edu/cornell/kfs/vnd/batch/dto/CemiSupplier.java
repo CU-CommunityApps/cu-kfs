@@ -54,7 +54,7 @@ public class CemiSupplier {
         this.taxIdValue = determineTaxIdValue(vendorDetail);
         this.transactionTaxId = determineTransactionTaxId(vendorDetail, this.taxIdValue, this.taxIdType);
         this.primaryTaxId = determinePrimaryTaxId(vendorDetail, this.taxIdValue);
-        this.countryTaxId = vendorDetail.getVendorHeader().getVendorCorpCitizenCode();
+        this.countryTaxId = KFSConstants.COUNTRY_CODE_UNITED_STATES;
         this.dunsNumber = vendorDetail.getVendorDunsNumber();
         this.paymentTerms = determineVendorPaymentTerms(vendorDetail);
         

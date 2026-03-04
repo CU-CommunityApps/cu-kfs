@@ -26,7 +26,7 @@
         <field name="Default_Withholding_Tax_Code" type="STATIC" value=""/> <!-- Leave blank for round 1 -->
         <field name="Primary_Tax_ID" type="STRING" key="primaryTaxId"/>
         <field name="Country_Tax_ID" type="STRING" key="countryTaxId"/>
-        <field name="Supplier_Category" type="STATIC" value=""/>
+        <field name="Supplier_Category" type="STATIC" value="Foundation_Default"/>
         <field name="Supplier_Group_1" type="STATIC" value=""/>
         <field name="Supplier_Group_2" type="STATIC" value=""/>
         <field name="Supplier_Group_3" type="STATIC" value=""/>
