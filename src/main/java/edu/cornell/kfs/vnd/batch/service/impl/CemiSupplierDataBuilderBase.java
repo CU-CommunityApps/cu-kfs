@@ -12,12 +12,14 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 
 import edu.cornell.kfs.sys.batch.xml.CemiFieldDefinition;
 import edu.cornell.kfs.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.vnd.CemiVendorConstants;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplier;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierAddress;
+import edu.cornell.kfs.vnd.batch.dto.CemiSupplierPhone;
 import edu.cornell.kfs.vnd.batch.service.CemiSupplierDataBuilder;
 
 public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBuilder {
@@ -59,6 +61,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             //Addresses Tab
             int addressCount = 0;
             for (final VendorAddress vendorAddress : vendor.getVendorAddresses()) {
+                //Restricting addresses by country = US
                 if (vendorAddress.isActive() && 
                         vendorAddress.getVendorCountryCode().equalsIgnoreCase(CemiVendorConstants.COUNTRY_CODE_UNITED_STATES)) {
                     addressCount++;
@@ -67,6 +70,24 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
                 } else {
                     LOG.info("writeSupplierDataToIntermediateStorage, vendorAddressGeneratedIdentifier {} for vendor {}-{} was NOT written to conversion file.", 
                             vendorAddress.getVendorAddressGeneratedIdentifier(),
+                            vendor.getVendorHeaderGeneratedIdentifier(),
+                            vendor.getVendorDetailAssignedIdentifier());
+                }
+            }
+            
+            //Phones Tab
+            //These should be the phone numbers tied to the actual vendor
+            //These are NOT the phone numbers associated with the vendor contact list on the vendor record.
+            int phoneNumberCount = 0;
+            for (final VendorPhoneNumber vendorPhoneNumber : vendor.getVendorPhoneNumbers()) {
+                //Presuming phone numbers are US and NOT restricting by country
+                if (vendorPhoneNumber.isActive()) {
+                    phoneNumberCount++;
+                    final CemiSupplierPhone supplierPhone = new CemiSupplierPhone(vendorPhoneNumber, supplierId, phoneNumberCount);
+                    writeSupplierPhoneRow(supplierPhone);
+                } else {
+                    LOG.info("writeSupplierDataToIntermediateStorage, vendorPhoneGeneratedIdentifier {} for vendor {}-{} was NOT written to conversion file.",
+                            vendorPhoneNumber.getVendorPhoneGeneratedIdentifier(),
                             vendor.getVendorHeaderGeneratedIdentifier(),
                             vendor.getVendorDetailAssignedIdentifier());
                 }
@@ -81,6 +102,10 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     
     protected void writeSupplierAddressRow(final CemiSupplierAddress supplierAddress) throws IOException {
         writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.ADDRESSES, supplierAddress);
+    }
+    
+    protected void writeSupplierPhoneRow(final CemiSupplierPhone supplierPhone) throws IOException {
+        writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.PHONES, supplierPhone);
     }
 
     /*
