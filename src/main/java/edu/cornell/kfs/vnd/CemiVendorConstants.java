@@ -3,6 +3,7 @@ package edu.cornell.kfs.vnd;
 import java.util.List;
 import java.util.Map;
 
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.VendorConstants.AddressTypes;
 
@@ -30,6 +31,7 @@ public final class CemiVendorConstants {
     
     public static final String DUMMY_TAX_ID = "XXXXXXXXX";
     public static final String ALTERNATE_NAME_USAGE_DEFAULT_VALUE = "Reference";
+    public static final String COUNTRY_CODE_UNITED_STATES = KFSConstants.COUNTRY_CODE_UNITED_STATES;
 
     public static final Map<String, List<String>> ADDRESS_USES = Map.ofEntries(
             Map.entry(AddressTypes.PURCHASE_ORDER, List.of("PROCUREMENT", "SHIPPING")),
