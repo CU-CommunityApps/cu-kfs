@@ -68,19 +68,24 @@ public class CemiSupplierAddress {
         return (StringUtils.equals(vendorTypeCode, VendorConstants.VendorTypes.PURCHASE_ORDER));
     }
     
+    private static boolean addressTypeIsActiveAndIsDefaultAndMatches(String vendorAddressType, VendorAddress vendorAddress) {
+        if ((vendorAddress.getVendorAddressTypeCode()).equalsIgnoreCase(vendorAddressType)
+                && vendorAddress.isActive()
+                && vendorAddress.isVendorDefaultAddressIndicator()) {
+            return true;
+        }
+        return false;
+    }
+    
     // For PO vendors, mark default PO address as Primary
     // For non-PO vendors, mark default Remit address as Primary
     private static boolean determineWhetherAddressIsPrimary(String vendorTypeCode, VendorAddress vendorAddress) {
         if (isPurchaseOrderVendor(vendorTypeCode) ){
-            if ((vendorAddress.getVendorAddressTypeCode()).equalsIgnoreCase(CemiVendorConstants.AllDefinedAddressTypes.PURCHASE_ORDER)
-                    && vendorAddress.isActive()
-                    && vendorAddress.isVendorDefaultAddressIndicator()) {
+            if (addressTypeIsActiveAndIsDefaultAndMatches(CemiVendorConstants.AllDefinedAddressTypes.PURCHASE_ORDER, vendorAddress)) {
                 return true;
-            } else if ((vendorAddress.getVendorAddressTypeCode()).equalsIgnoreCase(CemiVendorConstants.AllDefinedAddressTypes.REMIT)
-                    && (vendorAddress.isActive()
-                    && vendorAddress.isVendorDefaultAddressIndicator())) {
+            } 
+        } else if (addressTypeIsActiveAndIsDefaultAndMatches(CemiVendorConstants.AllDefinedAddressTypes.REMIT, vendorAddress)) {
                 return true;
-            }
         }
         return false;
     }
