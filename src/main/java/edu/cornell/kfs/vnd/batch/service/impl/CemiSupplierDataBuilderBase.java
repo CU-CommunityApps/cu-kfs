@@ -62,7 +62,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
                 if (vendorAddress.isActive() && 
                         vendorAddress.getVendorCountryCode().equalsIgnoreCase(CemiVendorConstants.RESTRICT_COUNTRY_TO_US)) {
                     addressCount++;
-                    final CemiSupplierAddress supplierAddress = new CemiSupplierAddress(vendorAddress, supplierId, addressCount);
+                    final CemiSupplierAddress supplierAddress = new CemiSupplierAddress(vendor.getVendorHeader().getVendorTypeCode(), vendorAddress, supplierId, addressCount);
                     writeSupplierAddressRow(supplierAddress);
                 } else {
                     LOG.info("writeSupplierDataToIntermediateStorage, vendor {}-{} had inactive vendorAddressGeneratedIdentifier {} address NOT output to conversion file.", 

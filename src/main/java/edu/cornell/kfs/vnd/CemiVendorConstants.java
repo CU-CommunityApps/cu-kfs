@@ -3,6 +3,7 @@ package edu.cornell.kfs.vnd;
 import java.util.List;
 import java.util.Map;
 
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.VendorConstants.AddressTypes;
 
@@ -10,7 +11,7 @@ import edu.cornell.kfs.vnd.CUVendorConstants.CUAddressTypes;
 
 public final class CemiVendorConstants {
 
-    public static final String EMPTY_STRING = "";
+    public static final String EMPTY_STRING = KFSConstants.EMPTY_STRING;
     
     public static final String SUPPLIER_ID_FORMAT = "'SUP'000000";
     public static final String SUPPLIER_REFERENCE_ID_FORMAT = "ITH_{0}-{1}";
@@ -60,6 +61,6 @@ public final class CemiVendorConstants {
         public static final String FORM_1042S = "1042-S";
     }
     
-    public static final String RESTRICT_COUNTRY_TO_US = "US";
+    public static final String RESTRICT_COUNTRY_TO_US = KFSConstants.COUNTRY_CODE_UNITED_STATES;
 
 }

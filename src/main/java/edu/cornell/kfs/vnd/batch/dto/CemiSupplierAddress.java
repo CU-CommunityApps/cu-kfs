@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
+import edu.cornell.kfs.sys.util.CemiUtils;
 import edu.cornell.kfs.vnd.CemiVendorConstants;
 
 public class CemiSupplierAddress {
@@ -32,7 +33,7 @@ public class CemiSupplierAddress {
     private String addressUseTenanted4;
     private String comments;
 
-    public CemiSupplierAddress(final VendorAddress vendorAddress, final String supplierId, int addressCount) {
+    public CemiSupplierAddress(final String vendorTypeCode, final VendorAddress vendorAddress, final String supplierId, int addressCount) {
         this.vendorAddress = vendorAddress;
         this.supplierId = supplierId;
         this.addressId = buildSupplierAddressId(vendorAddress, supplierId, addressCount);
@@ -42,7 +43,7 @@ public class CemiSupplierAddress {
         this.city = vendorAddress.getVendorCityName();
         this.stateCode = vendorAddress.getVendorStateCode();
         this.zipCode = vendorAddress.getVendorZipCode();
-        this.addressPrimary = determineWhetherAddressIsPriamry(vendorAddress);
+        this.addressPrimary = CemiUtils.convertToBooleanValueForFileExtract(determineWhetherAddressIsPrimary(vendorTypeCode, vendorAddress));
         this.addressType = CemiVendorConstants.DEFAULT_ADDRESS_TYPE;
         assignAddressUseValuesBasedOnAddressType(vendorAddress.getVendorAddressTypeCode());
         assignAddressTenantedUseValuesBasedOnAddressType(vendorAddress.getVendorAddressTypeCode());
@@ -63,31 +64,26 @@ public class CemiSupplierAddress {
                 Integer.toString(addressCount));
     }
     
-    private static boolean isPurchaseOrderVendor(VendorAddress vendorAddress) {
-        if (StringUtils.equals(vendorAddress.getVendorAddressTypeCode(), VendorConstants.AddressTypes.PURCHASE_ORDER)) {
+    private static boolean isPurchaseOrderVendor(String vendorTypeCode, VendorAddress vendorAddress) {
+        return (StringUtils.equals(vendorTypeCode, VendorConstants.VendorTypes.PURCHASE_ORDER));
+    }
+    
+    private static boolean isRemitVendor(String vendorTypeCode, VendorAddress vendorAddress) {
+        return (StringUtils.equals(vendorTypeCode, VendorConstants.VendorTypes.DISBURSEMENT_VOUCHER) 
+                || (StringUtils.equals(vendorTypeCode, VendorConstants.VendorTypes.DISBURSEMENT_VOUCHER)));
+    }
+    
+    private static boolean determineWhetherAddressIsPrimary(String vendorTypeCode, VendorAddress vendorAddress) {
+        if (isPurchaseOrderVendor(vendorTypeCode, vendorAddress)
+                && vendorAddress.isActive()
+                && vendorAddress.isVendorDefaultAddressIndicator()) {
+            return true;
+        } else if (isRemitVendor(vendorTypeCode, vendorAddress)
+                && vendorAddress.isActive()
+                && vendorAddress.isVendorDefaultAddressIndicator()) {
             return true;
         }
         return false;
-    }
-    
-    private static boolean isRemitVendor(VendorAddress vendorAddress) {
-        if (StringUtils.equals(vendorAddress.getVendorAddressTypeCode(), VendorConstants.AddressTypes.REMIT)) {
-            return true;
-        }
-        return false;
-    }
-    
-    private static String determineWhetherAddressIsPriamry(VendorAddress vendorAddress) {
-        if (isPurchaseOrderVendor(vendorAddress)
-                && vendorAddress.isActive()
-                && vendorAddress.isVendorDefaultAddressIndicator()) {
-            return String.valueOf(Boolean.TRUE).toUpperCase();
-        } else if (isRemitVendor(vendorAddress)
-                && vendorAddress.isActive()
-                && vendorAddress.isVendorDefaultAddressIndicator()) {
-            return String.valueOf(Boolean.TRUE).toUpperCase();
-        }
-        return String.valueOf(Boolean.FALSE).toUpperCase();
     }
     
     private void assignAddressUseValuesBasedOnAddressType(String vendorAddressTypeCode) {
@@ -99,6 +95,7 @@ public class CemiSupplierAddress {
                 setAddressUse2(useValuesList.get(1));
             } else if (useValuesList.size() == 1) {
                 setAddressUse(useValuesList.get(0));
+                setAddressUse2(CemiVendorConstants.EMPTY_STRING);
             }
         } else {
             setAddressUse(CemiVendorConstants.EMPTY_STRING);
@@ -115,6 +112,7 @@ public class CemiSupplierAddress {
                 setAddressUseTenanted2(useTenantedValuesList.get(1));
             } else if (useTenantedValuesList.size() == 1) {
                 setAddressUseTenanted(useTenantedValuesList.get(0));
+                setAddressUseTenanted2(CemiVendorConstants.EMPTY_STRING);
             }
         } else {
             setAddressUseTenanted(CemiVendorConstants.EMPTY_STRING);
