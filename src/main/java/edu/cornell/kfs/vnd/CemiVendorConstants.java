@@ -11,6 +11,8 @@ import edu.cornell.kfs.vnd.CUVendorConstants.CUAddressTypes;
 
 public final class CemiVendorConstants {
 
+    public static final String EMPTY_STRING = KFSConstants.EMPTY_STRING;
+    
     public static final String SUPPLIER_ID_FORMAT = "'SUP'000000";
     public static final String SUPPLIER_REFERENCE_ID_FORMAT = "SUPU_{0}-{1}";
     public static final String ADDRESS_ID_FORMAT = "{0}_{1}_{2}";
@@ -49,6 +51,13 @@ public final class CemiVendorConstants {
     public static final Map<String, String> TAX_ID_TYPES = Map.ofEntries(
             Map.entry(VendorConstants.TAX_TYPE_FEIN, USA_EIN_TAX_TYPE),
             Map.entry(VendorConstants.TAX_TYPE_SSN, USA_SSN_TAX_TYPE));
+    
+    public static final class AllDefinedAddressTypes {
+        public static final String PURCHASE_ORDER = VendorConstants.AddressTypes.PURCHASE_ORDER;
+        public static final String REMIT = VendorConstants.AddressTypes.REMIT;
+        public static final String QUOTE = VendorConstants.AddressTypes.QUOTE;
+        public static final String TAX = CUVendorConstants.CUAddressTypes.TAX;
+    }
 
     public static final class CemiQuerySettingsIds {
         public static final String SUPPLIERS = "SUPPLIERS";
@@ -56,6 +65,7 @@ public final class CemiVendorConstants {
 
     public static final class SupplierExtractSheets {
         public static final String SUPPLIER = "Supplier";
+        public static final String ADDRESSES = "Addresses";
     }
 
     public static final class TaxAuthorityFormTypes {

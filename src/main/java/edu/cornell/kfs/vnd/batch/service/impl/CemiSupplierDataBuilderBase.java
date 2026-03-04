@@ -10,13 +10,14 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
 import edu.cornell.kfs.sys.batch.xml.CemiFieldDefinition;
 import edu.cornell.kfs.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.vnd.CemiVendorConstants;
-import edu.cornell.kfs.vnd.CemiVendorConstants.SupplierExtractSheets;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplier;
+import edu.cornell.kfs.vnd.batch.dto.CemiSupplierAddress;
 import edu.cornell.kfs.vnd.batch.service.CemiSupplierDataBuilder;
 
 public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBuilder {
@@ -50,15 +51,36 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             if (vendorCount % 1000 == 0) {
                 LOG.info("writeSupplierDataToIntermediateStorage, Writing {} Vendors and counting...", vendorCount);
             }
+            //Suppliers Tab
             final String supplierId = supplierIdFormatter.format(vendorCount);
             final CemiSupplier supplier = new CemiSupplier(vendor, supplierId);
             writeSupplierRow(supplier);
+            
+            //Addresses Tab
+            int addressCount = 0;
+            for (final VendorAddress vendorAddress : vendor.getVendorAddresses()) {
+                if (vendorAddress.isActive() && 
+                        vendorAddress.getVendorCountryCode().equalsIgnoreCase(CemiVendorConstants.COUNTRY_CODE_UNITED_STATES)) {
+                    addressCount++;
+                    final CemiSupplierAddress supplierAddress = new CemiSupplierAddress(vendor.getVendorHeader().getVendorTypeCode(), vendorAddress, supplierId, addressCount);
+                    writeSupplierAddressRow(supplierAddress);
+                } else {
+                    LOG.info("writeSupplierDataToIntermediateStorage, vendorAddressGeneratedIdentifier {} for vendor {}-{} was NOT written to conversion file.", 
+                            vendorAddress.getVendorAddressGeneratedIdentifier(),
+                            vendor.getVendorHeaderGeneratedIdentifier(),
+                            vendor.getVendorDetailAssignedIdentifier());
+                }
+            }
         }
         LOG.info("writeSupplierDataToIntermediateStorage, Finished writing {} Vendors", vendorCount);
     }
 
     protected void writeSupplierRow(final CemiSupplier supplier) throws IOException {
-        writeDataToIntermediateStorage(SupplierExtractSheets.SUPPLIER, supplier);
+        writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.SUPPLIER, supplier);
+    }
+    
+    protected void writeSupplierAddressRow(final CemiSupplierAddress supplierAddress) throws IOException {
+        writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.ADDRESSES, supplierAddress);
     }
 
     /*
