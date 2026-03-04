@@ -1,11 +1,14 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +42,10 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
+import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.InfrastructureException;
+import org.kuali.kfs.krad.service.AttachmentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
@@ -61,6 +66,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     private static final Logger LOG = LogManager.getLogger();
     
     private CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
+    private AttachmentService attachmentService;
 
 
     @Override
@@ -303,6 +309,10 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         this.paymentMethodGeneralLedgerPendingEntryService = paymentMethodGeneralLedgerPendingEntryService;
     }
 
+    public void setAttachmentService(AttachmentService attachmentService) {
+        this.attachmentService = attachmentService;
+    }
+
     @Override
     public void clearTax(final PaymentRequestDocument document) {
         // remove all existing tax items added by previous calculation
@@ -529,8 +539,11 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
         if (CollectionUtils.isNotEmpty(preqDto.getNotes())) {
             for (PaymentRequestNoteDto noteDto : preqDto.getNotes()) {
-                Note n = documentService.createNoteFromDocument(preqDoc, noteDto.getNoteText());
-                preqDoc.addNote(n);
+                Note note = documentService.createNoteFromDocument(preqDoc, noteDto.getNoteText());
+                if (noteDto.hasAttachment()) {
+                    addAttachmentToNote(preqDoc, noteDto, note);
+                }
+                preqDoc.addNote(note);
             }
         }
 
@@ -612,5 +625,42 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
         return null;
      }
+
+    /**
+     * Adds an attachment to the given note based on the attachment information in the note DTO.
+     * The attachment content is expected to be Base64-encoded in the DTO.
+     * 
+     * @param document the payment request document
+     * @param noteDto the note DTO containing attachment information
+     * @param note the note to add the attachment to
+     */
+    private void addAttachmentToNote(CuPaymentRequestDocument document, PaymentRequestNoteDto noteDto, Note note) {
+        try {
+            byte[] attachmentBytes = Base64.getDecoder().decode(noteDto.getAttachmentContent());
+            int fileSize = attachmentBytes.length;
+            
+            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(attachmentBytes)) {
+                Attachment attachment = attachmentService.createAttachment(
+                        document.getDocumentHeader(),
+                        noteDto.getAttachmentFileName(),
+                        noteDto.getAttachmentMimeType(),
+                        fileSize,
+                        inputStream,
+                        null  // attachmentType - passing null as in the reference implementations
+                );
+                note.addAttachment(attachment);
+                LOG.info("addAttachmentToNote, successfully added attachment '{}' (size: {} bytes, mimeType: {}) to note",
+                        noteDto.getAttachmentFileName(), fileSize, noteDto.getAttachmentMimeType());
+            }
+        } catch (IllegalArgumentException e) {
+            LOG.error("addAttachmentToNote, failed to decode base64 attachment content for file '{}'", 
+                    noteDto.getAttachmentFileName(), e);
+            throw new RuntimeException("Failed to decode base64 attachment content: " + e.getMessage(), e);
+        } catch (IOException e) {
+            LOG.error("addAttachmentToNote, failed to create attachment for file '{}'", 
+                    noteDto.getAttachmentFileName(), e);
+            throw new RuntimeException("Failed to create attachment: " + e.getMessage(), e);
+        }
+    }
 
 }

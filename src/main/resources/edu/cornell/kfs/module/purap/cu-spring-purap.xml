@@ -185,6 +185,7 @@
     <bean id="paymentRequestService" parent="paymentRequestService-parentBean" 
           class="edu.cornell.kfs.module.purap.document.service.impl.CuPaymentRequestServiceImpl" 
           p:paymentMethodGeneralLedgerPendingEntryService-ref="cUPaymentMethodGeneralLedgerPendingEntryService"
+          p:attachmentService-ref="attachmentService"
     />
     
     <bean id="iWantDocumentInputFileType"
