@@ -19,14 +19,13 @@
         <field name="Supplier_Name" type="STRING" key="vendorDetail.vendorName"/>
         <field name="Tax_Authority_Form_Type" type="STRING" key="taxAuthorityFormType"/>
         <field name="IRS_1099_Supplier" type="STRING" key="irs1099SupplierFlag"/>
-        <field name="Report_1099_with_Parent" type="STATIC" value=""/>
-        <!--
+        <field name="Report_1099_with_Parent" type="STATIC" value=""/> <!-- Leave blank for round 1 -->
         <field name="Tax_ID_Type" type="STRING" key="taxIdType"/>
         <field name="Tax_ID_Text" type="STRING" key="taxIdValue"/>
         <field name="Transaction_Tax_ID" type="STRING" key="transactionTaxId"/>
-        <field name="Default_Withholding_Tax_Code" type="STATIC" value=""/>
-        <field name="Primary_Tax_ID" type="STATIC" value="TRUE"/>
-        <field name="Country_Tax_ID" type="STATIC" value="US"/>
+        <field name="Default_Withholding_Tax_Code" type="STATIC" value=""/> <!-- Leave blank for round 1 -->
+        <field name="Primary_Tax_ID" type="STRING" key="primaryTaxId"/>
+        <field name="Country_Tax_ID" type="STRING" key="countryTaxId"/>
         <field name="Supplier_Category" type="STATIC" value="Foundation_Default"/>
         <field name="Supplier_Group_1" type="STATIC" value=""/>
         <field name="Supplier_Group_2" type="STATIC" value=""/>
@@ -62,11 +61,10 @@
         <field name="Field_Text_Value_2" type="STATIC" value=""/>
         <field name="Field_Single_Select_Choice_2" type="STATIC" value=""/>
         <field name="Field_Multi_Select_Choice_2" type="STATIC" value=""/>
-        <field name="Alternate_Name_Business_Entity_1" type="STRING" key="alias[0].name"/>
-        <field name="Alternate_Name_Usage_Business_Entity_1" type="STRING" key="alias[0].usage"/>
-        <field name="Alternate_Name_Business_Entity_2" type="STRING" key="alias[1].name"/>
-        <field name="Alternate_Name_Usage_Business_Entity_2" type="STRING" key="alias[1].usage"/>
-        -->
+        <field name="Alternate_Name_Business_Entity_1" type="STRING" key="alias0Name"/>
+        <field name="Alternate_Name_Usage_Business_Entity_1" type="STRING" key="alias0Usage"/>
+        <field name="Alternate_Name_Business_Entity_2" type="STRING" key="alias1Name"/>
+        <field name="Alternate_Name_Usage_Business_Entity_2" type="STRING" key="alias1Usage"/>
     </sheet>
 
     <!--

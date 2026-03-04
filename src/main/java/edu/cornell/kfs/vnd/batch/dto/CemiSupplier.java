@@ -1,9 +1,13 @@
 package edu.cornell.kfs.vnd.batch.dto;
 
 import java.text.MessageFormat;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.vnd.businessobject.VendorAlias;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 
@@ -21,6 +25,15 @@ public class CemiSupplier {
     private final String taxAuthorityFormType;
     private final String taxIdType;
     private final String taxIdValue;
+    private final String transactionTaxId;
+    private final String primaryTaxId;
+    private final String countryTaxId;
+    private final String dunsNumber;
+    private final String paymentTerms;
+    private final String alias0Name;
+    private final String alias0Usage;
+    private final String alias1Name;
+    private final String alias1Usage;
 
     /*
      * For POJO properties that need to go into the spreadsheet (and the future temp table),
@@ -38,8 +51,50 @@ public class CemiSupplier {
         this.supplierReferenceId = buildSupplierReferenceId(vendorDetail);
         this.taxAuthorityFormType = determineTaxAuthorityFormType(vendorDetail);
         this.taxIdType = determineTaxIdType(vendorDetail);
-        this.taxIdValue = "TODO";
+        this.taxIdValue = determineTaxIdValue(vendorDetail);
+        this.transactionTaxId = determineTransactionTaxId(vendorDetail, this.taxIdValue, this.taxIdType);
+        this.primaryTaxId = determinePrimaryTaxId(vendorDetail, this.taxIdValue);
+        this.countryTaxId = CemiVendorConstants.COUNTRY_CODE_UNITED_STATES;
+        this.dunsNumber = vendorDetail.getVendorDunsNumber();
+        this.paymentTerms = determineVendorPaymentTerms(vendorDetail);
+        
+        List<VendorAlias> vendorAliases = vendorDetail.getVendorAliases().stream()
+                .filter(VendorAlias::isActive)
+                .collect(Collectors.toList());
+        this.alias0Name  = getAliasName(vendorAliases, 0);
+        this.alias0Usage = getAliasUsage(vendorAliases, 0);
+        this.alias1Name  = getAliasName(vendorAliases, 1);
+        this.alias1Usage = getAliasUsage(vendorAliases, 1);
     }
+
+    private static String determineTaxIdValue(VendorDetail vendorDetail) {
+        boolean cemiEnv = false; //TODO: determine if job is running in CEMI environment
+        boolean maskCEMISensitiveValues = true; // TODO: determine if masking sensitive values for CEMI data conversion is on or off
+        
+        if(cemiEnv && !maskCEMISensitiveValues) {
+            //return tax id value from vendor
+        }
+        return CemiVendorConstants.DUMMY_TAX_ID;
+    }
+
+    private static String getAliasName(final List<VendorAlias> aliases, final int index) {
+        return index < aliases.size() ? aliases.get(index).getVendorAliasName() : "";
+    }
+
+    private static String getAliasUsage(final List<VendorAlias> aliases, final int index) {
+        return index < aliases.size() ? CemiVendorConstants.ALTERNATE_NAME_USAGE_DEFAULT_VALUE : "";
+    }
+
+    private static String determineTransactionTaxId(VendorDetail vendorDetail, String taxIdValue, String taxIdType) {
+        boolean transactionTaxId = StringUtils.isNotBlank(taxIdValue) && !CemiVendorConstants.USA_SSN_TAX_TYPE.equalsIgnoreCase(taxIdType); // default to true if tax id is present, FALSE if tax type USA_SSN
+        return CemiUtils.convertToBooleanValueForFileExtract(transactionTaxId);
+    }
+    
+    private static String determinePrimaryTaxId(VendorDetail vendorDetail, String taxIdValue) {
+        boolean primaryTaxId = StringUtils.isNotBlank(taxIdValue); // default to true if tax id is present
+        return CemiUtils.convertToBooleanValueForFileExtract(primaryTaxId);
+    }
+
 
     private static String buildSupplierReferenceId(final VendorDetail vendor) {
         return MessageFormat.format(CemiVendorConstants.SUPPLIER_REFERENCE_ID_FORMAT,
@@ -61,6 +116,21 @@ public class CemiSupplier {
     private static String determineTaxIdType(final VendorDetail vendor) {
         final String kfsTaxType = StringUtils.defaultString(vendor.getVendorHeader().getVendorTaxTypeCode());
         return CemiVendorConstants.TAX_ID_TYPES.get(kfsTaxType);
+    }
+    
+    private String determineVendorPaymentTerms(VendorDetail vendorDetail) {
+        vendorDetail.refreshReferenceObject("vendorPaymentTerms");
+        if (ObjectUtils.isNotNull(vendorDetail.getVendorPaymentTerms())) {
+            String paymentTermsDescription = vendorDetail.getVendorPaymentTerms().getVendorPaymentTermsDescription();
+            if (paymentTermsDescription == null || paymentTermsDescription.isEmpty()) {
+                return paymentTermsDescription;
+            }
+            return paymentTermsDescription
+                    .trim()
+                    .replaceAll("[^a-zA-Z0-9]+", "_") // replace spans of special chars/spaces with _
+                    .replaceAll("^_|_$", ""); // strip leading/trailing underscores
+        }
+        return "";
     }
 
     public VendorDetail getVendorDetail() {
@@ -100,6 +170,38 @@ public class CemiSupplier {
         return CemiUtils.convertToBooleanValueForFileExtract(
                 StringUtils.isNoneBlank(taxIdType, taxIdValue)
                         && !StringUtils.equals(taxIdType, CemiVendorConstants.USA_SSN_TAX_TYPE));
+    }
+
+    public String getPrimaryTaxId() {
+        return primaryTaxId;
+    }
+
+    public String getCountryTaxId() {
+        return countryTaxId;
+    }
+
+    public String getDunsNumber() {
+        return dunsNumber;
+    }
+
+    public String getPaymentTerms() {
+        return paymentTerms;
+    }
+
+    public String getAlias0Name() {
+        return alias0Name;
+    }
+
+    public String getAlias0Usage() {
+        return alias0Usage;
+    }
+
+    public String getAlias1Name() {
+        return alias1Name;
+    }
+
+    public String getAlias1Usage() {
+        return alias1Usage;
     }
 
 }

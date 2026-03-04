@@ -3,6 +3,7 @@ package edu.cornell.kfs.vnd;
 import java.util.List;
 import java.util.Map;
 
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.VendorConstants.AddressTypes;
 
@@ -11,7 +12,7 @@ import edu.cornell.kfs.vnd.CUVendorConstants.CUAddressTypes;
 public final class CemiVendorConstants {
 
     public static final String SUPPLIER_ID_FORMAT = "'SUP'000000";
-    public static final String SUPPLIER_REFERENCE_ID_FORMAT = "ITH_{0}-{1}";
+    public static final String SUPPLIER_REFERENCE_ID_FORMAT = "SUPU_{0}-{1}";
     public static final String ADDRESS_ID_FORMAT = "{0}_{1}_{2}";
     public static final int SUPPLIER_HEADER_ROWS_PER_SHEET = 6;
 
@@ -28,6 +29,10 @@ public final class CemiVendorConstants {
 
     public static final String USA_EIN_TAX_TYPE = "USA-EIN";
     public static final String USA_SSN_TAX_TYPE = "USA-SSN";
+    
+    public static final String DUMMY_TAX_ID = "XXXXXXXXX";
+    public static final String ALTERNATE_NAME_USAGE_DEFAULT_VALUE = "Reference";
+    public static final String COUNTRY_CODE_UNITED_STATES = KFSConstants.COUNTRY_CODE_UNITED_STATES;
 
     public static final Map<String, List<String>> ADDRESS_USES = Map.ofEntries(
             Map.entry(AddressTypes.PURCHASE_ORDER, List.of("PROCUREMENT", "SHIPPING")),
