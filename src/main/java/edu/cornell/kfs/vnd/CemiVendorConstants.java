@@ -46,6 +46,13 @@ public final class CemiVendorConstants {
     public static final Map<String, String> TAX_ID_TYPES = Map.ofEntries(
             Map.entry(VendorConstants.TAX_TYPE_FEIN, USA_EIN_TAX_TYPE),
             Map.entry(VendorConstants.TAX_TYPE_SSN, USA_SSN_TAX_TYPE));
+    
+    public static final class ALL_DEFINED_ADDRESS_TYPES {
+        public static final String PURCHASE_ORDER = VendorConstants.AddressTypes.PURCHASE_ORDER;
+        public static final String REMIT = VendorConstants.AddressTypes.REMIT;
+        public static final String QUOTE = VendorConstants.AddressTypes.QUOTE;
+        public static final String TAX = CUVendorConstants.CUAddressTypes.TAX;
+    }
 
     public static final class CemiQuerySettingsIds {
         public static final String SUPPLIERS = "SUPPLIERS";
