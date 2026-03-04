@@ -39,19 +39,19 @@ public class CemiSupplierPhone {
         this.phoneNumber = vendorPhoneNumber.getVendorPhoneNumber();
         this.phoneExtension = vendorPhoneNumber.getVendorPhoneExtensionNumber();
         this.phoneDeviceType = CemiVendorConstants.DEFAULT_PHONE_DEVICE_TYPE;
-        this.phonePrimary = CemiUtils.convertToBooleanValueForFileExtract(setFirstSupplierPhoneNumberAsPrimary(phoneNumberCount));
+        this.phonePrimary = CemiUtils.convertToBooleanValueForFileExtract(determineIfFirstPhoneNumberForSettingPrimaryIndicator(phoneNumberCount));
         assignPhoneUseValuesBasedOnPhoneType(vendorPhoneNumber.getVendorPhoneTypeCode());
+        assignPhoneUseTenantedValuesBasedOnPhoneType(vendorPhoneNumber.getVendorPhoneTypeCode());
         
         //columns not populated with this load
         this.phoneExtension = CemiVendorConstants.EMPTY_STRING;
         this.phoneUse2 = CemiVendorConstants.EMPTY_STRING;
         this.phoneUse3 = CemiVendorConstants.EMPTY_STRING;
         this.phoneUse4 = CemiVendorConstants.EMPTY_STRING;
-        this.comments = CemiVendorConstants.EMPTY_STRING;
-        this.phoneUseTenanted = CemiVendorConstants.EMPTY_STRING;
         this.phoneUseTenanted2 = CemiVendorConstants.EMPTY_STRING;
         this.phoneUseTenanted3 = CemiVendorConstants.EMPTY_STRING;
         this.phoneUseTenanted4 = CemiVendorConstants.EMPTY_STRING;
+        this.comments = CemiVendorConstants.EMPTY_STRING;
     }
     
     private static String buildSupplierPhoneId(final VendorPhoneNumber vendorPhoneNumber, final String supplierId, int phoneNumberCount) {
@@ -61,7 +61,7 @@ public class CemiSupplierPhone {
                 Integer.toString(phoneNumberCount));
     }
     
-    private static boolean setFirstSupplierPhoneNumberAsPrimary(int phoneNumberCount) {
+    private static boolean determineIfFirstPhoneNumberForSettingPrimaryIndicator(int phoneNumberCount) {
         return phoneNumberCount == 1;
     }
     
@@ -74,6 +74,22 @@ public class CemiSupplierPhone {
             } else {
                 setPhoneUse(CemiVendorConstants.EMPTY_STRING);
             }
+        } else {
+            setPhoneUse(CemiVendorConstants.EMPTY_STRING);
+        }
+    }
+    
+    private void assignPhoneUseTenantedValuesBasedOnPhoneType(String vendorPhoneTypeCode) {
+        if (StringUtils.isNotBlank(vendorPhoneTypeCode)
+                && CemiVendorConstants.PHONE_TENANTED_USES.containsKey(vendorPhoneTypeCode)) {
+            List<String> useValuesList = CemiVendorConstants.PHONE_TENANTED_USES.get(vendorPhoneTypeCode);
+            if (useValuesList.size() == 1) {
+                setPhoneUseTenanted(useValuesList.get(0));
+            } else {
+                setPhoneUseTenanted(CemiVendorConstants.EMPTY_STRING);
+            }
+        } else {
+            setPhoneUseTenanted(CemiVendorConstants.EMPTY_STRING);
         }
     }
 

@@ -88,7 +88,7 @@ public final class CemiVendorConstants {
         public static final String E_INVOICING = "EI";
         public static final String FAX = "FX";
         public static final String INSURANCE = "IN";
-        public static final String MOBLE = "MB";
+        public static final String MOBILE = "MB";
         public static final String PAGER = "PG";
         public static final String MAIN_PHONE_NUMBER = "PH";
         public static final String PURCHASE_ORDER = "PO";
@@ -104,6 +104,12 @@ public final class CemiVendorConstants {
             Map.entry(AllDefinedPhoneTypes.ACCOUNTS_RECEIVABLE_PHONE, List.of("REMIT")),
             Map.entry(AllDefinedPhoneTypes.SALES, List.of("PROCUREMENT")),
             Map.entry(AllDefinedPhoneTypes.VENDOR_INFORMATION, List.of("SHIPPING"))
+    );
+    
+    public static final Map<String, List<String>> PHONE_TENANTED_USES = Map.ofEntries(
+            Map.entry(AllDefinedPhoneTypes.ACCOUNTS_RECEIVABLE_PHONE, List.of("Remit_To")),
+            Map.entry(AllDefinedPhoneTypes.SALES, List.of("Procurement")),
+            Map.entry(AllDefinedPhoneTypes.VENDOR_INFORMATION, List.of("Shipping"))
     );
 
 }

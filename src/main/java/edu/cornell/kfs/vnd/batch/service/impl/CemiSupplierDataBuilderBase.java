@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.Validate;
@@ -78,20 +79,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             //Phones Tab
             //These should be the phone numbers tied to the actual vendor
             //These are NOT the phone numbers associated with the vendor contact list on the vendor record.
-            int phoneNumberCount = 0;
-            for (final VendorPhoneNumber vendorPhoneNumber : vendor.getVendorPhoneNumbers()) {
-                //Presuming phone numbers are US and NOT restricting by country
-                if (vendorPhoneNumber.isActive()) {
-                    phoneNumberCount++;
-                    final CemiSupplierPhone supplierPhone = new CemiSupplierPhone(vendorPhoneNumber, supplierId, phoneNumberCount);
-                    writeSupplierPhoneRow(supplierPhone);
-                } else {
-                    LOG.info("writeSupplierDataToIntermediateStorage, vendorPhoneGeneratedIdentifier {} for vendor {}-{} was NOT written to conversion file.",
-                            vendorPhoneNumber.getVendorPhoneGeneratedIdentifier(),
-                            vendor.getVendorHeaderGeneratedIdentifier(),
-                            vendor.getVendorDetailAssignedIdentifier());
-                }
-            }
+            writeAllSupplierPhoneRows(vendor, supplierId);
         }
         LOG.info("writeSupplierDataToIntermediateStorage, Finished writing {} Vendors", vendorCount);
     }
@@ -107,6 +95,24 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     protected void writeSupplierPhoneRow(final CemiSupplierPhone supplierPhone) throws IOException {
         writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.PHONES, supplierPhone);
     }
+    
+    protected void writeAllSupplierPhoneRows(VendorDetail vendor, String supplierId) throws IOException {
+        int phoneNumberCount = 0;
+        for (final VendorPhoneNumber vendorPhoneNumber : vendor.getVendorPhoneNumbers()) {
+            //Presuming phone numbers are US and NOT restricting by country
+            if (vendorPhoneNumber.isActive()) {
+                phoneNumberCount++;
+                final CemiSupplierPhone supplierPhone = new CemiSupplierPhone(vendorPhoneNumber, supplierId, phoneNumberCount);
+                writeSupplierPhoneRow(supplierPhone);
+            } else {
+                LOG.info("writeSupplierDataToIntermediateStorage, vendorPhoneGeneratedIdentifier {} for vendor {}-{} was NOT written to conversion file.",
+                        vendorPhoneNumber.getVendorPhoneGeneratedIdentifier(),
+                        vendor.getVendorHeaderGeneratedIdentifier(),
+                        vendor.getVendorDetailAssignedIdentifier());
+            }
+        }
+    }
+    
 
     /*
      * The subclass that writes the vendor data to the temp tables needs to implement this method.
