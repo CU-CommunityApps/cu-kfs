@@ -7,6 +7,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.VendorConstants.AddressTypes;
 
+import edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder.BankAccountTypes;
 import edu.cornell.kfs.vnd.CUVendorConstants.CUAddressTypes;
 
 public final class CemiVendorConstants {
@@ -17,7 +18,9 @@ public final class CemiVendorConstants {
     public static final String SUPPLIER_REFERENCE_ID_FORMAT = "SUPU_{0}-{1}";
     public static final String ADDRESS_ID_FORMAT = "{0}_{1}_{2}";
     public static final String PHONE_ID_FORMAT = "{0}_{1}_{2}";
+    public static final String BANK_ACCOUNT_ID_FORMAT = "{0}_{1}_{2}";
     public static final int SUPPLIER_HEADER_ROWS_PER_SHEET = 6;
+    public static final int MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES = 3;
 
     public static final String SUPPLIER_OUTPUT_DEFINITION_FILE_PATH = "classpath:edu/cornell/kfs/vnd/batch/CemiSupplierExtractFileOutputDefinition.xml";
     public static final String SUPPLIER_TEMPLATE_FILE_PATH = "classpath:edu/cornell/kfs/vnd/batch/Supplier.xlsx";
@@ -34,8 +37,12 @@ public final class CemiVendorConstants {
 
     public static final String USA_EIN_TAX_TYPE = "USA-EIN";
     public static final String USA_SSN_TAX_TYPE = "USA-SSN";
-    
+
+    public static final String CHECKING_ACCOUNT_TYPE = "DDA";
+    public static final String SAVINGS_ACCOUNT_TYPE = "SA";
+
     public static final String DUMMY_TAX_ID = "XXXXXXXXX";
+    public static final String DUMMY_ACCOUNT_NUMBER = "XXXXXXXXX";
     public static final String ALTERNATE_NAME_USAGE_DEFAULT_VALUE = "Reference";
     public static final String COUNTRY_CODE_UNITED_STATES = KFSConstants.COUNTRY_CODE_UNITED_STATES;
 
@@ -53,8 +60,16 @@ public final class CemiVendorConstants {
 
     public static final Map<String, String> TAX_ID_TYPES = Map.ofEntries(
             Map.entry(VendorConstants.TAX_TYPE_FEIN, USA_EIN_TAX_TYPE),
-            Map.entry(VendorConstants.TAX_TYPE_SSN, USA_SSN_TAX_TYPE));
-    
+            Map.entry(VendorConstants.TAX_TYPE_SSN, USA_SSN_TAX_TYPE)
+    );
+
+    public static final Map<String, String> BANK_ACCOUNT_TYPES = Map.ofEntries(
+            Map.entry(BankAccountTypes.PERSONAL_CHECKING, CHECKING_ACCOUNT_TYPE),
+            Map.entry(BankAccountTypes.PERSONAL_SAVINGS, SAVINGS_ACCOUNT_TYPE),
+            Map.entry(BankAccountTypes.CORPORATE_CHECKING, CHECKING_ACCOUNT_TYPE),
+            Map.entry(BankAccountTypes.CORPORATE_SAVINGS, SAVINGS_ACCOUNT_TYPE)
+    );
+
     public static final class AllDefinedAddressTypes {
         public static final String PURCHASE_ORDER = VendorConstants.AddressTypes.PURCHASE_ORDER;
         public static final String REMIT = VendorConstants.AddressTypes.REMIT;
@@ -71,6 +86,7 @@ public final class CemiVendorConstants {
         public static final String ADDRESSES = "Addresses";
         public static final String EMAILS = "Emails";
         public static final String PHONES = "Phones";
+        public static final String BANK_ACCOUNTS = "Bank_Accounts";
         public static final String CHILDREN = "Children";
     }
 

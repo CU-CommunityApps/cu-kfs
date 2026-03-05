@@ -14,6 +14,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
@@ -24,6 +26,12 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
+import org.kuali.kfs.pdp.PdpPropertyConstants;
+import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +59,7 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
     private CuVendorDao cuVendorDao;
     private CemiVendorDao cemiVendorDao;
     private CemiOutputDefinitionFileType cemiOutputDefinitionFileType;
+    private BusinessObjectService businessObjectService;
     private ParameterService parameterService;
     private DateTimeService dateTimeService;
 
@@ -127,8 +136,21 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
             final Stream<VendorDetail> vendors = cuVendorDao.getVendorsForCemiSupplierExtractAsCloseableStream();
         ) {
             final Iterator<VendorDetail> vendorsIterator = vendors.iterator();
-            dataBuilder.writeSupplierDataToIntermediateStorage(vendorsIterator);
+            dataBuilder.writeSupplierDataToIntermediateStorage(vendorsIterator, this::findAllAccountsForVendor);
         }
+    }
+
+    private Collection<PayeeACHAccount> findAllAccountsForVendor(final Integer vendorHeaderGeneratedIdentifier,
+            final Integer vendorDetailAssignedIdentifier) throws IOException {
+        final String vendorId = StringUtils.join(
+                vendorHeaderGeneratedIdentifier, KFSConstants.DASH, vendorDetailAssignedIdentifier);
+        final Map<String, Object> criteria = Map.ofEntries(
+                Map.entry(PdpPropertyConstants.PAYEE_ID_NUMBER, vendorId),
+                Map.entry(PdpPropertyConstants.PAYEE_IDENTIFIER_TYPE_CODE, PayeeIdTypeCodes.VENDOR_ID),
+                Map.entry(KFSPropertyConstants.ACTIVE, KFSConstants.ACTIVE_INDICATOR)
+        );
+        return businessObjectService.findMatchingOrderBy(
+                PayeeACHAccount.class, criteria, PdpPropertyConstants.ACH_ACCOUNT_GENERATED_IDENTIFIER, true);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -238,6 +260,10 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
 
     public void setCemiOutputDefinitionFileType(final CemiOutputDefinitionFileType cemiOutputDefinitionFileType) {
         this.cemiOutputDefinitionFileType = cemiOutputDefinitionFileType;
+    }
+
+    public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
     }
 
     public void setParameterService(final ParameterService parameterService) {
