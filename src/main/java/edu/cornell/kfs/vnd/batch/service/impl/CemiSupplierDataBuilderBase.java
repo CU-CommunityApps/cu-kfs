@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.Validate;
@@ -20,6 +19,7 @@ import edu.cornell.kfs.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.vnd.CemiVendorConstants;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplier;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierAddress;
+import edu.cornell.kfs.vnd.batch.dto.CemiSupplierChildren;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierPhone;
 import edu.cornell.kfs.vnd.batch.service.CemiSupplierDataBuilder;
 
@@ -32,6 +32,13 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     protected final boolean maskSensitiveData;
     protected final DecimalFormat supplierIdFormatter;
     protected int vendorCount;
+    
+    /* These data elements are used together to determine when a parent or child vendor is being processed
+     * in the writeSupplierDataToIntermediateStorage for-loop that iterates over the vendorDetail records.
+     */
+    protected VendorDetail parentVendor = null;
+    protected String parentSupplierId = null;
+    
 
     protected CemiSupplierDataBuilderBase(final CemiOutputDefinition outputDefinition,
             final LocalDateTime jobRunDate, final boolean maskSensitiveData) {
@@ -54,6 +61,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             if (vendorCount % 1000 == 0) {
                 LOG.info("writeSupplierDataToIntermediateStorage, Writing {} Vendors and counting...", vendorCount);
             }
+            
             //Suppliers Tab
             final String supplierId = supplierIdFormatter.format(vendorCount);
             final CemiSupplier supplier = new CemiSupplier(vendor, supplierId);
@@ -80,6 +88,9 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             //These should be the phone numbers tied to the actual vendor
             //These are NOT the phone numbers associated with the vendor contact list on the vendor record.
             writeAllSupplierPhoneRowsFor(vendor, supplierId);
+            
+            //Children Tab
+            writeAllSupplierChildrenRowsFor(vendor, supplierId);
         }
         LOG.info("writeSupplierDataToIntermediateStorage, Finished writing {} Vendors", vendorCount);
     }
@@ -112,7 +123,30 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             }
         }
     }
-
+    
+    protected void changeParentIdentifiersWhenProcessedSupplierChildrenIndicatesResetParent(CemiSupplierChildren supplierChildren, VendorDetail vendor, String supplierId) {
+        if (supplierChildren.isResetParent()) {
+            
+            setParentVendor(vendor);
+            setParentSupplierId(supplierId);
+        } 
+    }
+    
+    protected void writeSupplierChildrenRow(final CemiSupplierChildren supplierChildren) throws IOException {
+        writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.CHILDREN, supplierChildren);
+    }
+    
+    protected void writeAllSupplierChildrenRowsFor(VendorDetail vendor, String supplierId) throws IOException {
+        final CemiSupplierChildren supplierChildren = new CemiSupplierChildren(vendor, supplierId, parentVendor, parentSupplierId);
+        changeParentIdentifiersWhenProcessedSupplierChildrenIndicatesResetParent(supplierChildren, vendor, supplierId);
+        if (supplierChildren.isOutputParentChildRelationship()) {
+            writeSupplierChildrenRow(supplierChildren);
+        }  else {
+            LOG.info("writeAllSupplierChildrenRowsFor, NO parent-child relationship written to conversion file for vendor {}-{}",
+                    vendor.getVendorHeaderGeneratedIdentifier(),
+                    vendor.getVendorDetailAssignedIdentifier());
+        }
+    }
 
     /*
      * The subclass that writes the vendor data to the temp tables needs to implement this method.
@@ -134,6 +168,22 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             default:
                 throw new IllegalStateException("Unknown field type: " + field.getType());
         }
+    }
+
+    public VendorDetail getParentVendor() {
+        return parentVendor;
+    }
+
+    public void setParentVendor(VendorDetail parentVendor) {
+        this.parentVendor = parentVendor;
+    }
+
+    public String getParentSupplierId() {
+        return parentSupplierId;
+    }
+
+    public void setParentSupplierId(String parentSupplierId) {
+        this.parentSupplierId = parentSupplierId;
     }
 
 }
