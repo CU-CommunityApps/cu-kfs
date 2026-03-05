@@ -88,6 +88,26 @@
         <field name="Address_Use_Tenanted_4" type="STRING" key="addressUseTenanted4"/>
         <field name="Comments" type="STRING" key="comments"/>
     </sheet>
+    
+    <sheet name="Phones" num-header-rows="6" start-column-index="1">
+        <field name="Supplier_ID" type="STRING" key="supplierId"/>
+        <field name="Phone_ID" type="STRING" key="phoneId"/>
+        <field name="Country_ISO_Code" type="STRING" key="country"/>
+        <field name="International_Phone_Code" type="STRING" key="internationalPhoneCode"/>
+        <field name="Phone_Number" type="STRING" key="phoneNumber"/>
+        <field name="Phone_Extension" type="STRING" key="phoneExtension"/>
+        <field name="Phone_Device_Type" type="STRING" key="phoneDeviceType"/>
+        <field name="Phone_Primary" type="STRING" key="phonePrimary"/>
+        <field name="Use_For_Phone" type="STRING" key="phoneUse"/>
+        <field name="Use_For_Phone_2" type="STRING" key="phoneUse2"/>
+        <field name="Use_For_Phone_3" type="STRING" key="phoneUse3"/>
+        <field name="Use_For_Phone_4" type="STRING" key="phoneUse4"/>
+        <field name="Use_For_Tenanted_Phone" type="STRING" key="phoneUseTenanted"/>
+        <field name="Use_For_Tenanted_Phone_2" type="STRING" key="phoneUseTenanted2"/>
+        <field name="Use_For_Tenanted_Phone_3" type="STRING" key="phoneUseTenanted3"/>
+        <field name="Use_For_Tenanted_Phone_4" type="STRING" key="phoneUseTenanted4"/>
+        <field name="Phone_Comments" type="STRING" key="comments"/>
+    </sheet>
 
     <!--
     <sheet name="Children" num-header-rows="6" start-column-index="1">
