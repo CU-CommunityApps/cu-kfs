@@ -45,7 +45,7 @@ public class CemiSupplierEmailSubEntry {
         
         List<String> uses = CemiVendorConstants.ADDRESS_TENANTED_USES.get(addressTypeCode);
         if (uses == null) {
-            return Collections.emptyList();
+            return Collections.nCopies(4, CemiVendorConstants.EMPTY_STRING);
         }
         
         List<String> result = new ArrayList<>(uses);
@@ -63,7 +63,7 @@ public class CemiSupplierEmailSubEntry {
     private static List<String> determineEmailUseFor(String addressTypeCode) {
         List<String> uses = CemiVendorConstants.ADDRESS_USES.get(addressTypeCode);
         if (uses == null) {
-            return Collections.emptyList();
+            return Collections.nCopies(4, CemiVendorConstants.EMPTY_STRING);
         }
         
         List<String> result = new ArrayList<>(uses);
