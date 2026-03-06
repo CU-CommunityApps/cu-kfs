@@ -8,7 +8,7 @@ import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 @FunctionalInterface
 public interface VendorAccountFinder {
 
-    Collection<PayeeACHAccount> findAllAccountsForVendor(final Integer vendorHeaderGeneratedIdentifier,
+    Collection<PayeeACHAccount> findAllActiveAccountsForVendor(final Integer vendorHeaderGeneratedIdentifier,
             final Integer vendorDetailAssignedIdentifier) throws IOException;
 
 }

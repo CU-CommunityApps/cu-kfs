@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -136,11 +135,11 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
             final Stream<VendorDetail> vendors = cuVendorDao.getVendorsForCemiSupplierExtractAsCloseableStream();
         ) {
             final Iterator<VendorDetail> vendorsIterator = vendors.iterator();
-            dataBuilder.writeSupplierDataToIntermediateStorage(vendorsIterator, this::findAllAccountsForVendor);
+            dataBuilder.writeSupplierDataToIntermediateStorage(vendorsIterator, this::findAllActiveAccountsForVendor);
         }
     }
 
-    private Collection<PayeeACHAccount> findAllAccountsForVendor(final Integer vendorHeaderGeneratedIdentifier,
+    private Collection<PayeeACHAccount> findAllActiveAccountsForVendor(final Integer vendorHeaderGeneratedIdentifier,
             final Integer vendorDetailAssignedIdentifier) throws IOException {
         final String vendorId = StringUtils.join(
                 vendorHeaderGeneratedIdentifier, KFSConstants.DASH, vendorDetailAssignedIdentifier);
