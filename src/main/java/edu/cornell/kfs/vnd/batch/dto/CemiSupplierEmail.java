@@ -22,53 +22,49 @@ public class CemiSupplierEmail {
     public CemiSupplierEmail(final VendorDetail vendorDetail, final String supplierId) {
         this.vendorDetail = vendorDetail;
         this.supplierId = supplierId;
-        this.supplierEmails = new ArrayList<CemiSupplierEmailSubEntry>();
+        this.supplierEmails = new ArrayList<>();
 
-        List<VendorAddress> vendorAddresses = vendorDetail.getVendorAddresses() != null ? vendorDetail
-                .getVendorAddresses().stream().filter(VendorAddress::isActive)
-                .filter(a -> StringUtils.isNotBlank(a.getVendorAddressEmailAddress())).collect(Collectors.toList())
-                : Collections.emptyList();
+        List<VendorAddress> vendorAddresses = getActiveAddressesWithEmail(vendorDetail);
+        VendorAddress primaryAddress = findPrimaryAddress(
+            vendorDetail.getVendorHeader().getVendorTypeCode(), vendorAddresses
+        );
+        List<VendorAddress> remainingAddresses = getRemainingAddresses(vendorAddresses, primaryAddress);
 
-        final VendorAddress primaryAddress = findPrimaryAddress(vendorDetail.getVendorHeader().getVendorTypeCode(),
-                vendorAddresses);
-        List<VendorAddress> remainingAddresses;
-        if (primaryAddress != null) {
-            remainingAddresses = vendorAddresses.stream().filter(a -> !a.getVendorAddressGeneratedIdentifier()
-                    .equals(primaryAddress.getVendorAddressGeneratedIdentifier())).collect(Collectors.toList());
-        } else {
-            remainingAddresses = vendorAddresses.stream().collect(Collectors.toList());
+        supplierEmails.add(buildPrimaryEntry(primaryAddress, vendorAddresses));
+        supplierEmails.add(buildSecondaryEntry(remainingAddresses, 0, 2));
+        supplierEmails.add(buildSecondaryEntry(remainingAddresses, 1, 3));
+    }
+
+    private List<VendorAddress> getActiveAddressesWithEmail(VendorDetail vendorDetail) {
+        if (vendorDetail.getVendorAddresses() == null) {
+            return Collections.emptyList();
         }
+        return vendorDetail.getVendorAddresses().stream()
+            .filter(VendorAddress::isActive)
+            .filter(a -> StringUtils.isNotBlank(a.getVendorAddressEmailAddress()))
+            .collect(Collectors.toList());
+    }
 
-        int addressCount = vendorAddresses.size();
-        if (addressCount >= 1) {
-            CemiSupplierEmailSubEntry cemiSupplierEmailSubEntry1 = new CemiSupplierEmailSubEntry(primaryAddress,
-                    supplierId, true, 1);
-            this.supplierEmails.add(cemiSupplierEmailSubEntry1);
-        } else {
-            CemiSupplierEmailSubEntry cemiSupplierEmailSubEntry1 = new CemiSupplierEmailSubEntry();
-            this.supplierEmails.add(cemiSupplierEmailSubEntry1);
+    private List<VendorAddress> getRemainingAddresses(List<VendorAddress> addresses, VendorAddress primaryAddress) {
+        if (primaryAddress == null) {
+            return new ArrayList<>(addresses);
         }
+        return addresses.stream()
+            .filter(a -> !a.getVendorAddressGeneratedIdentifier()
+                .equals(primaryAddress.getVendorAddressGeneratedIdentifier()))
+            .collect(Collectors.toList());
+    }
 
-        // use remaining addresses
-        int remainingAddressCount = remainingAddresses.size();
-        if (remainingAddressCount >= 1) {
-            CemiSupplierEmailSubEntry cemiSupplierEmailSubEntry2 = new CemiSupplierEmailSubEntry(
-                    remainingAddresses.get(0), supplierId, false, 2);
-            this.supplierEmails.add(cemiSupplierEmailSubEntry2);
-        } else {
-            CemiSupplierEmailSubEntry cemiSupplierEmailSubEntry2 = new CemiSupplierEmailSubEntry();
-            this.supplierEmails.add(cemiSupplierEmailSubEntry2);
-        }
+    private CemiSupplierEmailSubEntry buildPrimaryEntry(VendorAddress primaryAddress, List<VendorAddress> allAddresses) {
+        return allAddresses.isEmpty()
+            ? new CemiSupplierEmailSubEntry()
+            : new CemiSupplierEmailSubEntry(primaryAddress, supplierId, true, 1);
+    }
 
-        if (remainingAddressCount >= 2) {
-            CemiSupplierEmailSubEntry cemiSupplierEmailSubEntry3 = new CemiSupplierEmailSubEntry(
-                    remainingAddresses.get(1), supplierId, false, 3);
-            this.supplierEmails.add(cemiSupplierEmailSubEntry3);
-        } else {
-            CemiSupplierEmailSubEntry cemiSupplierEmailSubEntry3 = new CemiSupplierEmailSubEntry();
-            this.supplierEmails.add(cemiSupplierEmailSubEntry3);
-        }
-
+    private CemiSupplierEmailSubEntry buildSecondaryEntry(List<VendorAddress> remaining, int index, int slot) {
+        return remaining.size() > index
+            ? new CemiSupplierEmailSubEntry(remaining.get(index), supplierId, false, slot)
+            : new CemiSupplierEmailSubEntry();
     }
     
     private VendorAddress findPrimaryAddress(String vendorTypeCode, List<VendorAddress> vendorAddresses) {

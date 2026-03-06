@@ -86,13 +86,11 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             }
             
             // Emails Tab
-            List<VendorAddress> vendorAddressesWithEmail = vendor.getVendorAddresses() != null
-                    ? vendor.getVendorAddresses().stream()
+            List<VendorAddress> vendorAddressesWithEmail = vendor.getVendorAddresses().stream()
                             .filter(VendorAddress::isActive)
                             .filter(a -> StringUtils.isNotBlank(a.getVendorAddressEmailAddress()))
-                            .collect(Collectors.toList())
-                    : Collections.emptyList();
-            if(vendorAddressesWithEmail.size()>0) {
+                            .collect(Collectors.toList());
+            if(vendorAddressesWithEmail.size() > 0) {
                 final CemiSupplierEmail supplierEmail = new CemiSupplierEmail(vendor, supplierId);
                 writeSupplierEmailRow(supplierEmail);
             }
