@@ -3,9 +3,13 @@ package edu.cornell.kfs.vnd.batch.service.impl;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.IteratorUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,6 +25,7 @@ import edu.cornell.kfs.vnd.batch.businessobject.CemiSupplierParentIdentifiersRef
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplier;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierAddress;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierChildren;
+import edu.cornell.kfs.vnd.batch.dto.CemiSupplierEmail;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierPhone;
 import edu.cornell.kfs.vnd.batch.service.CemiSupplierDataBuilder;
 
@@ -81,6 +86,16 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
                 }
             }
             
+            // Emails Tab
+            List<VendorAddress> vendorAddressesWithEmail = vendor.getVendorAddresses().stream()
+                            .filter(VendorAddress::isActive)
+                            .filter(a -> StringUtils.isNotBlank(a.getVendorAddressEmailAddress()))
+                            .collect(Collectors.toList());
+            if(vendorAddressesWithEmail.size() > 0) {
+                final CemiSupplierEmail supplierEmail = new CemiSupplierEmail(vendor, supplierId);
+                writeSupplierEmailRow(supplierEmail);
+            }
+            
             //Phones Tab
             //These should be the phone numbers tied to the actual vendor
             //These are NOT the phone numbers associated with the vendor contact list on the vendor record.
@@ -98,6 +113,10 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     
     protected void writeSupplierAddressRow(final CemiSupplierAddress supplierAddress) throws IOException {
         writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.ADDRESSES, supplierAddress);
+    }
+    
+    protected void writeSupplierEmailRow(final CemiSupplierEmail supplierEmail) throws IOException {
+        writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.EMAILS, supplierEmail);
     }
     
     protected void writeSupplierPhoneRow(final CemiSupplierPhone supplierPhone) throws IOException {

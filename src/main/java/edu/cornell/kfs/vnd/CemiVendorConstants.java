@@ -69,6 +69,7 @@ public final class CemiVendorConstants {
     public static final class SupplierExtractSheets {
         public static final String SUPPLIER = "Supplier";
         public static final String ADDRESSES = "Addresses";
+        public static final String EMAILS = "Emails";
         public static final String PHONES = "Phones";
         public static final String CHILDREN = "Children";
     }

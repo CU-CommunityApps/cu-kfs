@@ -114,5 +114,40 @@
         <field name="Included_Children" type="STRING" key="childSupplierId"/>
     </sheet>
     
+    <sheet name="Emails" num-header-rows="6" start-column-index="1">
+        <field name="Supplier_ID" type="STRING" key="supplierId"/>
+        <field name="Email_ID_1" type="STRING" key="supplierEmails[0].emailId"/>
+        <field name="Email_Address_1" type="STRING" key="supplierEmails[0].emailAddress"/>
+        <field name="Email_Primary_1" type="STRING" key="supplierEmails[0].emailPrimary"/>
+        <field name="Email_Use_For_1_1" type="STRING" key="supplierEmails[0].emailUseFor[0]"/>
+        <field name="Email_Use_For_1_2" type="STRING" key="supplierEmails[0].emailUseFor[1]"/>
+        <field name="Email_Use_For_1_3" type="STRING" key="supplierEmails[0].emailUseFor[2]"/>
+        <field name="Email_Use_For_1_4" type="STRING" key="supplierEmails[0].emailUseFor[3]"/>
+        <field name="Use_For_Tenanted_1_1" type="STRING" key="supplierEmails[0].useForTenanted[0]"/>
+        <field name="Use_For_Tenanted_1_2" type="STRING" key="supplierEmails[0].useForTenanted[1]"/>
+        <field name="Use_For_Tenanted_1_3" type="STRING" key="supplierEmails[0].useForTenanted[2]"/>
+        <field name="Use_For_Tenanted_1_4" type="STRING" key="supplierEmails[0].useForTenanted[3]"/>
+        <field name="Email_ID_2" type="STRING" key="supplierEmails[1].emailId"/>
+        <field name="Email_Address_2" type="STRING" key="supplierEmails[1].emailAddress"/>
+        <field name="Email_Primary_2" type="STRING" key="supplierEmails[1].emailPrimary"/>
+        <field name="Email_Use_For_2_1" type="STRING" key="supplierEmails[1].emailUseFor[0]"/>
+        <field name="Email_Use_For_2_2" type="STRING" key="supplierEmails[1].emailUseFor[1]"/>
+        <field name="Email_Use_For_2_3" type="STRING" key="supplierEmails[1].emailUseFor[2]"/>
+        <field name="Email_Use_For_2_4" type="STRING" key="supplierEmails[1].emailUseFor[3]"/>
+        <field name="Use_For_Tenanted_2_1" type="STRING" key="supplierEmails[1].useForTenanted[0]"/>
+        <field name="Use_For_Tenanted_2_2" type="STRING" key="supplierEmails[1].useForTenanted[1]"/>
+        <field name="Use_For_Tenanted_2_3" type="STRING" key="supplierEmails[1].useForTenanted[2]"/>
+        <field name="Use_For_Tenanted_2_4" type="STRING" key="supplierEmails[1].useForTenanted[3]"/>
+        <field name="Email_ID_3" type="STRING" key="supplierEmails[2].emailId"/>
+        <field name="Email_Address_3" type="STRING" key="supplierEmails[2].emailAddress"/>
+        <field name="Email_Primary_3" type="STRING" key="supplierEmails[2].emailPrimary"/>
+        <field name="Email_Use_For_3_1" type="STRING" key="supplierEmails[2].emailUseFor[0]"/>
+        <field name="Email_Use_For_3_2" type="STRING" key="supplierEmails[2].emailUseFor[1]"/>
+        <field name="Email_Use_For_3_3" type="STRING" key="supplierEmails[2].emailUseFor[2]"/>
+        <field name="Use_For_Tenanted_3_1" type="STRING" key="supplierEmails[2].useForTenanted[0]"/>
+        <field name="Use_For_Tenanted_3_2" type="STRING" key="supplierEmails[2].useForTenanted[1]"/>
+        <field name="Use_For_Tenanted_3_3" type="STRING" key="supplierEmails[2].useForTenanted[2]"/>
+    </sheet>
+    
 
 </cemiOutputDefinition>
