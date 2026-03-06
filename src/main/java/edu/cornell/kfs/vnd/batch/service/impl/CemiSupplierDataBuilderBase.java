@@ -17,6 +17,7 @@ import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 import edu.cornell.kfs.sys.batch.xml.CemiFieldDefinition;
 import edu.cornell.kfs.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.vnd.CemiVendorConstants;
+import edu.cornell.kfs.vnd.batch.businessobject.CemiSupplierParentIdentifiersReference;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplier;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierAddress;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierChildren;
@@ -33,11 +34,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     protected final DecimalFormat supplierIdFormatter;
     protected int vendorCount;
     
-    /* These data elements are used together to determine when a parent or child vendor is being processed
-     * in the writeSupplierDataToIntermediateStorage for-loop that iterates over the vendorDetail records.
-     */
-    protected VendorDetail parentVendor = null;
-    protected String parentSupplierId = null;
+    protected CemiSupplierParentIdentifiersReference parentSupplierReference = null;
     
 
     protected CemiSupplierDataBuilderBase(final CemiOutputDefinition outputDefinition,
@@ -90,7 +87,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             writeAllSupplierPhoneRowsFor(vendor, supplierId);
             
             //Children Tab
-            writeAllSupplierChildrenRowsFor(vendor, supplierId);
+            writeSupplierChildrenRowWhenVendorIsChild(vendor, supplierId, getParentSupplierReference());
         }
         LOG.info("writeSupplierDataToIntermediateStorage, Finished writing {} Vendors", vendorCount);
     }
@@ -124,27 +121,57 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
         }
     }
     
-    protected void changeParentIdentifiersWhenProcessedSupplierChildrenIndicatesResetParent(CemiSupplierChildren supplierChildren, VendorDetail vendor, String supplierId) {
-        if (supplierChildren.isResetParent()) {
-            
-            setParentVendor(vendor);
-            setParentSupplierId(supplierId);
-        } 
+    protected boolean currentVendorShouldBecomeParentVendor(VendorDetail currentVendor) {
+        if (currentVendor.isVendorParentIndicator()) {
+            return true;
+        }
+        return false;
     }
     
     protected void writeSupplierChildrenRow(final CemiSupplierChildren supplierChildren) throws IOException {
         writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.CHILDREN, supplierChildren);
     }
     
-    protected void writeAllSupplierChildrenRowsFor(VendorDetail vendor, String supplierId) throws IOException {
-        final CemiSupplierChildren supplierChildren = new CemiSupplierChildren(vendor, supplierId, parentVendor, parentSupplierId);
-        changeParentIdentifiersWhenProcessedSupplierChildrenIndicatesResetParent(supplierChildren, vendor, supplierId);
-        if (supplierChildren.isOutputParentChildRelationship()) {
+    protected void writeSupplierChildrenRowWhenVendorIsChild(VendorDetail currentVendor, String currentSupplierId,
+            CemiSupplierParentIdentifiersReference parentSupplierReference) throws IOException {
+        
+        if (ObjectUtils.isNotNull(parentSupplierReference)
+                && !currentVendor.isVendorParentIndicator()
+                && currentVendor.getVendorHeaderGeneratedIdentifier().equals(parentSupplierReference.getParentVendorHeaderGeneratedIdentifier())
+                && !currentVendor.getVendorDetailAssignedIdentifier().equals(parentSupplierReference.getParentVendorDetailAssignedIdentifier())) {
+            //child vendor has been detected
+            final CemiSupplierChildren supplierChildren = new CemiSupplierChildren(currentSupplierId, parentSupplierReference.getParentSupplierId());
             writeSupplierChildrenRow(supplierChildren);
-        }  else {
-            LOG.info("writeAllSupplierChildrenRowsFor, NO parent-child relationship written to conversion file for vendor {}-{}",
-                    vendor.getVendorHeaderGeneratedIdentifier(),
-                    vendor.getVendorDetailAssignedIdentifier());
+        } else {
+            if (ObjectUtils.isNotNull(parentSupplierReference) ) {
+                LOG.debug("writeSupplierChildrenRowWhenVendorIsChild, child vendor was not detected for "
+                    + "currentVendor.getVendorHeaderGeneratedIdentifier {}  "
+                    + "currentVendor.getVendorDetailAssignedIdentifier() {}  "
+                    + "parentSupplierReference.getParentVendorHeaderGeneratedIdentifier() {}   "
+                    + "parentSupplierReference.getParentVendorDetailAssignedIdentifier() {}",
+                    currentVendor.getVendorHeaderGeneratedIdentifier(),
+                    currentVendor.getVendorDetailAssignedIdentifier(),
+                    parentSupplierReference.getParentVendorHeaderGeneratedIdentifier(),
+                    parentSupplierReference.getParentVendorDetailAssignedIdentifier());
+            } else {
+                LOG.debug("writeSupplierChildrenRowWhenVendorIsChild, child vendor was not detected parentSupplierReference is NULL");
+            }
+        }
+        
+        if (currentVendorShouldBecomeParentVendor(currentVendor)) {
+            setParentSupplierReference(new CemiSupplierParentIdentifiersReference(currentSupplierId, currentVendor.getVendorHeaderGeneratedIdentifier(), currentVendor.getVendorDetailAssignedIdentifier()));
+        } else {
+            LOG.debug("writeSupplierChildrenRowWhenVendorIsChild, currentVendorShouldBecomeParentVendor return false for "
+                    + "currentVendor.getVendorHeaderGeneratedIdentifier {}  "
+                    + "currentVendor.getVendorDetailAssignedIdentifier() {}  "
+                    + "currentVendor.isVendorParentIndicator() {}"
+                    + "parentSupplierReference.getParentVendorHeaderGeneratedIdentifier() {}   "
+                    + "parentSupplierReference.getParentVendorDetailAssignedIdentifier() {}",
+                    currentVendor.getVendorHeaderGeneratedIdentifier(),
+                    currentVendor.getVendorDetailAssignedIdentifier(),
+                    currentVendor.isVendorParentIndicator(),
+                    parentSupplierReference.getParentVendorHeaderGeneratedIdentifier(),
+                    parentSupplierReference.getParentVendorDetailAssignedIdentifier());
         }
     }
 
@@ -170,20 +197,12 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
         }
     }
 
-    public VendorDetail getParentVendor() {
-        return parentVendor;
+    public CemiSupplierParentIdentifiersReference getParentSupplierReference() {
+        return parentSupplierReference;
     }
 
-    public void setParentVendor(VendorDetail parentVendor) {
-        this.parentVendor = parentVendor;
-    }
-
-    public String getParentSupplierId() {
-        return parentSupplierId;
-    }
-
-    public void setParentSupplierId(String parentSupplierId) {
-        this.parentSupplierId = parentSupplierId;
+    public void setParentSupplierReference(CemiSupplierParentIdentifiersReference parentSupplierReference) {
+        this.parentSupplierReference = parentSupplierReference;
     }
 
 }
