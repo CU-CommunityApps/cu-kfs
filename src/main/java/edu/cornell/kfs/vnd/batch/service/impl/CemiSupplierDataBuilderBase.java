@@ -3,10 +3,11 @@ package edu.cornell.kfs.vnd.batch.service.impl;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +15,7 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
@@ -24,10 +26,13 @@ import edu.cornell.kfs.vnd.CemiVendorConstants;
 import edu.cornell.kfs.vnd.batch.businessobject.CemiSupplierParentIdentifiersReference;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplier;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierAddress;
+import edu.cornell.kfs.vnd.batch.dto.CemiSupplierBankAccount;
+import edu.cornell.kfs.vnd.batch.dto.CemiSupplierBankAccountSubEntry;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierChildren;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierEmail;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierPhone;
 import edu.cornell.kfs.vnd.batch.service.CemiSupplierDataBuilder;
+import edu.cornell.kfs.vnd.util.VendorAccountFinder;
 
 public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBuilder {
 
@@ -57,13 +62,16 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
      * will return ALL of its child vendors (if any) BEFORE returning the next unrelated parent vendor.
      */
     @Override
-    public void writeSupplierDataToIntermediateStorage(final Iterator<VendorDetail> vendors) throws IOException {
+    public void writeSupplierDataToIntermediateStorage(final Iterator<VendorDetail> vendors,
+                final VendorAccountFinder accountFinder) throws IOException {
         for (final VendorDetail vendor : IteratorUtils.asIterable(vendors)) {
             vendorCount++;
             if (vendorCount % 1000 == 0) {
                 LOG.info("writeSupplierDataToIntermediateStorage, Writing {} Vendors and counting...", vendorCount);
             }
-            
+            final Collection<PayeeACHAccount> vendorAccounts = accountFinder.findAllActiveAccountsForVendor(
+                    vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
+
             //Suppliers Tab
             final String supplierId = supplierIdFormatter.format(vendorCount);
             final CemiSupplier supplier = new CemiSupplier(vendor, supplierId);
@@ -100,7 +108,10 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             //These should be the phone numbers tied to the actual vendor
             //These are NOT the phone numbers associated with the vendor contact list on the vendor record.
             writeAllSupplierPhoneRowsFor(vendor, supplierId);
-            
+
+            // Bank_Accounts Tab
+            writeSupplierBankAccountsAsSingleRow(supplierId, vendor, vendorAccounts);
+
             //Children Tab
             writeSupplierChildrenRowWhenVendorIsChild(vendor, supplierId, getParentSupplierReference());
         }
@@ -192,6 +203,52 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
                     parentSupplierReference.getParentVendorHeaderGeneratedIdentifier(),
                     parentSupplierReference.getParentVendorDetailAssignedIdentifier());
         }
+    }
+
+    protected void writeSupplierBankAccountsAsSingleRow(final String supplierId, final VendorDetail vendor,
+            final Collection<PayeeACHAccount> vendorAccounts) throws IOException {
+        final Stream.Builder<CemiSupplierBankAccountSubEntry> accountEntries = Stream.builder();
+        int numAccounts = 0;
+
+        for (final PayeeACHAccount vendorAccount : vendorAccounts) {
+            if (!vendorAccount.isActive()) {
+                LOG.warn("writeSupplierBankAccountsAsSingleRow, Payee ACH Account with ID {} for KFS Vendor {}-{} is "
+                        + "inactive and will NOT be included; it should have been filtered out by the upstream query",
+                        vendorAccount.getAchAccountGeneratedIdentifier(),
+                        vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
+                continue;
+            }
+            numAccounts++;
+            final CemiSupplierBankAccountSubEntry accountEntry = new CemiSupplierBankAccountSubEntry(
+                    vendorAccount, supplierId, numAccounts);
+            accountEntries.add(accountEntry);
+        }
+
+        if (numAccounts == 0) {
+            LOG.debug("writeSupplierBankAccountsAsSingleRow, No active Payee ACH Accounts exist for KFS Vendor {}-{}; "
+                    + "a corresponding Supplier Bank Account row will NOT be written",
+                    vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
+            return;
+        }
+
+        while (numAccounts < CemiVendorConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES) {
+            numAccounts++;
+            accountEntries.add(CemiSupplierBankAccountSubEntry.EMPTY);
+        }
+
+        if (numAccounts > CemiVendorConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES) {
+            LOG.warn("writeSupplierBankAccountsAsSingleRow, Found {} active Payee ACH Accounts for KFS Vendor {}-{}; "
+                    + "only the first {} will be written",
+                    numAccounts, vendor.getVendorHeaderGeneratedIdentifier(),
+                    vendor.getVendorDetailAssignedIdentifier(), CemiVendorConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES);
+        }
+
+        final CemiSupplierBankAccount supplierAccount = new CemiSupplierBankAccount(supplierId, accountEntries.build());
+        writeSupplierBankAccountRow(supplierAccount);
+    }
+
+    protected void writeSupplierBankAccountRow(final CemiSupplierBankAccount supplierAccount) throws IOException {
+        writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.BANK_ACCOUNTS, supplierAccount);
     }
 
     /*
