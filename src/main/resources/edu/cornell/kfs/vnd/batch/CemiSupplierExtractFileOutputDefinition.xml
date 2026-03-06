@@ -109,12 +109,10 @@
         <field name="Phone_Comments" type="STRING" key="comments"/>
     </sheet>
 
-    <!--
     <sheet name="Children" num-header-rows="6" start-column-index="1">
         <field name="Supplier_ID" type="STRING" key="supplierId"/>
         <field name="Included_Children" type="STRING" key="childSupplierId"/>
     </sheet>
-    -->
     
 
 </cemiOutputDefinition>

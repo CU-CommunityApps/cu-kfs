@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.Validate;
@@ -18,8 +17,10 @@ import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 import edu.cornell.kfs.sys.batch.xml.CemiFieldDefinition;
 import edu.cornell.kfs.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.vnd.CemiVendorConstants;
+import edu.cornell.kfs.vnd.batch.businessobject.CemiSupplierParentIdentifiersReference;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplier;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierAddress;
+import edu.cornell.kfs.vnd.batch.dto.CemiSupplierChildren;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierPhone;
 import edu.cornell.kfs.vnd.batch.service.CemiSupplierDataBuilder;
 
@@ -32,6 +33,9 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     protected final boolean maskSensitiveData;
     protected final DecimalFormat supplierIdFormatter;
     protected int vendorCount;
+    
+    protected CemiSupplierParentIdentifiersReference parentSupplierReference = null;
+    
 
     protected CemiSupplierDataBuilderBase(final CemiOutputDefinition outputDefinition,
             final LocalDateTime jobRunDate, final boolean maskSensitiveData) {
@@ -54,6 +58,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             if (vendorCount % 1000 == 0) {
                 LOG.info("writeSupplierDataToIntermediateStorage, Writing {} Vendors and counting...", vendorCount);
             }
+            
             //Suppliers Tab
             final String supplierId = supplierIdFormatter.format(vendorCount);
             final CemiSupplier supplier = new CemiSupplier(vendor, supplierId);
@@ -80,6 +85,9 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             //These should be the phone numbers tied to the actual vendor
             //These are NOT the phone numbers associated with the vendor contact list on the vendor record.
             writeAllSupplierPhoneRowsFor(vendor, supplierId);
+            
+            //Children Tab
+            writeSupplierChildrenRowWhenVendorIsChild(vendor, supplierId, getParentSupplierReference());
         }
         LOG.info("writeSupplierDataToIntermediateStorage, Finished writing {} Vendors", vendorCount);
     }
@@ -112,7 +120,60 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             }
         }
     }
-
+    
+    protected boolean currentVendorShouldBecomeParentVendor(VendorDetail currentVendor) {
+        if (currentVendor.isVendorParentIndicator()) {
+            return true;
+        }
+        return false;
+    }
+    
+    protected void writeSupplierChildrenRow(final CemiSupplierChildren supplierChildren) throws IOException {
+        writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.CHILDREN, supplierChildren);
+    }
+    
+    protected void writeSupplierChildrenRowWhenVendorIsChild(VendorDetail currentVendor, String currentSupplierId,
+            CemiSupplierParentIdentifiersReference parentSupplierReference) throws IOException {
+        
+        if (ObjectUtils.isNotNull(parentSupplierReference)
+                && !currentVendor.isVendorParentIndicator()
+                && currentVendor.getVendorHeaderGeneratedIdentifier().equals(parentSupplierReference.getParentVendorHeaderGeneratedIdentifier())
+                && !currentVendor.getVendorDetailAssignedIdentifier().equals(parentSupplierReference.getParentVendorDetailAssignedIdentifier())) {
+            //child vendor has been detected
+            final CemiSupplierChildren supplierChildren = new CemiSupplierChildren(currentSupplierId, parentSupplierReference.getParentSupplierId());
+            writeSupplierChildrenRow(supplierChildren);
+        } else {
+            if (ObjectUtils.isNotNull(parentSupplierReference) ) {
+                LOG.debug("writeSupplierChildrenRowWhenVendorIsChild, child vendor was not detected for "
+                    + "currentVendor.getVendorHeaderGeneratedIdentifier {}  "
+                    + "currentVendor.getVendorDetailAssignedIdentifier() {}  "
+                    + "parentSupplierReference.getParentVendorHeaderGeneratedIdentifier() {}   "
+                    + "parentSupplierReference.getParentVendorDetailAssignedIdentifier() {}",
+                    currentVendor.getVendorHeaderGeneratedIdentifier(),
+                    currentVendor.getVendorDetailAssignedIdentifier(),
+                    parentSupplierReference.getParentVendorHeaderGeneratedIdentifier(),
+                    parentSupplierReference.getParentVendorDetailAssignedIdentifier());
+            } else {
+                LOG.debug("writeSupplierChildrenRowWhenVendorIsChild, child vendor was not detected parentSupplierReference is NULL");
+            }
+        }
+        
+        if (currentVendorShouldBecomeParentVendor(currentVendor)) {
+            setParentSupplierReference(new CemiSupplierParentIdentifiersReference(currentSupplierId, currentVendor.getVendorHeaderGeneratedIdentifier(), currentVendor.getVendorDetailAssignedIdentifier()));
+        } else {
+            LOG.debug("writeSupplierChildrenRowWhenVendorIsChild, currentVendorShouldBecomeParentVendor return false for "
+                    + "currentVendor.getVendorHeaderGeneratedIdentifier {}  "
+                    + "currentVendor.getVendorDetailAssignedIdentifier() {}  "
+                    + "currentVendor.isVendorParentIndicator() {}"
+                    + "parentSupplierReference.getParentVendorHeaderGeneratedIdentifier() {}   "
+                    + "parentSupplierReference.getParentVendorDetailAssignedIdentifier() {}",
+                    currentVendor.getVendorHeaderGeneratedIdentifier(),
+                    currentVendor.getVendorDetailAssignedIdentifier(),
+                    currentVendor.isVendorParentIndicator(),
+                    parentSupplierReference.getParentVendorHeaderGeneratedIdentifier(),
+                    parentSupplierReference.getParentVendorDetailAssignedIdentifier());
+        }
+    }
 
     /*
      * The subclass that writes the vendor data to the temp tables needs to implement this method.
@@ -134,6 +195,14 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             default:
                 throw new IllegalStateException("Unknown field type: " + field.getType());
         }
+    }
+
+    public CemiSupplierParentIdentifiersReference getParentSupplierReference() {
+        return parentSupplierReference;
+    }
+
+    public void setParentSupplierReference(CemiSupplierParentIdentifiersReference parentSupplierReference) {
+        this.parentSupplierReference = parentSupplierReference;
     }
 
 }
