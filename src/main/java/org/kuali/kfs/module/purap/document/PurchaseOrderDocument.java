@@ -590,6 +590,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
         setApplicationDocumentStatus(PurchaseOrderStatuses.APPDOC_IN_PROCESS);
         setAccountDistributionMethod(requisitionDocument.getAccountDistributionMethod());
+        // CU Customization KFSPTS-37456: Copy document funding source code from requisition
+        setDocumentFundingSourceCode(requisitionDocument.getDocumentFundingSourceCode());
         // Copy items from requisition (which will copy the item's accounts and capital assets)
         final List<PurchaseOrderItem> items = new ArrayList<>();
         for (final PurApItem reqItem : ((PurchasingAccountsPayableDocument) requisitionDocument).getItems()) {
