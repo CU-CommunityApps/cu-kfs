@@ -67,7 +67,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
         for (final VendorDetail vendor : IteratorUtils.asIterable(vendors)) {
             vendorCount++;
             if (vendorCount % 1000 == 0) {
-                LOG.info("writeSupplierDataToIntermediateStorage, Writing {} Vendors and counting...", vendorCount);
+                LOG.debug("writeSupplierDataToIntermediateStorage, Writing {} Vendors and counting...", vendorCount);
             }
             final Collection<PayeeACHAccount> vendorAccounts = accountFinder.findAllActiveAccountsForVendor(
                     vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
@@ -87,7 +87,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
                     final CemiSupplierAddress supplierAddress = new CemiSupplierAddress(vendor.getVendorHeader().getVendorTypeCode(), vendorAddress, supplierId, addressCount);
                     writeSupplierAddressRow(supplierAddress);
                 } else {
-                    LOG.info("writeSupplierDataToIntermediateStorage, vendorAddressGeneratedIdentifier {} for vendor {}-{} was NOT written to conversion file.", 
+                    LOG.debug("writeSupplierDataToIntermediateStorage, vendorAddressGeneratedIdentifier {} for vendor {}-{} was NOT written to conversion file.", 
                             vendorAddress.getVendorAddressGeneratedIdentifier(),
                             vendor.getVendorHeaderGeneratedIdentifier(),
                             vendor.getVendorDetailAssignedIdentifier());
@@ -143,7 +143,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
                 final CemiSupplierPhone supplierPhone = new CemiSupplierPhone(vendorPhoneNumber, supplierId, phoneNumberCount);
                 writeSupplierPhoneRow(supplierPhone);
             } else {
-                LOG.info("writeAllSupplierPhoneRowsFor, vendorPhoneGeneratedIdentifier {} for vendor {}-{} was NOT written to conversion file.",
+                LOG.debug("writeAllSupplierPhoneRowsFor, vendorPhoneGeneratedIdentifier {} for vendor {}-{} was NOT written to conversion file.",
                         vendorPhoneNumber.getVendorPhoneGeneratedIdentifier(),
                         vendor.getVendorHeaderGeneratedIdentifier(),
                         vendor.getVendorDetailAssignedIdentifier());

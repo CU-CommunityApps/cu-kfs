@@ -44,7 +44,6 @@ public class CemiSupplierPhone {
         assignPhoneUseTenantedValuesBasedOnPhoneType(vendorPhoneNumber.getVendorPhoneTypeCode());
         
         //columns not populated with this load
-        this.phoneExtension = CemiVendorConstants.EMPTY_STRING;
         this.phoneUse2 = CemiVendorConstants.EMPTY_STRING;
         this.phoneUse3 = CemiVendorConstants.EMPTY_STRING;
         this.phoneUse4 = CemiVendorConstants.EMPTY_STRING;
