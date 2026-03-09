@@ -75,9 +75,9 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
     @Override
     public void processCustomTranslationForBusinessObjectCreate(
             RassXmlAwardEntry xmlAward, Award newAward) {
-        String proposalAwardTypeCode = parameterService.getParameterValueAsString(
+        String awardTypeCode = parameterService.getParameterValueAsString(
                 RassStep.class, RassConstants.RASS_DEFAULT_PROPOSAL_AWARD_TYPE_PARAMETER);
-        newAward.setProposalAwardTypeCode(proposalAwardTypeCode);
+        newAward.setAwardTypeCode(awardTypeCode);
         newAward.setAwardEntryDate(dateTimeService.getCurrentSqlDate());
         newAward.getAwardAccounts().add(createDefaultAwardAccount(xmlAward));
         addPrimaryFundManager(xmlAward, newAward);

@@ -30,7 +30,7 @@
   <proposalSubmissionDate>2021-01-31</proposalSubmissionDate>
   <proposalFederalPassThroughIndicator>false</proposalFederalPassThroughIndicator>
   <grantNumber>2020-30303-40404</grantNumber>
-  <proposalAwardTypeCode>S</proposalAwardTypeCode>
+  <awardTypeCode>S</awardTypeCode>
   <agencyNumber>19191</agencyNumber>
   <proposalStatusCode>SP</proposalStatusCode>
   <proposalPurposeCode>R</proposalPurposeCode>
@@ -314,7 +314,7 @@
   <proposalSubmissionDate>2021-01-31</proposalSubmissionDate>
   <proposalFederalPassThroughIndicator>false</proposalFederalPassThroughIndicator>
   <grantNumber>2020-30303-40404</grantNumber>
-  <proposalAwardTypeCode>S</proposalAwardTypeCode>
+  <awardTypeCode>S</awardTypeCode>
   <agencyNumber>19191</agencyNumber>
   <proposalStatusCode>SP</proposalStatusCode>
   <proposalPurposeCode>R</proposalPurposeCode>

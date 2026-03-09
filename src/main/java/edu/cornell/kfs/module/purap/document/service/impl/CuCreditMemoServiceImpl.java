@@ -28,7 +28,7 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
     private CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
 
     @Override
-    public VendorCreditMemoDocument addHoldOnCreditMemo(final VendorCreditMemoDocument cmDocument, final String note) throws Exception {
+    public VendorCreditMemoDocument addHoldOnCreditMemo(final VendorCreditMemoDocument cmDocument, final String note) {
         // save the note
         final Note noteObj = documentService.createNoteFromDocument(cmDocument, note);
         cmDocument.addNote(noteObj);
@@ -56,7 +56,7 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
      *      java.lang.String)
      */
     @Override
-    public VendorCreditMemoDocument removeHoldOnCreditMemo(final VendorCreditMemoDocument cmDocument, final String note) throws Exception {
+    public VendorCreditMemoDocument removeHoldOnCreditMemo(final VendorCreditMemoDocument cmDocument, final String note) {
         // save the note
         final Note noteObj = documentService.createNoteFromDocument(cmDocument, note);
         cmDocument.addNote(noteObj);

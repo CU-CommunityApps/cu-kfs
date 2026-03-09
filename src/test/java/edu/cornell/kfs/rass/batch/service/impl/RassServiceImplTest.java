@@ -951,7 +951,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
 
     private void assertAwardWasUpdatedAsExpected(RassXmlAwardEntryFixture expectedAward, Award actualAward, int i) {
         assertEquals("Wrong proposal/award type at index " + i,
-                RassTestConstants.DEFAULT_PROPOSAL_AWARD_TYPE, actualAward.getProposalAwardTypeCode());
+                RassTestConstants.DEFAULT_PROPOSAL_AWARD_TYPE, actualAward.getAwardTypeCode());
         assertEqualsOrBothBlank("Wrong proposal number at index " + i, expectedAward.proposalNumber, actualAward.getProposalNumber());
         assertEqualsOrBothBlank("Wrong award status at index " + i, expectedAward.status, actualAward.getAwardStatusCode());
         assertEqualsOrBothBlank("Wrong agency number at index " + i, expectedAward.agencyNumber, actualAward.getAgencyNumber());

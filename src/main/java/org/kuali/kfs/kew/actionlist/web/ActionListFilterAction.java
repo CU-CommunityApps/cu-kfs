@@ -69,8 +69,7 @@ public class ActionListFilterAction extends KualiAction {
 
     public ActionForward start(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws
-            Exception {
+            final HttpServletResponse response) {
         final ActionListFilterForm filterForm = (ActionListFilterForm) form;
         final UserSession uSession = getUserSession();
         final ActionListFilter filter =
@@ -90,8 +89,7 @@ public class ActionListFilterAction extends KualiAction {
 
     public ActionForward filter(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws
-            Exception {
+            final HttpServletResponse response) {
         final ActionListFilterForm filterForm = (ActionListFilterForm) form;
         //validate the filter through the actionitem/actionlist service (I'm thinking actionlistservice)
         final UserSession uSession = getUserSession();
@@ -118,8 +116,7 @@ public class ActionListFilterAction extends KualiAction {
      */
     public ActionForward clear(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws
-            Exception {
+            final HttpServletResponse response) {
         final ActionListFilterForm filterForm = (ActionListFilterForm) form;
         filterForm.setFilter(new ActionListFilter());
         filterForm.setCreateDateFrom("");
@@ -134,7 +131,7 @@ public class ActionListFilterAction extends KualiAction {
         return mapping.findForward("viewFilter");
     }
 
-    public void initForm(final HttpServletRequest request, final ActionForm form) throws Exception {
+    public void initForm(final HttpServletRequest request, final ActionForm form) {
         final ActionListFilterForm filterForm = (ActionListFilterForm) form;
         filterForm.setUserWorkgroups(getUserWorkgroupsDropDownList(getUserSession().getPrincipalId()));
         final PreferencesService prefSrv = KewApiServiceLocator.getPreferencesService();

@@ -19,7 +19,7 @@
   <awardIndirectCostAmount>
     <value>0.00</value>
   </awardIndirectCostAmount>
-  <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+  <awardTypeCode>Z</awardTypeCode>
   <awardStatusCode>WC</awardStatusCode>
   <letterOfCreditFundGroupCode>EDUC</letterOfCreditFundGroupCode>
   <grantDescriptionCode>GRT</grantDescriptionCode>
@@ -187,7 +187,7 @@
     <proposalSubmissionDate>2009-07-01</proposalSubmissionDate>
     <proposalFederalPassThroughIndicator>false</proposalFederalPassThroughIndicator>
     <grantNumber>P1112223334</grantNumber>
-    <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+    <awardTypeCode>Z</awardTypeCode>
     <agencyNumber>456</agencyNumber>
     <proposalStatusCode>WC</proposalStatusCode>
     <cfdaNumber>88.333</cfdaNumber>
@@ -461,7 +461,7 @@
     <proposalSubmissionDate>2009-07-01</proposalSubmissionDate>
     <proposalFederalPassThroughIndicator>false</proposalFederalPassThroughIndicator>
     <grantNumber>P1112223334</grantNumber>
-    <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+    <awardTypeCode>Z</awardTypeCode>
     <agencyNumber>456</agencyNumber>
     <proposalStatusCode>WC</proposalStatusCode>
     <cfdaNumber>88.333</cfdaNumber>
@@ -527,7 +527,7 @@
   <awardIndirectCostAmount>
     <value>0.00</value>
   </awardIndirectCostAmount>
-  <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+  <awardTypeCode>Z</awardTypeCode>
   <awardStatusCode>WC</awardStatusCode>
   <letterOfCreditFundGroupCode>EDUC</letterOfCreditFundGroupCode>
   <grantDescriptionCode>GRT</grantDescriptionCode>
@@ -629,7 +629,7 @@
     <proposalSubmissionDate>2009-07-01</proposalSubmissionDate>
     <proposalFederalPassThroughIndicator>false</proposalFederalPassThroughIndicator>
     <grantNumber>P1112223334</grantNumber>
-    <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+    <awardTypeCode>Z</awardTypeCode>
     <agencyNumber>456</agencyNumber>
     <proposalStatusCode>WC</proposalStatusCode>
     <cfdaNumber>88.333</cfdaNumber>
@@ -687,7 +687,7 @@
   <awardIndirectCostAmount>
     <value>0.00</value>
   </awardIndirectCostAmount>
-  <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+  <awardTypeCode>Z</awardTypeCode>
   <awardStatusCode>WC</awardStatusCode>
   <letterOfCreditFundGroupCode>EDUC</letterOfCreditFundGroupCode>
   <grantDescriptionCode>GRT</grantDescriptionCode>
@@ -825,7 +825,7 @@
     <proposalSubmissionDate>2009-07-01</proposalSubmissionDate>
     <proposalFederalPassThroughIndicator>false</proposalFederalPassThroughIndicator>
     <grantNumber>P1112223334</grantNumber>
-    <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+    <awardTypeCode>Z</awardTypeCode>
     <agencyNumber>456</agencyNumber>
     <proposalStatusCode>WC</proposalStatusCode>
     <cfdaNumber>88.333</cfdaNumber>

@@ -219,7 +219,7 @@ public class BlanketApproveEngine extends StandardWorkflowEngine {
         return nodeInstancesToProcess;
     }
 
-    private boolean isNodeNameInPath(final Set nodeNames, final RouteNodeInstance nodeInstance) throws Exception {
+    private boolean isNodeNameInPath(final Set nodeNames, final RouteNodeInstance nodeInstance) {
         boolean isInPath = false;
         for (final Object nodeName1 : nodeNames) {
             final String nodeName = (String) nodeName1;

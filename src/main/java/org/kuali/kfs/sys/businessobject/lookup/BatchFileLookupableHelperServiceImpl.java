@@ -37,11 +37,14 @@ import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
 import org.kuali.kfs.sys.batch.service.BatchFileAdminAuthorizationService;
 import org.kuali.kfs.sys.util.KfsDateUtils;
+import org.kuali.kfs.sys.web.struts.KualiBatchFileAdminAction;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.bo.BusinessObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,6 +53,7 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /*
  * Cornell Customization: Add old batch file lookup to support lookups on Create Disencumbrance page. This should be removed once the new batch file lookup will support return from lookup.
@@ -82,20 +86,20 @@ public class BatchFileLookupableHelperServiceImpl extends AbstractLookupableHelp
         }
 
         BatchFileFinder finder = new BatchFileFinder(results, filter);
-        List<File> rootDirectories = BatchFileUtils.retrieveBatchFileLookupRootDirectories();
+        List<File> rootDirectories = BatchFileUtils.retrieveBatchFileLookupRootDirectories().stream().map(Path::toFile).collect(Collectors.toList());
         finder.find(rootDirectories);
 
         return results;
     }
 
     protected IOFileFilter getPathBasedFileFilter() {
-        List<File> selectedFiles = getSelectedDirectories(getSelectedPaths());
+        List<Path> selectedFiles = getSelectedDirectories(getSelectedPaths());
         if (selectedFiles.isEmpty()) {
             return null;
         }
         IOFileFilter fileFilter = null;
-        for (File selectedFile : selectedFiles) {
-            IOFileFilter subFilter = new SubDirectoryFileFilter(selectedFile);
+        for (Path selectedFile : selectedFiles) {
+            IOFileFilter subFilter = new SubDirectoryFileFilter(selectedFile.toFile());
             if (fileFilter == null) {
                 fileFilter = subFilter;
             } else {
@@ -139,12 +143,12 @@ public class BatchFileLookupableHelperServiceImpl extends AbstractLookupableHelp
         throw new RuntimeException("Unable to perform search using last modified date " + lastModifiedDatePattern);
     }
 
-    protected List<File> getSelectedDirectories(String[] selectedPaths) {
-        List<File> directories = new ArrayList<File>();
+    protected List<Path> getSelectedDirectories(String[] selectedPaths) {
+        List<Path> directories = new ArrayList<Path>();
         if (selectedPaths != null) {
             for (String selectedPath : selectedPaths) {
-                File directory = new File(BatchFileUtils.resolvePathToAbsolutePath(selectedPath));
-                if (!directory.exists()) {
+                Path directory = Paths.get(BatchFileUtils.resolvePathToAbsolutePath(selectedPath)).toAbsolutePath();
+                if (!directory.toFile().exists()) {
                     throw new RuntimeException("Non existent directory " + BatchFileUtils.resolvePathToAbsolutePath(selectedPath));
                 }
                 directories.add(directory);
@@ -300,7 +304,7 @@ public class BatchFileLookupableHelperServiceImpl extends AbstractLookupableHelp
         if (selectedPaths != null) {
             for (String selectedPath : selectedPaths) {
                 String resolvedPath = BatchFileUtils.resolvePathToAbsolutePath(selectedPath);
-                if (!BatchFileUtils.isDirectoryAccessible(resolvedPath)) {
+                if (!KualiBatchFileAdminAction.isDirectoryAccessible(resolvedPath)) {
                     throw new RuntimeException("Can't access path " + selectedPath);
                 }
             }
@@ -315,4 +319,5 @@ public class BatchFileLookupableHelperServiceImpl extends AbstractLookupableHelp
     public void setBatchFileAdminAuthorizationService(BatchFileAdminAuthorizationService batchFileAdminAuthorizationService) {
         this.batchFileAdminAuthorizationService = batchFileAdminAuthorizationService;
     }
+
 }

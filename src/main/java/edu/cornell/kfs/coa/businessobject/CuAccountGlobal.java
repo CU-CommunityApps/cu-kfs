@@ -57,7 +57,6 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
     protected String contractControlFinCoaCode;
     protected String contractControlAccountNumber;
     protected String acctIndirectCostRcvyTypeCd;
-    protected Integer contractsAndGrantsAccountResponsibilityId;
     protected String invoiceFrequencyCode;
     protected String invoiceTypeCode;
     protected Long costShareForProjectNumber;
@@ -298,10 +297,6 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 
 		if (StringUtils.isNotBlank(financialIcrSeriesIdentifier)) {
 		    account.setFinancialIcrSeriesIdentifier(financialIcrSeriesIdentifier);
-		}
-
-		if (ObjectUtils.isNotNull(contractsAndGrantsAccountResponsibilityId)) {
-		    account.setContractsAndGrantsAccountResponsibilityId(contractsAndGrantsAccountResponsibilityId);
 		}
 
 		if (StringUtils.isNotBlank(invoiceFrequencyCode)) {
@@ -585,14 +580,6 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 
     public void setAcctIndirectCostRcvyTypeCd(final String acctIndirectCostRcvyTypeCd) {
         this.acctIndirectCostRcvyTypeCd = acctIndirectCostRcvyTypeCd;
-    }
-
-    public Integer getContractsAndGrantsAccountResponsibilityId() {
-        return contractsAndGrantsAccountResponsibilityId;
-    }
-
-    public void setContractsAndGrantsAccountResponsibilityId(final Integer contractsAndGrantsAccountResponsibilityId) {
-        this.contractsAndGrantsAccountResponsibilityId = contractsAndGrantsAccountResponsibilityId;
     }
 
     public String getInvoiceFrequencyCode() {

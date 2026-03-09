@@ -150,7 +150,7 @@
                 <value>preferencesService</value>
                 <value>responsibilityChangeQueue</value>
                 <value>rice.ksb.exceptionMessagingService</value>
-                <value>rice.ksb.messageQueueService</value>
+                <value>ksb.messageQueueService</value>
                 <value>roleService</value>
                 <value>routeModuleService</value>
                 <value>routeNodeService</value>

@@ -450,7 +450,7 @@ public class KualiDocumentActionBase extends KualiAction {
      */
     public ActionForward insertAdHocRoutePerson(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         final Document document = kualiDocumentFormBase.getDocument();
         // check authorization for adding ad hoc route person
@@ -485,11 +485,10 @@ public class KualiDocumentActionBase extends KualiAction {
      * @param request
      * @param response
      * @return ActionForward
-     * @throws Exception
      */
     public ActionForward deleteAdHocRoutePerson(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         kualiDocumentFormBase.getAdHocRoutePersons().remove(getLineToDelete(request));
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
@@ -504,11 +503,10 @@ public class KualiDocumentActionBase extends KualiAction {
      * @param request
      * @param response
      * @return ActionForward
-     * @throws Exception
      */
     public ActionForward insertAdHocRouteWorkgroup(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         final Document document = kualiDocumentFormBase.getDocument();
 
@@ -536,11 +534,10 @@ public class KualiDocumentActionBase extends KualiAction {
      * @param request
      * @param response
      * @return ActionForward
-     * @throws Exception
      */
     public ActionForward deleteAdHocRouteWorkgroup(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
 
         kualiDocumentFormBase.getAdHocRouteWorkgroups().remove(getLineToDelete(request));
@@ -640,13 +637,11 @@ public class KualiDocumentActionBase extends KualiAction {
      * @param context    additional context that needs to be passed back with the question response
      * @return ActionForward which contains the question forward, or basic forward if user select no to prompt,
      *         otherwise will return null to indicate processing should continue
-     * @throws Exception
      */
     protected ActionForward checkAndWarnAboutSensitiveData(
             final ActionMapping mapping, final ActionForm form,
             final HttpServletRequest request, final HttpServletResponse response, final String fieldName, final String fieldValue,
-            final String caller, final String context)
-        throws Exception {
+            final String caller, final String context) {
         final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         final Document document = kualiDocumentFormBase.getDocument();
 
@@ -852,9 +847,8 @@ public class KualiDocumentActionBase extends KualiAction {
      * @param request
      * @param reason
      *
-     * @throws Exception
      */
-    protected void doDisapprove(final KualiDocumentFormBase form, final HttpServletRequest request, final String reason) throws Exception {
+    protected void doDisapprove(final KualiDocumentFormBase form, final HttpServletRequest request, final String reason) {
         doProcessingAfterPost(form, request);
         getDocumentService().disapproveDocument(form.getDocument(), reason);
         KNSGlobalVariables.getMessageList().add(MESSAGE_ROUTE_DISAPPROVED);
@@ -1206,11 +1200,10 @@ public class KualiDocumentActionBase extends KualiAction {
      * @param request
      * @param response
      * @return ActionForward
-     * @throws Exception
      */
     public ActionForward cancelBOAttachment(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final KualiDocumentFormBase documentForm = (KualiDocumentFormBase) form;
 
         // blank current attachmentFile
@@ -1466,6 +1459,11 @@ public class KualiDocumentActionBase extends KualiAction {
         final Note note = document.getNote(noteIndex);
 
         deleteNoteFromDocument(document, note);
+        // if the document isn't approved, save it so the deleted note/attachment stays deleted
+        final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        if (!workflowDocument.isApproved()) {
+            getDocumentService().saveDocument(document);
+        }
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
@@ -1511,7 +1509,7 @@ public class KualiDocumentActionBase extends KualiAction {
 
     public ActionForward sendNoteWorkflowNotification(
             final ActionMapping mapping, final ActionForm form,
-            final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+            final HttpServletRequest request, final HttpServletResponse response) {
         final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         final Document document = kualiDocumentFormBase.getDocument();
 
@@ -1584,11 +1582,10 @@ public class KualiDocumentActionBase extends KualiAction {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     public ActionForward promptBeforeValidation(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         return promptBeforeValidation(mapping, form, request, response, "route");
     }
 
@@ -1602,11 +1599,10 @@ public class KualiDocumentActionBase extends KualiAction {
      * @param response
      * @param methodToCall
      * @return
-     * @throws Exception
      */
     public ActionForward promptBeforeValidation(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response, final String methodToCall) throws Exception {
+            final HttpServletResponse response, final String methodToCall) {
         final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
 
         /* callback to any pre rules check class */
@@ -2056,11 +2052,10 @@ public class KualiDocumentActionBase extends KualiAction {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     public ActionForward complete(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) {
         final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         doProcessingAfterPost(kualiDocumentFormBase, request);
 
@@ -2143,11 +2138,10 @@ public class KualiDocumentActionBase extends KualiAction {
          * @param response http response
          * @return Response object representing *either*: 1) an ActionForward due to error or abort 2) a reason and
          *         button clicked
-         * @throws Exception
          */
         public Response ask(
                 final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
-                final HttpServletResponse response) throws Exception {
+                final HttpServletResponse response) {
             final String question = request.getParameter(KRADConstants.QUESTION_INST_ATTRIBUTE_NAME);
             String reason = request.getParameter(KRADConstants.QUESTION_REASON_ATTRIBUTE_NAME);
 

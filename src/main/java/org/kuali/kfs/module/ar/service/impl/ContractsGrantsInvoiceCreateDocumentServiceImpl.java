@@ -1317,6 +1317,9 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
             final List<InvoiceDetailAccountObjectCode> invoiceDetailAccountObjectCodes, final KualiDecimal total) {
         final KualiDecimal cumulativeExpenditureTotal = sumInvoiceDetailAccountObjectCodes(
                 invoiceDetailAccountObjectCodes).getCumulativeExpenditures();
+        if (total.isZero()) {
+            return BigDecimal.ZERO;
+        }
         return cumulativeExpenditureTotal.bigDecimalValue().divide(total.bigDecimalValue(), 10, RoundingMode.HALF_UP);
     }
 
@@ -1804,8 +1807,8 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                              */
                             award.setCreationProcessType(creationProcessType);
                             if (verifyBillingFrequencyService.validateBillingFrequency(award, checkGracePeriod)
-                                || ArConstants.BillingFrequencyValues.isMilestone(award)
-                                || ArConstants.BillingFrequencyValues.isPredeterminedBilling(award)) {
+                                    || ArConstants.BillingFrequencyValues.isMilestone(award)
+                                    || ArConstants.BillingFrequencyValues.isPredeterminedBilling(award)) {
                                 validateAward(errorList, award, creationProcessType);
                             } else {
                                 errorList.add(configurationService.getPropertyValueAsString(
@@ -2119,7 +2122,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
 
     protected void writeErrorEntryByAward(
             final Award award, final List<String> validationCategory,
-            final PrintStream printStream) throws IOException {
+            final PrintStream printStream) {
         // %15s %18s %20s %19s %15s %18s %23s %18s
         if (ObjectUtils.isNotNull(award)) {
             KualiDecimal cumulativeExpenses = KualiDecimal.ZERO;
@@ -2186,8 +2189,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
 
     protected void writeToReport(
             final String proposalNumber, final String accountNumber, final String awardBeginningDate,
-            final String awardEndingDate, final String awardTotalAmount, final String cumulativeExpenses, final PrintStream printStream)
-            throws IOException {
+            final String awardEndingDate, final String awardTotalAmount, final String cumulativeExpenses, final PrintStream printStream) {
         printStream.printf("%15s", proposalNumber);
         printStream.printf("%18s", accountNumber);
         printStream.printf("%20s", awardBeginningDate);
@@ -2199,9 +2201,8 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
 
     /**
      * @param printStream
-     * @throws IOException
      */
-    protected void writeReportHeader(final PrintStream printStream) throws IOException {
+    protected void writeReportHeader(final PrintStream printStream) {
         printStream.printf("%15s%18s%20s%19s%15s%23s\r\n", "Proposal Number", "Account Number", "Award Start Date",
                 "Award Stop Date", "Award Total", "Cumulative Expenses");
         printStream.printf("%23s", "Validation Category");
