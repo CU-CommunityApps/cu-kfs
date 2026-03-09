@@ -220,7 +220,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             }
             numAccounts++;
             final CemiSupplierBankAccountSubEntry accountEntry = new CemiSupplierBankAccountSubEntry(
-                    vendorAccount, supplierId, numAccounts);
+                    vendorAccount, supplierId, numAccounts, maskSensitiveData);
             accountEntries.add(accountEntry);
         }
 

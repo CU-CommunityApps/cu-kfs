@@ -23,6 +23,7 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -37,8 +38,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.CemiBaseConstants;
 import edu.cornell.kfs.sys.CUKFSConstants.FileExtensions;
+import edu.cornell.kfs.sys.CemiBaseConstants;
 import edu.cornell.kfs.sys.batch.CemiOutputDefinitionFileType;
 import edu.cornell.kfs.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.sys.batch.xml.CemiOutputDefinition;
@@ -50,9 +51,12 @@ import edu.cornell.kfs.vnd.batch.service.CemiSupplierExtractService;
 import edu.cornell.kfs.vnd.dataaccess.CemiVendorDao;
 import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
 
+@SuppressWarnings("deprecation")
 public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractService {
 
     private static final Logger LOG = LogManager.getLogger();
+
+    private final Environment environment;
 
     private String supplierFileCreationDirectory;
     private String supplierFileOutboundDirectory;
@@ -62,6 +66,11 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
     private BusinessObjectService businessObjectService;
     private ParameterService parameterService;
     private DateTimeService dateTimeService;
+    private String cemiEnvironmentLaneName;
+
+    public CemiSupplierExtractServiceImpl(final Environment environment) {
+        this.environment = environment;
+    }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
@@ -233,14 +242,13 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
     }
     
     private boolean isCemiSensitiveDataSetToUnmask() {
-        String maskingParamterValue =  parameterService.getParameterValueAsString(
+        String maskingParameterValue =  parameterService.getParameterValueAsString(
                 CreateCemiSupplierExtractStep.class, CuVendorParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
-        
-        return (!maskingParamterValue.isBlank() && maskingParamterValue.equalsIgnoreCase(CemiBaseConstants.UNMASK));
+        return StringUtils.equalsIgnoreCase(maskingParameterValue, CemiBaseConstants.UNMASK);
     }
     
     private boolean isCemiEnvironment() {
-        return false; //TODO determine running environment, return true iff env is CEMI; otherwise false
+        return StringUtils.equalsIgnoreCase(cemiEnvironmentLaneName, environment.getLane());
     }
     
     private boolean shouldUnmaskCemiSensitiveData() {

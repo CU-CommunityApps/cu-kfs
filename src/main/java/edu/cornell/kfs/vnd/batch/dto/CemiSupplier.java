@@ -69,7 +69,7 @@ public class CemiSupplier {
 
     private static String determineTaxIdValue(VendorDetail vendorDetail, boolean maskCemiSensitiveData) {
         if (!maskCemiSensitiveData) {
-            //return tax id value from vendor TODO add setting the tax ID value
+            return vendorDetail.getVendorHeader().getVendorTaxNumber();
         }
         return CemiVendorConstants.DUMMY_TAX_ID;
     }
@@ -82,8 +82,10 @@ public class CemiSupplier {
         return index < aliases.size() ? CemiVendorConstants.ALTERNATE_NAME_USAGE_DEFAULT_VALUE : "";
     }
 
+    // default to true if tax id is present, FALSE if tax type USA_SSN
     private static String determineTransactionTaxId(VendorDetail vendorDetail, String taxIdValue, String taxIdType) {
-        boolean transactionTaxId = StringUtils.isNotBlank(taxIdValue) && !CemiVendorConstants.USA_SSN_TAX_TYPE.equalsIgnoreCase(taxIdType); // default to true if tax id is present, FALSE if tax type USA_SSN
+        boolean transactionTaxId = StringUtils.isNoneBlank(taxIdType, taxIdValue)
+                && !CemiVendorConstants.USA_SSN_TAX_TYPE.equalsIgnoreCase(taxIdType);
         return CemiUtils.convertToBooleanValueForFileExtract(transactionTaxId);
     }
     
@@ -115,7 +117,7 @@ public class CemiSupplier {
         return CemiVendorConstants.TAX_ID_TYPES.get(kfsTaxType);
     }
     
-    private String determineVendorPaymentTerms(VendorDetail vendorDetail) {
+    private static String determineVendorPaymentTerms(VendorDetail vendorDetail) {
         vendorDetail.refreshReferenceObject("vendorPaymentTerms");
         if (ObjectUtils.isNotNull(vendorDetail.getVendorPaymentTerms())) {
             String paymentTermsDescription = vendorDetail.getVendorPaymentTerms().getVendorPaymentTermsDescription();
@@ -164,9 +166,7 @@ public class CemiSupplier {
     }
 
     public String getTransactionTaxId() {
-        return CemiUtils.convertToBooleanValueForFileExtract(
-                StringUtils.isNoneBlank(taxIdType, taxIdValue)
-                        && !StringUtils.equals(taxIdType, CemiVendorConstants.USA_SSN_TAX_TYPE));
+        return transactionTaxId;
     }
 
     public String getPrimaryTaxId() {

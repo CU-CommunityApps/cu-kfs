@@ -47,12 +47,12 @@ public class CemiSupplierBankAccountSubEntry {
     }
 
     public CemiSupplierBankAccountSubEntry(final PayeeACHAccount vendorAccount, final String supplierId,
-            final int accountIndex) {
+            final int accountIndex, final boolean maskSensitiveData) {
         this.vendorAccount = vendorAccount;
         this.supplierId = supplierId;
         this.bankName = vendorAccount.getBankRouting().getBankName();
         this.bankRoutingNumber = vendorAccount.getBankRoutingNumber();
-        this.bankAccountNumber = determineBankAccountNumber(vendorAccount);
+        this.bankAccountNumber = determineBankAccountNumber(vendorAccount, maskSensitiveData);
         this.bankAccountName = determineBankAccountName(bankName, bankAccountNumber);
         this.bankAccountId = determineBankAccountId(supplierId, bankAccountName, accountIndex);
         this.bankAccountType = determineBankAccountType(vendorAccount);
@@ -62,11 +62,9 @@ public class CemiSupplierBankAccountSubEntry {
         this.paymentTypes = Collections.nCopies(3, CemiVendorConstants.EMPTY_STRING);
     }
 
-    private static String determineBankAccountNumber(final PayeeACHAccount vendorAccount) {
-        boolean cemiEnv = false; //TODO: determine if job is running in CEMI environment
-        boolean maskCEMISensitiveValues = true; // TODO: determine if masking sensitive values for CEMI data conversion is on or off
-        if (cemiEnv && !maskCEMISensitiveValues) {
-            //return vendorAccount.getBankAccountNumber();
+    private static String determineBankAccountNumber(final PayeeACHAccount vendorAccount, final boolean maskSensitiveData) {
+        if (!maskSensitiveData) {
+            return vendorAccount.getBankAccountNumber();
         }
         return CemiVendorConstants.DUMMY_ACCOUNT_NUMBER;
     }
