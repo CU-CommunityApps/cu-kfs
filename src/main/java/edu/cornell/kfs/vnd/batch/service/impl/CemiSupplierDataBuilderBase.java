@@ -67,7 +67,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
         for (final VendorDetail vendor : IteratorUtils.asIterable(vendors)) {
             vendorCount++;
             if (vendorCount % 1000 == 0) {
-                LOG.debug("writeSupplierDataToIntermediateStorage, Writing {} Vendors and counting...", vendorCount);
+                LOG.info("writeSupplierDataToIntermediateStorage, Writing {} Vendors and counting...", vendorCount);
             }
             final Collection<PayeeACHAccount> vendorAccounts = accountFinder.findAllActiveAccountsForVendor(
                     vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
