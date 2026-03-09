@@ -295,6 +295,7 @@
 		  p:cuVendorDao-ref="vendorDao"
 		  p:cemiVendorDao-ref="cemiVendorDao"
           p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:businessObjectService-ref="businessObjectService"
           p:parameterService-ref="parameterService"
           p:dateTimeService-ref="dateTimeService"/>
 
