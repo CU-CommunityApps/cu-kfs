@@ -37,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.CemiBaseConstants;
 import edu.cornell.kfs.sys.CUKFSConstants.FileExtensions;
 import edu.cornell.kfs.sys.batch.CemiOutputDefinitionFileType;
 import edu.cornell.kfs.sys.batch.service.impl.CemiExcelWriter;
@@ -131,7 +132,8 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
         try (
             // Replace this builder with a temp table implementation when ready.
             final CemiSupplierDataBuilderCsvImpl dataBuilder = new CemiSupplierDataBuilderCsvImpl(
-                    getOutputDefinitionForSupplierExtract(), jobRunDate, supplierFileCreationDirectory, false);
+                    getOutputDefinitionForSupplierExtract(), jobRunDate, supplierFileCreationDirectory, 
+                    shouldMaskCemiSensitiveData());
             final Stream<VendorDetail> vendors = cuVendorDao.getVendorsForCemiSupplierExtractAsCloseableStream();
         ) {
             final Iterator<VendorDetail> vendorsIterator = vendors.iterator();
@@ -228,6 +230,25 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
     private boolean shouldCopySupplierExtractFileToOutboundDirectory() {
         return parameterService.getParameterValueAsBoolean(
                 CreateCemiSupplierExtractStep.class, CuVendorParameterConstants.COPY_CEMI_SUPPLIER_FILE_TO_OUTBOUND_FOLDER);
+    }
+    
+    private boolean isCemiSensitiveDataSetToUnmask() {
+        String maskingParamterValue =  parameterService.getParameterValueAsString(
+                CreateCemiSupplierExtractStep.class, CuVendorParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
+        
+        return (!maskingParamterValue.isBlank() && maskingParamterValue.equalsIgnoreCase(CemiBaseConstants.UNMASK));
+    }
+    
+    private boolean isCemiEnvironment() {
+        return false; //TODO determine running environment, return true iff env is CEMI; otherwise false
+    }
+    
+    private boolean shouldUnmaskCemiSensitiveData() {
+        return (isCemiEnvironment() && isCemiSensitiveDataSetToUnmask());
+    }
+    
+    private boolean shouldMaskCemiSensitiveData() {
+        return (!shouldUnmaskCemiSensitiveData());
     }
 
     private void copySupplierExtractFileToOutboundDirectory(final File sourceFile, final File targetFile) {

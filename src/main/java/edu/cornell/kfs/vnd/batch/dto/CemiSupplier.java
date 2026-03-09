@@ -45,13 +45,13 @@ public class CemiSupplier {
      * If necessary, this object can be modified into a mutable one and/or a different mechanism could
      * be implemented to compute the derived values.
      */
-    public CemiSupplier(final VendorDetail vendorDetail, final String supplierId) {
+    public CemiSupplier(final VendorDetail vendorDetail, final String supplierId, boolean maskCemiSensitiveData) {
         this.vendorDetail = vendorDetail;
         this.supplierId = supplierId;
         this.supplierReferenceId = buildSupplierReferenceId(vendorDetail);
         this.taxAuthorityFormType = determineTaxAuthorityFormType(vendorDetail);
         this.taxIdType = determineTaxIdType(vendorDetail);
-        this.taxIdValue = determineTaxIdValue(vendorDetail);
+        this.taxIdValue = determineTaxIdValue(vendorDetail, maskCemiSensitiveData);
         this.transactionTaxId = determineTransactionTaxId(vendorDetail, this.taxIdValue, this.taxIdType);
         this.primaryTaxId = determinePrimaryTaxId(vendorDetail, this.taxIdValue);
         this.countryTaxId = CemiVendorConstants.COUNTRY_CODE_UNITED_STATES;
@@ -67,12 +67,9 @@ public class CemiSupplier {
         this.alias1Usage = getAliasUsage(vendorAliases, 1);
     }
 
-    private static String determineTaxIdValue(VendorDetail vendorDetail) {
-        boolean cemiEnv = false; //TODO: determine if job is running in CEMI environment
-        boolean maskCEMISensitiveValues = true; // TODO: determine if masking sensitive values for CEMI data conversion is on or off
-        
-        if(cemiEnv && !maskCEMISensitiveValues) {
-            //return tax id value from vendor
+    private static String determineTaxIdValue(VendorDetail vendorDetail, boolean maskCemiSensitiveData) {
+        if (!maskCemiSensitiveData) {
+            //return tax id value from vendor TODO add setting the tax ID value
         }
         return CemiVendorConstants.DUMMY_TAX_ID;
     }

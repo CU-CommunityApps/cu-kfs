@@ -74,7 +74,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
 
             //Suppliers Tab
             final String supplierId = supplierIdFormatter.format(vendorCount);
-            final CemiSupplier supplier = new CemiSupplier(vendor, supplierId);
+            final CemiSupplier supplier = new CemiSupplier(vendor, supplierId, maskSensitiveData);
             writeSupplierRow(supplier);
             
             //Addresses Tab
