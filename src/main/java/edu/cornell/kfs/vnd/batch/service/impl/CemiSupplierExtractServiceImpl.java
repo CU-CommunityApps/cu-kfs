@@ -302,4 +302,8 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
         this.dateTimeService = dateTimeService;
     }
 
+    public void setCemiEnvironmentLaneName(final String cemiEnvironmentLaneName) {
+        this.cemiEnvironmentLaneName = cemiEnvironmentLaneName;
+    }
+
 }
