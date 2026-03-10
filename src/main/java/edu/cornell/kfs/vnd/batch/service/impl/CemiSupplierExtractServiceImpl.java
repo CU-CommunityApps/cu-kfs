@@ -66,7 +66,6 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
     private BusinessObjectService businessObjectService;
     private ParameterService parameterService;
     private DateTimeService dateTimeService;
-    private String cemiEnvironmentLaneName;
 
     public CemiSupplierExtractServiceImpl(final Environment environment) {
         this.environment = environment;
@@ -240,23 +239,23 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
         return parameterService.getParameterValueAsBoolean(
                 CreateCemiSupplierExtractStep.class, CuVendorParameterConstants.COPY_CEMI_SUPPLIER_FILE_TO_OUTBOUND_FOLDER);
     }
-    
+
     private boolean isCemiSensitiveDataSetToUnmask() {
         String maskingParameterValue =  parameterService.getParameterValueAsString(
                 CreateCemiSupplierExtractStep.class, CuVendorParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
         return StringUtils.equalsIgnoreCase(maskingParameterValue, CemiBaseConstants.UNMASK);
     }
-    
+
     private boolean isCemiEnvironment() {
-        return StringUtils.equalsIgnoreCase(cemiEnvironmentLaneName, environment.getLane());
+        return StringUtils.equalsIgnoreCase(environment.getLane(), CemiBaseConstants.CEMI_ENVIRONMENT_LANE_NAME);
     }
-    
+
     private boolean shouldUnmaskCemiSensitiveData() {
-        return (isCemiEnvironment() && isCemiSensitiveDataSetToUnmask());
+        return isCemiEnvironment() && isCemiSensitiveDataSetToUnmask();
     }
-    
+
     private boolean shouldMaskCemiSensitiveData() {
-        return (!shouldUnmaskCemiSensitiveData());
+        return !shouldUnmaskCemiSensitiveData();
     }
 
     private void copySupplierExtractFileToOutboundDirectory(final File sourceFile, final File targetFile) {
@@ -300,10 +299,6 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
 
     public void setDateTimeService(final DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
-    }
-
-    public void setCemiEnvironmentLaneName(final String cemiEnvironmentLaneName) {
-        this.cemiEnvironmentLaneName = cemiEnvironmentLaneName;
     }
 
 }

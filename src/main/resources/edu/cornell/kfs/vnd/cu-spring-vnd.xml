@@ -298,8 +298,7 @@
           p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
           p:businessObjectService-ref="businessObjectService"
           p:parameterService-ref="parameterService"
-          p:dateTimeService-ref="dateTimeService"
-          p:cemiEnvironmentLaneName="${cemi.environment.lane.name}"/>
+          p:dateTimeService-ref="dateTimeService"/>
 
     <bean id="cemiVendorDao" parent="cemiVendorDao-parentBean"/>
     <bean id="cemiVendorDao-parentBean"
