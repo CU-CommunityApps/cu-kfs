@@ -10,6 +10,7 @@
      <property name="attributes">
       <list merge="true">
         <ref bean="PurchaseOrderDocument-vendorEmailAddress"/>
+		<ref bean="PurchaseOrderDocument-documentFundingSourceCode"/>
       </list>
     </property>
  
@@ -131,6 +132,31 @@
   	    <property name="searchingTypeDefinitions">
     		<ref bean="SearchingTypeDefinitions-PurchaseOrderDocumentFamily"/>
     	</property>  	
-	</bean> 
-	
+	</bean>
+
+	<!-- KFSPTS-37456 CU Customization -->
+	<bean id="FundingSource-fundingSourceCode" parent="FundingSource-fundingSourceCode-parentBean"/>
+	<bean abstract="true"
+		  id="FundingSource-fundingSourceCode-parentBean"
+		  parent="AttributeDefinition"
+		  p:forceUppercase="true"
+		  p:label="Funding Source Code"
+		  p:maxLength="4"
+		  p:name="fundingSourceCode"
+		  p:shortLabel="Code"
+		  p:validationPattern-ref="AnyCharacterValidation"
+	>
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="6"/>
+		</property>
+	</bean>
+
+	<bean id="PurchaseOrderDocument-documentFundingSourceCode"
+		  parent="PurchaseOrderDocument-documentFundingSourceCode-parentBean"/>
+	<bean id="PurchaseOrderDocument-documentFundingSourceCode-parentBean" abstract="true"
+		  parent="FundingSource-fundingSourceCode" p:name="documentFundingSourceCode" p:label="Funding Source"
+		  p:shortLabel="Funding Source" p:required="false">
+	</bean>
+
+
 </beans>
