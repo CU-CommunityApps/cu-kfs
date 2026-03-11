@@ -37,7 +37,7 @@
 
 <c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}" />
 <c:if test="${empty editableFundingSource}">
-	<c:set var="editableFundingSource" value="false" />
+	<c:set var="editableFundingSource" value="true" />
 </c:if>
 
 <c:if test="${amendmentEntry}">
