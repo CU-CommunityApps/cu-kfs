@@ -483,9 +483,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
 
     public PaymentRequestDocument createPaymentRequestDocumentFromDto(PaymentRequestDto preqDto, PaymentRequestResultsDto results) {
-
         LOG.info("Creating PaymentRequestDocument from DTO for PO: {}", preqDto.getPoNumberAsInteger());
-
         try {
             PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(preqDto.getPoNumberAsInteger());
 
@@ -638,16 +636,11 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         try {
             byte[] attachmentBytes = Base64.getDecoder().decode(noteDto.getAttachmentContent());
             int fileSize = attachmentBytes.length;
+            String attachmentType = null;
             
             try (ByteArrayInputStream inputStream = new ByteArrayInputStream(attachmentBytes)) {
-                Attachment attachment = attachmentService.createAttachment(
-                        document.getDocumentHeader(),
-                        noteDto.getAttachmentFileName(),
-                        noteDto.getAttachmentMimeType(),
-                        fileSize,
-                        inputStream,
-                        null  // attachmentType - passing null as in the reference implementations
-                );
+                Attachment attachment = attachmentService.createAttachment(note, noteDto.getAttachmentFileName(), 
+                     noteDto.getAttachmentMimeType(), fileSize, inputStream, attachmentType);
                 note.addAttachment(attachment);
                 LOG.info("addAttachmentToNote, successfully added attachment '{}' (size: {} bytes, mimeType: {}) to note",
                         noteDto.getAttachmentFileName(), fileSize, noteDto.getAttachmentMimeType());
