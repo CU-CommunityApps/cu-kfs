@@ -1,5 +1,6 @@
 package edu.cornell.kfs.vnd.batch.dto;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +34,7 @@ public class CemiSupplierEmailSubEntry {
     public CemiSupplierEmailSubEntry(VendorAddress vendorAddress, String supplierId, boolean primaryAddress, int index) {
         this.vendorAddress = vendorAddress;
         this.supplierId = supplierId;
-        this.emailId = determineEmailId(vendorAddress, supplierId, index);
+        this.emailId = determineEmailId(supplierId, vendorAddress.getVendorAddressGeneratedIdentifier(), index);
         this.emailAddress = vendorAddress.getVendorAddressEmailAddress();
         this.emailPrimary = CemiUtils.convertToBooleanValueForFileExtract(primaryAddress);
         String addressTypeCode = vendorAddress.getVendorAddressTypeCode();
@@ -55,10 +56,12 @@ public class CemiSupplierEmailSubEntry {
         return result;
     }
 
-    private String determineEmailId(VendorAddress vendorAddress, String supplierId, int index) {
-        return supplierId + "_" + vendorAddress.getVendorAddressEmailAddress() + "_" + index;
+    private String determineEmailId(String supplierId, Integer vendorAddressGeneratedIdentifier, int index) {
+        return MessageFormat.format(CemiVendorConstants.EMAIL_ID_FORMAT,
+                supplierId, 
+                Integer.toString(vendorAddressGeneratedIdentifier),
+                Integer.toString(index));
     }
-    
     
     private static List<String> determineEmailUseFor(String addressTypeCode) {
         List<String> uses = CemiVendorConstants.ADDRESS_USES.get(addressTypeCode);

@@ -14,9 +14,10 @@ public final class CemiVendorConstants {
 
     public static final String EMPTY_STRING = KFSConstants.EMPTY_STRING;
     
-    public static final String SUPPLIER_ID_FORMAT = "'SUP'000000";
+    public static final String SUPPLIER_ID_FORMAT = "'SUPP'000000";
     public static final String SUPPLIER_REFERENCE_ID_FORMAT = "SUPU_{0}-{1}";
     public static final String ADDRESS_ID_FORMAT = "{0}_{1}_{2}";
+    public static final String EMAIL_ID_FORMAT = "{0}_{1}_{2}";
     public static final String PHONE_ID_FORMAT = "{0}_{1}_{2}";
     public static final String BANK_ACCOUNT_ID_FORMAT = "{0}_{1}_{2}";
     public static final int SUPPLIER_HEADER_ROWS_PER_SHEET = 6;
