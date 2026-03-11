@@ -44,12 +44,6 @@ public class CemiSupplierPhone {
         assignPhoneUseTenantedValuesBasedOnPhoneType(vendorPhoneNumber.getVendorPhoneTypeCode());
         
         //columns not populated with this load
-        this.phoneUse2 = CemiVendorConstants.EMPTY_STRING;
-        this.phoneUse3 = CemiVendorConstants.EMPTY_STRING;
-        this.phoneUse4 = CemiVendorConstants.EMPTY_STRING;
-        this.phoneUseTenanted2 = CemiVendorConstants.EMPTY_STRING;
-        this.phoneUseTenanted3 = CemiVendorConstants.EMPTY_STRING;
-        this.phoneUseTenanted4 = CemiVendorConstants.EMPTY_STRING;
         this.comments = CemiVendorConstants.EMPTY_STRING;
     }
     
@@ -64,31 +58,74 @@ public class CemiSupplierPhone {
         return phoneNumberCount == 1;
     }
     
+    private void setAllPhoneUseValuesToEmptyString() {
+        setPhoneUse(CemiVendorConstants.EMPTY_STRING);
+        setPhoneUse2(CemiVendorConstants.EMPTY_STRING);
+        setPhoneUse3(CemiVendorConstants.EMPTY_STRING);
+        setPhoneUse4(CemiVendorConstants.EMPTY_STRING);
+    }
+    
     private void assignPhoneUseValuesBasedOnPhoneType(String vendorPhoneTypeCode) {
+        setAllPhoneUseValuesToEmptyString();
+        
         if (StringUtils.isNotBlank(vendorPhoneTypeCode)
                 && CemiVendorConstants.PHONE_USES.containsKey(vendorPhoneTypeCode)) {
             List<String> useValuesList = CemiVendorConstants.PHONE_USES.get(vendorPhoneTypeCode);
-            if (useValuesList.size() == 1) {
+            
+            //Set only the phone use value mappings that have been defined based on the vendor phone type
+            if (useValuesList.size() == 4) {
                 setPhoneUse(useValuesList.get(0));
-            } else {
-                setPhoneUse(CemiVendorConstants.EMPTY_STRING);
+                setPhoneUse2(useValuesList.get(1));
+                setPhoneUse3(useValuesList.get(2));
+                setPhoneUse4(useValuesList.get(3));
+                
+            } else if (useValuesList.size() == 3) {
+                setPhoneUse(useValuesList.get(0));
+                setPhoneUse2(useValuesList.get(1));
+                setPhoneUse3(useValuesList.get(2));
+                
+            } else if (useValuesList.size() == 2) {
+                setPhoneUse(useValuesList.get(0));
+                setPhoneUse2(useValuesList.get(1));
+                
+            } else if (useValuesList.size() == 1) {
+                setPhoneUse(useValuesList.get(0));
             }
-        } else {
-            setPhoneUse(CemiVendorConstants.EMPTY_STRING);
         }
     }
     
+    private void setAllPhoneUseTenantedValuesToEmptyString() {
+        setPhoneUseTenanted(CemiVendorConstants.EMPTY_STRING);
+        setPhoneUseTenanted2(CemiVendorConstants.EMPTY_STRING);
+        setPhoneUseTenanted3(CemiVendorConstants.EMPTY_STRING);
+        setPhoneUseTenanted4(CemiVendorConstants.EMPTY_STRING);
+    }
+    
     private void assignPhoneUseTenantedValuesBasedOnPhoneType(String vendorPhoneTypeCode) {
+        setAllPhoneUseTenantedValuesToEmptyString();
+        
         if (StringUtils.isNotBlank(vendorPhoneTypeCode)
                 && CemiVendorConstants.PHONE_TENANTED_USES.containsKey(vendorPhoneTypeCode)) {
             List<String> useValuesList = CemiVendorConstants.PHONE_TENANTED_USES.get(vendorPhoneTypeCode);
-            if (useValuesList.size() == 1) {
+            
+            if (useValuesList.size() == 4) {
                 setPhoneUseTenanted(useValuesList.get(0));
-            } else {
-                setPhoneUseTenanted(CemiVendorConstants.EMPTY_STRING);
+                setPhoneUseTenanted2(useValuesList.get(1));
+                setPhoneUseTenanted3(useValuesList.get(2));
+                setPhoneUseTenanted4(useValuesList.get(3));
+                
+            } else if (useValuesList.size() == 3) {
+                setPhoneUseTenanted(useValuesList.get(0));
+                setPhoneUseTenanted2(useValuesList.get(1));
+                setPhoneUseTenanted3(useValuesList.get(2));
+                
+            } else if (useValuesList.size() == 2) {
+                setPhoneUseTenanted(useValuesList.get(0));
+                setPhoneUseTenanted2(useValuesList.get(1));
+
+            } else if (useValuesList.size() == 1) {
+                setPhoneUseTenanted(useValuesList.get(0));
             }
-        } else {
-            setPhoneUseTenanted(CemiVendorConstants.EMPTY_STRING);
         }
     }
 
