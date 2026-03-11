@@ -120,14 +120,36 @@ public final class CemiVendorConstants {
     
     public static final Map<String, List<String>> PHONE_USES = Map.ofEntries(
             Map.entry(AllDefinedPhoneTypes.ACCOUNTS_RECEIVABLE_PHONE, List.of("REMIT")),
-            Map.entry(AllDefinedPhoneTypes.SALES, List.of("PROCUREMENT")),
-            Map.entry(AllDefinedPhoneTypes.VENDOR_INFORMATION, List.of("SHIPPING"))
+            Map.entry(AllDefinedPhoneTypes.CUSTOMER_SERVICE, List.of("REMIT")),
+            Map.entry(AllDefinedPhoneTypes.E_INVOICING, List.of("REMIT")),
+            Map.entry(AllDefinedPhoneTypes.FAX, List.of("REMIT")),
+            Map.entry(AllDefinedPhoneTypes.INSURANCE, List.of("BILLING", "SHIPPING")),
+            Map.entry(AllDefinedPhoneTypes.MOBILE, List.of("BILLING", "SHIPPING")),
+            Map.entry(AllDefinedPhoneTypes.MAIN_PHONE_NUMBER, List.of("PROCUREMENT", "REMIT")),
+            Map.entry(AllDefinedPhoneTypes.PURCHASE_ORDER, List.of("PROCUREMENT")),
+            Map.entry(AllDefinedPhoneTypes.PARTS, List.of("SHIPPING")),
+            Map.entry(AllDefinedPhoneTypes.SALES, List.of("BILLING")),
+            Map.entry(AllDefinedPhoneTypes.SERVICE_MAINTENANCE, List.of("PROCUREMENT", "REMIT")),
+            Map.entry(AllDefinedPhoneTypes.TOLL_FREE, List.of("PROCUREMENT", "REMIT")),
+            Map.entry(AllDefinedPhoneTypes.TECHNICAL_SUPPORT, List.of("PROCUREMENT", "REMIT")),
+            Map.entry(AllDefinedPhoneTypes.VENDOR_INFORMATION, List.of("PROCUREMENT", "REMIT", "SHIPPING", "BILLING"))
     );
     
     public static final Map<String, List<String>> PHONE_TENANTED_USES = Map.ofEntries(
             Map.entry(AllDefinedPhoneTypes.ACCOUNTS_RECEIVABLE_PHONE, List.of("Remit_To")),
-            Map.entry(AllDefinedPhoneTypes.SALES, List.of("Procurement")),
-            Map.entry(AllDefinedPhoneTypes.VENDOR_INFORMATION, List.of("Shipping"))
+            Map.entry(AllDefinedPhoneTypes.CUSTOMER_SERVICE, List.of("Remit_To")),
+            Map.entry(AllDefinedPhoneTypes.E_INVOICING, List.of("Remit_To")),
+            Map.entry(AllDefinedPhoneTypes.FAX, List.of("Remit_To")),
+            Map.entry(AllDefinedPhoneTypes.INSURANCE, List.of("Billing", "Shipping")),
+            Map.entry(AllDefinedPhoneTypes.MOBILE, List.of("Billing", "Shipping")),
+            Map.entry(AllDefinedPhoneTypes.MAIN_PHONE_NUMBER, List.of("Procurement", "Remit_To")),
+            Map.entry(AllDefinedPhoneTypes.PURCHASE_ORDER, List.of("Procurement")),
+            Map.entry(AllDefinedPhoneTypes.PARTS, List.of("Shipping")),
+            Map.entry(AllDefinedPhoneTypes.SALES, List.of("Billing")),
+            Map.entry(AllDefinedPhoneTypes.SERVICE_MAINTENANCE, List.of("Procurement", "Remit_To")),
+            Map.entry(AllDefinedPhoneTypes.TOLL_FREE, List.of("Procurement", "Remit_To")),
+            Map.entry(AllDefinedPhoneTypes.TECHNICAL_SUPPORT, List.of("Procurement", "Remit_To")),
+            Map.entry(AllDefinedPhoneTypes.VENDOR_INFORMATION, List.of("Procurement", "Remit_To", "Shipping", "Billing"))
     );
 
 }
