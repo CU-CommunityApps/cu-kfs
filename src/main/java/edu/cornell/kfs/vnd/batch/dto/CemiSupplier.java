@@ -45,13 +45,13 @@ public class CemiSupplier {
      * If necessary, this object can be modified into a mutable one and/or a different mechanism could
      * be implemented to compute the derived values.
      */
-    public CemiSupplier(final VendorDetail vendorDetail, final String supplierId) {
+    public CemiSupplier(final VendorDetail vendorDetail, final String supplierId, boolean maskCemiSensitiveData) {
         this.vendorDetail = vendorDetail;
         this.supplierId = supplierId;
         this.supplierReferenceId = buildSupplierReferenceId(vendorDetail);
         this.taxAuthorityFormType = determineTaxAuthorityFormType(vendorDetail);
         this.taxIdType = determineTaxIdType(vendorDetail);
-        this.taxIdValue = determineTaxIdValue(vendorDetail);
+        this.taxIdValue = determineTaxIdValue(vendorDetail, maskCemiSensitiveData);
         this.transactionTaxId = determineTransactionTaxId(vendorDetail, this.taxIdValue, this.taxIdType);
         this.primaryTaxId = determinePrimaryTaxId(vendorDetail, this.taxIdValue);
         this.countryTaxId = CemiVendorConstants.COUNTRY_CODE_UNITED_STATES;
@@ -67,12 +67,9 @@ public class CemiSupplier {
         this.alias1Usage = getAliasUsage(vendorAliases, 1);
     }
 
-    private static String determineTaxIdValue(VendorDetail vendorDetail) {
-        boolean cemiEnv = false; //TODO: determine if job is running in CEMI environment
-        boolean maskCEMISensitiveValues = true; // TODO: determine if masking sensitive values for CEMI data conversion is on or off
-        
-        if(cemiEnv && !maskCEMISensitiveValues) {
-            //return tax id value from vendor
+    private static String determineTaxIdValue(VendorDetail vendorDetail, boolean maskCemiSensitiveData) {
+        if (!maskCemiSensitiveData) {
+            return vendorDetail.getVendorHeader().getVendorTaxNumber();
         }
         return CemiVendorConstants.DUMMY_TAX_ID;
     }
@@ -85,8 +82,10 @@ public class CemiSupplier {
         return index < aliases.size() ? CemiVendorConstants.ALTERNATE_NAME_USAGE_DEFAULT_VALUE : "";
     }
 
+    // default to true if tax id is present, FALSE if tax type USA_SSN
     private static String determineTransactionTaxId(VendorDetail vendorDetail, String taxIdValue, String taxIdType) {
-        boolean transactionTaxId = StringUtils.isNotBlank(taxIdValue) && !CemiVendorConstants.USA_SSN_TAX_TYPE.equalsIgnoreCase(taxIdType); // default to true if tax id is present, FALSE if tax type USA_SSN
+        boolean transactionTaxId = StringUtils.isNoneBlank(taxIdType, taxIdValue)
+                && !CemiVendorConstants.USA_SSN_TAX_TYPE.equalsIgnoreCase(taxIdType);
         return CemiUtils.convertToBooleanValueForFileExtract(transactionTaxId);
     }
     
@@ -118,7 +117,7 @@ public class CemiSupplier {
         return CemiVendorConstants.TAX_ID_TYPES.get(kfsTaxType);
     }
     
-    private String determineVendorPaymentTerms(VendorDetail vendorDetail) {
+    private static String determineVendorPaymentTerms(VendorDetail vendorDetail) {
         vendorDetail.refreshReferenceObject("vendorPaymentTerms");
         if (ObjectUtils.isNotNull(vendorDetail.getVendorPaymentTerms())) {
             String paymentTermsDescription = vendorDetail.getVendorPaymentTerms().getVendorPaymentTermsDescription();
@@ -167,9 +166,7 @@ public class CemiSupplier {
     }
 
     public String getTransactionTaxId() {
-        return CemiUtils.convertToBooleanValueForFileExtract(
-                StringUtils.isNoneBlank(taxIdType, taxIdValue)
-                        && !StringUtils.equals(taxIdType, CemiVendorConstants.USA_SSN_TAX_TYPE));
+        return transactionTaxId;
     }
 
     public String getPrimaryTaxId() {
