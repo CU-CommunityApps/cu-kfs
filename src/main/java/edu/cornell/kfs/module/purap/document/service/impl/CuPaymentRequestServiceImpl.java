@@ -636,7 +636,8 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         try {
             byte[] attachmentBytes = Base64.getDecoder().decode(noteDto.getAttachmentContent());
             int fileSize = attachmentBytes.length;
-            String attachmentType = null;
+            //String attachmentType = null;
+            String attachmentType = noteDto.getNoteType();
             
             try (ByteArrayInputStream inputStream = new ByteArrayInputStream(attachmentBytes)) {
                 Attachment attachment = attachmentService.createAttachment(note, noteDto.getAttachmentFileName(), 
