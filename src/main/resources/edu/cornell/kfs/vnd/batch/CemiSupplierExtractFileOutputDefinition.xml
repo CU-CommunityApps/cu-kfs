@@ -159,7 +159,7 @@
         <field name="Supplier_ID" type="STRING" key="supplierId"/>
         <field name="Included_Children" type="STRING" key="childSupplierId"/>
     </sheet>
-    
+
     <sheet name="Emails" num-header-rows="6" start-column-index="1">
         <field name="Supplier_ID" type="STRING" key="supplierId"/>
         <field name="Email_ID_1" type="STRING" key="supplierEmails[0].emailId"/>
@@ -190,10 +190,11 @@
         <field name="Email_Use_For_3_1" type="STRING" key="supplierEmails[2].emailUseFor[0]"/>
         <field name="Email_Use_For_3_2" type="STRING" key="supplierEmails[2].emailUseFor[1]"/>
         <field name="Email_Use_For_3_3" type="STRING" key="supplierEmails[2].emailUseFor[2]"/>
+        <field name="Email_Use_For_3_4" type="STRING" key="supplierEmails[2].emailUseFor[3]"/>
         <field name="Use_For_Tenanted_3_1" type="STRING" key="supplierEmails[2].useForTenanted[0]"/>
         <field name="Use_For_Tenanted_3_2" type="STRING" key="supplierEmails[2].useForTenanted[1]"/>
         <field name="Use_For_Tenanted_3_3" type="STRING" key="supplierEmails[2].useForTenanted[2]"/>
+        <field name="Use_For_Tenanted_3_4" type="STRING" key="supplierEmails[2].useForTenanted[3]"/>
     </sheet>
-    
 
 </cemiOutputDefinition>
