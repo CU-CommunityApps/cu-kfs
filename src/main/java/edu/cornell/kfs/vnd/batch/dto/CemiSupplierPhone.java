@@ -50,7 +50,7 @@ public class CemiSupplierPhone {
     private static String buildSupplierPhoneId(final VendorPhoneNumber vendorPhoneNumber, final String supplierId, int phoneNumberCount) {
         return MessageFormat.format(CemiVendorConstants.PHONE_ID_FORMAT,
                 supplierId,
-                vendorPhoneNumber.getVendorPhoneNumber(),
+                Integer.toString(vendorPhoneNumber.getVendorPhoneGeneratedIdentifier()),
                 Integer.toString(phoneNumberCount));
     }
     

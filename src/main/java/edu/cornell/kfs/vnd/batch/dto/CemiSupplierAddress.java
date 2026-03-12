@@ -60,7 +60,7 @@ public class CemiSupplierAddress {
     private static String buildSupplierAddressId(final VendorAddress vendorAddress, String supplierId, int addressCount) {
         return MessageFormat.format(CemiVendorConstants.ADDRESS_ID_FORMAT,
                 supplierId,
-                vendorAddress.getVendorLine1Address(),
+                Integer.toString(vendorAddress.getVendorAddressGeneratedIdentifier()),
                 Integer.toString(addressCount));
     }
     

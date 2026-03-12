@@ -54,7 +54,7 @@ public class CemiSupplierBankAccountSubEntry {
         this.bankRoutingNumber = vendorAccount.getBankRoutingNumber();
         this.bankAccountNumber = determineBankAccountNumber(vendorAccount, maskSensitiveData);
         this.bankAccountName = determineBankAccountName(bankName, bankAccountNumber);
-        this.bankAccountId = determineBankAccountId(supplierId, bankAccountName, accountIndex);
+        this.bankAccountId = determineBankAccountId(supplierId, (vendorAccount.getAchAccountGeneratedIdentifier()).toString(), accountIndex);
         this.bankAccountType = determineBankAccountType(vendorAccount);
         this.branchId = CemiVendorConstants.EMPTY_STRING;
         this.branchName = CemiVendorConstants.EMPTY_STRING;
@@ -74,10 +74,12 @@ public class CemiSupplierBankAccountSubEntry {
         return StringUtils.join(bankName, KFSConstants.BLANK_SPACE, lastFourDigitsOfBankAccountNumber);
     }
 
-    private static String determineBankAccountId(final String supplierId, final String bankAccountName,
+    private static String determineBankAccountId(final String supplierId, final String accountSystemGeneratedIdentifier,
             final int accountIndex) {
         return MessageFormat.format(CemiVendorConstants.BANK_ACCOUNT_ID_FORMAT,
-                supplierId, bankAccountName, Integer.toString(accountIndex));
+                supplierId, 
+                accountSystemGeneratedIdentifier, 
+                Integer.toString(accountIndex));
     }
 
     private static String determineBankAccountType(final PayeeACHAccount vendorAccount) {
