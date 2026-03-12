@@ -308,7 +308,7 @@ public class BatchFileSearchService extends SearchService {
         List<Path> directoriesToSearch = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(userSelectedPaths)) {
             for (final Path uniqueSelectedDirectory : uniqueSelectedDirectories) {
-                final Path directory = BatchFileUtils.resolvePathToAbsolutePath(uniqueSelectedDirectory.getFileName());
+                final Path directory = BatchFileUtils.resolvePathToAbsolutePath(uniqueSelectedDirectory);
                 if (Files.exists(directory)) {
                     directoriesToSearch.add(directory);
                 }
