@@ -81,7 +81,7 @@
 	            <kul:htmlControlAttribute
 	                property="document.documentFundingSourceCode"
 	                attributeEntry="${documentAttributes.documentFundingSourceCode}"
-	                readOnly="${not (fullEntryMode and editableFundingSource)}"
+	                readOnly="true"
 	                tabindexOverride="${tabindexOverrideBase + 5}"/>
 	        </td>
 	    </tr>

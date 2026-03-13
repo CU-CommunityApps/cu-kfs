@@ -409,8 +409,8 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
             LOG.info("createRequisitionItem: Truncating RequisitionItem Description to " + requisitionItemDescriptionMaxLength + " characters");
             reqItem.setItemDescription(reqItem.getItemDescription().substring(0, requisitionItemDescriptionMaxLength));
         }
+        final boolean commCodeParam = false;
 
-         final boolean commCodeParam = parameterService.getParameterValueAsBoolean(RequisitionDocument.class, PurapParameterConstants.ENABLE_DEFAULT_VENDOR_COMMODITY_CODE_IND);
 
          if (commCodeParam) {
              if (reqItem.getCommodityCode() != null && !reqItem.getCommodityCode().isActive() && StringUtils.isNotBlank(defaultCommodityCode)) {
