@@ -16,6 +16,7 @@
         <property name="attributes">
             <list merge="true">
                 <ref bean="RequisitionDocument-vendorEmailAddress"/>
+				<ref bean="RequisitionDocument-documentFundingSourceCode"/>
             </list>
         </property>
         <property name="webScriptFiles" ref="reqsWebScriptFiles" />
@@ -280,5 +281,12 @@
             </map>
         </property>
     </bean>
+
+	<bean id="RequisitionDocument-documentFundingSourceCode"
+		  parent="RequisitionDocument-documentFundingSourceCode-parentBean"/>
+	<bean id="RequisitionDocument-documentFundingSourceCode-parentBean" abstract="true"
+		  parent="FundingSource-fundingSourceCode" p:name="documentFundingSourceCode" p:label="Funding Source"
+		  p:shortLabel="Funding Source" p:required="false">
+	</bean>
 
 </beans>

@@ -61,7 +61,10 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
     // Non-quantity Unit of Measure - this UOM should be used as the default UOM for all Non-Quantity orders to ensure they are properly handled by SciQuest (KFSPTS-792)
     private static final String NON_QUANTITY_UOM = "LOT"; 
     //end KFSUPGRADE-406
-    
+
+    // Text to pass to SciQuest in the case where a federally funded account is used on the PO
+    private static final String FEDERAL_FUNDING_TEXT = "Federal funding has been designated for this purchase order.";
+
     private AttachmentService attachmentService;
     private BusinessObjectService businessObjectService;
     private PurchaseOrderService purchaseOrderService;
@@ -628,7 +631,15 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
 	        cxml.append("         </CustomFieldValue>\n");
 	        cxml.append("      </CustomFieldValueSet>\n");
         }
- // end KFSUPGRADE-407    
+ // end KFSUPGRADE-407
+
+        if (StringUtils.equalsIgnoreCase(purchaseOrder.getDocumentFundingSourceCode(), "FEDL")) {
+            cxml.append("      <CustomFieldValueSet label=\"Funding\" name=\"Funding\">\n");
+            cxml.append("        <CustomFieldValue>\n");
+            cxml.append("          <Value><![CDATA[" + FEDERAL_FUNDING_TEXT + "]]></Value>\n");
+            cxml.append("         </CustomFieldValue>\n");
+            cxml.append("      </CustomFieldValueSet>\n");
+        }
         
         // KFSUPGRADE-400 KFSPTS-427 : additional fields
         // do we have to check if field is empty or null ?

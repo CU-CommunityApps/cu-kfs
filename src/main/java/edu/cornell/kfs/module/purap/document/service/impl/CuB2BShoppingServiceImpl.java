@@ -51,6 +51,7 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerRoleSet;
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.service.CuB2BShoppingService;
 import edu.cornell.kfs.module.purap.document.service.CuPurapService;
 import edu.cornell.kfs.module.purap.service.JaggaerRoleService;
@@ -165,6 +166,13 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
             req.setVendorRestrictedIndicator(vendor.getVendorRestrictedIndicator());
             req.setItems(itemsForVendor);
             req.setRequisitionSourceCode(PurapConstants.RequisitionSources.B2B);
+
+            // CU Customization KFSPTS-37456: Set default funding source from parameter
+            final String defaultFundingSource = parameterService.getParameterValueAsString(
+                    RequisitionDocument.class, CUPurapParameterConstants.DEFAULT_FUNDING_SOURCE);
+            if (StringUtils.isNotBlank(defaultFundingSource)) {
+                req.setDocumentFundingSourceCode(defaultFundingSource);
+            }
 
             req.updateAndSaveAppDocStatus(RequisitionStatuses.APPDOC_IN_PROCESS);
 
@@ -401,8 +409,8 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
             LOG.info("createRequisitionItem: Truncating RequisitionItem Description to " + requisitionItemDescriptionMaxLength + " characters");
             reqItem.setItemDescription(reqItem.getItemDescription().substring(0, requisitionItemDescriptionMaxLength));
         }
+        final boolean commCodeParam = false;
 
-         final boolean commCodeParam = parameterService.getParameterValueAsBoolean(RequisitionDocument.class, PurapParameterConstants.ENABLE_DEFAULT_VENDOR_COMMODITY_CODE_IND);
 
          if (commCodeParam) {
              if (reqItem.getCommodityCode() != null && !reqItem.getCommodityCode().isActive() && StringUtils.isNotBlank(defaultCommodityCode)) {

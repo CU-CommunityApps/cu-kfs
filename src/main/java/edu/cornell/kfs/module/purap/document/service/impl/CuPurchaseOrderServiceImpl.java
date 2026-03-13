@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kim.impl.identity.Person;
@@ -23,6 +24,7 @@ import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
+import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.impl.PurchaseOrderServiceImpl;
@@ -37,6 +39,17 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
     private static final Logger LOG = LogManager.getLogger();
     
     private AttachmentService attachmentService;
+
+    @Override
+    public PurchaseOrderDocument createPurchaseOrderDocument(RequisitionDocument reqDocument, String newSessionUserId,
+                                                             Integer contractManagerCode) {
+        if (reqDocument != null && StringUtils.isBlank(reqDocument.getDocumentFundingSourceCode())) {
+            reqDocument.setDocumentFundingSourceCode(parameterService.getParameterValueAsString("KFS-PURAP", "Requisition", "DEFAULT_FUNDING_SOURCE"));
+        }
+
+        PurchaseOrderDocument poDocument = super.createPurchaseOrderDocument(reqDocument, newSessionUserId, contractManagerCode);
+        return poDocument;
+    }
 
     @Override
     public void performPurchaseOrderFirstTransmitViaPrinting(final PurchaseOrderDocument po) {
@@ -134,7 +147,31 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
 
     protected PurchaseOrderDocument generatePurchaseOrderFromRequisition(final RequisitionDocument reqDocument) {
         final PurchaseOrderDocument poDocument = super.generatePurchaseOrderFromRequisition(reqDocument);
+
+        // CU Customization KFSPTS-37456
+        String documentFundingSourceCode = parameterService.getParameterValueAsString("KFS-PURAP", "Requisition", "DEFAULT_FUNDING_SOURCE");
+        if (isFederallyFunded(poDocument)) {
+            documentFundingSourceCode = "FEDL";
+        }
+        poDocument.setDocumentFundingSourceCode(documentFundingSourceCode);
+
         return copyNotesAndAttachmentsToPO(reqDocument, poDocument); 
+    }
+
+    private boolean isFederallyFunded(final PurchaseOrderDocument poDocument) {
+
+        for (Object item : poDocument.getItems()) {
+            PurchaseOrderItem poItem = (PurchaseOrderItem) item;
+
+            for (PurApAccountingLine purApAccountingLine : poItem.getSourceAccountingLines()) {
+                if (ObjectUtils.isNotNull(purApAccountingLine.getAccount().getAccountCfdaNumber())) {
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
     }
 
     // mjmc *************************************************************************************************
@@ -205,6 +242,10 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
     protected PurchaseOrderDocument createPurchaseOrderDocumentFromSourceDocument(
             final PurchaseOrderDocument sourceDocument, final String docType) {
         final PurchaseOrderDocument newDocument = super.createPurchaseOrderDocumentFromSourceDocument(sourceDocument, docType);
+
+        // CU Customization KFSPTS-37456
+        newDocument.setDocumentFundingSourceCode(parameterService.getParameterValueAsString("KFS-PURAP", "Requisition", "DEFAULT_FUNDING_SOURCE"));
+
         resetOverrideCodesOnItemAccountingLines(newDocument);
         return newDocument;
     }
