@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -633,7 +634,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         }
  // end KFSUPGRADE-407
 
-        if (StringUtils.equalsIgnoreCase(purchaseOrder.getDocumentFundingSourceCode(), "FEDL")) {
+        if (StringUtils.equalsIgnoreCase(purchaseOrder.getDocumentFundingSourceCode(), CUKFSConstants.FEDERAL_FUNDING_CODE) {
             cxml.append("      <CustomFieldValueSet label=\"Funding\" name=\"Funding\">\n");
             cxml.append("        <CustomFieldValue>\n");
             cxml.append("          <Value><![CDATA[" + FEDERAL_FUNDING_TEXT + "]]></Value>\n");
