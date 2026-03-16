@@ -283,7 +283,7 @@ public class CUKFSConstants {
         }
     }
 
-    public static final String REQUISITION = "Requisition";
+    public static final String PURCHASE_ORDER = "PurchaseOrder";
     public static final String DEFAULT_FUNDING_SOURCE = "DEFAULT_FUNDING_SOURCE";
     public static final String FEDERAL_FUNDING_CODE = "FEDL";
 

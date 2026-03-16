@@ -20,7 +20,6 @@ import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.PersistenceService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.RequisitionStatuses;
 import org.kuali.kfs.module.purap.businessobject.B2BInformation;

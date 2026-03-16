@@ -46,7 +46,7 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
 
         if (poDocument != null) {
             String documentFundingSourceCode = parameterService.getParameterValueAsString(CUKFSConstants.ParameterNamespaces.PURCHASING,
-                    CUKFSConstants.REQUISITION, CUKFSConstants.FEDERAL_FUNDING_CODE);
+                    CUKFSConstants.PURCHASE_ORDER, CUKFSConstants.DEFAULT_FUNDING_SOURCE);
             if (isFederallyFunded(poDocument)) {
                 documentFundingSourceCode = CUKFSConstants.FEDERAL_FUNDING_CODE;
             }
@@ -162,7 +162,7 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
         final PurchaseOrderDocument poDocument = super.generatePurchaseOrderFromRequisition(reqDocument);
 
         String documentFundingSourceCode = parameterService.getParameterValueAsString(CUKFSConstants.ParameterNamespaces.PURCHASING,
-                CUKFSConstants.REQUISITION, CUKFSConstants.DEFAULT_FUNDING_SOURCE);
+                CUKFSConstants.PURCHASE_ORDER, CUKFSConstants.DEFAULT_FUNDING_SOURCE);
         if (isFederallyFunded(poDocument)) {
             documentFundingSourceCode = CUKFSConstants.FEDERAL_FUNDING_CODE;
         }
@@ -177,7 +177,8 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
             PurchaseOrderItem poItem = (PurchaseOrderItem) item;
 
             for (PurApAccountingLine purApAccountingLine : poItem.getSourceAccountingLines()) {
-                if (ObjectUtils.isNotNull(purApAccountingLine.getAccount().getAccountCfdaNumber())) {
+                if (ObjectUtils.isNotNull(purApAccountingLine) && ObjectUtils.isNotNull(purApAccountingLine.getAccount()) &&
+                        ObjectUtils.isNotNull(purApAccountingLine.getAccount().getAccountCfdaNumber())) {
                     return true;
                 }
             }
