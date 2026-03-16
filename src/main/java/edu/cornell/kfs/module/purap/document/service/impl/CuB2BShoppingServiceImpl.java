@@ -167,13 +167,6 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
             req.setItems(itemsForVendor);
             req.setRequisitionSourceCode(PurapConstants.RequisitionSources.B2B);
 
-            // CU Customization KFSPTS-37456: Set default funding source from parameter
-            final String defaultFundingSource = parameterService.getParameterValueAsString(
-                    RequisitionDocument.class, CUPurapParameterConstants.DEFAULT_FUNDING_SOURCE);
-            if (StringUtils.isNotBlank(defaultFundingSource)) {
-                req.setDocumentFundingSourceCode(defaultFundingSource);
-            }
-
             req.updateAndSaveAppDocStatus(RequisitionStatuses.APPDOC_IN_PROCESS);
 
             //KFSPTS-1446 : Needed to move the setting of method of PO transmission to after the templateVendorAddress call because that method will set the method of PO transmission to the value on the vendor address. 

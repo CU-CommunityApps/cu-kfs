@@ -74,16 +74,18 @@
 	                <kul:lookup boClassName="org.kuali.kfs.coa.businessobject.Organization" fieldConversions="organizationCode:document.organizationCode,chartOfAccountsCode:document.chartOfAccountsCode" />
 	            </c:if>
 	        </td>
-	        <th class="right">
-	            <label><kul:htmlAttributeLabel attributeEntry="${documentAttributes.documentFundingSourceCode}" /></label>
-	        </th>
-	        <td>
-	            <kul:htmlControlAttribute
-	                property="document.documentFundingSourceCode"
-	                attributeEntry="${documentAttributes.documentFundingSourceCode}"
-	                readOnly="true"
-	                tabindexOverride="${tabindexOverrideBase + 5}"/>
-	        </td>
+			<c:if test="${purchaseOrder}">
+				<th class="right">
+					<label><kul:htmlAttributeLabel attributeEntry="${documentAttributes.documentFundingSourceCode}" /></label>
+				</th>
+				<td>
+					<kul:htmlControlAttribute
+						property="document.documentFundingSourceCode"
+						attributeEntry="${documentAttributes.documentFundingSourceCode}"
+						readOnly="true"
+						tabindexOverride="${tabindexOverrideBase + 5}"/>
+				</td>
+			</c:if>
 	    </tr>
     </c:if>
 

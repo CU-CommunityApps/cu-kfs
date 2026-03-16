@@ -294,13 +294,6 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
                 RequisitionDocument.class, PurapParameterConstants.PURAP_DEFAULT_PO_TRANSMISSION_CODE));
         requisitionDocument.setUseTaxIndicator(SpringContext.getBean(PurchasingService.class).getDefaultUseTaxIndicatorValue(requisitionDocument));
         
-        // CU Customization KFSPTS-37456: Set default funding source from parameter
-        final String defaultFundingSource = parameterService.getParameterValueAsString(
-                RequisitionDocument.class, CUPurapParameterConstants.DEFAULT_FUNDING_SOURCE);
-        if (StringUtils.isNotBlank(defaultFundingSource)) {
-            requisitionDocument.setDocumentFundingSourceCode(defaultFundingSource);
-        }
-        
         // if org doc number present on I Want doc, copy it to REQ
         if(StringUtils.isNotBlank(iWantDocument.getDocumentHeader().getOrganizationDocumentNumber())){
         	requisitionDocument.getDocumentHeader().setOrganizationDocumentNumber(iWantDocument.getDocumentHeader().getOrganizationDocumentNumber());

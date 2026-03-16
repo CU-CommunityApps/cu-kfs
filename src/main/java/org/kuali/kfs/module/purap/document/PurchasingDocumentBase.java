@@ -82,7 +82,6 @@ import java.util.Map;
 public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDocumentBase implements
         PurchasingDocument {
 
-    protected String documentFundingSourceCode; // CU Customization KFSPTS-37456
     protected String requisitionSourceCode;
     protected String purchaseOrderTransmissionMethodCode;
     protected String purchaseOrderCostSourceCode;
@@ -1594,16 +1593,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     // KFSPTS-985, KFSUPGRADE-75
     public boolean isIntegratedWithFavoriteAccount() {
         return true;
-    }
-
-    // CU Customization KFSPTS-37456
-    public String getDocumentFundingSourceCode() {
-        return documentFundingSourceCode;
-    }
-
-    // CU Customization KFSPTS-37456
-    public void setDocumentFundingSourceCode(String documentFundingSourceCode) {
-        this.documentFundingSourceCode = documentFundingSourceCode;
     }
 
 }

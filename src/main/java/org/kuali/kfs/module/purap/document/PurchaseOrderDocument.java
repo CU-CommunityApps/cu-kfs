@@ -191,6 +191,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     protected RecurringPaymentFrequency recurringPaymentFrequency;
     protected ContractManager contractManager;
 
+    protected String documentFundingSourceCode;
+
     public PurchaseOrderDocument() {
         super();
         purchaseOrderVendorStipulations = new ArrayList<>();
@@ -590,8 +592,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
         setApplicationDocumentStatus(PurchaseOrderStatuses.APPDOC_IN_PROCESS);
         setAccountDistributionMethod(requisitionDocument.getAccountDistributionMethod());
-        // CU Customization KFSPTS-37456: Copy document funding source code from requisition
-        setDocumentFundingSourceCode(requisitionDocument.getDocumentFundingSourceCode());
         // Copy items from requisition (which will copy the item's accounts and capital assets)
         final List<PurchaseOrderItem> items = new ArrayList<>();
         for (final PurApItem reqItem : ((PurchasingAccountsPayableDocument) requisitionDocument).getItems()) {
@@ -1701,4 +1701,15 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     public NoteType getNoteType() {
         return NoteType.BUSINESS_OBJECT;
     }
+
+    // CU Customization KFSPTS-37456
+    public String getDocumentFundingSourceCode() {
+        return documentFundingSourceCode;
+    }
+
+    // CU Customization KFSPTS-37456
+    public void setDocumentFundingSourceCode(String documentFundingSourceCode) {
+        this.documentFundingSourceCode = documentFundingSourceCode;
+    }
+
 }
