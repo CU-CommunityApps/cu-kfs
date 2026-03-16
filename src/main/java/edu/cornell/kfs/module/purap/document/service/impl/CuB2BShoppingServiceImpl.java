@@ -20,6 +20,7 @@ import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.PersistenceService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.RequisitionStatuses;
 import org.kuali.kfs.module.purap.businessobject.B2BInformation;
@@ -50,7 +51,6 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerRoleSet;
-import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.service.CuB2BShoppingService;
 import edu.cornell.kfs.module.purap.document.service.CuPurapService;
 import edu.cornell.kfs.module.purap.service.JaggaerRoleService;
@@ -401,8 +401,8 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
             LOG.info("createRequisitionItem: Truncating RequisitionItem Description to " + requisitionItemDescriptionMaxLength + " characters");
             reqItem.setItemDescription(reqItem.getItemDescription().substring(0, requisitionItemDescriptionMaxLength));
         }
-        final boolean commCodeParam = false;
 
+         final boolean commCodeParam = parameterService.getParameterValueAsBoolean(RequisitionDocument.class, PurapParameterConstants.ENABLE_DEFAULT_VENDOR_COMMODITY_CODE_IND);
 
          if (commCodeParam) {
              if (reqItem.getCommodityCode() != null && !reqItem.getCommodityCode().isActive() && StringUtils.isNotBlank(defaultCommodityCode)) {
