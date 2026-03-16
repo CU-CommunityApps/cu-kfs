@@ -112,13 +112,20 @@ public enum PaymentRequestDtoFixture {
             StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.TOO_LONG_NOTE), false,
             buildMessageList(), buildMessageList("The maximum size of a note is 15 characters, the note provided was 77 characters long.")),
-    VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_GOOD_LINE(StringUtils.EMPTY, "1234-1", "98769",
+    VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_GOOD_LINE_GOOD_ATTACH(StringUtils.EMPTY, "1234-1", "98769",
             "11/25/2025", "11/26/2025",
             "invoiceNumber", "50", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
             null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
             StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
-            buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), true,
+            buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID, PaymentRequestNoteDtoFixture.ATTACHMENT_GOOD), true,
             buildMessageList(), buildMessageList()),
+    VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_GOOD_LINE_BAD_ATTACH(StringUtils.EMPTY, "1234-1", "98769",
+            "11/25/2025", "11/26/2025",
+            "invoiceNumber", "50", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+            null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
+            StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
+            buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID, PaymentRequestNoteDtoFixture.ATTACHMENT_BAD), false,
+            buildMessageList(), buildMessageList("File Name is a required field.", "Mime Type is a required field.")),
     VALIDATION_TEST_FORMAT_ERRORS(StringUtils.EMPTY, "1234-1", "98769A",
             "11/25/2025X", "111/26/2025",
             "invoiceNumber", "50.Y", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
@@ -129,14 +136,7 @@ public enum PaymentRequestDtoFixture {
             buildMessageList("PO Number is not a valid integer", "Invoice Date must be in the format of MM/DD/YYYY.",
                 "Received Date must be in the format of MM/DD/YYYY.", "Invoice Number is not a valid decimal.",
                 "Item Price is not a valid decimal.", "Item Quantity is not a valid decimal.", "Item Line Number is not a valid integer",
-                "Freight Price is not a valid decimal.", "Shipping Price is not a valid decimal.", "Miscellaneous Price is not a valid decimal.")),
-    PAYMREQ_CREATE_EXAMPLE(StringUtils.EMPTY, "1234-1", "98769",
-            "11/25/2025", "11/26/2025",
-            "invoiceNumber", "50", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-            null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
-            StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
-            buildNotes(PaymentRequestNoteDtoFixture.NOTE_WITH_ATTACHMENT), true,
-            buildMessageList(), buildMessageList());
+                "Freight Price is not a valid decimal.", "Shipping Price is not a valid decimal.", "Miscellaneous Price is not a valid decimal."));
 
     public final String jsonFileName;
     public final String vendorNumber;

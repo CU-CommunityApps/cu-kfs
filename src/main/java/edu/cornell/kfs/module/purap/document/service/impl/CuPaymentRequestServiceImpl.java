@@ -627,7 +627,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         return null;
      }
 
-    protected void addAttachmentToNote(PaymentRequestNoteDto noteDto, Note note) {
+    private void addAttachmentToNote(PaymentRequestNoteDto noteDto, Note note) {
         try {
             byte[] attachmentBytes = Base64.getDecoder().decode(noteDto.getAttachmentContent());
             int fileSize = attachmentBytes.length;

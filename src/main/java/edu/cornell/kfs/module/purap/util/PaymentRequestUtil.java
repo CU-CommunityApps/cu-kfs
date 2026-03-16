@@ -21,7 +21,9 @@ public class PaymentRequestUtil {
         ITEM_QUANTITY(true, "Item Quantity"),
         ITEM_PRICE(true, "Item Price"),
         NOTE_TEXT(true, "Note Text"),
-        NOTE_TYPE(false, "Note Type");
+        NOTE_TYPE(false, "Note Type"),
+        ATTACHMENT_FILE_NAME(false, "File Name"),
+        ATTACHMENT_MIME_TYPE(false, "Mime Type");
 
         public final boolean required;
         public final String friendlyName;

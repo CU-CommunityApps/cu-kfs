@@ -231,6 +231,15 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
                     PurapConstants.AttachmentTypeCodes.ATTACHMENT_TYPE_INVOICE_IMAGE + "'.";
             results.getErrorMessages().add(errorMessage);
         }
+
+        if (StringUtils.isNotBlank(noteDto.getAttachmentContent())) {
+            if (StringUtils.isBlank(noteDto.getAttachmentFileName())) {
+                updateResultsWithRequiredFieldError(PaymentRequestDtoFields.ATTACHMENT_FILE_NAME, results);
+            }
+            if (StringUtils.isBlank(noteDto.getAttachmentMimeType())) {
+                updateResultsWithRequiredFieldError(PaymentRequestDtoFields.ATTACHMENT_MIME_TYPE, results);
+            }
+        }
     }
 
     private boolean isValidNoteType(String noteType) {
