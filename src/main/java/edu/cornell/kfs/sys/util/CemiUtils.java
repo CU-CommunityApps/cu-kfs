@@ -3,9 +3,18 @@ package edu.cornell.kfs.sys.util;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.batch.xml.CemiSheetDefinition;
@@ -20,13 +29,13 @@ public final class CemiUtils {
         return FILE_DATE_TIME_FORMATTER.format(dateTime);
     }
 
-    public static final String generateFileNameContainingDateTime(
+    public static String generateFileNameContainingDateTime(
             final LocalDateTime dateTime, final String fileNamePrefix, final String fileExtension) {
         final String dateTimeString = generateDateTimeInConsistentFormat(dateTime);
         return StringUtils.join(fileNamePrefix, dateTimeString, fileExtension);
     }
 
-    public static final String convertToBooleanValueForFileExtract(final boolean value) {
+    public static String convertToBooleanValueForFileExtract(final boolean value) {
         return Boolean.toString(value)
                 .toUpperCase(Locale.US);
     }
@@ -45,6 +54,41 @@ public final class CemiUtils {
 
     public static int getDataColumnCount(final CemiSheetDefinition sheetDefinition) {
         return sheetDefinition.getFields().size();
+    }
+
+    public static String generateKeyForGroupingDuplicates(final String... propertyValues) {
+        return Stream.of(propertyValues)
+                .map(StringUtils::trimToEmpty)
+                .map(propertyValue -> propertyValue.toUpperCase(Locale.US))
+                .collect(Collectors.joining(CUKFSConstants.SEMICOLON));
+    }
+
+    public static <T> String[] getDistinctValuesFromMatchingSubLists(
+            final Map<String, List<String>> subLists, final List<T> dataObjects, final Function<T, String> keyGetter) {
+        return dataObjects.stream()
+                .map(keyGetter::apply)
+                .filter(StringUtils::isNotBlank)
+                .map(subLists::get)
+                .filter(CollectionUtils::isNotEmpty)
+                .flatMap(List::stream)
+                .distinct()
+                .toArray(String[]::new);
+    }
+
+    public static List<String> createListWithElementsAndMinimumSize(final int minSize, final String... elements) {
+        if (elements.length == 0) {
+            return createListOfEmptyStrings(minSize);
+        } else if (elements.length >= minSize) {
+            return List.of(elements);
+        } else {
+            final String[] minSizeArray = Arrays.copyOf(elements, minSize);
+            Arrays.fill(minSizeArray, elements.length, minSize, KFSConstants.EMPTY_STRING);
+            return List.of(minSizeArray);
+        }
+    }
+
+    public static List<String> createListOfEmptyStrings(final int size) {
+        return Collections.nCopies(size, KFSConstants.EMPTY_STRING);
     }
 
 }

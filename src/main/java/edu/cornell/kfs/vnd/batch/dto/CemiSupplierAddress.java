@@ -3,16 +3,23 @@ package edu.cornell.kfs.vnd.batch.dto;
 import java.text.MessageFormat;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
 import edu.cornell.kfs.sys.util.CemiUtils;
 import edu.cornell.kfs.vnd.CemiVendorConstants;
 
+@SuppressWarnings("deprecation")
 public class CemiSupplierAddress {
 
-    private VendorAddress vendorAddress;
+    private static final Logger LOG = LogManager.getLogger();
+
+    private List<VendorAddress> matchingVendorAddresses;
     private String supplierId;
     private String addressId;
     private String country;
@@ -23,38 +30,34 @@ public class CemiSupplierAddress {
     private String zipCode;
     private String addressPrimary;
     private String addressType;
-    private String addressUse;
-    private String addressUse2;
-    private String addressUse3;
-    private String addressUse4;
-    private String addressUseTenanted;
-    private String addressUseTenanted2;
-    private String addressUseTenanted3;
-    private String addressUseTenanted4;
+    private List<String> addressUses;
+    private List<String> addressTenantedUses;
     private String comments;
 
-    public CemiSupplierAddress(final String vendorTypeCode, final VendorAddress vendorAddress, final String supplierId, int addressCount) {
-        this.vendorAddress = vendorAddress;
+    public CemiSupplierAddress(final String vendorTypeCode, final List<VendorAddress> matchingVendorAddresses,
+            final String supplierId, int addressCount) {
+        Validate.isTrue(CollectionUtils.isNotEmpty(matchingVendorAddresses),
+                "matchingVendorAddresses cannot be null or empty");
+
+        final VendorAddress firstAddress = matchingVendorAddresses.get(0);
+        this.matchingVendorAddresses = matchingVendorAddresses;
         this.supplierId = supplierId;
-        this.addressId = buildSupplierAddressId(vendorAddress, supplierId, addressCount);
-        this.country = vendorAddress.getVendorCountryCode();
-        this.line1 = vendorAddress.getVendorLine1Address();
-        this.line2 = vendorAddress.getVendorLine2Address();
-        this.city = vendorAddress.getVendorCityName();
-        this.stateCode = vendorAddress.getVendorStateCode();
-        this.zipCode = vendorAddress.getVendorZipCode();
-        this.addressPrimary = CemiUtils.convertToBooleanValueForFileExtract(determineWhetherAddressIsPrimary(vendorTypeCode, vendorAddress));
+        this.addressId = buildSupplierAddressId(firstAddress, supplierId, addressCount);
+        this.country = firstAddress.getVendorCountryCode();
+        this.line1 = firstAddress.getVendorLine1Address();
+        this.line2 = firstAddress.getVendorLine2Address();
+        this.city = firstAddress.getVendorCityName();
+        this.stateCode = firstAddress.getVendorStateCode();
+        this.zipCode = firstAddress.getVendorZipCode();
+        this.addressPrimary = determineWhetherAtLeastOneAddressIsPrimary(vendorTypeCode, matchingVendorAddresses);
         this.addressType = CemiVendorConstants.DEFAULT_ADDRESS_TYPE;
-        assignAddressUseValuesBasedOnAddressType(vendorAddress.getVendorAddressTypeCode());
-        assignAddressTenantedUseValuesBasedOnAddressType(vendorAddress.getVendorAddressTypeCode());
+        this.addressUses = determineAddressUseValuesBasedOnAddressTypes(matchingVendorAddresses,
+                firstAddress.getVendorHeaderGeneratedIdentifier(), firstAddress.getVendorDetailAssignedIdentifier());
+        this.addressTenantedUses = determineAddressTenantedUseValuesBasedOnAddressTypes(matchingVendorAddresses,
+                firstAddress.getVendorHeaderGeneratedIdentifier(), firstAddress.getVendorDetailAssignedIdentifier());
         
         //columns not populated with this load
-        this.addressUse3 = CemiVendorConstants.EMPTY_STRING;
-        this.addressUse4 = CemiVendorConstants.EMPTY_STRING;
-        this.addressUseTenanted3 = CemiVendorConstants.EMPTY_STRING;
-        this.addressUseTenanted4 = CemiVendorConstants.EMPTY_STRING;
         this.comments = CemiVendorConstants.EMPTY_STRING;
-        
     }
     
     private static String buildSupplierAddressId(final VendorAddress vendorAddress, String supplierId, int addressCount) {
@@ -76,7 +79,14 @@ public class CemiSupplierAddress {
         }
         return false;
     }
-    
+
+    private static String determineWhetherAtLeastOneAddressIsPrimary(final String vendorTypeCode,
+            final List<VendorAddress> vendorAddresses) {
+        final boolean atLeastOneAddressIsPrimary = vendorAddresses.stream()
+                .anyMatch(vendorAddress -> determineWhetherAddressIsPrimary(vendorTypeCode, vendorAddress));
+        return CemiUtils.convertToBooleanValueForFileExtract(atLeastOneAddressIsPrimary);
+    }
+
     // For PO vendors, mark default PO address as Primary
     // For non-PO vendors, mark default Remit address as Primary
     private static boolean determineWhetherAddressIsPrimary(String vendorTypeCode, VendorAddress vendorAddress) {
@@ -89,47 +99,41 @@ public class CemiSupplierAddress {
         }
         return false;
     }
-    
-    private void assignAddressUseValuesBasedOnAddressType(String vendorAddressTypeCode) {
-        if (StringUtils.isNotBlank(vendorAddressTypeCode)
-                && CemiVendorConstants.ADDRESS_USES.containsKey(vendorAddressTypeCode)) {
-            List<String> useValuesList = CemiVendorConstants.ADDRESS_USES.get(vendorAddressTypeCode);
-            if (useValuesList.size() == 2) {
-                setAddressUse(useValuesList.get(0));
-                setAddressUse2(useValuesList.get(1));
-            } else if (useValuesList.size() == 1) {
-                setAddressUse(useValuesList.get(0));
-                setAddressUse2(CemiVendorConstants.EMPTY_STRING);
-            }
-        } else {
-            setAddressUse(CemiVendorConstants.EMPTY_STRING);
-            setAddressUse2(CemiVendorConstants.EMPTY_STRING);
+
+    private static List<String> determineAddressUseValuesBasedOnAddressTypes(final List<VendorAddress> vendorAddresses,
+            final Integer vendorHeaderGeneratedIdentifier, final Integer vendorDetailAssignedIdentifier) {
+        final String[] matchingAddressUses = CemiUtils.getDistinctValuesFromMatchingSubLists(
+                CemiVendorConstants.ADDRESS_USES, vendorAddresses, VendorAddress::getVendorAddressTypeCode);
+        if (matchingAddressUses.length > CemiVendorConstants.MAX_ADDRESS_USES) {
+            LOG.warn("determineAddressUseValuesBasedOnAddressTypes, Found a total of {} address uses across {} "
+                    + "duplicate addresses for Vendor {}-{}; only the first {} will be used in the output",
+                    matchingAddressUses.length, vendorAddresses.size(), vendorHeaderGeneratedIdentifier,
+                    vendorDetailAssignedIdentifier, CemiVendorConstants.MAX_ADDRESS_USES);
         }
-    }
-    
-    private void assignAddressTenantedUseValuesBasedOnAddressType(String vendorAddressTypeCode) {
-        if (StringUtils.isNotBlank(vendorAddressTypeCode)
-                && CemiVendorConstants.ADDRESS_TENANTED_USES.containsKey(vendorAddressTypeCode)) {
-            List<String> useTenantedValuesList = CemiVendorConstants.ADDRESS_TENANTED_USES.get(vendorAddressTypeCode);
-            if (useTenantedValuesList.size() == 2) {
-                setAddressUseTenanted(useTenantedValuesList.get(0));
-                setAddressUseTenanted2(useTenantedValuesList.get(1));
-            } else if (useTenantedValuesList.size() == 1) {
-                setAddressUseTenanted(useTenantedValuesList.get(0));
-                setAddressUseTenanted2(CemiVendorConstants.EMPTY_STRING);
-            }
-        } else {
-            setAddressUseTenanted(CemiVendorConstants.EMPTY_STRING);
-            setAddressUseTenanted2(CemiVendorConstants.EMPTY_STRING);
-        }
+        return CemiUtils.createListWithElementsAndMinimumSize(
+                CemiVendorConstants.MAX_ADDRESS_USES, matchingAddressUses);
     }
 
-    public VendorAddress getVendorAddress() {
-        return vendorAddress;
+    private static List<String> determineAddressTenantedUseValuesBasedOnAddressTypes(final List<VendorAddress> vendorAddresses,
+            final Integer vendorHeaderGeneratedIdentifier, final Integer vendorDetailAssignedIdentifier) {
+        final String[] matchingAddressTenantedUses = CemiUtils.getDistinctValuesFromMatchingSubLists(
+                CemiVendorConstants.ADDRESS_TENANTED_USES, vendorAddresses, VendorAddress::getVendorAddressTypeCode);
+        if (matchingAddressTenantedUses.length > CemiVendorConstants.MAX_ADDRESS_TENANTED_USES) {
+            LOG.warn("determineAddressUseValuesBasedOnAddressTypes, Found a total of {} address tenanted uses across {} "
+                    + "duplicate addresses for Vendor {}-{}; only the first {} will be used in the output",
+                    matchingAddressTenantedUses.length, vendorAddresses.size(), vendorHeaderGeneratedIdentifier,
+                    vendorDetailAssignedIdentifier, CemiVendorConstants.MAX_ADDRESS_TENANTED_USES);
+        }
+        return CemiUtils.createListWithElementsAndMinimumSize(
+                CemiVendorConstants.MAX_ADDRESS_TENANTED_USES, matchingAddressTenantedUses);
     }
 
-    public void setVendorAddress(VendorAddress vendorAddress) {
-        this.vendorAddress = vendorAddress;
+    public List<VendorAddress> getMatchingVendorAddresses() {
+        return matchingVendorAddresses;
+    }
+
+    public void setMatchingVendorAddresses(List<VendorAddress> matchingVendorAddresses) {
+        this.matchingVendorAddresses = matchingVendorAddresses;
     }
 
     public String getSupplierId() {
@@ -212,68 +216,20 @@ public class CemiSupplierAddress {
         this.addressType = addressType;
     }
 
-    public String getAddressUse() {
-        return addressUse;
+    public List<String> getAddressUses() {
+        return addressUses;
     }
 
-    public void setAddressUse(String addressUse) {
-        this.addressUse = addressUse;
+    public void setAddressUses(final List<String> addressUses) {
+        this.addressUses = addressUses;
     }
 
-    public String getAddressUse2() {
-        return addressUse2;
+    public List<String> getAddressTenantedUses() {
+        return addressTenantedUses;
     }
 
-    public void setAddressUse2(String addressUse2) {
-        this.addressUse2 = addressUse2;
-    }
-
-    public String getAddressUse3() {
-        return addressUse3;
-    }
-
-    public void setAddressUse3(String addressUse3) {
-        this.addressUse3 = addressUse3;
-    }
-
-    public String getAddressUse4() {
-        return addressUse4;
-    }
-
-    public void setAddressUse4(String addressUse4) {
-        this.addressUse4 = addressUse4;
-    }
-
-    public String getAddressUseTenanted() {
-        return addressUseTenanted;
-    }
-
-    public void setAddressUseTenanted(String addressUseTenanted) {
-        this.addressUseTenanted = addressUseTenanted;
-    }
-
-    public String getAddressUseTenanted2() {
-        return addressUseTenanted2;
-    }
-
-    public void setAddressUseTenanted2(String addressUseTenanted2) {
-        this.addressUseTenanted2 = addressUseTenanted2;
-    }
-
-    public String getAddressUseTenanted3() {
-        return addressUseTenanted3;
-    }
-
-    public void setAddressUseTenanted3(String addressUseTenanted3) {
-        this.addressUseTenanted3 = addressUseTenanted3;
-    }
-
-    public String getAddressUseTenanted4() {
-        return addressUseTenanted4;
-    }
-
-    public void setAddressUseTenanted4(String addressUseTenanted4) {
-        this.addressUseTenanted4 = addressUseTenanted4;
+    public void setAddressTenantedUses(final List<String> addressTenantedUses) {
+        this.addressTenantedUses = addressTenantedUses;
     }
 
     public String getComments() {

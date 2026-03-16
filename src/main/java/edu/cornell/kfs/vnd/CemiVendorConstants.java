@@ -22,6 +22,13 @@ public final class CemiVendorConstants {
     public static final String BANK_ACCOUNT_ID_FORMAT = "{0}_{1}_{2}";
     public static final int SUPPLIER_HEADER_ROWS_PER_SHEET = 6;
     public static final int MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES = 3;
+    public static final int MAX_SUPPLIER_EMAIL_ENTRIES = 3;
+    public static final int MAX_ADDRESS_USES = 4;
+    public static final int MAX_ADDRESS_TENANTED_USES = 4;
+    public static final int MAX_PHONE_USES = 4;
+    public static final int MAX_PHONE_TENANTED_USES = 4;
+    public static final int MAX_EMAIL_USES = 4;
+    public static final int MAX_EMAIL_TENANTED_USES = 4;
 
     public static final String SUPPLIER_OUTPUT_DEFINITION_FILE_PATH = "classpath:edu/cornell/kfs/vnd/batch/CemiSupplierExtractFileOutputDefinition.xml";
     public static final String SUPPLIER_TEMPLATE_FILE_PATH = "classpath:edu/cornell/kfs/vnd/batch/Supplier.xlsx";
