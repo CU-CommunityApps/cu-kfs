@@ -1595,4 +1595,5 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         return true;
     }
 
+
 }

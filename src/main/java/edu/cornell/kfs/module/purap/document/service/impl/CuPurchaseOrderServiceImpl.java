@@ -265,8 +265,7 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
             final PurchaseOrderDocument sourceDocument, final String docType) {
         final PurchaseOrderDocument newDocument = super.createPurchaseOrderDocumentFromSourceDocument(sourceDocument, docType);
 
-        // CU Customization KFSPTS-37456
-        newDocument.setDocumentFundingSourceCode(parameterService.getParameterValueAsString("KFS-PURAP", "Requisition", "DEFAULT_FUNDING_SOURCE"));
+        newDocument.setDocumentFundingSourceCode(sourceDocument.getDocumentFundingSourceCode());
 
         resetOverrideCodesOnItemAccountingLines(newDocument);
         return newDocument;
