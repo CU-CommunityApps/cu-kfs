@@ -1,7 +1,5 @@
 package edu.cornell.kfs.module.purap.service.impl;
 
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 
 import org.apache.logging.log4j.Level;

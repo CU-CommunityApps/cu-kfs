@@ -129,7 +129,14 @@ public enum PaymentRequestDtoFixture {
             buildMessageList("PO Number is not a valid integer", "Invoice Date must be in the format of MM/DD/YYYY.",
                 "Received Date must be in the format of MM/DD/YYYY.", "Invoice Number is not a valid decimal.",
                 "Item Price is not a valid decimal.", "Item Quantity is not a valid decimal.", "Item Line Number is not a valid integer",
-                "Freight Price is not a valid decimal.", "Shipping Price is not a valid decimal.", "Miscellaneous Price is not a valid decimal."));
+                "Freight Price is not a valid decimal.", "Shipping Price is not a valid decimal.", "Miscellaneous Price is not a valid decimal.")),
+    PAYMREQ_CREATE_EXAMPLE(StringUtils.EMPTY, "1234-1", "98769",
+            "11/25/2025", "11/26/2025",
+            "invoiceNumber", "50", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+            null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
+            StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
+            buildNotes(PaymentRequestNoteDtoFixture.NOTE_WITH_ATTACHMENT), true,
+            buildMessageList(), buildMessageList());
 
     public final String jsonFileName;
     public final String vendorNumber;

@@ -482,6 +482,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
                 && super.isEligibleForAutoApproval(document, defaultMinimumLimit);
     }
 
+    @Override
     public PaymentRequestDocument createPaymentRequestDocumentFromDto(PaymentRequestDto preqDto, PaymentRequestResultsDto results) {
         LOG.info("Creating PaymentRequestDocument from DTO for PO: {}", preqDto.getPoNumberAsInteger());
         try {
@@ -493,6 +494,8 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             return (PaymentRequestDocument) savedPreqDoc;
 
         } catch (Exception e) {
+            LOG.error("createPaymentRequestDocumentFromDto, There was an error create thePaymentRequestDocument", e);
+
             Map<String, AutoPopulatingList<ErrorMessage>> errorMessages = GlobalVariables.getMessageMap().getErrorMessages();
             for (Map.Entry<String, AutoPopulatingList<ErrorMessage>> entry : errorMessages.entrySet()) {
                 AutoPopulatingList<ErrorMessage> errors = entry.getValue();
@@ -539,7 +542,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             for (PaymentRequestNoteDto noteDto : preqDto.getNotes()) {
                 Note note = documentService.createNoteFromDocument(preqDoc, noteDto.getNoteText());
                 if (noteDto.hasAttachment()) {
-                    addAttachmentToNote(preqDoc, noteDto, note);
+                    addAttachmentToNote(noteDto, note);
                 }
                 preqDoc.addNote(note);
             }
@@ -624,19 +627,10 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         return null;
      }
 
-    /**
-     * Adds an attachment to the given note based on the attachment information in the note DTO.
-     * The attachment content is expected to be Base64-encoded in the DTO.
-     * 
-     * @param document the payment request document
-     * @param noteDto the note DTO containing attachment information
-     * @param note the note to add the attachment to
-     */
-    private void addAttachmentToNote(CuPaymentRequestDocument document, PaymentRequestNoteDto noteDto, Note note) {
+    protected void addAttachmentToNote(PaymentRequestNoteDto noteDto, Note note) {
         try {
             byte[] attachmentBytes = Base64.getDecoder().decode(noteDto.getAttachmentContent());
             int fileSize = attachmentBytes.length;
-            //String attachmentType = null;
             String attachmentType = noteDto.getNoteType();
             
             try (ByteArrayInputStream inputStream = new ByteArrayInputStream(attachmentBytes)) {
