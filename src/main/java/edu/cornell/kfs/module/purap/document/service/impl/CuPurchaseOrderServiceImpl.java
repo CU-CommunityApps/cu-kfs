@@ -9,6 +9,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.bo.Attachment;
@@ -177,6 +178,13 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
             PurchaseOrderItem poItem = (PurchaseOrderItem) item;
 
             for (PurApAccountingLine purApAccountingLine : poItem.getSourceAccountingLines()) {
+
+                Account account = purApAccountingLine.getAccount();
+                if (StringUtils.isBlank(account.getAccountName())) {
+                    purApAccountingLine.refreshReferenceObject("account");
+                    account = purApAccountingLine.getAccount();
+                }
+
                 if (ObjectUtils.isNotNull(purApAccountingLine) && ObjectUtils.isNotNull(purApAccountingLine.getAccount()) &&
                         ObjectUtils.isNotNull(purApAccountingLine.getAccount().getAccountCfdaNumber())) {
                     return true;
