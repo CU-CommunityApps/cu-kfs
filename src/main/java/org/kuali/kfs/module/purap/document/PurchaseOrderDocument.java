@@ -1702,12 +1702,10 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         return NoteType.BUSINESS_OBJECT;
     }
 
-    // CU Customization KFSPTS-37456
     public String getDocumentFundingSourceCode() {
         return documentFundingSourceCode;
     }
 
-    // CU Customization KFSPTS-37456
     public void setDocumentFundingSourceCode(String documentFundingSourceCode) {
         this.documentFundingSourceCode = documentFundingSourceCode;
     }

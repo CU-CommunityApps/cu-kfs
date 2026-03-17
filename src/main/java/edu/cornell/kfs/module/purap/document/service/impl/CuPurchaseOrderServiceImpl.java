@@ -47,9 +47,9 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
 
         if (poDocument != null) {
             String documentFundingSourceCode = parameterService.getParameterValueAsString(CUKFSConstants.ParameterNamespaces.PURCHASING,
-                    CUKFSConstants.PURCHASE_ORDER, CUKFSConstants.DEFAULT_FUNDING_SOURCE);
+                    CUPurapConstants.PURCHASE_ORDER, CUPurapConstants.DEFAULT_FUNDING_SOURCE);
             if (isFederallyFunded(poDocument)) {
-                documentFundingSourceCode = CUKFSConstants.FEDERAL_FUNDING_CODE;
+                documentFundingSourceCode = CUPurapConstants.FEDERAL_FUNDING_CODE;
             }
             poDocument.setDocumentFundingSourceCode(documentFundingSourceCode);
         }
@@ -60,7 +60,7 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
     @Override
     protected void savePurchaseOrderData(PurchaseOrderDocument po) {
         if (isFederallyFunded(po)) {
-            po.setDocumentFundingSourceCode(CUKFSConstants.FEDERAL_FUNDING_CODE);
+            po.setDocumentFundingSourceCode(CUPurapConstants.FEDERAL_FUNDING_CODE);
         }
         super.savePurchaseOrderData(po);
     }
@@ -163,9 +163,9 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
         final PurchaseOrderDocument poDocument = super.generatePurchaseOrderFromRequisition(reqDocument);
 
         String documentFundingSourceCode = parameterService.getParameterValueAsString(CUKFSConstants.ParameterNamespaces.PURCHASING,
-                CUKFSConstants.PURCHASE_ORDER, CUKFSConstants.DEFAULT_FUNDING_SOURCE);
+                CUPurapConstants.PURCHASE_ORDER, CUPurapConstants.DEFAULT_FUNDING_SOURCE);
         if (isFederallyFunded(poDocument)) {
-            documentFundingSourceCode = CUKFSConstants.FEDERAL_FUNDING_CODE;
+            documentFundingSourceCode = CUPurapConstants.FEDERAL_FUNDING_CODE;
         }
         poDocument.setDocumentFundingSourceCode(documentFundingSourceCode);
 
