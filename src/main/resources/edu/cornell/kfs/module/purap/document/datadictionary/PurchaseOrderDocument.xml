@@ -134,7 +134,6 @@
     	</property>  	
 	</bean>
 
-	<!-- KFSPTS-37456 CU Customization -->
 	<bean id="FundingSource-fundingSourceCode" parent="FundingSource-fundingSourceCode-parentBean"/>
 	<bean abstract="true"
 		  id="FundingSource-fundingSourceCode-parentBean"

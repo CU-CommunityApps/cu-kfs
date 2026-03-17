@@ -28,17 +28,12 @@
               description="A boolean as to whether the document is a PREQ."%>
 <%@ attribute name="detailSectionLabel" required="true"
 			  description="The label of the detail section."%>
-<%@ attribute name="editableFundingSource" required="false"
-			  description="Is fundingsourcecode editable?."%>
 <%@ attribute name="tabErrorKey" required="false"
 			  description="error map to display"%>
 <%@ attribute name="editableAccountDistributionMethod" required="false"
 			  description="Is editableAccountDistributionMethod editable?"%>
 
 <c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}" />
-<c:if test="${empty editableFundingSource}">
-	<c:set var="editableFundingSource" value="true" />
-</c:if>
 
 <c:if test="${amendmentEntry}">
 	<c:if test="${KualiForm.readOnlyReceivingRequired eq 'true'}">
@@ -74,6 +69,8 @@
 	                <kul:lookup boClassName="org.kuali.kfs.coa.businessobject.Organization" fieldConversions="organizationCode:document.organizationCode,chartOfAccountsCode:document.chartOfAccountsCode" />
 	            </c:if>
 	        </td>
+
+			<!-- CU Customization KFSPTS-37456 -->
 			<c:if test="${purchaseOrder}">
 				<th class="right">
 					<label><kul:htmlAttributeLabel attributeEntry="${documentAttributes.documentFundingSourceCode}" /></label>
@@ -86,6 +83,8 @@
 						tabindexOverride="${tabindexOverrideBase + 5}"/>
 				</td>
 			</c:if>
+			<!-- end CU Customization KFSPTS-37456 -->
+
 	    </tr>
     </c:if>
 
