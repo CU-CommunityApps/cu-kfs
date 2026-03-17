@@ -79,7 +79,6 @@
                     <purap:purapDocumentDetail
                             documentAttributes="${DataDictionary.PurchaseOrderDocument.attributes}"
                             purchaseOrder="true"
-                            editableFundingSource="false"
                             detailSectionLabel="Purchase Order Detail"
                             editableAccountDistributionMethod="${KualiForm.readOnlyAccountDistributionMethod}"
                             tabErrorKey="${PurapConstants.DETAIL_TAB_ERRORS}"/>
@@ -97,7 +96,6 @@
                     <purap:purapDocumentDetail
                             documentAttributes="${DataDictionary.PurchaseOrderDocument.attributes}"
                             purchaseOrder="true"
-                            editableFundingSource="false"
                             editableAccountDistributionMethod="${KualiForm.readOnlyAccountDistributionMethod}"
                             detailSectionLabel="Purchase Order Detail"/>
                 </sys:documentOverview>
