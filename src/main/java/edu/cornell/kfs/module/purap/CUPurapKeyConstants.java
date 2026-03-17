@@ -73,4 +73,5 @@ public class CUPurapKeyConstants {
     public static final String ERROR_PAYMENTREQUEST_PO_INVOICE_ALREADY_USED = "error.paymentrequest.po.invoice.already.used";
     public static final String ERROR_PAYMENTREQUEST_DATE_BAD_FORMAT = "error.paymentrequest.date.bad.format";
     public static final String ERROR_PAYMENTREQUEST_NOTE_TOO_LONG = "error.paymentrequest.note.too.long";
+    public static final String ERROR_PAYMENTREQUEST_FIELD_FORMATTING = "error.paymentrequest.formatting.error";
 }

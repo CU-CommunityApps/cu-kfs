@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.krad.util.KRADConstants;
@@ -138,12 +139,9 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
 
     private void updateResultsWithRequiredFieldError(PaymentRequestDtoFields field, PaymentRequestResultsDto results) {
         results.setValid(false);
-        results.getErrorMessages().add(buildRequiredFieldError(field.friendlyName));
-    }
-
-    private String buildRequiredFieldError(String fieldName) {
         String messageBase = configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED);
-        return MessageFormat.format(messageBase, fieldName);
+        String formattedMessage = MessageFormat.format(messageBase, field.friendlyName);
+        results.getErrorMessages().add(formattedMessage);
     }
 
     private void validateIntegerString(String integerString, PaymentRequestDtoFields field, PaymentRequestResultsDto results) {
@@ -219,7 +217,6 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
                 results.setValid(false);
                 String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_NOTE_TOO_LONG);
                 String formattedMessage = MessageFormat.format(messageBase, String.valueOf(noteTextMaxLength), String.valueOf(noteDto.getNoteText().length()));
-
                 results.getErrorMessages().add(formattedMessage);
             } 
         }
@@ -235,9 +232,22 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         if (StringUtils.isNotBlank(noteDto.getAttachmentContent())) {
             if (StringUtils.isBlank(noteDto.getAttachmentFileName())) {
                 updateResultsWithRequiredFieldError(PaymentRequestDtoFields.ATTACHMENT_FILE_NAME, results);
+            } else {
+                if (!validateAttachmentField(noteDto.getAttachmentFileName(), "attachmentFileName", results)) {
+                    String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_FIELD_FORMATTING);
+                    String formattedMessage = MessageFormat.format(messageBase, PaymentRequestDtoFields.ATTACHMENT_FILE_NAME);
+                    results.getErrorMessages().add(formattedMessage);
+                }
             }
+
             if (StringUtils.isBlank(noteDto.getAttachmentMimeType())) {
                 updateResultsWithRequiredFieldError(PaymentRequestDtoFields.ATTACHMENT_MIME_TYPE, results);
+            } else {
+                if (!validateAttachmentField(noteDto.getAttachmentMimeType(), "attachmentMimeTypeCode", results)) {
+                    String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_FIELD_FORMATTING);
+                    String formattedMessage = MessageFormat.format(messageBase, PaymentRequestDtoFields.ATTACHMENT_MIME_TYPE);
+                    results.getErrorMessages().add(formattedMessage);
+                }
             }
         }
     }
@@ -311,6 +321,20 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
 
             results.getErrorMessages().add(formattedMessage);
         }
+    }
+
+    private boolean validateAttachmentField(final String fieldValue, final String fieldName, PaymentRequestResultsDto results) {
+        AttributeDefinition poNumberAttributeDefinition = dataDictionaryService
+                .getAttributeDefinition(Attachment.class.getName(), fieldName);
+        Integer maxLength = poNumberAttributeDefinition.getMaxLength();
+        Pattern validationExpression = poNumberAttributeDefinition.getValidationPattern().getRegexPattern();
+
+        boolean valid = StringUtils.isNotBlank(fieldValue) && fieldValue.length() <= maxLength
+                && validationExpression.matcher(fieldValue).matches();
+        if (!valid) {
+            results.setValid(valid);
+        }
+        return valid;
     }
 
     public void setConfigurationService(ConfigurationService configurationService) {
