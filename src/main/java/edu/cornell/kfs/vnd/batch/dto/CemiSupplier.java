@@ -7,12 +7,15 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAlias;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 
+import edu.cornell.kfs.sys.service.impl.ISOFIPSConversionServiceImpl;
 import edu.cornell.kfs.sys.util.CemiUtils;
 import edu.cornell.kfs.vnd.CUVendorConstants.VendorOwnershipCodes;
+import edu.cornell.kfs.vnd.CemiForeignTaxIdTypes;
 import edu.cornell.kfs.vnd.CemiVendorConstants;
 import edu.cornell.kfs.vnd.CemiVendorConstants.TaxAuthorityFormTypes;
 
@@ -54,7 +57,7 @@ public class CemiSupplier {
         this.taxIdValue = determineTaxIdValue(vendorDetail, maskCemiSensitiveData);
         this.transactionTaxId = determineTransactionTaxId(vendorDetail, this.taxIdValue, this.taxIdType);
         this.primaryTaxId = determinePrimaryTaxId(vendorDetail, this.taxIdValue);
-        this.countryTaxId = CemiVendorConstants.COUNTRY_CODE_UNITED_STATES;
+        this.countryTaxId = determineCountryTaxId(vendorDetail);
         this.dunsNumber = vendorDetail.getVendorDunsNumber();
         this.paymentTerms = determineVendorPaymentTerms(vendorDetail);
         
@@ -67,9 +70,20 @@ public class CemiSupplier {
         this.alias1Usage = getAliasUsage(vendorAliases, 1);
     }
 
+    private String determineCountryTaxId(VendorDetail vendorDetail) {
+        VendorHeader vendorHeader = vendorDetail.getVendorHeader();
+        return vendorHeader.getVendorCorpCitizenCode();
+    }
+
     private static String determineTaxIdValue(VendorDetail vendorDetail, boolean maskCemiSensitiveData) {
         if (!maskCemiSensitiveData) {
-            return vendorDetail.getVendorHeader().getVendorTaxNumber();
+            VendorHeader vendorHeader = vendorDetail.getVendorHeader();
+            if(vendorHeader.getVendorForeignIndicator()) {
+                return vendorHeader.getVendorForeignTaxId();
+            }
+            else {
+                return vendorHeader.getVendorTaxNumber();
+            }
         }
         return CemiVendorConstants.DUMMY_TAX_ID;
     }
@@ -113,6 +127,13 @@ public class CemiSupplier {
     }
 
     private static String determineTaxIdType(final VendorDetail vendor) {
+        if(vendor.getVendorHeader().getVendorForeignIndicator()) {
+            final String isoCountryCode = SpringContext.getBean(ISOFIPSConversionServiceImpl.class).convertFIPSCountryCodeToActiveISOCountryCode(vendor.getVendorHeader().getVendorCorpCitizenCode());
+            final String foreignTaxType = CemiForeignTaxIdTypes.fromIsoCode(isoCountryCode)
+                    .map(CemiForeignTaxIdTypes::getTaxIdType)
+                    .orElse(KFSConstants.EMPTY_STRING);
+            return foreignTaxType;
+        }
         final String kfsTaxType = StringUtils.defaultString(vendor.getVendorHeader().getVendorTaxTypeCode());
         return CemiVendorConstants.TAX_ID_TYPES.get(kfsTaxType);
     }
