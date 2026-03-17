@@ -76,8 +76,7 @@ public class CemiSupplier {
         VendorHeader vendorHeader = vendorDetail.getVendorHeader();
         if (StringUtils.isNotBlank(taxIdValue) && StringUtils.isNotBlank(vendorHeader.getVendorCorpCitizenCode())) {
             return getConversionService().convertFIPSCountryCodeToActiveISOCountryCode(vendorHeader.getVendorCorpCitizenCode());
-        }
-        else {
+        } else {
             return KFSConstants.EMPTY_STRING;
         }
     }
@@ -87,8 +86,7 @@ public class CemiSupplier {
             VendorHeader vendorHeader = vendorDetail.getVendorHeader();
             if (vendorHeader.getVendorForeignIndicator()) {
                 return vendorHeader.getVendorForeignTaxId();
-            }
-            else {
+            } else {
                 return vendorHeader.getVendorTaxNumber();
             }
         }
@@ -106,11 +104,10 @@ public class CemiSupplier {
     // default to true if tax id is present, FALSE if tax type USA_SSN
     private static String determineTransactionTaxId(VendorDetail vendorDetail, String taxIdValue, String taxIdType) {
         if (StringUtils.isNotBlank(taxIdValue)) {
-            boolean transactionTaxId = StringUtils.isNoneBlank(taxIdType, taxIdValue)
+            boolean transactionTaxId = StringUtils.isNotBlank(taxIdType)
                     && !CemiVendorConstants.USA_SSN_TAX_TYPE.equalsIgnoreCase(taxIdType);
             return CemiUtils.convertToBooleanValueForFileExtract(transactionTaxId);
-        }
-        else {
+        } else {
             return KFSConstants.EMPTY_STRING;
         }
 
@@ -118,10 +115,8 @@ public class CemiSupplier {
     
     private static String determinePrimaryTaxId(VendorDetail vendorDetail, String taxIdValue) {
         if (StringUtils.isNotBlank(taxIdValue)) {
-            boolean primaryTaxId = StringUtils.isNotBlank(taxIdValue); // default to true if tax id is present
-            return CemiUtils.convertToBooleanValueForFileExtract(primaryTaxId);
-        }
-        else {
+            return CemiUtils.convertToBooleanValueForFileExtract(true);
+        } else {
             return KFSConstants.EMPTY_STRING;
         }
     }
@@ -147,8 +142,7 @@ public class CemiSupplier {
     private static String determineTaxIdType(final VendorDetail vendor, String taxIdValue) {
         if (StringUtils.isBlank(taxIdValue)) {
             return KFSConstants.EMPTY_STRING;
-        }
-        else {
+        } else {
             if( vendor.getVendorHeader().getVendorForeignIndicator()) {
                 String fipsCountry = vendor.getVendorHeader().getVendorCorpCitizenCode();
                 if (StringUtils.isNotBlank(fipsCountry)) {
@@ -157,8 +151,7 @@ public class CemiSupplier {
                             .map(CemiForeignTaxIdType::getTaxIdType)
                             .orElse(KFSConstants.EMPTY_STRING);
                     return foreignTaxType;
-                }
-                else {
+                } else {
                     return KFSConstants.EMPTY_STRING;
                 }
             }
