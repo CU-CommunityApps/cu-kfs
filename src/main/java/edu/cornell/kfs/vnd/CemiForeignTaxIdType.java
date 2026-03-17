@@ -3,7 +3,7 @@ package edu.cornell.kfs.vnd;
 import java.util.Arrays;
 import java.util.Optional;
 
-public enum CemiForeignTaxIdTypes {
+public enum CemiForeignTaxIdType {
         INDONESIA("Indonesia", "ID", "IDN-LEGALF"),
         ITALY("Italy", "IT", "ITA-LEGALF"),
         NEW_ZEALAND("New Zealand", "NZ", "NZL-LEGALF"),
@@ -82,7 +82,7 @@ public enum CemiForeignTaxIdTypes {
         OMAN("Oman", "OM", "OMN-LEGALF"),
         NEPAL("Nepal", "NP", "NPL-LEGALF"),
         ARGENTINA("Argentina", "AR", "ARG-LEGALF"),
-        TURKIYE("Türkiye", "TR", "TUR-LEGALF"),
+        TURKIYE("T\\u00FCrkiye", "TR", "TUR-LEGALF"),
         TUNISIA("Tunisia", "TN", "TUN-LEGALF"),
         SERBIA("Serbia", "RS", "SRB-LEGALF"),
         NIGERIA("Nigeria", "NG", "NGA-LEGALF"),
@@ -96,7 +96,7 @@ public enum CemiForeignTaxIdTypes {
         private final String isoCode;
         private final String taxIdType;
 
-        CemiForeignTaxIdTypes(String countryName, String isoCode, String taxIdType) {
+        private CemiForeignTaxIdType(String countryName, String isoCode, String taxIdType) {
             this.countryName = countryName;
             this.isoCode = isoCode;
             this.taxIdType = taxIdType;
@@ -107,24 +107,30 @@ public enum CemiForeignTaxIdTypes {
         public String getTaxIdType() { return taxIdType; }
 
         // Lookup by ISO code (e.g. "US", "DE")
-        public static Optional<CemiForeignTaxIdTypes> fromIsoCode(String isoCode) {
-            if (isoCode == null) return Optional.empty();
+        public static Optional<CemiForeignTaxIdType> fromIsoCode(String isoCode) {
+            if (isoCode == null) {
+                return Optional.empty();
+            }
             return Arrays.stream(values())
                     .filter(e -> isoCode.equalsIgnoreCase(e.isoCode))
                     .findFirst();
         }
 
         // Lookup by tax ID type string (e.g. "USA-LEGALF")
-        public static Optional<CemiForeignTaxIdTypes> fromTaxIdType(String taxIdType) {
-            if (taxIdType == null) return Optional.empty();
+        public static Optional<CemiForeignTaxIdType> fromTaxIdType(String taxIdType) {
+            if (taxIdType == null) {
+                return Optional.empty();
+            }
             return Arrays.stream(values())
                     .filter(e -> taxIdType.equalsIgnoreCase(e.taxIdType))
                     .findFirst();
         }
 
         // Lookup by country name (case-insensitive)
-        public static Optional<CemiForeignTaxIdTypes> fromCountryName(String name) {
-            if (name == null) return Optional.empty();
+        public static Optional<CemiForeignTaxIdType> fromCountryName(String name) {
+            if (name == null) {
+                return Optional.empty();
+            }
             return Arrays.stream(values())
                     .filter(e -> name.equalsIgnoreCase(e.countryName))
                     .findFirst();
