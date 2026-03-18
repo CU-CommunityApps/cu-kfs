@@ -145,7 +145,8 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
             final Stream<VendorDetail> vendors = cuVendorDao.getVendorsForCemiSupplierExtractAsCloseableStream();
         ) {
             final Iterator<VendorDetail> vendorsIterator = vendors.iterator();
-            dataBuilder.writeSupplierDataToIntermediateStorage(vendorsIterator, this::findAllActiveAccountsForVendor);
+            dataBuilder.writeSupplierDataToIntermediateStorage(
+                    vendorsIterator, this::findAllActiveAccountsForVendor, jobRunDate);
         }
     }
 

@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
@@ -32,6 +33,7 @@ import edu.cornell.kfs.vnd.batch.dto.CemiSupplierChildren;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierEmail;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierPhone;
 import edu.cornell.kfs.vnd.batch.service.CemiSupplierDataBuilder;
+import edu.cornell.kfs.vnd.dataaccess.CemiVendorDao;
 import edu.cornell.kfs.vnd.util.VendorAccountFinder;
 
 public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBuilder {
@@ -43,8 +45,9 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     protected final boolean maskSensitiveData;
     protected final DecimalFormat supplierIdFormatter;
     protected int vendorCount;
-    
+   
     protected CemiSupplierParentIdentifiersReference parentSupplierReference = null;
+    protected CemiVendorDao cemiVendorDao = null;
     
 
     protected CemiSupplierDataBuilderBase(final CemiOutputDefinition outputDefinition,
@@ -63,7 +66,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
      */
     @Override
     public void writeSupplierDataToIntermediateStorage(final Iterator<VendorDetail> vendors,
-                final VendorAccountFinder accountFinder) throws IOException {
+                final VendorAccountFinder accountFinder, final LocalDateTime jobRunDate) throws IOException {
         for (final VendorDetail vendor : IteratorUtils.asIterable(vendors)) {
             vendorCount++;
             if (vendorCount % 1000 == 0) {
@@ -76,6 +79,10 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             final String supplierId = supplierIdFormatter.format(vendorCount);
             final CemiSupplier supplier = new CemiSupplier(vendor, supplierId, maskSensitiveData);
             writeSupplierRow(supplier);
+            
+            //Record identifier associations for Supplier extract file based upon batch job run date
+            recordSupplierIdentifiersInLegacyAssociationTable(supplierId, vendor.getVendorHeaderGeneratedIdentifier(),
+                            vendor.getVendorDetailAssignedIdentifier(), jobRunDate);
             
             //Addresses Tab
             int addressCount = 0;
@@ -120,6 +127,13 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
 
     protected void writeSupplierRow(final CemiSupplier supplier) throws IOException {
         writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.SUPPLIER, supplier);
+    }
+    
+    protected void recordSupplierIdentifiersInLegacyAssociationTable(final String supplierId,
+            final Integer vendorHeaderGeneratedIdentifier, final Integer vendorDetailAssignedIdentifier,
+            final LocalDateTime jobRunDate) {
+        getCemiVendorDao().storeSupplierIdVendorIdSupplierExtractRunDateMapping(supplierId,
+                vendorHeaderGeneratedIdentifier, vendorDetailAssignedIdentifier, jobRunDate);
     }
     
     protected void writeSupplierAddressRow(final CemiSupplierAddress supplierAddress) throws IOException {
@@ -279,6 +293,17 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
 
     public void setParentSupplierReference(CemiSupplierParentIdentifiersReference parentSupplierReference) {
         this.parentSupplierReference = parentSupplierReference;
+    }
+
+    public CemiVendorDao getCemiVendorDao() {
+        if (cemiVendorDao == null) {
+            setCemiVendorDao(SpringContext.getBean(CemiVendorDao.class));
+        }
+        return cemiVendorDao;
+    }
+
+    public void setCemiVendorDao(CemiVendorDao cemiVendorDao) {
+        this.cemiVendorDao = cemiVendorDao;
     }
 
 }
