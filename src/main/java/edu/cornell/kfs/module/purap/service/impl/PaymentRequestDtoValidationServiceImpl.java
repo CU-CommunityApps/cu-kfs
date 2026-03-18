@@ -20,7 +20,6 @@ import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
-import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
@@ -210,7 +209,7 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         if (StringUtils.isBlank(noteDto.getNoteText())) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.NOTE_TEXT, results);
         } else {
-            AttributeDefinition accountAttributeDefinition = dataDictionaryService.getAttributeDefinition(Note.class.getName(), KRADConstants.NOTE_TEXT_PROPERTY_NAME);
+            AttributeDefinition accountAttributeDefinition = dataDictionaryService.getAttributeDefinition(Note.class.getName(), PaymentRequestDtoFields.NOTE_TEXT.datadictionaryFieldName);
             Integer noteTextMaxLength = accountAttributeDefinition.getMaxLength();
 
             if (noteDto.getNoteText().length() > noteTextMaxLength) {
@@ -233,7 +232,7 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
             if (StringUtils.isBlank(noteDto.getAttachmentFileName())) {
                 updateResultsWithRequiredFieldError(PaymentRequestDtoFields.ATTACHMENT_FILE_NAME, results);
             } else {
-                if (!validateAttachmentField(noteDto.getAttachmentFileName(), "attachmentFileName", results)) {
+                if (!validateAttachmentField(noteDto.getAttachmentFileName(), PaymentRequestDtoFields.ATTACHMENT_FILE_NAME.datadictionaryFieldName, results)) {
                     String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_FIELD_FORMATTING);
                     String formattedMessage = MessageFormat.format(messageBase, PaymentRequestDtoFields.ATTACHMENT_FILE_NAME);
                     results.getErrorMessages().add(formattedMessage);
@@ -243,7 +242,7 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
             if (StringUtils.isBlank(noteDto.getAttachmentMimeType())) {
                 updateResultsWithRequiredFieldError(PaymentRequestDtoFields.ATTACHMENT_MIME_TYPE, results);
             } else {
-                if (!validateAttachmentField(noteDto.getAttachmentMimeType(), "attachmentMimeTypeCode", results)) {
+                if (!validateAttachmentField(noteDto.getAttachmentMimeType(), PaymentRequestDtoFields.ATTACHMENT_MIME_TYPE.datadictionaryFieldName, results)) {
                     String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_FIELD_FORMATTING);
                     String formattedMessage = MessageFormat.format(messageBase, PaymentRequestDtoFields.ATTACHMENT_MIME_TYPE);
                     results.getErrorMessages().add(formattedMessage);
@@ -323,11 +322,11 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         }
     }
 
-    private boolean validateAttachmentField(final String fieldValue, final String fieldName, PaymentRequestResultsDto results) {
-        AttributeDefinition poNumberAttributeDefinition = dataDictionaryService
-                .getAttributeDefinition(Attachment.class.getName(), fieldName);
-        Integer maxLength = poNumberAttributeDefinition.getMaxLength();
-        Pattern validationExpression = poNumberAttributeDefinition.getValidationPattern().getRegexPattern();
+    private boolean validateAttachmentField(final String fieldValue, final String datadictionaryFieldName, PaymentRequestResultsDto results) {
+        AttributeDefinition attributeDefinition = dataDictionaryService
+                .getAttributeDefinition(Attachment.class.getName(), datadictionaryFieldName);
+        Integer maxLength = attributeDefinition.getMaxLength();
+        Pattern validationExpression = attributeDefinition.getValidationPattern().getRegexPattern();
 
         boolean valid = StringUtils.isNotBlank(fieldValue) && fieldValue.length() <= maxLength
                 && validationExpression.matcher(fieldValue).matches();

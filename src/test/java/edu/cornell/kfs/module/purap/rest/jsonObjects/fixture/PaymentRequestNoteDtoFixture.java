@@ -17,7 +17,8 @@ public enum PaymentRequestNoteDtoFixture {
     LEGACY_NOTE_2("Another note for fun", PurapConstants.AttachmentTypeCodes.ATTACHMENT_TYPE_OTHER),
     TOO_LONG_NOTE("This note is longer than 15 characters so it should cause a validation error.", PurapConstants.AttachmentTypeCodes.ATTACHMENT_TYPE_OTHER),
     ATTACHMENT_GOOD("Attachment", PurapConstants.AttachmentTypeCodes.ATTACHMENT_TYPE_INVOICE_IMAGE, "invoice.pdf", "pdf", "content"),
-    ATTACHMENT_BAD("Attachment", PurapConstants.AttachmentTypeCodes.ATTACHMENT_TYPE_INVOICE_IMAGE, " ", null, "content"),
+    ATTACHMENT_NO_FILE_NO_MIME("Attachment", PurapConstants.AttachmentTypeCodes.ATTACHMENT_TYPE_INVOICE_IMAGE, " ", null, "content"),
+    ATTACHMENT_BAD_FILE_BAD_MIME("Attachment", PurapConstants.AttachmentTypeCodes.ATTACHMENT_TYPE_INVOICE_IMAGE, "This @ that.pdf ", "really long mime type that fails length", "content"),
     EMPTY_NOTE(null, null);
 
     public final String noteText;
