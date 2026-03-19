@@ -494,7 +494,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             return (PaymentRequestDocument) savedPreqDoc;
 
         } catch (Exception e) {
-            LOG.error("createPaymentRequestDocumentFromDto, There was an error create thePaymentRequestDocument", e);
+            LOG.error("createPaymentRequestDocumentFromDto, There was an error creating the PaymentRequestDocument", e);
 
             Map<String, AutoPopulatingList<ErrorMessage>> errorMessages = GlobalVariables.getMessageMap().getErrorMessages();
             for (Map.Entry<String, AutoPopulatingList<ErrorMessage>> entry : errorMessages.entrySet()) {

@@ -231,22 +231,18 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         if (StringUtils.isNotBlank(noteDto.getAttachmentContent())) {
             if (StringUtils.isBlank(noteDto.getAttachmentFileName())) {
                 updateResultsWithRequiredFieldError(PaymentRequestDtoFields.ATTACHMENT_FILE_NAME, results);
-            } else {
-                if (!validateAttachmentField(noteDto.getAttachmentFileName(), PaymentRequestDtoFields.ATTACHMENT_FILE_NAME.datadictionaryFieldName, results)) {
-                    String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_FIELD_FORMATTING);
-                    String formattedMessage = MessageFormat.format(messageBase, PaymentRequestDtoFields.ATTACHMENT_FILE_NAME);
-                    results.getErrorMessages().add(formattedMessage);
-                }
+            } else if (!validateAttachmentField(noteDto.getAttachmentFileName(), PaymentRequestDtoFields.ATTACHMENT_FILE_NAME.datadictionaryFieldName, results)) {
+                String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_FIELD_FORMATTING);
+                String formattedMessage = MessageFormat.format(messageBase, PaymentRequestDtoFields.ATTACHMENT_FILE_NAME.friendlyName);
+                results.getErrorMessages().add(formattedMessage);
             }
 
             if (StringUtils.isBlank(noteDto.getAttachmentMimeType())) {
                 updateResultsWithRequiredFieldError(PaymentRequestDtoFields.ATTACHMENT_MIME_TYPE, results);
-            } else {
-                if (!validateAttachmentField(noteDto.getAttachmentMimeType(), PaymentRequestDtoFields.ATTACHMENT_MIME_TYPE.datadictionaryFieldName, results)) {
-                    String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_FIELD_FORMATTING);
-                    String formattedMessage = MessageFormat.format(messageBase, PaymentRequestDtoFields.ATTACHMENT_MIME_TYPE);
-                    results.getErrorMessages().add(formattedMessage);
-                }
+            } else if (!validateAttachmentField(noteDto.getAttachmentMimeType(), PaymentRequestDtoFields.ATTACHMENT_MIME_TYPE.datadictionaryFieldName, results)) {
+                String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_FIELD_FORMATTING);
+                String formattedMessage = MessageFormat.format(messageBase, PaymentRequestDtoFields.ATTACHMENT_MIME_TYPE.friendlyName);
+                results.getErrorMessages().add(formattedMessage);
             }
         }
     }

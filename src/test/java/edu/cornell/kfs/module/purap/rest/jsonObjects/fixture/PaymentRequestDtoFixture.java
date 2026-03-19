@@ -132,7 +132,7 @@ public enum PaymentRequestDtoFixture {
             null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
             StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.ATTACHMENT_BAD_FILE_BAD_MIME), false,
-            buildMessageList(), buildMessageList("ATTACHMENT_FILE_NAME is not formatted properly.", "ATTACHMENT_MIME_TYPE is not formatted properly.")),
+            buildMessageList(), buildMessageList("File Name is not formatted properly.", "Mime Type is not formatted properly.")),
     VALIDATION_TEST_FORMAT_ERRORS(StringUtils.EMPTY, "1234-1", "98769A",
             "11/25/2025X", "111/26/2025",
             "invoiceNumber", "50.Y", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,

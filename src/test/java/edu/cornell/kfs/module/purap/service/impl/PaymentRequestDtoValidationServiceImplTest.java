@@ -136,12 +136,14 @@ public class PaymentRequestDtoValidationServiceImplTest {
         AttributeDefinition fileNameDefiition = Mockito.mock(AttributeDefinition.class);
         Mockito.when(fileNameDefiition.getMaxLength()).thenReturn(Integer.valueOf(15));
         Mockito.when(fileNameDefiition.getValidationPattern()).thenReturn(new AnyCharacterValidationPattern());
-        Mockito.when(service.getAttributeDefinition(Attachment.class.getName(), PaymentRequestDtoFields.ATTACHMENT_FILE_NAME.datadictionaryFieldName)).thenReturn(fileNameDefiition);
+        Mockito.when(service.getAttributeDefinition(Attachment.class.getName(), 
+                PaymentRequestDtoFields.ATTACHMENT_FILE_NAME.datadictionaryFieldName)).thenReturn(fileNameDefiition);
 
-        AttributeDefinition mimeDefiition = Mockito.mock(AttributeDefinition.class);
-        Mockito.when(mimeDefiition.getMaxLength()).thenReturn(Integer.valueOf(15));
-        Mockito.when(mimeDefiition.getValidationPattern()).thenReturn(new AnyCharacterValidationPattern());
-        Mockito.when(service.getAttributeDefinition(Attachment.class.getName(), PaymentRequestDtoFields.ATTACHMENT_MIME_TYPE.datadictionaryFieldName)).thenReturn(mimeDefiition);
+        AttributeDefinition mimeDefinition = Mockito.mock(AttributeDefinition.class);
+        Mockito.when(mimeDefinition.getMaxLength()).thenReturn(Integer.valueOf(15));
+        Mockito.when(mimeDefinition.getValidationPattern()).thenReturn(new AnyCharacterValidationPattern());
+        Mockito.when(service.getAttributeDefinition(Attachment.class.getName(), 
+                PaymentRequestDtoFields.ATTACHMENT_MIME_TYPE.datadictionaryFieldName)).thenReturn(mimeDefinition);
         
         return service;
     }
