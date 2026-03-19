@@ -102,24 +102,27 @@ public class CemiVendorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc im
     public void storeSupplierIdVendorIdSupplierExtractRunDateMapping(final String supplierId,
             final Integer vendorHeaderGeneratedIdentifier, final Integer vendorDetailAssignedIdentifier,
             final LocalDateTime jobRunDate) {
+        
+        String jobRunDateAsString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
 
         final CuSqlQuery query = new CuSqlChunk()
                 .append("INSERT INTO KFS.CU_CEMI_MAPPING_SPLR_VNDR_EXTR_FILE_T ")
                 .append("(WKDY_SPLR_ID, VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, EXTR_FILE_RUNDATE) ")
-                .append("VALUES ('").append(supplierId).append("'")
-                .append(", ").append(String.valueOf(vendorHeaderGeneratedIdentifier.intValue()))
-                .append(", ").append(String.valueOf(vendorDetailAssignedIdentifier.intValue()))
-                .append(", '").append(CemiUtils.generateBatchJobRunDateAsString(jobRunDate)).append("')")
+                .append("VALUES (").appendAsParameter(Types.VARCHAR, supplierId)
+                .append(", ").appendAsParameter(Types.INTEGER, vendorHeaderGeneratedIdentifier)
+                .append(", ").appendAsParameter(Types.INTEGER, vendorDetailAssignedIdentifier)
+                .append(", ").appendAsParameter(Types.VARCHAR, jobRunDateAsString)
+                .append(")")
                 .toQuery();
 
-        final int numRowsInserted = this.executeUpdate(query);
+        final int numRowsInserted = executeUpdate(query);
         if (numRowsInserted != 1) {
-            LOG.error("storeSupplierIdVendorIdSupplierExtractRunDate, Query should have inserted 1 row,"
+            LOG.error("storeSupplierIdVendorIdSupplierExtractRunDateMapping, Query should have inserted 1 row,"
                     + " but it inserted {} instead", numRowsInserted);
             throw new RuntimeException(String.format("Failed to insert Supplier-Vendor-JobRunDate row for:"
                     + " supplierId %s, vendor id %s-%s, extraction job run datetime %s.", supplierId,
                     vendorHeaderGeneratedIdentifier.intValue(), vendorDetailAssignedIdentifier.intValue(),
-                    CemiUtils.generateBatchJobRunDateAsString(jobRunDate)));
+                    jobRunDateAsString));
         }
     }
 

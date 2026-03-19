@@ -16,7 +16,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
@@ -47,14 +46,16 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     protected int vendorCount;
    
     protected CemiSupplierParentIdentifiersReference parentSupplierReference = null;
-    protected CemiVendorDao cemiVendorDao = null;
+    protected CemiVendorDao cemiVendorDao;
     
 
-    protected CemiSupplierDataBuilderBase(final CemiOutputDefinition outputDefinition,
+    protected CemiSupplierDataBuilderBase(final CemiOutputDefinition outputDefinition, CemiVendorDao cemiVendorDao,
             final LocalDateTime jobRunDate, final boolean maskSensitiveData) {
         Validate.notNull(outputDefinition, "outputDefinition cannot be null");
+        Validate.notNull(cemiVendorDao, "cemiVendorDao cannot be null");
         Validate.notNull(jobRunDate, "jobRunDate cannot be null");
         this.outputDefinition = outputDefinition;
+        this.cemiVendorDao = cemiVendorDao;
         this.jobRunDate = jobRunDate;
         this.maskSensitiveData = maskSensitiveData;
         this.supplierIdFormatter = new DecimalFormat(CemiVendorConstants.SUPPLIER_ID_FORMAT);
@@ -296,9 +297,6 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     }
 
     public CemiVendorDao getCemiVendorDao() {
-        if (cemiVendorDao == null) {
-            setCemiVendorDao(SpringContext.getBean(CemiVendorDao.class));
-        }
         return cemiVendorDao;
     }
 

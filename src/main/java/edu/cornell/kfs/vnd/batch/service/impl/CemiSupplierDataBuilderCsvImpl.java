@@ -18,15 +18,17 @@ import edu.cornell.kfs.sys.batch.xml.CemiFieldDefinition;
 import edu.cornell.kfs.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.sys.batch.xml.CemiSheetDefinition;
 import edu.cornell.kfs.sys.util.CemiUtils;
+import edu.cornell.kfs.vnd.dataaccess.CemiVendorDao;
 
 public class CemiSupplierDataBuilderCsvImpl extends CemiSupplierDataBuilderBase {
 
     private final Map<String, CemiCsvWriter> csvWriters;
     private final Map<String, CemiSheetDefinition> sheetDefinitions;
 
-    public CemiSupplierDataBuilderCsvImpl(final CemiOutputDefinition outputDefinition, final LocalDateTime jobRunDate,
+    public CemiSupplierDataBuilderCsvImpl(final CemiOutputDefinition outputDefinition,
+            final CemiVendorDao cemiVendorDao, final LocalDateTime jobRunDate,
             final String baseFileDirectory, final boolean maskSensitiveData) throws IOException {
-        super(outputDefinition, jobRunDate, maskSensitiveData);
+        super(outputDefinition, cemiVendorDao, jobRunDate, maskSensitiveData);
         Validate.notBlank(baseFileDirectory, "baseFileDirectory cannot be blank");
 
         this.sheetDefinitions = outputDefinition.getSheets().stream()
