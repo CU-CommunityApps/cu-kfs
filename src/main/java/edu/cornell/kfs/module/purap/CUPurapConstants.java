@@ -215,6 +215,10 @@ public class CUPurapConstants {
         public static final String MANUAL = "MANL";
         public static final String CONVERSION = "CNVS";
     }
+
+    public static final class PurapFundingSources {
+        public static final String FEDERAL_FUNDING_SOURCE = "FEDR";
+    }
     
     public static class ElectronicInvoice {
      // ELECTRONIC INVOICE DISCOUNT DESCRIPTION
@@ -581,7 +585,4 @@ public class CUPurapConstants {
         public static final String PAYFLOW = "Payflow";
     }
 
-    public static final String PURCHASE_ORDER = "PurchaseOrder";
-    public static final String DEFAULT_FUNDING_SOURCE = "DEFAULT_FUNDING_SOURCE";
-    public static final String FEDERAL_FUNDING_CODE = "FEDL";
 }
