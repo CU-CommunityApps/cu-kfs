@@ -140,12 +140,13 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
         try (
             // Replace this builder with a temp table implementation when ready.
             final CemiSupplierDataBuilderCsvImpl dataBuilder = new CemiSupplierDataBuilderCsvImpl(
-                    getOutputDefinitionForSupplierExtract(), jobRunDate, supplierFileCreationDirectory, 
+                    getOutputDefinitionForSupplierExtract(), getCemiVendorDao(), jobRunDate, supplierFileCreationDirectory, 
                     shouldMaskCemiSensitiveData());
             final Stream<VendorDetail> vendors = cuVendorDao.getVendorsForCemiSupplierExtractAsCloseableStream();
         ) {
             final Iterator<VendorDetail> vendorsIterator = vendors.iterator();
-            dataBuilder.writeSupplierDataToIntermediateStorage(vendorsIterator, this::findAllActiveAccountsForVendor);
+            dataBuilder.writeSupplierDataToIntermediateStorage(
+                    vendorsIterator, this::findAllActiveAccountsForVendor, jobRunDate);
         }
     }
 
@@ -283,6 +284,10 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
 
     public void setCemiVendorDao(final CemiVendorDao cemiVendorDao) {
         this.cemiVendorDao = cemiVendorDao;
+    }
+
+    public CemiVendorDao getCemiVendorDao() {
+        return cemiVendorDao;
     }
 
     public void setCemiOutputDefinitionFileType(final CemiOutputDefinitionFileType cemiOutputDefinitionFileType) {

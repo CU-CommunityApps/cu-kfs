@@ -1,6 +1,7 @@
 package edu.cornell.kfs.vnd.dataaccess;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public interface CemiVendorDao {
 
@@ -13,5 +14,9 @@ public interface CemiVendorDao {
     void prepareBaseVendorDataNeededForMainVendorIdQuery();
 
     void queryAndStoreVendorIdsForSupplierExtract();
+    
+    void storeSupplierIdVendorIdSupplierExtractRunDateMapping(final String supplierId,
+            final Integer vendorHeaderGeneratedIdentifier, final Integer vendorDetailAssignedIdentifier,
+            final LocalDateTime jobRunDate);
 
 }

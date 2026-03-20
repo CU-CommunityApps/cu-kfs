@@ -32,6 +32,7 @@ import edu.cornell.kfs.vnd.batch.dto.CemiSupplierChildren;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierEmail;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierPhone;
 import edu.cornell.kfs.vnd.batch.service.CemiSupplierDataBuilder;
+import edu.cornell.kfs.vnd.dataaccess.CemiVendorDao;
 import edu.cornell.kfs.vnd.util.VendorAccountFinder;
 
 public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBuilder {
@@ -43,15 +44,18 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     protected final boolean maskSensitiveData;
     protected final DecimalFormat supplierIdFormatter;
     protected int vendorCount;
-    
+   
     protected CemiSupplierParentIdentifiersReference parentSupplierReference = null;
+    protected CemiVendorDao cemiVendorDao;
     
 
-    protected CemiSupplierDataBuilderBase(final CemiOutputDefinition outputDefinition,
+    protected CemiSupplierDataBuilderBase(final CemiOutputDefinition outputDefinition, CemiVendorDao cemiVendorDao,
             final LocalDateTime jobRunDate, final boolean maskSensitiveData) {
         Validate.notNull(outputDefinition, "outputDefinition cannot be null");
+        Validate.notNull(cemiVendorDao, "cemiVendorDao cannot be null");
         Validate.notNull(jobRunDate, "jobRunDate cannot be null");
         this.outputDefinition = outputDefinition;
+        this.cemiVendorDao = cemiVendorDao;
         this.jobRunDate = jobRunDate;
         this.maskSensitiveData = maskSensitiveData;
         this.supplierIdFormatter = new DecimalFormat(CemiVendorConstants.SUPPLIER_ID_FORMAT);
@@ -63,7 +67,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
      */
     @Override
     public void writeSupplierDataToIntermediateStorage(final Iterator<VendorDetail> vendors,
-                final VendorAccountFinder accountFinder) throws IOException {
+                final VendorAccountFinder accountFinder, final LocalDateTime jobRunDate) throws IOException {
         for (final VendorDetail vendor : IteratorUtils.asIterable(vendors)) {
             vendorCount++;
             if (vendorCount % 1000 == 0) {
@@ -76,6 +80,10 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             final String supplierId = supplierIdFormatter.format(vendorCount);
             final CemiSupplier supplier = new CemiSupplier(vendor, supplierId, maskSensitiveData);
             writeSupplierRow(supplier);
+            
+            //Record identifier associations for Supplier extract file based upon batch job run date
+            recordSupplierIdentifiersInLegacyAssociationTable(supplierId, vendor.getVendorHeaderGeneratedIdentifier(),
+                            vendor.getVendorDetailAssignedIdentifier(), jobRunDate);
             
             //Addresses Tab
             int addressCount = 0;
@@ -120,6 +128,13 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
 
     protected void writeSupplierRow(final CemiSupplier supplier) throws IOException {
         writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.SUPPLIER, supplier);
+    }
+    
+    protected void recordSupplierIdentifiersInLegacyAssociationTable(final String supplierId,
+            final Integer vendorHeaderGeneratedIdentifier, final Integer vendorDetailAssignedIdentifier,
+            final LocalDateTime jobRunDate) {
+        getCemiVendorDao().storeSupplierIdVendorIdSupplierExtractRunDateMapping(supplierId,
+                vendorHeaderGeneratedIdentifier, vendorDetailAssignedIdentifier, jobRunDate);
     }
     
     protected void writeSupplierAddressRow(final CemiSupplierAddress supplierAddress) throws IOException {
@@ -279,6 +294,14 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
 
     public void setParentSupplierReference(CemiSupplierParentIdentifiersReference parentSupplierReference) {
         this.parentSupplierReference = parentSupplierReference;
+    }
+
+    public CemiVendorDao getCemiVendorDao() {
+        return cemiVendorDao;
+    }
+
+    public void setCemiVendorDao(CemiVendorDao cemiVendorDao) {
+        this.cemiVendorDao = cemiVendorDao;
     }
 
 }
