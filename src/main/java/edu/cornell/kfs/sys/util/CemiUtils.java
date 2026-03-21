@@ -8,6 +8,7 @@ import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.batch.xml.CemiSheetDefinition;
 
 public final class CemiUtils {
 
@@ -32,6 +33,18 @@ public final class CemiUtils {
     
     public static final String generateBatchJobRunDateAsString(final LocalDateTime jobRunDate) {
         return generateDateTimeInConsistentFormat(jobRunDate);
+    }
+
+    public static int getRowCount(final CemiSheetDefinition sheetDefinition) {
+        return sheetDefinition.getNumHeaderRows();
+    }
+
+    public static int getFullColumnCount(final CemiSheetDefinition sheetDefinition) {
+        return sheetDefinition.getStartColumnIndex() + sheetDefinition.getFields().size();
+    }
+
+    public static int getDataColumnCount(final CemiSheetDefinition sheetDefinition) {
+        return sheetDefinition.getFields().size();
     }
 
 }
