@@ -184,7 +184,7 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
                 }
 
                 if (ObjectUtils.isNotNull(purApAccountingLine) && ObjectUtils.isNotNull(purApAccountingLine.getAccount()) &&
-                        ObjectUtils.isNotNull(purApAccountingLine.getAccount().getAccountCfdaNumber())) {
+                        StringUtils.isNotBlank(purApAccountingLine.getAccount().getAccountCfdaNumber())) {
                     return true;
                 }
             }
