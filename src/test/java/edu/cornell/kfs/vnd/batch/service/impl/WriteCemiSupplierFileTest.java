@@ -112,7 +112,7 @@ public class WriteCemiSupplierFileTest {
         final File file = new File(path + fileName);
 
         createAndPopulateExcelFileFromTemplate(file);
-        assertGeneratedFileHasNonZeroValuesForUncompressedSizes(file);
+        assertFileWasGeneratedWithoutUsingZip64(file);
         assertGeneratedFileHasExpectedStructureInModifiedSheets(file);
     }
 
@@ -138,7 +138,7 @@ public class WriteCemiSupplierFileTest {
                 .toArray(String[]::new);
     }
 
-    private void assertGeneratedFileHasNonZeroValuesForUncompressedSizes(final File file) throws Exception {
+    private void assertFileWasGeneratedWithoutUsingZip64(final File file) throws Exception {
         try (
             final ZipFile zipFile = ZipFile.builder()
                     .setFile(file)
