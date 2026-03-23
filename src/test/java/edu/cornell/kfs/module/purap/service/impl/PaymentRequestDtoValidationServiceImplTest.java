@@ -1,7 +1,5 @@
 package edu.cornell.kfs.module.purap.service.impl;
 
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 
 import org.apache.logging.log4j.Level;
@@ -15,6 +13,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.kns.datadictionary.validation.charlevel.AnyCharacterValidationPattern;
+import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.krad.util.KRADConstants;
@@ -32,6 +32,7 @@ import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestResultsDto;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.fixture.PaymentRequestDtoFixture;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.fixture.PaymentRequestLineItemDtoFixture;
+import edu.cornell.kfs.module.purap.util.PaymentRequestUtil.PaymentRequestDtoFields;
 
 public class PaymentRequestDtoValidationServiceImplTest {
     private static final Logger LOG = LogManager.getLogger();
@@ -58,8 +59,6 @@ public class PaymentRequestDtoValidationServiceImplTest {
                 .thenReturn("At least one {0} must be entered.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_INVALID_VENDOR_NUMBER))
                 .thenReturn("Vendor Number {0} is not valid.");
-        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_INVALID_PO))
-                .thenReturn("PO Number {0} is not valid.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_NOT_MATCH_VENDOR))
                 .thenReturn("PO Number {0} has a vendor number {1} but the vendor number supplied was {2}.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_NOT_OPEN))
@@ -74,6 +73,8 @@ public class PaymentRequestDtoValidationServiceImplTest {
                 .thenReturn("{0} must be in the format of MM/DD/YYYY.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_NOTE_TOO_LONG))
                 .thenReturn("The maximum size of a note is {0} characters, the note provided was {1} characters long.");
+        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_FIELD_FORMATTING))
+                .thenReturn("{0} is not formatted properly.");
         return service;
     }
 
@@ -127,9 +128,23 @@ public class PaymentRequestDtoValidationServiceImplTest {
 
     private DataDictionaryService buildMockDataDictionaryService() {
         DataDictionaryService service = Mockito.mock(DataDictionaryService.class);
-        AttributeDefinition definition = Mockito.mock(AttributeDefinition.class);
-        Mockito.when(definition.getMaxLength()).thenReturn(15);
-        Mockito.when(service.getAttributeDefinition(Note.class.getName(), KRADConstants.NOTE_TEXT_PROPERTY_NAME)).thenReturn(definition);
+        
+        AttributeDefinition noteDefinition = Mockito.mock(AttributeDefinition.class);
+        Mockito.when(noteDefinition.getMaxLength()).thenReturn(15);
+        Mockito.when(service.getAttributeDefinition(Note.class.getName(), KRADConstants.NOTE_TEXT_PROPERTY_NAME)).thenReturn(noteDefinition);
+
+        AttributeDefinition fileNameDefiition = Mockito.mock(AttributeDefinition.class);
+        Mockito.when(fileNameDefiition.getMaxLength()).thenReturn(Integer.valueOf(15));
+        Mockito.when(fileNameDefiition.getValidationPattern()).thenReturn(new AnyCharacterValidationPattern());
+        Mockito.when(service.getAttributeDefinition(Attachment.class.getName(), 
+                PaymentRequestDtoFields.ATTACHMENT_FILE_NAME.datadictionaryFieldName)).thenReturn(fileNameDefiition);
+
+        AttributeDefinition mimeDefinition = Mockito.mock(AttributeDefinition.class);
+        Mockito.when(mimeDefinition.getMaxLength()).thenReturn(Integer.valueOf(15));
+        Mockito.when(mimeDefinition.getValidationPattern()).thenReturn(new AnyCharacterValidationPattern());
+        Mockito.when(service.getAttributeDefinition(Attachment.class.getName(), 
+                PaymentRequestDtoFields.ATTACHMENT_MIME_TYPE.datadictionaryFieldName)).thenReturn(mimeDefinition);
+        
         return service;
     }
 

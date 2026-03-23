@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestDto;
 
 public enum PaymentRequestDtoFixture {
@@ -82,7 +83,7 @@ public enum PaymentRequestDtoFixture {
             null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
             StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), false, buildMessageList(),
-            buildMessageList("PO Number 98765 is not valid.")),
+            buildMessageList(CUPurapConstants.PURCHASE_ORDER_NOT_FOUND_MESSAGE)),
     VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_BAD_VENDOR(StringUtils.EMPTY, "1234-1", "98766",
             "11/25/2025", "11/26/2025",
             "invoiceNumber", "50", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
@@ -111,13 +112,27 @@ public enum PaymentRequestDtoFixture {
             StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.TOO_LONG_NOTE), false,
             buildMessageList(), buildMessageList("The maximum size of a note is 15 characters, the note provided was 77 characters long.")),
-    VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_GOOD_LINE(StringUtils.EMPTY, "1234-1", "98769",
+    VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_GOOD_LINE_GOOD_ATTACH(StringUtils.EMPTY, "1234-1", "98769",
             "11/25/2025", "11/26/2025",
             "invoiceNumber", "50", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
             null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
             StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
-            buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), true,
+            buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID, PaymentRequestNoteDtoFixture.ATTACHMENT_GOOD), true,
             buildMessageList(), buildMessageList()),
+    VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_GOOD_LINE_EMPTY_ATTACH_VAL(StringUtils.EMPTY, "1234-1", "98769",
+            "11/25/2025", "11/26/2025",
+            "invoiceNumber", "50", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+            null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
+            StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
+            buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID, PaymentRequestNoteDtoFixture.ATTACHMENT_NO_FILE_NO_MIME), false,
+            buildMessageList(), buildMessageList("File Name is a required field.", "Mime Type is a required field.")),
+    VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_GOOD_LINE_BAD_ATTACH(StringUtils.EMPTY, "1234-1", "98769",
+            "11/25/2025", "11/26/2025",
+            "invoiceNumber", "50", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+            null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
+            StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
+            buildNotes(PaymentRequestNoteDtoFixture.ATTACHMENT_BAD_FILE_BAD_MIME), false,
+            buildMessageList(), buildMessageList("File Name is not formatted properly.", "Mime Type is not formatted properly.")),
     VALIDATION_TEST_FORMAT_ERRORS(StringUtils.EMPTY, "1234-1", "98769A",
             "11/25/2025X", "111/26/2025",
             "invoiceNumber", "50.Y", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,

@@ -52,7 +52,7 @@ public class PaymentRequestResource {
 
     /*
     This can be remvoed after payflow is fully implemented.  
-    This should be false when pushed to develop / master.
+    This should be FALSE when pushed to develop / master.
     Note: when we implement routing of payment request documents, if there is an error on submission, we will need to cancel the preq
      */
     private static final boolean AUTO_CANCEL_PO_FOR_TESTING = false;
@@ -111,12 +111,12 @@ public class PaymentRequestResource {
 
                     } else {
                         LOG.info("createPaymentRequestDocument, unable to save preq, return false {}", results);
-                        return Response.status(Status.BAD_REQUEST).entity(gson.toJson(results)).build();   
+                        return Response.status(results.getErrorStatus()).entity(gson.toJson(results)).build();   
                     }
 
             } else {
                 LOG.info("createPaymentRequestDocument, there were validation errors, return false {}", results);
-                return Response.status(Status.BAD_REQUEST).entity(gson.toJson(results)).build();
+                return Response.status(results.getErrorStatus()).entity(gson.toJson(results)).build();
             }
 
         } catch (Exception e) {
