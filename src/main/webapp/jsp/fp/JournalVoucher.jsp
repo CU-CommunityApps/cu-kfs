@@ -89,11 +89,16 @@
                         </c:if>
 
                         <c:if test="${!readOnly && !isYearEnd}">
+                            <%-- CU Customization: Modify onchange handling for balance type to also set methodToCall. --%>
+                            <input type="hidden" id="balanceTypeHelper" name="balanceTypeHelper" value="placeholder"/>
                             <SCRIPT type="text/javascript">
                                 function submitForChangedBalanceType() {
+                                    document.forms[0].balanceTypeHelper.value = "methodToCall.changeBalanceType";
+                                    document.forms[0].balanceTypeHelper.name = "methodToCall.changeBalanceType";
                                     document.forms[0].submit();
                                 }
                             </SCRIPT>
+                            <%-- End CU Customization --%>
                             <html:select property="selectedBalanceType.code" onchange="submitForChangedBalanceType()">
                                 <c:forEach items="${KualiForm.balanceTypes}" var="balanceType">
                                     <html:option value="${balanceType.code}">
