@@ -191,6 +191,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     protected RecurringPaymentFrequency recurringPaymentFrequency;
     protected ContractManager contractManager;
 
+    protected String documentFundingSourceCode;
+
     public PurchaseOrderDocument() {
         super();
         purchaseOrderVendorStipulations = new ArrayList<>();
@@ -1699,4 +1701,13 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     public NoteType getNoteType() {
         return NoteType.BUSINESS_OBJECT;
     }
+
+    public String getDocumentFundingSourceCode() {
+        return documentFundingSourceCode;
+    }
+
+    public void setDocumentFundingSourceCode(String documentFundingSourceCode) {
+        this.documentFundingSourceCode = documentFundingSourceCode;
+    }
+
 }

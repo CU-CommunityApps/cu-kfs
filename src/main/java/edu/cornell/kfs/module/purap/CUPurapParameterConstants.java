@@ -56,4 +56,7 @@ public class CUPurapParameterConstants {
     public static final String MAX_FILE_SIZE_PO_SEND_TO_VENDOR = "MAX_FILE_SIZE_PO_SEND_TO_VENDOR";
     
     public static final String ENABLE_IWANT_CONTRACT_TAB_IND = "ENABLE_IWANT_CONTRACT_TAB_IND";
+
+    public static final String PURCHASE_ORDER = "PurchaseOrder";
+    public static final String DEFAULT_FUNDING_SOURCE = "DEFAULT_FUNDING_SOURCE";
 }
