@@ -10,6 +10,7 @@
      <property name="attributes">
       <list merge="true">
         <ref bean="PurchaseOrderDocument-vendorEmailAddress"/>
+		<ref bean="PurchaseOrderDocument-documentFundingSourceCode"/>
       </list>
     </property>
  
@@ -131,6 +132,20 @@
   	    <property name="searchingTypeDefinitions">
     		<ref bean="SearchingTypeDefinitions-PurchaseOrderDocumentFamily"/>
     	</property>  	
-	</bean> 
-	
+	</bean>
+
+	<bean id="PurchaseOrderDocument-documentFundingSourceCode"
+		  parent="PurchaseOrderDocument-documentFundingSourceCode-parentBean"/>
+	<bean id="PurchaseOrderDocument-documentFundingSourceCode-parentBean" abstract="true"
+		  parent="AttributeDefinition"
+		  p:name="documentFundingSourceCode"
+		  p:label="Funding Source"
+		  p:shortLabel="Funding Source"
+		  p:required="false"
+		  p:forceUppercase="true"
+		  p:maxLength="4"
+		  p:validationPattern-ref="AnyCharacterValidation"
+		  p:control-ref="FourCharacterTextControl"
+	/>
+
 </beans>

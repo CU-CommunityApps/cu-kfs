@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.core.api.config.Environment;
+import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.bo.Attachment;
@@ -23,6 +25,7 @@ import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
+import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.impl.PurchaseOrderServiceImpl;
@@ -37,6 +40,32 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
     private static final Logger LOG = LogManager.getLogger();
     
     private AttachmentService attachmentService;
+
+    @Override
+    public PurchaseOrderDocument createPurchaseOrderDocument(RequisitionDocument reqDocument, String newSessionUserId,
+                                                             Integer contractManagerCode) {
+        PurchaseOrderDocument poDocument = super.createPurchaseOrderDocument(reqDocument, newSessionUserId, contractManagerCode);
+
+        String documentFundingSourceCode = determineDocumentFundingSourceCode(poDocument);
+        poDocument.setDocumentFundingSourceCode(documentFundingSourceCode);
+
+        return poDocument;
+    }
+
+    private String determineDocumentFundingSourceCode(PurchaseOrderDocument poDocument) {
+        String defaultFundingSource = parameterService.getParameterValueAsString(CUKFSConstants.ParameterNamespaces.PURCHASING,
+                CUPurapParameterConstants.PURCHASE_ORDER, CUPurapParameterConstants.DEFAULT_FUNDING_SOURCE);
+
+        return isFederallyFunded(poDocument) ? CUPurapConstants.PurapFundingSources.FEDERAL_FUNDING_SOURCE : defaultFundingSource;
+    }
+
+    @Override
+    protected void savePurchaseOrderData(PurchaseOrderDocument po) {
+        String documentFundingSourceCode = determineDocumentFundingSourceCode(po);
+        po.setDocumentFundingSourceCode(documentFundingSourceCode);
+
+        super.savePurchaseOrderData(po);
+    }
 
     @Override
     public void performPurchaseOrderFirstTransmitViaPrinting(final PurchaseOrderDocument po) {
@@ -134,7 +163,35 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
 
     protected PurchaseOrderDocument generatePurchaseOrderFromRequisition(final RequisitionDocument reqDocument) {
         final PurchaseOrderDocument poDocument = super.generatePurchaseOrderFromRequisition(reqDocument);
+
+        String documentFundingSourceCode = determineDocumentFundingSourceCode(poDocument);
+        poDocument.setDocumentFundingSourceCode(documentFundingSourceCode);
+
         return copyNotesAndAttachmentsToPO(reqDocument, poDocument); 
+    }
+
+    public boolean isFederallyFunded(final PurchaseOrderDocument poDocument) {
+
+        for (Object item : poDocument.getItems()) {
+            PurchaseOrderItem poItem = (PurchaseOrderItem) item;
+
+            for (PurApAccountingLine purApAccountingLine : poItem.getSourceAccountingLines()) {
+
+                Account account = purApAccountingLine.getAccount();
+                if (StringUtils.isBlank(account.getAccountName())) {
+                    purApAccountingLine.refreshReferenceObject("account");
+                    account = purApAccountingLine.getAccount();
+                }
+
+                if (ObjectUtils.isNotNull(purApAccountingLine) && ObjectUtils.isNotNull(purApAccountingLine.getAccount()) &&
+                        StringUtils.isNotBlank(purApAccountingLine.getAccount().getAccountCfdaNumber())) {
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
     }
 
     // mjmc *************************************************************************************************
@@ -205,6 +262,9 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
     protected PurchaseOrderDocument createPurchaseOrderDocumentFromSourceDocument(
             final PurchaseOrderDocument sourceDocument, final String docType) {
         final PurchaseOrderDocument newDocument = super.createPurchaseOrderDocumentFromSourceDocument(sourceDocument, docType);
+
+        newDocument.setDocumentFundingSourceCode(sourceDocument.getDocumentFundingSourceCode());
+
         resetOverrideCodesOnItemAccountingLines(newDocument);
         return newDocument;
     }
