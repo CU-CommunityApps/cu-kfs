@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
+import javax.ws.rs.core.Response.Status;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -15,9 +17,9 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
-import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
@@ -29,6 +31,7 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestDto;
@@ -135,12 +138,9 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
 
     private void updateResultsWithRequiredFieldError(PaymentRequestDtoFields field, PaymentRequestResultsDto results) {
         results.setValid(false);
-        results.getErrorMessages().add(buildRequiredFieldError(field.friendlyName));
-    }
-
-    private String buildRequiredFieldError(String fieldName) {
         String messageBase = configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED);
-        return MessageFormat.format(messageBase, fieldName);
+        String formattedMessage = MessageFormat.format(messageBase, field.friendlyName);
+        results.getErrorMessages().add(formattedMessage);
     }
 
     private void validateIntegerString(String integerString, PaymentRequestDtoFields field, PaymentRequestResultsDto results) {
@@ -209,14 +209,13 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         if (StringUtils.isBlank(noteDto.getNoteText())) {
             updateResultsWithRequiredFieldError(PaymentRequestDtoFields.NOTE_TEXT, results);
         } else {
-            AttributeDefinition accountAttributeDefinition = dataDictionaryService.getAttributeDefinition(Note.class.getName(), KRADConstants.NOTE_TEXT_PROPERTY_NAME);
+            AttributeDefinition accountAttributeDefinition = dataDictionaryService.getAttributeDefinition(Note.class.getName(), PaymentRequestDtoFields.NOTE_TEXT.datadictionaryFieldName);
             Integer noteTextMaxLength = accountAttributeDefinition.getMaxLength();
 
             if (noteDto.getNoteText().length() > noteTextMaxLength) {
                 results.setValid(false);
                 String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_NOTE_TOO_LONG);
                 String formattedMessage = MessageFormat.format(messageBase, String.valueOf(noteTextMaxLength), String.valueOf(noteDto.getNoteText().length()));
-
                 results.getErrorMessages().add(formattedMessage);
             } 
         }
@@ -227,6 +226,24 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
                     PurapConstants.AttachmentTypeCodes.ATTACHMENT_TYPE_OTHER + "' or '" +
                     PurapConstants.AttachmentTypeCodes.ATTACHMENT_TYPE_INVOICE_IMAGE + "'.";
             results.getErrorMessages().add(errorMessage);
+        }
+
+        if (StringUtils.isNotBlank(noteDto.getAttachmentContent())) {
+            if (StringUtils.isBlank(noteDto.getAttachmentFileName())) {
+                updateResultsWithRequiredFieldError(PaymentRequestDtoFields.ATTACHMENT_FILE_NAME, results);
+            } else if (!validateAttachmentField(noteDto.getAttachmentFileName(), PaymentRequestDtoFields.ATTACHMENT_FILE_NAME.datadictionaryFieldName, results)) {
+                String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_FIELD_FORMATTING);
+                String formattedMessage = MessageFormat.format(messageBase, PaymentRequestDtoFields.ATTACHMENT_FILE_NAME.friendlyName);
+                results.getErrorMessages().add(formattedMessage);
+            }
+
+            if (StringUtils.isBlank(noteDto.getAttachmentMimeType())) {
+                updateResultsWithRequiredFieldError(PaymentRequestDtoFields.ATTACHMENT_MIME_TYPE, results);
+            } else if (!validateAttachmentField(noteDto.getAttachmentMimeType(), PaymentRequestDtoFields.ATTACHMENT_MIME_TYPE.datadictionaryFieldName, results)) {
+                String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_FIELD_FORMATTING);
+                String formattedMessage = MessageFormat.format(messageBase, PaymentRequestDtoFields.ATTACHMENT_MIME_TYPE.friendlyName);
+                results.getErrorMessages().add(formattedMessage);
+            }
         }
     }
 
@@ -251,9 +268,8 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(paymentRequestDto.getPoNumberAsInteger());
         if (poDoc == null) {
             results.setValid(false);
-            String messageBase = configurationService
-                    .getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_INVALID_PO);
-            results.getErrorMessages().add(MessageFormat.format(messageBase, paymentRequestDto.getPoNumber()));
+            results.getErrorMessages().add(CUPurapConstants.PURCHASE_ORDER_NOT_FOUND_MESSAGE);
+            results.setErrorStatus(Status.NOT_FOUND);
         } else if (!StringUtils.equalsIgnoreCase(poDoc.getVendorNumber(), paymentRequestDto.getVendorNumber())) {
             results.setValid(false);
             String messageBase = configurationService
@@ -300,6 +316,20 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
 
             results.getErrorMessages().add(formattedMessage);
         }
+    }
+
+    private boolean validateAttachmentField(final String fieldValue, final String datadictionaryFieldName, PaymentRequestResultsDto results) {
+        AttributeDefinition attributeDefinition = dataDictionaryService
+                .getAttributeDefinition(Attachment.class.getName(), datadictionaryFieldName);
+        Integer maxLength = attributeDefinition.getMaxLength();
+        Pattern validationExpression = attributeDefinition.getValidationPattern().getRegexPattern();
+
+        boolean valid = StringUtils.isNotBlank(fieldValue) && fieldValue.length() <= maxLength
+                && validationExpression.matcher(fieldValue).matches();
+        if (!valid) {
+            results.setValid(valid);
+        }
+        return valid;
     }
 
     public void setConfigurationService(ConfigurationService configurationService) {

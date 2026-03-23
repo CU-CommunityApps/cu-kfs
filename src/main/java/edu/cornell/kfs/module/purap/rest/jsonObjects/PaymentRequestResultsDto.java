@@ -2,6 +2,7 @@ package edu.cornell.kfs.module.purap.rest.jsonObjects;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -12,10 +13,12 @@ public class PaymentRequestResultsDto {
     private List<String> successMessages;
     private List<String> errorMessages;
     private String documentNumber;
+    private transient Status errorStatus;
 
     public PaymentRequestResultsDto() {
         successMessages = new ArrayList<>();
         errorMessages = new ArrayList<>();
+        errorStatus = Status.BAD_REQUEST;
     }
 
     public boolean isValid() {
@@ -48,6 +51,14 @@ public class PaymentRequestResultsDto {
 
     public void setErrorMessages(List<String> errorMessages) {
         this.errorMessages = errorMessages;
+    }
+
+    public Status getErrorStatus() {
+        return errorStatus;
+    }
+
+    public void setErrorStatus(Status errorStatus) {
+        this.errorStatus = errorStatus;
     }
 
     @Override

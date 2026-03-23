@@ -1,5 +1,7 @@
 package edu.cornell.kfs.module.purap.util;
 
+import org.kuali.kfs.krad.util.KRADConstants;
+
 public class PaymentRequestUtil {
     public enum PaymentRequestDtoFields {
         VENDOR_NUMBER(true, "Vendor Number"), 
@@ -20,15 +22,23 @@ public class PaymentRequestUtil {
         ITEM_LINE_NUMBER(true, "Item Line Number"),
         ITEM_QUANTITY(true, "Item Quantity"),
         ITEM_PRICE(true, "Item Price"),
-        NOTE_TEXT(true, "Note Text"),
-        NOTE_TYPE(false, "Note Type");
+        NOTE_TEXT(true, "Note Text", KRADConstants.NOTE_TEXT_PROPERTY_NAME),
+        NOTE_TYPE(false, "Note Type"),
+        ATTACHMENT_FILE_NAME(false, "File Name", "attachmentFileName"),
+        ATTACHMENT_MIME_TYPE(false, "Mime Type", "attachmentMimeTypeCode");
 
         public final boolean required;
         public final String friendlyName;
+        public final String datadictionaryFieldName;
 
         private PaymentRequestDtoFields(boolean required, String friendlyName) {
+            this(required, friendlyName, null);
+        }
+
+        private PaymentRequestDtoFields(boolean required, String friendlyName, String datadictionaryFieldName) {
             this.required = required;
             this.friendlyName = friendlyName;
+            this.datadictionaryFieldName = datadictionaryFieldName;
         }
     }
 }

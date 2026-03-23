@@ -1,11 +1,14 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +42,10 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
+import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.InfrastructureException;
+import org.kuali.kfs.krad.service.AttachmentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
@@ -61,6 +66,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     private static final Logger LOG = LogManager.getLogger();
     
     private CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
+    private AttachmentService attachmentService;
 
 
     @Override
@@ -303,6 +309,10 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         this.paymentMethodGeneralLedgerPendingEntryService = paymentMethodGeneralLedgerPendingEntryService;
     }
 
+    public void setAttachmentService(AttachmentService attachmentService) {
+        this.attachmentService = attachmentService;
+    }
+
     @Override
     public void clearTax(final PaymentRequestDocument document) {
         // remove all existing tax items added by previous calculation
@@ -472,10 +482,9 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
                 && super.isEligibleForAutoApproval(document, defaultMinimumLimit);
     }
 
+    @Override
     public PaymentRequestDocument createPaymentRequestDocumentFromDto(PaymentRequestDto preqDto, PaymentRequestResultsDto results) {
-
         LOG.info("Creating PaymentRequestDocument from DTO for PO: {}", preqDto.getPoNumberAsInteger());
-
         try {
             PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(preqDto.getPoNumberAsInteger());
 
@@ -485,6 +494,8 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             return (PaymentRequestDocument) savedPreqDoc;
 
         } catch (Exception e) {
+            LOG.error("createPaymentRequestDocumentFromDto, There was an error creating the PaymentRequestDocument", e);
+
             Map<String, AutoPopulatingList<ErrorMessage>> errorMessages = GlobalVariables.getMessageMap().getErrorMessages();
             for (Map.Entry<String, AutoPopulatingList<ErrorMessage>> entry : errorMessages.entrySet()) {
                 AutoPopulatingList<ErrorMessage> errors = entry.getValue();
@@ -529,8 +540,11 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
         if (CollectionUtils.isNotEmpty(preqDto.getNotes())) {
             for (PaymentRequestNoteDto noteDto : preqDto.getNotes()) {
-                Note n = documentService.createNoteFromDocument(preqDoc, noteDto.getNoteText());
-                preqDoc.addNote(n);
+                Note note = documentService.createNoteFromDocument(preqDoc, noteDto.getNoteText());
+                if (noteDto.hasAttachment()) {
+                    addAttachmentToNote(noteDto, note);
+                }
+                preqDoc.addNote(note);
             }
         }
 
@@ -612,5 +626,29 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
         return null;
      }
+
+    private void addAttachmentToNote(PaymentRequestNoteDto noteDto, Note note) {
+        try {
+            byte[] attachmentBytes = Base64.getDecoder().decode(noteDto.getAttachmentContent());
+            int fileSize = attachmentBytes.length;
+            String attachmentType = noteDto.getNoteType();
+            
+            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(attachmentBytes)) {
+                Attachment attachment = attachmentService.createAttachment(note, noteDto.getAttachmentFileName(), 
+                     noteDto.getAttachmentMimeType(), fileSize, inputStream, attachmentType);
+                note.addAttachment(attachment);
+                LOG.info("addAttachmentToNote, successfully added attachment '{}' (size: {} bytes, mimeType: {}) to note",
+                        noteDto.getAttachmentFileName(), fileSize, noteDto.getAttachmentMimeType());
+            }
+        } catch (IllegalArgumentException e) {
+            LOG.error("addAttachmentToNote, failed to decode base64 attachment content for file '{}'", 
+                    noteDto.getAttachmentFileName(), e);
+            throw new RuntimeException("Failed to decode base64 attachment content: " + e.getMessage(), e);
+        } catch (IOException e) {
+            LOG.error("addAttachmentToNote, failed to create attachment for file '{}'", 
+                    noteDto.getAttachmentFileName(), e);
+            throw new RuntimeException("Failed to create attachment: " + e.getMessage(), e);
+        }
+    }
 
 }
