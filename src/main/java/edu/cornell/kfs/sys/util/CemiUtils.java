@@ -35,7 +35,7 @@ public final class CemiUtils {
         return generateDateTimeInConsistentFormat(jobRunDate);
     }
 
-    public static int getRowCount(final CemiSheetDefinition sheetDefinition) {
+    public static int getHeaderRowCount(final CemiSheetDefinition sheetDefinition) {
         return sheetDefinition.getNumHeaderRows();
     }
 

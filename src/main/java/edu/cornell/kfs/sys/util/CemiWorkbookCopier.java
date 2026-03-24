@@ -62,20 +62,20 @@ public class CemiWorkbookCopier {
     private void trackHeaderRowDataAndDeleteRowsOnModifiableSheets(final XSSFWorkbook oldWorkbook) {
         for (final CemiSheetDefinition sheetDefinition : outputDefinition.getSheets()) {
             final String sheetName = sheetDefinition.getName();
-            final int rowCount = CemiUtils.getRowCount(sheetDefinition);
+            final int headerRowCount = CemiUtils.getHeaderRowCount(sheetDefinition);
             final int columnCount = CemiUtils.getFullColumnCount(sheetDefinition);
-            final RowData[] rowsToReinsert = new RowData[rowCount];
+            final RowData[] rowsToReinsert = new RowData[headerRowCount];
             final XSSFSheet sheet = oldWorkbook.getSheet(sheetName);
             Validate.validState(sheet != null, "The %s sheet was not found in the workbook", sheetName);
-            Validate.validState(sheet.getLastRowNum() >= rowCount - 1, "The %s sheet had less than %s rows",
-                    sheetName, rowCount);
+            Validate.validState(sheet.getLastRowNum() >= headerRowCount - 1, "The %s sheet had less than %s rows",
+                    sheetName, headerRowCount);
 
             for (int rowIndex = sheet.getLastRowNum(); rowIndex >= 0; rowIndex--) {
                 final XSSFRow row = sheet.getRow(rowIndex);
-                if (row == null) {
-                    continue;
-                } else if (rowIndex >= rowCount) {
-                    sheet.removeRow(row);
+                if (rowIndex >= headerRowCount) {
+                    if (row != null) {
+                        sheet.removeRow(row);
+                    }
                     continue;
                 }
 
@@ -90,6 +90,13 @@ public class CemiWorkbookCopier {
         }
     }
 
+    /*
+     * NOTE: Apache POI's SXSSFWorkbook doesn't seem to be setting up the ZIP64 headers properly,
+     * so we need to disable ZIP64 mode to make the spreadsheet compatible with other tools.
+     * However, doing so will limit the size of the spreadsheet contents to 4GB. If we end up needing
+     * to prepare content larger than 4GB, then we may have to implement an alternative solution
+     * (such as programmatically unzipping and re-zipping the files to fix the headers).
+     */
     private void disableZip64ModeToImproveCompatibility(final SXSSFWorkbook newWorkbook) {
         newWorkbook.setZip64Mode(Zip64Mode.Never);
     }
@@ -99,7 +106,7 @@ public class CemiWorkbookCopier {
             final String sheetName = sheetDefinition.getName();
             final SXSSFSheet newSheet = newWorkbook.getSheet(sheetName);
             final RowData[] rows = rowDataMappings.get(sheetName);
-            final int rowCount = CemiUtils.getRowCount(sheetDefinition);
+            final int rowCount = CemiUtils.getHeaderRowCount(sheetDefinition);
             final int columnCount = CemiUtils.getFullColumnCount(sheetDefinition);
             Validate.validState(newSheet != null, "Sheet %s not found in streaming workbook", sheetName);
             Validate.validState(rows != null, "Row data for Sheet %s not found", sheetName);

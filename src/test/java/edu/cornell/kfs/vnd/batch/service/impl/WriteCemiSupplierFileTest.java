@@ -191,7 +191,7 @@ public class WriteCemiSupplierFileTest {
 
     private String getExpectedLowerRightRefBounds(final CemiSheetDefinition sheetDefinition) {
         final int numInsertedDataRows = 1;
-        final int expectedRowCount = CemiUtils.getRowCount(sheetDefinition) + numInsertedDataRows;
+        final int expectedRowCount = CemiUtils.getHeaderRowCount(sheetDefinition) + numInsertedDataRows;
         final int expectedColumnCount = CemiUtils.getFullColumnCount(sheetDefinition);
         final String expectedColumnString = CellReference.convertNumToColString(expectedColumnCount - 1);
         return expectedColumnString + Integer.toString(expectedRowCount);
@@ -200,7 +200,7 @@ public class WriteCemiSupplierFileTest {
     private void assertSheetHasCorrectHeaderRows(
             final CemiSheetDefinition sheetDefinition, final XSSFSheet oldSheet, final XSSFSheet newSheet) {
         final String sheetName = sheetDefinition.getName();
-        final int headerRowCount = CemiUtils.getRowCount(sheetDefinition);
+        final int headerRowCount = CemiUtils.getHeaderRowCount(sheetDefinition);
         final int columnCount = CemiUtils.getFullColumnCount(sheetDefinition);
         for (int rowIndex = 0; rowIndex < headerRowCount; rowIndex++) {
             final XSSFRow oldRow = oldSheet.getRow(rowIndex);
@@ -260,7 +260,7 @@ public class WriteCemiSupplierFileTest {
 
     private void assertSheetHasCorrectTestDataRow(final CemiSheetDefinition sheetDefinition, final XSSFSheet newSheet) {
         final String sheetName = newSheet.getSheetName();
-        final int rowIndex = CemiUtils.getRowCount(sheetDefinition);
+        final int rowIndex = CemiUtils.getHeaderRowCount(sheetDefinition);
         final String rowAndSheetMessage = " for row at index " + rowIndex + " in sheet " + sheetName;
         final int startColumnIndex = sheetDefinition.getStartColumnIndex();
         final int columnCount = CemiUtils.getDataColumnCount(sheetDefinition);
