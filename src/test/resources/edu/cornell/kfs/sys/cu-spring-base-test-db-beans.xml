@@ -40,7 +40,7 @@
         <property name="properties">
             <props merge="true">
                 <prop key="datasource.platform">org.kuali.kfs.core.framework.persistence.platform.OracleDatabasePlatform</prop>
-                <prop key="kfs.datasource.driver.name">org.hsqldb.jdbc.JDBCDriver</prop>
+                <prop key="datasource.driver">org.hsqldb.jdbc.JDBCDriver</prop>
                 <prop key="kfs.datasource.url">NEEDS_TO_BE_OVERRIDDEN</prop>
                 <prop key="kfs.datasource.username">kfs</prop>
                 <prop key="kfs.datasource.password"></prop>
