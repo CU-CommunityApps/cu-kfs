@@ -2,9 +2,9 @@ package edu.cornell.kfs.sys.batch.service.impl;
 
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -20,12 +20,11 @@ import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import edu.cornell.kfs.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.sys.batch.xml.CemiSheetDefinition;
+import edu.cornell.kfs.sys.util.CemiWorkbookCopier;
 
 public class CemiExcelWriter implements Closeable {
 
@@ -33,49 +32,33 @@ public class CemiExcelWriter implements Closeable {
 
     private final Map<String, CemiSheet> sheets;
 
-    private FileInputStream fileInputStream;
     private OPCPackage opcPackage;
     private XSSFWorkbook templateWorkbook;
     private SXSSFWorkbook streamedWorkbook;
     private FileOutputStream fileOutputStream;
     private boolean committed;
 
-    public CemiExcelWriter(final CemiOutputDefinition outputDefinition, final File templateFile)
-            throws IOException, InvalidFormatException {
+    public CemiExcelWriter(final CemiOutputDefinition outputDefinition, final InputStream templateFileStream,
+            final File targetFile) throws IOException, InvalidFormatException {
         Validate.notNull(outputDefinition, "outputDefinition cannot be null");
-        Validate.notNull(templateFile, "templateFile cannot be null");
+        Validate.notNull(templateFileStream, "templateFileStream cannot be null");
+        Validate.notNull(targetFile, "targetFile cannot be null");
         boolean setupSucceeded = false;
 
         try {
-            fileInputStream = new FileInputStream(templateFile);
-            opcPackage = OPCPackage.open(fileInputStream);
+            opcPackage = OPCPackage.open(templateFileStream);
             templateWorkbook = new XSSFWorkbook(opcPackage);
-            removeNonHeaderRowsFromTemplate(outputDefinition, templateWorkbook);
-            streamedWorkbook = new SXSSFWorkbook(templateWorkbook);
-            fileOutputStream = new FileOutputStream(templateFile);
+
+            final CemiWorkbookCopier workbookCopier = new CemiWorkbookCopier(outputDefinition);
+            streamedWorkbook = workbookCopier.cleanAndCopyDataToStreamedWorkbook(templateWorkbook);
 
             this.sheets = createSheetsMap(outputDefinition, streamedWorkbook);
+            fileOutputStream = new FileOutputStream(targetFile);
             committed = false;
             setupSucceeded = true;
         } finally {
             if (!setupSucceeded) {
-                IOUtils.closeQuietly(fileOutputStream, streamedWorkbook, templateWorkbook, opcPackage, fileInputStream);
-            }
-        }
-    }
-
-    private static void removeNonHeaderRowsFromTemplate(final CemiOutputDefinition outputDefinition,
-            final XSSFWorkbook templateWorkbook) {
-        for (final CemiSheetDefinition sheetDefinition : outputDefinition.getSheets()) {
-            final XSSFSheet sheet = templateWorkbook.getSheet(sheetDefinition.getName());
-            Validate.validState(sheet != null, "Sheet not found in template: %s", sheetDefinition.getName());
-            final int lastHeaderRowIndex = sheetDefinition.getNumHeaderRows() - 1;
-
-            int lastRowIndex = sheet.getLastRowNum();
-            while (lastRowIndex > lastHeaderRowIndex) {
-                final XSSFRow rowToDelete = sheet.getRow(lastRowIndex);
-                sheet.removeRow(rowToDelete);
-                lastRowIndex = sheet.getLastRowNum();
+                IOUtils.closeQuietly(fileOutputStream, streamedWorkbook, templateWorkbook, opcPackage);
             }
         }
     }
@@ -115,7 +98,7 @@ public class CemiExcelWriter implements Closeable {
     }
 
     public void commit() throws IOException {
-        Validate.validState(!committed, "The source spreadsheet file has already been overwritten");
+        Validate.validState(!committed, "The target spreadsheet file has already been created/overwritten");
         streamedWorkbook.write(fileOutputStream);
         committed = true;
     }
@@ -123,10 +106,10 @@ public class CemiExcelWriter implements Closeable {
     @Override
     public void close() throws IOException {
         if (!committed) {
-            LOG.warn("close, This instance has not yet committed its updates to the source spreadsheet file. "
+            LOG.warn("close, This instance has not yet committed its updates to the target spreadsheet file. "
                     + "Any changes that are only stored in auto-generated temporary files could be lost!");
         }
-        IOUtils.closeQuietly(fileOutputStream, streamedWorkbook, templateWorkbook, opcPackage, fileInputStream);
+        IOUtils.closeQuietly(fileOutputStream, streamedWorkbook, templateWorkbook, opcPackage);
     }
 
     private static final class CemiSheet {
@@ -136,7 +119,7 @@ public class CemiExcelWriter implements Closeable {
 
         private CemiSheet(final CemiSheetDefinition sheetDefinition, final SXSSFSheet workbookSheet) {
             Validate.notNull(sheetDefinition, "sheetDefinition cannot be null");
-            Validate.notNull(workbookSheet, "workbookSheet cannot be null; sheet might not exist in file: %s",
+            Validate.notNull(workbookSheet, "workbookSheet cannot be null; sheet %s might not exist in file",
                     sheetDefinition.getName());
             this.sheetDefinition = sheetDefinition;
             this.workbookSheet = workbookSheet;

@@ -1,10 +1,8 @@
 package edu.cornell.kfs.vnd.batch.service.impl;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -175,11 +173,7 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
                     supplierFileOutboundDirectory, CemiVendorConstants.SUPPLIER_EXTRACT_PLAIN_FILENAME);
             Validate.validState(!tempFile.exists(), "Temporary file already exists: %s", newFileName);
 
-            LOG.info("generateSupplierExtractFile, Copying template file...");
-            copyTemplateFileTo(tempFile);
-
-            LOG.info("generateSupplierExtractFile, Updating copied template with supplier data...");
-            updateSupplierExtractFile(tempFile, jobRunDate);
+            createAndPopulateSupplierExtractFile(tempFile, jobRunDate);
 
             if (shouldCopySupplierExtractFileToOutboundDirectory()) {
                 LOG.info("generateSupplierExtractFile, Copying file to outbound folder under the Supplier.xlsx name...");
@@ -200,22 +194,14 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
         return new File(StringUtils.join(prefix, CUKFSConstants.SLASH, fileName));
     }
 
-    private void copyTemplateFileTo(final File newFile) throws IOException {
-        try (
-            final InputStream inputStream = CuCoreUtilities.getResourceAsStream(
-                    CemiVendorConstants.SUPPLIER_TEMPLATE_FILE_PATH);
-            final OutputStream outputStream = new FileOutputStream(newFile);
-        ) {
-            IOUtils.copy(inputStream, outputStream);
-        }
-    }
-
-    private void updateSupplierExtractFile(final File file, final LocalDateTime jobRunDate)
+    private void createAndPopulateSupplierExtractFile(final File file, final LocalDateTime jobRunDate)
             throws IOException, InvalidFormatException {
         final CemiOutputDefinition outputDefinition = getOutputDefinitionForSupplierExtract();
 
         try (
-            final CemiExcelWriter writer = new CemiExcelWriter(outputDefinition, file);
+            final InputStream templateFileStream = CuCoreUtilities.getResourceAsStream(
+                    CemiVendorConstants.SUPPLIER_TEMPLATE_FILE_PATH);
+            final CemiExcelWriter writer = new CemiExcelWriter(outputDefinition, templateFileStream, file);
         ) {
             // Replace this appender with a temp table implementation when ready.
             final CemiSupplierFileAppenderCsvImpl supplierFileAppender = new CemiSupplierFileAppenderCsvImpl(
