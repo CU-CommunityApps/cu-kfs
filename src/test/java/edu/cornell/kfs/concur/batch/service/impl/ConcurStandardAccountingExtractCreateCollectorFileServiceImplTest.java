@@ -59,6 +59,7 @@ import org.springframework.util.MultiValueMap;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import org.apache.commons.lang3.tuple.Pair;
+import static org.mockito.ArgumentMatchers.nullable;
 
 @SuppressWarnings("deprecation")
 public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
@@ -206,15 +207,16 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
     }
 
     protected SearchService buildBatchFileLookupableHelperService(DateTimeService dateTimeService) {
-        BatchFileSearchService mockBatchFileSearchService = mock(BatchFileSearchService.class);
-        when(mockBatchFileSearchService.getSearchResults(any(),
+        SearchService mockBatchFileLookupableHelperService = mock(SearchService.class);
+        when(mockBatchFileLookupableHelperService.getSearchResults(
+                any(),
                 any(MultiValueMap.class),
                 anyInt(),
                 anyInt(),
-                any(String.class),
+                nullable(String.class),
                 anyBoolean()))
             .thenReturn(Pair.of(Collections.emptyList(), 0));
-        return mockBatchFileSearchService;
+        return mockBatchFileLookupableHelperService;
     }
 
     protected ConcurStandardAccountingExtractCollectorBatchBuilder buildMockBatchBuilder() {
