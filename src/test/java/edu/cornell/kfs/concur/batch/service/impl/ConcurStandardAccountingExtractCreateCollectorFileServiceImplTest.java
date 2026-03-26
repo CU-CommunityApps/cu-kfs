@@ -215,7 +215,14 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
                 anyInt(),
                 nullable(String.class),
                 anyBoolean()))
-            .thenReturn(Pair.of(Collections.emptyList(), 0));
+            .thenAnswer(invocation -> {
+                File collectorDir = new File(COLLECTOR_OUTPUT_DIRECTORY_PATH);
+                File[] existingFiles = collectorDir.listFiles(
+                    f -> f.getName().startsWith(ConcurConstants.COLLECTOR_CONCUR_OUTPUT_FILE_NAME_PREFIX)
+                         && f.getName().endsWith(GeneralLedgerConstants.BatchFileSystem.EXTENSION));
+                int count = existingFiles != null ? existingFiles.length : 0;
+                return Pair.of(Collections.emptyList(), count);
+            });
         return mockBatchFileLookupableHelperService;
     }
 
