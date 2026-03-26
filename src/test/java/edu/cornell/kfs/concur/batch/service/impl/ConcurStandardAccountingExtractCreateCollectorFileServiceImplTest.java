@@ -55,12 +55,17 @@ import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchR
 import edu.cornell.kfs.concur.batch.service.BusinessObjectFlatFileSerializerService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCreateCollectorFileService;
 
+import org.springframework.util.MultiValueMap;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import org.apache.commons.lang3.tuple.Pair;
+
 @SuppressWarnings("deprecation")
 public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
 
     protected static final String GET_FIELD_LENGTH_MAP_METHOD = "getFieldLengthMap";
     protected static final String EXPECTED_RESULTS_DIRECTORY_PATH = "src/test/resources/edu/cornell/kfs/concur/batch/service/impl/fixture/";
-    protected static final String BASE_TEST_DIRECTORY = "src/test";
+    protected static final String BASE_TEST_DIRECTORY = "test";
     protected static final String COLLECTOR_OUTPUT_DIRECTORY_PATH = BASE_TEST_DIRECTORY + "/gl/collectorFlatFile/";
 
     protected ConcurStandardAccountingExtractCreateCollectorFileService collectorFileService;
@@ -201,8 +206,15 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
     }
 
     protected SearchService buildBatchFileLookupableHelperService(DateTimeService dateTimeService) {
-    	SearchService lookupableHelperServiceImpl = new TestBatchFileLookupSearchServiceImpl();
-        return lookupableHelperServiceImpl;
+        BatchFileSearchService mockBatchFileSearchService = mock(BatchFileSearchService.class);
+        when(mockBatchFileSearchService.getSearchResults(any(),
+                any(MultiValueMap.class),
+                anyInt(),
+                anyInt(),
+                any(String.class),
+                anyBoolean()))
+            .thenReturn(Pair.of(Collections.emptyList(), 0));
+        return mockBatchFileSearchService;
     }
 
     protected ConcurStandardAccountingExtractCollectorBatchBuilder buildMockBatchBuilder() {
