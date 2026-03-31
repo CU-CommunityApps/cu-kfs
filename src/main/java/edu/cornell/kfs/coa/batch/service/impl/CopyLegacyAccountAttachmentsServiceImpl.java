@@ -35,10 +35,12 @@ import edu.cornell.kfs.coa.batch.CopyLegacyAccountAttachmentsStep;
 import edu.cornell.kfs.coa.batch.CuCoaBatchConstants;
 import edu.cornell.kfs.coa.batch.CuCoaBatchParameterConstants;
 import edu.cornell.kfs.coa.batch.businessobject.LegacyAccountAttachment;
+import edu.cornell.kfs.coa.batch.businessobject.RemappedAccountAttachment;
 import edu.cornell.kfs.coa.batch.dataaccess.CopyLegacyAccountAttachmentsDao;
 import edu.cornell.kfs.coa.batch.service.CopyLegacyAccountAttachmentsService;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentBackupLink;
+import edu.cornell.kfs.krad.service.CuAttachmentService;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 
 public class CopyLegacyAccountAttachmentsServiceImpl implements CopyLegacyAccountAttachmentsService {
@@ -56,6 +58,7 @@ public class CopyLegacyAccountAttachmentsServiceImpl implements CopyLegacyAccoun
     private DataDictionaryService dataDictionaryService;
     private ParameterService parameterService;
     private ConfigurationService configurationService;
+    private CuAttachmentService cuAttachmentService;
 
     @Transactional
     @Override
@@ -234,6 +237,29 @@ public class CopyLegacyAccountAttachmentsServiceImpl implements CopyLegacyAccoun
                 + "Finished marking attachments as having copy failures");
     }
 
+    @Override
+    public void moveFileContentsForRemappedAttachments() {
+        final List<RemappedAccountAttachment> remappedAttachments = copyLegacyAccountAttachmentsDao
+                .getRemappedAccountAttachments();
+        if (remappedAttachments.isEmpty()) {
+            LOG.info("moveFileContentsForRemappedAttachments, There were no remapped attachments to fix");
+            return;
+        } else {
+            LOG.info("moveFileContentsForRemappedAttachments, Attempting to fix the file content locations "
+                    + "for {} attachments", remappedAttachments.size());
+        }
+        int numSuccessfulMoves = 0;
+
+        for (final RemappedAccountAttachment remappedAttachment : remappedAttachments) {
+            if (cuAttachmentService.fixRemappedAttachmentIfPossible(remappedAttachment)) {
+                numSuccessfulMoves++;
+            }
+        }
+
+        LOG.info("moveFileContentsForRemappedAttachments, finished moving all file contents; {} moves were successful",
+                numSuccessfulMoves);
+    }
+
     public void setCopyLegacyAccountAttachmentsDao(
             final CopyLegacyAccountAttachmentsDao copyLegacyAccountAttachmentsDao) {
         this.copyLegacyAccountAttachmentsDao = copyLegacyAccountAttachmentsDao;
@@ -270,6 +296,10 @@ public class CopyLegacyAccountAttachmentsServiceImpl implements CopyLegacyAccoun
 
     public void setConfigurationService(final ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+
+    public void setCuAttachmentService(final CuAttachmentService cuAttachmentService) {
+        this.cuAttachmentService = cuAttachmentService;
     }
 
 }

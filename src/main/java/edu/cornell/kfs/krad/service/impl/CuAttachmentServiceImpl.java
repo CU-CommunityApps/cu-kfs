@@ -1,27 +1,32 @@
 package edu.cornell.kfs.krad.service.impl;
 
-import edu.cornell.kfs.krad.dao.CuAttachmentDao;
-import edu.cornell.kfs.krad.service.BlackListAttachmentService;
-import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.krad.antivirus.service.ScanResult;
-import edu.cornell.kfs.krad.antivirus.service.AntiVirusService;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.krad.bo.Attachment;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.service.NoteService;
-import org.kuali.kfs.krad.service.impl.AttachmentServiceImpl;
-import org.kuali.kfs.core.api.mo.common.GloballyUnique;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.mo.common.GloballyUnique;
+import org.kuali.kfs.krad.bo.Attachment;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.service.NoteService;
+import org.kuali.kfs.krad.service.impl.AttachmentServiceImpl;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.springframework.transaction.annotation.Transactional;
+
+import edu.cornell.kfs.coa.batch.businessobject.RemappedAccountAttachment;
+import edu.cornell.kfs.krad.antivirus.service.AntiVirusService;
+import edu.cornell.kfs.krad.antivirus.service.ScanResult;
+import edu.cornell.kfs.krad.dao.CuAttachmentDao;
+import edu.cornell.kfs.krad.service.BlackListAttachmentService;
+import edu.cornell.kfs.krad.service.CuAttachmentService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 /**
  * Custom subclass of AttachmentServiceImpl featuring the following enhancements:
@@ -30,7 +35,7 @@ import java.io.InputStream;
  * Added attachment file extension black list parameter processing.
  */
 @Transactional
-public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
+public class CuAttachmentServiceImpl extends AttachmentServiceImpl implements CuAttachmentService {
 
     private static final Logger LOG = LogManager.getLogger();
 
@@ -113,6 +118,49 @@ public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
         }
 
         return ((CuAttachmentDao)getAttachmentDao()).getAttachmentByAttachmentId(attachmentIdentifier);
+    }
+
+    @Override
+    public boolean fixRemappedAttachmentIfPossible(final RemappedAccountAttachment remappedAttachment) {
+        final Note note = noteService.getNoteByNoteId(remappedAttachment.getNoteIdentifier());
+        if (ObjectUtils.isNull(note)) {
+            LOG.warn("fixRemappedAttachmentIfPossible, Note {} does not exist; cannot move attachment",
+                    remappedAttachment.getNoteIdentifier());
+            return false;
+        } else if (ObjectUtils.isNull(note.getAttachment())) {
+            LOG.warn("fixRemappedAttachmentIfPossible, Note {} has no attachment to move",
+                    remappedAttachment.getNoteIdentifier());
+            return false;
+        }
+
+        try {
+            final Attachment attachment = note.getAttachment();
+            final String oldDirectory = getDocumentDirectory(remappedAttachment.getMismappedAccountObjectId());
+            final String newDirectory = getDocumentDirectory(remappedAttachment.getCorrectAccountObjectId());
+            final File newDirectoryAsFile = new File(newDirectory);
+            if (!newDirectoryAsFile.exists()) {
+                throw new RuntimeException("The getDocumentDirectory() call did not auto-generate the destination "
+                        + "directory; this should NEVER happen!");
+            }
+            final File oldFileLocation = new File(oldDirectory + File.separator + attachment.getAttachmentIdentifier());
+            final File newFileLocation = new File(newDirectory + File.separator + attachment.getAttachmentIdentifier());
+            if (!oldFileLocation.exists()) {
+                LOG.warn("fixRemappedAttachmentIfPossible, Old unmoved file no longer exists for Note {}",
+                        remappedAttachment.getNoteIdentifier());
+                return false;
+            } else if (newFileLocation.exists()) {
+                LOG.warn("fixRemappedAttachmentIfPossible, File contents were already moved for Note {}",
+                        remappedAttachment.getNoteIdentifier());
+                return false;
+            } else {
+                FileUtils.moveFile(oldFileLocation, newFileLocation);
+                return true;
+            }
+        } catch (final IOException e) {
+            LOG.error("fixRemappedAttachmentIfPossible, Failed to finish moving attachment for Note {}",
+                    remappedAttachment.getNoteIdentifier(), e);
+            return false;
+        }
     }
 
     public AntiVirusService getAntiVirusService() {

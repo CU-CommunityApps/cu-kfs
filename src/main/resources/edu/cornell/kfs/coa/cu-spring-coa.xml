@@ -36,6 +36,7 @@
 				<value>accountReversionImportJob</value>
 				<value>createWorkdayOpenAccountsCsvJob</value>
 				<value>copyLegacyAccountAttachmentsJob</value>
+                <value>fixRemappedAccountAttachmentsJob</value>
 			</list>
 		</property>
         <property name="batchFileDirectories">
@@ -252,6 +253,19 @@
           class="edu.cornell.kfs.coa.batch.CopyLegacyAccountAttachmentsStep"
           p:copyLegacyAccountAttachmentsService-ref="copyLegacyAccountAttachmentsService"/>
 
+    <bean id="fixRemappedAccountAttachmentsJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="fixRemappedAccountAttachmentsStep" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="fixRemappedAccountAttachmentsStep"
+          parent="step"
+          class="edu.cornell.kfs.coa.batch.FixRemappedAccountAttachmentsStep"
+          p:copyLegacyAccountAttachmentsService-ref="copyLegacyAccountAttachmentsService"/>
+
     <bean id="copyLegacyAccountAttachmentsService" parent="copyLegacyAccountAttachmentsService-parentBean"/>
     <bean id="copyLegacyAccountAttachmentsService-parentBean"
           abstract="true"
@@ -264,7 +278,8 @@
           p:noteService-ref="noteService"
           p:dataDictionaryService-ref="dataDictionaryService"
           p:parameterService-ref="parameterService"
-          p:configurationService-ref="configurationService"/>
+          p:configurationService-ref="configurationService"
+          p:cuAttachmentService-ref="cuAttachmentService"/>
 
     <bean id="copyLegacyAccountAttachmentsDao"
           parent="platformAwareDaoJdbc"

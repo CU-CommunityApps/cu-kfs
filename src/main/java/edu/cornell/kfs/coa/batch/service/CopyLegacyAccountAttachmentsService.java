@@ -15,4 +15,6 @@ public interface CopyLegacyAccountAttachmentsService {
     void recordCopyingErrorsForLegacyAccountAttachments(
             final List<Pair<LegacyAccountAttachment, String>> attachmentsWithErrors);
 
+    void moveFileContentsForRemappedAttachments();
+
 }

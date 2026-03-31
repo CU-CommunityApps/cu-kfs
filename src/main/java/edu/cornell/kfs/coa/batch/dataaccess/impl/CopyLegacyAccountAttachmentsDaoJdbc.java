@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.kfs.coa.batch.businessobject.LegacyAccountAttachment;
+import edu.cornell.kfs.coa.batch.businessobject.RemappedAccountAttachment;
 import edu.cornell.kfs.coa.batch.dataaccess.CopyLegacyAccountAttachmentsDao;
 import edu.cornell.kfs.sys.util.CuSqlChunk;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
@@ -87,6 +88,28 @@ public class CopyLegacyAccountAttachmentsDaoJdbc
                 .append(" WHERE COPYING_ACCT_ATTACH_ID = ").appendAsParameter(Types.BIGINT, id)
                 .toQuery();
         executeUpdate(sqlQuery);
+    }
+
+    @Override
+    public List<RemappedAccountAttachment> getRemappedAccountAttachments() {
+        final CuSqlQuery sqlQuery = CuSqlQuery.of("SELECT * FROM KFS.TEMP_ACCT_ATTACH_REMAP_T");
+        return queryForValues(sqlQuery, this::buildRemappedAccountAttachment);
+    }
+
+    private RemappedAccountAttachment buildRemappedAccountAttachment(final ResultSet rs, final int rowNum)
+            throws SQLException {
+        final RemappedAccountAttachment attachment = new RemappedAccountAttachment();
+        attachment.setLegacyAccountCode(rs.getString("LEGACY_ACCOUNT_CODE"));
+        attachment.setMismappedKfsChart(rs.getString("MISMAPPED_KFS_CHART"));
+        attachment.setMismappedKfsAccount(rs.getString("MISMAPPED_KFS_ACCOUNT"));
+        attachment.setCorrectKfsChart(rs.getString("CORRECT_KFS_CHART"));
+        attachment.setCorrectKfsAccount(rs.getString("CORRECT_KFS_ACCOUNT"));
+        attachment.setMismappedAccountObjectId(rs.getString("MISMAPPED_ACCT_OBJ_ID"));
+        attachment.setCorrectAccountObjectId(rs.getString("CORRECT_ACCT_OBJ_ID"));
+        attachment.setNoteIdentifier(rs.getLong("NTE_ID"));
+        attachment.setNoteText(rs.getString("NTE_TEXT"));
+        attachment.setAttachmentFileName(rs.getString("ATTACHMENT_FILE_NM"));
+        return attachment;
     }
 
 }

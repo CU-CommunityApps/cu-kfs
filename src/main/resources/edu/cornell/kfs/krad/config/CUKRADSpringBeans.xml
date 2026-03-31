@@ -53,6 +53,8 @@
         </property>
     </bean>
 
+    <alias name="attachmentService" alias="cuAttachmentService"/>
+
     <bean id="maintainableXMLConversionService" class="edu.cornell.kfs.krad.service.impl.NoOpMaintainableXMLConversionServiceImpl" />
 
     <bean id="cuMaintainableXMLConversionService" parent="cuMaintainableXMLConversionService-parentBean"/>
