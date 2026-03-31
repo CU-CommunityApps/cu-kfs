@@ -1,6 +1,5 @@
 package edu.cornell.kfs.sys.businessobject.lookup;
 
-import org.codehaus.plexus.util.FileUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,10 +9,13 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class CuBatchFileLookupableHelperServiceImplTest {
 
@@ -45,14 +47,11 @@ public class CuBatchFileLookupableHelperServiceImplTest {
         List<String> fileNames = new ArrayList<>();
 
         for (File rootDirectory : rootDirectories) {
-            for (String fileName: FileUtils.getFileNames(rootDirectory, null, null, true)) {
-
-                final int lastIndexOfFileSeparator = fileName.lastIndexOf(fileSeparator);
-                if (lastIndexOfFileSeparator > 0) {
-                    fileNames.add(fileName.substring(lastIndexOfFileSeparator + 1));
-                } else {
-                    fileNames.add(fileName);
-                }
+            try (Stream<Path> pathStream = Files.walk(rootDirectory.toPath())) {
+                pathStream
+                    .filter(Files::isRegularFile)
+                    .map(path -> path.getFileName().toString())
+                    .forEach(fileNames::add);
             }
         }
 
