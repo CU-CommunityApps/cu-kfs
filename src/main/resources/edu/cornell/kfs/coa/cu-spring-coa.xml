@@ -282,5 +282,15 @@
           p:endpointCode="#{T(edu.cornell.kfs.sys.CUKFSConstants$EndpointCodes).ACCOUNT_ATTACHMENTS}"/>
 
     <alias name="accountAttachmentAuthFilter" alias="AccountAttachmentAuthFilter"/>
+    
+    <bean id="accountDerivedRoleSeparationOfDutiesRoleTypeService"
+          parent="accountDerivedRoleSeparationOfDutiesRoleTypeService-parentBean"/>
+    <bean id="accountDerivedRoleSeparationOfDutiesRoleTypeService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.coa.identity.AccountDerivedRoleSeparationOfDutiesRoleTypeServiceImpl"
+          parent="kimNoMembersRoleTypeService"
+          p:accountService-ref="accountService"
+          p:contractsAndGrantsService-ref="contractsAndGrantsService"
+          p:workflowDocumentService-ref="workflowDocumentService"/>
 
 </beans>
