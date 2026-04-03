@@ -1,10 +1,11 @@
 package edu.cornell.kfs.vnd.batch.dto;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
+
+import edu.cornell.kfs.sys.util.CemiUtils;
+import edu.cornell.kfs.vnd.CemiVendorConstants;
 
 public class CemiSupplierEmail {
     
@@ -14,10 +15,11 @@ public class CemiSupplierEmail {
     private final List<CemiSupplierEmailSubEntry> supplierEmails;
     
     public CemiSupplierEmail(final VendorDetail vendorDetail, final String supplierId,
-                final Stream<CemiSupplierEmailSubEntry> supplierEmails) {
+                final CemiSupplierEmailSubEntry... supplierEmails) {
         this.vendorDetail = vendorDetail;
         this.supplierId = supplierId;
-        this.supplierEmails = supplierEmails.collect(Collectors.toUnmodifiableList());
+        this.supplierEmails = CemiUtils.createListPaddedToMinimumSizeIfNecessary(
+                CemiSupplierEmailSubEntry.EMPTY, CemiVendorConstants.MAX_SUPPLIER_EMAIL_ENTRIES, supplierEmails);
     }
 
     public VendorDetail getVendorDetail() {

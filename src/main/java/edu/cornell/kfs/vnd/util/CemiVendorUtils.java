@@ -46,7 +46,7 @@ public final class CemiVendorUtils {
     // For PO vendors, mark default PO address as Primary
     // For non-PO vendors, mark default Remit address as Primary
     public static boolean isPrimaryVendorAddress(final String vendorTypeCode, final VendorAddress vendorAddress) {
-        if (isPurchaseOrderVendor(vendorTypeCode) ) {
+        if (isPurchaseOrderVendor(vendorTypeCode)) {
             return addressTypeIsActiveAndIsDefaultAndMatches(
                     CemiVendorConstants.AllDefinedAddressTypes.PURCHASE_ORDER, vendorAddress);
         } else {

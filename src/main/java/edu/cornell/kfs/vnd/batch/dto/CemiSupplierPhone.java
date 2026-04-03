@@ -75,7 +75,7 @@ public class CemiSupplierPhone {
                     matchingPhoneUses.length, vendorPhoneNumbers.size(), vendorHeaderGeneratedIdentifier,
                     vendorDetailAssignedIdentifier, CemiVendorConstants.MAX_PHONE_USES);
         }
-        return CemiUtils.createListWithElementsAndMinimumSize(
+        return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
                 CemiVendorConstants.MAX_PHONE_USES, matchingPhoneUses);
     }
 
@@ -89,7 +89,7 @@ public class CemiSupplierPhone {
                     matchingPhoneTenantedUses.length, vendorPhoneNumbers.size(), vendorHeaderGeneratedIdentifier,
                     vendorDetailAssignedIdentifier, CemiVendorConstants.MAX_PHONE_TENANTED_USES);
         }
-        return CemiUtils.createListWithElementsAndMinimumSize(
+        return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
                 CemiVendorConstants.MAX_PHONE_TENANTED_USES, matchingPhoneTenantedUses);
     }
 

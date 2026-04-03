@@ -4,17 +4,15 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
 import edu.cornell.kfs.sys.util.CemiUtils;
 import edu.cornell.kfs.vnd.CemiVendorConstants;
+import edu.cornell.kfs.vnd.util.CemiVendorUtils;
 
-@SuppressWarnings("deprecation")
 public class CemiSupplierAddress {
 
     private static final Logger LOG = LogManager.getLogger();
@@ -66,38 +64,12 @@ public class CemiSupplierAddress {
                 Integer.toString(vendorAddress.getVendorAddressGeneratedIdentifier()),
                 Integer.toString(addressCount));
     }
-    
-    private static boolean isPurchaseOrderVendor(String vendorTypeCode) {
-        return (StringUtils.equals(vendorTypeCode, VendorConstants.VendorTypes.PURCHASE_ORDER));
-    }
-    
-    private static boolean addressTypeIsActiveAndIsDefaultAndMatches(String vendorAddressType, VendorAddress vendorAddress) {
-        if ((vendorAddress.getVendorAddressTypeCode()).equalsIgnoreCase(vendorAddressType)
-                && vendorAddress.isActive()
-                && vendorAddress.isVendorDefaultAddressIndicator()) {
-            return true;
-        }
-        return false;
-    }
 
     private static String determineWhetherAtLeastOneAddressIsPrimary(final String vendorTypeCode,
             final List<VendorAddress> vendorAddresses) {
-        final boolean atLeastOneAddressIsPrimary = vendorAddresses.stream()
-                .anyMatch(vendorAddress -> determineWhetherAddressIsPrimary(vendorTypeCode, vendorAddress));
+        final boolean atLeastOneAddressIsPrimary = CemiVendorUtils.containsPrimaryVendorAddress(
+                vendorTypeCode, vendorAddresses);
         return CemiUtils.convertToBooleanValueForFileExtract(atLeastOneAddressIsPrimary);
-    }
-
-    // For PO vendors, mark default PO address as Primary
-    // For non-PO vendors, mark default Remit address as Primary
-    private static boolean determineWhetherAddressIsPrimary(String vendorTypeCode, VendorAddress vendorAddress) {
-        if (isPurchaseOrderVendor(vendorTypeCode) ){
-            if (addressTypeIsActiveAndIsDefaultAndMatches(CemiVendorConstants.AllDefinedAddressTypes.PURCHASE_ORDER, vendorAddress)) {
-                return true;
-            } 
-        } else if (addressTypeIsActiveAndIsDefaultAndMatches(CemiVendorConstants.AllDefinedAddressTypes.REMIT, vendorAddress)) {
-                return true;
-        }
-        return false;
     }
 
     private static List<String> determineAddressUseValuesBasedOnAddressTypes(final List<VendorAddress> vendorAddresses,
@@ -110,7 +82,7 @@ public class CemiSupplierAddress {
                     matchingAddressUses.length, vendorAddresses.size(), vendorHeaderGeneratedIdentifier,
                     vendorDetailAssignedIdentifier, CemiVendorConstants.MAX_ADDRESS_USES);
         }
-        return CemiUtils.createListWithElementsAndMinimumSize(
+        return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
                 CemiVendorConstants.MAX_ADDRESS_USES, matchingAddressUses);
     }
 
@@ -124,7 +96,7 @@ public class CemiSupplierAddress {
                     matchingAddressTenantedUses.length, vendorAddresses.size(), vendorHeaderGeneratedIdentifier,
                     vendorDetailAssignedIdentifier, CemiVendorConstants.MAX_ADDRESS_TENANTED_USES);
         }
-        return CemiUtils.createListWithElementsAndMinimumSize(
+        return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
                 CemiVendorConstants.MAX_ADDRESS_TENANTED_USES, matchingAddressTenantedUses);
     }
 

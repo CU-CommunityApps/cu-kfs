@@ -62,7 +62,7 @@ public class CemiSupplierEmailSubEntry {
                     matchingEmailTenantedUses.length, vendorAddresses.size(), vendorHeaderGeneratedIdentifier,
                     vendorDetailAssignedIdentifier, CemiVendorConstants.MAX_EMAIL_TENANTED_USES);
         }
-        return CemiUtils.createListWithElementsAndMinimumSize(
+        return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
                 CemiVendorConstants.MAX_EMAIL_TENANTED_USES, matchingEmailTenantedUses);
     }
 
@@ -83,7 +83,7 @@ public class CemiSupplierEmailSubEntry {
                     matchingEmailUses.length, vendorAddresses.size(), vendorHeaderGeneratedIdentifier,
                     vendorDetailAssignedIdentifier, CemiVendorConstants.MAX_EMAIL_USES);
         }
-        return CemiUtils.createListWithElementsAndMinimumSize(
+        return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
                 CemiVendorConstants.MAX_EMAIL_USES, matchingEmailUses);
     }
 

@@ -75,20 +75,30 @@ public final class CemiUtils {
                 .toArray(String[]::new);
     }
 
-    public static List<String> createListWithElementsAndMinimumSize(final int minSize, final String... elements) {
+    public static List<String> createListPaddedToMinimumSizeIfNecessary(final int minSize, final String... elements) {
+        return createListPaddedToMinimumSizeIfNecessary(KFSConstants.EMPTY_STRING, minSize, elements);
+    }
+
+    @SafeVarargs
+    public static <T> List<T> createListPaddedToMinimumSizeIfNecessary(
+            final T emptyValue, final int minSize, final T... elements) {
         if (elements.length == 0) {
-            return createListOfEmptyStrings(minSize);
+            return createListOfEmptyValues(minSize, emptyValue);
         } else if (elements.length >= minSize) {
             return List.of(elements);
         } else {
-            final String[] minSizeArray = Arrays.copyOf(elements, minSize);
-            Arrays.fill(minSizeArray, elements.length, minSize, KFSConstants.EMPTY_STRING);
+            final T[] minSizeArray = Arrays.copyOf(elements, minSize);
+            Arrays.fill(minSizeArray, elements.length, minSize, emptyValue);
             return List.of(minSizeArray);
         }
     }
 
     public static List<String> createListOfEmptyStrings(final int size) {
-        return Collections.nCopies(size, KFSConstants.EMPTY_STRING);
+        return createListOfEmptyValues(size, KFSConstants.EMPTY_STRING);
+    }
+
+    public static <T> List<T> createListOfEmptyValues(final int size, final T emptyValue) {
+        return Collections.nCopies(size, emptyValue);
     }
 
 }

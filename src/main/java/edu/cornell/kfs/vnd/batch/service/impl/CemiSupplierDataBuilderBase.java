@@ -214,11 +214,6 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             emailEntries.add(emailEntry);
         }
 
-        while (emailCount < CemiVendorConstants.MAX_SUPPLIER_EMAIL_ENTRIES) {
-            emailCount++;
-            emailEntries.add(CemiSupplierEmailSubEntry.EMPTY);
-        }
-
         if (emailCount > CemiVendorConstants.MAX_SUPPLIER_EMAIL_ENTRIES) {
             LOG.warn("writeSupplierEmailsAsSingleRow, Found {} distinct active emails for KFS Vendor {}-{}; "
                     + "only the first {} will be written",
@@ -226,8 +221,12 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
                     vendor.getVendorDetailAssignedIdentifier(), CemiVendorConstants.MAX_SUPPLIER_EMAIL_ENTRIES);
         }
 
-        final CemiSupplierEmail supplierEmail = new CemiSupplierEmail(vendor, supplierId, emailEntries.build());
+        final CemiSupplierEmail supplierEmail = new CemiSupplierEmail(vendor, supplierId, toEmailArray(emailEntries));
         writeSupplierEmailRow(supplierEmail);
+    }
+
+    protected CemiSupplierEmailSubEntry[] toEmailArray(final Stream.Builder<CemiSupplierEmailSubEntry> entries) {
+        return entries.build().toArray(CemiSupplierEmailSubEntry[]::new);
     }
 
     protected Map<String, List<VendorAddress>> groupAndOrderVendorAddressesContainingEmails(final VendorDetail vendor) {
@@ -332,26 +331,25 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
                     + "a corresponding Supplier Bank Account row will NOT be written",
                     vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
             return;
-        }
-
-        while (numAccounts < CemiVendorConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES) {
-            numAccounts++;
-            accountEntries.add(CemiSupplierBankAccountSubEntry.EMPTY);
-        }
-
-        if (numAccounts > CemiVendorConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES) {
+        } else if (numAccounts > CemiVendorConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES) {
             LOG.warn("writeSupplierBankAccountsAsSingleRow, Found {} active Payee ACH Accounts for KFS Vendor {}-{}; "
                     + "only the first {} will be written",
                     numAccounts, vendor.getVendorHeaderGeneratedIdentifier(),
                     vendor.getVendorDetailAssignedIdentifier(), CemiVendorConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES);
         }
 
-        final CemiSupplierBankAccount supplierAccount = new CemiSupplierBankAccount(supplierId, accountEntries.build());
+        final CemiSupplierBankAccount supplierAccount = new CemiSupplierBankAccount(
+                supplierId, toAccountArray(accountEntries));
         writeSupplierBankAccountRow(supplierAccount);
     }
 
     protected void writeSupplierBankAccountRow(final CemiSupplierBankAccount supplierAccount) throws IOException {
         writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.BANK_ACCOUNTS, supplierAccount);
+    }
+
+    protected CemiSupplierBankAccountSubEntry[] toAccountArray(
+            final Stream.Builder<CemiSupplierBankAccountSubEntry> entries) {
+        return entries.build().toArray(CemiSupplierBankAccountSubEntry[]::new);
     }
 
     /*
