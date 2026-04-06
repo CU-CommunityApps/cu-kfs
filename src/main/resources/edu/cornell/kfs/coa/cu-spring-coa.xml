@@ -283,7 +283,12 @@
 
     <alias name="accountAttachmentAuthFilter" alias="AccountAttachmentAuthFilter"/>
     
-    <bean id="accountDerivedRoleSeparationOfDutiesRoleTypeService"
+    <bean id="accountDerivedRoleTypeService"
+          parent="accountDerivedRoleTypeService-parentBean"
+          p:workflowDocumentService-ref="workflowDocumentService"/>
+
+
+<bean id="accountDerivedRoleSeparationOfDutiesRoleTypeService"
           parent="accountDerivedRoleSeparationOfDutiesRoleTypeService-parentBean"/>
     <bean id="accountDerivedRoleSeparationOfDutiesRoleTypeService-parentBean"
           abstract="true"
@@ -292,5 +297,6 @@
           p:accountService-ref="accountService"
           p:contractsAndGrantsService-ref="contractsAndGrantsService"
           p:workflowDocumentService-ref="workflowDocumentService"/>
+
 
 </beans>

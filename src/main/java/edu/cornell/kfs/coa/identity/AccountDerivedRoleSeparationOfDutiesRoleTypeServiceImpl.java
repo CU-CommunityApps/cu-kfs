@@ -88,7 +88,7 @@ public class AccountDerivedRoleSeparationOfDutiesRoleTypeServiceImpl extends Der
                     && principalIsNotSubmitterApproverOrInitiator(principalId, documentNumber)) {
                 final RoleMembership roleMembershipInfo = getRoleMembershipWhenAccountInfoUnavailable(roleName, principalId, roleQualifier);
                 if (ObjectUtils.isNotNull(roleMembershipInfo)) {
-LOG.info("chartOfAccountsCode check:: roleMembershipInfo.getMemberId()={}=", roleMembershipInfo.getMemberId());
+LOG.info("EDU:: chartOfAccountsCode check:: roleMembershipInfo.getMemberId()={}=", roleMembershipInfo.getMemberId());
                     members.add(roleMembershipInfo);
                 }
             }
@@ -96,31 +96,31 @@ LOG.info("chartOfAccountsCode check:: roleMembershipInfo.getMemberId()={}=", rol
             if (KFSConstants.SysKimApiConstants.ACCOUNT_SUPERVISOR_KIM_ROLE_NAME.equals(roleName)) {
                 final Account account = getAccount(chartOfAccountsCode, accountNumber);
                 if (account != null && principalIsNotSubmitterApproverOrInitiator(account.getAccountsSupervisorySystemsIdentifier(), documentNumber)) {
-LOG.info("ACCOUNT_SUPERVISOR_KIM_ROLE_NAME when account!=null check:: account.getAccountsSupervisorySystemsIdentifier()={}=", account.getAccountsSupervisorySystemsIdentifier());
+LOG.info("EDU:: ACCOUNT_SUPERVISOR_KIM_ROLE_NAME when account!=null check:: account.getAccountsSupervisorySystemsIdentifier()={}=", account.getAccountsSupervisorySystemsIdentifier());
                     members.add(RoleMembership.Builder.create(null, null, account.getAccountsSupervisorySystemsIdentifier(), MemberType.PRINCIPAL, roleQualifier).build());
                 }
                 // only add the additional approver if they are different AND NOT the submitter or initator
                 if (StringUtils.isNotBlank(accountSupervisorPrincipalID) && (account == null || !StringUtils.equals(accountSupervisorPrincipalID, account.getAccountsSupervisorySystemsIdentifier()))
                         || principalIsNotSubmitterApproverOrInitiator(accountSupervisorPrincipalID, documentNumber)) {
-LOG.info("ACCOUNT_SUPERVISOR_KIM_ROLE_NAME when account!=null check:: accountSupervisorPrincipalID={}=", accountSupervisorPrincipalID);
+LOG.info("EDU:: ACCOUNT_SUPERVISOR_KIM_ROLE_NAME when account!=null check:: accountSupervisorPrincipalID={}=", accountSupervisorPrincipalID);
                     members.add(RoleMembership.Builder.create(null, null, accountSupervisorPrincipalID, MemberType.PRINCIPAL, roleQualifier).build());
                 }
             } else if (KFSConstants.SysKimApiConstants.FISCAL_OFFICER_KIM_ROLE_NAME.equals(roleName)) {
                 final Account account = getAccount(chartOfAccountsCode, accountNumber);
                 if (account != null && principalIsNotSubmitterApproverOrInitiator(account.getAccountsSupervisorySystemsIdentifier(), documentNumber)) {
-LOG.info("FISCAL_OFFICER_KIM_ROLE_NAME when account!=null check:: account.getAccountFiscalOfficerSystemIdentifier()={}=", account.getAccountFiscalOfficerSystemIdentifier());
+LOG.info("EDU:: FISCAL_OFFICER_KIM_ROLE_NAME when account!=null check:: account.getAccountFiscalOfficerSystemIdentifier()={}=", account.getAccountFiscalOfficerSystemIdentifier());
                     members.add(RoleMembership.Builder.create(null, null, account.getAccountFiscalOfficerSystemIdentifier(), MemberType.PRINCIPAL, roleQualifier).build());
                 }
                 // only add the additional approver if they are different
                 if (StringUtils.isNotBlank(fiscalOfficerPrincipalID) && (account == null || !StringUtils.equals(fiscalOfficerPrincipalID, account.getAccountFiscalOfficerSystemIdentifier()))
                         || principalIsNotSubmitterApproverOrInitiator(fiscalOfficerPrincipalID, documentNumber)) {
-LOG.info("FISCAL_OFFICER_KIM_ROLE_NAME when account!=null check:: fiscalOfficerPrincipalID={}=", fiscalOfficerPrincipalID);
+LOG.info("EDU:: FISCAL_OFFICER_KIM_ROLE_NAME when account!=null check:: fiscalOfficerPrincipalID={}=", fiscalOfficerPrincipalID);
                     members.add(RoleMembership.Builder.create(null, null, fiscalOfficerPrincipalID, MemberType.PRINCIPAL, roleQualifier).build());
                 }
             } else if (KFSConstants.SysKimApiConstants.FISCAL_OFFICER_PRIMARY_DELEGATE_KIM_ROLE_NAME.equals(roleName)) {
                 final AccountDelegate delegate = getPrimaryDelegate(chartOfAccountsCode, accountNumber, financialSystemDocumentTypeCodeCode, totalDollarAmount);
                 if (delegate != null && principalIsNotSubmitterApproverOrInitiator(delegate.getAccountDelegateSystemId(), documentNumber)) {
-LOG.info("if:: FISCAL_OFFICER_PRIMARY_DELEGATE_KIM_ROLE_NAME when delegate!=null check:: delegate.getAccountDelegateSystemId()={}=", delegate.getAccountDelegateSystemId());
+LOG.info("EDU:: if:: FISCAL_OFFICER_PRIMARY_DELEGATE_KIM_ROLE_NAME when delegate!=null check:: delegate.getAccountDelegateSystemId()={}=", delegate.getAccountDelegateSystemId());
                     roleQualifier.put(KimAttributes.FINANCIAL_SYSTEM_DOCUMENT_TYPE_CODE, delegate.getFinancialDocumentTypeCode());
                     roleQualifier.put(KimAttributes.FROM_AMOUNT, delegate.getFinDocApprovalFromThisAmt() == null
                             ? "0" : delegate.getFinDocApprovalFromThisAmt().toString());
@@ -134,7 +134,7 @@ LOG.info("else:: FISCAL_OFFICER_PRIMARY_DELEGATE_KIM_ROLE_NAME when delegate!=nu
                 final List<AccountDelegate> delegates = getSecondaryDelegates(chartOfAccountsCode, accountNumber, financialSystemDocumentTypeCodeCode, totalDollarAmount);
                 for (final AccountDelegate delegate : delegates) {
                     if (principalIsNotSubmitterApproverOrInitiator(delegate.getAccountDelegateSystemId(), documentNumber)) {
-LOG.info("if:: FISCAL_OFFICER_SECONDARY_DELEGATE_KIM_ROLE_NAME when delegate!=null check:: delegate.getAccountDelegateSystemId()={}=", delegate.getAccountDelegateSystemId());
+LOG.info("EDU:: if:: FISCAL_OFFICER_SECONDARY_DELEGATE_KIM_ROLE_NAME when delegate!=null check:: delegate.getAccountDelegateSystemId()={}=", delegate.getAccountDelegateSystemId());
                         roleQualifier.put(KimAttributes.FINANCIAL_SYSTEM_DOCUMENT_TYPE_CODE, delegate.getFinancialDocumentTypeCode());
                         roleQualifier.put(KimAttributes.FROM_AMOUNT, delegate.getFinDocApprovalFromThisAmt() == null
                                 ? "0" : delegate.getFinDocApprovalFromThisAmt().toString());
@@ -142,16 +142,16 @@ LOG.info("if:: FISCAL_OFFICER_SECONDARY_DELEGATE_KIM_ROLE_NAME when delegate!=nu
                                 ? "NOLIMIT" : delegate.getFinDocApprovalToThisAmount().toString());
                         members.add(RoleMembership.Builder.create(null, null, delegate.getAccountDelegateSystemId(), MemberType.PRINCIPAL, roleQualifier).build());
                     } else {
-LOG.info("else:: FISCAL_OFFICER_SECONDARY_DELEGATE_KIM_ROLE_NAME when delegate!=null check:: delegate.getAccountDelegateSystemId()={}=", delegate.getAccountDelegateSystemId());
+LOG.info("EDU:: else:: FISCAL_OFFICER_SECONDARY_DELEGATE_KIM_ROLE_NAME when delegate!=null check:: delegate.getAccountDelegateSystemId()={}=", delegate.getAccountDelegateSystemId());
                     }
                 }
             } else if (KFSConstants.SysKimApiConstants.AWARD_SECONDARY_DIRECTOR_KIM_ROLE_NAME.equals(roleName)) {
                 final Person person = getProjectDirectorForAccount(chartOfAccountsCode, accountNumber);
                 if (person != null && principalIsNotSubmitterApproverOrInitiator(person.getPrincipalId(), documentNumber)) {
-LOG.info("if:: AWARD_SECONDARY_DIRECTOR_KIM_ROLE_NAME when person!=null check:: person.getPrincipalId()={}=", person.getPrincipalId());
+LOG.info("EDU:: if:: AWARD_SECONDARY_DIRECTOR_KIM_ROLE_NAME when person!=null check:: person.getPrincipalId()={}=", person.getPrincipalId());
                     members.add(RoleMembership.Builder.create(null, null, person.getPrincipalId(), MemberType.PRINCIPAL, roleQualifier).build());
                 } else {
-LOG.info("else:: AWARD_SECONDARY_DIRECTOR_KIM_ROLE_NAME when delegate!=null check:: person.getPrincipalId()={}=", person.getPrincipalId());
+LOG.info("EDU:: else:: AWARD_SECONDARY_DIRECTOR_KIM_ROLE_NAME when delegate!=null check:: person.getPrincipalId()={}=", person.getPrincipalId());
                 }
             }
         }
@@ -246,7 +246,7 @@ LOG.info("else:: AWARD_SECONDARY_DIRECTOR_KIM_ROLE_NAME when delegate!=null chec
                 submitterPrincipalId = documentPrincipalId;
             }
         }
-        LOG.info("getSubmitter is returning submitterPrincipalId={}=", submitterPrincipalId);
+        LOG.info("EDU:: getSubmitter is returning submitterPrincipalId={}=", submitterPrincipalId);
         return submitterPrincipalId;
     }
     
@@ -259,7 +259,7 @@ LOG.info("else:: AWARD_SECONDARY_DIRECTOR_KIM_ROLE_NAME when delegate!=null chec
                 approverOrInitiatorPrincipalId = documentPrincipalId;
             }
         }
-        LOG.info("getApproverOrInitiator is returning approverOrInitiatorPrincipalId={}=", approverOrInitiatorPrincipalId);
+        LOG.info("EDU:: getApproverOrInitiator is returning approverOrInitiatorPrincipalId={}=", approverOrInitiatorPrincipalId);
         return approverOrInitiatorPrincipalId;
     }
     
