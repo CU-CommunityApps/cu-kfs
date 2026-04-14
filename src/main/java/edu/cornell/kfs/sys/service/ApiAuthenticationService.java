@@ -7,5 +7,6 @@ public interface ApiAuthenticationService {
     boolean isAuthorized(String endpointCode, HttpServletRequest request);
     boolean isAuthorized(String endpointCode, String credentials);
     String getAuthenticateUser(HttpServletRequest request);
+    boolean isDocumentInitatorAssociatedWithEndpoint(String endpointCode, String initiatorPrincipleId);
 
 }

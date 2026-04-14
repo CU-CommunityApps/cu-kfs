@@ -2,6 +2,7 @@ package edu.cornell.kfs.module.purap.document;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,6 +38,7 @@ import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants;
 import edu.cornell.kfs.module.purap.businessobject.CuPaymentRequestItemExtension;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.service.ApiAuthenticationService;
 
 public class CuPaymentRequestDocument extends PaymentRequestDocument {
 	private static final Logger LOG = LogManager.getLogger();
@@ -46,6 +48,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
     private static CuCheckStubService cuCheckStubService;
+    private static ApiAuthenticationService apiAuthenticationService;
     
     public CuPaymentRequestDocument() {
         super();
@@ -258,5 +261,24 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
             cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
         }
         return cuCheckStubService;
+    }
+
+    @Override
+    public boolean requiresAccountsPayableReviewRouting() {
+        return super.requiresAccountsPayableReviewRouting() || forceAccountsPayableReview();
+    }
+
+    protected boolean forceAccountsPayableReview() {
+        String initiatorPrincipleId = getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId(); 
+        boolean forceApReview = getApiAuthenticationService().isDocumentInitatorAssociatedWithEndpoint(CUKFSConstants.EndpointCodes.PAYMENT_REQUEST, initiatorPrincipleId);
+        LOG.info("forceAccountsPayableReview, for document number {} returning {}", getDocumentNumber(), forceApReview);
+        return forceApReview;
+    }
+
+    protected static ApiAuthenticationService getApiAuthenticationService() {
+        if (apiAuthenticationService == null) {
+            apiAuthenticationService = SpringContext.getBean(ApiAuthenticationService.class);
+        }
+        return apiAuthenticationService;
     }
 }
