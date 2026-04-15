@@ -3,10 +3,12 @@ package edu.cornell.kfs.vnd.batch.service.impl;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections4.IteratorUtils;
@@ -22,6 +24,7 @@ import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 
 import edu.cornell.kfs.sys.batch.xml.CemiFieldDefinition;
 import edu.cornell.kfs.sys.batch.xml.CemiOutputDefinition;
+import edu.cornell.kfs.sys.util.CemiUtils;
 import edu.cornell.kfs.vnd.CemiVendorConstants;
 import edu.cornell.kfs.vnd.batch.businessobject.CemiSupplierParentIdentifiersReference;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplier;
@@ -30,9 +33,11 @@ import edu.cornell.kfs.vnd.batch.dto.CemiSupplierBankAccount;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierBankAccountSubEntry;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierChildren;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierEmail;
+import edu.cornell.kfs.vnd.batch.dto.CemiSupplierEmailSubEntry;
 import edu.cornell.kfs.vnd.batch.dto.CemiSupplierPhone;
 import edu.cornell.kfs.vnd.batch.service.CemiSupplierDataBuilder;
 import edu.cornell.kfs.vnd.dataaccess.CemiVendorDao;
+import edu.cornell.kfs.vnd.util.CemiVendorUtils;
 import edu.cornell.kfs.vnd.util.VendorAccountFinder;
 
 public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBuilder {
@@ -86,31 +91,10 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
                             vendor.getVendorDetailAssignedIdentifier(), jobRunDate);
             
             //Addresses Tab
-            int addressCount = 0;
-            for (final VendorAddress vendorAddress : vendor.getVendorAddresses()) {
-                //Restricting addresses by country = US
-                if (vendorAddress.isActive() && 
-                        vendorAddress.getVendorCountryCode().equalsIgnoreCase(CemiVendorConstants.COUNTRY_CODE_UNITED_STATES)) {
-                    addressCount++;
-                    final CemiSupplierAddress supplierAddress = new CemiSupplierAddress(vendor.getVendorHeader().getVendorTypeCode(), vendorAddress, supplierId, addressCount);
-                    writeSupplierAddressRow(supplierAddress);
-                } else {
-                    LOG.debug("writeSupplierDataToIntermediateStorage, vendorAddressGeneratedIdentifier {} for vendor {}-{} was NOT written to conversion file.", 
-                            vendorAddress.getVendorAddressGeneratedIdentifier(),
-                            vendor.getVendorHeaderGeneratedIdentifier(),
-                            vendor.getVendorDetailAssignedIdentifier());
-                }
-            }
+            writeAllSupplierAddressRowsFor(vendor, supplierId);
             
             // Emails Tab
-            List<VendorAddress> vendorAddressesWithEmail = vendor.getVendorAddresses().stream()
-                            .filter(VendorAddress::isActive)
-                            .filter(a -> StringUtils.isNotBlank(a.getVendorAddressEmailAddress()))
-                            .collect(Collectors.toList());
-            if(vendorAddressesWithEmail.size() > 0) {
-                final CemiSupplierEmail supplierEmail = new CemiSupplierEmail(vendor, supplierId);
-                writeSupplierEmailRow(supplierEmail);
-            }
+            writeSupplierEmailsAsSingleRow(vendor, supplierId);
             
             //Phones Tab
             //These should be the phone numbers tied to the actual vendor
@@ -148,24 +132,127 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     protected void writeSupplierPhoneRow(final CemiSupplierPhone supplierPhone) throws IOException {
         writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.PHONES, supplierPhone);
     }
-    
+
+    protected void writeAllSupplierAddressRowsFor(final VendorDetail vendor, final String supplierId) throws IOException {
+        final Map<String, List<VendorAddress>> orderedAddressGroups = new LinkedHashMap<>();
+        
+        for (final VendorAddress vendorAddress : vendor.getVendorAddresses()) {
+            // Restricting addresses by country = US
+            if (!vendorAddress.isActive() ||
+                    !vendorAddress.getVendorCountryCode().equalsIgnoreCase(CemiVendorConstants.COUNTRY_CODE_UNITED_STATES)) {
+                LOG.debug("writeAllSupplierAddressRowsFor, Vendor Address {} for Vendor {}-{} was NOT written to conversion file.", 
+                        vendorAddress.getVendorAddressGeneratedIdentifier(),
+                        vendor.getVendorHeaderGeneratedIdentifier(),
+                        vendor.getVendorDetailAssignedIdentifier());
+                continue;
+            }
+            final String addressKey = CemiUtils.generateKeyForGroupingDuplicates(
+                    vendorAddress.getVendorLine1Address(), vendorAddress.getVendorLine2Address(),
+                    vendorAddress.getVendorCityName(), vendorAddress.getVendorStateCode(),
+                    vendorAddress.getVendorZipCode(), vendorAddress.getVendorAddressInternationalProvinceName(),
+                    vendorAddress.getVendorCountryCode());
+            final List<VendorAddress> addressGroup = orderedAddressGroups.computeIfAbsent(
+                    addressKey, key -> new ArrayList<>());
+            addressGroup.add(vendorAddress);
+        }
+
+        int addressCount = 0;
+        for (final List<VendorAddress> addressGroup : orderedAddressGroups.values()) {
+            addressCount++;
+            final CemiSupplierAddress supplierAddress = new CemiSupplierAddress(
+                    vendor.getVendorHeader().getVendorTypeCode(), addressGroup, supplierId, addressCount);
+            writeSupplierAddressRow(supplierAddress);
+        }
+    }
+
     protected void writeAllSupplierPhoneRowsFor(VendorDetail vendor, String supplierId) throws IOException {
-        int phoneNumberCount = 0;
+        final Map<String, List<VendorPhoneNumber>> orderedPhoneGroups = new LinkedHashMap<>();
+
         for (final VendorPhoneNumber vendorPhoneNumber : vendor.getVendorPhoneNumbers()) {
-            //Presuming phone numbers are US and NOT restricting by country
-            if (vendorPhoneNumber.isActive()) {
-                phoneNumberCount++;
-                final CemiSupplierPhone supplierPhone = new CemiSupplierPhone(vendorPhoneNumber, supplierId, phoneNumberCount);
-                writeSupplierPhoneRow(supplierPhone);
-            } else {
-                LOG.debug("writeAllSupplierPhoneRowsFor, vendorPhoneGeneratedIdentifier {} for vendor {}-{} was NOT written to conversion file.",
+            // Presuming phone numbers are US and NOT restricting by country
+            if (!vendorPhoneNumber.isActive()) {
+                LOG.debug("writeAllSupplierPhoneRowsFor, Vendor Phone {} for Vendor {}-{} was NOT written to conversion file.",
                         vendorPhoneNumber.getVendorPhoneGeneratedIdentifier(),
                         vendor.getVendorHeaderGeneratedIdentifier(),
                         vendor.getVendorDetailAssignedIdentifier());
+                continue;
             }
+            final String phoneKey = CemiUtils.generateKeyForGroupingDuplicates(
+                    vendorPhoneNumber.getVendorPhoneNumber(), vendorPhoneNumber.getVendorPhoneExtensionNumber());
+            final List<VendorPhoneNumber> phoneGroup = orderedPhoneGroups.computeIfAbsent(
+                    phoneKey, key -> new ArrayList<>());
+            phoneGroup.add(vendorPhoneNumber);
+        }
+
+        int phoneNumberCount = 0;
+        for (final List<VendorPhoneNumber> phoneGroup : orderedPhoneGroups.values()) {
+            phoneNumberCount++;
+            final CemiSupplierPhone supplierPhone = new CemiSupplierPhone(phoneGroup, supplierId, phoneNumberCount);
+            writeSupplierPhoneRow(supplierPhone);
         }
     }
-    
+
+    protected void writeSupplierEmailsAsSingleRow(VendorDetail vendor, String supplierId) throws IOException {
+        final Map<String, List<VendorAddress>> orderedAddressGroups = groupAndOrderVendorAddressesContainingEmails(vendor);
+        if (orderedAddressGroups.isEmpty()) {
+            LOG.debug("writeSupplierEmailsAsSingleRow, Did not find any active Vendor Addresses containing email info "
+                        + "for Vendor {}-{}; a corresponding Supplier Email row will NOT be written",
+                        vendor.getVendorHeaderGeneratedIdentifier(),
+                        vendor.getVendorDetailAssignedIdentifier());
+            return;
+        }
+
+        final List<List<VendorAddress>> reorderedGroups = CemiVendorUtils.reorderAddressGroupsToPutPrimaryGroupFirst(
+                vendor.getVendorHeader().getVendorTypeCode(), orderedAddressGroups.values());
+        final Stream.Builder<CemiSupplierEmailSubEntry> emailEntries = Stream.builder();
+        int emailCount = 0;
+        for (final List<VendorAddress> addressGroup : reorderedGroups) {
+            emailCount++;
+            final boolean isPrimary = (emailCount == 1);
+            final CemiSupplierEmailSubEntry emailEntry = new CemiSupplierEmailSubEntry(
+                    addressGroup, supplierId, isPrimary, emailCount);
+            emailEntries.add(emailEntry);
+        }
+
+        if (emailCount > CemiVendorConstants.MAX_SUPPLIER_EMAIL_ENTRIES) {
+            LOG.warn("writeSupplierEmailsAsSingleRow, Found {} distinct active emails for KFS Vendor {}-{}; "
+                    + "only the first {} will be written",
+                    emailCount, vendor.getVendorHeaderGeneratedIdentifier(),
+                    vendor.getVendorDetailAssignedIdentifier(), CemiVendorConstants.MAX_SUPPLIER_EMAIL_ENTRIES);
+        }
+
+        final CemiSupplierEmail supplierEmail = new CemiSupplierEmail(vendor, supplierId, toEmailArray(emailEntries));
+        writeSupplierEmailRow(supplierEmail);
+    }
+
+    protected CemiSupplierEmailSubEntry[] toEmailArray(final Stream.Builder<CemiSupplierEmailSubEntry> entries) {
+        return entries.build().toArray(CemiSupplierEmailSubEntry[]::new);
+    }
+
+    protected Map<String, List<VendorAddress>> groupAndOrderVendorAddressesContainingEmails(final VendorDetail vendor) {
+        final Map<String, List<VendorAddress>> orderedAddressGroups = new LinkedHashMap<>();
+
+        for (final VendorAddress vendorAddress : vendor.getVendorAddresses()) {
+            if (StringUtils.isBlank(vendorAddress.getVendorAddressEmailAddress())) {
+                continue;
+            } else if (!vendorAddress.isActive()) {
+                LOG.debug("groupAndOrderVendorAddressesContainingEmails, Vendor Address {} containing email info "
+                        + "for Vendor {}-{} was NOT written to conversion file.",
+                        vendorAddress.getVendorAddressGeneratedIdentifier(),
+                        vendor.getVendorHeaderGeneratedIdentifier(),
+                        vendor.getVendorDetailAssignedIdentifier());
+                continue;
+            }
+            final String addressKey = CemiUtils.generateKeyForGroupingDuplicates(
+                    vendorAddress.getVendorAddressEmailAddress());
+            final List<VendorAddress> addressGroup = orderedAddressGroups.computeIfAbsent(
+                    addressKey, key -> new ArrayList<>());
+            addressGroup.add(vendorAddress);
+        }
+
+        return orderedAddressGroups;
+    }
+
     protected boolean currentVendorShouldBecomeParentVendor(VendorDetail currentVendor) {
         if (currentVendor.isVendorParentIndicator()) {
             return true;
@@ -244,26 +331,25 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
                     + "a corresponding Supplier Bank Account row will NOT be written",
                     vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
             return;
-        }
-
-        while (numAccounts < CemiVendorConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES) {
-            numAccounts++;
-            accountEntries.add(CemiSupplierBankAccountSubEntry.EMPTY);
-        }
-
-        if (numAccounts > CemiVendorConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES) {
+        } else if (numAccounts > CemiVendorConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES) {
             LOG.warn("writeSupplierBankAccountsAsSingleRow, Found {} active Payee ACH Accounts for KFS Vendor {}-{}; "
                     + "only the first {} will be written",
                     numAccounts, vendor.getVendorHeaderGeneratedIdentifier(),
                     vendor.getVendorDetailAssignedIdentifier(), CemiVendorConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES);
         }
 
-        final CemiSupplierBankAccount supplierAccount = new CemiSupplierBankAccount(supplierId, accountEntries.build());
+        final CemiSupplierBankAccount supplierAccount = new CemiSupplierBankAccount(
+                supplierId, toAccountArray(accountEntries));
         writeSupplierBankAccountRow(supplierAccount);
     }
 
     protected void writeSupplierBankAccountRow(final CemiSupplierBankAccount supplierAccount) throws IOException {
         writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.BANK_ACCOUNTS, supplierAccount);
+    }
+
+    protected CemiSupplierBankAccountSubEntry[] toAccountArray(
+            final Stream.Builder<CemiSupplierBankAccountSubEntry> entries) {
+        return entries.build().toArray(CemiSupplierBankAccountSubEntry[]::new);
     }
 
     /*

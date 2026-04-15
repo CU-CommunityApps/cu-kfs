@@ -78,14 +78,14 @@
         <field name="Zip_Code" type="STRING" key="zipCode"/>
         <field name="Address_Primary" type="STRING" key="addressPrimary"/>
         <field name="Address_Type" type="STRING" key="addressType"/>
-        <field name="Address_Use" type="STRING" key="addressUse"/>
-        <field name="Address_Use_2" type="STRING" key="addressUse2"/>
-        <field name="Address_Use_3" type="STRING" key="addressUse3"/>
-        <field name="Address_Use_4" type="STRING" key="addressUse4"/>
-        <field name="Address_Use_Tenanted" type="STRING" key="addressUseTenanted"/>
-        <field name="Address_Use_Tenanted_2" type="STRING" key="addressUseTenanted2"/>
-        <field name="Address_Use_Tenanted_3" type="STRING" key="addressUseTenanted3"/>
-        <field name="Address_Use_Tenanted_4" type="STRING" key="addressUseTenanted4"/>
+        <field name="Address_Use" type="STRING" key="addressUses[0]"/>
+        <field name="Address_Use_2" type="STRING" key="addressUses[1]"/>
+        <field name="Address_Use_3" type="STRING" key="addressUses[2]"/>
+        <field name="Address_Use_4" type="STRING" key="addressUses[3]"/>
+        <field name="Address_Use_Tenanted" type="STRING" key="addressTenantedUses[0]"/>
+        <field name="Address_Use_Tenanted_2" type="STRING" key="addressTenantedUses[1]"/>
+        <field name="Address_Use_Tenanted_3" type="STRING" key="addressTenantedUses[2]"/>
+        <field name="Address_Use_Tenanted_4" type="STRING" key="addressTenantedUses[3]"/>
         <field name="Comments" type="STRING" key="comments"/>
     </sheet>
     
@@ -98,14 +98,14 @@
         <field name="Phone_Extension" type="STRING" key="phoneExtension"/>
         <field name="Phone_Device_Type" type="STRING" key="phoneDeviceType"/>
         <field name="Phone_Primary" type="STRING" key="phonePrimary"/>
-        <field name="Use_For_Phone" type="STRING" key="phoneUse"/>
-        <field name="Use_For_Phone_2" type="STRING" key="phoneUse2"/>
-        <field name="Use_For_Phone_3" type="STRING" key="phoneUse3"/>
-        <field name="Use_For_Phone_4" type="STRING" key="phoneUse4"/>
-        <field name="Use_For_Tenanted_Phone" type="STRING" key="phoneUseTenanted"/>
-        <field name="Use_For_Tenanted_Phone_2" type="STRING" key="phoneUseTenanted2"/>
-        <field name="Use_For_Tenanted_Phone_3" type="STRING" key="phoneUseTenanted3"/>
-        <field name="Use_For_Tenanted_Phone_4" type="STRING" key="phoneUseTenanted4"/>
+        <field name="Use_For_Phone" type="STRING" key="phoneUses[0]"/>
+        <field name="Use_For_Phone_2" type="STRING" key="phoneUses[1]"/>
+        <field name="Use_For_Phone_3" type="STRING" key="phoneUses[2]"/>
+        <field name="Use_For_Phone_4" type="STRING" key="phoneUses[3]"/>
+        <field name="Use_For_Tenanted_Phone" type="STRING" key="phoneTenantedUses[0]"/>
+        <field name="Use_For_Tenanted_Phone_2" type="STRING" key="phoneTenantedUses[1]"/>
+        <field name="Use_For_Tenanted_Phone_3" type="STRING" key="phoneTenantedUses[2]"/>
+        <field name="Use_For_Tenanted_Phone_4" type="STRING" key="phoneTenantedUses[3]"/>
         <field name="Phone_Comments" type="STRING" key="comments"/>
     </sheet>
 

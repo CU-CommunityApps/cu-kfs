@@ -1,7 +1,6 @@
 package edu.cornell.kfs.vnd.batch.dto;
 
 import java.text.MessageFormat;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.sys.util.CemiUtils;
 import edu.cornell.kfs.vnd.CemiVendorConstants;
 
 public class CemiSupplierBankAccountSubEntry {
@@ -42,8 +42,9 @@ public class CemiSupplierBankAccountSubEntry {
         this.bankAccountType = CemiVendorConstants.EMPTY_STRING;
         this.branchId = CemiVendorConstants.EMPTY_STRING;
         this.branchName = CemiVendorConstants.EMPTY_STRING;
-        this.acceptedPaymentTypes = Collections.nCopies(3, CemiVendorConstants.EMPTY_STRING);
-        this.paymentTypes = Collections.nCopies(3, CemiVendorConstants.EMPTY_STRING);
+        this.acceptedPaymentTypes = CemiUtils.createListOfEmptyStrings(
+                CemiVendorConstants.MAX_ACCOUNT_ACCEPTED_PAYMENT_TYPES);
+        this.paymentTypes = CemiUtils.createListOfEmptyStrings(CemiVendorConstants.MAX_ACCOUNT_PAYMENT_TYPES);
     }
 
     public CemiSupplierBankAccountSubEntry(final PayeeACHAccount vendorAccount, final String supplierId,
@@ -58,8 +59,9 @@ public class CemiSupplierBankAccountSubEntry {
         this.bankAccountType = determineBankAccountType(vendorAccount);
         this.branchId = CemiVendorConstants.EMPTY_STRING;
         this.branchName = CemiVendorConstants.EMPTY_STRING;
-        this.acceptedPaymentTypes = Collections.nCopies(3, CemiVendorConstants.EMPTY_STRING);
-        this.paymentTypes = Collections.nCopies(3, CemiVendorConstants.EMPTY_STRING);
+        this.acceptedPaymentTypes = CemiUtils.createListOfEmptyStrings(
+                CemiVendorConstants.MAX_ACCOUNT_ACCEPTED_PAYMENT_TYPES);
+        this.paymentTypes = CemiUtils.createListOfEmptyStrings(CemiVendorConstants.MAX_ACCOUNT_PAYMENT_TYPES);
     }
 
     private static String determineBankAccountNumber(final PayeeACHAccount vendorAccount, final boolean maskSensitiveData) {
