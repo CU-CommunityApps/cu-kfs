@@ -29,6 +29,8 @@ import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
@@ -49,6 +51,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
     private static CuCheckStubService cuCheckStubService;
     private static ApiAuthenticationService apiAuthenticationService;
+    private static PersonService personService;
     
     public CuPaymentRequestDocument() {
         super();
@@ -269,8 +272,9 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     }
 
     protected boolean forceAccountsPayableReview() {
-        String initiatorPrincipleId = getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId(); 
-        boolean forceApReview = getApiAuthenticationService().isDocumentInitatorAssociatedWithEndpoint(CUKFSConstants.EndpointCodes.PAYMENT_REQUEST, initiatorPrincipleId);
+        Person initiator = getPersonService().getPerson(getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId());
+        String initiatorPrincipleName = ObjectUtils.isNotNull(initiator) ? initiator.getPrincipalName() : StringUtils.EMPTY;
+        boolean forceApReview = getApiAuthenticationService().isDocumentInitatorAssociatedWithEndpoint(CUKFSConstants.EndpointCodes.PAYMENT_REQUEST, initiatorPrincipleName);
         LOG.info("forceAccountsPayableReview, for document number {} returning {}", getDocumentNumber(), forceApReview);
         return forceApReview;
     }
@@ -280,5 +284,12 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
             apiAuthenticationService = SpringContext.getBean(ApiAuthenticationService.class);
         }
         return apiAuthenticationService;
+    }
+
+    protected static PersonService getPersonService() {
+        if (personService == null) {
+            personService = SpringContext.getBean(PersonService.class);
+        }
+        return personService;
     }
 }

@@ -6,6 +6,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
@@ -67,6 +69,7 @@ public class PaymentRequestResource {
     private ApiAuthenticationService apiAuthenticationService;
     private CuPaymentRequestService cuPaymentRequestService;
     private DocumentService documentService;
+    private KualiRuleService kualiRuleService;
 
     @GET
     public Response describePaymentRequestResource() {
@@ -95,22 +98,9 @@ public class PaymentRequestResource {
                             () -> getCuPaymentRequestService().createPaymentRequestDocumentFromDto(paymentRequestDto, results));
 
                     if (preqDoc != null && results.isValid()) {
-                        preqDoc.updateExtendedPriceOnItems();
-                        if (StringUtils.equals(preqDoc.getApplicationDocumentStatus(),
-                                PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW)) {
-                            getPaymentRequestService().calculateTaxArea(preqDoc);
-                            return;
-                        }
-                        getPaymentRequestService().calculatePaymentRequest(preqDoc, true);
-                        SpringContext.getBean(KualiRuleService.class).applyRules(new AttributedCalculateAccountsPayableEvent(preqDoc));
-
-                        if (PaymentRequestStatuses.APPDOC_AWAITING_PAYMENT_METHOD_REVIEW.equalsIgnoreCase(preqDoc.getApplicationDocumentStatus())
-                                    && StringUtils.isNotBlank(preqDoc.getTaxClassificationCode()) && !StringUtils.equalsIgnoreCase(preqDoc.getTaxClassificationCode(), "N")) {
-                                SpringContext.getBean(PaymentRequestService.class).calculateTaxArea(preqDoc);
-                                return;
-                        }
-
+                        calculatePaymentRequest(preqDoc);
                         routePreq(userSession, preqDoc, results);
+                        
                         if (results.isValid()) {
                             LOG.info("createPaymentRequestDocument, PREQ Document #{} Created", preqDoc.getDocumentNumber());
                             results.getSuccessMessages().add(String.format("Created PREQ Document %s", preqDoc.getDocumentNumber()));
@@ -130,6 +120,26 @@ public class PaymentRequestResource {
         } catch (Exception e) {
             LOG.error("createPaymentRequestDocument, an error occurred", e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(CUKFSConstants.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    private void calculatePaymentRequest(PaymentRequestDocument preqDoc) {
+        // from PaymentRequestAction.customCalculate
+        preqDoc.updateExtendedPriceOnItems();
+
+        if (StringUtils.equals(preqDoc.getApplicationDocumentStatus(),
+                PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW)) {
+            getCuPaymentRequestService().calculateTaxArea(preqDoc);
+        } else {
+            getCuPaymentRequestService().calculatePaymentRequest(preqDoc, true);
+            getKualiRuleService().applyRules(new AttributedCalculateAccountsPayableEvent(preqDoc));
+        }
+
+        // from CuPaymentRequestAction.customCalculate
+        if (PaymentRequestStatuses.APPDOC_AWAITING_PAYMENT_METHOD_REVIEW.equalsIgnoreCase(preqDoc.getApplicationDocumentStatus())
+                && StringUtils.isNotBlank(preqDoc.getTaxClassificationCode())
+                && !StringUtils.equalsIgnoreCase(preqDoc.getTaxClassificationCode(), "N")) {
+            getCuPaymentRequestService().calculateTaxArea(preqDoc);
         }
     }
 
@@ -199,6 +209,13 @@ public class PaymentRequestResource {
             documentService = SpringContext.getBean(DocumentService.class);
         }
         return documentService;
+    }
+
+    public KualiRuleService getKualiRuleService() {
+        if (kualiRuleService == null) {
+            kualiRuleService = SpringContext.getBean(KualiRuleService.class);
+        }
+        return kualiRuleService;
     }
 
 }

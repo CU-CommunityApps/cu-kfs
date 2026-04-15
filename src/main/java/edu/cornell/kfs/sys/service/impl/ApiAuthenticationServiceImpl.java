@@ -117,8 +117,8 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
     }
 
     @Override
-    public boolean isDocumentInitatorAssociatedWithEndpoint(String endpointCode, String initiatorPrincipleId) {
-        LOG.debug("isDocumentInitatorAssociatedWithEndpoint: Checking authorization for endpoint code {} with credentials", endpointCode);
+    public boolean isDocumentInitatorAssociatedWithEndpoint(String endpointCode, String initiatorPrincipleName) {
+        LOG.debug("isDocumentInitatorAssociatedWithEndpoint: check to see if intiator '{}' is associated with enpoint '{}'", initiatorPrincipleName, endpointCode);
         
         List<ApiAuthenticationMapping> authenticationMappings = getAuthenticationMappingsFromEndpoint(endpointCode);
         if (authenticationMappings.isEmpty()) {
@@ -129,7 +129,8 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
         for (ApiAuthenticationMapping authenticationMapping : authenticationMappings) {
             if (isAuthenticationMappingValid(authenticationMapping)) {
                 ApiAuthenticator authenticator = authenticationMapping.getApiAuthenticator();
-                if (StringUtils.startsWith(authenticator.getCredentials(), initiatorPrincipleId)) {
+                LOG.debug("isDocumentInitatorAssociatedWithEndpoint, checking authenticator {}", authenticator.getAuthenticatorDescription());
+                if (StringUtils.startsWith(authenticator.getCredentials(), initiatorPrincipleName)) {
                     LOG.debug("isDocumentInitatorAssociatedWithEndpoint: Successfully authenticated for endpoint code {} with authenticator {}", 
                         endpointCode, authenticator.getAuthenticatorDescription());
                     return true;
