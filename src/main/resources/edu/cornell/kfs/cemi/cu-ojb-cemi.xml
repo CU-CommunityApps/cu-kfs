@@ -1,0 +1,59 @@
+<descriptor-repository version="1.0">
+
+    <class-descriptor class="edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardScheduleBo" table="CU_CEMI_EXTR_AWD_SCHD_TAB_AWD_SCHD_T">
+        <field-descriptor name="extractTableUniqueRowId" column="EXTR_TBL_ROW_ID" jdbc-type="BIGINT"
+                          primarykey="true" ndex="true" 
+                          autoincrement="true" sequence-name="KFS.CU_CEMI_EXTR_AWD_SCHD_TAB_AWD_SCHD_SEQ"/>
+        <field-descriptor name="jobRunDateAsString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" />
+        <field-descriptor name="proposalNumberUsedForDataRow" column="CGPRPSL_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="spreadsheetKey" column="WKDY_SPRDSHT_KEY_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="addOnly" column="ADD_ONLY" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardSchedule" column="AWD_SCHD" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardScheduleReferenceId" column="AWD_SCHD_REF_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardScheduleName" column="AWD_SCHD_NM" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardPostingIntervalGroup" column="AWD_PST_INTRVL_GRP" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardPeriodDataRowId" column="AWD_PRD_DT_ROW_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardPeriodReferenceId" column="AWD_PRD_REF_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardPeriodName" column="AWD_PRD_NM" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardPeriodNumber" column="AWD_PRD_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardIntervalRowId" column="AWD_INTRVL_ROW_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardPostingInterval" column="AWD_PST_INTRVL" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardPostingIntervalId" column="AWD_PST_INTRVL_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardPostingIntervalName" column="AWD_PST_INTRVL_NM" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardIntervalStartDate" column="AWD_INTRVL_STRT_DT" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardIntervalEndDate" column="AWD_INTRVL_END_DT" jdbc-type="VARCHAR" />
+        <field-descriptor name="isAwardContractStartDate" column="IS_AWD_CNTRCT_STRT_DT" jdbc-type="VARCHAR" />
+        <field-descriptor name="isAwardContractEndDate" column="IS_AWD_CNTRCT_END_DT" jdbc-type="VARCHAR" />
+    </class-descriptor>
+
+    <class-descriptor class="edu.cornell.kfs.cemi.pdp.batch.businessobject.CemiPaymentElectionGroupTwoBo" table="CU_CEMI_EXTR_GRP_TWO_TAB_PYMNT_ELCTN_T">
+        <field-descriptor name="extractTableUniqueRowId" column="EXTR_TBL_ROW_ID" jdbc-type="BIGINT"
+                          primarykey="true" ndex="true" 
+                          autoincrement="true" sequence-name="CU_CEMI_EXTR_GRP_TWO_TAB_PYMNT_ELCTN_SEQ"/>
+        <field-descriptor name="jobRunDateAsString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" />
+        <field-descriptor name="achAccountGeneratedIdentifierUsedForDataRow" column="ACH_ACCT_GNRTD_ID" jdbc-type="BIGINT" />
+        <field-descriptor name="employeeId" column="EMPL_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="paymentElectionGroupRule_2" column="PYMNT_ELCTN_GRP_RULE_2" jdbc-type="VARCHAR" />
+        <field-descriptor name="paymentElectionRule_2_1" column="PYMNT_ELCTN_RULE_2_1" jdbc-type="VARCHAR" />
+        <field-descriptor name="electionCountry_2_1" column="ELCTN_CNTRY_2_1" jdbc-type="VARCHAR" />
+        <field-descriptor name="electionCurrency_2_1" column="ELCTN_CURNCY_2_1" jdbc-type="VARCHAR" />
+        <field-descriptor name="paymentType_2_1" column="PYMNT_TYP_2_1" jdbc-type="VARCHAR" />
+        <field-descriptor name="accountCountry_2_1" column="ACCT_CNTRY_2_1" jdbc-type="VARCHAR" /> 
+        <field-descriptor name="accountCurrency_2_1" column="ACCT_CURNCY_2_1" jdbc-type="VARCHAR" />
+        <field-descriptor name="bankAccountNickname_2_1" column="BNK_ACCT_NCK_NM_2_1" jdbc-type="VARCHAR" />
+        <field-descriptor name="bankAccountName_2_1" column="BNK_ACCT_NM_2_1" jdbc-type="VARCHAR" />
+        <field-descriptor name="accountNumber_2_1" column="ACCT_NBR_2_1" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+        <field-descriptor name="accountType_2_1" column="ACCT_TYP_2_1" jdbc-type="VARCHAR" />
+        <field-descriptor name="bankName_2_1" column="BNK_NM_2_1" jdbc-type="VARCHAR" />
+        <field-descriptor name="bankRoutingNumber_2_1" column="BNK_RTNG_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="iban_2_1" column="IBAN_2_1" jdbc-type="VARCHAR" />
+        <field-descriptor name="bic_2_1" column="BIC_2_1" jdbc-type="VARCHAR" />
+        <field-descriptor name="branchName_2_1" column="BRNCH_NM_2_1" jdbc-type="VARCHAR" />
+        <field-descriptor name="branchIdNumber_2_1" column="BRNCH_ID_NBR_2_1" jdbc-type="VARCHAR" />
+        <field-descriptor name="checkDigit_2_1" column="CHCK_DGT_2_1" jdbc-type="VARCHAR" />
+        <field-descriptor name="distributionAmount_2_1" column="DISTRB_AMT_2_1" jdbc-type="VARCHAR" />
+        <field-descriptor name="distributionPercentage_2_1" column="DISTRB_PCT_2_1" jdbc-type="VARCHAR" />
+        <field-descriptor name="distributionBalance_2_1" column="DISTRIB_BAL_2_1" jdbc-type="VARCHAR" />
+    </class-descriptor>
+    
+</descriptor-repository>

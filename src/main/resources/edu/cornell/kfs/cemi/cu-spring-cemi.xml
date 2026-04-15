@@ -1,0 +1,295 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean id="cemiModuleConfiguration" parent="cemiModuleConfiguration-parentBean"/>
+    
+    <bean id="cemiModuleConfiguration-parentBean" abstract="true" parent="cemiModuleConfiguration-base-parentBean"/>
+    
+    <bean id="cemiModuleConfiguration-base-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration"
+          abstract="true" p:namespaceCode="KFS-CEMI">
+        <property name="initializeDataDictionary" value="true" />
+        <property name="packagePrefixes">
+            <list merge="true">
+                <value>edu.cornell.kfs.cemi</value>
+            </list>
+        </property>
+        <property name="databaseRepositoryFilePaths">
+            <list merge= "true">
+                <value>edu/cornell/kfs/cemi/cu-ojb-cemi.xml</value>
+                <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-vnd.xml</value>
+            </list>
+        </property>
+        <property name="jobNames">
+            <list merge="true">
+                 <value>createCemiAwardScheduleExtractJob</value>
+                 <value>createCemiPaymentElectionExtractJob</value>
+                 <value>createCemiSupplierExtractJob</value>
+                 <value>createCemiRemitToSupplierExtractJob</value>
+                 <value>createCemiOrderFromSupplierExtractJob</value>
+            </list>
+        </property>
+        <property name="batchFileDirectories">
+          <list merge="true">
+            <value>${reports.directory}/cemi</value>
+            <value>${staging.directory}/cemi</value>
+            <value>${staging.directory}/cemi/module/cg/cemiAwardScheduleExtract</value>
+            <value>${staging.directory}/cemi/pdp/cemiPaymentElectionExtract</value>
+            <value>${staging.directory}/cemi/vnd/cemiSupplierExtract</value>
+            <value>${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract</value>
+            <value>${staging.directory}/cemi/vnd/cemiOrderFromSupplierExtract</value>
+            <value>${staging.directory}/cemi/conversions/outbound</value>
+          </list>
+        </property>
+    </bean>
+
+    <bean id="cemiFileAppenderOrmDao" parent="cemiFileAppenderOrmDao-parentBean"/>
+    <bean id="cemiFileAppenderOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.dataaccess.impl.CemiFileAppenderOrmDaoOjbImpl"
+          parent="platformAwareDao"/>
+
+    <bean id="cemiFileAppenderService" parent="cemiFileAppenderService-parentBean"/>
+    <bean id="cemiFileAppenderService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.batch.service.impl.CemiFileAppenderServiceImpl"
+          p:cemiFileAppenderOrmDao-ref="cemiFileAppenderOrmDao"/>
+
+    <!-- Award Schedule -->
+
+    <bean id="createCemiAwardScheduleExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiAwardScheduleExtractStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cemiAwardScheduleDao" parent="cemiAwardScheduleDao-parentBean"/>
+    <bean id="cemiAwardScheduleDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cg.dataaccess.impl.CemiAwardScheduleDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="cemiAwardScheduleOrmDao" parent="cemiAwardScheduleOrmDao-parentBean"/>
+    <bean id="cemiAwardScheduleOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cg.dataaccess.impl.CemiAwardScheduleOrmDaoOjbImpl"
+          parent="platformAwareDao"/>
+
+    <bean id="cemiAwardScheduleExtractService" parent="cemiAwardScheduleExtractService-parentBean"/>
+    <bean id="cemiAwardScheduleExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cg.batch.service.impl.CemiAwardScheduleExtractServiceImpl"
+          c:environment-ref="environment"
+          p:awardScheduleFileCreationDirectory="${staging.directory}/cemi/module/cg/cemiAwardScheduleExtract"
+          p:awardScheduleFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiAwardScheduleOrmDao-ref="cemiAwardScheduleOrmDao"
+          p:cemiAwardScheduleDao-ref="cemiAwardScheduleDao"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:businessObjectService-ref="businessObjectService"
+          p:parameterService-ref="parameterService"
+          p:dateTimeService-ref="dateTimeService"/>
+          
+    <bean id="createCemiAwardScheduleExtractStep"
+          class="edu.cornell.kfs.cemi.module.cg.batch.CreateCemiAwardScheduleExtractStep"
+          parent="step"
+          p:cemiAwardScheduleExtractService-ref="cemiAwardScheduleExtractService"/>
+
+
+    <!-- Payment Election -->
+    <bean id="createCemiPaymentElectionExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiPaymentElectionExtractStep"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="createCemiPaymentElectionExtractStep"
+          class="edu.cornell.kfs.cemi.pdp.batch.CreateCemiPaymentElectionExtractStep"
+          parent="step"
+          p:cemiPaymentElectionExtractService-ref="cemiPaymentElectionExtractService"/>
+    
+    <bean id="cemiPaymentElectionDao" parent="cemiPaymentElectionDao-parentBean"/>
+    <bean id="cemiPaymentElectionDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.pdp.dataaccess.impl.CemiPaymentElectionDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="cemiPaymentElectionOrmDao" parent="cemiPaymentElectionOrmDao-parentBean"/>
+    <bean id="cemiPaymentElectionOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.pdp.dataaccess.impl.CemiPaymentElectionOrmDaoOjbImpl"
+          parent="platformAwareDao"/>
+
+    <bean id="cemiPaymentElectionExtractService" parent="cemiPaymentElectionExtractService-parentBean"/>
+    <bean id="cemiPaymentElectionExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.pdp.batch.service.impl.CemiPaymentElectionExtractServiceImpl"
+          c:environment-ref="environment"
+          p:paymentElectionFileCreationDirectory="${staging.directory}/cemi/pdp/cemiPaymentElectionExtract"
+          p:paymentElectionFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiPaymentElectionOrmDao-ref="cemiPaymentElectionOrmDao"
+          p:cemiPaymentElectionDao-ref="cemiPaymentElectionDao"
+          p:achBankService-ref="pdpAchBankService"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:businessObjectService-ref="businessObjectService"
+          p:parameterService-ref="parameterService"
+          p:dateTimeService-ref="dateTimeService"/>
+          
+
+
+    <!-- Suppliers -->
+    <bean id="cemiVendorDao" parent="cemiVendorDao-parentBean"/>
+    <bean id="cemiVendorDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiVendorDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="cemiVendorOrmDao" parent="cemiVendorOrmDao-parentBean"/>
+    <bean id="cemiVendorOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiVendorOrmDaoOjbImpl"
+          parent="vendorDaoOjb"/>
+    
+    <bean id="cemiModuleService" parent="cemiModuleService-parentBean"/>
+    <bean id="cemiModuleService-parentBean" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl" abstract="true"
+          p:moduleConfiguration-ref="cemiModuleConfiguration"/>
+
+    <bean id="createCemiSupplierExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiSupplierExtractStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="createCemiSupplierExtractStep"
+          class="edu.cornell.kfs.cemi.vnd.batch.CreateCemiSupplierExtractStep"
+          parent="step"
+          p:cemiSupplierExtractService-ref="cemiSupplierExtractService"/>
+
+    <bean id="cemiSupplierExtractService" parent="cemiSupplierExtractService-parentBean"/>
+    <bean id="cemiSupplierExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.batch.service.impl.CemiSupplierExtractServiceImpl"
+          c:environment-ref="environment"
+          p:supplierFileCreationDirectory="${staging.directory}/cemi/vnd/cemiSupplierExtract"
+          p:supplierFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiVendorOrmDao-ref="cemiVendorOrmDao"
+          p:cemiVendorDao-ref="cemiVendorDao"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:businessObjectService-ref="businessObjectService"
+          p:parameterService-ref="parameterService"
+          p:dateTimeService-ref="dateTimeService"/>
+
+
+    <bean id="cemiOutputDefinitionFileType" parent="cemiOutputDefinitionFileType-parentBean"/>
+    <bean id="cemiOutputDefinitionFileType-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType"
+          p:directoryPath="${staging.directory}/cemi/sys"
+          p:fileExtension="xml"
+          p:fileNamePrefix="NOT_USED_"
+          p:schemaLocation="classpath:edu/cornell/kfs/cemi/sys/batch/xml/cemiOutputDefinition.xsd"
+          p:outputClass="edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition"
+          p:dateTimeService-ref="dateTimeService"/>
+
+    <!-- Remit to Supplier -->
+
+    <bean id="createCemiRemitToSupplierExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiRemitToSupplierExtractStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="createCemiRemitToSupplierExtractStep"
+          class="edu.cornell.kfs.cemi.vnd.batch.CreateCemiRemitToSupplierExtractStep"
+          parent="step"
+          p:cemiRemitToSupplierExtractService-ref="cemiRemitToSupplierExtractService"/>
+
+    <bean id="cemiRemitToSupplierDao" parent="cemiRemitToSupplierDao-parentBean"/>
+    <bean id="cemiRemitToSupplierDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiRemitToSupplierDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"/>
+
+    <bean id="cemiRemitToSupplierOrmDao" parent="cemiRemitToSupplierOrmDao-parentBean"/>
+    <bean id="cemiRemitToSupplierOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiRemitToSupplierOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="cemiRemitToSupplierExtractService" parent="cemiRemitToSupplierExtractService-parentBean"/>
+    <bean id="cemiRemitToSupplierExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.batch.service.impl.CemiRemitToSupplierExtractServiceImpl"
+          c:environment-ref="environment"
+          p:remitToSupplierFileCreationDirectory="${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract"
+          p:remitToSupplierFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:cemiRemitToSupplierOrmDao-ref="cemiRemitToSupplierOrmDao"
+          p:cemiRemitToSupplierDao-ref="cemiRemitToSupplierDao"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
+          p:businessObjectService-ref="businessObjectService"
+          p:parameterService-ref="parameterService"/>
+
+    <!-- Order From Supplier -->
+
+    <bean id="createCemiOrderFromSupplierExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiOrderFromSupplierExtractStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="createCemiOrderFromSupplierExtractStep"
+          class="edu.cornell.kfs.cemi.vnd.batch.CreateCemiOrderFromSupplierExtractStep"
+          parent="step"
+          p:cemiOrderFromSupplierExtractService-ref="cemiOrderFromSupplierExtractService"/>
+
+    <bean id="cemiOrderFromSupplierDao" parent="cemiOrderFromSupplierDao-parentBean"/>
+    <bean id="cemiOrderFromSupplierDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiOrderFromSupplierDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"/>
+
+    <bean id="cemiOrderFromSupplierOrmDao" parent="cemiOrderFromSupplierOrmDao-parentBean"/>
+    <bean id="cemiOrderFromSupplierOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiOrderFromSupplierOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="cemiOrderFromSupplierExtractService" parent="cemiOrderFromSupplierExtractService-parentBean"/>
+    <bean id="cemiOrderFromSupplierExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.batch.service.impl.CemiOrderFromSupplierExtractServiceImpl"
+          c:environment-ref="environment"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/vnd/cemiOrderFromSupplierExtract"
+          p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:parameterService-ref="parameterService"
+          p:reportsDirectory="${reports.directory}/cemi/"
+          p:cemiOrderFromSupplierOrmDao-ref="cemiOrderFromSupplierOrmDao"
+          p:cemiOrderFromSupplierDao-ref="cemiOrderFromSupplierDao"
+          p:cemiVendorOrmDao-ref="cemiVendorOrmDao"
+          p:businessObjectService-ref="businessObjectService"/>
+
+</beans>
