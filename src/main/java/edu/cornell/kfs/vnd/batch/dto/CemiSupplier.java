@@ -1,0 +1,254 @@
+package edu.cornell.kfs.vnd.batch.dto;
+
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.vnd.businessobject.VendorAlias;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.kfs.vnd.businessobject.VendorHeader;
+
+import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
+import edu.cornell.kfs.sys.service.impl.ISOFIPSConversionServiceImpl;
+import edu.cornell.kfs.sys.util.CemiUtils;
+import edu.cornell.kfs.vnd.CUVendorConstants.VendorOwnershipCodes;
+import edu.cornell.kfs.vnd.CemiForeignTaxIdType;
+import edu.cornell.kfs.vnd.CemiVendorConstants;
+import edu.cornell.kfs.vnd.CemiVendorConstants.TaxAuthorityFormTypes;
+
+@SuppressWarnings("deprecation")
+public class CemiSupplier {
+
+    private final VendorDetail vendorDetail;
+    private final String supplierId;
+    private final String supplierReferenceId;
+    private final String taxAuthorityFormType;
+    private final String taxIdType;
+    private final String taxIdValue;
+    private final String transactionTaxId;
+    private final String primaryTaxId;
+    private final String countryTaxId;
+    private final String dunsNumber;
+    private final String paymentTerms;
+    private final String alias0Name;
+    private final String alias0Usage;
+    private final String alias1Name;
+    private final String alias1Usage;
+    private static ISOFIPSConversionService conversionService;
+
+    /*
+     * For POJO properties that need to go into the spreadsheet (and the future temp table),
+     * either create a related getter, or retrieve it from a Vendor Header/Detail getter.
+     * When using the latter, specify a nested "vendorHeader.propName" or "vendorDetail.propName"
+     * property in the XML definition.
+     * 
+     * This particular POJO populates derived values via static methods and keeps such values immutable.
+     * If necessary, this object can be modified into a mutable one and/or a different mechanism could
+     * be implemented to compute the derived values.
+     */
+    public CemiSupplier(final VendorDetail vendorDetail, final String supplierId, boolean maskCemiSensitiveData) {
+        this.vendorDetail = vendorDetail;
+        this.supplierId = supplierId;
+        this.supplierReferenceId = buildSupplierReferenceId(vendorDetail);
+        this.taxAuthorityFormType = determineTaxAuthorityFormType(vendorDetail);
+        this.taxIdValue = determineTaxIdValue(vendorDetail, maskCemiSensitiveData);
+        this.taxIdType = determineTaxIdType(vendorDetail, this.taxIdValue);
+        this.transactionTaxId = determineTransactionTaxId(vendorDetail, this.taxIdValue, this.taxIdType);
+        this.primaryTaxId = determinePrimaryTaxId(vendorDetail, this.taxIdValue);
+        this.countryTaxId = determineCountryTaxId(vendorDetail, this.taxIdValue);
+        this.dunsNumber = vendorDetail.getVendorDunsNumber();
+        this.paymentTerms = determineVendorPaymentTerms(vendorDetail);
+        
+        List<VendorAlias> vendorAliases = vendorDetail.getVendorAliases().stream()
+                .filter(VendorAlias::isActive)
+                .collect(Collectors.toList());
+        this.alias0Name  = getAliasName(vendorAliases, 0);
+        this.alias0Usage = getAliasUsage(vendorAliases, 0);
+        this.alias1Name  = getAliasName(vendorAliases, 1);
+        this.alias1Usage = getAliasUsage(vendorAliases, 1);
+    }
+
+    private String determineCountryTaxId(VendorDetail vendorDetail, String taxIdValue) {
+        VendorHeader vendorHeader = vendorDetail.getVendorHeader();
+        if (StringUtils.isNotBlank(taxIdValue) && StringUtils.isNotBlank(vendorHeader.getVendorCorpCitizenCode())) {
+            return getConversionService().convertFIPSCountryCodeToActiveISOCountryCode(vendorHeader.getVendorCorpCitizenCode());
+        } else {
+            return KFSConstants.EMPTY_STRING;
+        }
+    }
+
+    private static String determineTaxIdValue(VendorDetail vendorDetail, boolean maskCemiSensitiveData) {
+        if (!maskCemiSensitiveData) {
+            VendorHeader vendorHeader = vendorDetail.getVendorHeader();
+            if (vendorHeader.getVendorForeignIndicator()) {
+                return vendorHeader.getVendorForeignTaxId();
+            } else {
+                return vendorHeader.getVendorTaxNumber();
+            }
+        }
+        return CemiVendorConstants.DUMMY_TAX_ID;
+    }
+
+    private static String getAliasName(final List<VendorAlias> aliases, final int index) {
+        return index < aliases.size() ? aliases.get(index).getVendorAliasName() : "";
+    }
+
+    private static String getAliasUsage(final List<VendorAlias> aliases, final int index) {
+        return index < aliases.size() ? CemiVendorConstants.ALTERNATE_NAME_USAGE_DEFAULT_VALUE : "";
+    }
+
+    // default to true if tax id is present, FALSE if tax type USA_SSN
+    private static String determineTransactionTaxId(VendorDetail vendorDetail, String taxIdValue, String taxIdType) {
+        if (StringUtils.isNotBlank(taxIdValue)) {
+            boolean transactionTaxId = StringUtils.isNotBlank(taxIdType)
+                    && !CemiVendorConstants.USA_SSN_TAX_TYPE.equalsIgnoreCase(taxIdType);
+            return CemiUtils.convertToBooleanValueForFileExtract(transactionTaxId);
+        } else {
+            return KFSConstants.EMPTY_STRING;
+        }
+
+    }
+    
+    private static String determinePrimaryTaxId(VendorDetail vendorDetail, String taxIdValue) {
+        if (StringUtils.isNotBlank(taxIdValue)) {
+            return CemiUtils.convertToBooleanValueForFileExtract(true);
+        } else {
+            return KFSConstants.EMPTY_STRING;
+        }
+    }
+
+
+    private static String buildSupplierReferenceId(final VendorDetail vendor) {
+        return MessageFormat.format(CemiVendorConstants.SUPPLIER_REFERENCE_ID_FORMAT,
+                Integer.toString(vendor.getVendorHeaderGeneratedIdentifier()),
+                Integer.toString(vendor.getVendorDetailAssignedIdentifier()));
+    }
+
+    private static String determineTaxAuthorityFormType(final VendorDetail vendor) {
+        if (StringUtils.isNotBlank(vendor.getVendorHeader().getVendorW8TypeCode())) {
+            return TaxAuthorityFormTypes.FORM_1042S;
+        } else if (StringUtils.equals(vendor.getVendorHeader().getVendorOwnershipCode(),
+                VendorOwnershipCodes.INDIVIDUAL_OR_SOLE_PROPRIETOR_OR_SMLLC)) {
+            return TaxAuthorityFormTypes.FORM_1099_MISC;
+        } else {
+            return KFSConstants.EMPTY_STRING;
+        }
+    }
+
+    private static String determineTaxIdType(final VendorDetail vendor, String taxIdValue) {
+        if (StringUtils.isBlank(taxIdValue)) {
+            return KFSConstants.EMPTY_STRING;
+        } else {
+            if( vendor.getVendorHeader().getVendorForeignIndicator()) {
+                String fipsCountry = vendor.getVendorHeader().getVendorCorpCitizenCode();
+                if (StringUtils.isNotBlank(fipsCountry)) {
+                    final String isoCountryCode = getConversionService().convertFIPSCountryCodeToActiveISOCountryCode(vendor.getVendorHeader().getVendorCorpCitizenCode());
+                    final String foreignTaxType = CemiForeignTaxIdType.fromIsoCode(isoCountryCode)
+                            .map(CemiForeignTaxIdType::getTaxIdType)
+                            .orElse(KFSConstants.EMPTY_STRING);
+                    return foreignTaxType;
+                } else {
+                    return KFSConstants.EMPTY_STRING;
+                }
+            }
+            final String kfsTaxType = StringUtils.defaultString(vendor.getVendorHeader().getVendorTaxTypeCode());
+            return CemiVendorConstants.TAX_ID_TYPES.get(kfsTaxType);
+        }
+    }
+    
+    private static String determineVendorPaymentTerms(VendorDetail vendorDetail) {
+        vendorDetail.refreshReferenceObject("vendorPaymentTerms");
+        if (ObjectUtils.isNotNull(vendorDetail.getVendorPaymentTerms())) {
+            String paymentTermsDescription = vendorDetail.getVendorPaymentTerms().getVendorPaymentTermsDescription();
+            if (paymentTermsDescription == null || paymentTermsDescription.isEmpty()) {
+                return paymentTermsDescription;
+            }
+            return paymentTermsDescription
+                    .trim()
+                    .replaceAll("[^a-zA-Z0-9]+", "_") // replace spans of special chars/spaces with _
+                    .replaceAll("^_|_$", ""); // strip leading/trailing underscores
+        }
+        return "";
+    }
+
+    public VendorDetail getVendorDetail() {
+        return vendorDetail;
+    }
+
+    public VendorHeader getVendorHeader() {
+        return vendorDetail.getVendorHeader();
+    }
+
+    public String getSupplierId() {
+        return supplierId;
+    }
+
+    public String getSupplierReferenceId() {
+        return supplierReferenceId;
+    }
+
+    public String getTaxAuthorityFormType() {
+        return taxAuthorityFormType;
+    }
+
+    public String getIrs1099SupplierFlag() {
+        return CemiUtils.convertToBooleanValueForFileExtract(
+                StringUtils.equals(taxAuthorityFormType, TaxAuthorityFormTypes.FORM_1099_MISC));
+    }
+
+    public String getTaxIdType() {
+        return taxIdType;
+    }
+
+    public String getTaxIdValue() {
+        return taxIdValue;
+    }
+
+    public String getTransactionTaxId() {
+        return transactionTaxId;
+    }
+
+    public String getPrimaryTaxId() {
+        return primaryTaxId;
+    }
+
+    public String getCountryTaxId() {
+        return countryTaxId;
+    }
+
+    public String getDunsNumber() {
+        return dunsNumber;
+    }
+
+    public String getPaymentTerms() {
+        return paymentTerms;
+    }
+
+    public String getAlias0Name() {
+        return alias0Name;
+    }
+
+    public String getAlias0Usage() {
+        return alias0Usage;
+    }
+
+    public String getAlias1Name() {
+        return alias1Name;
+    }
+
+    public String getAlias1Usage() {
+        return alias1Usage;
+    }
+    
+    public static ISOFIPSConversionService getConversionService(){
+        if (conversionService == null) {
+            conversionService = SpringContext.getBean(ISOFIPSConversionService.class);
+        }
+        return conversionService;
+    }
+
+}
