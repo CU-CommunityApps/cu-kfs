@@ -273,9 +273,9 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
 
     protected boolean forceAccountsPayableReview() {
         Person initiator = getPersonService().getPerson(getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId());
-        String initiatorPrincipleName = ObjectUtils.isNotNull(initiator) ? initiator.getPrincipalName() : StringUtils.EMPTY;
-        boolean forceApReview = getApiAuthenticationService().isDocumentInitatorAssociatedWithEndpoint(CUKFSConstants.EndpointCodes.PAYMENT_REQUEST, initiatorPrincipleName);
-        LOG.info("forceAccountsPayableReview, for document number {} returning {}", getDocumentNumber(), forceApReview);
+        String initiatorPrincipalName = ObjectUtils.isNotNull(initiator) ? initiator.getPrincipalName() : StringUtils.EMPTY;
+        boolean forceApReview = getApiAuthenticationService().isDocumentInitatorAssociatedWithEndpoint(CUKFSConstants.EndpointCodes.PAYMENT_REQUEST, initiatorPrincipalName);
+        LOG.debug("forceAccountsPayableReview, for document number {} returning {}", getDocumentNumber(), forceApReview);
         return forceApReview;
     }
 

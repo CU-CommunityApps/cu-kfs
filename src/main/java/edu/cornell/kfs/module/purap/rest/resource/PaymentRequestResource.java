@@ -123,26 +123,6 @@ public class PaymentRequestResource {
         }
     }
 
-    private void calculatePaymentRequest(PaymentRequestDocument preqDoc) {
-        // from PaymentRequestAction.customCalculate
-        preqDoc.updateExtendedPriceOnItems();
-
-        if (StringUtils.equals(preqDoc.getApplicationDocumentStatus(),
-                PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW)) {
-            getCuPaymentRequestService().calculateTaxArea(preqDoc);
-        } else {
-            getCuPaymentRequestService().calculatePaymentRequest(preqDoc, true);
-            getKualiRuleService().applyRules(new AttributedCalculateAccountsPayableEvent(preqDoc));
-        }
-
-        // from CuPaymentRequestAction.customCalculate
-        if (PaymentRequestStatuses.APPDOC_AWAITING_PAYMENT_METHOD_REVIEW.equalsIgnoreCase(preqDoc.getApplicationDocumentStatus())
-                && StringUtils.isNotBlank(preqDoc.getTaxClassificationCode())
-                && !StringUtils.equalsIgnoreCase(preqDoc.getTaxClassificationCode(), "N")) {
-            getCuPaymentRequestService().calculateTaxArea(preqDoc);
-        }
-    }
-
     private UserSession createUserSessionForAiPaymentRequestUser(String loggedInPrincipalName) throws Exception {
         try {
 
@@ -170,6 +150,26 @@ public class PaymentRequestResource {
             LOG.info("cancelPreq, preq is null, so can't cancel it.");
         }
 
+    }
+
+    private void calculatePaymentRequest(PaymentRequestDocument preqDoc) {
+        // from PaymentRequestAction.customCalculate
+        preqDoc.updateExtendedPriceOnItems();
+
+        if (StringUtils.equals(preqDoc.getApplicationDocumentStatus(),
+                PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW)) {
+            getCuPaymentRequestService().calculateTaxArea(preqDoc);
+        } else {
+            getCuPaymentRequestService().calculatePaymentRequest(preqDoc, true);
+            getKualiRuleService().applyRules(new AttributedCalculateAccountsPayableEvent(preqDoc));
+        }
+
+        // from CuPaymentRequestAction.customCalculate
+        if (PaymentRequestStatuses.APPDOC_AWAITING_PAYMENT_METHOD_REVIEW.equalsIgnoreCase(preqDoc.getApplicationDocumentStatus())
+                && StringUtils.isNotBlank(preqDoc.getTaxClassificationCode())
+                && !StringUtils.equalsIgnoreCase(preqDoc.getTaxClassificationCode(), "N")) {
+            getCuPaymentRequestService().calculateTaxArea(preqDoc);
+        }
     }
 
     private void routePreq(final UserSession userSession, PaymentRequestDocument preqDoc, PaymentRequestResultsDto results ) throws Exception {
