@@ -117,12 +117,12 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
     }
 
     @Override
-    public boolean isDocumentInitatorAssociatedWithEndpoint(String endpointCode, String initiatorPrincipalName) {
-        LOG.debug("isDocumentInitatorAssociatedWithEndpoint: check to see if intiator '{}' is associated with enpoint '{}'", initiatorPrincipalName, endpointCode);
+    public boolean isDocumentInitiatorAssociatedWithEndpoint(String endpointCode, String initiatorPrincipalName) {
+        LOG.debug("isDocumentInitiatorAssociatedWithEndpoint: check to see if initiator '{}' is associated with endpoint '{}'", initiatorPrincipalName, endpointCode);
         
         List<ApiAuthenticationMapping> authenticationMappings = getAuthenticationMappingsFromEndpoint(endpointCode);
         if (authenticationMappings.isEmpty()) {
-            LOG.warn("isDocumentInitatorAssociatedWithEndpoint: No authentication mappings found for endpoint code {}", endpointCode);
+            LOG.warn("isDocumentInitiatorAssociatedWithEndpoint: No authentication mappings found for endpoint code {}", endpointCode);
             return false;
         }
         
@@ -130,12 +130,12 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
             if (isAuthenticationMappingValid(authenticationMapping)) {
                 ApiAuthenticator authenticator = authenticationMapping.getApiAuthenticator();
                 if (StringUtils.startsWith(authenticator.getCredentials(), initiatorPrincipalName)) {
-                    LOG.debug("isDocumentInitatorAssociatedWithEndpoint: initiator {} is associated with endpoint {}", initiatorPrincipalName, endpointCode);
+                    LOG.debug("isDocumentInitiatorAssociatedWithEndpoint: initiator {} is associated with endpoint {}", initiatorPrincipalName, endpointCode);
                     return true;
                 } 
             }
         }
-        LOG.debug("isDocumentInitatorAssociatedWithEndpoint: initiator {} is NOT associated with endpoint {}", initiatorPrincipalName, endpointCode);
+        LOG.debug("isDocumentInitiatorAssociatedWithEndpoint: initiator {} is NOT associated with endpoint {}", initiatorPrincipalName, endpointCode);
         return false;
     }
     

@@ -51,7 +51,7 @@ import javax.ws.rs.Produces;
 public class PaymentRequestResource {
     private static final Logger LOG = LogManager.getLogger();
     private static final String CANCEL_PREQ_ANNOTATION_MESSAGE = "Canceled with the payment request endpoint";
-    private static final String ROUTE_PREQ_ANNOTATION_MESSAGE = "Preq created with the payment request endpoint";
+    private static final String ROUTE_PREQ_ANNOTATION_MESSAGE = "PREQ created with the payment request endpoint";
 
     private static Gson gson = new GsonBuilder()
             .setDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT)
@@ -107,10 +107,10 @@ public class PaymentRequestResource {
                             results.setDocumentNumber(preqDoc.getDocumentNumber());
                             return Response.ok(gson.toJson(results)).build();
                         } else {
-                            LOG.info("createPaymentRequestDocument, unable to route preq, return false {}", results);
+                            LOG.info("createPaymentRequestDocument, unable to route PREQ, return false {}", results);
                         }
                     } else {
-                        LOG.info("createPaymentRequestDocument, unable to save preq, return false {}", results);
+                        LOG.info("createPaymentRequestDocument, unable to save PREQ, return false {}", results);
                     }
             } else {
                 LOG.info("createPaymentRequestDocument, there were validation errors, return false {}", results);
@@ -144,16 +144,16 @@ public class PaymentRequestResource {
                 GlobalVariables.doInNewGlobalVariables(userSession,
                                 () -> getDocumentService().cancelDocument(preqDoc, CANCEL_PREQ_ANNOTATION_MESSAGE));
             } catch (ValidationException e) {
-                LOG.error("cancelPreq, unable to cancel preq", e);
+                LOG.error("cancelPreq, unable to cancel PREQ", e);
             }
         } else {
-            LOG.info("cancelPreq, preq is null, so can't cancel it.");
+            LOG.info("cancelPreq, PREQ is null, so cannot cancel it.");
         }
 
     }
 
     private void calculatePaymentRequest(PaymentRequestDocument preqDoc) {
-        // from PaymentRequestAction.customCalculate
+        // Derived from PaymentRequestAction.customCalculate
         preqDoc.updateExtendedPriceOnItems();
 
         if (StringUtils.equals(preqDoc.getApplicationDocumentStatus(),
@@ -164,7 +164,7 @@ public class PaymentRequestResource {
             getKualiRuleService().applyRules(new AttributedCalculateAccountsPayableEvent(preqDoc));
         }
 
-        // from CuPaymentRequestAction.customCalculate
+        // Derived from CuPaymentRequestAction.customCalculate
         if (PaymentRequestStatuses.APPDOC_AWAITING_PAYMENT_METHOD_REVIEW.equalsIgnoreCase(preqDoc.getApplicationDocumentStatus())
                 && StringUtils.isNotBlank(preqDoc.getTaxClassificationCode())
                 && !StringUtils.equalsIgnoreCase(preqDoc.getTaxClassificationCode(), "N")) {
