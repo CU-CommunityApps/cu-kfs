@@ -1,6 +1,7 @@
 package edu.cornell.kfs.sys.service.impl;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,23 +55,14 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
     public boolean isAuthorized(String endpointCode, String credentials) {
         LOG.debug("isAuthorized: Checking authorization for endpoint code {} with credentials", endpointCode);
         
-        ApiEndpointDescriptor endpointDescriptor = getEndpointDescriptor(endpointCode);
-        if (ObjectUtils.isNull(endpointDescriptor) || !endpointDescriptor.isActive()) {
-            LOG.warn("isAuthorized: Endpoint code {} not found or not active", endpointCode);
-            return false;
-        }
-        
-        List<ApiAuthenticationMapping> authenticationMappings = endpointDescriptor.getAuthenticationMappings();
-        if (ObjectUtils.isNull(authenticationMappings) || authenticationMappings.isEmpty()) {
+        List<ApiAuthenticationMapping> authenticationMappings = getAuthenticationMappingsFromEndpoint(endpointCode);
+        if (authenticationMappings.isEmpty()) {
             LOG.warn("isAuthorized: No authentication mappings found for endpoint code {}", endpointCode);
             return false;
         }
         
         for (ApiAuthenticationMapping authenticationMapping : authenticationMappings) {
-            if (ObjectUtils.isNotNull(authenticationMapping) && authenticationMapping.isActive() && 
-                authenticationMapping.getApiAuthenticator() != null && 
-                authenticationMapping.getApiAuthenticator().isActive()) {
-                
+            if (isAuthenticationMappingValid(authenticationMapping)) {
                 ApiAuthenticator authenticator = authenticationMapping.getApiAuthenticator();
                 if (StringUtils.equals(credentials, authenticator.getCredentials())) {
                     LOG.debug("isAuthorized: Successfully authenticated for endpoint code {} with authenticator {}", 
@@ -85,6 +77,13 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
         LOG.debug("isAuthorized: No matching credentials found for endpoint code {}", endpointCode);
         return false;
     }
+    
+    private boolean isAuthenticationMappingValid(ApiAuthenticationMapping authenticationMapping) {
+        return ObjectUtils.isNotNull(authenticationMapping) 
+                && authenticationMapping.isActive() 
+                && authenticationMapping.getApiAuthenticator() != null 
+                && authenticationMapping.getApiAuthenticator().isActive();
+    }
 
     public String getAuthenticateUser(HttpServletRequest request) {
         String credentials = getCredentials(request);
@@ -95,8 +94,49 @@ public class ApiAuthenticationServiceImpl implements ApiAuthenticationService {
         return StringUtils.EMPTY;
     }
     
+    public List<ApiAuthenticationMapping> getAuthenticationMappingsFromEndpoint(String endpointCode) {
+        LOG.debug("getAuthenticationMappingsFromEndpoint: Retrieving authentication mappings for endpoint code {}", endpointCode);
+        
+        ApiEndpointDescriptor endpointDescriptor = getEndpointDescriptor(endpointCode);
+        if (ObjectUtils.isNull(endpointDescriptor) || !endpointDescriptor.isActive()) {
+            LOG.warn("getAuthenticationMappingsFromEndpoint: Endpoint code {} not found or not active", endpointCode);
+            return new ArrayList<>();
+        }
+        
+        List<ApiAuthenticationMapping> authenticationMappings = endpointDescriptor.getAuthenticationMappings();
+        if (ObjectUtils.isNull(authenticationMappings)) {
+            LOG.warn("getAuthenticationMappingsFromEndpoint: No authentication mappings found for endpoint code {}", endpointCode);
+            return new ArrayList<>();
+        }
+        
+        return authenticationMappings;
+    }
+
     private ApiEndpointDescriptor getEndpointDescriptor(String endpointCode) {
         return businessObjectService.findBySinglePrimaryKey(ApiEndpointDescriptor.class, endpointCode);
+    }
+
+    @Override
+    public boolean isDocumentInitiatorAssociatedWithEndpoint(String endpointCode, String initiatorPrincipalName) {
+        LOG.debug("isDocumentInitiatorAssociatedWithEndpoint: check to see if initiator '{}' is associated with endpoint '{}'", initiatorPrincipalName, endpointCode);
+        
+        List<ApiAuthenticationMapping> authenticationMappings = getAuthenticationMappingsFromEndpoint(endpointCode);
+        if (authenticationMappings.isEmpty()) {
+            LOG.warn("isDocumentInitiatorAssociatedWithEndpoint: No authentication mappings found for endpoint code {}", endpointCode);
+            return false;
+        }
+        
+        for (ApiAuthenticationMapping authenticationMapping : authenticationMappings) {
+            if (isAuthenticationMappingValid(authenticationMapping)) {
+                ApiAuthenticator authenticator = authenticationMapping.getApiAuthenticator();
+                if (StringUtils.startsWith(authenticator.getCredentials(), initiatorPrincipalName)) {
+                    LOG.debug("isDocumentInitiatorAssociatedWithEndpoint: initiator {} is associated with endpoint {}", initiatorPrincipalName, endpointCode);
+                    return true;
+                } 
+            }
+        }
+        LOG.debug("isDocumentInitiatorAssociatedWithEndpoint: initiator {} is NOT associated with endpoint {}", initiatorPrincipalName, endpointCode);
+        return false;
     }
     
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
