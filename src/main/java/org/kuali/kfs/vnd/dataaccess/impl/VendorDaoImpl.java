@@ -719,9 +719,4 @@ public class VendorDaoImpl implements VendorDao, CuVendorDao {
         return ((CuVendorDao) vendorDaoOjb).getPotentialEmployeeVendorsAsCloseableStream();
     }
 
-    @Override
-    public Stream<VendorDetail> getVendorsForCemiSupplierExtractAsCloseableStream() {
-        return ((CuVendorDao) vendorDaoOjb).getVendorsForCemiSupplierExtractAsCloseableStream();
-    }
-
 }
