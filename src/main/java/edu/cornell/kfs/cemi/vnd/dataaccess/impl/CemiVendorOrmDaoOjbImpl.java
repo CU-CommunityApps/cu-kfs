@@ -11,11 +11,11 @@ import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
-import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorDaoOjb;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorOrmDao;
 import edu.cornell.kfs.sys.util.CuOjbUtils;
 import edu.cornell.kfs.vnd.dataaccess.impl.CuVendorDaoOjb;
 
-public class CemiVendorDaoOjbImpl extends CuVendorDaoOjb implements CemiVendorDaoOjb {
+public class CemiVendorOrmDaoOjbImpl extends CuVendorDaoOjb implements CemiVendorOrmDao {
     
     @Override
     public Stream<VendorDetail> getVendorsForCemiSupplierExtractAsCloseableStream() {

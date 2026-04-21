@@ -1,7 +1,7 @@
 package edu.cornell.kfs.cemi.sys.batch;
 
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
-import edu.cornell.kfs.cemi.sys.CemiKFSKeyConstants;
+import edu.cornell.kfs.cemi.sys.CemiKeyConstants;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.sys.batch.CuXmlBatchInputFileTypeBase;
 
@@ -14,7 +14,7 @@ public class CemiOutputDefinitionFileType extends CuXmlBatchInputFileTypeBase<Ce
 
     @Override
     public String getTitleKey() {
-        return CemiKFSKeyConstants.MESSAGE_BATCH_UPLOAD_TITLE_CEMI_OUTPUT_DEFINITION;
+        return CemiKeyConstants.MESSAGE_BATCH_UPLOAD_TITLE_CEMI_OUTPUT_DEFINITION;
     }
 
 }

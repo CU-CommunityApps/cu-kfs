@@ -20,4 +20,8 @@ public final class CemiBaseConstants {
     public static final String UNMASK = "UNMASK";
     
 
+    public static final class FileExtensions {
+        public static final String XLSX = ".xlsx";
+    }
+    
 }

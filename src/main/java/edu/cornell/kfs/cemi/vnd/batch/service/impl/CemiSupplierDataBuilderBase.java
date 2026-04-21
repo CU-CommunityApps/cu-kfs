@@ -36,7 +36,7 @@ import edu.cornell.kfs.cemi.vnd.batch.dto.CemiSupplierEmail;
 import edu.cornell.kfs.cemi.vnd.batch.dto.CemiSupplierEmailSubEntry;
 import edu.cornell.kfs.cemi.vnd.batch.dto.CemiSupplierPhone;
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiSupplierDataBuilder;
-import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorDaoJdbc;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorDao;
 import edu.cornell.kfs.cemi.vnd.util.CemiVendorUtils;
 import edu.cornell.kfs.cemi.vnd.util.VendorAccountFinder;
 
@@ -51,16 +51,16 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     protected int vendorCount;
    
     protected CemiSupplierParentIdentifiersReference parentSupplierReference = null;
-    protected CemiVendorDaoJdbc cemiVendorDaoJdbc;
+    protected CemiVendorDao cemiVendorDao;
     
 
-    protected CemiSupplierDataBuilderBase(final CemiOutputDefinition outputDefinition, CemiVendorDaoJdbc cemiVendorDaoJdbc,
+    protected CemiSupplierDataBuilderBase(final CemiOutputDefinition outputDefinition, CemiVendorDao cemiVendorDao,
             final LocalDateTime jobRunDate, final boolean maskSensitiveData) {
         Validate.notNull(outputDefinition, "outputDefinition cannot be null");
-        Validate.notNull(cemiVendorDaoJdbc, "cemiVendorDaoJdbc cannot be null");
+        Validate.notNull(cemiVendorDao, "cemiVendorDao cannot be null");
         Validate.notNull(jobRunDate, "jobRunDate cannot be null");
         this.outputDefinition = outputDefinition;
-        this.cemiVendorDaoJdbc = cemiVendorDaoJdbc;
+        this.cemiVendorDao = cemiVendorDao;
         this.jobRunDate = jobRunDate;
         this.maskSensitiveData = maskSensitiveData;
         this.supplierIdFormatter = new DecimalFormat(CemiVendorConstants.SUPPLIER_ID_FORMAT);
@@ -117,7 +117,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     protected void recordSupplierIdentifiersInLegacyAssociationTable(final String supplierId,
             final Integer vendorHeaderGeneratedIdentifier, final Integer vendorDetailAssignedIdentifier,
             final LocalDateTime jobRunDate) {
-        getCemiVendorDaoJdbc().storeSupplierIdVendorIdSupplierExtractRunDateMapping(supplierId,
+        getCemiVendorDao().storeSupplierIdVendorIdSupplierExtractRunDateMapping(supplierId,
                 vendorHeaderGeneratedIdentifier, vendorDetailAssignedIdentifier, jobRunDate);
     }
     
@@ -382,12 +382,12 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
         this.parentSupplierReference = parentSupplierReference;
     }
 
-    public CemiVendorDaoJdbc getCemiVendorDaoJdbc() {
-        return cemiVendorDaoJdbc;
+    public CemiVendorDao getCemiVendorDao() {
+        return cemiVendorDao;
     }
 
-    public void setCemiVendorDaoJdbc(CemiVendorDaoJdbc cemiVendorDaoJdbc) {
-        this.cemiVendorDaoJdbc = cemiVendorDaoJdbc;
+    public void setCemiVendorDao(CemiVendorDao cemiVendorDao) {
+        this.cemiVendorDao = cemiVendorDao;
     }
 
 }

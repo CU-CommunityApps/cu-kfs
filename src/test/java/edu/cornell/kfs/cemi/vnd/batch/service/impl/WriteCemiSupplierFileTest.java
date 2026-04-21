@@ -71,7 +71,7 @@ public class WriteCemiSupplierFileTest {
 
     @RegisterExtension
     static TestSpringContextExtension springContextExtension = TestSpringContextExtension.forClassPathSpringXmlFile(
-            "edu/cornell/kfs/vnd/batch/service/impl/cu-spring-vnd-cemi-supplier-file-test.xml");
+            "edu/cornell/kfs/cemi/vnd/batch/service/impl/cu-spring-vnd-cemi-supplier-file-test.xml");
 
     private CemiOutputDefinitionFileType outputDefinitionFileType;
     private CemiOutputDefinition outputDefinition;

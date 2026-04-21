@@ -4,7 +4,7 @@ import java.util.stream.Stream;
 
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
-public interface CemiVendorDaoOjb {
+public interface CemiVendorOrmDao {
 
     Stream<VendorDetail> getVendorsForCemiSupplierExtractAsCloseableStream();
 

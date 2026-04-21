@@ -35,7 +35,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
-import edu.cornell.kfs.cemi.sys.CemiKFSConstants.FileExtensions;
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants.FileExtensions;
 import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
@@ -44,8 +44,8 @@ import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
 import edu.cornell.kfs.cemi.vnd.CemiVendorParameterConstants;
 import edu.cornell.kfs.cemi.vnd.batch.CreateCemiSupplierExtractStep;
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiSupplierExtractService;
-import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorDaoJdbc;
-import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorDaoOjb;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorDao;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorOrmDao;
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -58,8 +58,8 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
 
     private String supplierFileCreationDirectory;
     private String supplierFileOutboundDirectory;
-    private CemiVendorDaoOjb cemiVendorDaoOjb;
-    private CemiVendorDaoJdbc cemiVendorDaoJdbc;
+    private CemiVendorOrmDao cemiVendorOrmDao;
+    private CemiVendorDao cemiVendorDao;
     private CemiOutputDefinitionFileType cemiOutputDefinitionFileType;
     private BusinessObjectService businessObjectService;
     private ParameterService parameterService;
@@ -73,8 +73,8 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
     @Override
     public void resetState() {
         LOG.info("resetState, Deleting the list of extractable Vendors from the previous run (if present)...");
-        getCemiVendorDaoJdbc().clearExistingListOfBaseVendorData();
-        getCemiVendorDaoJdbc().clearExistingListOfExtractableVendorIds();
+        getCemiVendorDao().clearExistingListOfBaseVendorData();
+        getCemiVendorDao().clearExistingListOfExtractableVendorIds();
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -93,7 +93,7 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
                 "Parameter %s contained a 'from' date that is later than the 'to' date",
                 CemiVendorParameterConstants.CEMI_SUPPLIER_EXTRACT_DATE_RANGE);
 
-        getCemiVendorDaoJdbc().updateSupplierExtractQuerySettings(fromDate, toDate);
+        getCemiVendorDao().updateSupplierExtractQuerySettings(fromDate, toDate);
     }
 
     private LocalDate parseDate(final String value) {
@@ -109,14 +109,14 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
     @Override
     public void populateListOfBaseVendorData() {
         LOG.info("populateListOfBaseVendorData, Preparing base Vendor data needed for subsequent Vendor query...");
-        getCemiVendorDaoJdbc().prepareBaseVendorDataNeededForMainVendorIdQuery();
+        getCemiVendorDao().prepareBaseVendorDataNeededForMainVendorIdQuery();
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void populateListOfInScopeVendors() {
         LOG.info("populateListOfInScopeVendors, Querying and storing the list of extractable Vendors...");
-        cemiVendorDaoJdbc.queryAndStoreVendorIdsForSupplierExtract();
+        getCemiVendorDao().queryAndStoreVendorIdsForSupplierExtract();
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -138,9 +138,9 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
         try (
             // Replace this builder with a temp table implementation when ready.
             final CemiSupplierDataBuilderCsvImpl dataBuilder = new CemiSupplierDataBuilderCsvImpl(
-                    getOutputDefinitionForSupplierExtract(), getCemiVendorDaoJdbc(), jobRunDate, supplierFileCreationDirectory, 
+                    getOutputDefinitionForSupplierExtract(), getCemiVendorDao(), jobRunDate, supplierFileCreationDirectory, 
                     shouldMaskCemiSensitiveData());
-            final Stream<VendorDetail> vendors = getCemiVendorDaoOjb().getVendorsForCemiSupplierExtractAsCloseableStream();
+            final Stream<VendorDetail> vendors = getCemiVendorOrmDao().getVendorsForCemiSupplierExtractAsCloseableStream();
         ) {
             final Iterator<VendorDetail> vendorsIterator = vendors.iterator();
             dataBuilder.writeSupplierDataToIntermediateStorage(
@@ -281,20 +281,20 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
         this.dateTimeService = dateTimeService;
     }
 
-    public CemiVendorDaoJdbc getCemiVendorDaoJdbc() {
-        return cemiVendorDaoJdbc;
+    public CemiVendorDao getCemiVendorDao() {
+        return cemiVendorDao;
     }
 
-    public void setCemiVendorDaoJdbc(CemiVendorDaoJdbc cemiVendorDaoJdbc) {
-        this.cemiVendorDaoJdbc = cemiVendorDaoJdbc;
+    public void setCemiVendorDao(CemiVendorDao cemiVendorDao) {
+        this.cemiVendorDao = cemiVendorDao;
     }
 
-    public CemiVendorDaoOjb getCemiVendorDaoOjb() {
-        return cemiVendorDaoOjb;
+    public CemiVendorOrmDao getCemiVendorOrmDao() {
+        return cemiVendorOrmDao;
     }
 
-    public void setCemiVendorDaoOjb(CemiVendorDaoOjb cemiVendorDaoOjb) {
-        this.cemiVendorDaoOjb = cemiVendorDaoOjb;
+    public void setCemiVendorOrmDao(CemiVendorOrmDao cemiVendorOrmDao) {
+        this.cemiVendorOrmDao = cemiVendorOrmDao;
     }
 
 }

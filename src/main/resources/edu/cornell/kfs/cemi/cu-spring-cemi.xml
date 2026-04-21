@@ -36,17 +36,17 @@
         </property>
     </bean>
     
-    <bean id="cemiVendorDaoJdbc" parent="cemiVendorDaoJdbc-parentBean"/>
-    <bean id="cemiVendorDaoJdbc-parentBean"
+    <bean id="cemiVendorDao" parent="cemiVendorDao-parentBean"/>
+    <bean id="cemiVendorDao-parentBean"
           abstract="true"
           class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiVendorDaoJdbcImpl"
           parent="platformAwareDaoJdbc"
           p:dateTimeService-ref="dateTimeService"/>
 
-    <bean id="cemiVendorDaoOjb" parent="cemiVendorDaoOjb-parentBean"/>
-    <bean id="cemiVendorDaoOjb-parentBean"
+    <bean id="cemiVendorOrmDao" parent="cemiVendorOrmDao-parentBean"/>
+    <bean id="cemiVendorOrmDao-parentBean"
           abstract="true"
-          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiVendorDaoOjbImpl"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiVendorOrmDaoOjbImpl"
           parent="vendorDaoOjb"/>
     
     <bean id="cemiModuleService" parent="cemiModuleService-parentBean"/>
@@ -73,8 +73,8 @@
           c:environment-ref="environment"
           p:supplierFileCreationDirectory="${staging.directory}/cemi/vnd/cemiSupplierExtract"
           p:supplierFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
-          p:cemiVendorDaoOjb-ref="cemiVendorDaoOjb"
-          p:cemiVendorDaoJdbc-ref="cemiVendorDaoJdbc"
+          p:cemiVendorOrmDao-ref="cemiVendorOrmDao"
+          p:cemiVendorDao-ref="cemiVendorDao"
           p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
           p:businessObjectService-ref="businessObjectService"
           p:parameterService-ref="parameterService"

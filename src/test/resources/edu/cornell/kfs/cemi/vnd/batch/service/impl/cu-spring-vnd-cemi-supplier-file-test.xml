@@ -4,10 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <import resource="classpath:org/kuali/kfs/sys/spring-sys.xml"/>
-    <import resource="classpath:org/kuali/kfs/vnd/spring-vnd.xml"/>
-    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-sys.xml"/>
-    <import resource="classpath:edu/cornell/kfs/vnd/cu-spring-vnd.xml"/>
+    <import resource="classpath:edu/cornell/kfs/cemi/cu-spring-cemi.xml"/>
     <import resource="classpath:edu/cornell/kfs/sys/cu-spring-base-test-beans.xml"/>
 
     <bean id="propertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer-parentBean">

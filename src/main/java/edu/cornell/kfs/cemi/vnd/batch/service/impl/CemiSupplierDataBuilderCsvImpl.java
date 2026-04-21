@@ -16,7 +16,7 @@ import edu.cornell.kfs.cemi.sys.batch.xml.CemiFieldDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiSheetDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorDaoJdbc;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorDao;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSConstants.FileExtensions;
 
@@ -26,9 +26,9 @@ public class CemiSupplierDataBuilderCsvImpl extends CemiSupplierDataBuilderBase 
     private final Map<String, CemiSheetDefinition> sheetDefinitions;
 
     public CemiSupplierDataBuilderCsvImpl(final CemiOutputDefinition outputDefinition,
-            final CemiVendorDaoJdbc cemiVendorDaoJdbc, final LocalDateTime jobRunDate,
+            final CemiVendorDao cemiVendorDao, final LocalDateTime jobRunDate,
             final String baseFileDirectory, final boolean maskSensitiveData) throws IOException {
-        super(outputDefinition, cemiVendorDaoJdbc, jobRunDate, maskSensitiveData);
+        super(outputDefinition, cemiVendorDao, jobRunDate, maskSensitiveData);
         Validate.notBlank(baseFileDirectory, "baseFileDirectory cannot be blank");
 
         this.sheetDefinitions = outputDefinition.getSheets().stream()

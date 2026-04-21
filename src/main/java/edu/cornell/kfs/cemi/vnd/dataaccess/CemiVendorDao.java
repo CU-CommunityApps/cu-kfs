@@ -3,7 +3,7 @@ package edu.cornell.kfs.cemi.vnd.dataaccess;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public interface CemiVendorDaoJdbc {
+public interface CemiVendorDao {
 
     void clearExistingListOfBaseVendorData();
     
