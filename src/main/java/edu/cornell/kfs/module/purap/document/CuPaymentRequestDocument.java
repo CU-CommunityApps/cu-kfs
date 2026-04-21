@@ -2,7 +2,6 @@ package edu.cornell.kfs.module.purap.document;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,8 +28,6 @@ import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
-import org.kuali.kfs.kim.api.identity.PersonService;
-import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
@@ -40,7 +37,6 @@ import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants;
 import edu.cornell.kfs.module.purap.businessobject.CuPaymentRequestItemExtension;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.service.ApiAuthenticationService;
 
 public class CuPaymentRequestDocument extends PaymentRequestDocument {
 	private static final Logger LOG = LogManager.getLogger();
@@ -50,8 +46,6 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
     private static CuCheckStubService cuCheckStubService;
-    private static ApiAuthenticationService apiAuthenticationService;
-    private static PersonService personService;
     
     public CuPaymentRequestDocument() {
         super();
@@ -264,32 +258,5 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
             cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
         }
         return cuCheckStubService;
-    }
-
-    @Override
-    public boolean requiresAccountsPayableReviewRouting() {
-        return super.requiresAccountsPayableReviewRouting() || forceAccountsPayableReview();
-    }
-
-    protected boolean forceAccountsPayableReview() {
-        Person initiator = getPersonService().getPerson(getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId());
-        String initiatorPrincipalName = ObjectUtils.isNotNull(initiator) ? initiator.getPrincipalName() : StringUtils.EMPTY;
-        boolean forceApReview = getApiAuthenticationService().isDocumentInitiatorAssociatedWithEndpoint(CUKFSConstants.EndpointCodes.PAYMENT_REQUEST, initiatorPrincipalName);
-        LOG.debug("forceAccountsPayableReview, for document number {} returning {}", getDocumentNumber(), forceApReview);
-        return forceApReview;
-    }
-
-    protected static ApiAuthenticationService getApiAuthenticationService() {
-        if (apiAuthenticationService == null) {
-            apiAuthenticationService = SpringContext.getBean(ApiAuthenticationService.class);
-        }
-        return apiAuthenticationService;
-    }
-
-    protected static PersonService getPersonService() {
-        if (personService == null) {
-            personService = SpringContext.getBean(PersonService.class);
-        }
-        return personService;
     }
 }
