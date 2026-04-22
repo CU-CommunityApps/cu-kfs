@@ -304,23 +304,20 @@
     </build>
     <repositories>
         <repository>
-            <id>kualico.nexus.financials.releases</id>
-            <name>KualiCo Nexus Financials</name>
-            <url>https://nexus.kuali.co/nexus/content/repositories/financials-repos/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/kualico/financials</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
         </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
-            <id>kualico.nexus.financials.releases</id>
-            <name>KualiCo Nexus Financials</name>
-            <url>https://nexus.kuali.co/nexus/content/repositories/financials-repos/</url>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/kualico/financials</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
@@ -872,6 +869,15 @@
                     <artifactId>log4j</artifactId>
                     <groupId>log4j</groupId>
                 </exclusion>
+                <!-- CORBA libraries unavailable from defunct nexus.kuali.org repo; not needed for KFS -->
+                <exclusion>
+                    <groupId>org.jacorb</groupId>
+                    <artifactId>jacorb</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jacorb</groupId>
+                    <artifactId>jacorb-idl</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -999,6 +1005,15 @@
                 <exclusion>
                     <groupId>javax.xml.bind</groupId>
                     <artifactId>jaxb-api</artifactId>
+                </exclusion>
+                <!-- SDO plugin pulls in commonj.sdo from defunct maven.java.net repo; not needed for KFS -->
+                <exclusion>
+                    <groupId>com.sun.xml.ws</groupId>
+                    <artifactId>sdo-eclipselink-plugin</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commonj.sdo</groupId>
+                    <artifactId>commonj.sdo</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
