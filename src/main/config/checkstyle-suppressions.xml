@@ -26,6 +26,7 @@
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]com[\\/]rsmart[\\/]kuali[\\/].*" />
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]org[\\/]kuali[\\/]kfs[\\/].*" />
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]util[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]cemi[\\/].*" />
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]coa[\\/].*" />
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]concur[\\/].*" />
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]fp[\\/].*" />
