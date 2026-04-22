@@ -304,37 +304,6 @@
     </build>
     <repositories>
         <repository>
-            <id>cornell-internal</id>
-            <url>https://maven.cit.cornell.edu/repository/internal</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>cornell-external</id>
-            <url>https://maven.cit.cornell.edu/repository/external</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>cornell-snapshots</id>
-            <url>https://maven.cit.cornell.edu/repository/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
-        <repository>
             <id>kualico.nexus.financials.releases</id>
             <name>KualiCo Nexus Financials</name>
             <url>https://nexus.kuali.co/nexus/content/repositories/financials-repos/</url>
@@ -344,54 +313,11 @@
             </snapshots>
             <releases>
                 <enabled>true</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>kualico.nexus.financials.snapshots</id>
-            <name>KualiCo Nexus Snapshots Financials</name>
-            <url>https://nexus.kuali.co/nexus/content/repositories/financials-snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
             </releases>
         </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
-            <id>cornell-internal</id>
-            <url>https://maven.cit.cornell.edu/repository/internal</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>cornell-external</id>
-            <url>https://maven.cit.cornell.edu/repository/external</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>cornell-snapshots</id>
-            <url>https://maven.cit.cornell.edu/repository/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
             <id>kualico.nexus.financials.releases</id>
             <name>KualiCo Nexus Financials</name>
             <url>https://nexus.kuali.co/nexus/content/repositories/financials-repos/</url>
@@ -401,18 +327,6 @@
             </snapshots>
             <releases>
                 <enabled>true</enabled>
-            </releases>
-        </pluginRepository>
-        <pluginRepository>
-            <id>kualico.nexus.financials.snapshots</id>
-            <name>KualiCo Nexus Snapshots Financials</name>
-            <url>https://nexus.kuali.co/nexus/content/repositories/financials-snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
             </releases>
         </pluginRepository>
     </pluginRepositories>
@@ -1808,16 +1722,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <distributionManagement>
-        <repository>
-            <id>cornell-internal</id>
-            <url>https://nexus.kuali.cucloud.net/nexus/content/repositories/internal</url>
-        </repository>
-        <snapshotRepository>
-            <id>cornell-snapshots</id>
-            <name>cornell-snapshots</name>
-            <uniqueVersion>true</uniqueVersion>
-            <url>https://nexus.kuali.cucloud.net/nexus/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 </project>
