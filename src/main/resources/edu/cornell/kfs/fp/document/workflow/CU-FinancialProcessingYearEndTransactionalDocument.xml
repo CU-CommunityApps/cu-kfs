@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <data xmlns="ns:workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
     <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
         <documentType>
@@ -11,9 +11,7 @@
             <routePaths>
                 <routePath>
                     <start name="AdHoc" nextNode="Account"/>
-                    <role name="Account" nextNode="AccountingOrganizationHierarchy"/>
-                    <role name="AccountingOrganizationHierarchy" nextNode="ObjectCode"/>
-                    <role name="ObjectCode" nextNode="Fund"/>
+                    <role name="Account" nextNode="Fund"/>
                     <role name="Fund" nextNode="SubFund"/>
                     <role name="SubFund" nextNode="Award"/>
                     <role name="Award"/>
@@ -22,14 +20,6 @@
             <routeNodes>
                 <start name="AdHoc"/>
                 <role name="Account">
-                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-                    <activationType>P</activationType>
-                </role>
-                <role name="AccountingOrganizationHierarchy">
-                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-                    <activationType>P</activationType>
-                </role>
-                <role name="ObjectCode">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
                 </role>
