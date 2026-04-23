@@ -500,7 +500,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     private boolean paymentRequestSubFundGroupsAreEligibleForAutoApproval(
             final PaymentRequestDocument document, final List<PurApAccountingLine> preqAccountingLines) {
         final Collection<String> ineligibleSubFundGroups = parameterService.getParameterValuesAsString(
-                PaymentRequestDocument.class, CUPurapParameterConstants.SUB_FUND_GROUPS_RESTRICTING_AUTO_APPROVE);
+                PaymentRequestDocument.class, CUPurapParameterConstants.SUB_FUND_GROUPS_PREVENTING_AUTO_APPROVE);
         final boolean isEligible = preqAccountingLines.stream()
                 .map(PurApAccountingLine::getAccount)
                 .map(Account::getSubFundGroupCode)
@@ -514,7 +514,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     private boolean paymentRequestFundGroupsAreEligibleForAutoApproval(
             final PaymentRequestDocument document, final List<PurApAccountingLine> preqAccountingLines) {
         final Collection<String> ineligibleFundGroups = parameterService.getParameterValuesAsString(
-                PaymentRequestDocument.class, CUPurapParameterConstants.FUND_GROUPS_RESTRICTING_AUTO_APPROVE);
+                PaymentRequestDocument.class, CUPurapParameterConstants.FUND_GROUPS_PREVENTING_AUTO_APPROVE);
         final boolean isEligible = preqAccountingLines.stream()
                 .map(PurApAccountingLine::getAccount)
                 .map(Account::getSubFundGroup)
