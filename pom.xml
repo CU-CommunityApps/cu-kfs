@@ -20,14 +20,9 @@
         <job.name>${project.artifactId}</job.name>
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
-
         <kfs.version>2024-09-25</kfs.version>
-
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>
         <checkstyle.version>10.17.0</checkstyle.version>
-        <!-- CU customization to continue support for commons-digester after KualiCo has removed it from base code;
-             This can be removed once all code has been updated to use jaxb or other framework to replace commons-digester.
-        -->
         <commons-digester3.version>3.2</commons-digester3.version>
         <commons-validator.version>1.9.0</commons-validator.version>
         <gson.version>2.10.1</gson.version>
@@ -1149,11 +1144,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-        <!--
-            Start of CXF dependencies. These should be removed after we rewrite
-            the Account Verification Web Service to use a different framework.
-         -->
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
@@ -1607,14 +1597,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--
-            End of CXF dependencies.
-         -->
-
-        <!--
-            Start of JAX-RS dependencies. These should be removed after we convert
-            all of our JAX-RS-dependent code to use Spring MVC and/or HTTP Core/Client.
-         -->
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
@@ -1703,10 +1685,6 @@
             <artifactId>jakarta.el-api</artifactId>
             <version>${jakarta.el.el-api.version}</version>
         </dependency>
-        <!--
-            End of JAX-RS dependencies.
-         -->
-
         <dependency>
             <groupId>com.prowidesoftware</groupId>
             <artifactId>pw-iso20022</artifactId>
