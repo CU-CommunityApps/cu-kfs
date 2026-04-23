@@ -15,14 +15,18 @@ import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coa.businessobject.SubFundGroup;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
@@ -467,12 +471,15 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         String paymentMethodCode = ((CuPaymentRequestDocument) paymentRequestDocument).getPaymentMethodCode();
         boolean isPRNC = StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, paymentMethodCode)
                 || StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT, paymentMethodCode);
-        LOG.info(" -- PayReq [" + paymentRequestDocument.getDocumentNumber() + "] skipped as it is of type PRNC.");
+        if (isPRNC) {
+            LOG.info(" -- PayReq [{}] skipped as it is of type PRNC.", paymentRequestDocument.getDocumentNumber());
+        }
         return isPRNC;
     }
 
     /**
-     * Overridden to also require that the associated PO's amount must be within auto-approval limits.
+     * Overridden to also require that the associated PO's amount must be within auto-approval limits,
+     * and to also require that the PREQ account lines' associated funds and sub-funds allow for auto-approval.
      * 
      * @see org.kuali.kfs.module.purap.document.service.impl.PaymentRequestServiceImpl#isEligibleForAutoApproval(
      * org.kuali.kfs.module.purap.document.PaymentRequestDocument, org.kuali.kfs.core.api.util.type.KualiDecimal)
@@ -480,7 +487,51 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     @Override
     protected boolean isEligibleForAutoApproval(PaymentRequestDocument document, KualiDecimal defaultMinimumLimit) {
         return !isPRNCDocument(document) && purchaseOrderForPaymentRequestIsWithinAutoApproveAmountLimit(document)
+                && paymentRequestAccountsAreEligibleForAutoApproval(document)
                 && super.isEligibleForAutoApproval(document, defaultMinimumLimit);
+    }
+
+    private boolean paymentRequestAccountsAreEligibleForAutoApproval(final PaymentRequestDocument document) {
+        final List<PurApAccountingLine> preqAccountingLines = getPaymentRequestAccountingLines(document);
+        return paymentRequestSubFundGroupsAreEligibleForAutoApproval(document, preqAccountingLines)
+                && paymentRequestFundGroupsAreEligibleForAutoApproval(document, preqAccountingLines);
+    }
+
+    private boolean paymentRequestSubFundGroupsAreEligibleForAutoApproval(
+            final PaymentRequestDocument document, final List<PurApAccountingLine> preqAccountingLines) {
+        final Collection<String> ineligibleSubFundGroups = parameterService.getParameterValuesAsString(
+                PaymentRequestDocument.class, CUPurapParameterConstants.SUB_FUND_GROUPS_RESTRICTING_AUTO_APPROVE);
+        final boolean isEligible = preqAccountingLines.stream()
+                .map(PurApAccountingLine::getAccount)
+                .map(Account::getSubFundGroupCode)
+                .noneMatch(subFundGroupCode -> ineligibleSubFundGroups.contains(subFundGroupCode));
+        if (!isEligible) {
+            LOG.info(" -- PayReq [{}] skipped due to ineligible Sub-Fund Group.", document.getDocumentNumber());
+        }
+        return isEligible;
+    }
+
+    private boolean paymentRequestFundGroupsAreEligibleForAutoApproval(
+            final PaymentRequestDocument document, final List<PurApAccountingLine> preqAccountingLines) {
+        final Collection<String> ineligibleFundGroups = parameterService.getParameterValuesAsString(
+                PaymentRequestDocument.class, CUPurapParameterConstants.FUND_GROUPS_RESTRICTING_AUTO_APPROVE);
+        final boolean isEligible = preqAccountingLines.stream()
+                .map(PurApAccountingLine::getAccount)
+                .map(Account::getSubFundGroup)
+                .map(SubFundGroup::getFundGroupCode)
+                .noneMatch(fundGroupCode -> ineligibleFundGroups.contains(fundGroupCode));
+        if (!isEligible) {
+            LOG.info(" -- PayReq [{}] skipped due to ineligible Fund Group.", document.getDocumentNumber());
+        }
+        return isEligible;
+    }
+
+    private List<PurApAccountingLine> getPaymentRequestAccountingLines(final PaymentRequestDocument document) {
+        return ((List<?>) document.getItems()).stream()
+                .map(PurApItem.class::cast)
+                .map(PurApItem::getSourceAccountingLines)
+                .flatMap(List::stream)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
