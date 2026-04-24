@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -26,7 +27,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
-import org.kuali.kfs.coa.businessobject.SubFundGroup;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
@@ -499,31 +499,41 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
     private boolean paymentRequestSubFundGroupsAreEligibleForAutoApproval(
             final PaymentRequestDocument document, final List<PurApAccountingLine> preqAccountingLines) {
-        final Collection<String> ineligibleSubFundGroups = parameterService.getParameterValuesAsString(
+        final Collection<String> excludedSubFundGroups = parameterService.getParameterValuesAsString(
                 PaymentRequestDocument.class, CUPurapParameterConstants.SUB_FUND_GROUPS_PREVENTING_AUTO_APPROVE);
-        final boolean isEligible = preqAccountingLines.stream()
+        final Optional<Account> accountWithExcludedSubFundGroup = preqAccountingLines.stream()
                 .map(PurApAccountingLine::getAccount)
-                .map(Account::getSubFundGroupCode)
-                .noneMatch(subFundGroupCode -> ineligibleSubFundGroups.contains(subFundGroupCode));
-        if (!isEligible) {
-            LOG.info(" -- PayReq [{}] skipped due to ineligible Sub-Fund Group.", document.getDocumentNumber());
+                .filter(account -> excludedSubFundGroups.contains(account.getSubFundGroupCode()))
+                .findFirst();
+        if (accountWithExcludedSubFundGroup.isPresent()) {
+            final Account account = accountWithExcludedSubFundGroup.get();
+            LOG.info(" -- PayReq [{}] skipped due to an accounting line using Chart/Account [{}-{}], " +
+                    "whose Sub-Fund Group [{}] does not allow for auto-approvals.",
+                    document.getDocumentNumber(), account.getChartOfAccountsCode(), account.getAccountNumber(),
+                    account.getSubFundGroupCode());
+            return false;
         }
-        return isEligible;
+        return true;
     }
 
     private boolean paymentRequestFundGroupsAreEligibleForAutoApproval(
             final PaymentRequestDocument document, final List<PurApAccountingLine> preqAccountingLines) {
-        final Collection<String> ineligibleFundGroups = parameterService.getParameterValuesAsString(
+        final Collection<String> excludedFundGroups = parameterService.getParameterValuesAsString(
                 PaymentRequestDocument.class, CUPurapParameterConstants.FUND_GROUPS_PREVENTING_AUTO_APPROVE);
-        final boolean isEligible = preqAccountingLines.stream()
+        final Optional<Account> accountWithExcludedFundGroup = preqAccountingLines.stream()
                 .map(PurApAccountingLine::getAccount)
-                .map(Account::getSubFundGroup)
-                .map(SubFundGroup::getFundGroupCode)
-                .noneMatch(fundGroupCode -> ineligibleFundGroups.contains(fundGroupCode));
-        if (!isEligible) {
-            LOG.info(" -- PayReq [{}] skipped due to ineligible Fund Group.", document.getDocumentNumber());
+                .filter(account -> ObjectUtils.isNotNull(account.getSubFundGroup()))
+                .filter(account -> excludedFundGroups.contains(account.getSubFundGroup().getFundGroupCode()))
+                .findFirst();
+        if (accountWithExcludedFundGroup.isPresent()) {
+            final Account account = accountWithExcludedFundGroup.get();
+            LOG.info(" -- PayReq [{}] skipped due to an accounting line using Chart/Account [{}-{}], " +
+                    "whose Fund Group [{}] does not allow for auto-approvals.",
+                    document.getDocumentNumber(), account.getChartOfAccountsCode(), account.getAccountNumber(),
+                    account.getSubFundGroup().getFundGroupCode());
+            return false;
         }
-        return isEligible;
+        return true;
     }
 
     private List<PurApAccountingLine> getPaymentRequestAccountingLines(final PaymentRequestDocument document) {
