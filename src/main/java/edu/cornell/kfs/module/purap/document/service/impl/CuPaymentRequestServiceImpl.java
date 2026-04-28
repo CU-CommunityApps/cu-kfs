@@ -1,5 +1,11 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
+import static edu.cornell.kfs.module.purap.CUPurapConstants.Payflow.PAYFLOW;
+import static edu.cornell.kfs.pdp.CUPdpConstants.PdpDocumentTypes.PAYMENT_REQUEST;
+import static org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes.ITEM_TYPE_FREIGHT_CODE;
+import static org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes.ITEM_TYPE_MISC_CODE;
+import static org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes.ITEM_TYPE_SHIP_AND_HAND_CODE;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -9,24 +15,33 @@ import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestDto;
-import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestLineItemDto;
-import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestNoteDto;
-import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestResultsDto;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.api.KewApiServiceLocator;
+import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 import org.kuali.kfs.krad.UserSessionUtils;
+import org.kuali.kfs.krad.bo.Attachment;
+import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.exception.InfrastructureException;
+import org.kuali.kfs.krad.service.AttachmentService;
 import org.kuali.kfs.krad.util.ErrorMessage;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
-import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.businessobject.ItemType;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
@@ -39,28 +54,18 @@ import org.kuali.kfs.module.purap.document.service.impl.PaymentRequestServiceImp
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.KewApiServiceLocator;
-import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
-import org.kuali.kfs.krad.bo.Attachment;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.exception.InfrastructureException;
-import org.kuali.kfs.krad.service.AttachmentService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
-import org.springframework.util.AutoPopulatingList;
-
-import static edu.cornell.kfs.module.purap.CUPurapConstants.Payflow.PAYFLOW;
-import static edu.cornell.kfs.pdp.CUPdpConstants.PdpDocumentTypes.PAYMENT_REQUEST;
-import static org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes.ITEM_TYPE_FREIGHT_CODE;
-import static org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes.ITEM_TYPE_MISC_CODE;
-import static org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes.ITEM_TYPE_SHIP_AND_HAND_CODE;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestLineItemDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestNoteDto;
+import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestResultsDto;
 
 public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl implements CuPaymentRequestService {
     private static final Logger LOG = LogManager.getLogger();
@@ -466,12 +471,15 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         String paymentMethodCode = ((CuPaymentRequestDocument) paymentRequestDocument).getPaymentMethodCode();
         boolean isPRNC = StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, paymentMethodCode)
                 || StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT, paymentMethodCode);
-        LOG.info(" -- PayReq [" + paymentRequestDocument.getDocumentNumber() + "] skipped as it is of type PRNC.");
+        if (isPRNC) {
+            LOG.info(" -- PayReq [{}] skipped as it is of type PRNC.", paymentRequestDocument.getDocumentNumber());
+        }
         return isPRNC;
     }
 
     /**
-     * Overridden to also require that the associated PO's amount must be within auto-approval limits.
+     * Overridden to also require that the associated PO's amount must be within auto-approval limits,
+     * and to also require that the PREQ account lines' associated funds and sub-funds allow for auto-approval.
      * 
      * @see org.kuali.kfs.module.purap.document.service.impl.PaymentRequestServiceImpl#isEligibleForAutoApproval(
      * org.kuali.kfs.module.purap.document.PaymentRequestDocument, org.kuali.kfs.core.api.util.type.KualiDecimal)
@@ -479,7 +487,61 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     @Override
     protected boolean isEligibleForAutoApproval(PaymentRequestDocument document, KualiDecimal defaultMinimumLimit) {
         return !isPRNCDocument(document) && purchaseOrderForPaymentRequestIsWithinAutoApproveAmountLimit(document)
+                && paymentRequestAccountsAreEligibleForAutoApproval(document)
                 && super.isEligibleForAutoApproval(document, defaultMinimumLimit);
+    }
+
+    private boolean paymentRequestAccountsAreEligibleForAutoApproval(final PaymentRequestDocument document) {
+        final List<PurApAccountingLine> preqAccountingLines = getPaymentRequestAccountingLines(document);
+        return paymentRequestSubFundGroupsAreEligibleForAutoApproval(document, preqAccountingLines)
+                && paymentRequestFundGroupsAreEligibleForAutoApproval(document, preqAccountingLines);
+    }
+
+    private boolean paymentRequestSubFundGroupsAreEligibleForAutoApproval(
+            final PaymentRequestDocument document, final List<PurApAccountingLine> preqAccountingLines) {
+        final Collection<String> excludedSubFundGroups = parameterService.getParameterValuesAsString(
+                PaymentRequestDocument.class, CUPurapParameterConstants.SUB_FUND_GROUPS_PREVENTING_AUTO_APPROVE);
+        final Optional<Account> accountWithExcludedSubFundGroup = preqAccountingLines.stream()
+                .map(PurApAccountingLine::getAccount)
+                .filter(account -> excludedSubFundGroups.contains(account.getSubFundGroupCode()))
+                .findFirst();
+        if (accountWithExcludedSubFundGroup.isPresent()) {
+            final Account account = accountWithExcludedSubFundGroup.get();
+            LOG.info(" -- PayReq [{}] skipped due to an accounting line using Chart/Account [{}-{}], " +
+                    "whose Sub-Fund Group [{}] does not allow for auto-approvals.",
+                    document.getDocumentNumber(), account.getChartOfAccountsCode(), account.getAccountNumber(),
+                    account.getSubFundGroupCode());
+            return false;
+        }
+        return true;
+    }
+
+    private boolean paymentRequestFundGroupsAreEligibleForAutoApproval(
+            final PaymentRequestDocument document, final List<PurApAccountingLine> preqAccountingLines) {
+        final Collection<String> excludedFundGroups = parameterService.getParameterValuesAsString(
+                PaymentRequestDocument.class, CUPurapParameterConstants.FUND_GROUPS_PREVENTING_AUTO_APPROVE);
+        final Optional<Account> accountWithExcludedFundGroup = preqAccountingLines.stream()
+                .map(PurApAccountingLine::getAccount)
+                .filter(account -> ObjectUtils.isNotNull(account.getSubFundGroup()))
+                .filter(account -> excludedFundGroups.contains(account.getSubFundGroup().getFundGroupCode()))
+                .findFirst();
+        if (accountWithExcludedFundGroup.isPresent()) {
+            final Account account = accountWithExcludedFundGroup.get();
+            LOG.info(" -- PayReq [{}] skipped due to an accounting line using Chart/Account [{}-{}], " +
+                    "whose Fund Group [{}] does not allow for auto-approvals.",
+                    document.getDocumentNumber(), account.getChartOfAccountsCode(), account.getAccountNumber(),
+                    account.getSubFundGroup().getFundGroupCode());
+            return false;
+        }
+        return true;
+    }
+
+    private List<PurApAccountingLine> getPaymentRequestAccountingLines(final PaymentRequestDocument document) {
+        return ((List<?>) document.getItems()).stream()
+                .map(PurApItem.class::cast)
+                .map(PurApItem::getSourceAccountingLines)
+                .flatMap(List::stream)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
@@ -649,6 +711,41 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
                     noteDto.getAttachmentFileName(), e);
             throw new RuntimeException("Failed to create attachment: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * Overridden to remove the usage of the Receiving-Requirement-based annotation when auto-approving.
+     */
+    @Override
+    @Transactional
+    public boolean autoApprovePaymentRequest(PaymentRequestDocument doc, final KualiDecimal defaultMinimumLimit) {
+        if (isEligibleForAutoApproval(doc, defaultMinimumLimit)) {
+            // Much of the framework assumes that document instances that are saved via
+            // DocumentService.saveDocument are those that were dynamically created by PojoFormBase (i.e., the
+            // Document instance wasn't created from OJB). We need to make a deep copy and materialize
+            // collections to fulfill that assumption so that collection elements will delete properly
+
+            // TODO: maybe rewriting PurapService.calculateItemTax could be rewritten so that the a deep copy
+            // doesn't need to be made by taking advantage of OJB's managed array lists
+            try {
+                ObjectUtils.materializeUpdateableCollections(doc);
+                for (final PaymentRequestItem item : (List<PaymentRequestItem>) doc.getItems()) {
+                    ObjectUtils.materializeUpdateableCollections(item);
+                }
+            } catch (final Exception ex) {
+                throw new RuntimeException(ex);
+            }
+            doc = (PaymentRequestDocument) ObjectUtils.deepCopy(doc);
+
+            // set the auto approved indicator to true so that doRouteStatus method can use to change the app doc
+            // status.
+            doc.setAutoApprovedIndicator(true);
+            LOG.info("About to blanketApproveDocument, doc.getDocumentNumber()={}", doc::getDocumentNumber);
+            // su approve rather than blanket approve, so no ACK notifications would be generated
+            // ==== CU Customization: Do not check receiving requirements and do not use the related annotation. ====
+            documentService.superUserApproveDocument(doc, "auto-approving: Total is below threshold.");
+        }
+        return true;
     }
 
 }
