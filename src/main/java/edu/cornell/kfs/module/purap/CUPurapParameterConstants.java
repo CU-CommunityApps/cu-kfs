@@ -59,4 +59,7 @@ public class CUPurapParameterConstants {
 
     public static final String PURCHASE_ORDER = "PurchaseOrder";
     public static final String DEFAULT_FUNDING_SOURCE = "DEFAULT_FUNDING_SOURCE";
+
+    public static final String FUND_GROUPS_PREVENTING_AUTO_APPROVE = "FUND_GROUPS_PREVENTING_AUTO_APPROVE";
+    public static final String SUB_FUND_GROUPS_PREVENTING_AUTO_APPROVE = "SUB_FUND_GROUPS_PREVENTING_AUTO_APPROVE";
 }
