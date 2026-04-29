@@ -20,14 +20,9 @@
         <job.name>${project.artifactId}</job.name>
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
-
         <kfs.version>2024-09-25</kfs.version>
-
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>
         <checkstyle.version>10.17.0</checkstyle.version>
-        <!-- CU customization to continue support for commons-digester after KualiCo has removed it from base code;
-             This can be removed once all code has been updated to use jaxb or other framework to replace commons-digester.
-        -->
         <commons-digester3.version>3.2</commons-digester3.version>
         <commons-validator.version>1.9.0</commons-validator.version>
         <gson.version>2.10.1</gson.version>
@@ -304,115 +299,26 @@
     </build>
     <repositories>
         <repository>
-            <id>cornell-internal</id>
-            <url>https://maven.cit.cornell.edu/repository/internal</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/kualico/financials</url>
         </repository>
         <repository>
-            <id>cornell-external</id>
-            <url>https://maven.cit.cornell.edu/repository/external</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>cornell-snapshots</id>
-            <url>https://maven.cit.cornell.edu/repository/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>kualico.nexus.financials.releases</id>
-            <name>KualiCo Nexus Financials</name>
-            <url>https://nexus.kuali.co/nexus/content/repositories/financials-repos/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>kualico.nexus.financials.snapshots</id>
-            <name>KualiCo Nexus Snapshots Financials</name>
-            <url>https://nexus.kuali.co/nexus/content/repositories/financials-snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
         </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
-            <id>cornell-internal</id>
-            <url>https://maven.cit.cornell.edu/repository/internal</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>cornell-external</id>
-            <url>https://maven.cit.cornell.edu/repository/external</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>cornell-snapshots</id>
-            <url>https://maven.cit.cornell.edu/repository/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>kualico.nexus.financials.releases</id>
-            <name>KualiCo Nexus Financials</name>
-            <url>https://nexus.kuali.co/nexus/content/repositories/financials-repos/</url>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/kualico/financials</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
             </snapshots>
             <releases>
                 <enabled>true</enabled>
-            </releases>
-        </pluginRepository>
-        <pluginRepository>
-            <id>kualico.nexus.financials.snapshots</id>
-            <name>KualiCo Nexus Snapshots Financials</name>
-            <url>https://nexus.kuali.co/nexus/content/repositories/financials-snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
             </releases>
         </pluginRepository>
     </pluginRepositories>
@@ -958,6 +864,15 @@
                     <artifactId>log4j</artifactId>
                     <groupId>log4j</groupId>
                 </exclusion>
+                <!-- CORBA libraries unavailable from defunct nexus.kuali.org repo; not needed for KFS -->
+                <exclusion>
+                    <groupId>org.jacorb</groupId>
+                    <artifactId>jacorb</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jacorb</groupId>
+                    <artifactId>jacorb-idl</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1085,6 +1000,15 @@
                 <exclusion>
                     <groupId>javax.xml.bind</groupId>
                     <artifactId>jaxb-api</artifactId>
+                </exclusion>
+                <!-- SDO plugin pulls in commonj.sdo from defunct maven.java.net repo; not needed for KFS -->
+                <exclusion>
+                    <groupId>com.sun.xml.ws</groupId>
+                    <artifactId>sdo-eclipselink-plugin</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commonj.sdo</groupId>
+                    <artifactId>commonj.sdo</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1220,11 +1144,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-        <!--
-            Start of CXF dependencies. These should be removed after we rewrite
-            the Account Verification Web Service to use a different framework.
-         -->
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
@@ -1678,14 +1597,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--
-            End of CXF dependencies.
-         -->
-
-        <!--
-            Start of JAX-RS dependencies. These should be removed after we convert
-            all of our JAX-RS-dependent code to use Spring MVC and/or HTTP Core/Client.
-         -->
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
@@ -1774,10 +1685,6 @@
             <artifactId>jakarta.el-api</artifactId>
             <version>${jakarta.el.el-api.version}</version>
         </dependency>
-        <!--
-            End of JAX-RS dependencies.
-         -->
-
         <dependency>
             <groupId>com.prowidesoftware</groupId>
             <artifactId>pw-iso20022</artifactId>
@@ -1808,16 +1715,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <distributionManagement>
-        <repository>
-            <id>cornell-internal</id>
-            <url>https://nexus.kuali.cucloud.net/nexus/content/repositories/internal</url>
-        </repository>
-        <snapshotRepository>
-            <id>cornell-snapshots</id>
-            <name>cornell-snapshots</name>
-            <uniqueVersion>true</uniqueVersion>
-            <url>https://nexus.kuali.cucloud.net/nexus/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 </project>
