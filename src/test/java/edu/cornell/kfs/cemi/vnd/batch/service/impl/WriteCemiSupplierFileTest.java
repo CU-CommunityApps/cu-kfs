@@ -41,12 +41,12 @@ import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiSheetDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
+import edu.cornell.kfs.cemi.vnd.CemiVendorTestConstants.VendorSpringBeans;
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.util.CreateTestDirectories;
 import edu.cornell.kfs.sys.util.GlobalResourceLoaderUtils;
 import edu.cornell.kfs.sys.util.TestSpringContextExtension;
-import edu.cornell.kfs.cemi.vnd.CemiVendorTestConstants.VendorSpringBeans;
 
 @CreateTestDirectories(
     baseDirectory = WriteCemiSupplierFileTest.CEMI_SUPPLIER_DIRECTORY,
@@ -132,7 +132,7 @@ public class WriteCemiSupplierFileTest {
     }
 
     private String[] createRowFilledWithSimpleTestData(final CemiSheetDefinition sheet) {
-        final int fieldCount = sheet.getFields().size();
+        final int fieldCount = CemiUtils.getNumberOfPrintableFields(sheet);
         return IntStream.range(0, fieldCount)
                 .mapToObj(index -> "V" + index)
                 .toArray(String[]::new);

@@ -18,6 +18,12 @@
  */
 package org.kuali.kfs.sys.cache;
 
+import java.time.Duration;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.kuali.kfs.krad.maintenance.MaintenanceUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,11 +36,8 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 
-import java.time.Duration;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import edu.cornell.kfs.cemi.sys.batch.dataaccess.CemiTableMetadata;
+import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 
 /**
  * Redis is our default caching implementation -- it is high-performance and can be used in a distributed environment.
@@ -50,7 +53,9 @@ public class RedisCacheConfiguration {
     @Bean
     public Set<String> cacheNamesWithDefaultTtl() {
         final Set<String> cornellCacheNamesWithDefaultTtl = Set.of(
-                MaintenanceUtils.LOCKING_ID_CACHE_NAME
+                MaintenanceUtils.LOCKING_ID_CACHE_NAME,
+                CemiOutputDefinition.CACHE_NAME,
+                CemiTableMetadata.CACHE_NAME
         );
         return Stream.of(SharedCacheConfiguration.staticCacheNamesWithDefaultTtl(), cornellCacheNamesWithDefaultTtl)
                 .flatMap(Set::stream)

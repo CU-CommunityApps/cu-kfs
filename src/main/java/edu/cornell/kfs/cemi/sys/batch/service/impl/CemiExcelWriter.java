@@ -24,6 +24,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiSheetDefinition;
+import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.sys.util.CemiWorkbookCopier;
 
 public class CemiExcelWriter implements Closeable {
@@ -79,7 +80,7 @@ public class CemiExcelWriter implements Closeable {
 
         final CemiSheet sheet = sheets.get(sheetName);
         Validate.validState(sheet != null, "Sheet not found: %s", sheetName);
-        final int rowDataLength = sheet.sheetDefinition.getFields().size();
+        final int rowDataLength = CemiUtils.getNumberOfPrintableFields(sheet.sheetDefinition);
         Validate.validState(rowDataLength == rowData.length,
                 "rowData for sheet %s should have had %s elements, but it actually had %s elements",
                 sheetName, rowDataLength, rowData.length);

@@ -36,7 +36,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants.FileExtensions;
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants.OutputDefinitionNames;
 import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
+import edu.cornell.kfs.cemi.sys.batch.dataaccess.CemiSheetDao;
+import edu.cornell.kfs.cemi.sys.batch.service.CemiOutputDefinitionService;
+import edu.cornell.kfs.cemi.sys.batch.service.CemiTableMetadataService;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
@@ -60,7 +64,9 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
     private String supplierFileOutboundDirectory;
     private CemiVendorOrmDao cemiVendorOrmDao;
     private CemiVendorDao cemiVendorDao;
-    private CemiOutputDefinitionFileType cemiOutputDefinitionFileType;
+    private CemiSheetDao cemiSheetDao;
+    private CemiOutputDefinitionService cemiOutputDefinitionService;
+    private CemiTableMetadataService cemiTableMetadataService;
     private BusinessObjectService businessObjectService;
     private ParameterService parameterService;
     private DateTimeService dateTimeService;
@@ -137,9 +143,12 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
             final LocalDateTime jobRunDate) throws IOException {
         try (
             // Replace this builder with a temp table implementation when ready.
-            final CemiSupplierDataBuilderCsvImpl dataBuilder = new CemiSupplierDataBuilderCsvImpl(
-                    getOutputDefinitionForSupplierExtract(), getCemiVendorDao(), jobRunDate, supplierFileCreationDirectory, 
-                    shouldMaskCemiSensitiveData());
+            //final CemiSupplierDataBuilderCsvImpl dataBuilder = new CemiSupplierDataBuilderCsvImpl(
+            //        getOutputDefinitionForSupplierExtract(), getCemiVendorDao(), jobRunDate, supplierFileCreationDirectory, 
+            //        shouldMaskCemiSensitiveData());
+            final CemiSupplierDataBuilderTableImpl dataBuilder = new CemiSupplierDataBuilderTableImpl(
+                    outputDefinition, cemiVendorDao, jobRunDate, shouldMaskCemiSensitiveData(),
+                    cemiSheetDao, cemiTableMetadataService);
             final Stream<VendorDetail> vendors = getCemiVendorOrmDao().getVendorsForCemiSupplierExtractAsCloseableStream();
         ) {
             final Iterator<VendorDetail> vendorsIterator = vendors.iterator();
@@ -204,22 +213,18 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
             final CemiExcelWriter writer = new CemiExcelWriter(outputDefinition, templateFileStream, file);
         ) {
             // Replace this appender with a temp table implementation when ready.
-            final CemiSupplierFileAppenderCsvImpl supplierFileAppender = new CemiSupplierFileAppenderCsvImpl(
-                outputDefinition, jobRunDate, supplierFileCreationDirectory);
+            //final CemiSupplierFileAppenderCsvImpl supplierFileAppender = new CemiSupplierFileAppenderCsvImpl(
+            //    outputDefinition, jobRunDate, supplierFileCreationDirectory);
+            final CemiSupplierFileAppenderTableImpl supplierFileAppender = new CemiSupplierFileAppenderTableImpl(
+                    outputDefinition, jobRunDate, cemiSheetDao, cemiTableMetadataService);
             supplierFileAppender.populateSupplierFileFromIntermediateDataStorage(writer);
             writer.commit();
             supplierFileAppender.cleanUpIntermediateStorage();
         }
     }
 
-    private CemiOutputDefinition getOutputDefinitionForSupplierExtract() throws IOException {
-        try (
-            final InputStream inputStream = CuCoreUtilities.getResourceAsStream(
-                    CemiVendorConstants.SUPPLIER_OUTPUT_DEFINITION_FILE_PATH);
-        ) {
-            final byte[] fileContents = IOUtils.toByteArray(inputStream);
-            return cemiOutputDefinitionFileType.parse(fileContents);
-        }
+    private CemiOutputDefinition getOutputDefinitionForSupplierExtract() {
+        return cemiOutputDefinitionService.getCemiOutputDefinition(OutputDefinitionNames.SUPPLIER);
     }
 
     private boolean shouldCopySupplierExtractFileToOutboundDirectory() {
@@ -265,8 +270,12 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
     }
 
 
-    public void setCemiOutputDefinitionFileType(final CemiOutputDefinitionFileType cemiOutputDefinitionFileType) {
-        this.cemiOutputDefinitionFileType = cemiOutputDefinitionFileType;
+    public void setCemiOutputDefinitionService(final CemiOutputDefinitionService cemiOutputDefinitionService) {
+        this.cemiOutputDefinitionService = cemiOutputDefinitionService;
+    }
+
+    public void setCemiTableMetadataService(final CemiTableMetadataService cemiTableMetadataService) {
+        this.cemiTableMetadataService = cemiTableMetadataService;
     }
 
     public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
@@ -295,6 +304,10 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
 
     public void setCemiVendorOrmDao(CemiVendorOrmDao cemiVendorOrmDao) {
         this.cemiVendorOrmDao = cemiVendorOrmDao;
+    }
+
+    public void setCemiSheetDao(final CemiSheetDao cemiSheetDao) {
+        this.cemiSheetDao = cemiSheetDao;
     }
 
 }

@@ -4,18 +4,21 @@ import java.util.List;
 
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
+import edu.cornell.kfs.cemi.sys.batch.dto.CemiDtoWithDateAndIndex;
+import edu.cornell.kfs.cemi.sys.util.CemiDtoIndexer;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
 
-public class CemiSupplierEmail {
+public class CemiSupplierEmail extends CemiDtoWithDateAndIndex {
     
     private final VendorDetail vendorDetail;
     private final String supplierId;
     
     private final List<CemiSupplierEmailSubEntry> supplierEmails;
     
-    public CemiSupplierEmail(final VendorDetail vendorDetail, final String supplierId,
+    public CemiSupplierEmail(final CemiDtoIndexer indexer, final VendorDetail vendorDetail, final String supplierId,
                 final CemiSupplierEmailSubEntry... supplierEmails) {
+        super(indexer);
         this.vendorDetail = vendorDetail;
         this.supplierId = supplierId;
         this.supplierEmails = CemiUtils.createListPaddedToMinimumSizeIfNecessary(

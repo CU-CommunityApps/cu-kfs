@@ -1,5 +1,7 @@
 package edu.cornell.kfs.cemi.sys.batch.xml;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -16,7 +18,9 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "cemiFieldType")
 @XmlRootElement(name = "field")
-public class CemiFieldDefinition {
+public class CemiFieldDefinition implements Serializable {
+
+    private static final long serialVersionUID = -1143143856634053621L;
 
     @XmlAttribute(name = "name", required = true)
     private String name;
@@ -24,9 +28,8 @@ public class CemiFieldDefinition {
     @XmlAttribute(name = "type", required = true)
     private CemiFieldDefinitionType type;
 
-    // Currently not in use; verify if we need this.
-    @XmlAttribute(name = "max-length")
-    private int maxLength;
+    @XmlAttribute(name = "length")
+    private int length;
 
     @XmlAttribute(name = "key")
     private String key;
@@ -34,8 +37,11 @@ public class CemiFieldDefinition {
     @XmlAttribute(name = "value")
     private String value;
 
+    @XmlAttribute(name = "indexes")
+    private String indexes;
+
     public CemiFieldDefinition() {
-        this.maxLength = -1;
+        this.length = -1;
     }
 
     public String getName() {
@@ -54,12 +60,12 @@ public class CemiFieldDefinition {
         this.type = type;
     }
 
-    public int getMaxLength() {
-        return maxLength;
+    public int getLength() {
+        return length;
     }
 
-    public void setMaxLength(final int maxLength) {
-        this.maxLength = maxLength;
+    public void setLength(final int length) {
+        this.length = length;
     }
 
     public String getKey() {
@@ -76,6 +82,14 @@ public class CemiFieldDefinition {
 
     public void setValue(final String value) {
         this.value = value;
+    }
+
+    public String getIndexes() {
+        return indexes;
+    }
+
+    public void setIndexes(final String indexes) {
+        this.indexes = indexes;
     }
 
     @Override

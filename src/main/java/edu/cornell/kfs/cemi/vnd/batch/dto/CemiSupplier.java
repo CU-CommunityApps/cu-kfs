@@ -12,6 +12,8 @@ import org.kuali.kfs.vnd.businessobject.VendorAlias;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 
+import edu.cornell.kfs.cemi.sys.batch.dto.CemiDtoWithDateAndIndex;
+import edu.cornell.kfs.cemi.sys.util.CemiDtoIndexer;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiForeignTaxIdType;
 import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
@@ -20,7 +22,7 @@ import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 import edu.cornell.kfs.vnd.CUVendorConstants.VendorOwnershipCodes;
 
 @SuppressWarnings("deprecation")
-public class CemiSupplier {
+public class CemiSupplier extends CemiDtoWithDateAndIndex {
 
     private final VendorDetail vendorDetail;
     private final String supplierId;
@@ -49,7 +51,9 @@ public class CemiSupplier {
      * If necessary, this object can be modified into a mutable one and/or a different mechanism could
      * be implemented to compute the derived values.
      */
-    public CemiSupplier(final VendorDetail vendorDetail, final String supplierId, boolean maskCemiSensitiveData) {
+    public CemiSupplier(final CemiDtoIndexer indexer, final VendorDetail vendorDetail, final String supplierId,
+            boolean maskCemiSensitiveData) {
+        super(indexer);
         this.vendorDetail = vendorDetail;
         this.supplierId = supplierId;
         this.supplierReferenceId = buildSupplierReferenceId(vendorDetail);

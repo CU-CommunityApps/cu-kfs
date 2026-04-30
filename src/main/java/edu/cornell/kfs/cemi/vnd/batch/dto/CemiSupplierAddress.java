@@ -9,11 +9,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
+import edu.cornell.kfs.cemi.sys.batch.dto.CemiDtoWithDateAndIndex;
+import edu.cornell.kfs.cemi.sys.util.CemiDtoIndexer;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
 import edu.cornell.kfs.cemi.vnd.util.CemiVendorUtils;
 
-public class CemiSupplierAddress {
+public class CemiSupplierAddress extends CemiDtoWithDateAndIndex {
 
     private static final Logger LOG = LogManager.getLogger();
 
@@ -32,8 +34,10 @@ public class CemiSupplierAddress {
     private List<String> addressTenantedUses;
     private String comments;
 
-    public CemiSupplierAddress(final String vendorTypeCode, final List<VendorAddress> matchingVendorAddresses,
+    public CemiSupplierAddress(final CemiDtoIndexer indexer, final String vendorTypeCode,
+            final List<VendorAddress> matchingVendorAddresses,
             final String supplierId, int addressCount) {
+        super(indexer);
         Validate.isTrue(CollectionUtils.isNotEmpty(matchingVendorAddresses),
                 "matchingVendorAddresses cannot be null or empty");
 

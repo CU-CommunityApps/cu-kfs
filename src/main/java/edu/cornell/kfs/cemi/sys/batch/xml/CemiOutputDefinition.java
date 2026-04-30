@@ -1,5 +1,6 @@
 package edu.cornell.kfs.cemi.sys.batch.xml;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
@@ -18,10 +20,17 @@ import jakarta.xml.bind.annotation.XmlType;
     "sheets"
 })
 @XmlRootElement(name = "cemiOutputDefinition")
-public class CemiOutputDefinition {
+public class CemiOutputDefinition implements Serializable {
+
+    private static final long serialVersionUID = 6920815709872737418L;
+
+    public static final String CACHE_NAME = "CemiOutputDefinitionCache";
 
     @XmlElement(name = "sheet", required = true)
     private List<CemiSheetDefinition> sheets;
+
+    @XmlAttribute(name = "name", required = true)
+    private String name;
 
     public List<CemiSheetDefinition> getSheets() {
         if (sheets == null) {
@@ -32,6 +41,14 @@ public class CemiOutputDefinition {
 
     public void setSheets(final List<CemiSheetDefinition> sheets) {
         this.sheets = sheets;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
     }
 
     @Override

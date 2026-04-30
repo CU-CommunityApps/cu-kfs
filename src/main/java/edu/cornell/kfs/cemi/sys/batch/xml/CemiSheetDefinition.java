@@ -1,5 +1,6 @@
 package edu.cornell.kfs.cemi.sys.batch.xml;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,9 @@ import jakarta.xml.bind.annotation.XmlType;
     "fields"
 })
 @XmlRootElement(name = "sheet")
-public class CemiSheetDefinition {
+public class CemiSheetDefinition implements Serializable {
+
+    private static final long serialVersionUID = 4326037812667965712L;
 
     @XmlElement(name = "field", required = true)
     private List<CemiFieldDefinition> fields;

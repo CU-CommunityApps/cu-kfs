@@ -9,10 +9,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 
+import edu.cornell.kfs.cemi.sys.batch.dto.CemiDtoWithDateAndIndex;
+import edu.cornell.kfs.cemi.sys.util.CemiDtoIndexer;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
 
-public class CemiSupplierPhone {
+public class CemiSupplierPhone extends CemiDtoWithDateAndIndex {
 
     private static final Logger LOG = LogManager.getLogger();
 
@@ -29,8 +31,9 @@ public class CemiSupplierPhone {
     private List<String> phoneTenantedUses;
     private String comments;
 
-    public CemiSupplierPhone(final List<VendorPhoneNumber> matchingVendorPhoneNumbers,
+    public CemiSupplierPhone(final CemiDtoIndexer indexer, final List<VendorPhoneNumber> matchingVendorPhoneNumbers,
             final String supplierId, int phoneNumberCount) {
+        super(indexer);
         Validate.isTrue(CollectionUtils.isNotEmpty(matchingVendorPhoneNumbers),
                 "matchingVendorPhoneNumbers cannot be null or empty");
 

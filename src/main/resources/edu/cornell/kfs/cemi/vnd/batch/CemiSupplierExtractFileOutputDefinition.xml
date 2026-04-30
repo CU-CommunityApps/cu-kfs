@@ -11,9 +11,12 @@
 
     NOTE: This XML file doesn't keep track of POJO classes; it only needs to know POJO property names/paths.
  -->
-<cemiOutputDefinition>
+<cemiOutputDefinition name="Supplier">
 
     <sheet name="Supplier" num-header-rows="6" start-column-index="1">
+        <field name="EXTR_FILE_RUNDATE" type="STRING_DB_ONLY" key="jobRunDateString"/>
+        <field name="ROW_INDEX" type="BIGINT_DB_ONLY" key="rowIndex"/>
+
         <field name="Supplier_ID" type="STRING" key="supplierId"/>
         <field name="Supplier_Reference_ID" type="STRING" key="supplierReferenceId"/>
         <field name="Supplier_Name" type="STRING" key="vendorDetail.vendorName"/>
@@ -21,7 +24,7 @@
         <field name="IRS_1099_Supplier" type="STRING" key="irs1099SupplierFlag"/>
         <field name="Report_1099_with_Parent" type="STATIC" value=""/> <!-- Leave blank for round 1 -->
         <field name="Tax_ID_Type" type="STRING" key="taxIdType"/>
-        <field name="Tax_ID_Text" type="STRING" key="taxIdValue"/>
+        <field name="Tax_ID_Text" type="STRING_ENCRYPTED" key="taxIdValue"/>
         <field name="Transaction_Tax_ID" type="STRING" key="transactionTaxId"/>
         <field name="Default_Withholding_Tax_Code" type="STATIC" value=""/> <!-- Leave blank for round 1 -->
         <field name="Primary_Tax_ID" type="STRING" key="primaryTaxId"/>
@@ -68,6 +71,9 @@
     </sheet>
 
     <sheet name="Addresses" num-header-rows="6" start-column-index="1">
+        <field name="EXTR_FILE_RUNDATE" type="STRING_DB_ONLY" key="jobRunDateString"/>
+        <field name="ROW_INDEX" type="BIGINT_DB_ONLY" key="rowIndex"/>
+
         <field name="Supplier_ID" type="STRING" key="supplierId"/>
         <field name="Address_ID" type="STRING" key="addressId"/>
         <field name="Country_For_Address" type="STRING" key="country"/>
@@ -90,6 +96,9 @@
     </sheet>
     
     <sheet name="Phones" num-header-rows="6" start-column-index="1">
+        <field name="EXTR_FILE_RUNDATE" type="STRING_DB_ONLY" key="jobRunDateString"/>
+        <field name="ROW_INDEX" type="BIGINT_DB_ONLY" key="rowIndex"/>
+
         <field name="Supplier_ID" type="STRING" key="supplierId"/>
         <field name="Phone_ID" type="STRING" key="phoneId"/>
         <field name="Country_ISO_Code" type="STRING" key="country"/>
@@ -110,6 +119,9 @@
     </sheet>
 
     <sheet name="Bank_Accounts" num-header-rows="6" start-column-index="1">
+        <field name="EXTR_FILE_RUNDATE" type="STRING_DB_ONLY" key="jobRunDateString"/>
+        <field name="ROW_INDEX" type="BIGINT_DB_ONLY" key="rowIndex"/>
+
         <field name="Supplier_ID" type="STRING" key="supplierId"/>
         <field name="Settlement_Bank_Account_ID_1" type="STRING" key="accounts[0].bankAccountId"/>
         <field name="Bank_Account_Nickname_1" type="STRING" key="accounts[0].bankAccountName"/>
@@ -118,7 +130,7 @@
         <field name="Routing_Transit_Number_1" type="STRING" key="accounts[0].bankRoutingNumber"/>
         <field name="Branch_ID_1" type="STRING" key="accounts[0].branchId"/>
         <field name="Branch_Name_1" type="STRING" key="accounts[0].branchName"/>
-        <field name="Bank_Account_Number_1" type="STRING" key="accounts[0].bankAccountNumber"/>
+        <field name="Bank_Account_Number_1" type="STRING_ENCRYPTED" key="accounts[0].bankAccountNumber"/>
         <field name="Accepts_Payment_Types_1_1" type="STRING" key="accounts[0].acceptedPaymentTypes[0]"/>
         <field name="Accepts_Payment_Types_1_2" type="STRING" key="accounts[0].acceptedPaymentTypes[1]"/>
         <field name="Accepts_Payment_Types_1_3" type="STRING" key="accounts[0].acceptedPaymentTypes[2]"/>
@@ -132,7 +144,7 @@
         <field name="Routing_Transit_Number_2" type="STRING" key="accounts[1].bankRoutingNumber"/>
         <field name="Branch_ID_2" type="STRING" key="accounts[1].branchId"/>
         <field name="Branch_Name_2" type="STRING" key="accounts[1].branchName"/>
-        <field name="Bank_Account_Number_2" type="STRING" key="accounts[1].bankAccountNumber"/>
+        <field name="Bank_Account_Number_2" type="STRING_ENCRYPTED" key="accounts[1].bankAccountNumber"/>
         <field name="Accepts_Payment_Types_2_1" type="STRING" key="accounts[1].acceptedPaymentTypes[0]"/>
         <field name="Accepts_Payment_Types_2_2" type="STRING" key="accounts[1].acceptedPaymentTypes[1]"/>
         <field name="Accepts_Payment_Types_2_3" type="STRING" key="accounts[1].acceptedPaymentTypes[2]"/>
@@ -146,7 +158,7 @@
         <field name="Routing_Transit_Number_3" type="STRING" key="accounts[2].bankRoutingNumber"/>
         <field name="Branch_ID_3" type="STRING" key="accounts[2].branchId"/>
         <field name="Branch_Name_3" type="STRING" key="accounts[2].branchName"/>
-        <field name="Bank_Account_Number_3" type="STRING" key="accounts[2].bankAccountNumber"/>
+        <field name="Bank_Account_Number_3" type="STRING_ENCRYPTED" key="accounts[2].bankAccountNumber"/>
         <field name="Accepts_Payment_Types_3_1" type="STRING" key="accounts[2].acceptedPaymentTypes[0]"/>
         <field name="Accepts_Payment_Types_3_2" type="STRING" key="accounts[2].acceptedPaymentTypes[1]"/>
         <field name="Accepts_Payment_Types_3_3" type="STRING" key="accounts[2].acceptedPaymentTypes[2]"/>
@@ -156,11 +168,17 @@
     </sheet>
 
     <sheet name="Children" num-header-rows="6" start-column-index="1">
+        <field name="EXTR_FILE_RUNDATE" type="STRING_DB_ONLY" key="jobRunDateString"/>
+        <field name="ROW_INDEX" type="BIGINT_DB_ONLY" key="rowIndex"/>
+
         <field name="Supplier_ID" type="STRING" key="supplierId"/>
         <field name="Included_Children" type="STRING" key="childSupplierId"/>
     </sheet>
 
     <sheet name="Emails" num-header-rows="6" start-column-index="1">
+        <field name="EXTR_FILE_RUNDATE" type="STRING_DB_ONLY" key="jobRunDateString"/>
+        <field name="ROW_INDEX" type="BIGINT_DB_ONLY" key="rowIndex"/>
+
         <field name="Supplier_ID" type="STRING" key="supplierId"/>
         <field name="Email_ID_1" type="STRING" key="supplierEmails[0].emailId"/>
         <field name="Email_Address_1" type="STRING" key="supplierEmails[0].emailAddress"/>

@@ -24,6 +24,7 @@ import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiFieldDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
+import edu.cornell.kfs.cemi.sys.util.CemiDtoIndexer;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierParentIdentifiersReference;
@@ -49,7 +50,14 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     protected final boolean maskSensitiveData;
     protected final DecimalFormat supplierIdFormatter;
     protected int vendorCount;
-   
+
+    protected final CemiDtoIndexer supplierIndexer;
+    protected final CemiDtoIndexer addressIndexer;
+    protected final CemiDtoIndexer phoneIndexer;
+    protected final CemiDtoIndexer emailIndexer;
+    protected final CemiDtoIndexer accountIndexer;
+    protected final CemiDtoIndexer childrenIndexer;
+
     protected CemiSupplierParentIdentifiersReference parentSupplierReference = null;
     protected CemiVendorDao cemiVendorDao;
     
@@ -64,6 +72,14 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
         this.jobRunDate = jobRunDate;
         this.maskSensitiveData = maskSensitiveData;
         this.supplierIdFormatter = new DecimalFormat(CemiVendorConstants.SUPPLIER_ID_FORMAT);
+
+        final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
+        this.supplierIndexer = new CemiDtoIndexer(jobRunDateString);
+        this.addressIndexer = new CemiDtoIndexer(jobRunDateString);
+        this.phoneIndexer = new CemiDtoIndexer(jobRunDateString);
+        this.emailIndexer = new CemiDtoIndexer(jobRunDateString);
+        this.accountIndexer = new CemiDtoIndexer(jobRunDateString);
+        this.childrenIndexer = new CemiDtoIndexer(jobRunDateString);
     }
 
     /*
@@ -83,7 +99,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
 
             //Suppliers Tab
             final String supplierId = supplierIdFormatter.format(vendorCount);
-            final CemiSupplier supplier = new CemiSupplier(vendor, supplierId, maskSensitiveData);
+            final CemiSupplier supplier = new CemiSupplier(supplierIndexer, vendor, supplierId, maskSensitiveData);
             writeSupplierRow(supplier);
             
             //Record identifier associations for Supplier extract file based upon batch job run date
@@ -160,7 +176,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
         for (final List<VendorAddress> addressGroup : orderedAddressGroups.values()) {
             addressCount++;
             final CemiSupplierAddress supplierAddress = new CemiSupplierAddress(
-                    vendor.getVendorHeader().getVendorTypeCode(), addressGroup, supplierId, addressCount);
+                    addressIndexer, vendor.getVendorHeader().getVendorTypeCode(), addressGroup, supplierId, addressCount);
             writeSupplierAddressRow(supplierAddress);
         }
     }
@@ -187,7 +203,8 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
         int phoneNumberCount = 0;
         for (final List<VendorPhoneNumber> phoneGroup : orderedPhoneGroups.values()) {
             phoneNumberCount++;
-            final CemiSupplierPhone supplierPhone = new CemiSupplierPhone(phoneGroup, supplierId, phoneNumberCount);
+            final CemiSupplierPhone supplierPhone = new CemiSupplierPhone(
+                    phoneIndexer, phoneGroup, supplierId, phoneNumberCount);
             writeSupplierPhoneRow(supplierPhone);
         }
     }
@@ -221,7 +238,8 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
                     vendor.getVendorDetailAssignedIdentifier(), CemiVendorConstants.MAX_SUPPLIER_EMAIL_ENTRIES);
         }
 
-        final CemiSupplierEmail supplierEmail = new CemiSupplierEmail(vendor, supplierId, toEmailArray(emailEntries));
+        final CemiSupplierEmail supplierEmail = new CemiSupplierEmail(
+                emailIndexer, vendor, supplierId, toEmailArray(emailEntries));
         writeSupplierEmailRow(supplierEmail);
     }
 
@@ -272,7 +290,8 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
                 && currentVendor.getVendorHeaderGeneratedIdentifier().equals(parentSupplierReference.getParentVendorHeaderGeneratedIdentifier())
                 && !currentVendor.getVendorDetailAssignedIdentifier().equals(parentSupplierReference.getParentVendorDetailAssignedIdentifier())) {
             //child vendor has been detected
-            final CemiSupplierChildren supplierChildren = new CemiSupplierChildren(currentSupplierId, parentSupplierReference.getParentSupplierId());
+            final CemiSupplierChildren supplierChildren = new CemiSupplierChildren(
+                    childrenIndexer, currentSupplierId, parentSupplierReference.getParentSupplierId());
             writeSupplierChildrenRow(supplierChildren);
         } else {
             if (ObjectUtils.isNotNull(parentSupplierReference) ) {
@@ -339,7 +358,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
         }
 
         final CemiSupplierBankAccount supplierAccount = new CemiSupplierBankAccount(
-                supplierId, toAccountArray(accountEntries));
+                accountIndexer, supplierId, toAccountArray(accountEntries));
         writeSupplierBankAccountRow(supplierAccount);
     }
 

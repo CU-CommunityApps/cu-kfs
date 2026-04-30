@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -16,6 +17,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.cemi.sys.batch.xml.CemiFieldDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiSheetDefinition;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -24,7 +26,11 @@ public final class CemiUtils {
     private static final DateTimeFormatter FILE_DATE_TIME_FORMATTER = DateTimeFormatter
                 .ofPattern(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmss, Locale.US)
                 .withZone(ZoneId.of(CUKFSConstants.TIME_ZONE_US_EASTERN));
-    
+
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
+    private static final Pattern NON_WORD_PATTERN = Pattern.compile("\\W+");
+    private static final Pattern DB_NAME_PATTERN = Pattern.compile("^[A-Za-z]\\w*$");
+
     private static final String generateDateTimeInConsistentFormat(final LocalDateTime dateTime) {
         return FILE_DATE_TIME_FORMATTER.format(dateTime);
     }
@@ -49,11 +55,18 @@ public final class CemiUtils {
     }
 
     public static int getFullColumnCount(final CemiSheetDefinition sheetDefinition) {
-        return sheetDefinition.getStartColumnIndex() + sheetDefinition.getFields().size();
+        return sheetDefinition.getStartColumnIndex() + getNumberOfPrintableFields(sheetDefinition);
     }
 
     public static int getDataColumnCount(final CemiSheetDefinition sheetDefinition) {
-        return sheetDefinition.getFields().size();
+        return getNumberOfPrintableFields(sheetDefinition);
+    }
+
+    public static int getNumberOfPrintableFields(final CemiSheetDefinition sheetDefinition) {
+        return (int) sheetDefinition.getFields().stream()
+                .map(CemiFieldDefinition::getType)
+                .filter(fieldType -> fieldType.includedInFileOutput)
+                .count();
     }
 
     public static String generateKeyForGroupingDuplicates(final String... propertyValues) {
@@ -99,6 +112,27 @@ public final class CemiUtils {
 
     public static <T> List<T> createListOfEmptyValues(final int size, final T emptyValue) {
         return Collections.nCopies(size, emptyValue);
+    }
+
+    public static String formatSheetTableName(final String prefix, final String name) {
+        final String fullName = StringUtils.join(prefix, CUKFSConstants.UNDERSCORE, name);
+        return formatNameForDatabase(fullName);
+    }
+
+    public static String formatSheetColumnName(final String name) {
+        return formatNameForDatabase(name);
+    }
+
+    public static String formatNameForDatabase(final String name) {
+        String result = StringUtils.defaultString(name);
+        result = StringUtils.upperCase(result, Locale.US);
+        result = WHITESPACE_PATTERN.matcher(result).replaceAll(CUKFSConstants.UNDERSCORE);
+        result = NON_WORD_PATTERN.matcher(result).replaceAll(KFSConstants.EMPTY_STRING);
+        return result;
+    }
+
+    public static boolean isNameFormattedForUseAsDbIdentifier(final String name) {
+        return StringUtils.isNotBlank(name) && DB_NAME_PATTERN.matcher(name).matches();
     }
 
 }
