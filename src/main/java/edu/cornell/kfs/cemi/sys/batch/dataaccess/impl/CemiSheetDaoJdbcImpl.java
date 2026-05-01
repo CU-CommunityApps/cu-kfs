@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -95,8 +96,9 @@ public class CemiSheetDaoJdbcImpl extends CemiDaoBaseJdbc implements CemiSheetDa
     }
 
     @Override
-    public Stream<String[]> getSheetTableRowsFormattedForFileOutput(final CemiTableMetadata metadata,
-            final Map<String, Object> criteria, final List<String> orderByFields) {
+    public int processSheetTableRows(final CemiTableMetadata metadata,
+            final Map<String, Object> criteria, final List<String> orderByFields,
+            final Consumer<String[]> rowHandler) {
         final CuSqlChunk query = new CuSqlChunk();
         final List<CemiColumnMetadata> columnsToSelect = metadata.getColumns().stream()
                 .filter(CemiColumnMetadata::isIncludedInFileOutput)
@@ -105,8 +107,17 @@ public class CemiSheetDaoJdbcImpl extends CemiDaoBaseJdbc implements CemiSheetDa
         appendColumnAndTableSelection(query, metadata, columnsToSelect);
         appendCriteria(query, metadata, criteria);
         appendOrderByClause(query, metadata, orderByFields);
-        return queryForStream(query.toQuery(),
-                (resultSet, rowNumber) -> readRowForFileOutput(resultSet, columnsToSelect));
+        return queryForResults(query.toQuery(), resultSet -> {
+            int rowCount = 0;
+            while (resultSet.next()) {
+                rowCount++;
+                final String[] sheetRow = readRowForFileOutput(resultSet, columnsToSelect);
+                rowHandler.accept(sheetRow);
+            }
+            return rowCount;
+        });
+        //return queryForStream(query.toQuery(),
+        //        (resultSet, rowNumber) -> readRowForFileOutput(resultSet, columnsToSelect));
     }
 
     private void appendColumnAndTableSelection(final CuSqlChunk query, final CemiTableMetadata metadata,

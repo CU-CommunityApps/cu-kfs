@@ -13,6 +13,7 @@ import edu.cornell.kfs.cemi.sys.CemiPropertyConstants.CemiColumnNames;
 import edu.cornell.kfs.cemi.sys.batch.dataaccess.CemiSheetDao;
 import edu.cornell.kfs.cemi.sys.batch.dataaccess.CemiTableMetadata;
 import edu.cornell.kfs.cemi.sys.batch.service.CemiTableMetadataService;
+import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiSheetDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
@@ -35,14 +36,28 @@ public class CemiSupplierFileAppenderTableImpl extends CemiSupplierFileAppenderB
     }
 
     @Override
+    protected void populateSheetFromIntermediateDataStorage(
+            final CemiSheetDefinition sheetDefinition, final CemiExcelWriter fileWriter) throws IOException {
+        final String sheetName = sheetDefinition.getName();
+        final CemiTableMetadata tableMetadata = cemiTableMetadataService.getCemiTableMetadata(
+                outputDefinition, sheetName);
+        final Map<String, Object> criteria = Collections.singletonMap(
+                CemiColumnNames.EXTR_FILE_RUNDATE, jobRunDateString);
+        final List<String> orderByFields = List.of(CemiColumnNames.ROW_INDEX);
+        cemiSheetDao.processSheetTableRows(tableMetadata, criteria, orderByFields,
+                sheetRow -> fileWriter.writeRow(sheetName, sheetRow));
+    }
+
+    @Override
     protected Stream<String[]> getCloseableSheetDataStreamFromIntermediateStorage(
             final CemiSheetDefinition sheetDefinition) throws IOException {
-        final CemiTableMetadata tableMetadata = cemiTableMetadataService.getCemiTableMetadata(
+        throw new UnsupportedOperationException("not used");
+        /*final CemiTableMetadata tableMetadata = cemiTableMetadataService.getCemiTableMetadata(
                 outputDefinition, sheetDefinition.getName());
         final Map<String, Object> criteria = Collections.singletonMap(
                 CemiColumnNames.EXTR_FILE_RUNDATE, jobRunDateString);
         final List<String> orderByFields = List.of(CemiColumnNames.ROW_INDEX);
-        return cemiSheetDao.getSheetTableRowsFormattedForFileOutput(tableMetadata, criteria, orderByFields);
+        return cemiSheetDao.getSheetTableRowsFormattedForFileOutput(tableMetadata, criteria, orderByFields);*/
     }
 
     @Override

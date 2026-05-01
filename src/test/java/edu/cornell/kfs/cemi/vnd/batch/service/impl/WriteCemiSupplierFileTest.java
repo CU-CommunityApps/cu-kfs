@@ -338,7 +338,7 @@ public class WriteCemiSupplierFileTest {
     private String generateDataTypeSql(final int jdbcType) {
         switch (jdbcType) {
             case Types.VARCHAR:
-                return "VARCHAR2(250)";
+                return "VARCHAR2(250 BYTE)";
 
             case Types.INTEGER:
                 return "NUMBER(10,0)";
@@ -347,7 +347,7 @@ public class WriteCemiSupplierFileTest {
                 return "NUMBER(14,0)";
 
             default:
-                return "VARCHAR2(250)";
+                return "VARCHAR2(250 BYTE)";
         }
     }
 
