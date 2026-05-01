@@ -6,18 +6,24 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.sql.Types;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.CellType;
@@ -32,10 +38,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.kuali.kfs.sys.KFSConstants;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetDimension;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
-import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants.ModuleNames;
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants.OutputDefinitionFileNames;
+import edu.cornell.kfs.cemi.sys.batch.dataaccess.CemiColumnMetadata;
+import edu.cornell.kfs.cemi.sys.batch.dataaccess.CemiTableMetadata;
+import edu.cornell.kfs.cemi.sys.batch.service.CemiOutputDefinitionService;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiSheetDefinition;
@@ -48,6 +60,12 @@ import edu.cornell.kfs.sys.util.CreateTestDirectories;
 import edu.cornell.kfs.sys.util.GlobalResourceLoaderUtils;
 import edu.cornell.kfs.sys.util.TestSpringContextExtension;
 
+/*
+ * Technical Note: This unit test can auto-generate some basic "CREATE TABLE" SQL statements from
+ * an output definition. To do so, uncomment and update the appropriate lines in the setUp() method,
+ * then run the test and ensure it succeeds. When done, a new SQL file will be available under
+ * the project's "test" directory.
+ */
 @CreateTestDirectories(
     baseDirectory = WriteCemiSupplierFileTest.CEMI_SUPPLIER_DIRECTORY,
     subDirectories = {
@@ -73,29 +91,30 @@ public class WriteCemiSupplierFileTest {
     static TestSpringContextExtension springContextExtension = TestSpringContextExtension.forClassPathSpringXmlFile(
             "edu/cornell/kfs/cemi/vnd/batch/service/impl/cu-spring-vnd-cemi-supplier-file-test.xml");
 
-    private CemiOutputDefinitionFileType outputDefinitionFileType;
+    private CemiOutputDefinitionService outputDefinitionService;
     private CemiOutputDefinition outputDefinition;
+    private CemiOutputDefinition outputDefinitionForSql;
 
     @BeforeEach
     void setUp() throws Exception {
-        outputDefinitionFileType = springContextExtension.getBean(VendorSpringBeans.CEMI_OUTPUT_DEFINITION_FILE_TYPE,
-                CemiOutputDefinitionFileType.class);
+        outputDefinitionService = springContextExtension.getBean(VendorSpringBeans.CEMI_OUTPUT_DEFINITION_SERVICE,
+                CemiOutputDefinitionService.class);
 
-        outputDefinition = GlobalResourceLoaderUtils.doWithResourceRetrievalDelegatedToKradResourceLoaderUtil(() -> {
-            try (
-                final InputStream definitionStream = CuCoreUtilities.getResourceAsStream(
-                        CemiVendorConstants.SUPPLIER_OUTPUT_DEFINITION_FILE_PATH);
-            ) {
-                final byte[] fileContents = IOUtils.toByteArray(definitionStream);
-                return outputDefinitionFileType.parse(fileContents);
-            }
-        });
+        outputDefinition = GlobalResourceLoaderUtils.doWithResourceRetrievalDelegatedToKradResourceLoaderUtil(
+                () -> outputDefinitionService.getCemiOutputDefinition(
+                        ModuleNames.VENDOR, OutputDefinitionFileNames.SUPPLIER));
+    
+        // Uncomment and adjust these lines if you want to generate sheet table creation SQL.
+        //outputDefinitionForSql = GlobalResourceLoaderUtils.doWithResourceRetrievalDelegatedToKradResourceLoaderUtil(
+        //        () -> outputDefinitionService.getCemiOutputDefinition(
+        //                ModuleNames.VENDOR, OutputDefinitionFileNames.SUPPLIER));
     }
 
     @AfterEach
     void tearDown() throws Exception {
+        outputDefinitionForSql = null;
         outputDefinition = null;
-        outputDefinitionFileType = null;
+        outputDefinitionService = null;
     }
 
     @Test    
@@ -114,6 +133,10 @@ public class WriteCemiSupplierFileTest {
         createAndPopulateExcelFileFromTemplate(file);
         assertFileWasGeneratedWithoutUsingZip64(file);
         assertGeneratedFileHasExpectedStructureInModifiedSheets(file);
+
+        if (outputDefinitionForSql != null) {
+            generateSqlForSheetTables();
+        }
     }
 
     private void createAndPopulateExcelFileFromTemplate(final File file) throws Exception {
@@ -276,6 +299,55 @@ public class WriteCemiSupplierFileTest {
                     "Wrong cell type at index " + columnIndex + rowAndSheetMessage);
             assertEquals(expectedValue, cell.getStringCellValue(),
                     "Wrong value at cell index " + columnIndex + rowAndSheetMessage);
+        }
+    }
+
+    private void generateSqlForSheetTables() throws Exception {
+        try (
+            final OutputStream fileStream = new FileOutputStream(
+                    BASE_TEST_DIRECTORY + outputDefinitionForSql.getName() + ".sql");
+            final OutputStreamWriter streamWriter = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8);
+            final BufferedWriter writer = new BufferedWriter(streamWriter);
+        ) {
+            for (final CemiSheetDefinition sheet : outputDefinitionForSql.getSheets()) {
+                final CemiTableMetadata tableMetadata = CemiTableMetadata.of(outputDefinitionForSql.getName(), sheet);
+                writer.write("CREATE TABLE ");
+                writer.write(CemiBaseConstants.DATA_SCHEMA_PREFIX);
+                writer.write(tableMetadata.getTableName());
+                writer.write(" (");
+                
+                final String columnList = tableMetadata.getColumns().stream()
+                        .map(this::generateColumnDefinitionSql)
+                        .collect(Collectors.joining(KFSConstants.COMMA));
+                writer.write(columnList);
+
+                writer.write(KFSConstants.NEWLINE);
+                writer.write(");");
+                writer.write(KFSConstants.NEWLINE);
+                writer.write(KFSConstants.NEWLINE);
+            }
+        }
+    }
+
+    private String generateColumnDefinitionSql(final CemiColumnMetadata columnMetadata) {
+        final String dataTypeSql = generateDataTypeSql(columnMetadata.getJdbcType());
+        return StringUtils.join(KFSConstants.NEWLINE, "    ", columnMetadata.getColumnName(),
+                KFSConstants.BLANK_SPACE, dataTypeSql);
+    }
+
+    private String generateDataTypeSql(final int jdbcType) {
+        switch (jdbcType) {
+            case Types.VARCHAR:
+                return "VARCHAR2(250)";
+
+            case Types.INTEGER:
+                return "NUMBER(10,0)";
+
+            case Types.BIGINT:
+                return "NUMBER(14,0)";
+
+            default:
+                return "VARCHAR2(250)";
         }
     }
 

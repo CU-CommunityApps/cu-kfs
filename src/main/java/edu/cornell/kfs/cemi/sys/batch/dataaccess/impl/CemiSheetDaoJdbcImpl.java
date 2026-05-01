@@ -38,7 +38,7 @@ public class CemiSheetDaoJdbcImpl extends CemiDaoBaseJdbc implements CemiSheetDa
                 .collect(Collectors.joining(CUKFSConstants.COMMA_AND_SPACE));
 
         query.append("INSERT INTO ")
-                .append(CemiBaseConstants.CEMI_SCHEMA_PREFIX).append(metadata.getTableName())
+                .append(CemiBaseConstants.DATA_SCHEMA_PREFIX).append(metadata.getTableName())
                 .append(" (").append(columnListing).append(") VALUES (");
 
         boolean firstColumn = true;
@@ -116,7 +116,7 @@ public class CemiSheetDaoJdbcImpl extends CemiDaoBaseJdbc implements CemiSheetDa
                 .collect(Collectors.joining(CUKFSConstants.COMMA_AND_SPACE));
 
         query.append("SELECT ").append(columnListing)
-                .append(" FROM ").append(CemiBaseConstants.CEMI_SCHEMA_PREFIX).append(metadata.getTableName());
+                .append(" FROM ").append(CemiBaseConstants.DATA_SCHEMA_PREFIX).append(metadata.getTableName());
     }
 
     private void appendCriteria(final CuSqlChunk query, final CemiTableMetadata metadata,
@@ -153,6 +153,8 @@ public class CemiSheetDaoJdbcImpl extends CemiDaoBaseJdbc implements CemiSheetDa
             return Types.VARCHAR;
         } else if (value instanceof Integer) {
             return Types.INTEGER;
+        } else if (value instanceof Long) {
+            return Types.BIGINT;
         } else if (value instanceof List) {
             final List<?> listValue = (List<?>) value;
             Validate.validState(!listValue.isEmpty(),

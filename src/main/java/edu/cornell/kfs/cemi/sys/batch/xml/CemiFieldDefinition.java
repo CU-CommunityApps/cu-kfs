@@ -28,8 +28,9 @@ public class CemiFieldDefinition implements Serializable {
     @XmlAttribute(name = "type", required = true)
     private CemiFieldDefinitionType type;
 
-    @XmlAttribute(name = "length")
-    private int length;
+    // Currently not in use; verify if we need this.
+    @XmlAttribute(name = "max-length")
+    private int maxLength;
 
     @XmlAttribute(name = "key")
     private String key;
@@ -37,11 +38,8 @@ public class CemiFieldDefinition implements Serializable {
     @XmlAttribute(name = "value")
     private String value;
 
-    @XmlAttribute(name = "indexes")
-    private String indexes;
-
     public CemiFieldDefinition() {
-        this.length = -1;
+        this.maxLength = -1;
     }
 
     public String getName() {
@@ -60,12 +58,12 @@ public class CemiFieldDefinition implements Serializable {
         this.type = type;
     }
 
-    public int getLength() {
-        return length;
+    public int getMaxLength() {
+        return maxLength;
     }
 
-    public void setLength(final int length) {
-        this.length = length;
+    public void setMaxLength(final int maxLength) {
+        this.maxLength = maxLength;
     }
 
     public String getKey() {
@@ -82,14 +80,6 @@ public class CemiFieldDefinition implements Serializable {
 
     public void setValue(final String value) {
         this.value = value;
-    }
-
-    public String getIndexes() {
-        return indexes;
-    }
-
-    public void setIndexes(final String indexes) {
-        this.indexes = indexes;
     }
 
     @Override

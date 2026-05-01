@@ -9,11 +9,15 @@ public final class CemiBaseConstants {
     public static final String CEMI_ENVIRONMENT_LANE_NAME = "kfs-cemi";
 
     public static final String CEMI_OUTPUT_DEFINITION_FILE_TYPE_IDENTIFIER = "cemiOutputDefinitionFileType";
+    public static final String CEMI_OUTPUT_DEFINITION_FILE_PATH_FORMAT =
+            "classpath:edu/cornell/kfs/cemi/{0}/batch/{1}.xml";
 
-    public static final String CEMI_SCHEMA = "CEMI";
-    public static final String CEMI_SCHEMA_PREFIX = CEMI_SCHEMA + KFSConstants.DELIMITER;
-    public static final String VARCHAR2_TYPE = "VARCHAR2";
-    public static final String NUMBER_TYPE = "NUMBER";
+    // Change this constant to "CEMI" when we're ready to move the sheet tables to the CEMI schema.
+    public static final String DATA_SCHEMA = "KFS";
+    public static final String DATA_SCHEMA_PREFIX = DATA_SCHEMA + KFSConstants.DELIMITER;
+    public static final String SHEET_TABLE_PREFIX = "CU_CEMI_";
+    public static final String SHEET_TABLE_SUFFIX = "_T";
+    public static final String VAL_SUFFIX = "_VAL";
     public static final int DEFAULT_SHEET_COLUMN_SIZE = 200;
     public static final int DEFAULT_SHEET_COLUMN_PRECISION = 10;
     public static final int SHEET_TABLE_BATCH_SIZE = 200;
@@ -48,8 +52,12 @@ public final class CemiBaseConstants {
         public static final String XLSX = ".xlsx";
     }
 
-    public static final class OutputDefinitionNames {
-        public static final String SUPPLIER = "Supplier";
+    public static final class ModuleNames {
+        public static final String VENDOR = "vnd";
+    }
+
+    public static final class OutputDefinitionFileNames {
+        public static final String SUPPLIER = "CemiSupplierExtractFileOutputDefinition";
     }
 
 }

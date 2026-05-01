@@ -6,7 +6,13 @@
 
     There are two main types of "field" elements:
 
-    [1] POJO-derived value - Has the "STRING" type and uses the "key" attribute to specify the POJO property.
+    [1] POJO-derived value - Has one of the following types and uses the "key" attribute to specify the POJO property:
+        * STRING - Represents a string property
+        * STRING_ENCRYPTED - Represents a string property that should be encrypted in storage
+        * STRING_DB_ONLY - Represents a string property that should be included in storage but excluded in the Excel output
+        * BIGINT_DB_ONLY - Represents a BIGINT property that should be included in storage but excluded in the Excel output
+        * INTEGER_DB_ONLY - Represents an INTEGER property that should be included in storage but excluded in the Excel output
+
     [2] Literal value - Has the "STATIC" type and uses the "value" attribute to specify the literal. Can be empty.
 
     NOTE: This XML file doesn't keep track of POJO classes; it only needs to know POJO property names/paths.

@@ -21,7 +21,7 @@ public final class CemiColumnMetadata implements Serializable {
 
     public CemiColumnMetadata(final String columnName, final String dtoFieldName, final int jdbcType,
             final boolean encrypted, final boolean includedInFileOutput) {
-        Validate.isTrue(CemiUtils.isNameFormattedForUseAsDbIdentifier(columnName), "columnName is blank or malformed");
+        Validate.isTrue(CemiUtils.isFormattedAsValidIdentifier(columnName), "columnName is blank or malformed");
         Validate.notBlank(dtoFieldName, "dtoFieldName cannot be blank");
         this.columnName = columnName;
         this.dtoFieldName = dtoFieldName;
@@ -33,7 +33,7 @@ public final class CemiColumnMetadata implements Serializable {
     }
 
     public CemiColumnMetadata(final String columnName, final String staticValue) {
-        Validate.isTrue(CemiUtils.isNameFormattedForUseAsDbIdentifier(columnName), "columnName is blank or malformed");
+        Validate.isTrue(CemiUtils.isFormattedAsValidIdentifier(columnName), "columnName is blank or malformed");
         Validate.notNull(staticValue, "staticValue cannot be null");
         this.columnName = columnName;
         this.dtoFieldName = null;

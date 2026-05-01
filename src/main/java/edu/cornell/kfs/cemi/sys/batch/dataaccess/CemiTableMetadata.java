@@ -29,8 +29,8 @@ public final class CemiTableMetadata implements Serializable {
 
     public CemiTableMetadata(final String sheetName, final String tableName,
             final List<CemiColumnMetadata> columns) {
-        Validate.isTrue(CemiUtils.isNameFormattedForUseAsDbIdentifier(sheetName), "sheetName is blank or malformed");
-        Validate.isTrue(CemiUtils.isNameFormattedForUseAsDbIdentifier(tableName), "tableName is blank or malformed");
+        Validate.isTrue(CemiUtils.isFormattedAsValidIdentifier(sheetName), "sheetName is blank or malformed");
+        Validate.isTrue(CemiUtils.isFormattedAsValidIdentifier(tableName), "tableName is blank or malformed");
         Validate.isTrue(CollectionUtils.isNotEmpty(columns), "columns list cannot be null or empty");
         this.sheetName = sheetName;
         this.tableName = tableName;

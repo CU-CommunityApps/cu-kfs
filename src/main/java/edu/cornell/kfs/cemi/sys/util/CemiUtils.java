@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiFieldDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiSheetDefinition;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -29,7 +31,9 @@ public final class CemiUtils {
 
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
     private static final Pattern NON_WORD_PATTERN = Pattern.compile("\\W+");
-    private static final Pattern DB_NAME_PATTERN = Pattern.compile("^[A-Za-z]\\w*$");
+    private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("^[A-Za-z]\\w*$");
+
+    private static final Set<String> RESERVED_WORDS = Set.of("STATE");
 
     private static final String generateDateTimeInConsistentFormat(final LocalDateTime dateTime) {
         return FILE_DATE_TIME_FORMATTER.format(dateTime);
@@ -115,12 +119,14 @@ public final class CemiUtils {
     }
 
     public static String formatSheetTableName(final String prefix, final String name) {
-        final String fullName = StringUtils.join(prefix, CUKFSConstants.UNDERSCORE, name);
+        final String fullName = StringUtils.join(CemiBaseConstants.SHEET_TABLE_PREFIX, prefix,
+                CUKFSConstants.UNDERSCORE, name, CemiBaseConstants.SHEET_TABLE_SUFFIX);
         return formatNameForDatabase(fullName);
     }
 
     public static String formatSheetColumnName(final String name) {
-        return formatNameForDatabase(name);
+        final String columnName = formatNameForDatabase(name);
+        return RESERVED_WORDS.contains(columnName) ? columnName + CemiBaseConstants.VAL_SUFFIX : columnName;
     }
 
     public static String formatNameForDatabase(final String name) {
@@ -131,8 +137,8 @@ public final class CemiUtils {
         return result;
     }
 
-    public static boolean isNameFormattedForUseAsDbIdentifier(final String name) {
-        return StringUtils.isNotBlank(name) && DB_NAME_PATTERN.matcher(name).matches();
+    public static boolean isFormattedAsValidIdentifier(final String name) {
+        return StringUtils.isNotBlank(name) && IDENTIFIER_PATTERN.matcher(name).matches();
     }
 
 }

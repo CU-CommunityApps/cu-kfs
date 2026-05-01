@@ -3,29 +3,32 @@ package edu.cornell.kfs.cemi.sys.batch.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.util.Map;
+import java.text.MessageFormat;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
 import edu.cornell.kfs.cemi.sys.batch.service.CemiOutputDefinitionService;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
+import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 
 public class CemiOutputDefinitionServiceImpl implements CemiOutputDefinitionService {
 
     private CemiOutputDefinitionFileType cemiOutputDefinitionFileType;
-    private Map<String, String> definitionFileMappings;
 
-    @Cacheable(cacheNames = CemiOutputDefinition.CACHE_NAME, key = "'{getCemiOutputDefinition}definitionName=' + #p0")
+    @Cacheable(cacheNames = CemiOutputDefinition.CACHE_NAME,
+            key = "'{getCemiOutputDefinition}moduleName=' + #p0 + ',definitionName=' + #p1")
     @Override
-    public CemiOutputDefinition getCemiOutputDefinition(final String definitionName) {
-        Validate.notBlank(definitionName, "definitionName cannot be blank");
-        final String definitionFile = definitionFileMappings.get(definitionName);
-        Validate.notBlank(definitionFile, "Unrecognized definition: %s", definitionName);
+    public CemiOutputDefinition getCemiOutputDefinition(final String moduleName, final String definitionName) {
+        Validate.isTrue(CemiUtils.isFormattedAsValidIdentifier(moduleName), "moduleName is blank or malformed");
+        Validate.isTrue(CemiUtils.isFormattedAsValidIdentifier(definitionName), "definitionName is blank or malformed");
+        final String definitionFile = MessageFormat.format(CemiBaseConstants.CEMI_OUTPUT_DEFINITION_FILE_PATH_FORMAT,
+                moduleName, definitionName);
         return readOutputDefinitionFromFile(definitionFile);
     }
 
@@ -48,10 +51,6 @@ public class CemiOutputDefinitionServiceImpl implements CemiOutputDefinitionServ
 
     public void setCemiOutputDefinitionFileType(final CemiOutputDefinitionFileType cemiOutputDefinitionFileType) {
         this.cemiOutputDefinitionFileType = cemiOutputDefinitionFileType;
-    }
-
-    public void setDefinitionFileMappings(final Map<String, String> definitionFileMappings) {
-        this.definitionFileMappings = definitionFileMappings;
     }
 
 }

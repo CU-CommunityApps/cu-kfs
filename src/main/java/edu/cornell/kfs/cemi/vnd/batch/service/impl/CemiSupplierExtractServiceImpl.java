@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -36,8 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants.FileExtensions;
-import edu.cornell.kfs.cemi.sys.CemiBaseConstants.OutputDefinitionNames;
-import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants.ModuleNames;
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants.OutputDefinitionFileNames;
 import edu.cornell.kfs.cemi.sys.batch.dataaccess.CemiSheetDao;
 import edu.cornell.kfs.cemi.sys.batch.service.CemiOutputDefinitionService;
 import edu.cornell.kfs.cemi.sys.batch.service.CemiTableMetadataService;
@@ -224,7 +223,7 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
     }
 
     private CemiOutputDefinition getOutputDefinitionForSupplierExtract() {
-        return cemiOutputDefinitionService.getCemiOutputDefinition(OutputDefinitionNames.SUPPLIER);
+        return cemiOutputDefinitionService.getCemiOutputDefinition(ModuleNames.VENDOR, OutputDefinitionFileNames.SUPPLIER);
     }
 
     private boolean shouldCopySupplierExtractFileToOutboundDirectory() {

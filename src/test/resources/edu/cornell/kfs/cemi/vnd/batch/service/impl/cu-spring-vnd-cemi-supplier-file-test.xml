@@ -26,6 +26,8 @@
             <set merge="true">
                 <idref bean="cemiOutputDefinitionFileType"/>
                 <idref bean="cemiOutputDefinitionFileType-parentBean"/>
+                <idref bean="cemiOutputDefinitionService"/>
+                <idref bean="cemiOutputDefinitionService-parentBean"/>
                 <idref bean="dateTimeService"/>
             </set>
         </property>
