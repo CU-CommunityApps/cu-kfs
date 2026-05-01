@@ -1,5 +1,8 @@
 package edu.cornell.kfs.cemi.vnd.dataaccess.impl;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.stream.Stream;
 
 import org.apache.ojb.broker.query.Criteria;
@@ -60,6 +63,12 @@ public class CemiVendorOrmDaoOjbImpl extends CuVendorDaoOjb implements CemiVendo
     // This was added to reduce processing time for local development during CEMI project work.
     private static boolean getBooleanProperty(String propertyName) {
         return KRADServiceLocator.getKualiConfigurationService().getPropertyValueAsBoolean(propertyName);
+    }
+
+    @Override
+    public Iterator<VendorDetail> findVendorsWithRemitAddresses() {
+        // TODO Auto-generated method stub
+        return Collections.emptyIterator();
     }
     
 }

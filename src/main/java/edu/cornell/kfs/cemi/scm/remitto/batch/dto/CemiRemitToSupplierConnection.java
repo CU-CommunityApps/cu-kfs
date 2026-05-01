@@ -1,4 +1,4 @@
-package edu.cornell.kfs.cemi.vnd.batch.dto;
+package edu.cornell.kfs.cemi.scm.remitto.batch.dto;
 
 import java.text.MessageFormat;
 import java.util.List;

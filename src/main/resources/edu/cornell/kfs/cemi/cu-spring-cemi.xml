@@ -32,7 +32,7 @@
             <value>${reports.directory}/cemi</value>
             <value>${staging.directory}/cemi</value>
             <value>${staging.directory}/cemi/vnd/cemiSupplierExtract</value>
-            <value>${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract</value>
+            <value>${staging.directory}/cemi/scm/remitto/cemiRemitToSupplierExtract</value>
             <value>${staging.directory}/cemi/conversions/outbound</value>
           </list>
         </property>
@@ -104,16 +104,16 @@
     </bean>
 
     <bean id="createCemiRemitToSupplierExtractStep"
-          class="edu.cornell.kfs.cemi.vnd.batch.CreateCemiRemitToSupplierExtractStep"
+          class="edu.cornell.kfs.cemi.scm.remitto.batch.CreateCemiRemitToSupplierExtractStep"
           parent="step"
           p:cemiRemitToSupplierExtractService-ref="cemiRemitToSupplierExtractService"/>
 
     <bean id="cemiRemitToSupplierExtractService" parent="cemiRemitToSupplierExtractService-parentBean"/>
     <bean id="cemiRemitToSupplierExtractService-parentBean"
           abstract="true"
-          class="edu.cornell.kfs.cemi.vnd.batch.service.impl.CemiRemitToSupplierExtractServiceImpl"
+          class="edu.cornell.kfs.cemi.scm.remitto.batch.service.impl.CemiRemitToSupplierExtractServiceImpl"
           c:environment-ref="environment"
-          p:remitToSupplierFileCreationDirectory="${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract"
+          p:remitToSupplierFileCreationDirectory="${staging.directory}/cemi/scm/remitto/cemiRemitToSupplierExtract"
           p:remitToSupplierFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
           p:cemiVendorOrmDao-ref="cemiVendorOrmDao"
           p:cemiVendorDao-ref="cemiVendorDao"
