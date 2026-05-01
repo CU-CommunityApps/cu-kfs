@@ -1,4 +1,4 @@
-package edu.cornell.kfs.cemi.vnd.batch.service.impl;
+package edu.cornell.kfs.cemi.scm.remitto.batch.service.impl;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -20,18 +21,20 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.springframework.core.env.Environment;
 
+import edu.cornell.kfs.cemi.scm.remitto.batch.dto.CemiRemitToSupplierConnection;
+import edu.cornell.kfs.cemi.scm.remitto.batch.service.CemiRemitToSupplierExtractService;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
+import edu.cornell.kfs.cemi.vnd.CemiVendorParameterConstants;
 import edu.cornell.kfs.cemi.vnd.batch.CreateCemiSupplierExtractStep;
-import edu.cornell.kfs.cemi.vnd.batch.dto.CemiRemitToSupplierConnection;
-import edu.cornell.kfs.cemi.vnd.batch.service.CemiRemitToSupplierExtractService;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorDao;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorOrmDao;
 
@@ -47,9 +50,9 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private static final String REMIT_TO_SUPPLIER_TEMPLATE_FILE = "edu/cornell/kfs/cemi/vnd/batch/remitToSupplier/Remit_To_Supplier.xlsx";
+    private static final String REMIT_TO_SUPPLIER_TEMPLATE_FILE = "edu/cornell/kfs/cemi/scm/remitto/batch/Remit_To_Supplier.xlsx";
     private static final String REMIT_TO_SUPPLIER_SHEET_NAME = "Remit_To_Supplier";
-    private static final int DATA_START_ROW = 10; // Row 11 in Excel (0-based)
+    private static final int DATA_START_ROW = 6; // Row 7 in Excel (0-based)
     private static final int START_COLUMN_INDEX = 0;
 
     private static final String OUTPUT_FILE_NAME_FORMAT = "Remit_To_Supplier_{0}.xlsx";
@@ -63,8 +66,6 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
     private BusinessObjectService businessObjectService;
     private ParameterService parameterService;
 
-    private LocalDateTime vendorActivityFromDate;
-    private LocalDateTime vendorActivityToDate;
     private DecimalFormat supplierIdFormatter;
 
     public CemiRemitToSupplierExtractServiceImpl(final Environment environment) {
@@ -74,30 +75,18 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
 
     @Override
     public void resetState() {
-        this.vendorActivityFromDate = null;
-        this.vendorActivityToDate = null;
         LOG.debug("resetState, Service state has been reset");
     }
 
     @Override
     public void initializeExtractDateRangeSettings() {
-        final String fromDateString = parameterService.getParameterValueAsString(
-                CreateCemiSupplierExtractStep.class, CemiVendorConstants.Parameters.VENDOR_ACTIVITY_FROM_DATE);
-        final String toDateString = parameterService.getParameterValueAsString(
-                CreateCemiSupplierExtractStep.class, CemiVendorConstants.Parameters.VENDOR_ACTIVITY_TO_DATE);
-
-        this.vendorActivityFromDate = CemiVendorConstants.parseVendorActivityDate(fromDateString);
-        this.vendorActivityToDate = CemiVendorConstants.parseVendorActivityDate(toDateString);
-
-        LOG.info("initializeExtractDateRangeSettings, Using date range: {} to {}", 
-                vendorActivityFromDate, vendorActivityToDate);
     }
 
     @Override
     public void generateRemitToSupplierExtractFile(final LocalDateTime jobRunDate) {
         LOG.info("generateRemitToSupplierExtractFile, Starting Remit To Supplier extract generation");
 
-        final boolean maskSensitiveData = determineMaskSensitiveDataSetting();
+        final boolean maskSensitiveData = shouldMaskCemiSensitiveData();
         final String outputFileName = buildOutputFileName(jobRunDate);
         final Path outputPath = Paths.get(remitToSupplierFileCreationDirectory, outputFileName);
 
@@ -109,8 +98,7 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
                 throw new IllegalStateException("Sheet '" + REMIT_TO_SUPPLIER_SHEET_NAME + "' not found in template");
             }
 
-            final Iterator<VendorDetail> vendorIterator = cemiVendorOrmDao.findVendorsWithRemitAddresses(
-                    vendorActivityFromDate, vendorActivityToDate);
+            final Iterator<VendorDetail> vendorIterator = cemiVendorOrmDao.findVendorsWithRemitAddresses();
 
             int rowIndex = DATA_START_ROW;
             int vendorCount = 0;
@@ -172,17 +160,30 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
         final String dateStamp = jobRunDate.format(FILE_DATE_FORMAT);
         return OUTPUT_FILE_NAME_FORMAT.replace("{0}", dateStamp);
     }
+    
+    private boolean isCemiSensitiveDataSetToUnmask() {
+        String maskingParameterValue =  parameterService.getParameterValueAsString(
+                CreateCemiSupplierExtractStep.class, CemiVendorParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
+        return StringUtils.equalsIgnoreCase(maskingParameterValue, CemiBaseConstants.UNMASK);
+    }
 
-    private boolean determineMaskSensitiveDataSetting() {
-        final String currentEnvironment = environment.getProperty(CemiBaseConstants.CEMI_ENVIRONMENT_PROPERTY);
-        return !StringUtils.equalsIgnoreCase(CemiBaseConstants.CEMI_ENVIRONMENT_VALUE, currentEnvironment);
+    private boolean isCemiEnvironment() {
+        return StringUtils.equalsIgnoreCase(environment.getLane(), CemiBaseConstants.CEMI_ENVIRONMENT_LANE_NAME);
+    }
+
+    private boolean shouldUnmaskCemiSensitiveData() {
+        return isCemiEnvironment() && isCemiSensitiveDataSetToUnmask();
+    }
+
+    private boolean shouldMaskCemiSensitiveData() {
+        return !shouldUnmaskCemiSensitiveData();
     }
 
     private List<VendorAddress> findRemitAddressesForVendor(final VendorDetail vendor) {
         return vendor.getVendorAddresses().stream()
                 .filter(VendorAddress::isActive)
-                .filter(addr -> CemiVendorConstants.AddressTypeCodes.REMIT.equals(addr.getVendorAddressTypeCode()))
-                .toList();
+                .filter(addr -> VendorConstants.AddressTypes.REMIT.equals(addr.getVendorAddressTypeCode()))
+                .collect(Collectors.toList());
     }
 
     private CemiRemitToSupplierConnection buildConnectionFromVendorAddress(
