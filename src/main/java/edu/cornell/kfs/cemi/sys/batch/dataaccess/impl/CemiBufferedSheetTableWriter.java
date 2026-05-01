@@ -39,7 +39,7 @@ public class CemiBufferedSheetTableWriter implements Closeable {
         final SheetBuffer sheetBuffer = sheetBuffers.get(sheetName);
         Validate.isTrue(sheetBuffer != null, "Unrecognized sheet name: %s", sheetName);
         Validate.notNull(rowObject, "rowObject cannot be null");
-        sheetBuffer.rowObjects.add(sheetBuffer);
+        sheetBuffer.rowObjects.add(rowObject);
         if (sheetBuffer.rowObjects.size() >= CemiBaseConstants.SHEET_TABLE_BATCH_SIZE) {
             flushToDatabase(sheetBuffer);
         }
