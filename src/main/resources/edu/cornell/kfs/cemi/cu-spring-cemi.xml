@@ -48,7 +48,14 @@
           abstract="true"
           class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiVendorOrmDaoOjbImpl"
           parent="vendorDaoOjb"/>
-    
+
+    <bean id="cemiSheetDao" parent="cemiSheetDao-parentBean"/>
+    <bean id="cemiSheetDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.batch.dataaccess.impl.CemiSheetDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:encryptionService-ref="encryptionService"/>
+
     <bean id="cemiModuleService" parent="cemiModuleService-parentBean"/>
     <bean id="cemiModuleService-parentBean" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl" abstract="true"
           p:moduleConfiguration-ref="cemiModuleConfiguration"/>
@@ -75,11 +82,17 @@
           p:supplierFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
           p:cemiVendorOrmDao-ref="cemiVendorOrmDao"
           p:cemiVendorDao-ref="cemiVendorDao"
-          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:cemiSheetDao-ref="cemiSheetDao"
+          p:cemiOutputDefinitionService-ref="cemiOutputDefinitionService"
+          p:cemiTableMetadataService-ref="cemiTableMetadataService"
           p:businessObjectService-ref="businessObjectService"
           p:parameterService-ref="parameterService"
           p:dateTimeService-ref="dateTimeService"/>
 
+    <bean id="cemiTableMetadataService" parent="cemiTableMetadataService-parentBean"/>
+    <bean id="cemiTableMetadataService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.batch.service.impl.CemiTableMetadataServiceImpl"/>
 
     <bean id="cemiOutputDefinitionFileType" parent="cemiOutputDefinitionFileType-parentBean"/>
     <bean id="cemiOutputDefinitionFileType-parentBean"

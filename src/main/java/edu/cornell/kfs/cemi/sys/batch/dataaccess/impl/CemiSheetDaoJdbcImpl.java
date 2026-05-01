@@ -192,4 +192,8 @@ public class CemiSheetDaoJdbcImpl extends CemiDaoBaseJdbc implements CemiSheetDa
         return cellValues.build().toArray(String[]::new);
     }
 
+    public void setEncryptionService(final EncryptionService encryptionService) {
+        this.encryptionService = encryptionService;
+    }
+
 }
