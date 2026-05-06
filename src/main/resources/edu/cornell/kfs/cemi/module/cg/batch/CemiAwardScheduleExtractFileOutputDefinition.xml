@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This is the main file for defining how the Award Schedule data will map to the Award Schedule spreadsheet/workbook.
+
+    Each "sheet" element should correspond to one of the sheets/tabs in the workbook.
+
+    There are two main types of "field" elements:
+
+    [1] POJO-derived value - Has the "STRING" type and uses the "key" attribute to specify the POJO property.
+    [2] Literal value - Has the "STATIC" type and uses the "value" attribute to specify the literal. Can be empty.
+
+    NOTE: This XML file doesn't keep track of POJO classes; it only needs to know POJO property names/paths.
+ -->
+<cemiOutputDefinition>
+
+    <sheet name="Award Schedule" num-header-rows="5" start-column-index="1">
+        <field name="Spreadsheet Key" type="STRING" key="spreadsheetKey"/>
+        <field name="Add Only" type="STRING" key="addOnly"/>
+        <field name="Award Schedule" type="STRING" key="awardSchedule"/>
+        <field name="Award Schedule Reference ID" type="STRING" key="awardScheduleReferenceId"/>
+        <field name="Award Schedule Name" type="STRING" key="awardScheduleName"/>
+        <field name="Award Posting Interval Group" type="STRING" key="awardPostingIntervalGroup"/>
+        <field name="Row ID" type="STRING" key="awardPeriodDataRowId"/> 
+        <field name="Award Period Reference ID" type="STRING" key="awardPeriodReferenceId"/>
+        <field name="Award Period Name" type="STRING" key="awardPeriodName"/>
+        <field name="Award Period Number" type="STRING" key="awardPeriodNumber"/>
+        <field name="Row ID" type="STRING" key="awardIntervalRowId"/> 
+        <field name="Award Posting Interval" type="STRING" key="awardPostingInterval"/>
+        <field name="Award Posting Interval ID" type="STRING" key="awardPostingIntervalId"/>
+        <field name="Award Posting Interval Name" type="STRING" key="awardPostingIntervalName"/>
+        <field name="Award Interval Start Date" type="STRING" key="awardIntervalStartDate"/>
+        <field name="Award Interval End Date" type="STRING" key="awardIntervalEndDate"/>
+        <field name="Is Award Contract Start Date" type="STRING" key="isAwardContractStartDate"/>
+        <field name="Is Award Contract End Date" type="STRING" key="isAwardContractEndDate"/>
+    </sheet>
+
+</cemiOutputDefinition>
