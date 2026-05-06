@@ -15,7 +15,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.cemi.module.cg.CemiCGConstants;
+import edu.cornell.kfs.cemi.module.cg.CemiAwardScheduleConstants;
 import edu.cornell.kfs.cemi.module.cg.batch.dto.CemiAwardSchedule;
 import edu.cornell.kfs.cemi.module.cg.batch.service.CemiAwardScheduleDataBuilder;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleDao;
@@ -76,11 +76,11 @@ public abstract class CemiAwardScheduleDataBuilderBase implements CemiAwardSched
     }
     
     private static String buildSpreadsheetKey(final String awardProposalNumber) {
-        return MessageFormat.format(CemiCGConstants.SPREADSHEET_KEY_FORMAT, awardProposalNumber);
+        return MessageFormat.format(CemiAwardScheduleConstants.SPREADSHEET_KEY_FORMAT, awardProposalNumber);
     }
     
     private static String buildAwardScheduleReferenceId(final String awardProposalNumber) {
-        return MessageFormat.format(CemiCGConstants.AWARD_SCHEDULE_REFERENCE_ID_FORMAT, awardProposalNumber);
+        return MessageFormat.format(CemiAwardScheduleConstants.AWARD_SCHEDULE_REFERENCE_ID_FORMAT, awardProposalNumber);
     }
     
     private String determineFormattedDate(Date dateToFormat) {
@@ -90,7 +90,7 @@ public abstract class CemiAwardScheduleDataBuilderBase implements CemiAwardSched
     }
     
     protected void writeAwardScheduleRow(final CemiAwardSchedule awardSchedule) throws IOException {
-        writeDataToIntermediateStorage(CemiCGConstants.AwardScheduleExtractSheets.AWARD_SCHEDULE, awardSchedule);
+        writeDataToIntermediateStorage(CemiAwardScheduleConstants.AwardScheduleExtractSheets.AWARD_SCHEDULE, awardSchedule);
     }
     
     protected void recordAwardScheduleIdentifiersInLegacyAssociationTable(final String spreadsheetKey,

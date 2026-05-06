@@ -7,7 +7,7 @@ import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.cemi.module.cg.CemiCGConstants;
+import edu.cornell.kfs.cemi.module.cg.CemiAwardScheduleConstants;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
@@ -45,15 +45,15 @@ public class CemiAwardSchedule {
         this.awardSchedule = CemiBaseConstants.EMPTY_STRING;
         this.awardScheduleReferenceId = awardScheduleReferenceId;
         this.awardScheduleName = determineAwardScheduleName(award.getAwardProjectTitle());
-        this.awardPostingIntervalGroup = CemiCGConstants.BUDGET_PERIOD;
-        this.awardPeriodDataRowId = CemiCGConstants.NUMERIC_ONE;
+        this.awardPostingIntervalGroup = CemiAwardScheduleConstants.BUDGET_PERIOD;
+        this.awardPeriodDataRowId = CemiAwardScheduleConstants.NUMERIC_ONE;
         this.awardPeriodReferenceId = buildAwardPeriodReferenceId(award.getProposalNumber());
-        this.awardPeriodName = CemiCGConstants.CINV_PERIOD;
-        this.awardPeriodNumber = CemiCGConstants.NUMERIC_ONE;
-        this.awardIntervalRowId = CemiCGConstants.NUMERIC_ONE;
+        this.awardPeriodName = CemiAwardScheduleConstants.CINV_PERIOD;
+        this.awardPeriodNumber = CemiAwardScheduleConstants.NUMERIC_ONE;
+        this.awardIntervalRowId = CemiAwardScheduleConstants.NUMERIC_ONE;
         this.awardPostingInterval = CemiBaseConstants.EMPTY_STRING;
         this.awardPostingIntervalId = buildAwardPostingIntervalId(award.getProposalNumber());
-        this.awardPostingIntervalName = CemiCGConstants.BUDGET_PERIOD;
+        this.awardPostingIntervalName = CemiAwardScheduleConstants.AWARD_PERIOD;
         this.awardIntervalStartDate = awardIntervalStartDate;
         this.awardIntervalEndDate = awardIntervalEndDate;
         this.isAwardContractStartDate = CemiBaseConstants.YES;
@@ -61,11 +61,11 @@ public class CemiAwardSchedule {
     }
     
     private static String buildAwardPeriodReferenceId(final String awardProposalNumber) {
-        return MessageFormat.format(CemiCGConstants.AWARD_PERIOD_REFERENCE_ID_FORMAT, awardProposalNumber);
+        return MessageFormat.format(CemiAwardScheduleConstants.AWARD_PERIOD_REFERENCE_ID_FORMAT, awardProposalNumber);
     }
     
     private static String buildAwardPostingIntervalId(final String awardProposalNumber) {
-        return MessageFormat.format(CemiCGConstants.AWARD_POSTING_INTERVAL_ID_FORMAT, awardProposalNumber);
+        return MessageFormat.format(CemiAwardScheduleConstants.AWARD_POSTING_INTERVAL_ID_FORMAT, awardProposalNumber);
     }
     
     private String determineAwardScheduleName(String awardScheduleName) {

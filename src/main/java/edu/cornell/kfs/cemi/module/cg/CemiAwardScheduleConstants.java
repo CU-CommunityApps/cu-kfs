@@ -1,6 +1,6 @@
 package edu.cornell.kfs.cemi.module.cg;
 
-public final class CemiCGConstants {
+public final class CemiAwardScheduleConstants {
     
     /* Award Schedule */
     public static final String SPREADSHEET_KEY_FORMAT = "AS_ITH_{0}";

@@ -25,8 +25,8 @@ import org.kuali.kfs.module.cg.businessobject.Award;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.cornell.kfs.cemi.module.cg.CemiCGConstants;
-import edu.cornell.kfs.cemi.module.cg.CemiCGParameterConstants;
+import edu.cornell.kfs.cemi.module.cg.CemiAwardScheduleConstants;
+import edu.cornell.kfs.cemi.module.cg.CemiAwardScheduleParameterConstants;
 import edu.cornell.kfs.cemi.module.cg.batch.CreateCemiAwardScheduleExtractStep;
 import edu.cornell.kfs.cemi.module.cg.batch.service.CemiAwardScheduleExtractService;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleDao;
@@ -108,16 +108,16 @@ public class CemiAwardScheduleExtractServiceImpl implements CemiAwardScheduleExt
         try {
             LOG.info("generateAwardScheduleExtractFile, Starting creation of CEMI Award Schedule Extract file...");
             final String newFileName = CemiUtils.generateFileNameContainingDateTime(
-                    jobRunDate, CemiCGConstants.AWARD_SCHEDULE_EXTRACT_FILENAME_PREFIX, FileExtensions.XLSX);
+                    jobRunDate, CemiAwardScheduleConstants.AWARD_SCHEDULE_EXTRACT_FILENAME_PREFIX, FileExtensions.XLSX);
             final File tempFile = qualifyAndGetFilePath(awardScheduleFileCreationDirectory, newFileName);
             final File finalFile = qualifyAndGetFilePath(
-                    awardScheduleFileOutboundDirectory, CemiCGConstants.AWARD_SCHEDULE_EXTRACT_PLAIN_FILENAME);
+                    awardScheduleFileOutboundDirectory, CemiAwardScheduleConstants.AWARD_SCHEDULE_EXTRACT_PLAIN_FILENAME);
             Validate.validState(!tempFile.exists(), "Temporary file already exists: %s", newFileName);
 
             createAndPopulateAwardScheduleExtractFile(tempFile, jobRunDate);
 
             if (shouldCopyAwardScheduleExtractFileToOutboundDirectory()) {
-                LOG.info("generateAwardScheduleExtractFile, Copying file to outbound folder under the {} name...", CemiCGConstants.AWARD_SCHEDULE_EXTRACT_PLAIN_FILENAME);
+                LOG.info("generateAwardScheduleExtractFile, Copying file to outbound folder under the {} name...", CemiAwardScheduleConstants.AWARD_SCHEDULE_EXTRACT_PLAIN_FILENAME);
                 copyAwardScheduleExtractFileToOutboundDirectory(tempFile, finalFile);
             } else {
                 LOG.info("generateAwardScheduleExtractFile, Copying of the file to the outbound folder has been disabled. "
@@ -141,7 +141,7 @@ public class CemiAwardScheduleExtractServiceImpl implements CemiAwardScheduleExt
 
         try (
             final InputStream templateFileStream = CuCoreUtilities.getResourceAsStream(
-                    CemiCGConstants.AWARD_SCHEDULE_TEMPLATE_FILE_PATH);
+                    CemiAwardScheduleConstants.AWARD_SCHEDULE_TEMPLATE_FILE_PATH);
             final CemiExcelWriter writer = new CemiExcelWriter(outputDefinition, templateFileStream, file);
         ) {
             // Replace this appender with a temp table implementation when ready.
@@ -156,7 +156,7 @@ public class CemiAwardScheduleExtractServiceImpl implements CemiAwardScheduleExt
     private CemiOutputDefinition getOutputDefinitionForAwardScheduleExtract() throws IOException {
         try (
             final InputStream inputStream = CuCoreUtilities.getResourceAsStream(
-                    CemiCGConstants.AWARD_SCHEDULE_OUTPUT_DEFINITION_FILE_PATH);
+                    CemiAwardScheduleConstants.AWARD_SCHEDULE_OUTPUT_DEFINITION_FILE_PATH);
         ) {
             final byte[] fileContents = IOUtils.toByteArray(inputStream);
             return cemiOutputDefinitionFileType.parse(fileContents);
@@ -165,7 +165,7 @@ public class CemiAwardScheduleExtractServiceImpl implements CemiAwardScheduleExt
 
     private boolean shouldCopyAwardScheduleExtractFileToOutboundDirectory() {
         return parameterService.getParameterValueAsBoolean(
-                CreateCemiAwardScheduleExtractStep.class, CemiCGParameterConstants.COPY_CEMI_AWARD_SCHEDULE_FILE_TO_OUTBOUND_FOLDER);
+                CreateCemiAwardScheduleExtractStep.class, CemiAwardScheduleParameterConstants.COPY_CEMI_AWARD_SCHEDULE_FILE_TO_OUTBOUND_FOLDER);
     }
 
     private boolean isCemiSensitiveDataSetToUnmask() {
