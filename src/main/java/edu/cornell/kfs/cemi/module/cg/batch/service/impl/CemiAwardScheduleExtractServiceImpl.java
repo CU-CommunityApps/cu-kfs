@@ -94,7 +94,7 @@ public class CemiAwardScheduleExtractServiceImpl implements CemiAwardScheduleExt
             // Replace this builder with a temp table implementation when ready.
             final CemiAwardScheduleDataBuilderCsvImpl dataBuilder = new CemiAwardScheduleDataBuilderCsvImpl(
                     getOutputDefinitionForAwardScheduleExtract(), getCemiAwardScheduleDao(), getDateTimeService(),
-                    jobRunDate, getAwardScheduleFileCreationDirectory(), shouldMaskCemiSensitiveData());
+                    getBusinessObjectService(), jobRunDate, getAwardScheduleFileCreationDirectory(), shouldMaskCemiSensitiveData());
             final Stream<Award> awards = getCemiAwardScheduleOrmDao().getAwardsForCemiAwardScheduleExtractAsCloseableStream();
         ) {
             final Iterator<Award> awardsIterator = awards.iterator();
