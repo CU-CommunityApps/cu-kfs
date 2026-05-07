@@ -3,7 +3,6 @@ package edu.cornell.kfs.cemi.module.cg.batch.dto;
 import java.text.MessageFormat;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSConstants;
 
@@ -34,8 +33,6 @@ public class CemiAwardSchedule {
     private String awardIntervalEndDate;
     private String isAwardContractStartDate;
     private String isAwardContractEndDate;
-    
-    private DateTimeService dateTimeService;
     
     public CemiAwardSchedule (final Award award, String spreadsheetKey, String awardScheduleReferenceId,
             String awardIntervalStartDate, String awardIntervalEndDate, boolean maskSensitiveData) {
@@ -230,14 +227,6 @@ public class CemiAwardSchedule {
 
     public void setIsAwardContractEndDate(String isAwardContractEndDate) {
         this.isAwardContractEndDate = isAwardContractEndDate;
-    }
-
-    public DateTimeService getDateTimeService() {
-        return dateTimeService;
-    }
-
-    public void setDateTimeService(DateTimeService dateTimeService) {
-        this.dateTimeService = dateTimeService;
     }
     
 }
