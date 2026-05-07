@@ -23,5 +23,12 @@ public final class CemiBaseConstants {
     public static final class FileExtensions {
         public static final String XLSX = ".xlsx";
     }
+
+    public static final String YES = "Y";
+    
+    public static final String EMPTY_STRING = "";
+    
+    // Date Formats
+    public static final String DATE_FORMAT_yyyy_MM_dd = "yyyy-MM-dd";
     
 }
