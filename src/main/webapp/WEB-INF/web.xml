@@ -112,7 +112,7 @@
     </filter>
     <filter>
         <filter-name>PaymentRequestAuthFilter</filter-name>
-        <filter-class>edu.cornell.kfs.module.purap.web.filter.PaymentRequestAuthFilter</filter-class>
+        <filter-class>edu.cornell.kfs.sys.web.filter.CuDelegatingFilterProxy</filter-class>
     </filter>
 
     <filter>
