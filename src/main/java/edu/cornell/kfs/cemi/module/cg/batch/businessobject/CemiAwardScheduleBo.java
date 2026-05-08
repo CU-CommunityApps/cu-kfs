@@ -12,7 +12,7 @@ public class CemiAwardScheduleBo extends PersistableBusinessObjectBase implement
     
     private static final long serialVersionUID = -7478232634840096057L;
     
-    private String extractTableUniqueRowId;
+    private Long extractTableUniqueRowId;
     private String jobRunDateAsString;
     private String proposalNumberUsedForDataRow; 
     
@@ -38,9 +38,14 @@ public class CemiAwardScheduleBo extends PersistableBusinessObjectBase implement
     
     public CemiAwardScheduleBo (CemiAwardSchedule cemiAwardScheduleDataRow, String proposalNumberForScheduleRow,
             LocalDateTime jobRunDate, CemiAwardScheduleBoSequence awardScheduleTabTableSequence) {
-        this.extractTableUniqueRowId = awardScheduleTabTableSequence.getDefaultValue();
+        
+        // These values are to make the row that would appear in an extract spreadsheet seachable as well as
+        // identifiable by the actual KFS data object keys used to create that row and date-time of the extract file.
+        this.extractTableUniqueRowId = awardScheduleTabTableSequence.getLongValue();
         this.jobRunDateAsString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
         this.proposalNumberUsedForDataRow = proposalNumberForScheduleRow;
+        
+        // These table data values should be the same as what would be in the extract file tabbed sheet columns.
         this.spreadsheetKey = cemiAwardScheduleDataRow.getSpreadsheetKey();
         this.addOnly = cemiAwardScheduleDataRow.getAddOnly();
         this.awardSchedule = cemiAwardScheduleDataRow .getAwardSchedule();
@@ -59,14 +64,13 @@ public class CemiAwardScheduleBo extends PersistableBusinessObjectBase implement
         this.awardIntervalEndDate = cemiAwardScheduleDataRow.getAwardIntervalEndDate();
         this.isAwardContractStartDate = cemiAwardScheduleDataRow.getIsAwardContractStartDate();
         this.isAwardContractEndDate = cemiAwardScheduleDataRow.getIsAwardContractEndDate();
-        this.testingDummyValue = "YOU SHOULD NOT BE ABLE TO READ THIS VALUE IN THE TABLE!!";
     }
 
-    public String getExtractTableUniqueRowId() {
+    public Long getExtractTableUniqueRowId() {
         return extractTableUniqueRowId;
     }
 
-    public void setExtractTableUniqueRowId(String extractTableUniqueRowId) {
+    public void setExtractTableUniqueRowId(Long extractTableUniqueRowId) {
         this.extractTableUniqueRowId = extractTableUniqueRowId;
     }
 

@@ -15,8 +15,12 @@ public class CemiAwardScheduleBoSequence implements DefaultValueFinder {
      */
     @Override
     public String getDefaultValue() {
+        return getLongValue().toString();
+    }
+    
+    public Long getLongValue() {
         return getSequenceAccessorService()
-                .getNextAvailableSequenceNumber(CemiAwardScheduleConstants.CU_CEMI_EXTR_AWD_SCHD_TAB_AWD_SCHD_SEQ).toString();
+                .getNextAvailableSequenceNumber(CemiAwardScheduleConstants.CU_CEMI_EXTR_AWD_SCHD_TAB_AWD_SCHD_SEQ);
     }
 
     public SequenceAccessorService getSequenceAccessorService() {
