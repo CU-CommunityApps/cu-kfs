@@ -381,6 +381,6 @@
 		  parent="apiAuthenticationFilter-baseBean"
 		  p:endpointCode="#{T(edu.cornell.kfs.sys.CUKFSConstants$EndpointCodes).PAYMENT_REQUEST}"/>
 
-	<alias name="paymentRequestAuthFilter" alias="paymentRequestAuthFilter"/>
+	<alias name="paymentRequestAuthFilter" alias="PaymentRequestAuthFilter"/>
     
 </beans>
