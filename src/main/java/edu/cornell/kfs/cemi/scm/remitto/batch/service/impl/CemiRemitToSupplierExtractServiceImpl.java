@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -29,6 +30,7 @@ import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
+import edu.cornell.kfs.cemi.scm.remitto.CemiRemiToSupplierConstants;
 import edu.cornell.kfs.cemi.scm.remitto.batch.dto.CemiRemitToSupplierConnection;
 import edu.cornell.kfs.cemi.scm.remitto.batch.service.CemiRemitToSupplierExtractService;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
@@ -49,14 +51,6 @@ import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorOrmDao;
 public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplierExtractService {
 
     private static final Logger LOG = LogManager.getLogger();
-
-    private static final String REMIT_TO_SUPPLIER_TEMPLATE_FILE = "edu/cornell/kfs/cemi/scm/remitto/batch/Remit_To_Supplier.xlsx";
-    private static final String REMIT_TO_SUPPLIER_SHEET_NAME = "Remit_To_Supplier";
-    private static final int DATA_START_ROW = 6; // Row 7 in Excel (0-based)
-    private static final int START_COLUMN_INDEX = 0;
-
-    private static final String OUTPUT_FILE_NAME_FORMAT = "Remit_To_Supplier_{0}.xlsx";
-    private static final DateTimeFormatter FILE_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
     private final Environment environment;
     private String remitToSupplierFileCreationDirectory;
@@ -93,16 +87,18 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
         try (InputStream templateStream = getTemplateInputStream();
              Workbook workbook = new XSSFWorkbook(templateStream)) {
 
-            final Sheet sheet = workbook.getSheet(REMIT_TO_SUPPLIER_SHEET_NAME);
+            final Sheet sheet = workbook.getSheet(CemiRemiToSupplierConstants.REMIT_TO_SUPPLIER_SHEET_NAME);
             if (sheet == null) {
-                throw new IllegalStateException("Sheet '" + REMIT_TO_SUPPLIER_SHEET_NAME + "' not found in template");
+                throw new IllegalStateException("Sheet '" + CemiRemiToSupplierConstants.REMIT_TO_SUPPLIER_SHEET_NAME + "' not found in template");
             }
 
-            final Iterator<VendorDetail> vendorIterator = cemiVendorOrmDao.findVendorsWithRemitAddresses();
+            //final Iterator<VendorDetail> vendorIterator = cemiVendorOrmDao.findVendorsWithRemitAddresses();
+            Stream<VendorDetail> vendors = cemiVendorOrmDao.getVendorsForCemiSupplierExtractAsCloseableStream();
 
-            int rowIndex = DATA_START_ROW;
+            int rowIndex = CemiRemiToSupplierConstants.DATA_START_ROW;
             int vendorCount = 0;
 
+            final Iterator<VendorDetail> vendorIterator  = vendors.iterator();
             while (vendorIterator.hasNext()) {
                 final VendorDetail vendor = vendorIterator.next();
                 final List<VendorAddress> remitAddresses = findRemitAddressesForVendor(vendor);
@@ -137,7 +133,7 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
             }
 
             LOG.info("generateRemitToSupplierExtractFile, Completed. Processed {} vendors, wrote {} rows to {}",
-                    vendorCount, rowIndex - DATA_START_ROW, outputPath);
+                    vendorCount, rowIndex - CemiRemiToSupplierConstants.DATA_START_ROW, outputPath);
 
             // Copy to outbound directory
             copyToOutboundDirectory(outputPath, outputFileName);
@@ -149,16 +145,16 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
     }
 
     private InputStream getTemplateInputStream() throws IOException {
-        final InputStream templateStream = getClass().getClassLoader().getResourceAsStream(REMIT_TO_SUPPLIER_TEMPLATE_FILE);
+        final InputStream templateStream = getClass().getClassLoader().getResourceAsStream(CemiRemiToSupplierConstants.REMIT_TO_SUPPLIER_TEMPLATE_FILE);
         if (templateStream == null) {
-            throw new IOException("Template file not found: " + REMIT_TO_SUPPLIER_TEMPLATE_FILE);
+            throw new IOException("Template file not found: " + CemiRemiToSupplierConstants.REMIT_TO_SUPPLIER_TEMPLATE_FILE);
         }
         return templateStream;
     }
 
     private String buildOutputFileName(final LocalDateTime jobRunDate) {
-        final String dateStamp = jobRunDate.format(FILE_DATE_FORMAT);
-        return OUTPUT_FILE_NAME_FORMAT.replace("{0}", dateStamp);
+        final String dateStamp = jobRunDate.format(CemiRemiToSupplierConstants.FILE_DATE_FORMAT);
+        return CemiRemiToSupplierConstants.OUTPUT_FILE_NAME_FORMAT.replace("{0}", dateStamp);
     }
     
     private boolean isCemiSensitiveDataSetToUnmask() {
@@ -225,7 +221,7 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
             row = sheet.createRow(rowIndex);
         }
 
-        int colIndex = START_COLUMN_INDEX;
+        int colIndex = CemiRemiToSupplierConstants.START_COLUMN_INDEX;
 
         // Supplier
         setCellValue(row, colIndex++, connection.getSupplierId());
