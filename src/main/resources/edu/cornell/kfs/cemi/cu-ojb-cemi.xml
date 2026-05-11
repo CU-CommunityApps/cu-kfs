@@ -1,0 +1,28 @@
+<descriptor-repository version="1.0">
+
+    <class-descriptor class="edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardScheduleBo" table="CU_CEMI_EXTR_AWD_SCHD_TAB_AWD_SCHD_T">
+        <field-descriptor name="extractTableUniqueRowId" column="EXTR_TBL_ROW_ID" jdbc-type="BIGINT"
+                          primarykey="true" ndex="true" 
+                          autoincrement="true" sequence-name="KFS.CU_CEMI_EXTR_AWD_SCHD_TAB_AWD_SCHD_SEQ"/>
+        <field-descriptor name="jobRunDateAsString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" />
+        <field-descriptor name="proposalNumberUsedForDataRow" column="CGPRPSL_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="spreadsheetKey" column="WKDY_SPRDSHT_KEY_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="addOnly" column="ADD_ONLY" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardSchedule" column="AWD_SCHD" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardScheduleReferenceId" column="AWD_SCHD_REF_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardScheduleName" column="AWD_SCHD_NM" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardPostingIntervalGroup" column="AWD_PST_INTRVL_GRP" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardPeriodDataRowId" column="AWD_PRD_DT_ROW_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardPeriodReferenceId" column="AWD_PRD_REF_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardPeriodName" column="AWD_PRD_NM" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardPeriodNumber" column="AWD_PRD_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardIntervalRowId" column="AWD_INTRVL_ROW_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardPostingInterval" column="AWD_PST_INTRVL" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardPostingIntervalId" column="AWD_PST_INTRVL_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardPostingIntervalName" column="AWD_PST_INTRVL_NM" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardIntervalStartDate" column="AWD_INTRVL_STRT_DT" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardIntervalEndDate" column="AWD_INTRVL_END_DT" jdbc-type="VARCHAR" />
+        <field-descriptor name="isAwardContractStartDate" column="IS_AWD_CNTRCT_STRT_DT" jdbc-type="VARCHAR" />
+        <field-descriptor name="isAwardContractEndDate" column="IS_AWD_CNTRCT_END_DT" jdbc-type="VARCHAR" />
+    </class-descriptor>
+</descriptor-repository>

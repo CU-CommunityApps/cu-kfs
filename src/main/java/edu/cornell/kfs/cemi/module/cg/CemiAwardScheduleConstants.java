@@ -21,4 +21,6 @@ public final class CemiAwardScheduleConstants {
     public static final class AwardScheduleExtractSheets {
         public static final String AWARD_SCHEDULE = "Award Schedule";
     }
+    
+    public static final String CU_CEMI_EXTR_AWD_SCHD_TAB_AWD_SCHD_SEQ = "CU_CEMI_EXTR_AWD_SCHD_TAB_AWD_SCHD_SEQ";
 }

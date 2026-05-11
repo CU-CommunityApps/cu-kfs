@@ -11,11 +11,14 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.cemi.module.cg.CemiAwardScheduleConstants;
+import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardScheduleBo;
+import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardScheduleBoSequence;
 import edu.cornell.kfs.cemi.module.cg.batch.dto.CemiAwardSchedule;
 import edu.cornell.kfs.cemi.module.cg.batch.service.CemiAwardScheduleDataBuilder;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleDao;
@@ -35,17 +38,20 @@ public abstract class CemiAwardScheduleDataBuilderBase implements CemiAwardSched
    
     protected CemiAwardScheduleDao cemiAwardScheduleDao;
     protected DateTimeService dateTimeService;
+    protected BusinessObjectService businessObjectService;
 
     protected CemiAwardScheduleDataBuilderBase(final CemiOutputDefinition outputDefinition,
-            CemiAwardScheduleDao cemiAwardScheduleDao, DateTimeService dateTimeService, 
+            CemiAwardScheduleDao cemiAwardScheduleDao, DateTimeService dateTimeService, BusinessObjectService businessObjectService, 
             final LocalDateTime jobRunDate, boolean maskSensitiveData) {
         Validate.notNull(outputDefinition, "outputDefinition cannot be null");
         Validate.notNull(cemiAwardScheduleDao, "cemiAwardScheduleDao cannot be null");
         Validate.notNull(dateTimeService, "dateTimeService cannot be null");
+        Validate.notNull(businessObjectService, "businessObjectService cannot be null");
         Validate.notNull(jobRunDate, "jobRunDate cannot be null");
         this.outputDefinition = outputDefinition;
         this.cemiAwardScheduleDao = cemiAwardScheduleDao;
         this.dateTimeService = dateTimeService;
+        this.businessObjectService = businessObjectService;
         this.jobRunDate = jobRunDate;
         this.maskSensitiveData = maskSensitiveData;
     }
@@ -53,6 +59,8 @@ public abstract class CemiAwardScheduleDataBuilderBase implements CemiAwardSched
     @Override
     public void writeAwardScheduleDataToIntermediateStorage(final Iterator<Award> awards,
                 final LocalDateTime jobRunDate) throws IOException {
+        CemiAwardScheduleBoSequence awardScheduleTabTableSequence = new CemiAwardScheduleBoSequence();
+        
         for (final Award award : IteratorUtils.asIterable(awards)) {
             awardScheduleCount++;
             if (awardScheduleCount % 1000 == 0) {
@@ -67,12 +75,22 @@ public abstract class CemiAwardScheduleDataBuilderBase implements CemiAwardSched
             String awardScheduleReferenceId = buildAwardScheduleReferenceId(award.getProposalNumber());
             final CemiAwardSchedule awardSchedule = new CemiAwardSchedule(award, spreadsheetKey, 
                     awardScheduleReferenceId, awardIntervalStartDate, awardIntervalEndDate, maskSensitiveData);
-            writeAwardScheduleRow(awardSchedule);
+            //Database table storage of data extract
+            saveAwardScheduleRowToTable(awardSchedule, award.getProposalNumber(), jobRunDate, awardScheduleTabTableSequence);
+            
+            //csv storage of data extract
+            writeAwardScheduleRowToFiles(awardSchedule);
             
             //Record identifier associations for Award Schedule extract file based upon batch job run date
             recordAwardScheduleIdentifiersInLegacyAssociationTable(spreadsheetKey, awardScheduleReferenceId, jobRunDate);
         }
         LOG.info("writeAwardScheduleDataToIntermediateStorage, Finished writing {} Awards for Award Schedule", awardScheduleCount);
+    }
+    
+    protected void saveAwardScheduleRowToTable(CemiAwardSchedule awardSchedule, String proposalNumberUsed,
+            LocalDateTime jobRunDate, CemiAwardScheduleBoSequence awardScheduleTabTableSequence) {
+        CemiAwardScheduleBo dataToSave = new CemiAwardScheduleBo(awardSchedule, proposalNumberUsed, jobRunDate, awardScheduleTabTableSequence);
+         dataToSave = getBusinessObjectService().save(dataToSave);
     }
     
     private static String buildSpreadsheetKey(final String awardProposalNumber) {
@@ -89,7 +107,7 @@ public abstract class CemiAwardScheduleDataBuilderBase implements CemiAwardSched
                         : KFSConstants.EMPTY_STRING;
     }
     
-    protected void writeAwardScheduleRow(final CemiAwardSchedule awardSchedule) throws IOException {
+    protected void writeAwardScheduleRowToFiles(final CemiAwardSchedule awardSchedule) throws IOException {
         writeDataToIntermediateStorage(CemiAwardScheduleConstants.AwardScheduleExtractSheets.AWARD_SCHEDULE, awardSchedule);
     }
     
@@ -127,6 +145,14 @@ public abstract class CemiAwardScheduleDataBuilderBase implements CemiAwardSched
 
     public void setCemiAwardScheduleDao(CemiAwardScheduleDao cemiAwardScheduleDao) {
         this.cemiAwardScheduleDao = cemiAwardScheduleDao;
+    }
+
+    public BusinessObjectService getBusinessObjectService() {
+        return businessObjectService;
+    }
+
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
     }
 
 }

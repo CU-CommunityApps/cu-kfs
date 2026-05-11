@@ -25,7 +25,7 @@ public class CemiAwardScheduleOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb impl
             // well as provide both old and new awards that had a variety of attributes for local verification. 
             proposalNumberCondition = "(A0.CGPRPSL_NBR) IN ("
                     + "SELECT CGPRPSL_NBR FROM KFS.CU_CEMI_AWD_SCHDL_EXTR_AWD_T"
-                    + " WHERE CGPRPSL_NBR <= 65000 OR CGPRPSL_NBR >= 160000)";
+                    + " WHERE CGPRPSL_NBR <= 139300 OR CGPRPSL_NBR >= 193300)";
         } else {
             proposalNumberCondition = "(A0.CGPRPSL_NBR) IN ("
                     + "SELECT CGPRPSL_NBR FROM KFS.CU_CEMI_AWD_SCHDL_EXTR_AWD_T)";

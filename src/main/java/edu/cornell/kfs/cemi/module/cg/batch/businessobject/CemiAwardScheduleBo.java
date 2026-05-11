@@ -1,20 +1,20 @@
-package edu.cornell.kfs.cemi.module.cg.batch.dto;
+package edu.cornell.kfs.cemi.module.cg.batch.businessobject;
 
-import java.text.MessageFormat;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
-import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.module.cg.businessobject.Award;
-import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
-import edu.cornell.kfs.cemi.module.cg.CemiAwardScheduleConstants;
-import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
-import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
+import edu.cornell.kfs.cemi.module.cg.batch.dto.CemiAwardSchedule;
+import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 
-@SuppressWarnings("deprecation")
-public class CemiAwardSchedule {
+public class CemiAwardScheduleBo extends PersistableBusinessObjectBase implements Serializable {
     
-    private Award award;
-    private AwardExtendedAttribute awardExtendedAttribute; 
+    private static final long serialVersionUID = -7478232634840096057L;
+    
+    private Long extractTableUniqueRowId;
+    private String jobRunDateAsString;
+    private String proposalNumberUsedForDataRow; 
     
     private String spreadsheetKey;
     private String addOnly;
@@ -34,56 +34,60 @@ public class CemiAwardSchedule {
     private String awardIntervalEndDate;
     private String isAwardContractStartDate;
     private String isAwardContractEndDate;
+    private String testingDummyValue;
     
-    public CemiAwardSchedule (final Award award, String spreadsheetKey, String awardScheduleReferenceId,
-            String awardIntervalStartDate, String awardIntervalEndDate, boolean maskSensitiveData) {
-        this.award = award;
-        this.spreadsheetKey = spreadsheetKey;
-        this.addOnly = CemiBaseConstants.YES;
-        this.awardSchedule = CemiBaseConstants.EMPTY_STRING;
-        this.awardScheduleReferenceId = awardScheduleReferenceId;
-        this.awardScheduleName = determineAwardScheduleName(award.getAwardProjectTitle());
-        this.awardPostingIntervalGroup = CemiAwardScheduleConstants.BUDGET_PERIOD;
-        this.awardPeriodDataRowId = CemiAwardScheduleConstants.NUMERIC_ONE;
-        this.awardPeriodReferenceId = buildAwardPeriodReferenceId(award.getProposalNumber());
-        this.awardPeriodName = CemiAwardScheduleConstants.CINV_PERIOD;
-        this.awardPeriodNumber = CemiAwardScheduleConstants.NUMERIC_ONE;
-        this.awardIntervalRowId = CemiAwardScheduleConstants.NUMERIC_ONE;
-        this.awardPostingInterval = CemiBaseConstants.EMPTY_STRING;
-        this.awardPostingIntervalId = buildAwardPostingIntervalId(award.getProposalNumber());
-        this.awardPostingIntervalName = CemiAwardScheduleConstants.AWARD_PERIOD;
-        this.awardIntervalStartDate = awardIntervalStartDate;
-        this.awardIntervalEndDate = awardIntervalEndDate;
-        this.isAwardContractStartDate = CemiBaseConstants.YES;
-        this.isAwardContractEndDate = CemiBaseConstants.YES;
-    }
-    
-    private static String buildAwardPeriodReferenceId(final String awardProposalNumber) {
-        return MessageFormat.format(CemiAwardScheduleConstants.AWARD_PERIOD_REFERENCE_ID_FORMAT, awardProposalNumber);
-    }
-    
-    private static String buildAwardPostingIntervalId(final String awardProposalNumber) {
-        return MessageFormat.format(CemiAwardScheduleConstants.AWARD_POSTING_INTERVAL_ID_FORMAT, awardProposalNumber);
-    }
-    
-    private String determineAwardScheduleName(String awardScheduleName) {
-        return StringUtils.isNotBlank(awardScheduleName) ? awardScheduleName : KFSConstants.EMPTY_STRING;
+    public CemiAwardScheduleBo (CemiAwardSchedule cemiAwardScheduleDataRow, String proposalNumberForScheduleRow,
+            LocalDateTime jobRunDate, CemiAwardScheduleBoSequence awardScheduleTabTableSequence) {
+        
+        // These values are to make the row that would appear in an extract spreadsheet seachable as well as
+        // identifiable by the actual KFS data object keys used to create that row and date-time of the extract file.
+        this.extractTableUniqueRowId = awardScheduleTabTableSequence.getLongValue();
+        this.jobRunDateAsString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
+        this.proposalNumberUsedForDataRow = proposalNumberForScheduleRow;
+        
+        // These table data values should be the same as what would be in the extract file tabbed sheet columns.
+        this.spreadsheetKey = cemiAwardScheduleDataRow.getSpreadsheetKey();
+        this.addOnly = cemiAwardScheduleDataRow.getAddOnly();
+        this.awardSchedule = cemiAwardScheduleDataRow .getAwardSchedule();
+        this.awardScheduleReferenceId = cemiAwardScheduleDataRow.getAwardScheduleReferenceId();
+        this.awardScheduleName = cemiAwardScheduleDataRow.getAwardScheduleName();
+        this.awardPostingIntervalGroup = cemiAwardScheduleDataRow.getAwardPostingIntervalGroup();
+        this.awardPeriodDataRowId = cemiAwardScheduleDataRow.getAwardPeriodDataRowId();
+        this.awardPeriodReferenceId = cemiAwardScheduleDataRow.getAwardPeriodReferenceId();
+        this.awardPeriodName = cemiAwardScheduleDataRow.getAwardPeriodName();
+        this.awardPeriodNumber = cemiAwardScheduleDataRow.getAwardPeriodNumber();
+        this.awardIntervalRowId = cemiAwardScheduleDataRow.getAwardIntervalRowId();
+        this.awardPostingInterval = cemiAwardScheduleDataRow.getAwardPostingInterval();
+        this.awardPostingIntervalId = cemiAwardScheduleDataRow.getAwardPostingIntervalId();
+        this.awardPostingIntervalName = cemiAwardScheduleDataRow.getAwardPostingIntervalName();
+        this.awardIntervalStartDate = cemiAwardScheduleDataRow.getAwardIntervalStartDate();
+        this.awardIntervalEndDate = cemiAwardScheduleDataRow.getAwardIntervalEndDate();
+        this.isAwardContractStartDate = cemiAwardScheduleDataRow.getIsAwardContractStartDate();
+        this.isAwardContractEndDate = cemiAwardScheduleDataRow.getIsAwardContractEndDate();
     }
 
-    public Award getAward() {
-        return award;
+    public Long getExtractTableUniqueRowId() {
+        return extractTableUniqueRowId;
     }
 
-    public void setAward(Award award) {
-        this.award = award;
+    public void setExtractTableUniqueRowId(Long extractTableUniqueRowId) {
+        this.extractTableUniqueRowId = extractTableUniqueRowId;
     }
 
-    public AwardExtendedAttribute getAwardExtendedAttribute() {
-        return awardExtendedAttribute;
+    public String getJobRunDateAsString() {
+        return jobRunDateAsString;
     }
 
-    public void setAwardExtendedAttribute(AwardExtendedAttribute awardExtendedAttribute) {
-        this.awardExtendedAttribute = awardExtendedAttribute;
+    public void setJobRunDateAsString(String jobRunDateAsString) {
+        this.jobRunDateAsString = jobRunDateAsString;
+    }
+
+    public String getProposalNumberUsedForDataRow() {
+        return proposalNumberUsedForDataRow;
+    }
+
+    public void setProposalNumberUsedForDataRow(String proposalNumberUsedForDataRow) {
+        this.proposalNumberUsedForDataRow = proposalNumberUsedForDataRow;
     }
 
     public String getSpreadsheetKey() {
@@ -229,5 +233,13 @@ public class CemiAwardSchedule {
     public void setIsAwardContractEndDate(String isAwardContractEndDate) {
         this.isAwardContractEndDate = isAwardContractEndDate;
     }
-    
+
+    public String getTestingDummyValue() {
+        return testingDummyValue;
+    }
+
+    public void setTestingDummyValue(String testingDummyValue) {
+        this.testingDummyValue = testingDummyValue;
+    }
+
 }

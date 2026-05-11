@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleDao;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiCsvWriter;
@@ -28,9 +29,9 @@ public class CemiAwardScheduleDataBuilderCsvImpl extends CemiAwardScheduleDataBu
 
     public CemiAwardScheduleDataBuilderCsvImpl(final CemiOutputDefinition outputDefinition,
             final CemiAwardScheduleDao cemiAwardScheduleDao, DateTimeService dateTimeService,
-            final LocalDateTime jobRunDate, final String baseFileDirectory,
-            final boolean maskSensitiveData) throws IOException {
-        super(outputDefinition, cemiAwardScheduleDao, dateTimeService, jobRunDate, maskSensitiveData);
+            BusinessObjectService businessObjectService, final LocalDateTime jobRunDate,
+            final String baseFileDirectory, final boolean maskSensitiveData) throws IOException {
+        super(outputDefinition, cemiAwardScheduleDao, dateTimeService, businessObjectService, jobRunDate, maskSensitiveData);
         Validate.notBlank(baseFileDirectory, "baseFileDirectory cannot be blank");
 
         this.sheetDefinitions = outputDefinition.getSheets().stream()
