@@ -379,7 +379,8 @@
 
 	<bean id="paymentRequestAuthFilter"
 		  parent="apiAuthenticationFilter-baseBean"
-		  p:endpointCode="#{T(edu.cornell.kfs.sys.CUKFSConstants$EndpointCodes).PAYMENT_REQUEST}"/>
+		  p:endpointCode="#{T(edu.cornell.kfs.sys.CUKFSConstants$EndpointCodes).PAYMENT_REQUEST}"
+		  p:accessControlAllowMethods="GET,POST" />
 
 	<alias name="paymentRequestAuthFilter" alias="PaymentRequestAuthFilter"/>
     
