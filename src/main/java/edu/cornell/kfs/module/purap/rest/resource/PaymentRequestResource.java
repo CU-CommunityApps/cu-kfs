@@ -18,7 +18,6 @@ import org.kuali.kfs.krad.service.KualiRuleService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
-import org.kuali.kfs.module.purap.document.service.PaymentRequestService;
 import org.kuali.kfs.module.purap.document.validation.event.AttributedCalculateAccountsPayableEvent;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;

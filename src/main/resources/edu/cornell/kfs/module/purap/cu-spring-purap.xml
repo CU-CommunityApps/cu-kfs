@@ -376,5 +376,12 @@
         p:purchaseOrderService-ref="purchaseOrderService"
         p:paymentRequestDao-ref="paymentRequestDao"
         p:dataDictionaryService-ref="dataDictionaryService"/>
+
+	<bean id="paymentRequestAuthFilter"
+		  parent="apiAuthenticationFilter-baseBean"
+		  p:endpointCode="#{T(edu.cornell.kfs.sys.CUKFSConstants$EndpointCodes).PAYMENT_REQUEST}"
+		  p:accessControlAllowMethods="GET,POST" />
+
+	<alias name="paymentRequestAuthFilter" alias="PaymentRequestAuthFilter"/>
     
 </beans>
