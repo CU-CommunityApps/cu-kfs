@@ -57,6 +57,9 @@ public final class CemiVendorConstants {
     public static final String ALTERNATE_NAME_USAGE_DEFAULT_VALUE = "Reference";
     public static final String COUNTRY_CODE_UNITED_STATES = KFSConstants.COUNTRY_CODE_UNITED_STATES;
 
+    public static final String VENDOR_MODULE_PATH = "vnd";
+    public static final String SUPPLIER_OUTPUT_DEFINITION_NAME = "CemiSupplierExtractFileOutputDefinition";
+
     public static final Map<String, List<String>> ADDRESS_USES = Map.ofEntries(
             Map.entry(AddressTypes.PURCHASE_ORDER, List.of("PROCUREMENT", "SHIPPING")),
             Map.entry(AddressTypes.REMIT, List.of("REMIT")),

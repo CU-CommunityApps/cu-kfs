@@ -6,6 +6,9 @@ public final class CemiBaseConstants {
 
     public static final String CEMI_OUTPUT_DEFINITION_FILE_TYPE_IDENTIFIER = "cemiOutputDefinitionFileType";
 
+    public static final String CEMI_OUTPUT_DEFINITION_FILE_PATH_FORMAT =
+            "classpath:edu/cornell/kfs/cemi/{0}/batch/{1}.xml";
+
     public enum CemiFieldDefinitionType {
         STATIC,
         STRING;
@@ -30,5 +33,7 @@ public final class CemiBaseConstants {
     
     // Date Formats
     public static final String DATE_FORMAT_yyyy_MM_dd = "yyyy-MM-dd";
-    
+
+    public static final String VAL_SUFFIX = "_VAL";
+
 }

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 public interface CemiSupplierExtractService {
 
+    boolean performOneTimeCopyOfWorkbookToDatabaseIfNecessary();
+
     void resetState();
 
     void initializeVendorActivityDateRangeSettings();

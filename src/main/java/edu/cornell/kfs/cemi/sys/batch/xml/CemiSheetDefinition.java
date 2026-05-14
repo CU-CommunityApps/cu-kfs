@@ -1,5 +1,6 @@
 package edu.cornell.kfs.cemi.sys.batch.xml;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,9 @@ import jakarta.xml.bind.annotation.XmlType;
     "fields"
 })
 @XmlRootElement(name = "sheet")
-public class CemiSheetDefinition {
+public class CemiSheetDefinition implements Serializable {
+
+    private static final long serialVersionUID = 4326037812667965712L;
 
     @XmlElement(name = "field", required = true)
     private List<CemiFieldDefinition> fields;
@@ -32,6 +35,12 @@ public class CemiSheetDefinition {
 
     @XmlAttribute(name = "start-column-index", required = true)
     private int startColumnIndex;
+
+    @XmlAttribute(name = "dto-class", required = false)
+    private String dtoClassName;
+
+    @XmlAttribute(name = "business-object-class", required = false)
+    private String businessObjectClassName;
 
     public List<CemiFieldDefinition> getFields() {
         if (fields == null) {
@@ -66,6 +75,22 @@ public class CemiSheetDefinition {
 
     public void setStartColumnIndex(final int startColumnIndex) {
         this.startColumnIndex = startColumnIndex;
+    }
+
+    public String getDtoClassName() {
+        return dtoClassName;
+    }
+
+    public void setDtoClassName(final String dtoClassName) {
+        this.dtoClassName = dtoClassName;
+    }
+
+    public String getBusinessObjectClassName() {
+        return businessObjectClassName;
+    }
+
+    public void setBusinessObjectClassName(final String businessObjectClassName) {
+        this.businessObjectClassName = businessObjectClassName;
     }
 
     @Override

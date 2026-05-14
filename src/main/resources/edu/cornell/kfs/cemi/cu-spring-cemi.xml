@@ -100,7 +100,12 @@
           abstract="true"
           class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiVendorOrmDaoOjbImpl"
           parent="vendorDaoOjb"/>
-    
+
+    <bean id="cemiSheetDao" parent="cemiSheetDao-parentBean"/>
+    <bean id="cemiSheetDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.dataaccess.impl.CemiSheetDaoOjbImpl"/>
+
     <bean id="cemiModuleService" parent="cemiModuleService-parentBean"/>
     <bean id="cemiModuleService-parentBean" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl" abstract="true"
           p:moduleConfiguration-ref="cemiModuleConfiguration"/>
@@ -127,7 +132,8 @@
           p:supplierFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
           p:cemiVendorOrmDao-ref="cemiVendorOrmDao"
           p:cemiVendorDao-ref="cemiVendorDao"
-          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:cemiSheetDao-ref="cemiSheetDao"
+          p:cemiOutputDefinitionService-ref="cemiOutputDefinitionService"
           p:businessObjectService-ref="businessObjectService"
           p:parameterService-ref="parameterService"
           p:dateTimeService-ref="dateTimeService"/>
@@ -143,4 +149,11 @@
           p:schemaLocation="classpath:edu/cornell/kfs/cemi/sys/batch/xml/cemiOutputDefinition.xsd"
           p:outputClass="edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition"
           p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="cemiOutputDefinitionService" parent="cemiOutputDefinitionService-parentBean"/>
+    <bean id="cemiOutputDefinitionService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.batch.service.impl.CemiOutputDefinitionServiceImpl"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"/>
+
 </beans>

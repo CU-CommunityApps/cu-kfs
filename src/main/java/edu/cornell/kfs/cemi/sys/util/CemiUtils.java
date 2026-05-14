@@ -8,7 +8,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -16,6 +18,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiSheetDefinition;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -24,7 +27,15 @@ public final class CemiUtils {
     private static final DateTimeFormatter FILE_DATE_TIME_FORMATTER = DateTimeFormatter
                 .ofPattern(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmss, Locale.US)
                 .withZone(ZoneId.of(CUKFSConstants.TIME_ZONE_US_EASTERN));
-    
+
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
+    private static final Pattern NON_WORD_PATTERN = Pattern.compile("\\W+");
+    private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("^[A-Za-z]\\w*$");
+    private static final Pattern UNDERSCORE_AND_LETTER_PATTERN = Pattern.compile("_([A-Za-z])");
+    private static final Pattern MODULE_PATH_PATTERN = Pattern.compile("^(module/)?[A-Za-z]+$");
+
+    private static final Set<String> RESERVED_WORDS = Set.of("STATE");
+
     private static final String generateDateTimeInConsistentFormat(final LocalDateTime dateTime) {
         return FILE_DATE_TIME_FORMATTER.format(dateTime);
     }
@@ -99,6 +110,37 @@ public final class CemiUtils {
 
     public static <T> List<T> createListOfEmptyValues(final int size, final T emptyValue) {
         return Collections.nCopies(size, emptyValue);
+    }
+
+    public static String formatTentativeSheetBoFieldName(final String name) {
+        String result = formatSheetColumnName(name);
+        result = StringUtils.lowerCase(result, Locale.US);
+        result = UNDERSCORE_AND_LETTER_PATTERN.matcher(result).replaceAll(matchResult -> {
+            final String letterAfterUnderscore = matchResult.group(1);
+            return StringUtils.upperCase(letterAfterUnderscore, Locale.US);
+        });
+        return result;
+    }
+
+    public static String formatSheetColumnName(final String name) {
+        final String columnName = formatNameForDatabase(name);
+        return RESERVED_WORDS.contains(columnName) ? columnName + CemiBaseConstants.VAL_SUFFIX : columnName;
+    }
+
+    public static String formatNameForDatabase(final String name) {
+        String result = StringUtils.defaultString(name);
+        result = StringUtils.upperCase(result, Locale.US);
+        result = WHITESPACE_PATTERN.matcher(result).replaceAll(CUKFSConstants.UNDERSCORE);
+        result = NON_WORD_PATTERN.matcher(result).replaceAll(KFSConstants.EMPTY_STRING);
+        return result;
+    }
+
+    public static boolean isFormattedAsValidIdentifier(final String name) {
+        return StringUtils.isNotBlank(name) && IDENTIFIER_PATTERN.matcher(name).matches();
+    }
+
+    public static boolean isFormattedAsValidModulePath(final String path) {
+        return StringUtils.isNotBlank(path) && MODULE_PATH_PATTERN.matcher(path).matches();
     }
 
 }

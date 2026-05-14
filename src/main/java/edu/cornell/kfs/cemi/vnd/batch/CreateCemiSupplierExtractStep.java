@@ -12,6 +12,9 @@ public class CreateCemiSupplierExtractStep extends AbstractStep {
 
     @Override
     public boolean execute(final String jobName, final LocalDateTime jobRunDate) throws InterruptedException {
+        if (cemiSupplierExtractService.performOneTimeCopyOfWorkbookToDatabaseIfNecessary()) {
+            return true;
+        }
         //Phase1: Obtain the dataset
         cemiSupplierExtractService.resetState();
         cemiSupplierExtractService.initializeVendorActivityDateRangeSettings();

@@ -1,5 +1,6 @@
 package edu.cornell.kfs.cemi.sys.batch.xml;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,11 @@ import jakarta.xml.bind.annotation.XmlType;
     "sheets"
 })
 @XmlRootElement(name = "cemiOutputDefinition")
-public class CemiOutputDefinition {
+public class CemiOutputDefinition implements Serializable {
+
+    private static final long serialVersionUID = 6920815709872737418L;
+
+    public static final String CACHE_NAME = "CemiOutputDefinitionCache";
 
     @XmlElement(name = "sheet", required = true)
     private List<CemiSheetDefinition> sheets;

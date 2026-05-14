@@ -1,5 +1,7 @@
 package edu.cornell.kfs.cemi.sys.batch.xml;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -16,23 +18,31 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "cemiFieldType")
 @XmlRootElement(name = "field")
-public class CemiFieldDefinition {
+public class CemiFieldDefinition implements Serializable {
+
+    private static final long serialVersionUID = -1143143856634053621L;
 
     @XmlAttribute(name = "name", required = true)
     private String name;
 
-    @XmlAttribute(name = "type", required = true)
+    // TODO: Remove this field!
+    @XmlAttribute(name = "type", required = false)
     private CemiFieldDefinitionType type;
 
     // Currently not in use; verify if we need this.
     @XmlAttribute(name = "max-length")
     private int maxLength;
 
+    // TODO: Remove this field and replace with dtoFieldName below!
     @XmlAttribute(name = "key")
     private String key;
 
+    // TODO: Remove this field!
     @XmlAttribute(name = "value")
     private String value;
+
+    @XmlAttribute(name = "dto-field")
+    private String dtoFieldName;
 
     public CemiFieldDefinition() {
         this.maxLength = -1;
@@ -78,6 +88,14 @@ public class CemiFieldDefinition {
         this.value = value;
     }
 
+    public String getDtoFieldName() {
+        return dtoFieldName;
+    }
+
+    public void setDtoFieldName(final String dtoFieldName) {
+        this.dtoFieldName = dtoFieldName;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         return EqualsBuilder.reflectionEquals(obj, this);
@@ -94,6 +112,11 @@ public class CemiFieldDefinition {
     }
 
     void afterUnmarshal(final Unmarshaller unmarshaller, final Object parent) {
+        if (StringUtils.isBlank(key) && StringUtils.isNotBlank(dtoFieldName)) {
+            key = dtoFieldName;
+            type = CemiFieldDefinitionType.STRING;
+        }
+
         if (key != null) {
             if (value != null) {
                 throw new IllegalStateException("'key' and 'value' attributes on 'field' tags are mutually exclusive");

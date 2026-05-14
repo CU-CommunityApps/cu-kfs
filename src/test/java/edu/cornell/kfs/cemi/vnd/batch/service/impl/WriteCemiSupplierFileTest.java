@@ -16,7 +16,6 @@ import java.util.Locale;
 import java.util.stream.IntStream;
 
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -35,18 +34,18 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetDimension;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
-import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
+import edu.cornell.kfs.cemi.sys.batch.service.CemiOutputDefinitionService;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiSheetDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
+import edu.cornell.kfs.cemi.vnd.CemiVendorTestConstants.VendorSpringBeans;
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.util.CreateTestDirectories;
 import edu.cornell.kfs.sys.util.GlobalResourceLoaderUtils;
 import edu.cornell.kfs.sys.util.TestSpringContextExtension;
-import edu.cornell.kfs.cemi.vnd.CemiVendorTestConstants.VendorSpringBeans;
 
 @CreateTestDirectories(
     baseDirectory = WriteCemiSupplierFileTest.CEMI_SUPPLIER_DIRECTORY,
@@ -73,29 +72,37 @@ public class WriteCemiSupplierFileTest {
     static TestSpringContextExtension springContextExtension = TestSpringContextExtension.forClassPathSpringXmlFile(
             "edu/cornell/kfs/cemi/vnd/batch/service/impl/cu-spring-vnd-cemi-supplier-file-test.xml");
 
-    private CemiOutputDefinitionFileType outputDefinitionFileType;
+    private CemiOutputDefinitionService outputDefinitionService;
     private CemiOutputDefinition outputDefinition;
+    private CemiOutputDefinition outputDefinitionForOrmSetup;
 
     @BeforeEach
     void setUp() throws Exception {
-        outputDefinitionFileType = springContextExtension.getBean(VendorSpringBeans.CEMI_OUTPUT_DEFINITION_FILE_TYPE,
-                CemiOutputDefinitionFileType.class);
+        outputDefinitionService = springContextExtension.getBean(VendorSpringBeans.CEMI_OUTPUT_DEFINITION_SERVICE,
+                CemiOutputDefinitionService.class);
 
-        outputDefinition = GlobalResourceLoaderUtils.doWithResourceRetrievalDelegatedToKradResourceLoaderUtil(() -> {
-            try (
-                final InputStream definitionStream = CuCoreUtilities.getResourceAsStream(
-                        CemiVendorConstants.SUPPLIER_OUTPUT_DEFINITION_FILE_PATH);
-            ) {
-                final byte[] fileContents = IOUtils.toByteArray(definitionStream);
-                return outputDefinitionFileType.parse(fileContents);
-            }
-        });
+        outputDefinition = getCemiOutputDefinition(
+                    CemiVendorConstants.VENDOR_MODULE_PATH, CemiVendorConstants.SUPPLIER_OUTPUT_DEFINITION_NAME);
+        
+        /*
+         * If you want to use this unit test to help with auto-generating the SQL and OJB XML that corresponds
+         * to the sheets of a particular Output Definition, then uncomment and modify the lines below accordingly.
+         */
+
+        //outputDefinitionForMetadata = getCemiOutputDefinition(
+        //            CemiVendorConstants.VENDOR_MODULE_PATH, CemiVendorConstants.SUPPLIER_OUTPUT_DEFINITION_NAME);
+    }
+
+    private CemiOutputDefinition getCemiOutputDefinition(final String modulePath, final String definitionName) {
+        return GlobalResourceLoaderUtils.doWithResourceRetrievalDelegatedToKradResourceLoaderUtil(
+                () -> outputDefinitionService.getCemiOutputDefinition(modulePath, definitionName));
     }
 
     @AfterEach
     void tearDown() throws Exception {
+        outputDefinitionForOrmSetup = null;
         outputDefinition = null;
-        outputDefinitionFileType = null;
+        outputDefinitionService = null;
     }
 
     @Test    
@@ -114,6 +121,10 @@ public class WriteCemiSupplierFileTest {
         createAndPopulateExcelFileFromTemplate(file);
         assertFileWasGeneratedWithoutUsingZip64(file);
         assertGeneratedFileHasExpectedStructureInModifiedSheets(file);
+
+        if (outputDefinitionForOrmSetup != null) {
+            // TODO: Implement!
+        }
     }
 
     private void createAndPopulateExcelFileFromTemplate(final File file) throws Exception {
