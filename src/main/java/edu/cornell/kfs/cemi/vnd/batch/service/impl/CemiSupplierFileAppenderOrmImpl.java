@@ -29,7 +29,7 @@ public class CemiSupplierFileAppenderOrmImpl extends CemiSupplierFileAppenderBas
     protected void populateSheetFromIntermediateDataStorage(
             final CemiSheetDefinition sheetDefinition, final CemiExcelWriter fileWriter) throws IOException {
         final String sheetName = sheetDefinition.getName();
-        workbookHandler.getAndHandleSheetRowDataForPrinting(jobRunDateString, jobRunDateString, sheetDataRow -> {
+        workbookHandler.getAndHandleSheetRowDataForPrinting(sheetName, jobRunDateString, sheetDataRow -> {
             fileWriter.writeRow(sheetName, sheetDataRow);
         });
     }
