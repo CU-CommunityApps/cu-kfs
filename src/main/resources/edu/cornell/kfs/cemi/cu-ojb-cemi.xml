@@ -1,5 +1,7 @@
 <descriptor-repository version="1.0">
 
+    <!-- Award Schedule Extract -->
+
     <class-descriptor class="edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardScheduleBo" table="CU_CEMI_EXTR_AWD_SCHD_TAB_AWD_SCHD_T">
         <field-descriptor name="extractTableUniqueRowId" column="EXTR_TBL_ROW_ID" jdbc-type="BIGINT"
                           primarykey="true" ndex="true" 
@@ -25,4 +27,203 @@
         <field-descriptor name="isAwardContractStartDate" column="IS_AWD_CNTRCT_STRT_DT" jdbc-type="VARCHAR" />
         <field-descriptor name="isAwardContractEndDate" column="IS_AWD_CNTRCT_END_DT" jdbc-type="VARCHAR" />
     </class-descriptor>
+
+    <!-- Supplier Extract -->
+
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo" table="CU_CEMI_EXTR_SUPPLIER_TAB_SUPPLIER_T">
+        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="rowIndex" column="ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="colB" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colC" column="SUPPLIER_REFERENCE_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colD" column="SUPPLIER_NAME" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colE" column="TAX_AUTHORITY_FORM_TYPE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colF" column="IRS_1099_SUPPLIER" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colG" column="REPORT_1099_WITH_PARENT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colH" column="TAX_ID_TYPE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colI" column="TAX_ID_TEXT" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+        <field-descriptor name="colJ" column="TRANSACTION_TAX_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colK" column="DEFAULT_WITHHOLDING_TAX_CODE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colL" column="PRIMARY_TAX_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colM" column="COUNTRY_TAX_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colN" column="SUPPLIER_CATEGORY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colO" column="SUPPLIER_GROUP_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colP" column="SUPPLIER_GROUP_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colQ" column="SUPPLIER_GROUP_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colR" column="SUPPLIER_GROUP_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colS" column="CUSTOMER_ACCOUNT_NUMBER" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colT" column="DUNS_NUMBER" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colU" column="PAYMENT_TERMS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colV" column="DEFAULT_PAYMENT_TYPE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colW" column="PAYMENT_TYPES_ACCEPTED_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colX" column="PAYMENT_TYPES_ACCEPTED_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colY" column="PAYMENT_TYPES_ACCEPTED_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colZ" column="CURRENCY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAA" column="ACCEPTED_CURRENCIES" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAB" column="PROCUREMENT_CREDIT_CARD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAC" column="ALWAYS_SEPARATE_PAYMENTS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAD" column="TEXT_FOR_DEFAULT_SUPPLIER_PAYMENT_MEMO" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAE" column="USE_SUPPLIER_REFERENCE_AS_DEFAULT_SUPPLIER_PAYMENT_MEMO" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAF" column="USE_INVOICE_MEMO_AS_DEFAULT_SUPPLIER_PAYMENT_MEMO" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAG" column="USE_SUPPLIER_CONNECTION_MEMO" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAH" column="DO_NOT_REPLACE_ALL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAI" column="SUPPLIER_CLASSIFICATION_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAJ" column="SUPPLIER_CLASSIFICATION_FIELD_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAK" column="FIELD_DATE_VALUE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAL" column="FIELD_NUMBER_VALUE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAM" column="FIELD_TEXT_VALUE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAN" column="FIELD_SINGLE_SELECT_CHOICE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAO" column="FIELD_MULTI_SELECT_CHOICE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAP" column="SUPPLIER_CLASSIFICATION_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAQ" column="SUPPLIER_CLASSIFICATION_FIELD_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAR" column="FIELD_DATE_VALUE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAS" column="FIELD_NUMBER_VALUE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAT" column="FIELD_TEXT_VALUE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAU" column="FIELD_SINGLE_SELECT_CHOICE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAV" column="FIELD_MULTI_SELECT_CHOICE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAW" column="ALTERNATE_NAME_BUSINESS_ENTITY_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAX" column="ALTERNATE_NAME_USAGE_BUSINESS_ENTITY_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAY" column="ALTERNATE_NAME_BUSINESS_ENTITY_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAZ" column="ALTERNATE_NAME_USAGE_BUSINESS_ENTITY_2" jdbc-type="VARCHAR"/>
+    </class-descriptor>
+
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo" table="CU_CEMI_EXTR_SUPPLIER_TAB_ADDRESSES_T">
+        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="rowIndex" column="ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="colB" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colC" column="ADDRESS_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colD" column="COUNTRY_FOR_ADDRESS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colE" column="ADDRESS_LINE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colF" column="ADDRESS_LINE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colG" column="CITY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colH" column="STATE_VAL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colI" column="ZIP_CODE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colJ" column="ADDRESS_PRIMARY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colK" column="ADDRESS_TYPE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colL" column="ADDRESS_USE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colM" column="ADDRESS_USE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colN" column="ADDRESS_USE_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colO" column="ADDRESS_USE_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colP" column="ADDRESS_USE_TENANTED" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colQ" column="ADDRESS_USE_TENANTED_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colR" column="ADDRESS_USE_TENANTED_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colS" column="ADDRESS_USE_TENANTED_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colT" column="COMMENTS" jdbc-type="VARCHAR"/>
+    </class-descriptor>
+
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierPhoneBo" table="CU_CEMI_EXTR_SUPPLIER_TAB_PHONES_T">
+        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="rowIndex" column="ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="colB" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colC" column="PHONE_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colD" column="COUNTRY_ISO_CODE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colE" column="INTERNATIONAL_PHONE_CODE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colF" column="PHONE_NUMBER" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colG" column="PHONE_EXTENSION" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colH" column="PHONE_DEVICE_TYPE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colI" column="PHONE_PRIMARY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colJ" column="USE_FOR_PHONE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colK" column="USE_FOR_PHONE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colL" column="USE_FOR_PHONE_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colM" column="USE_FOR_PHONE_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colN" column="USE_FOR_TENANTED_PHONE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colO" column="USE_FOR_TENANTED_PHONE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colP" column="USE_FOR_TENANTED_PHONE_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colQ" column="USE_FOR_TENANTED_PHONE_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colR" column="PHONE_COMMENTS" jdbc-type="VARCHAR"/>
+    </class-descriptor>
+
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBankAccountBo" table="CU_CEMI_EXTR_SUPPLIER_TAB_BANK_ACCOUNTS_T">
+        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="rowIndex" column="ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="colB" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colC" column="SETTLEMENT_BANK_ACCOUNT_ID_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colD" column="BANK_ACCOUNT_NICKNAME_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colE" column="BANK_ACCOUNT_TYPE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colF" column="BANK_NAME_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colG" column="ROUTING_TRANSIT_NUMBER_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colH" column="BRANCH_ID_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colI" column="BRANCH_NAME_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colJ" column="BANK_ACCOUNT_NUMBER_1" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+        <field-descriptor name="colK" column="ACCEPTS_PAYMENT_TYPES_1_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colL" column="ACCEPTS_PAYMENT_TYPES_1_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colM" column="ACCEPTS_PAYMENT_TYPES_1_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colN" column="PAYMENT_TYPES_1_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colO" column="PAYMENT_TYPES_1_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colP" column="PAYMENT_TYPES_1_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colQ" column="SETTLEMENT_BANK_ACCOUNT_ID_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colR" column="BANK_ACCOUNT_NICKNAME_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colS" column="BANK_ACCOUNT_TYPE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colT" column="BANK_NAME_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colU" column="ROUTING_TRANSIT_NUMBER_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colV" column="BRANCH_ID_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colW" column="BRANCH_NAME_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colX" column="BANK_ACCOUNT_NUMBER_2" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+        <field-descriptor name="colY" column="ACCEPTS_PAYMENT_TYPES_2_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colZ" column="ACCEPTS_PAYMENT_TYPES_2_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAA" column="ACCEPTS_PAYMENT_TYPES_2_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAB" column="PAYMENT_TYPES_2_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAC" column="PAYMENT_TYPES_2_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAD" column="PAYMENT_TYPES_2_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAE" column="SETTLEMENT_BANK_ACCOUNT_ID_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAF" column="BANK_ACCOUNT_NICKNAME_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAG" column="BANK_ACCOUNT_TYPE_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAH" column="BANK_NAME_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAI" column="ROUTING_TRANSIT_NUMBER_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAJ" column="BRANCH_ID_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAK" column="BRANCH_NAME_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAL" column="BANK_ACCOUNT_NUMBER_3" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+        <field-descriptor name="colAM" column="ACCEPTS_PAYMENT_TYPES_3_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAN" column="ACCEPTS_PAYMENT_TYPES_3_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAO" column="ACCEPTS_PAYMENT_TYPES_3_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAP" column="PAYMENT_TYPES_3_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAQ" column="PAYMENT_TYPES_3_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAR" column="PAYMENT_TYPES_3_3" jdbc-type="VARCHAR"/>
+    </class-descriptor>
+
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierChildrenBo" table="CU_CEMI_EXTR_SUPPLIER_TAB_CHILDREN_T">
+        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="rowIndex" column="ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="colB" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colC" column="INCLUDED_CHILDREN" jdbc-type="VARCHAR"/>
+    </class-descriptor>
+
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierEmailBo" table="CU_CEMI_EXTR_SUPPLIER_TAB_EMAILS_T">
+        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="rowIndex" column="ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="colB" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colC" column="EMAIL_ID_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colD" column="EMAIL_ADDRESS_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colE" column="EMAIL_PRIMARY_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colF" column="EMAIL_USE_FOR_1_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colG" column="EMAIL_USE_FOR_1_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colH" column="EMAIL_USE_FOR_1_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colI" column="EMAIL_USE_FOR_1_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colJ" column="USE_FOR_TENANTED_1_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colK" column="USE_FOR_TENANTED_1_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colL" column="USE_FOR_TENANTED_1_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colM" column="USE_FOR_TENANTED_1_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colN" column="EMAIL_ID_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colO" column="EMAIL_ADDRESS_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colP" column="EMAIL_PRIMARY_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colQ" column="EMAIL_USE_FOR_2_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colR" column="EMAIL_USE_FOR_2_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colS" column="EMAIL_USE_FOR_2_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colT" column="EMAIL_USE_FOR_2_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colU" column="USE_FOR_TENANTED_2_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colV" column="USE_FOR_TENANTED_2_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colW" column="USE_FOR_TENANTED_2_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colX" column="USE_FOR_TENANTED_2_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colY" column="EMAIL_ID_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colZ" column="EMAIL_ADDRESS_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAA" column="EMAIL_PRIMARY_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAB" column="EMAIL_USE_FOR_3_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAC" column="EMAIL_USE_FOR_3_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAD" column="EMAIL_USE_FOR_3_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAE" column="EMAIL_USE_FOR_3_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAF" column="USE_FOR_TENANTED_3_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAG" column="USE_FOR_TENANTED_3_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAH" column="USE_FOR_TENANTED_3_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="colAI" column="USE_FOR_TENANTED_3_4" jdbc-type="VARCHAR"/>
+    </class-descriptor>
+
 </descriptor-repository>

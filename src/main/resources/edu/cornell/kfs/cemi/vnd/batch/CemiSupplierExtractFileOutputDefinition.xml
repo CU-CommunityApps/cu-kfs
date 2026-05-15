@@ -13,61 +13,65 @@
  -->
 <cemiOutputDefinition>
 
-    <sheet name="Supplier" num-header-rows="6" start-column-index="1">
+    <sheet name="Supplier" num-header-rows="6" start-column-index="1"
+           dto-class="edu.cornell.kfs.cemi.vnd.batch.dto.CemiSupplier"
+           business-object-class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo">
         <field name="Supplier_ID" type="STRING" key="supplierId"/>
         <field name="Supplier_Reference_ID" type="STRING" key="supplierReferenceId"/>
         <field name="Supplier_Name" type="STRING" key="vendorDetail.vendorName"/>
         <field name="Tax_Authority_Form_Type" type="STRING" key="taxAuthorityFormType"/>
         <field name="IRS_1099_Supplier" type="STRING" key="irs1099SupplierFlag"/>
-        <field name="Report_1099_with_Parent" type="STATIC" value=""/> <!-- Leave blank for round 1 -->
+        <field name="Report_1099_with_Parent" type="STRING" key="emptyValue"/>
         <field name="Tax_ID_Type" type="STRING" key="taxIdType"/>
         <field name="Tax_ID_Text" type="STRING" key="taxIdValue"/>
         <field name="Transaction_Tax_ID" type="STRING" key="transactionTaxId"/>
-        <field name="Default_Withholding_Tax_Code" type="STATIC" value=""/> <!-- Leave blank for round 1 -->
+        <field name="Default_Withholding_Tax_Code" type="STRING" key="emptyValue"/>
         <field name="Primary_Tax_ID" type="STRING" key="primaryTaxId"/>
         <field name="Country_Tax_ID" type="STRING" key="countryTaxId"/>
-        <field name="Supplier_Category" type="STATIC" value="Foundation_Default"/>
-        <field name="Supplier_Group_1" type="STATIC" value=""/>
-        <field name="Supplier_Group_2" type="STATIC" value=""/>
-        <field name="Supplier_Group_3" type="STATIC" value=""/>
-        <field name="Supplier_Group_4" type="STATIC" value=""/>
-        <field name="Customer_Account_Number" type="STATIC" value=""/>
+        <field name="Supplier_Category" type="STRING" key="supplierCategory"/>
+        <field name="Supplier_Group_1" type="STRING" key="emptyValue"/>
+        <field name="Supplier_Group_2" type="STRING" key="emptyValue"/>
+        <field name="Supplier_Group_3" type="STRING" key="emptyValue"/>
+        <field name="Supplier_Group_4" type="STRING" key="emptyValue"/>
+        <field name="Customer_Account_Number" type="STRING" key="emptyValue"/>
         <field name="DUNS_Number" type="STRING" key="dunsNumber"/>
         <field name="Payment_Terms" type="STRING" key="paymentTerms"/>
-        <field name="Default_Payment_Type" type="STATIC" value="Check"/>
-        <field name="Payment_Types_Accepted_1" type="STATIC" value="Check"/>
-        <field name="Payment_Types_Accepted_2" type="STATIC" value=""/>
-        <field name="Payment_Types_Accepted_3" type="STATIC" value=""/>
-        <field name="Currency" type="STATIC" value="USD"/>
-        <field name="Accepted_Currencies" type="STATIC" value="USD"/>
-        <field name="Procurement_Credit_Card" type="STATIC" value=""/>
-        <field name="Always_Separate_Payments" type="STATIC" value=""/>
-        <field name="Text_for_Default_Supplier_Payment_Memo" type="STATIC" value=""/>
-        <field name="Use_Supplier_Reference_as_Default_Supplier_Payment_Memo" type="STATIC" value=""/>
-        <field name="Use_Invoice_Memo_as_Default_Supplier_Payment_Memo" type="STATIC" value=""/>
-        <field name="Use_Supplier_Connection_Memo" type="STATIC" value=""/>
-        <field name="Do_Not_Replace_All" type="STATIC" value=""/>
-        <field name="Supplier_Classification_1" type="STATIC" value=""/>
-        <field name="Supplier_Classification_Field_1" type="STATIC" value=""/>
-        <field name="Field_Date_Value_1" type="STATIC" value=""/>
-        <field name="Field_Number_Value_1" type="STATIC" value=""/>
-        <field name="Field_Text_Value_1" type="STATIC" value=""/>
-        <field name="Field_Single_Select_Choice_1" type="STATIC" value=""/>
-        <field name="Field_Multi_Select_Choice_1" type="STATIC" value=""/>
-        <field name="Supplier_Classification_2" type="STATIC" value=""/>
-        <field name="Supplier_Classification_Field_2" type="STATIC" value=""/>
-        <field name="Field_Date_Value_2" type="STATIC" value=""/>
-        <field name="Field_Number_Value_2" type="STATIC" value=""/>
-        <field name="Field_Text_Value_2" type="STATIC" value=""/>
-        <field name="Field_Single_Select_Choice_2" type="STATIC" value=""/>
-        <field name="Field_Multi_Select_Choice_2" type="STATIC" value=""/>
+        <field name="Default_Payment_Type" type="STRING" key="defaultPaymentType"/>
+        <field name="Payment_Types_Accepted_1" type="STRING" key="paymentTypesAccepted[0]"/>
+        <field name="Payment_Types_Accepted_2" type="STRING" key="paymentTypesAccepted[1]"/>
+        <field name="Payment_Types_Accepted_3" type="STRING" key="paymentTypesAccepted[2]"/>
+        <field name="Currency" type="STRING" key="currency"/>
+        <field name="Accepted_Currencies" type="STRING" key="acceptedCurrencies"/>
+        <field name="Procurement_Credit_Card" type="STRING" key="emptyValue"/>
+        <field name="Always_Separate_Payments" type="STRING" key="emptyValue"/>
+        <field name="Text_for_Default_Supplier_Payment_Memo" type="STRING" key="emptyValue"/>
+        <field name="Use_Supplier_Reference_as_Default_Supplier_Payment_Memo" type="STRING" key="emptyValue"/>
+        <field name="Use_Invoice_Memo_as_Default_Supplier_Payment_Memo" type="STRING" key="emptyValue"/>
+        <field name="Use_Supplier_Connection_Memo" type="STRING" key="emptyValue"/>
+        <field name="Do_Not_Replace_All" type="STRING" key="emptyValue"/>
+        <field name="Supplier_Classification_1" type="STRING" key="emptyValue"/>
+        <field name="Supplier_Classification_Field_1" type="STRING" key="emptyValue"/>
+        <field name="Field_Date_Value_1" type="STRING" key="emptyValue"/>
+        <field name="Field_Number_Value_1" type="STRING" key="emptyValue"/>
+        <field name="Field_Text_Value_1" type="STRING" key="emptyValue"/>
+        <field name="Field_Single_Select_Choice_1" type="STRING" key="emptyValue"/>
+        <field name="Field_Multi_Select_Choice_1" type="STRING" key="emptyValue"/>
+        <field name="Supplier_Classification_2" type="STRING" key="emptyValue"/>
+        <field name="Supplier_Classification_Field_2" type="STRING" key="emptyValue"/>
+        <field name="Field_Date_Value_2" type="STRING" key="emptyValue"/>
+        <field name="Field_Number_Value_2" type="STRING" key="emptyValue"/>
+        <field name="Field_Text_Value_2" type="STRING" key="emptyValue"/>
+        <field name="Field_Single_Select_Choice_2" type="STRING" key="emptyValue"/>
+        <field name="Field_Multi_Select_Choice_2" type="STRING" key="emptyValue"/>
         <field name="Alternate_Name_Business_Entity_1" type="STRING" key="alias0Name"/>
         <field name="Alternate_Name_Usage_Business_Entity_1" type="STRING" key="alias0Usage"/>
         <field name="Alternate_Name_Business_Entity_2" type="STRING" key="alias1Name"/>
         <field name="Alternate_Name_Usage_Business_Entity_2" type="STRING" key="alias1Usage"/>
     </sheet>
 
-    <sheet name="Addresses" num-header-rows="6" start-column-index="1">
+    <sheet name="Addresses" num-header-rows="6" start-column-index="1"
+           dto-class="edu.cornell.kfs.cemi.vnd.batch.dto.CemiSupplierAddress"
+           business-object-class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo">
         <field name="Supplier_ID" type="STRING" key="supplierId"/>
         <field name="Address_ID" type="STRING" key="addressId"/>
         <field name="Country_For_Address" type="STRING" key="country"/>
@@ -89,7 +93,9 @@
         <field name="Comments" type="STRING" key="comments"/>
     </sheet>
     
-    <sheet name="Phones" num-header-rows="6" start-column-index="1">
+    <sheet name="Phones" num-header-rows="6" start-column-index="1"
+           dto-class="edu.cornell.kfs.cemi.vnd.batch.dto.CemiSupplierPhone"
+           business-object-class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierPhoneBo">
         <field name="Supplier_ID" type="STRING" key="supplierId"/>
         <field name="Phone_ID" type="STRING" key="phoneId"/>
         <field name="Country_ISO_Code" type="STRING" key="country"/>
@@ -109,7 +115,9 @@
         <field name="Phone_Comments" type="STRING" key="comments"/>
     </sheet>
 
-    <sheet name="Bank_Accounts" num-header-rows="6" start-column-index="1">
+    <sheet name="Bank_Accounts" num-header-rows="6" start-column-index="1"
+           dto-class="edu.cornell.kfs.cemi.vnd.batch.dto.CemiSupplierBankAccount"
+           business-object-class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBankAccountBo">
         <field name="Supplier_ID" type="STRING" key="supplierId"/>
         <field name="Settlement_Bank_Account_ID_1" type="STRING" key="accounts[0].bankAccountId"/>
         <field name="Bank_Account_Nickname_1" type="STRING" key="accounts[0].bankAccountName"/>
@@ -155,12 +163,16 @@
         <field name="Payment_Types_3_3" type="STRING" key="accounts[2].paymentTypes[2]"/>
     </sheet>
 
-    <sheet name="Children" num-header-rows="6" start-column-index="1">
+    <sheet name="Children" num-header-rows="6" start-column-index="1"
+           dto-class="edu.cornell.kfs.cemi.vnd.batch.dto.CemiSupplierChildren"
+           business-object-class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierChildrenBo">
         <field name="Supplier_ID" type="STRING" key="supplierId"/>
         <field name="Included_Children" type="STRING" key="childSupplierId"/>
     </sheet>
 
-    <sheet name="Emails" num-header-rows="6" start-column-index="1">
+    <sheet name="Emails" num-header-rows="6" start-column-index="1"
+           dto-class="edu.cornell.kfs.cemi.vnd.batch.dto.CemiSupplierEmail"
+           business-object-class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierEmailBo">
         <field name="Supplier_ID" type="STRING" key="supplierId"/>
         <field name="Email_ID_1" type="STRING" key="supplierEmails[0].emailId"/>
         <field name="Email_Address_1" type="STRING" key="supplierEmails[0].emailAddress"/>

@@ -6,18 +6,27 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.stream.IntStream;
 
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.util.CellReference;
@@ -31,11 +40,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.kuali.kfs.sys.KFSConstants;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetDimension;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
+import edu.cornell.kfs.cemi.sys.CemiBasePropertyConstants;
+import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBase;
+import edu.cornell.kfs.cemi.sys.batch.dataaccess.CemiSheetOrmMetadata;
 import edu.cornell.kfs.cemi.sys.batch.service.CemiOutputDefinitionService;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
+import edu.cornell.kfs.cemi.sys.batch.xml.CemiFieldDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiSheetDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
@@ -64,6 +78,13 @@ public class WriteCemiSupplierFileTest {
     static final String STAGING_SYS_DIRECTORY = CEMI_SUPPLIER_DIRECTORY + "staging/sys/";
     static final String STAGING_VND_DIRECTORY = CEMI_SUPPLIER_DIRECTORY + "staging/vnd/";
 
+    private static final String DESCRIPTOR_REPOSITORY_START = "<descriptor-repository version=\"1.0\">";
+    private static final String DESCRIPTOR_REPOSITORY_END = "</descriptor-repository>";
+    private static final String CLASS_DESCRIPTOR_START_FORMAT = "    <class-descriptor class=\"{0}\" table=\"[{1}]\">";
+    private static final String CLASS_DESCRIPTOR_END = "    </class-descriptor>";
+    private static final String FIELD_DESCRIPTOR_FORMAT =
+            "        <field-descriptor name=\"{0}\" column=\"{1}\" jdbc-type=\"{2}\"/>";
+
     private static final DateTimeFormatter FILE_DATE_TIME_FORMATTER = DateTimeFormatter
             .ofPattern(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmss, Locale.US)
             .withZone(ZoneId.of(CUKFSConstants.TIME_ZONE_US_EASTERN));
@@ -89,7 +110,7 @@ public class WriteCemiSupplierFileTest {
          * to the sheets of a particular Output Definition, then uncomment and modify the lines below accordingly.
          */
 
-        //outputDefinitionForMetadata = getCemiOutputDefinition(
+        //outputDefinitionForOrmSetup = getCemiOutputDefinition(
         //            CemiVendorConstants.VENDOR_MODULE_PATH, CemiVendorConstants.SUPPLIER_OUTPUT_DEFINITION_NAME);
     }
 
@@ -123,7 +144,8 @@ public class WriteCemiSupplierFileTest {
         assertGeneratedFileHasExpectedStructureInModifiedSheets(file);
 
         if (outputDefinitionForOrmSetup != null) {
-            // TODO: Implement!
+            generateSqlForSheetTables();
+            generateOjbMetadataForSheetTables();
         }
     }
 
@@ -287,6 +309,124 @@ public class WriteCemiSupplierFileTest {
                     "Wrong cell type at index " + columnIndex + rowAndSheetMessage);
             assertEquals(expectedValue, cell.getStringCellValue(),
                     "Wrong value at cell index " + columnIndex + rowAndSheetMessage);
+        }
+    }
+
+    private void generateSqlForSheetTables() throws Exception {
+        try (
+            final OutputStream fileStream = new FileOutputStream(
+                    BASE_TEST_DIRECTORY + "cemi-tables.sql");
+            final OutputStreamWriter streamWriter = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8);
+            final BufferedWriter writer = new BufferedWriter(streamWriter);
+        ) {
+            for (final CemiSheetDefinition sheetDefinition : outputDefinitionForOrmSetup.getSheets()) {
+                final CemiSheetOrmMetadata sheetMetadata = new CemiSheetOrmMetadata(sheetDefinition);
+                writer.write("CREATE TABLE KFS.[");
+                writer.write(sheetMetadata.getSheetName());
+                writer.write("] (");
+                writer.write(KFSConstants.NEWLINE);
+                
+                final List<Pair<String, String>> fields = getColumnNameToBoFieldMappings(sheetMetadata, sheetDefinition);
+                boolean firstField = true;
+                for (final Pair<String, String> field : fields) {
+                    if (firstField) {
+                        firstField = false;
+                    } else {
+                        writer.write(KFSConstants.COMMA);
+                        writer.write(KFSConstants.NEWLINE);
+                    }
+                    final String columnSql = generateColumnDefinitionSql(field.getLeft(), field.getRight());
+                    writer.write(columnSql);
+                }
+
+                writer.write(KFSConstants.NEWLINE);
+                writer.write(");");
+                writer.write(KFSConstants.NEWLINE);
+                writer.write(KFSConstants.NEWLINE);
+            }
+        }
+    }
+
+    private List<Pair<String, String>> getColumnNameToBoFieldMappings(final CemiSheetOrmMetadata sheetMetadata,
+            final CemiSheetDefinition sheetDefinition) {
+        final List<Pair<String, String>> finalMappings = new ArrayList<>();
+        if (CemiIndexedBusinessObjectBase.class.isAssignableFrom(sheetMetadata.getBoClass())) {
+            finalMappings.add(Pair.of(CemiBasePropertyConstants.JOB_RUN_DATE, CemiBasePropertyConstants.JOB_RUN_DATE));
+            finalMappings.add(Pair.of(CemiBasePropertyConstants.ROW_INDEX, CemiBasePropertyConstants.ROW_INDEX));
+        }
+
+        final List<Pair<String, String>> fieldMappings = sheetMetadata.getFieldMappings();
+        final List<CemiFieldDefinition> fieldDefinitions = sheetDefinition.getFields();
+        for (int i = 0; i < fieldDefinitions.size(); i++) {
+            final Pair<String, String> fieldMapping = fieldMappings.get(i);
+            final CemiFieldDefinition fieldDefinition = fieldDefinitions.get(i);
+            final Pair<String, String> columnNameToBoFieldMapping = Pair.of(
+                    fieldDefinition.getName(), fieldMapping.getRight());
+            finalMappings.add(columnNameToBoFieldMapping);
+        }
+
+        return finalMappings;
+    }
+
+    private String generateColumnDefinitionSql(final String sheetColumnName, final String boFieldName) {
+        switch (boFieldName) {
+            case CemiBasePropertyConstants.JOB_RUN_DATE :
+                return "    EXTR_FILE_RUNDATE VARCHAR2(20)";
+
+            case CemiBasePropertyConstants.ROW_INDEX :
+                return "    ROW_INDEX NUMBER(14,0)";
+
+            default :
+                return StringUtils.join("    ", CemiUtils.formatSheetColumnName(sheetColumnName), " VARCHAR2(250)");
+        }
+    }
+
+    private void generateOjbMetadataForSheetTables() throws Exception {
+        try (
+            final OutputStream fileStream = new FileOutputStream(
+                    BASE_TEST_DIRECTORY + "cemi-ojb-repository.xml");
+            final OutputStreamWriter streamWriter = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8);
+            final BufferedWriter writer = new BufferedWriter(streamWriter);
+        ) {
+            writer.write(DESCRIPTOR_REPOSITORY_START);
+            writer.write(KFSConstants.NEWLINE);
+            writer.write(KFSConstants.NEWLINE);
+
+            for (final CemiSheetDefinition sheetDefinition : outputDefinitionForOrmSetup.getSheets()) {
+                final CemiSheetOrmMetadata sheetMetadata = new CemiSheetOrmMetadata(sheetDefinition);
+                final String classDescriptorStart = MessageFormat.format(CLASS_DESCRIPTOR_START_FORMAT,
+                        sheetMetadata.getBoClass().getName(), sheetMetadata.getSheetName());
+                writer.write(classDescriptorStart);
+                writer.write(KFSConstants.NEWLINE);
+
+                final List<Pair<String, String>> fields = getColumnNameToBoFieldMappings(sheetMetadata, sheetDefinition);
+                for (final Pair<String, String> field : fields) {
+                    final String fieldDescriptor = generateFieldDescriptor(field.getLeft(), field.getRight());
+                    writer.write(fieldDescriptor);
+                    writer.write(KFSConstants.NEWLINE);
+                }
+
+                writer.write(CLASS_DESCRIPTOR_END);
+                writer.write(KFSConstants.NEWLINE);
+                writer.write(KFSConstants.NEWLINE);
+            }
+
+            writer.write(DESCRIPTOR_REPOSITORY_END);
+            writer.write(KFSConstants.NEWLINE);
+        }
+    }
+
+    private String generateFieldDescriptor(final String sheetColumnName, final String boFieldName) {
+        switch (boFieldName) {
+            case CemiBasePropertyConstants.JOB_RUN_DATE :
+                return MessageFormat.format(FIELD_DESCRIPTOR_FORMAT, boFieldName, "EXTR_FILE_RUNDATE", "VARCHAR");
+
+            case CemiBasePropertyConstants.ROW_INDEX :
+                return MessageFormat.format(FIELD_DESCRIPTOR_FORMAT, boFieldName, "ROW_INDEX", "BIGINT");
+
+            default :
+                return MessageFormat.format(FIELD_DESCRIPTOR_FORMAT, boFieldName,
+                        CemiUtils.formatSheetColumnName(sheetColumnName), "VARCHAR");
         }
     }
 

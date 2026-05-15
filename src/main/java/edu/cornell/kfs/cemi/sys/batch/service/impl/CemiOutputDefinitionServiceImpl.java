@@ -21,7 +21,7 @@ public class CemiOutputDefinitionServiceImpl implements CemiOutputDefinitionServ
 
     @Override
     public CemiOutputDefinition getCemiOutputDefinition(final String modulePath, final String definitionName) {
-        Validate.isTrue(CemiUtils.isFormattedAsValidModulePath(modulePath), "modulePath is blank or malformed");
+        Validate.isTrue(CemiUtils.isFormattedAsValidFilePath(modulePath), "modulePath is blank or malformed");
         Validate.isTrue(CemiUtils.isFormattedAsValidIdentifier(definitionName), "definitionName is blank or malformed");
         final String definitionFile = MessageFormat.format(CemiBaseConstants.CEMI_OUTPUT_DEFINITION_FILE_PATH_FORMAT,
                 modulePath, definitionName);

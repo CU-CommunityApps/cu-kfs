@@ -47,17 +47,18 @@ public class CemiSheetOrmMetadata {
         }
 
         final List<CemiFieldDefinition> fields = sheetDefinition.getFields();
+        final int indexOffset = sheetDefinition.getStartColumnIndex();
         this.fieldMappings = IntStream.range(0, fields.size())
-                .mapToObj(index -> createFieldMapping(fields.get(index), boClass, index))
+                .mapToObj(index -> createFieldMapping(fields.get(index), boClass, index + indexOffset))
                 .collect(Collectors.toUnmodifiableList());
     }
 
     private static Pair<String, String> createFieldMapping(final CemiFieldDefinition fieldDefinition,
-            final Class<? extends PersistableBusinessObject> boClass, final int index) {
+            final Class<? extends PersistableBusinessObject> boClass, final int indexWithOffset) {
         final String dtoFieldName = fieldDefinition.getDtoFieldName();
         final String boFieldName;
         if (CemiSimpleSheetBusinessObjectBase.class.isAssignableFrom(boClass)) {
-            boFieldName = CemiBasePropertyConstants.COL_PREFIX + CellReference.convertNumToColString(index);
+            boFieldName = CemiBasePropertyConstants.COL_PREFIX + CellReference.convertNumToColString(indexWithOffset);
         } else {
             boFieldName = dtoFieldName;
         }

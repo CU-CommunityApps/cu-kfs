@@ -115,6 +115,8 @@ public class CemiFieldDefinition implements Serializable {
         if (StringUtils.isBlank(key) && StringUtils.isNotBlank(dtoFieldName)) {
             key = dtoFieldName;
             type = CemiFieldDefinitionType.STRING;
+        } else if (StringUtils.isBlank(dtoFieldName) && StringUtils.isNotBlank(key)) {
+            dtoFieldName = key;
         }
 
         if (key != null) {

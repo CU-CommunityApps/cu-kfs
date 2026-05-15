@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.function.TriConsumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -36,7 +37,9 @@ import org.springframework.transaction.annotation.Transactional;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants.FileExtensions;
 import edu.cornell.kfs.cemi.sys.batch.dataaccess.CemiSheetDao;
+import edu.cornell.kfs.cemi.sys.batch.dataaccess.impl.CemiWorkbookOrmHandler;
 import edu.cornell.kfs.cemi.sys.batch.service.CemiOutputDefinitionService;
+import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelReader;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
@@ -56,6 +59,7 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
 
     private final Environment environment;
 
+    private String stagingDirectory;
     private String supplierFileCreationDirectory;
     private String supplierFileOutboundDirectory;
     private CemiVendorOrmDao cemiVendorOrmDao;
@@ -73,19 +77,52 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public boolean performOneTimeCopyOfWorkbookToDatabaseIfNecessary() {
-        final Collection<String> parameterValues = parameterService.getParameterValuesAsString(
+        final String dateRangeParameter = parameterService.getParameterValueAsString(
                 CreateCemiSupplierExtractStep.class, CemiVendorParameterConstants.CEMI_SUPPLIER_EXTRACT_DATE_RANGE);
-        final String[] valuesArray = parameterValues.toArray(String[]::new);
-        if (valuesArray.length != 1) {
+        if (!StringUtils.contains(dateRangeParameter, CUKFSConstants.EQUALS_SIGN)) {
             return false;
         }
 
-        final String workbookFilePathRelativeToStagingDir = valuesArray[0];
-        LOG.info("performOneTimeCopyOfWorkbookToDatabaseIfNecessary, Date range parameter contains a single value; "
-                + "will treat it as an XLSX file path, cancel normal processing and instead copy a prior run's existing "
-                + "Supplier Extract sheet data rows into the equivalent database tables");
-        
+        LOG.info("performOneTimeCopyOfWorkbookToDatabaseIfNecessary, Date range parameter has a 'key=value' string; "
+                + "will treat it as a datetime-and-filepath pair, cancel normal processing and instead copy a prior "
+                + "run's existing Supplier Extract sheet data rows into the equivalent database tables");
+
+        final String runDateString = StringUtils.substringBefore(dateRangeParameter, CUKFSConstants.EQUALS_SIGN);
+        final String workbookFilePath = StringUtils.substringAfter(dateRangeParameter, CUKFSConstants.EQUALS_SIGN);
+
+        LOG.info("performOneTimeCopyOfWorkbookToDatabaseIfNecessary, Extracted data will be mapped to the following "
+                + "run-datetime string: {}", runDateString);
+        LOG.info("performOneTimeCopyOfWorkbookToDatabaseIfNecessary, Data will be extracted from the following "
+                + "workbook (relative to the 'staging' directory): {}", workbookFilePath);
+
+        extractSupplierWorkbookToDatabase(runDateString, workbookFilePath);
+
+        LOG.info("performOneTimeCopyOfWorkbookToDatabaseIfNecessary, Success! Workbook data has been fully processed");
         return true;
+    }
+
+    private void extractSupplierWorkbookToDatabase(final String jobRunDate, final String workbookFilePath) {
+        Validate.validState(CemiUtils.isFormattedAsValidFilePath(workbookFilePath),
+                "Workbook file path is blank or malformed");
+        final String fullWorkbookPath = StringUtils.join(stagingDirectory, CUKFSConstants.SLASH, workbookFilePath);
+        final File workbookFile = new File(fullWorkbookPath);
+        Validate.validState(workbookFile.exists(), "Workbook file not found: %s", workbookFilePath);
+
+        final CemiOutputDefinition outputDefinition = getOutputDefinitionForSupplierExtract();
+        final CemiWorkbookOrmHandler ormHandler = new CemiWorkbookOrmHandler(
+                outputDefinition, businessObjectService, cemiSheetDao);
+        final TriConsumer<String, Integer, String[]> rowDataHandler = (sheetName, rowIndex, rowData) -> {
+            ormHandler.storeArrayBasedSheetRow(sheetName, rowData, jobRunDate, rowIndex + 1L);
+        };
+
+        try (
+            final CemiExcelReader excelReader = new CemiExcelReader(workbookFile, outputDefinition, rowDataHandler);
+        ) {
+            excelReader.parse();
+        } catch (final Exception e) {
+            LOG.error("extractSupplierWorkbookToDatabase, Failed to extract workbook", e);
+            throw new RuntimeException(e);
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -273,6 +310,10 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
             LOG.error("copySupplierExtractFileToOutboundDirectory, Failed to copy file to outbound directory", e);
             throw new UncheckedIOException(e);
         }
+    }
+
+    public void setStagingDirectory(final String stagingDirectory) {
+        this.stagingDirectory = stagingDirectory;
     }
 
     public void setSupplierFileCreationDirectory(final String supplierFileCreationDirectory) {

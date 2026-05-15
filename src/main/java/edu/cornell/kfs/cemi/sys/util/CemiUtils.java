@@ -32,7 +32,7 @@ public final class CemiUtils {
     private static final Pattern NON_WORD_PATTERN = Pattern.compile("\\W+");
     private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("^[A-Za-z]\\w*$");
     private static final Pattern UNDERSCORE_AND_LETTER_PATTERN = Pattern.compile("_([A-Za-z])");
-    private static final Pattern MODULE_PATH_PATTERN = Pattern.compile("^(module/)?[A-Za-z]+$");
+    private static final Pattern FILE_PATH_PATTERN = Pattern.compile("^(\\w+/)*\\w+(\\.[A-Za-z0-9]+)?$");
 
     private static final Set<String> RESERVED_WORDS = Set.of("STATE");
 
@@ -139,8 +139,8 @@ public final class CemiUtils {
         return StringUtils.isNotBlank(name) && IDENTIFIER_PATTERN.matcher(name).matches();
     }
 
-    public static boolean isFormattedAsValidModulePath(final String path) {
-        return StringUtils.isNotBlank(path) && MODULE_PATH_PATTERN.matcher(path).matches();
+    public static boolean isFormattedAsValidFilePath(final String path) {
+        return StringUtils.isNotBlank(path) && FILE_PATH_PATTERN.matcher(path).matches();
     }
 
 }

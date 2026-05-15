@@ -2,9 +2,9 @@ package edu.cornell.kfs.cemi.sys.batch.dataaccess.impl;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
@@ -64,7 +64,7 @@ public class CemiWorkbookOrmHandler {
             try {
                 final Class<? extends PersistableBusinessObject> boClass = sheetMetadata.getBoClass();
                 sheetRowBo = boClass.getDeclaredConstructor().newInstance();
-                final BeanWrapper wrappedDto = PropertyAccessorFactory.forBeanPropertyAccess(sheetRowDto); 
+                final BeanWrapper wrappedDto = PropertyAccessorFactory.forBeanPropertyAccess(sheetRowDto);
                 final BeanWrapper wrappedBo = PropertyAccessorFactory.forBeanPropertyAccess(sheetRowBo);
                 for (final Pair<String, String> fieldMapping: sheetMetadata.getFieldMappings()) {
                     final Object fieldValue = wrappedDto.getPropertyValue(fieldMapping.getLeft());
@@ -86,16 +86,62 @@ public class CemiWorkbookOrmHandler {
         return sheetRowBo;
     }
 
-    public Stream<String[]> getSheetRowDataForPrinting(final String sheetName, final String jobRunDate) {
+    public void storeArrayBasedSheetRow(final String sheetName, final String[] sheetRow, final String jobRunDate,
+            final Long rowIndex) {
+        Validate.notBlank(sheetName, "sheetName cannot be blank");
+        Validate.notEmpty(sheetRow, "sheetRow cannot be null or empty");
+        Validate.notBlank(jobRunDate, "jobRunDate cannot be blank");
+        Validate.notNull(rowIndex, "rowIndex cannot be null");
+        final PersistableBusinessObject sheetRowBo = prepareSheetRowBoFromArray(
+                sheetName, sheetRow, jobRunDate, rowIndex);
+        businessObjectService.save(sheetRowBo);
+    }
+
+    private PersistableBusinessObject prepareSheetRowBoFromArray(final String sheetName, final String[] sheetRow,
+            final String jobRunDate, final Long rowIndex) {
+        final CemiSheetOrmMetadata sheetMetadata = sheetsByName.get(sheetName);
+        Validate.validState(sheetMetadata != null, "No mapping found for sheet: %s", sheetName);
+        final int expectedLength = sheetMetadata.getFieldMappings().size();
+        Validate.validState(sheetRow.length == expectedLength,
+                "Wrong length for array-based sheet row; expected: %s, actual: %s", expectedLength, sheetRow.length);
+
+        try {
+            final Class<? extends PersistableBusinessObject> boClass = sheetMetadata.getBoClass();
+            final PersistableBusinessObject sheetRowBo = boClass.getDeclaredConstructor().newInstance();
+            final BeanWrapper wrappedBo = PropertyAccessorFactory.forBeanPropertyAccess(sheetRowBo);
+            int index = 0;
+            for (final Pair<String, String> fieldMapping: sheetMetadata.getFieldMappings()) {
+                final String fieldValue = sheetRow[index];
+                wrappedBo.setPropertyValue(fieldMapping.getRight(), fieldValue);
+                index++;
+            }
+
+            if (sheetRowBo instanceof CemiIndexedBusinessObjectBase) {
+                final CemiIndexedBusinessObjectBase indexedBo = (CemiIndexedBusinessObjectBase) sheetRowBo;
+                indexedBo.setJobRunDate(jobRunDate);
+                indexedBo.setRowIndex(rowIndex);
+            }
+
+            return sheetRowBo;
+        } catch (final RuntimeException e) {
+            throw e;
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void getAndHandleSheetRowDataForPrinting(final String sheetName, final String jobRunDate,
+            final Consumer<String[]> rowDataHandler) {
         Validate.notBlank(sheetName, "sheetName cannot be blank");
         Validate.notBlank(jobRunDate, "jobRunDate cannot be blank");
+        Validate.notNull(rowDataHandler, "rowDataHandler cannot be null");
         final CemiSheetOrmMetadata sheetMetadata = sheetsByName.get(sheetName);
         Validate.validState(sheetMetadata != null, "No mapping found for sheet name: %s", sheetName);
         Validate.validState(CemiIndexedBusinessObjectBase.class.isAssignableFrom(sheetMetadata.getBoClass()),
                 "BO class %s for sheet %s should have been an instance of CemiIndexedBusinessObjectBase. "
                         + "Only sub-types of CemiIndexedBusinessObjectBase can be handled by this method.",
                         sheetMetadata.getBoClass().getName(), sheetName);
-        return cemiSheetDao.getSheetRowDataForPrinting(sheetMetadata, jobRunDate);
+        cemiSheetDao.getAndHandleSheetRowDataForPrinting(sheetMetadata, jobRunDate, rowDataHandler);
     }
 
 }

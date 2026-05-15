@@ -31,8 +31,13 @@ public class CemiSupplier {
     private final String transactionTaxId;
     private final String primaryTaxId;
     private final String countryTaxId;
+    private final String supplierCategory;
     private final String dunsNumber;
     private final String paymentTerms;
+    private final String defaultPaymentType;
+    private final List<String> paymentTypesAccepted;
+    private final String currency;
+    private final String acceptedCurrencies;
     private final String alias0Name;
     private final String alias0Usage;
     private final String alias1Name;
@@ -59,8 +64,14 @@ public class CemiSupplier {
         this.transactionTaxId = determineTransactionTaxId(vendorDetail, this.taxIdValue, this.taxIdType);
         this.primaryTaxId = determinePrimaryTaxId(vendorDetail, this.taxIdValue);
         this.countryTaxId = determineCountryTaxId(vendorDetail, this.taxIdValue);
+        this.supplierCategory = CemiVendorConstants.DEFAULT_SUPPLIER_CATEGORY;
         this.dunsNumber = vendorDetail.getVendorDunsNumber();
         this.paymentTerms = determineVendorPaymentTerms(vendorDetail);
+        this.defaultPaymentType = CemiVendorConstants.DEFAULT_PAYMENT_TYPE;
+        this.paymentTypesAccepted = List.of(
+                CemiVendorConstants.DEFAULT_PAYMENT_TYPE, KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING);
+        this.currency = CemiVendorConstants.DEFAULT_CURRENCY;
+        this.acceptedCurrencies = CemiVendorConstants.DEFAULT_CURRENCY;
         
         List<VendorAlias> vendorAliases = vendorDetail.getVendorAliases().stream()
                 .filter(VendorAlias::isActive)
@@ -227,6 +238,22 @@ public class CemiSupplier {
         return paymentTerms;
     }
 
+    public String getDefaultPaymentType() {
+        return defaultPaymentType;
+    }
+
+    public List<String> getPaymentTypesAccepted() {
+        return paymentTypesAccepted;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public String getAcceptedCurrencies() {
+        return acceptedCurrencies;
+    }
+
     public String getAlias0Name() {
         return alias0Name;
     }
@@ -242,12 +269,21 @@ public class CemiSupplier {
     public String getAlias1Usage() {
         return alias1Usage;
     }
-    
+
+    // Temporary placeholder for returning empty values until we're ready to proceed with more Supplier refactoring.
+    public String getEmptyValue() {
+        return KFSConstants.EMPTY_STRING;
+    }
+
     public static ISOFIPSConversionService getConversionService(){
         if (conversionService == null) {
             conversionService = SpringContext.getBean(ISOFIPSConversionService.class);
         }
         return conversionService;
+    }
+
+    public String getSupplierCategory() {
+        return supplierCategory;
     }
 
 }

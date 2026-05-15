@@ -1,9 +1,10 @@
 package edu.cornell.kfs.cemi.sys.batch.dataaccess;
 
-import java.util.stream.Stream;
+import java.util.function.Consumer;
 
 public interface CemiSheetDao {
 
-    Stream<String[]> getSheetRowDataForPrinting(final CemiSheetOrmMetadata sheetMetadata, final String jobRunDate);
+    void getAndHandleSheetRowDataForPrinting(final CemiSheetOrmMetadata sheetMetadata, final String jobRunDate,
+            final Consumer<String[]> sheetRowHandler);
 
 }
