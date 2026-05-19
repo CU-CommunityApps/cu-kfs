@@ -114,7 +114,7 @@ public abstract class CemiPaymentElectionDataBuilderBase implements CemiPaymentE
     }
 
     /*
-     * The subclass that writes the award schedule data to the temp tables needs to implement this method.
+     * The subclass that writes each sheet/tab of data in the spreasheet to temp tables needs to implement this method.
      * If desired, the implementation can keep connections/files/etc. open until close() is called.
      * See the CSV implementation for an example.
      */

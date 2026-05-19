@@ -70,7 +70,7 @@ public class CemiPaymentElectionGroupTwoBo extends PersistableBusinessObjectBase
         this.branchName_2_1 = groupTwo.getBranchName_2_1();
         this.branchIdNumber_2_1 = groupTwo.getBranchIdNumber_2_1();
         this.checkDigit_2_1 = groupTwo.getCheckDigit_2_1();
-        this.distributionAmount_2_1 = groupTwo.getDistributionBalance_2_1();
+        this.distributionAmount_2_1 = groupTwo.getDistributionAmount_2_1();
         this.distributionPercentage_2_1 = groupTwo.getDistributionPercentage_2_1();
         this.distributionBalance_2_1 = groupTwo.getDistributionBalance_2_1();
     }
