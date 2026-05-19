@@ -27,7 +27,9 @@ public class CreateCemiRemitToSupplierExtractStep extends AbstractStep {
 
         try {
             cemiRemitToSupplierExtractService.resetState();
+            cemiRemitToSupplierExtractService.populateListOfInScopeAwards();
             cemiRemitToSupplierExtractService.initializeExtractDateRangeSettings();
+            cemiRemitToSupplierExtractService.generateIntermediateSupplierExtractData(jobRunDate);
 
             cemiRemitToSupplierExtractService.generateRemitToSupplierExtractFile(jobRunDate);
 

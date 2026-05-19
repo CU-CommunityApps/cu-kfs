@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.cemi.scm.remitto.CemiRemiToSupplierConstants;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
 
@@ -29,9 +30,6 @@ import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
  * - Always_Separate_Payments (Optional)
  */
 public class CemiRemitToSupplierConnection {
-
-    public static final String SUPPLIER_CONNECTION_ID_FORMAT = "{0}_{1}";
-    public static final int MAX_ACCEPTED_PAYMENT_TYPES = 3;
 
     private final String supplierId;
     private final String supplierConnectionName;
@@ -80,7 +78,7 @@ public class CemiRemitToSupplierConnection {
         this.supplierConnectionName = supplierConnectionName;
         this.defaultPaymentType = defaultPaymentType;
         this.acceptedPaymentTypes = CemiUtils.createListPaddedToMinimumSizeIfNecessary(
-                MAX_ACCEPTED_PAYMENT_TYPES, acceptedPaymentTypes.toArray(String[]::new));
+                CemiRemiToSupplierConstants.MAX_ACCEPTED_PAYMENT_TYPES, acceptedPaymentTypes.toArray(String[]::new));
         this.settlementBankAccount = StringUtils.defaultString(settlementBankAccount);
         this.remitToAddressId = remitToAddressId;
         this.remitToEmailAddress = StringUtils.defaultString(remitToEmailAddress);
@@ -123,7 +121,7 @@ public class CemiRemitToSupplierConnection {
      */
     public static String buildConnectionName(final String supplierName, final String addressLine1) {
         if (StringUtils.isNotBlank(addressLine1)) {
-            return MessageFormat.format(SUPPLIER_CONNECTION_ID_FORMAT, supplierName, addressLine1);
+            return MessageFormat.format(CemiRemiToSupplierConstants.SUPPLIER_CONNECTION_ID_FORMAT, supplierName, addressLine1);
         }
         return supplierName;
     }

@@ -10,5 +10,8 @@ public final class CemiRemiToSupplierConstants {
 
     public static final String OUTPUT_FILE_NAME_FORMAT = "Remit_To_Supplier_{0}.xlsx";
     public static final DateTimeFormatter FILE_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+    
+    public static final String SUPPLIER_CONNECTION_ID_FORMAT = "{0}_{1}";
+    public static final int MAX_ACCEPTED_PAYMENT_TYPES = 3;
 
 }

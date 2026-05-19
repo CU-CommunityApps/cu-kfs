@@ -293,4 +293,16 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
         this.parameterService = parameterService;
     }
 
+    @Override
+    public void populateListOfInScopeAwards() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void generateIntermediateSupplierExtractData(LocalDateTime jobRunDate) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }
