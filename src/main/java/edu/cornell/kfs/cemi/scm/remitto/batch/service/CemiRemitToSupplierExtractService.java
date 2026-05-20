@@ -34,8 +34,7 @@ public interface CemiRemitToSupplierExtractService {
      */
     void generateRemitToSupplierExtractFile(final LocalDateTime jobRunDate);
 
-    void populateListOfInScopeAwards();
-
-    void generateIntermediateSupplierExtractData(LocalDateTime jobRunDate);
+    void generateIntermediateRemitToSupplierExtractData(LocalDateTime jobRunDate);
+    
 
 }

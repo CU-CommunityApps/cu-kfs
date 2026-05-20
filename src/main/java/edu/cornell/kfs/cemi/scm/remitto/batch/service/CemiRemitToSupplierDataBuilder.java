@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 
-import org.kuali.kfs.vnd.businessobject.VendorHeader;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo;
 
 public interface CemiRemitToSupplierDataBuilder extends Closeable {
     
-    void writeRemitToSupplierDataToIntermediateStorage(final Iterator<VendorHeader> suppliers,
+    void writeRemitToSupplierDataToIntermediateStorage(final Iterator<CemiSupplierBo> suppliers,
             final LocalDateTime jobRunDate) throws IOException;
+    
+    
 
 }

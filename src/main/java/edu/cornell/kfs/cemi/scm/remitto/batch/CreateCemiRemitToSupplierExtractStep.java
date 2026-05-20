@@ -1,7 +1,6 @@
 package edu.cornell.kfs.cemi.scm.remitto.batch;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,9 +26,9 @@ public class CreateCemiRemitToSupplierExtractStep extends AbstractStep {
 
         try {
             cemiRemitToSupplierExtractService.resetState();
-            cemiRemitToSupplierExtractService.populateListOfInScopeAwards();
+
             cemiRemitToSupplierExtractService.initializeExtractDateRangeSettings();
-            cemiRemitToSupplierExtractService.generateIntermediateSupplierExtractData(jobRunDate);
+            cemiRemitToSupplierExtractService.generateIntermediateRemitToSupplierExtractData(jobRunDate);
 
             cemiRemitToSupplierExtractService.generateRemitToSupplierExtractFile(jobRunDate);
 

@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.cemi.scm.remitto.CemiRemiToSupplierConstants;
+import edu.cornell.kfs.cemi.scm.remitto.CemiRemitToSupplierConstants;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
 
@@ -29,7 +29,7 @@ import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
  * - Default_Payment_Terms (Optional - defaults to overall Supplier payment terms if left blank)
  * - Always_Separate_Payments (Optional)
  */
-public class CemiRemitToSupplierConnection {
+public class CemiRemitToSupplier {
 
     private final String supplierId;
     private final String supplierConnectionName;
@@ -60,7 +60,7 @@ public class CemiRemitToSupplierConnection {
      * @param defaultPaymentTerms The payment terms (optional, defaults to supplier's terms)
      * @param alwaysSeparatePayments Whether to always separate payments
      */
-    public CemiRemitToSupplierConnection(
+    public CemiRemitToSupplier(
             final String supplierId,
             final String supplierConnectionName,
             final String defaultPaymentType,
@@ -78,7 +78,7 @@ public class CemiRemitToSupplierConnection {
         this.supplierConnectionName = supplierConnectionName;
         this.defaultPaymentType = defaultPaymentType;
         this.acceptedPaymentTypes = CemiUtils.createListPaddedToMinimumSizeIfNecessary(
-                CemiRemiToSupplierConstants.MAX_ACCEPTED_PAYMENT_TYPES, acceptedPaymentTypes.toArray(String[]::new));
+                CemiRemitToSupplierConstants.MAX_ACCEPTED_PAYMENT_TYPES, acceptedPaymentTypes.toArray(String[]::new));
         this.settlementBankAccount = StringUtils.defaultString(settlementBankAccount);
         this.remitToAddressId = remitToAddressId;
         this.remitToEmailAddress = StringUtils.defaultString(remitToEmailAddress);
@@ -95,12 +95,12 @@ public class CemiRemitToSupplierConnection {
      * Factory method to create a CemiRemitToSupplierConnection with minimal required fields
      * and sensible defaults.
      */
-    public static CemiRemitToSupplierConnection createWithDefaults(
+    public static CemiRemitToSupplier createWithDefaults(
             final String supplierId,
             final String supplierConnectionName,
             final String remitToAddressId,
             final boolean isDefault) {
-        return new CemiRemitToSupplierConnection(
+        return new CemiRemitToSupplier(
                 supplierId,
                 supplierConnectionName,
                 CemiVendorConstants.DEFAULT_PAYMENT_TYPE,
@@ -121,7 +121,7 @@ public class CemiRemitToSupplierConnection {
      */
     public static String buildConnectionName(final String supplierName, final String addressLine1) {
         if (StringUtils.isNotBlank(addressLine1)) {
-            return MessageFormat.format(CemiRemiToSupplierConstants.SUPPLIER_CONNECTION_ID_FORMAT, supplierName, addressLine1);
+            return MessageFormat.format(CemiRemitToSupplierConstants.SUPPLIER_CONNECTION_ID_FORMAT, supplierName, addressLine1);
         }
         return supplierName;
     }

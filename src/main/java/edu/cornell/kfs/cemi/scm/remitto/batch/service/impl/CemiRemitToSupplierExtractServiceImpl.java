@@ -1,11 +1,14 @@
 package edu.cornell.kfs.cemi.scm.remitto.batch.service.impl;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,7 +17,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -23,22 +28,39 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.kuali.kfs.core.api.config.Environment;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import edu.cornell.kfs.cemi.scm.remitto.CemiRemiToSupplierConstants;
-import edu.cornell.kfs.cemi.scm.remitto.batch.dto.CemiRemitToSupplierConnection;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+
+import edu.cornell.kfs.cemi.scm.remitto.CemiRemitToSupplierConstants;
+import edu.cornell.kfs.cemi.scm.remitto.CemiRemitToSupplierParameterConstants;
+import edu.cornell.kfs.cemi.scm.remitto.batch.CreateCemiRemitToSupplierExtractStep;
+import edu.cornell.kfs.cemi.scm.remitto.batch.dto.CemiRemitToSupplier;
 import edu.cornell.kfs.cemi.scm.remitto.batch.service.CemiRemitToSupplierExtractService;
+import edu.cornell.kfs.cemi.scm.remitto.dataaccess.CemiRemitToSupplierDao;
+import edu.cornell.kfs.cemi.scm.remitto.dataaccess.CemiRemitToSupplierOrmDao;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants.FileExtensions;
+import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
+import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
+import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
+import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
 import edu.cornell.kfs.cemi.vnd.CemiVendorParameterConstants;
 import edu.cornell.kfs.cemi.vnd.batch.CreateCemiSupplierExtractStep;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorDao;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorOrmDao;
+import edu.cornell.kfs.core.api.util.CuCoreUtilities;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 /**
  * Implementation of CemiRemitToSupplierExtractService.
@@ -55,9 +77,11 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
     private final Environment environment;
     private String remitToSupplierFileCreationDirectory;
     private String remitToSupplierFileOutboundDirectory;
-    private CemiVendorOrmDao cemiVendorOrmDao;
-    private CemiVendorDao cemiVendorDao;
+    private CemiRemitToSupplierOrmDao cemiRemitToSupplierOrmDao;
+    private CemiRemitToSupplierDao cemiRemitToSupplierDao;
+    private CemiOutputDefinitionFileType cemiOutputDefinitionFileType;
     private BusinessObjectService businessObjectService;
+    private DateTimeService dateTimeService;
     private ParameterService parameterService;
 
     private DecimalFormat supplierIdFormatter;
@@ -67,6 +91,7 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
         this.supplierIdFormatter = new DecimalFormat(CemiVendorConstants.SUPPLIER_ID_FORMAT);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void resetState() {
         LOG.debug("resetState, Service state has been reset");
@@ -75,87 +100,114 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
     @Override
     public void initializeExtractDateRangeSettings() {
     }
+    
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public void generateIntermediateRemitToSupplierExtractData(final LocalDateTime jobRunDate) {
+        LOG.info("generateIntermediateRemitToSupplierExtractData, Generating data rows for Remit To Supplier spreadsheet "
+                + "and placing in intermediate storage...");
+        try {
+            final CemiOutputDefinition outputDefinition = getOutputDefinitionForRemitToSupplierExtract();
+            generateRemitToSupplierExtractData(outputDefinition, jobRunDate);
+        } catch (final Exception e) {
+            LOG.error("generateIntermediateRemitToSupplierExtractData, Creation of Remit To Supplier Extract data failed", e);
+            throw new RuntimeException(e);
+        }
+    }
+    
+    private void generateRemitToSupplierExtractData(final CemiOutputDefinition outputDefinition,
+            final LocalDateTime jobRunDate) throws IOException {
+        try (
+            // Replace this builder with a temp table implementation when ready.
+            final CemiRemitToSupplierDataBuilderCsvImpl dataBuilder = new CemiRemitToSupplierDataBuilderCsvImpl(
+                    getOutputDefinitionForRemitToSupplierExtract(), getCemiRemitToSupplierDao(), getDateTimeService(),
+                    getBusinessObjectService(), jobRunDate, getRemitToSupplierFileCreationDirectory(), shouldMaskCemiSensitiveData());
 
+            final Stream<CemiSupplierBo> suppliers = getCemiRemitToSupplierOrmDao().getCemiSuppliersExtractAsCloseableStream();
+        ) {
+            final Iterator<CemiSupplierBo> suppliersIterator = suppliers.iterator();
+            dataBuilder.writeRemitToSupplierDataToIntermediateStorage(suppliersIterator, jobRunDate);
+        }
+    }
+    
+    private CemiOutputDefinition getOutputDefinitionForRemitToSupplierExtract() throws IOException {
+        try (
+            final InputStream inputStream = CuCoreUtilities.getResourceAsStream(
+                    CemiRemitToSupplierConstants.REMIT_TO_SUPPLIER_OUTPUT_DEFINITION_FILE_PATH);
+        ) {
+            final byte[] fileContents = IOUtils.toByteArray(inputStream);
+            return cemiOutputDefinitionFileType.parse(fileContents);
+        }
+    }
+    
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void generateRemitToSupplierExtractFile(final LocalDateTime jobRunDate) {
-        LOG.info("generateRemitToSupplierExtractFile, Starting Remit To Supplier extract generation");
+        try {
+            LOG.info("generateRemitToSupplierExtractFile, Starting creation of CEMI RemitToSupplier Extract file...");
+            final String newFileName = CemiUtils.generateFileNameContainingDateTime(
+                    jobRunDate, CemiRemitToSupplierConstants.REMIT_TO_SUPPLIER_EXTRACT_FILENAME_PREFIX, FileExtensions.XLSX);
+            final File tempFile = qualifyAndGetFilePath(remitToSupplierFileCreationDirectory, newFileName);
+            final File finalFile = qualifyAndGetFilePath(
+                    remitToSupplierFileOutboundDirectory, CemiRemitToSupplierConstants.REMIT_TO_SUPPLIER_EXTRACT_PLAIN_FILENAME);
+            Validate.validState(!tempFile.exists(), "Temporary file already exists: %s", newFileName);
 
-        final boolean maskSensitiveData = shouldMaskCemiSensitiveData();
-        final String outputFileName = buildOutputFileName(jobRunDate);
-        final Path outputPath = Paths.get(remitToSupplierFileCreationDirectory, outputFileName);
+            createAndPopulateRemitToSupplierExtractFile(tempFile, jobRunDate);
 
-        try (InputStream templateStream = getTemplateInputStream();
-             Workbook workbook = new XSSFWorkbook(templateStream)) {
-
-            final Sheet sheet = workbook.getSheet(CemiRemiToSupplierConstants.REMIT_TO_SUPPLIER_SHEET_NAME);
-            if (sheet == null) {
-                throw new IllegalStateException("Sheet '" + CemiRemiToSupplierConstants.REMIT_TO_SUPPLIER_SHEET_NAME + "' not found in template");
+            if (shouldCopyRemitToSpplierExtractFileToOutboundDirectory()) {
+                LOG.info("generateRemitToSupplierExtractFile, Copying file to outbound folder under the {} name...", CemiRemitToSupplierConstants.REMIT_TO_SUPPLIER_EXTRACT_PLAIN_FILENAME);
+                copyRemitToSupplierExtractFileToOutboundDirectory(tempFile, finalFile);
+            } else {
+                LOG.info("generateRemitToSupplierExtractFile, Copying of the file to the outbound folder has been disabled. "
+                        + "The copying operation will be skipped.");
             }
 
-            //final Iterator<VendorDetail> vendorIterator = cemiVendorOrmDao.findVendorsWithRemitAddresses();
-            Stream<VendorDetail> vendors = cemiVendorOrmDao.getVendorsForCemiSupplierExtractAsCloseableStream();
-
-            int rowIndex = CemiRemiToSupplierConstants.DATA_START_ROW;
-            int vendorCount = 0;
-
-            final Iterator<VendorDetail> vendorIterator  = vendors.iterator();
-            while (vendorIterator.hasNext()) {
-                final VendorDetail vendor = vendorIterator.next();
-                final List<VendorAddress> remitAddresses = findRemitAddressesForVendor(vendor);
-
-                if (remitAddresses.isEmpty()) {
-                    LOG.debug("generateRemitToSupplierExtractFile, No remit addresses found for vendor {}-{}",
-                            vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
-                    continue;
-                }
-
-                vendorCount++;
-                final String supplierId = supplierIdFormatter.format(vendorCount);
-                boolean isFirstConnection = true;
-
-                for (final VendorAddress remitAddress : remitAddresses) {
-                    final CemiRemitToSupplierConnection connection = buildConnectionFromVendorAddress(
-                            vendor, remitAddress, supplierId, isFirstConnection);
-
-                    writeConnectionToRow(sheet, rowIndex, connection);
-                    rowIndex++;
-                    isFirstConnection = false;
-                }
-
-                if (vendorCount % 100 == 0) {
-                    LOG.info("generateRemitToSupplierExtractFile, Processed {} vendors...", vendorCount);
-                }
-            }
-
-            // Write the workbook to file
-            try (FileOutputStream fileOut = new FileOutputStream(outputPath.toFile())) {
-                workbook.write(fileOut);
-            }
-
-            LOG.info("generateRemitToSupplierExtractFile, Completed. Processed {} vendors, wrote {} rows to {}",
-                    vendorCount, rowIndex - CemiRemiToSupplierConstants.DATA_START_ROW, outputPath);
-
-            // Copy to outbound directory
-            copyToOutboundDirectory(outputPath, outputFileName);
-
-        } catch (final IOException e) {
-            LOG.error("generateRemitToSupplierExtractFile, Error generating extract file", e);
-            throw new RuntimeException("Error generating Remit To Supplier extract file", e);
+            LOG.info("generateRemitToSupplierExtractFile, Success! Created the following extract file: {}", newFileName);
+        } catch (final Exception e) {
+            LOG.error("generateRemitToSupplierExtractFile, Creation of Remit To Supplier Extract file failed", e);
+            throw new RuntimeException(e);
         }
     }
+    
+    private File qualifyAndGetFilePath(final String prefix, final String fileName) {
+        return new File(StringUtils.join(prefix, CUKFSConstants.SLASH, fileName));
+    }
+    
+    private void createAndPopulateRemitToSupplierExtractFile(final File file, final LocalDateTime jobRunDate)
+            throws IOException, InvalidFormatException {
+        final CemiOutputDefinition outputDefinition = getOutputDefinitionForRemitToSupplierExtract();
 
-    private InputStream getTemplateInputStream() throws IOException {
-        final InputStream templateStream = getClass().getClassLoader().getResourceAsStream(CemiRemiToSupplierConstants.REMIT_TO_SUPPLIER_TEMPLATE_FILE);
-        if (templateStream == null) {
-            throw new IOException("Template file not found: " + CemiRemiToSupplierConstants.REMIT_TO_SUPPLIER_TEMPLATE_FILE);
+        try (
+            final InputStream templateFileStream = CuCoreUtilities.getResourceAsStream(
+                    CemiRemitToSupplierConstants.REMIT_TO_SUPPLIER_TEMPLATE_FILE_PATH);
+            final CemiExcelWriter writer = new CemiExcelWriter(outputDefinition, templateFileStream, file);
+        ) {
+            // Replace this appender with a temp table implementation when ready.
+            final CemiRemitToSupplierFileAppenderCsvImpl remitToSupplierFileAppender = new CemiRemitToSupplierFileAppenderCsvImpl(
+                outputDefinition, jobRunDate, remitToSupplierFileCreationDirectory);
+            remitToSupplierFileAppender.populateRemitToSupplierFileFromIntermediateDataStorage(writer);
+            writer.commit();
+            remitToSupplierFileAppender.cleanUpIntermediateStorage();
         }
-        return templateStream;
     }
-
-    private String buildOutputFileName(final LocalDateTime jobRunDate) {
-        final String dateStamp = jobRunDate.format(CemiRemiToSupplierConstants.FILE_DATE_FORMAT);
-        return CemiRemiToSupplierConstants.OUTPUT_FILE_NAME_FORMAT.replace("{0}", dateStamp);
+    
+    private void copyRemitToSupplierExtractFileToOutboundDirectory(final File sourceFile, final File targetFile) {
+        try {
+            final Path creationFilePath = sourceFile.toPath();
+            final Path outboundFilePath = targetFile.toPath();
+            Files.copy(creationFilePath, outboundFilePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            LOG.error("copyRemitToSupplierExtractFileToOutboundDirectory, Failed to copy file to outbound directory", e);
+            throw new UncheckedIOException(e);
+        }
     }
+    
+    private boolean shouldCopyRemitToSpplierExtractFileToOutboundDirectory() {
+        return parameterService.getParameterValueAsBoolean(
+                CreateCemiRemitToSupplierExtractStep.class, CemiRemitToSupplierParameterConstants.COPY_CEMI_REMIT_TO_SUPPLIER_FILE_TO_OUTBOUND_FOLDER);
+    }
+    
     
     private boolean isCemiSensitiveDataSetToUnmask() {
         String maskingParameterValue =  parameterService.getParameterValueAsString(
@@ -173,90 +225,6 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
 
     private boolean shouldMaskCemiSensitiveData() {
         return !shouldUnmaskCemiSensitiveData();
-    }
-
-    private List<VendorAddress> findRemitAddressesForVendor(final VendorDetail vendor) {
-        return vendor.getVendorAddresses().stream()
-                .filter(VendorAddress::isActive)
-                .filter(addr -> VendorConstants.AddressTypes.REMIT.equals(addr.getVendorAddressTypeCode()))
-                .collect(Collectors.toList());
-    }
-
-    private CemiRemitToSupplierConnection buildConnectionFromVendorAddress(
-            final VendorDetail vendor,
-            final VendorAddress remitAddress,
-            final String supplierId,
-            final boolean isDefault) {
-
-        final String connectionName = CemiRemitToSupplierConnection.buildConnectionName(
-                vendor.getVendorName(), remitAddress.getVendorLine1Address());
-
-        final String remitToAddressId = buildRemitToAddressId(supplierId, remitAddress);
-        final String remitToEmail = StringUtils.defaultString(remitAddress.getVendorAddressEmailAddress());
-
-        return new CemiRemitToSupplierConnection(
-                supplierId,
-                connectionName,
-                CemiVendorConstants.DEFAULT_PAYMENT_TYPE,
-                List.of(CemiVendorConstants.DEFAULT_PAYMENT_TYPE),
-                KFSConstants.EMPTY_STRING, // settlementBankAccount - populated later if needed
-                remitToAddressId,
-                remitToEmail,
-                KFSConstants.EMPTY_STRING, // payeeAlternateName
-                KFSConstants.EMPTY_STRING, // alternateNameUsage
-                isDefault,
-                KFSConstants.EMPTY_STRING, // defaultPaymentTerms
-                false); // alwaysSeparatePayments
-    }
-
-    private String buildRemitToAddressId(final String supplierId, final VendorAddress address) {
-        return String.format("%s_ADDR_%d", supplierId, address.getVendorAddressGeneratedIdentifier());
-    }
-
-    private void writeConnectionToRow(final Sheet sheet, final int rowIndex, 
-            final CemiRemitToSupplierConnection connection) {
-
-        Row row = sheet.getRow(rowIndex);
-        if (row == null) {
-            row = sheet.createRow(rowIndex);
-        }
-
-        int colIndex = CemiRemiToSupplierConstants.START_COLUMN_INDEX;
-
-        // Supplier
-        setCellValue(row, colIndex++, connection.getSupplierId());
-        // Supplier_Connection_Name
-        setCellValue(row, colIndex++, connection.getSupplierConnectionName());
-        // Default_Payment_Type
-        setCellValue(row, colIndex++, connection.getDefaultPaymentType());
-        // Accepted_Payment_Type_1, 2, 3
-        for (final String paymentType : connection.getAcceptedPaymentTypes()) {
-            setCellValue(row, colIndex++, paymentType);
-        }
-        // Settlement_Bank_Account
-        setCellValue(row, colIndex++, connection.getSettlementBankAccount());
-        // Remit_To_Address_ID
-        setCellValue(row, colIndex++, connection.getRemitToAddressId());
-        // Remit_To_Email_Address
-        setCellValue(row, colIndex++, connection.getRemitToEmailAddress());
-        // Payee_Alternate_Name
-        setCellValue(row, colIndex++, connection.getPayeeAlternateName());
-        // Alternate_Name_Usage
-        setCellValue(row, colIndex++, connection.getAlternateNameUsage());
-        // Is_Default
-        setCellValue(row, colIndex++, connection.getIsDefault());
-        // Default_Payment_Terms
-        setCellValue(row, colIndex++, connection.getDefaultPaymentTerms());
-        // Always_Separate_Payments
-        setCellValue(row, colIndex++, connection.getAlwaysSeparatePayments());
-    }
-
-    private void setCellValue(final Row row, final int colIndex, final String value) {
-        Cell cell = row.getCell(colIndex);
-        if (cell == null) {
-            cell = row.createCell(colIndex);
-        }
-        cell.setCellValue(StringUtils.defaultString(value));
     }
 
     private void copyToOutboundDirectory(final Path sourcePath, final String fileName) {
@@ -277,14 +245,6 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
         this.remitToSupplierFileOutboundDirectory = remitToSupplierFileOutboundDirectory;
     }
 
-    public void setCemiVendorOrmDao(final CemiVendorOrmDao cemiVendorOrmDao) {
-        this.cemiVendorOrmDao = cemiVendorOrmDao;
-    }
-
-    public void setCemiVendorDao(final CemiVendorDao cemiVendorDao) {
-        this.cemiVendorDao = cemiVendorDao;
-    }
-
     public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
@@ -293,16 +253,40 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
         this.parameterService = parameterService;
     }
 
-    @Override
-    public void populateListOfInScopeAwards() {
-        // TODO Auto-generated method stub
-        
+    public CemiRemitToSupplierDao getCemiRemitToSupplierDao() {
+        return cemiRemitToSupplierDao;
     }
 
-    @Override
-    public void generateIntermediateSupplierExtractData(LocalDateTime jobRunDate) {
-        // TODO Auto-generated method stub
-        
+    public void setCemiRemitToSupplierDao(CemiRemitToSupplierDao cemiRemitToSupplierDao) {
+        this.cemiRemitToSupplierDao = cemiRemitToSupplierDao;
+    }
+
+    public DateTimeService getDateTimeService() {
+        return dateTimeService;
+    }
+
+    public void setDateTimeService(DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
+    }
+
+    public BusinessObjectService getBusinessObjectService() {
+        return businessObjectService;
+    }
+
+    public String getRemitToSupplierFileCreationDirectory() {
+        return remitToSupplierFileCreationDirectory;
+    }
+
+    public String getRemitToSupplierFileOutboundDirectory() {
+        return remitToSupplierFileOutboundDirectory;
+    }
+
+    public CemiRemitToSupplierOrmDao getCemiRemitToSupplierOrmDao() {
+        return cemiRemitToSupplierOrmDao;
+    }
+
+    public void setCemiRemitToSupplierOrmDao(CemiRemitToSupplierOrmDao cemiRemitToSupplierOrmDao) {
+        this.cemiRemitToSupplierOrmDao = cemiRemitToSupplierOrmDao;
     }
 
 }
