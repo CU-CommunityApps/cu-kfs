@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This is the file for defining how the Vendor Remit Address data will map to the 
+    Remit To Supplier Connection spreadsheet/workbook.
+
+    There is one sheet "Remit To Supplier Connections" in the workbook.
+
+    There are two main types of "field" elements:
+
+    [1] POJO-derived value - Has the "STRING" type and uses the "key" attribute to specify the POJO property.
+    [2] Literal value - Has the "STATIC" type and uses the "value" attribute to specify the literal. Can be empty.
+
+    NOTE: This XML file doesn't keep track of POJO classes; it only needs to know POJO property names/paths.
+ -->
+<cemiOutputDefinition>
+
+    <sheet name="Remit To Supplier Connections" num-header-rows="10" start-column-index="1">
+        <field name="Supplier_ID" type="STRING" key="supplierId"/>
+        <field name="Supplier_Connection_Name" type="STRING" key="supplierConnectionName"/>
+        <field name="Default_Payment_Type" type="STRING" key="defaultPaymentType"/>
+        <field name="Accepted_Payment_Types_1" type="STRING" key="acceptedPaymentType1"/>
+        <field name="Accepted_Payment_Types_2" type="STRING" key="acceptedPaymentType2"/>
+        <field name="Accepted_Payment_Types_3" type="STRING" key="acceptedPaymentType3"/>
+        <field name="Settlement_Bank_Account" type="STRING" key="settlementBankAccount"/>
+        <field name="Remit_To_Address_ID" type="STRING" key="remitToAddressId"/>
+        <field name="Remit_To_Email_Address" type="STRING" key="remitToEmailAddress"/>
+        <field name="Payee_Alternate_Name" type="STRING" key="payeeAlternateName"/>
+        <field name="Alternate_Name_Usage" type="STRING" key="alternateNameUsage"/>
+        <field name="Default" type="STRING" key="isDefault"/>
+        <field name="Default_Payment_Terms" type="STRING" key="defaultPaymentTerms"/>
+        <field name="Always_Separate_Payments" type="STRING" key="alwaysSeparatePayments"/>
+    </sheet>
+
+</cemiOutputDefinition>

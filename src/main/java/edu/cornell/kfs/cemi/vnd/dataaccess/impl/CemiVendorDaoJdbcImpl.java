@@ -1,15 +1,19 @@
 package edu.cornell.kfs.cemi.vnd.dataaccess.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.springframework.jdbc.core.RowMapper;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
@@ -128,6 +132,34 @@ public class CemiVendorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc im
 
     public void setDateTimeService(final DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
+    }
+    
+    public String getSupplierId(String vendorHeaderGeneratedId, String vendorDetailId, String runDate) {
+
+        try {
+            // Build the SQL
+            StringBuilder sqlBuilder = new StringBuilder(3500);
+
+            sqlBuilder.append("SELECT WKDY_SPLR_ID from CU_CEMI_MAPPING_SPLR_VNDR_EXTR_FILE_T where");
+
+            sqlBuilder.append(" VNDR_HDR_GNRTD_ID = ? and VNDR_DTL_ASND_ID = ? and EXTR_FILE_RUNDATE = ?");
+
+            String sqlString = sqlBuilder.toString();
+
+            RowMapper<String> mapper = new RowMapper<String>() {
+                public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+                    return rs.getString("WKDY_SPLR_ID");
+                }
+            };
+
+            List<String> results = this.getJdbcTemplate().query(sqlString, mapper, vendorHeaderGeneratedId, vendorDetailId, runDate);
+            return results.get(0);
+
+        } catch (Exception ex) {
+            LOG.info("getSupplierId() Exception: " + ex.getMessage());
+            return null;
+        }
     }
 
 }

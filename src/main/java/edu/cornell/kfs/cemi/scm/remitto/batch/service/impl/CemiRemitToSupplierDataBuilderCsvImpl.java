@@ -1,0 +1,91 @@
+package edu.cornell.kfs.cemi.scm.remitto.batch.service.impl;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+
+import edu.cornell.kfs.cemi.scm.remitto.dataaccess.CemiRemitToSupplierDao;
+import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiCsvWriter;
+import edu.cornell.kfs.cemi.sys.batch.xml.CemiFieldDefinition;
+import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
+import edu.cornell.kfs.cemi.sys.batch.xml.CemiSheetDefinition;
+import edu.cornell.kfs.cemi.sys.util.CemiUtils;
+import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.CUKFSConstants.FileExtensions;
+
+public class CemiRemitToSupplierDataBuilderCsvImpl extends CemiRemitToSupplierDataBuilderBase {
+    
+    private final Map<String, CemiCsvWriter> csvWriters;
+    private final Map<String, CemiSheetDefinition> sheetDefinitions;
+
+    protected CemiRemitToSupplierDataBuilderCsvImpl(CemiOutputDefinition outputDefinition,
+            CemiRemitToSupplierDao cemiRemitToSupplierDao, DateTimeService dateTimeService,
+            BusinessObjectService businessObjectService, LocalDateTime jobRunDate, final String baseFileDirectory, boolean maskSensitiveData) throws IOException {
+        super(outputDefinition, cemiRemitToSupplierDao, dateTimeService, businessObjectService, jobRunDate, maskSensitiveData);
+        Validate.notBlank(baseFileDirectory, "baseFileDirectory cannot be blank");
+
+        this.sheetDefinitions = outputDefinition.getSheets().stream()
+                .collect(Collectors.toUnmodifiableMap(CemiSheetDefinition::getName, Function.identity()));
+
+        final Map<String, CemiCsvWriter> writers = new HashMap<>();
+        CemiCsvWriter nextWriter = null;
+        boolean setupSucceeded = false;
+
+        try {
+            for (final CemiSheetDefinition sheetDefinition : outputDefinition.getSheets()) {
+                final String sheetName = sheetDefinition.getName();
+                final String fileName = CemiUtils.generateFileNameContainingDateTime(
+                        jobRunDate, sheetName + CUKFSConstants.UNDERSCORE, FileExtensions.CSV);
+                final String fileNameWithPath = StringUtils.join(baseFileDirectory, CUKFSConstants.SLASH, fileName);
+                nextWriter = new CemiCsvWriter(fileNameWithPath);
+                writers.put(sheetName, nextWriter);
+                nextWriter = null;
+            }
+            this.csvWriters = Map.copyOf(writers);
+            setupSucceeded = true;
+        } finally {
+            if (!setupSucceeded) {
+                IOUtils.closeQuietly(nextWriter);
+                for (final CemiCsvWriter writer : writers.values()) {
+                    IOUtils.closeQuietly(writer);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        for (final CemiCsvWriter csvWriter : csvWriters.values()) {
+            IOUtils.closeQuietly(csvWriter);
+        }
+    }
+
+    @Override
+    protected void writeDataToIntermediateStorage(String sheetName, Object rowObject) throws IOException {
+        final CemiSheetDefinition sheetDefinition = sheetDefinitions.get(sheetName);
+        final CemiCsvWriter csvWriter = csvWriters.get(sheetName);
+        Validate.validState(sheetDefinition != null, "Unexpected CEMI Remit To Supplier datasheet: %s", sheetName);
+        Validate.validState(csvWriter != null, "Unexpected non-writeable Remit To Supplier datasheet: %s", sheetName);
+
+        final String[] csvRow = new String[sheetDefinition.getFields().size()];
+        int fieldIndex = 0;
+        for (final CemiFieldDefinition field : sheetDefinition.getFields()) {
+            final String fieldValue = getFieldValue(field, rowObject);
+            csvRow[fieldIndex] = fieldValue;
+            fieldIndex++;
+        }
+
+        csvWriter.writeNext(csvRow);
+
+    }
+
+}

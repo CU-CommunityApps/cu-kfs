@@ -31,6 +31,7 @@
                  <value>createCemiAwardScheduleExtractJob</value>
                  <value>createCemiPaymentElectionExtractJob</value>
                  <value>createCemiSupplierExtractJob</value>
+                 <value>createCemiRemitToSupplierExtractJob</value>
             </list>
         </property>
         <property name="batchFileDirectories">
@@ -40,6 +41,7 @@
             <value>${staging.directory}/cemi/module/cg/cemiAwardScheduleExtract</value>
             <value>${staging.directory}/cemi/pdp/cemiPaymentElectionExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiSupplierExtract</value>
+            <value>${staging.directory}/cemi/scm/remitto/cemiRemitToSupplierExtract</value>
             <value>${staging.directory}/cemi/conversions/outbound</value>
           </list>
         </property>
@@ -188,4 +190,30 @@
           p:schemaLocation="classpath:edu/cornell/kfs/cemi/sys/batch/xml/cemiOutputDefinition.xsd"
           p:outputClass="edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition"
           p:dateTimeService-ref="dateTimeService"/>
+
+    <!-- Remit To Supplier Extract beans -->
+    <bean id="createCemiRemitToSupplierExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiRemitToSupplierExtractStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="createCemiRemitToSupplierExtractStep"
+          class="edu.cornell.kfs.cemi.scm.remitto.batch.CreateCemiRemitToSupplierExtractStep"
+          parent="step"
+          p:cemiRemitToSupplierExtractService-ref="cemiRemitToSupplierExtractService"/>
+
+    <bean id="cemiRemitToSupplierExtractService" parent="cemiRemitToSupplierExtractService-parentBean"/>
+    <bean id="cemiRemitToSupplierExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.scm.remitto.batch.service.impl.CemiRemitToSupplierExtractServiceImpl"
+          c:environment-ref="environment"
+          p:remitToSupplierFileCreationDirectory="${staging.directory}/cemi/scm/remitto/cemiRemitToSupplierExtract"
+          p:remitToSupplierFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiVendorOrmDao-ref="cemiVendorOrmDao"
+          p:cemiVendorDao-ref="cemiVendorDao"
+          p:businessObjectService-ref="businessObjectService"
+          p:parameterService-ref="parameterService"/>
 </beans>
