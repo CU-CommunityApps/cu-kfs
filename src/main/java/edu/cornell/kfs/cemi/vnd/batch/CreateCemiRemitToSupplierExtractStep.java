@@ -1,4 +1,4 @@
-package edu.cornell.kfs.cemi.scm.remitto.batch;
+package edu.cornell.kfs.cemi.vnd.batch;
 
 import java.time.LocalDateTime;
 
@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.AbstractStep;
 
-import edu.cornell.kfs.cemi.scm.remitto.batch.service.CemiRemitToSupplierExtractService;
+import edu.cornell.kfs.cemi.vnd.batch.service.CemiRemitToSupplierExtractService;
 
 /**
  * Batch step for creating the CEMI Remit To Supplier Connection extract file.

@@ -1,4 +1,4 @@
-package edu.cornell.kfs.cemi.scm.remitto.batch.service.impl;
+package edu.cornell.kfs.cemi.vnd.batch.service.impl;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -10,10 +10,10 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import edu.cornell.kfs.cemi.scm.remitto.batch.service.CemiRemitToSupplierFileAppender;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiSheetDefinition;
+import edu.cornell.kfs.cemi.vnd.batch.service.CemiRemitToSupplierFileAppender;
 
 public abstract class CemiRemitToSupplierFileAppenderBase implements CemiRemitToSupplierFileAppender {
     

@@ -1,4 +1,4 @@
-package edu.cornell.kfs.cemi.scm.remitto.batch.service.impl;
+package edu.cornell.kfs.cemi.vnd.batch.service.impl;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -13,12 +13,12 @@ import org.apache.commons.lang3.Validate;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 
-import edu.cornell.kfs.cemi.scm.remitto.dataaccess.CemiRemitToSupplierDao;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiCsvWriter;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiFieldDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiSheetDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiRemitToSupplierDao;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSConstants.FileExtensions;
 

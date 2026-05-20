@@ -1,4 +1,4 @@
-package edu.cornell.kfs.cemi.scm.remitto.batch.service.impl;
+package edu.cornell.kfs.cemi.vnd.batch.service.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,23 +40,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
-import edu.cornell.kfs.cemi.scm.remitto.CemiRemitToSupplierConstants;
-import edu.cornell.kfs.cemi.scm.remitto.CemiRemitToSupplierParameterConstants;
-import edu.cornell.kfs.cemi.scm.remitto.batch.CreateCemiRemitToSupplierExtractStep;
-import edu.cornell.kfs.cemi.scm.remitto.batch.dto.CemiRemitToSupplier;
-import edu.cornell.kfs.cemi.scm.remitto.batch.service.CemiRemitToSupplierExtractService;
-import edu.cornell.kfs.cemi.scm.remitto.dataaccess.CemiRemitToSupplierDao;
-import edu.cornell.kfs.cemi.scm.remitto.dataaccess.CemiRemitToSupplierOrmDao;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants.FileExtensions;
 import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
+import edu.cornell.kfs.cemi.vnd.CemiRemitToSupplierConstants;
+import edu.cornell.kfs.cemi.vnd.CemiRemitToSupplierParameterConstants;
 import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
 import edu.cornell.kfs.cemi.vnd.CemiVendorParameterConstants;
+import edu.cornell.kfs.cemi.vnd.batch.CreateCemiRemitToSupplierExtractStep;
 import edu.cornell.kfs.cemi.vnd.batch.CreateCemiSupplierExtractStep;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo;
+import edu.cornell.kfs.cemi.vnd.batch.dto.CemiRemitToSupplier;
+import edu.cornell.kfs.cemi.vnd.batch.service.CemiRemitToSupplierExtractService;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiRemitToSupplierDao;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiRemitToSupplierOrmDao;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorDao;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorOrmDao;
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;

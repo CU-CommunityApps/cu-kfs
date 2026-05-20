@@ -1,4 +1,4 @@
-package edu.cornell.kfs.cemi.scm.remitto.dataaccess;
+package edu.cornell.kfs.cemi.vnd.dataaccess;
 
 public interface CemiRemitToSupplierDao {
     

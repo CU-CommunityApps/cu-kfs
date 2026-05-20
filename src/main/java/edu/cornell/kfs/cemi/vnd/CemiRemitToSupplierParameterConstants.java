@@ -1,4 +1,4 @@
-package edu.cornell.kfs.cemi.scm.remitto;
+package edu.cornell.kfs.cemi.vnd;
 
 public interface CemiRemitToSupplierParameterConstants {
     

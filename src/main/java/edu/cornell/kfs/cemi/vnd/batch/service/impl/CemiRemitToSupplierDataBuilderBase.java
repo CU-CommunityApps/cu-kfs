@@ -1,4 +1,4 @@
-package edu.cornell.kfs.cemi.scm.remitto.batch.service.impl;
+package edu.cornell.kfs.cemi.vnd.batch.service.impl;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -11,13 +11,13 @@ import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.cemi.scm.remitto.CemiRemitToSupplierConstants;
-import edu.cornell.kfs.cemi.scm.remitto.batch.dto.CemiRemitToSupplier;
-import edu.cornell.kfs.cemi.scm.remitto.batch.service.CemiRemitToSupplierDataBuilder;
-import edu.cornell.kfs.cemi.scm.remitto.dataaccess.CemiRemitToSupplierDao;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiFieldDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
+import edu.cornell.kfs.cemi.vnd.CemiRemitToSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo;
+import edu.cornell.kfs.cemi.vnd.batch.dto.CemiRemitToSupplier;
+import edu.cornell.kfs.cemi.vnd.batch.service.CemiRemitToSupplierDataBuilder;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiRemitToSupplierDao;
 
 public abstract class CemiRemitToSupplierDataBuilderBase implements CemiRemitToSupplierDataBuilder {
 

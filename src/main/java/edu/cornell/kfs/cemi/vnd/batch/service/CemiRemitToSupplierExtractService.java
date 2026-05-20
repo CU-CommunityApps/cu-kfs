@@ -1,4 +1,4 @@
-package edu.cornell.kfs.cemi.scm.remitto.batch.service;
+package edu.cornell.kfs.cemi.vnd.batch.service;
 
 import java.time.LocalDateTime;
 

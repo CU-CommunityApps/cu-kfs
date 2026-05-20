@@ -41,7 +41,7 @@
             <value>${staging.directory}/cemi/module/cg/cemiAwardScheduleExtract</value>
             <value>${staging.directory}/cemi/pdp/cemiPaymentElectionExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiSupplierExtract</value>
-            <value>${staging.directory}/cemi/scm/remitto/cemiRemitToSupplierExtract</value>
+            <value>${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract</value>
             <value>${staging.directory}/cemi/conversions/outbound</value>
           </list>
         </property>
@@ -192,6 +192,7 @@
           p:dateTimeService-ref="dateTimeService"/>
 
     <!-- Remit To Supplier Extract beans -->
+
     <bean id="createCemiRemitToSupplierExtractJob" parent="unscheduledJobDescriptor">
         <property name="steps">
             <list>
@@ -201,19 +202,20 @@
     </bean>
 
     <bean id="createCemiRemitToSupplierExtractStep"
-          class="edu.cornell.kfs.cemi.scm.remitto.batch.CreateCemiRemitToSupplierExtractStep"
+          class="edu.cornell.kfs.cemi.vnd.batch.CreateCemiRemitToSupplierExtractStep"
           parent="step"
           p:cemiRemitToSupplierExtractService-ref="cemiRemitToSupplierExtractService"/>
 
     <bean id="cemiRemitToSupplierExtractService" parent="cemiRemitToSupplierExtractService-parentBean"/>
     <bean id="cemiRemitToSupplierExtractService-parentBean"
           abstract="true"
-          class="edu.cornell.kfs.cemi.scm.remitto.batch.service.impl.CemiRemitToSupplierExtractServiceImpl"
+          class="edu.cornell.kfs.cemi.vnd.batch.service.impl.CemiRemitToSupplierExtractServiceImpl"
           c:environment-ref="environment"
-          p:remitToSupplierFileCreationDirectory="${staging.directory}/cemi/scm/remitto/cemiRemitToSupplierExtract"
+          p:remitToSupplierFileCreationDirectory="${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract"
           p:remitToSupplierFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
           p:cemiVendorOrmDao-ref="cemiVendorOrmDao"
           p:cemiVendorDao-ref="cemiVendorDao"
           p:businessObjectService-ref="businessObjectService"
           p:parameterService-ref="parameterService"/>
+
 </beans>

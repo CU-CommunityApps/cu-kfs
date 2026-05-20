@@ -1,4 +1,4 @@
-package edu.cornell.kfs.cemi.scm.remitto.batch.dto;
+package edu.cornell.kfs.cemi.vnd.batch.dto;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -6,8 +6,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.cemi.scm.remitto.CemiRemitToSupplierConstants;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
+import edu.cornell.kfs.cemi.vnd.CemiRemitToSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
 
 /**
