@@ -57,11 +57,17 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
      */
     @Override
     public void writeRemitToSupplierDataToIntermediateStorage(final Iterator<CemiSupplierAddressBo> addresses) {
+        int supplierAddressCount = 0;
         CemiSupplierBo currentSupplier = new CemiSupplierBo();
         List<CemiSupplierAddressBo> currentSupplierAddresses = new ArrayList<>();
         currentSupplier.setSupplierId(CUKFSConstants.NULL);
 
         for (final CemiSupplierAddressBo address : IteratorUtils.asIterable(addresses)) {
+            supplierAddressCount++;
+            if (supplierAddressCount % 1000 == 0) {
+                LOG.info("writeRemitToSupplierDataToIntermediateStorage, Processing {} supplier addresses and counting...",
+                        supplierAddressCount);
+            }
             final String supplierId = address.getSupplierId();
             if (!Strings.CS.equals(supplierId, currentSupplier.getSupplierId())) {
                 createAndStoreRemitToSupplierRows(currentSupplier, currentSupplierAddresses);
@@ -72,12 +78,14 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
         }
 
         createAndStoreRemitToSupplierRows(currentSupplier, currentSupplierAddresses);
+        LOG.info("writeRemitToSupplierDataToIntermediateStorage, Finished processing {} supplier addresses",
+                supplierAddressCount);
     }
 
     private CemiSupplierBo getSupplier(final String supplierId) {
         final Map<String, Object> criteria = Map.ofEntries(
                 Map.entry(CemiVendorPropertyConstants.SUPPLIER_ID, supplierId),
-                Map.entry(CemiBasePropertyConstants.JOB_RUN_DATE, jobRunDate)
+                Map.entry(CemiBasePropertyConstants.JOB_RUN_DATE, supplierJobRunDate)
         );
         final Collection<CemiSupplierBo> results = businessObjectService.findMatching(CemiSupplierBo.class, criteria);
         Validate.validState(!results.isEmpty(), "Could not find data row for supplier: %s", supplierId);
