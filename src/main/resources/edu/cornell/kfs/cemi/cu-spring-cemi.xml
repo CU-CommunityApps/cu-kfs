@@ -24,6 +24,7 @@
         <property name="databaseRepositoryFilePaths">
             <list merge= "true">
                 <value>edu/cornell/kfs/cemi/cu-ojb-cemi.xml</value>
+                <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-vnd.xml</value>
             </list>
         </property>
         <property name="jobNames">
@@ -213,6 +214,7 @@
           c:environment-ref="environment"
           p:remitToSupplierFileCreationDirectory="${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract"
           p:remitToSupplierFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
           p:cemiVendorOrmDao-ref="cemiVendorOrmDao"
           p:cemiVendorDao-ref="cemiVendorDao"
           p:businessObjectService-ref="businessObjectService"

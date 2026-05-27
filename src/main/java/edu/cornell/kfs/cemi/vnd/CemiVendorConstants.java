@@ -21,6 +21,8 @@ public final class CemiVendorConstants {
     public static final String EMAIL_ID_FORMAT = "{0}_{1}_{2}";
     public static final String PHONE_ID_FORMAT = "{0}_{1}_{2}";
     public static final String BANK_ACCOUNT_ID_FORMAT = "{0}_{1}_{2}";
+    public static final String SUPPLIER_REMIT_TO_CONNECTION_NAME_FORMAT = "{0} | {1}";
+    public static final String SUPPLIER_REMIT_TO_CONNECTION_ID_FORMAT = "{0}_{1}_{2}";
     public static final int SUPPLIER_HEADER_ROWS_PER_SHEET = 6;
     public static final int MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES = 3;
     public static final int MAX_SUPPLIER_EMAIL_ENTRIES = 3;
@@ -37,6 +39,11 @@ public final class CemiVendorConstants {
     public static final String SUPPLIER_TEMPLATE_FILE_PATH = "classpath:edu/cornell/kfs/cemi/vnd/batch/Supplier.xlsx";
     public static final String SUPPLIER_EXTRACT_FILENAME_PREFIX = "Supplier_ITH_";
     public static final String SUPPLIER_EXTRACT_PLAIN_FILENAME = "Supplier.xlsx";
+
+    public static final String REMIT_TO_SUPPLIER_OUTPUT_DEFINITION_PATH_SUFFIX = "vnd/batch/CemiRemitToSupplierExtractFileOutputDefinition.xml";
+    public static final String REMIT_TO_SUPPLIER_TEMPLATE_FILE_PATH = "classpath:edu/cornell/kfs/cemi/vnd/batch/Remit_To_Supplier.xlsx";
+    public static final String REMIT_TO_SUPPLIER_EXTRACT_FILENAME_PREFIX = "Remit_To_Supplier_ITH_";
+    public static final String REMIT_TO_SUPPLIER_EXTRACT_PLAIN_FILENAME = "Remit_To_Supplier.xlsx";
 
     public static final String DEFAULT_SUPPLIER_CATEGORY = "Foundation_Default";
     public static final String DEFAULT_PAYMENT_TYPE = "Check";
@@ -56,6 +63,8 @@ public final class CemiVendorConstants {
     public static final String DUMMY_ACCOUNT_NUMBER = "XXXXXXXXX";
     public static final String ALTERNATE_NAME_USAGE_DEFAULT_VALUE = "Reference";
     public static final String COUNTRY_CODE_UNITED_STATES = KFSConstants.COUNTRY_CODE_UNITED_STATES;
+
+    public static final String ITHACA_PAYMENT_MEMO = "Ithaca";
 
     public static final Map<String, List<String>> ADDRESS_USES = Map.ofEntries(
             Map.entry(AddressTypes.PURCHASE_ORDER, List.of("PROCUREMENT", "SHIPPING")),

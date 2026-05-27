@@ -16,6 +16,7 @@
         <xsd:attribute name="name" type="xsd:string" use="required"/>
         <xsd:attribute name="num-header-rows" type="xsd:integer" use="required"/>
         <xsd:attribute name="start-column-index" type="xsd:integer" use="required"/>
+        <xsd:attribute name="business-object-class" type="xsd:string" use="optional"/>
     </xsd:complexType>
 
     <xsd:complexType name="cemiFieldType">

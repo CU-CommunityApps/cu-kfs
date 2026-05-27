@@ -1,5 +1,7 @@
 package edu.cornell.kfs.cemi.sys.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -9,14 +11,21 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
+import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
+import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiSheetDefinition;
+import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public final class CemiUtils {
@@ -24,7 +33,10 @@ public final class CemiUtils {
     private static final DateTimeFormatter FILE_DATE_TIME_FORMATTER = DateTimeFormatter
                 .ofPattern(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmss, Locale.US)
                 .withZone(ZoneId.of(CUKFSConstants.TIME_ZONE_US_EASTERN));
-    
+
+    private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("^[A-Za-z]\\w*$");
+    private static final Pattern FILE_PATH_PATTERN = Pattern.compile("^(\\w+/)*\\w+(\\.[A-Za-z0-9]+)?$");
+
     private static final String generateDateTimeInConsistentFormat(final LocalDateTime dateTime) {
         return FILE_DATE_TIME_FORMATTER.format(dateTime);
     }
@@ -57,6 +69,10 @@ public final class CemiUtils {
     }
 
     public static String generateKeyForGroupingDuplicates(final String... propertyValues) {
+        return generateConcatenatedKey(propertyValues);
+    }
+
+    public static String generateConcatenatedKey(final String... propertyValues) {
         return Stream.of(propertyValues)
                 .map(StringUtils::trimToEmpty)
                 .map(propertyValue -> propertyValue.toUpperCase(Locale.US))
@@ -99,6 +115,28 @@ public final class CemiUtils {
 
     public static <T> List<T> createListOfEmptyValues(final int size, final T emptyValue) {
         return Collections.nCopies(size, emptyValue);
+    }
+
+    public static CemiOutputDefinition getOutputDefinitionFromCemiResourcesFile(
+            final CemiOutputDefinitionFileType cemiOutputDefinitionFileType, final String subPath) throws IOException {
+        Validate.notNull(cemiOutputDefinitionFileType, "cemiOutputDefinitionFileType cannot be null");
+        Validate.isTrue(isFormattedAsValidFilePath(subPath), "subPath was blank or malformed");
+
+        try (
+            final InputStream inputStream = CuCoreUtilities.getResourceAsStream(
+                    CemiBaseConstants.CEMI_OUTPUT_DEFINITION_FILE_PATH_PREFIX + subPath);
+        ) {
+            final byte[] fileContents = IOUtils.toByteArray(inputStream);
+            return cemiOutputDefinitionFileType.parse(fileContents);
+        }
+    }
+
+    public static boolean isFormattedAsValidIdentifier(final String name) {
+        return StringUtils.isNotBlank(name) && IDENTIFIER_PATTERN.matcher(name).matches();
+    }
+
+    public static boolean isFormattedAsValidFilePath(final String path) {
+        return StringUtils.isNotBlank(path) && FILE_PATH_PATTERN.matcher(path).matches();
     }
 
 }

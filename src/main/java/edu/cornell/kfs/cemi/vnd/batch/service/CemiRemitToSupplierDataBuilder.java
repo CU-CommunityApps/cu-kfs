@@ -1,17 +1,11 @@
 package edu.cornell.kfs.cemi.vnd.batch.service;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Iterator;
 
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
 
-public interface CemiRemitToSupplierDataBuilder extends Closeable {
-    
-    void writeRemitToSupplierDataToIntermediateStorage(final Iterator<CemiSupplierBo> suppliers,
-            final LocalDateTime jobRunDate) throws IOException;
-    
-    
+public interface CemiRemitToSupplierDataBuilder {
+
+    void writeRemitToSupplierDataToIntermediateStorage(final Iterator<CemiSupplierAddressBo> supplierAddresses);
 
 }

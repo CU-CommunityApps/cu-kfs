@@ -59,7 +59,7 @@ public final class CemiVendorUtils {
         return StringUtils.equals(vendorTypeCode, VendorConstants.VendorTypes.PURCHASE_ORDER);
     }
 
-    private static boolean addressTypeIsActiveAndIsDefaultAndMatches(
+    public static boolean addressTypeIsActiveAndIsDefaultAndMatches(
             final String vendorAddressType, final VendorAddress vendorAddress) {
         return vendorAddress.getVendorAddressTypeCode().equalsIgnoreCase(vendorAddressType)
                 && vendorAddress.isActive()
