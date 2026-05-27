@@ -43,5 +43,4 @@ public class CreateCemiRemitToSupplierExtractStep extends AbstractStep {
         this.cemiRemitToSupplierExtractService = cemiRemitToSupplierExtractService;
     }
 
-
 }

@@ -47,7 +47,21 @@
           </list>
         </property>
     </bean>
-    
+
+    <bean id="cemiFileAppenderOrmDao" parent="cemiFileAppenderOrmDao-parentBean"/>
+    <bean id="cemiFileAppenderOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.dataaccess.impl.CemiFileAppenderOrmDaoOjbImpl"
+          parent="platformAwareDao"/>
+
+    <bean id="cemiFileAppenderService" parent="cemiFileAppenderService-parentBean"/>
+    <bean id="cemiFileAppenderService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.batch.service.impl.CemiFileAppenderServiceImpl"
+          p:cemiFileAppenderOrmDao-ref="cemiFileAppenderOrmDao"/>
+
+    <!-- Award Schedule -->
+
     <bean id="createCemiAwardScheduleExtractJob" parent="unscheduledJobDescriptor">
         <property name="steps">
             <list>
@@ -55,9 +69,7 @@
             </list>
         </property>
     </bean>
-    
-    
-    <!-- Award Schedule -->
+
     <bean id="cemiAwardScheduleDao" parent="cemiAwardScheduleDao-parentBean"/>
     <bean id="cemiAwardScheduleDao-parentBean"
           abstract="true"
@@ -192,7 +204,7 @@
           p:outputClass="edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition"
           p:dateTimeService-ref="dateTimeService"/>
 
-    <!-- Remit To Supplier Extract beans -->
+    <!-- Remit to Supplier -->
 
     <bean id="createCemiRemitToSupplierExtractJob" parent="unscheduledJobDescriptor">
         <property name="steps">
@@ -207,6 +219,19 @@
           parent="step"
           p:cemiRemitToSupplierExtractService-ref="cemiRemitToSupplierExtractService"/>
 
+    <bean id="cemiRemitToSupplierDao" parent="cemiRemitToSupplierDao-parentBean"/>
+    <bean id="cemiRemitToSupplierDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiRemitToSupplierDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"/>
+
+    <bean id="cemiRemitToSupplierOrmDao" parent="cemiRemitToSupplierOrmDao-parentBean"/>
+    <bean id="cemiRemitToSupplierOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiRemitToSupplierOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
+
     <bean id="cemiRemitToSupplierExtractService" parent="cemiRemitToSupplierExtractService-parentBean"/>
     <bean id="cemiRemitToSupplierExtractService-parentBean"
           abstract="true"
@@ -215,8 +240,9 @@
           p:remitToSupplierFileCreationDirectory="${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract"
           p:remitToSupplierFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
           p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
-          p:cemiVendorOrmDao-ref="cemiVendorOrmDao"
-          p:cemiVendorDao-ref="cemiVendorDao"
+          p:cemiRemitToSupplierOrmDao-ref="cemiRemitToSupplierOrmDao"
+          p:cemiRemitToSupplierDao-ref="cemiRemitToSupplierDao"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
           p:businessObjectService-ref="businessObjectService"
           p:parameterService-ref="parameterService"/>
 

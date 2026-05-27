@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +32,6 @@ import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiRemitToSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiRemitToSupplierParameterConstants;
-import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
 import edu.cornell.kfs.cemi.vnd.CemiVendorParameterConstants;
 import edu.cornell.kfs.cemi.vnd.batch.CreateCemiRemitToSupplierExtractStep;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
@@ -77,9 +77,9 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
     private String getSupplierJobRunDate() {
         final String supplierJobRunDate = parameterService.getParameterValueAsString(
                 CreateCemiRemitToSupplierExtractStep.class,
-                CemiVendorParameterConstants.CEMI_REMIT_TO_SUPPLIER_EXTRACT_SUPPLIER_DATETIME);
+                CemiRemitToSupplierParameterConstants.CEMI_REMIT_TO_SUPPLIER_EXTRACT_SUPPLIER_DATETIME);
         Validate.validState(StringUtils.isNotBlank(supplierJobRunDate), "Parameter %s should not have been blank",
-                CemiVendorParameterConstants.CEMI_REMIT_TO_SUPPLIER_EXTRACT_SUPPLIER_DATETIME);
+                CemiRemitToSupplierParameterConstants.CEMI_REMIT_TO_SUPPLIER_EXTRACT_SUPPLIER_DATETIME);
         return supplierJobRunDate;
     }
 
@@ -169,7 +169,7 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
 
     private CemiOutputDefinition getOutputDefinitionForRemitToSupplierExtract() throws IOException {
         return CemiUtils.getOutputDefinitionFromCemiResourcesFile(cemiOutputDefinitionFileType,
-                CemiVendorConstants.REMIT_TO_SUPPLIER_OUTPUT_DEFINITION_PATH_SUFFIX);
+                CemiRemitToSupplierConstants.REMIT_TO_SUPPLIER_OUTPUT_DEFINITION_PATH_SUFFIX);
     }
 
     private void copyRemitToSupplierExtractFileToOutboundDirectory(final File sourceFile, final File targetFile) {
@@ -191,12 +191,13 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
 
     private boolean isCemiSensitiveDataSetToUnmask() {
         String maskingParameterValue =  parameterService.getParameterValueAsString(
-                CreateCemiRemitToSupplierExtractStep.class, CemiVendorParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
-        return StringUtils.equalsIgnoreCase(maskingParameterValue, CemiBaseConstants.UNMASK);
+                CreateCemiRemitToSupplierExtractStep.class,
+                CemiVendorParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
+        return Strings.CI.equals(maskingParameterValue, CemiBaseConstants.UNMASK);
     }
 
     private boolean isCemiEnvironment() {
-        return StringUtils.equalsIgnoreCase(environment.getLane(), CemiBaseConstants.CEMI_ENVIRONMENT_LANE_NAME);
+        return Strings.CI.equals(environment.getLane(), CemiBaseConstants.CEMI_ENVIRONMENT_LANE_NAME);
     }
 
     private boolean shouldUnmaskCemiSensitiveData() {
@@ -223,7 +224,7 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
         this.parameterService = parameterService;
     }
 
-    public void setCemiRemitToSupplierOrmDao(CemiRemitToSupplierOrmDao cemiRemitToSupplierOrmDao) {
+    public void setCemiRemitToSupplierOrmDao(final CemiRemitToSupplierOrmDao cemiRemitToSupplierOrmDao) {
         this.cemiRemitToSupplierOrmDao = cemiRemitToSupplierOrmDao;
     }
 

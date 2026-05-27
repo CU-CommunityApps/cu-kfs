@@ -8,7 +8,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
+import edu.cornell.kfs.cemi.vnd.CemiRemitToSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo;
@@ -75,7 +75,7 @@ public class CemiRemitToSupplierBoFactory {
         remitToSupplier.setRemitToEmailAddress(emailAddress);
         remitToSupplier.setPayeeAlternateName(KFSConstants.EMPTY_STRING);
         remitToSupplier.setAlternateNameUsage(KFSConstants.EMPTY_STRING);
-        remitToSupplier.setPaymentMemo(CemiVendorConstants.ITHACA_PAYMENT_MEMO);
+        remitToSupplier.setPaymentMemo(CemiRemitToSupplierConstants.ITHACA_PAYMENT_MEMO);
         remitToSupplier.setIsDefault(isDefault);
         remitToSupplier.setDefaultPaymentTerms(KFSConstants.EMPTY_STRING);
         remitToSupplier.setAlwaysSeparatePayments(alwaysSeparatePayments);
@@ -84,12 +84,12 @@ public class CemiRemitToSupplierBoFactory {
     }
 
     private String generateConnectionName() {
-        return MessageFormat.format(CemiVendorConstants.SUPPLIER_REMIT_TO_CONNECTION_NAME_FORMAT,
+        return MessageFormat.format(CemiRemitToSupplierConstants.SUPPLIER_REMIT_TO_CONNECTION_NAME_FORMAT,
                 supplierAddress.getAddressLine1(), supplier.getDefaultPaymentType());
     }
 
     private String generateConnectionId(final String connectionName) {
-        return MessageFormat.format(CemiVendorConstants.SUPPLIER_REMIT_TO_CONNECTION_ID_FORMAT,
+        return MessageFormat.format(CemiRemitToSupplierConstants.SUPPLIER_REMIT_TO_CONNECTION_ID_FORMAT,
                 supplier.getSupplierId(), connectionName, remitIndexForSupplier);
     }
 

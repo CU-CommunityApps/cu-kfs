@@ -16,10 +16,10 @@ import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBa
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiFieldDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiSheetDefinition;
-import edu.cornell.kfs.cemi.sys.dataaccess.CemiSheetOrmDataHandlerDao;
+import edu.cornell.kfs.cemi.sys.dataaccess.CemiFileAppenderOrmDao;
 import edu.cornell.kfs.sys.util.CuOjbUtils;
 
-public class CemiSheetOrmDataHandlerDaoOjbImpl extends PlatformAwareDaoBaseOjb implements CemiSheetOrmDataHandlerDao {
+public class CemiFileAppenderOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb implements CemiFileAppenderOrmDao {
 
     @Override
     public void getSheetDataAndWriteToFile(final CemiExcelWriter writer, final CemiSheetDefinition sheetDefinition,
