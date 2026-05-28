@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cemiOutputDefinition>
+
+    <sheet name="Submit Order From Supplier Conn" num-header-rows="5" start-column-index="1">
+        <field name="Spreadsheet Key*" type="STRING" key="spreadsheetKey"/>
+        <field name="Supplier" type="STRING" key="supplierIdHeader"/>
+        <field name="Auto Complete" type="STRING" key="autoComplete"/>
+        <field name="Comment" type="STRING" key="comment"/>
+        <field name="Worker" type="STRING" key="worker"/>
+        <field name="Supplier Reference ID" type="STRING" key="supplierReferenceId"/>
+        <field name="Supplier ID" type="STRING" key="supplierId"/>
+        <field name="Row ID*" type="STRING" key="supplierConnectionRowId"/>
+        <field name="Supplier Connection" type="STRING" key="supplierConnection"/>
+        <field name="Supplier Connection ID" type="STRING" key="supplierConnectionId"/>
+        <field name="Supplier Connection Name*" type="STRING" key="supplierConnectionName"/>
+        <field name="Default For PO Type+" type="STRING" key="defaultForPoType1"/>
+        <field name="Default For PO Type+" type="STRING" key="defaultForPoType2"/>
+        <field name="Default For PO Type+" type="STRING" key="defaultForPoType3"/>
+        <field name="Shipping Method" type="STRING" key="shippingMethod"/>
+        <field name="Shipping Terms" type="STRING" key="shippingTerms"/>
+        <field name="Purchase Order Issue Option" type="STRING" key="purchaseOrderIssueOption"/>
+        <field name="Row ID*" type="STRING" key="emailRowId"/>
+        <field name="Email" type="STRING" key="emailId"/>
+        <field name="Email Address" type="STRING" key="emailAddress"/>
+        <field name="Remit To Supplier Connection" type="STRING" key="remitToSupplierConnection"/>
+        <field name="Order From Address Reference" type="STRING" key="orderFromAddressReference"/>
+        <field name="Row ID*" type="STRING" key="alternateNameRowId"/>
+        <field name="Alternate Name*" type="STRING" key="alternateName"/>
+        <field name="Alternate Name Usage+" type="STRING" key="alternateNameUsage"/>
+        <field name="Is Default" type="STRING" key="isDefault"/>
+        <field name="Is Inactive" type="STRING" key="isInactive"/>
+        <field name="Memo" type="STRING" key="memo"/>
+    </sheet>
+
+</cemiOutputDefinition>

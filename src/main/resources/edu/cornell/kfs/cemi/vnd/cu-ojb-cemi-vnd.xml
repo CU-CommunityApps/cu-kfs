@@ -108,4 +108,39 @@
         <field-descriptor name="alwaysSeparatePayments" column="ALWAYS_SEPARATE_PAYMENTS" jdbc-type="VARCHAR"/>
     </class-descriptor>
 
+    <!-- Supplier Order From Extract -->
+
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierOrderFromBo" table="CU_CEMI_EXTR_SUPP_ORD_FRM_TAB_ORD_FRM_T">
+        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="rowIndex" column="ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="spreadsheetKey" column="SPREADSHEET_KEY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierIdHeader" column="SUPPLIER_ID_HEADER" jdbc-type="VARCHAR"/>
+        <field-descriptor name="autoComplete" column="AUTO_COMPLETE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="comment" column="COMMENT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="worker" column="WORKER" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierReferenceId" column="SUPPLIER_REFERENCE_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierId" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierConnectionRowId" column="SUPPLIER_CONNECTION_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierConnection" column="SUPPLIER_CONNECTION" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierConnectionId" column="SUPPLIER_CONNECTION_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierConnectionName" column="SUPPLIER_CONNECTION_NAME" jdbc-type="VARCHAR"/>
+        <field-descriptor name="defaultForPoType1" column="DEFAULT_FOR_PO_TYPE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="defaultForPoType2" column="DEFAULT_FOR_PO_TYPE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="defaultForPoType3" column="DEFAULT_FOR_PO_TYPE_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="shippingMethod" column="SHIPPING_METHOD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="shippingTerms" column="SHIPPING_TERMS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="purchaseOrderIssueOption" column="PURCHASE_ORDER_ISSUE_OPTION" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailRowId" column="EMAIL_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailId" column="EMAIL_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddress" column="EMAIL_ADDRESS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="remitToSupplierConnection" column="REMIT_TO_SUPPLIER_CONNECTION" jdbc-type="VARCHAR"/>
+        <field-descriptor name="orderFromAddressReference" column="ORDER_FROM_ADDRESS_REFERENCE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="alternateNameRowId" column="ALTERNATE_NAME_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="alternateName" column="ALTERNATE_NAME" jdbc-type="VARCHAR"/>
+        <field-descriptor name="alternateNameUsage" column="ALTERNATE_NAME_USAGE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="isDefault" column="IS_DEFAULT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="isInactive" column="IS_INACTIVE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="memo" column="MEMO" jdbc-type="VARCHAR"/>
+    <class-descriptor>
+
 </descriptor-repository>
