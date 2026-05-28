@@ -84,6 +84,46 @@
         <field-descriptor name="comments" column="COMMENTS" jdbc-type="VARCHAR"/>
     </class-descriptor>
 
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierEmailBo"
+                      table="CU_CEMI_EXTR_SUPPLIER_TAB_EMAILS_T">
+        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="supplierId" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailId1" column="EMAIL_ID_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddress1" column="EMAIL_ADDRESS_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailPrimary1" column="EMAIL_PRIMARY_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor1_1" column="EMAIL_USE_FOR_1_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor1_2" column="EMAIL_USE_FOR_1_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor1_3" column="EMAIL_USE_FOR_1_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor1_4" column="EMAIL_USE_FOR_1_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted1_1" column="USE_FOR_TENANTED_1_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted1_2" column="USE_FOR_TENANTED_1_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted1_3" column="USE_FOR_TENANTED_1_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted1_4" column="USE_FOR_TENANTED_1_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailId2" column="EMAIL_ID_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddress2" column="EMAIL_ADDRESS_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailPrimary2" column="EMAIL_PRIMARY_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor2_1" column="EMAIL_USE_FOR_2_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor2_2" column="EMAIL_USE_FOR_2_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor2_3" column="EMAIL_USE_FOR_2_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor2_4" column="EMAIL_USE_FOR_2_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted2_1" column="USE_FOR_TENANTED_2_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted2_2" column="USE_FOR_TENANTED_2_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted2_3" column="USE_FOR_TENANTED_2_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted2_4" column="USE_FOR_TENANTED_2_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailId3" column="EMAIL_ID_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddress3" column="EMAIL_ADDRESS_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailPrimary3" column="EMAIL_PRIMARY_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor3_1" column="EMAIL_USE_FOR_3_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor3_2" column="EMAIL_USE_FOR_3_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor3_3" column="EMAIL_USE_FOR_3_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor3_4" column="EMAIL_USE_FOR_3_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted3_1" column="USE_FOR_TENANTED_3_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted3_2" column="USE_FOR_TENANTED_3_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted3_3" column="USE_FOR_TENANTED_3_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted3_4" column="USE_FOR_TENANTED_3_4" jdbc-type="VARCHAR"/>
+    </class-descriptor>
+
     <!-- Remit To Supplier Extract -->
 
     <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierBo"
@@ -107,5 +147,40 @@
         <field-descriptor name="defaultPaymentTerms" column="DEFAULT_PAYMENT_TERMS" jdbc-type="VARCHAR"/>
         <field-descriptor name="alwaysSeparatePayments" column="ALWAYS_SEPARATE_PAYMENTS" jdbc-type="VARCHAR"/>
     </class-descriptor>
+
+    <!-- Supplier Order From Extract -->
+
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierOrderFromBo" table="CU_CEMI_EXTR_SUPP_ORD_FRM_TAB_ORD_FRM_T">
+        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="rowIndex" column="ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="spreadsheetKey" column="SPREADSHEET_KEY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierIdHeader" column="SUPPLIER_ID_HEADER" jdbc-type="VARCHAR"/>
+        <field-descriptor name="autoComplete" column="AUTO_COMPLETE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="comment" column="COMMENT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="worker" column="WORKER" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierReferenceId" column="SUPPLIER_REFERENCE_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierId" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierConnectionRowId" column="SUPPLIER_CONNECTION_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierConnection" column="SUPPLIER_CONNECTION" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierConnectionId" column="SUPPLIER_CONNECTION_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierConnectionName" column="SUPPLIER_CONNECTION_NAME" jdbc-type="VARCHAR"/>
+        <field-descriptor name="defaultForPoType1" column="DEFAULT_FOR_PO_TYPE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="defaultForPoType2" column="DEFAULT_FOR_PO_TYPE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="defaultForPoType3" column="DEFAULT_FOR_PO_TYPE_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="shippingMethod" column="SHIPPING_METHOD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="shippingTerms" column="SHIPPING_TERMS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="purchaseOrderIssueOption" column="PURCHASE_ORDER_ISSUE_OPTION" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailRowId" column="EMAIL_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailId" column="EMAIL_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddress" column="EMAIL_ADDRESS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="remitToSupplierConnection" column="REMIT_TO_SUPPLIER_CONNECTION" jdbc-type="VARCHAR"/>
+        <field-descriptor name="orderFromAddressReference" column="ORDER_FROM_ADDRESS_REFERENCE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="alternateNameRowId" column="ALTERNATE_NAME_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="alternateName" column="ALTERNATE_NAME" jdbc-type="VARCHAR"/>
+        <field-descriptor name="alternateNameUsage" column="ALTERNATE_NAME_USAGE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="isDefault" column="IS_DEFAULT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="isInactive" column="IS_INACTIVE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="memo" column="MEMO" jdbc-type="VARCHAR"/>
+    <class-descriptor>
 
 </descriptor-repository>

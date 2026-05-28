@@ -1,0 +1,150 @@
+package edu.cornell.kfs.cemi.vnd.batch.service.impl;
+
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.sys.KFSConstants;
+
+import edu.cornell.kfs.cemi.sys.util.CemiUtils;
+import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
+import edu.cornell.kfs.cemi.vnd.CemiVendorConstants.DefaultPOTypes;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierEmailBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierOrderFromBo;
+import edu.cornell.kfs.sys.CUKFSConstants;
+
+public class CemiSupplierOrderFromBoFactory {
+
+    private CemiSupplierBo supplier;
+    private CemiSupplierEmailBo supplierEmailRow;
+    private String emailFromKfsVendorAddress;
+    private String spreadsheetKey;
+    private String supplierConnectionRowId;
+    private boolean isFirstRowForSupplier;
+    private boolean isPunchoutSupplier;
+
+    private String emailRowId;
+    private String emailId;
+    private String emailAddress;
+
+    public CemiSupplierOrderFromBoFactory withSupplier(final CemiSupplierBo supplier) {
+        this.supplier = supplier;
+        return this;
+    }
+
+    public CemiSupplierOrderFromBoFactory withSupplierEmailRow(final CemiSupplierEmailBo supplierEmailRow) {
+        this.supplierEmailRow = supplierEmailRow;
+        return this;
+    }
+
+    public CemiSupplierOrderFromBoFactory withEmailFromKfsVendorAddress(final String emailFromKfsVendorAddress) {
+        this.emailFromKfsVendorAddress = emailFromKfsVendorAddress;
+        return this;
+    }
+
+    public CemiSupplierOrderFromBoFactory withSpreadsheetKey(final String spreadsheetKey) {
+        this.spreadsheetKey = spreadsheetKey;
+        return this;
+    }
+
+    public CemiSupplierOrderFromBoFactory withSupplierConnectionRowId(final String supplierConnectionRowId) {
+        this.supplierConnectionRowId = supplierConnectionRowId;
+        return this;
+    }
+
+    public CemiSupplierOrderFromBoFactory withFirstRowForSupplierFlag(final boolean isFirstRowForSupplier) {
+        this.isFirstRowForSupplier = isFirstRowForSupplier;
+        return this;
+    }
+
+    public CemiSupplierOrderFromBoFactory withPunchoutSupplierFlag(final boolean isPunchoutSupplier) {
+        this.isPunchoutSupplier = isPunchoutSupplier;
+        return this;
+    }
+
+    public CemiSupplierOrderFromBo createCemiSupplierOrderFromBo() {
+        Validate.validState(supplier != null, "A supplier was not defined");
+        Validate.validState(supplierEmailRow != null, "A supplier email record was not defined");
+
+        final CemiSupplierOrderFromBo supplierOrderFrom = new CemiSupplierOrderFromBo();
+
+        final String supplierIdForOutput = isFirstRowForSupplier ? supplier.getSupplierId() : KFSConstants.EMPTY_STRING;
+        final String autoComplete = isFirstRowForSupplier ? KRADConstants.YES_INDICATOR_VALUE : KFSConstants.EMPTY_STRING;
+        final String connectionName = generateConnectionName();
+        final String supplierReferenceId = generateSupplierReferenceId(connectionName);
+        final List<String> defaultPOTypes = determineDefaultPOTypes();
+        final String poIssueOption = determinePurchaseOrderIssueOption();
+        final String isDefault = determineDefaultConnectionSetting();
+
+        supplierOrderFrom.setSpreadsheetKey(spreadsheetKey);
+        supplierOrderFrom.setSupplierIdHeader(supplierIdForOutput);
+        supplierOrderFrom.setAutoComplete(autoComplete);
+        supplierOrderFrom.setComment(KFSConstants.EMPTY_STRING);
+        supplierOrderFrom.setWorker(KFSConstants.EMPTY_STRING);
+        supplierOrderFrom.setSupplierReferenceId(supplierReferenceId);
+        supplierOrderFrom.setSupplierId(supplierIdForOutput);
+        supplierOrderFrom.setSupplierConnectionRowId(supplierConnectionRowId);
+        supplierOrderFrom.setSupplierConnection(KFSConstants.EMPTY_STRING);
+        supplierOrderFrom.setSupplierConnectionId(KFSConstants.EMPTY_STRING);
+        supplierOrderFrom.setSupplierConnectionName(connectionName);
+        supplierOrderFrom.setDefaultForPoType1(defaultPOTypes.get(0));
+        supplierOrderFrom.setDefaultForPoType2(defaultPOTypes.get(1));
+        supplierOrderFrom.setDefaultForPoType3(defaultPOTypes.get(2));
+        supplierOrderFrom.setShippingMethod(KFSConstants.EMPTY_STRING);
+        supplierOrderFrom.setShippingTerms(KFSConstants.EMPTY_STRING);
+        supplierOrderFrom.setPurchaseOrderIssueOption(poIssueOption);
+        supplierOrderFrom.setEmailRowId(emailRowId);
+        supplierOrderFrom.setEmailId(emailId);
+        supplierOrderFrom.setEmailAddress(emailAddress);
+        supplierOrderFrom.setRemitToSupplierConnection(KFSConstants.EMPTY_STRING);
+        supplierOrderFrom.setOrderFromAddressReference(KFSConstants.EMPTY_STRING);
+        supplierOrderFrom.setAlternateNameRowId(KFSConstants.EMPTY_STRING);
+        supplierOrderFrom.setAlternateName(KFSConstants.EMPTY_STRING);
+        supplierOrderFrom.setAlternateNameUsage(KFSConstants.EMPTY_STRING);
+        supplierOrderFrom.setIsDefault(isDefault);
+        supplierOrderFrom.setIsInactive(KFSConstants.EMPTY_STRING);
+        supplierOrderFrom.setMemo(KFSConstants.EMPTY_STRING);
+
+        return supplierOrderFrom;
+    }
+
+    private String generateConnectionName() {
+        if (isPunchoutSupplier && isFirstRowForSupplier) {
+            return CemiVendorConstants.ORDER_FROM_CONNECTION_NAME_CATALOG;
+        } else {
+            return CemiVendorConstants.ORDER_FROM_CONNECTION_NAME_EMAIL_PREFIX + emailAddress;
+        }
+    }
+
+    private String generateSupplierReferenceId(final String connectionName) {
+        return StringUtils.joinWith(CUKFSConstants.UNDERSCORE,
+                supplier.getSupplierId(), connectionName, supplierConnectionRowId);
+    }
+
+    private List<String> determineDefaultPOTypes() {
+        if (isPunchoutSupplier) {
+            if (isFirstRowForSupplier) {
+                return List.of(DefaultPOTypes.CATALOG, KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING);
+            } else {
+                return List.of(DefaultPOTypes.STANDARD, DefaultPOTypes.BLANKET_ORDER, DefaultPOTypes.SOLE_SOURCE);
+            }
+        } else {
+            return CemiUtils.createListOfEmptyStrings(3);
+        }
+    }
+
+    private String determinePurchaseOrderIssueOption() {
+        if (isPunchoutSupplier && isFirstRowForSupplier) {
+            return CemiVendorConstants.PO_ISSUE_OPTION_XML_AUTO;
+        } else {
+            return CemiVendorConstants.PO_ISSUE_OPTION_EMAIL;
+        }
+    }
+
+    private String determineDefaultConnectionSetting() {
+        return CemiUtils.convertToBooleanValueForEIBFileExtract(isFirstRowForSupplier);
+    }
+
+}

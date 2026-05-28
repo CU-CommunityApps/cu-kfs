@@ -1,12 +1,18 @@
 package edu.cornell.kfs.cemi.vnd.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
@@ -80,6 +86,47 @@ public final class CemiVendorUtils {
                     supplierAddress.getAddressLine1(), supplierAddress.getAddressLine2(),
                     supplierAddress.getCity(), supplierAddress.getState(),
                     supplierAddress.getZipCode(), supplierAddress.getCountryForAddress());
+    }
+
+    public static Map<String, List<VendorAddress>> groupKfsVendorAddressesByLineDataThenPrioritizeByType(
+            final List<VendorAddress> vendorAddresses, String addressTypeWithHighestPrecedence) {
+        final Map<String, List<VendorAddress>> groupedVendorAddresses = new HashMap<>();
+
+        for (final VendorAddress vendorAddress : vendorAddresses) {
+            final String addressKey = CemiVendorUtils.generateAddressKey(vendorAddress);
+            final List<VendorAddress> subGroup = groupedVendorAddresses.computeIfAbsent(
+                    addressKey, key -> new ArrayList<>());
+            subGroup.add(vendorAddress);
+        }
+
+        final Comparator<VendorAddress> vendorAddressComparator = getVendorAddressPrecedenceComparator(
+                addressTypeWithHighestPrecedence);
+        for (final List<VendorAddress> subGroup : groupedVendorAddresses.values()) {
+            Collections.sort(subGroup, vendorAddressComparator);
+        }
+
+        return groupedVendorAddresses;
+    }
+
+    private static Comparator<VendorAddress> getVendorAddressPrecedenceComparator(
+            final String addressTypeWithHighestPrecedence) {
+        return Comparator
+                .comparing(VendorAddress::getVendorAddressTypeCode,
+                        (addressType1, addressType2) -> compareAddressTypesForPrecedence(
+                                addressType1, addressType2, addressTypeWithHighestPrecedence))
+                .thenComparing(VendorAddress::isVendorDefaultAddressIndicator, Comparator.reverseOrder())
+                .thenComparing(VendorAddress::getVendorAddressGeneratedIdentifier);
+    }
+
+    private static int compareAddressTypesForPrecedence(
+            final String addressType1, final String addressType2, final String addressTypeWithHighestPrecedence) {
+        if (Strings.CS.equals(addressType1, addressTypeWithHighestPrecedence)) {
+            return Strings.CS.equals(addressType2, addressTypeWithHighestPrecedence) ? 0 : -1;
+        } else if (Strings.CS.equals(addressType2, addressTypeWithHighestPrecedence)) {
+            return 1;
+        } else {
+            return Strings.CS.compare(addressType1, addressType2);
+        }
     }
 
 }
