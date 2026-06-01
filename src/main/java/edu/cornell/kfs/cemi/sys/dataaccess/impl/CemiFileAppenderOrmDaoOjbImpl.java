@@ -32,7 +32,7 @@ public class CemiFileAppenderOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb imple
         final ReportQueryByCriteria query = new ReportQueryByCriteria(sheetBoClass, criteria);
         query.setAttributes(getFieldNamesToQuery(sheetDefinition));
         query.setJdbcTypes(getAllVarcharJdbcTypes(sheetDefinition));
-        query.addOrderByAscending(CemiBasePropertyConstants.ROW_INDEX);
+        query.addOrderByAscending(CemiBasePropertyConstants.JOB_RUN_ROW_INDEX);
 
         try (
             final Stream<String[]> sheetDataRows = CuOjbUtils.buildCloseableStreamForReportQueryResults(

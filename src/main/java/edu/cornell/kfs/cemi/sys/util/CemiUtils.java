@@ -34,7 +34,6 @@ public final class CemiUtils {
                 .ofPattern(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmss, Locale.US)
                 .withZone(ZoneId.of(CUKFSConstants.TIME_ZONE_US_EASTERN));
 
-    private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("^[A-Za-z]\\w*$");
     private static final Pattern FILE_PATH_PATTERN = Pattern.compile("^(\\w+/)*\\w+(\\.[A-Za-z0-9]+)?$");
 
     private static final String generateDateTimeInConsistentFormat(final LocalDateTime dateTime) {
@@ -129,10 +128,6 @@ public final class CemiUtils {
             final byte[] fileContents = IOUtils.toByteArray(inputStream);
             return cemiOutputDefinitionFileType.parse(fileContents);
         }
-    }
-
-    public static boolean isFormattedAsValidIdentifier(final String name) {
-        return StringUtils.isNotBlank(name) && IDENTIFIER_PATTERN.matcher(name).matches();
     }
 
     public static boolean isFormattedAsValidFilePath(final String path) {

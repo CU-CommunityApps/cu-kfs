@@ -42,7 +42,7 @@ public class CemiRemitToSupplierOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb im
 
         final QueryByCriteria query = new QueryByCriteria(CemiSupplierAddressBo.class, criteria);
         query.addOrderByAscending(CemiVendorPropertyConstants.SUPPLIER_ID);
-        query.addOrderByAscending(CemiBasePropertyConstants.ROW_INDEX);
+        query.addOrderByAscending(CemiBasePropertyConstants.JOB_RUN_ROW_INDEX);
 
         return CuOjbUtils.buildCloseableStreamForQueryResults(CemiSupplierAddressBo.class,
                 () -> getPersistenceBrokerTemplate().getIteratorByQuery(query));

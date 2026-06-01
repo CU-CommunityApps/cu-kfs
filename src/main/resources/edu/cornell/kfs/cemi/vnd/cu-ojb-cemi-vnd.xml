@@ -5,7 +5,7 @@
     <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo"
                       table="CU_CEMI_EXTR_SUPPLIER_TAB_SUPPLIER_T">
         <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
-        <field-descriptor name="rowIndex" column="ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
         <field-descriptor name="supplierId" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="supplierReferenceId" column="SUPPLIER_REFERENCE_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="supplierName" column="SUPPLIER_NAME" jdbc-type="VARCHAR"/>
@@ -62,7 +62,7 @@
     <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo"
                       table="CU_CEMI_EXTR_SUPPLIER_TAB_ADDRESSES_T">
         <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
-        <field-descriptor name="rowIndex" column="ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
         <field-descriptor name="supplierId" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="addressId" column="ADDRESS_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="countryForAddress" column="COUNTRY_FOR_ADDRESS" jdbc-type="VARCHAR"/>
@@ -84,61 +84,12 @@
         <field-descriptor name="comments" column="COMMENTS" jdbc-type="VARCHAR"/>
     </class-descriptor>
 
-    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBankAccountBo"
-                      table="CU_CEMI_EXTR_SUPPLIER_TAB_BANK_ACCOUNTS_T">
-        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
-        <field-descriptor name="rowIndex" column="ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
-        <field-descriptor name="supplierId" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
-        <field-descriptor name="settlementBankAccountId1" column="SETTLEMENT_BANK_ACCOUNT_ID_1" jdbc-type="VARCHAR"/>
-        <field-descriptor name="bankAccountNickname1" column="BANK_ACCOUNT_NICKNAME_1" jdbc-type="VARCHAR"/>
-        <field-descriptor name="bankAccountType1" column="BANK_ACCOUNT_TYPE_1" jdbc-type="VARCHAR"/>
-        <field-descriptor name="bankName1" column="BANK_NAME_1" jdbc-type="VARCHAR"/>
-        <field-descriptor name="routingTransitNumber1" column="ROUTING_TRANSIT_NUMBER_1" jdbc-type="VARCHAR"/>
-        <field-descriptor name="branchId1" column="BRANCH_ID_1" jdbc-type="VARCHAR"/>
-        <field-descriptor name="branchName1" column="BRANCH_NAME_1" jdbc-type="VARCHAR"/>
-        <field-descriptor name="bankAccountNumber1" column="BANK_ACCOUNT_NUMBER_1" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
-        <field-descriptor name="acceptsPaymentTypes1_1" column="ACCEPTS_PAYMENT_TYPES_1_1" jdbc-type="VARCHAR"/>
-        <field-descriptor name="acceptsPaymentTypes1_2" column="ACCEPTS_PAYMENT_TYPES_1_2" jdbc-type="VARCHAR"/>
-        <field-descriptor name="acceptsPaymentTypes1_3" column="ACCEPTS_PAYMENT_TYPES_1_3" jdbc-type="VARCHAR"/>
-        <field-descriptor name="paymentTypes1_1" column="PAYMENT_TYPES_1_1" jdbc-type="VARCHAR"/>
-        <field-descriptor name="paymentTypes1_2" column="PAYMENT_TYPES_1_2" jdbc-type="VARCHAR"/>
-        <field-descriptor name="paymentTypes1_3" column="PAYMENT_TYPES_1_3" jdbc-type="VARCHAR"/>
-        <field-descriptor name="settlementBankAccountId2" column="SETTLEMENT_BANK_ACCOUNT_ID_2" jdbc-type="VARCHAR"/>
-        <field-descriptor name="bankAccountNickname2" column="BANK_ACCOUNT_NICKNAME_2" jdbc-type="VARCHAR"/>
-        <field-descriptor name="bankAccountType2" column="BANK_ACCOUNT_TYPE_2" jdbc-type="VARCHAR"/>
-        <field-descriptor name="bankName2" column="BANK_NAME_2" jdbc-type="VARCHAR"/>
-        <field-descriptor name="routingTransitNumber2" column="ROUTING_TRANSIT_NUMBER_2" jdbc-type="VARCHAR"/>
-        <field-descriptor name="branchId2" column="BRANCH_ID_2" jdbc-type="VARCHAR"/>
-        <field-descriptor name="branchName2" column="BRANCH_NAME_2" jdbc-type="VARCHAR"/>
-        <field-descriptor name="bankAccountNumber2" column="BANK_ACCOUNT_NUMBER_2" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
-        <field-descriptor name="acceptsPaymentTypes2_1" column="ACCEPTS_PAYMENT_TYPES_2_1" jdbc-type="VARCHAR"/>
-        <field-descriptor name="acceptsPaymentTypes2_2" column="ACCEPTS_PAYMENT_TYPES_2_2" jdbc-type="VARCHAR"/>
-        <field-descriptor name="acceptsPaymentTypes2_3" column="ACCEPTS_PAYMENT_TYPES_2_3" jdbc-type="VARCHAR"/>
-        <field-descriptor name="paymentTypes2_1" column="PAYMENT_TYPES_2_1" jdbc-type="VARCHAR"/>
-        <field-descriptor name="paymentTypes2_2" column="PAYMENT_TYPES_2_2" jdbc-type="VARCHAR"/>
-        <field-descriptor name="paymentTypes2_3" column="PAYMENT_TYPES_2_3" jdbc-type="VARCHAR"/>
-        <field-descriptor name="settlementBankAccountId3" column="SETTLEMENT_BANK_ACCOUNT_ID_3" jdbc-type="VARCHAR"/>
-        <field-descriptor name="bankAccountNickname3" column="BANK_ACCOUNT_NICKNAME_3" jdbc-type="VARCHAR"/>
-        <field-descriptor name="bankAccountType3" column="BANK_ACCOUNT_TYPE_3" jdbc-type="VARCHAR"/>
-        <field-descriptor name="bankName3" column="BANK_NAME_3" jdbc-type="VARCHAR"/>
-        <field-descriptor name="routingTransitNumber3" column="ROUTING_TRANSIT_NUMBER_3" jdbc-type="VARCHAR"/>
-        <field-descriptor name="branchId3" column="BRANCH_ID_3" jdbc-type="VARCHAR"/>
-        <field-descriptor name="branchName3" column="BRANCH_NAME_3" jdbc-type="VARCHAR"/>
-        <field-descriptor name="bankAccountNumber3" column="BANK_ACCOUNT_NUMBER_3" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
-        <field-descriptor name="acceptsPaymentTypes3_1" column="ACCEPTS_PAYMENT_TYPES_3_1" jdbc-type="VARCHAR"/>
-        <field-descriptor name="acceptsPaymentTypes3_2" column="ACCEPTS_PAYMENT_TYPES_3_2" jdbc-type="VARCHAR"/>
-        <field-descriptor name="acceptsPaymentTypes3_3" column="ACCEPTS_PAYMENT_TYPES_3_3" jdbc-type="VARCHAR"/>
-        <field-descriptor name="paymentTypes3_1" column="PAYMENT_TYPES_3_1" jdbc-type="VARCHAR"/>
-        <field-descriptor name="paymentTypes3_2" column="PAYMENT_TYPES_3_2" jdbc-type="VARCHAR"/>
-        <field-descriptor name="paymentTypes3_3" column="PAYMENT_TYPES_3_3" jdbc-type="VARCHAR"/>
-    </class-descriptor>
-
     <!-- Remit To Supplier Extract -->
 
     <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierBo"
                       table="CU_CEMI_EXTR_RMT_TO_SUPP_TAB_RMT_TO_SUPP_T">
         <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
-        <field-descriptor name="rowIndex" column="ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
         <field-descriptor name="supplierId" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="supplierConnectionId" column="SUPPLIER_CONNECTION_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="supplierConnectionName" column="SUPPLIER_CONNECTION_NAME" jdbc-type="VARCHAR"/>

@@ -36,7 +36,7 @@ public abstract class CemiOrmDataBuilderBase {
 
         final long nextCountValue = rowCount.incrementAndGet();
         sheetRow.setJobRunDate(jobRunDate);
-        sheetRow.setRowIndex(nextCountValue);
+        sheetRow.setJobRunRowIndex(nextCountValue);
         businessObjectService.save(sheetRow);
     }
 

@@ -23,7 +23,6 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
 import edu.cornell.kfs.cemi.sys.CemiBasePropertyConstants;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiOrmDataBuilderBase;
-import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiVendorPropertyConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
@@ -124,7 +123,7 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
         final Map<String, List<VendorAddress>> groupedVendorAddresses = new HashMap<>();
 
         for (final VendorAddress vendorAddress : vendorAddresses) {
-            final String addressKey = generateAddressKey(vendorAddress);
+            final String addressKey = CemiVendorUtils.generateAddressKey(vendorAddress);
             final List<VendorAddress> subGroup = groupedVendorAddresses.computeIfAbsent(
                     addressKey, key -> new ArrayList<>());
             subGroup.add(vendorAddress);
@@ -157,7 +156,7 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
                 .flatMap(List::stream)
                 .filter(kfsAddress -> CemiVendorUtils
                         .addressTypeIsActiveAndIsDefaultAndMatches(AddressTypes.REMIT, kfsAddress))
-                .map(this::generateAddressKey)
+                .map(CemiVendorUtils::generateAddressKey)
                 .findFirst()
                 .orElse(KFSConstants.EMPTY_STRING);
 
@@ -166,7 +165,7 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
         } else {
             return IntStream.range(0, supplierAddresses.size())
                     .filter(index -> Strings.CS.equals(
-                            defaultRemitAddressKey, generateAddressKey(supplierAddresses.get(index))))
+                            defaultRemitAddressKey, CemiVendorUtils.generateAddressKey(supplierAddresses.get(index))))
                     .findFirst()
                     .orElse(-1);
         }
@@ -174,7 +173,7 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
 
     private String getEmailAddress(final CemiSupplierAddressBo supplierAddress,
             final Map<String, List<VendorAddress>> groupedVendorAddresses) {
-        final String addressKey = generateAddressKey(supplierAddress);
+        final String addressKey = CemiVendorUtils.generateAddressKey(supplierAddress);
         final List<VendorAddress> addressGroup = groupedVendorAddresses.get(addressKey);
         if (addressGroup == null) {
             LOG.warn("getEmailAddress, UNEXPECTED: No KFS Vendor Addresses found for Supplier Address: {}", addressKey);
@@ -186,20 +185,6 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
                 .filter(StringUtils::isNotBlank)
                 .findFirst()
                 .orElse(KFSConstants.EMPTY_STRING);
-    }
-
-    private String generateAddressKey(final VendorAddress vendorAddress) {
-        return CemiUtils.generateConcatenatedKey(
-                    vendorAddress.getVendorLine1Address(), vendorAddress.getVendorLine2Address(),
-                    vendorAddress.getVendorCityName(), vendorAddress.getVendorStateCode(),
-                    vendorAddress.getVendorZipCode(), vendorAddress.getVendorCountryCode());
-    }
-
-    private String generateAddressKey(final CemiSupplierAddressBo supplierAddress) {
-        return CemiUtils.generateConcatenatedKey(
-                    supplierAddress.getAddressLine1(), supplierAddress.getAddressLine2(),
-                    supplierAddress.getCity(), supplierAddress.getState(),
-                    supplierAddress.getZipCode(), supplierAddress.getCountryForAddress());
     }
 
     private Comparator<VendorAddress> getVendorAddressEmailPrecedenceComparator() {
