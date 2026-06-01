@@ -42,7 +42,7 @@ public class CemiSupplierOrderFromOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb 
                 + "ON VMP.EXTR_FILE_RUNDATE = QST.SUPP_EXTR_FILE_RUNDATE)");
 
         final QueryByCriteria query = new QueryByCriteria(CemiSupplierAddressBo.class, criteria);
-        query.addOrderByAscending(CemiBasePropertyConstants.ROW_INDEX);
+        query.addOrderByAscending(CemiBasePropertyConstants.JOB_RUN_ROW_INDEX);
 
         return CuOjbUtils.buildCloseableStreamForQueryResults(CemiSupplierAddressBo.class,
                 () -> getPersistenceBrokerTemplate().getIteratorByQuery(query));
@@ -59,7 +59,7 @@ public class CemiSupplierOrderFromOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb 
 
         final QueryByCriteria query = new QueryByCriteria(CemiSupplierAddressBo.class, criteria);
         query.addOrderByAscending(CemiVendorPropertyConstants.SUPPLIER_ID);
-        query.addOrderByAscending(CemiBasePropertyConstants.ROW_INDEX);
+        query.addOrderByAscending(CemiBasePropertyConstants.JOB_RUN_ROW_INDEX);
 
         return CuOjbUtils.buildCloseableStreamForQueryResults(CemiSupplierAddressBo.class,
                 () -> getPersistenceBrokerTemplate().getIteratorByQuery(query));
