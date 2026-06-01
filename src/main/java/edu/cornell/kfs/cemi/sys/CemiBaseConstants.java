@@ -5,6 +5,7 @@ public final class CemiBaseConstants {
     public static final String CEMI_ENVIRONMENT_LANE_NAME = "kfs-cemi";
 
     public static final String CEMI_OUTPUT_DEFINITION_FILE_TYPE_IDENTIFIER = "cemiOutputDefinitionFileType";
+    public static final String CEMI_OUTPUT_DEFINITION_FILE_PATH_PREFIX = "classpath:edu/cornell/kfs/cemi/";
 
     public enum CemiFieldDefinitionType {
         STATIC,
