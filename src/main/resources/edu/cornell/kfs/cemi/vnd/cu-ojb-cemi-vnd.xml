@@ -1,0 +1,111 @@
+<descriptor-repository version="1.0">
+
+    <!-- Supplier Extract -->
+
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo"
+                      table="CU_CEMI_EXTR_SUPPLIER_TAB_SUPPLIER_T">
+        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="supplierId" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierReferenceId" column="SUPPLIER_REFERENCE_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierName" column="SUPPLIER_NAME" jdbc-type="VARCHAR"/>
+        <field-descriptor name="taxAuthorityFormType" column="TAX_AUTHORITY_FORM_TYPE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="irs1099Supplier" column="IRS_1099_SUPPLIER" jdbc-type="VARCHAR"/>
+        <field-descriptor name="report1099WithParent" column="REPORT_1099_WITH_PARENT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="taxIdType" column="TAX_ID_TYPE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="taxIdText" column="TAX_ID_TEXT" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+        <field-descriptor name="transactionTaxId" column="TRANSACTION_TAX_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="defaultWithholdingTaxCode" column="DEFAULT_WITHHOLDING_TAX_CODE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="primaryTaxId" column="PRIMARY_TAX_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="countryTaxId" column="COUNTRY_TAX_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierCategory" column="SUPPLIER_CATEGORY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierGroup1" column="SUPPLIER_GROUP_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierGroup2" column="SUPPLIER_GROUP_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierGroup3" column="SUPPLIER_GROUP_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierGroup4" column="SUPPLIER_GROUP_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="customerAccountNumber" column="CUSTOMER_ACCOUNT_NUMBER" jdbc-type="VARCHAR"/>
+        <field-descriptor name="dunsNumber" column="DUNS_NUMBER" jdbc-type="VARCHAR"/>
+        <field-descriptor name="paymentTerms" column="PAYMENT_TERMS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="defaultPaymentType" column="DEFAULT_PAYMENT_TYPE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="paymentTypesAccepted1" column="PAYMENT_TYPES_ACCEPTED_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="paymentTypesAccepted2" column="PAYMENT_TYPES_ACCEPTED_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="paymentTypesAccepted3" column="PAYMENT_TYPES_ACCEPTED_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="currency" column="CURRENCY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedCurrencies" column="ACCEPTED_CURRENCIES" jdbc-type="VARCHAR"/>
+        <field-descriptor name="procurementCreditCard" column="PROCUREMENT_CREDIT_CARD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="alwaysSeparatePayments" column="ALWAYS_SEPARATE_PAYMENTS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="textForDefaultSupplierPaymentMemo" column="TEXT_FOR_DEFAULT_SUPPLIER_PAYMENT_MEMO" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useSupplierReferenceAsDefaultSupplierPaymentMemo" column="USE_SUPPLIER_REFERENCE_AS_DEFAULT_SUPPLIER_PAYMENT_MEMO" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useInvoiceMemoAsDefaultSupplierPaymentMemo" column="USE_INVOICE_MEMO_AS_DEFAULT_SUPPLIER_PAYMENT_MEMO" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useSupplierConnectionMemo" column="USE_SUPPLIER_CONNECTION_MEMO" jdbc-type="VARCHAR"/>
+        <field-descriptor name="doNotReplaceAll" column="DO_NOT_REPLACE_ALL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierClassification1" column="SUPPLIER_CLASSIFICATION_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierClassificationField1" column="SUPPLIER_CLASSIFICATION_FIELD_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="fieldDateValue1" column="FIELD_DATE_VALUE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="fieldNumberValue1" column="FIELD_NUMBER_VALUE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="fieldTextValue1" column="FIELD_TEXT_VALUE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="fieldSingleSelectChoice1" column="FIELD_SINGLE_SELECT_CHOICE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="fieldMultiSelectChoice1" column="FIELD_MULTI_SELECT_CHOICE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierClassification2" column="SUPPLIER_CLASSIFICATION_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierClassificationField2" column="SUPPLIER_CLASSIFICATION_FIELD_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="fieldDateValue2" column="FIELD_DATE_VALUE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="fieldNumberValue2" column="FIELD_NUMBER_VALUE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="fieldTextValue2" column="FIELD_TEXT_VALUE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="fieldSingleSelectChoice2" column="FIELD_SINGLE_SELECT_CHOICE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="fieldMultiSelectChoice2" column="FIELD_MULTI_SELECT_CHOICE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="alternateNameBusinessEntity1" column="ALTERNATE_NAME_BUSINESS_ENTITY_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="alternateNameUsageBusinessEntity1" column="ALTERNATE_NAME_USAGE_BUSINESS_ENTITY_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="alternateNameBusinessEntity2" column="ALTERNATE_NAME_BUSINESS_ENTITY_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="alternateNameUsageBusinessEntity2" column="ALTERNATE_NAME_USAGE_BUSINESS_ENTITY_2" jdbc-type="VARCHAR"/>
+    </class-descriptor>
+
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo"
+                      table="CU_CEMI_EXTR_SUPPLIER_TAB_ADDRESSES_T">
+        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="supplierId" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressId" column="ADDRESS_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="countryForAddress" column="COUNTRY_FOR_ADDRESS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressLine1" column="ADDRESS_LINE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressLine2" column="ADDRESS_LINE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="city" column="CITY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="state" column="STATE_VAL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="zipCode" column="ZIP_CODE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressPrimary" column="ADDRESS_PRIMARY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressType" column="ADDRESS_TYPE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressUse1" column="ADDRESS_USE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressUse2" column="ADDRESS_USE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressUse3" column="ADDRESS_USE_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressUse4" column="ADDRESS_USE_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressUseTenanted1" column="ADDRESS_USE_TENANTED" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressUseTenanted2" column="ADDRESS_USE_TENANTED_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressUseTenanted3" column="ADDRESS_USE_TENANTED_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressUseTenanted4" column="ADDRESS_USE_TENANTED_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="comments" column="COMMENTS" jdbc-type="VARCHAR"/>
+    </class-descriptor>
+
+    <!-- Remit To Supplier Extract -->
+
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierBo"
+                      table="CU_CEMI_EXTR_RMT_TO_SUPP_TAB_RMT_TO_SUPP_T">
+        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="supplierId" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierConnectionId" column="SUPPLIER_CONNECTION_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierConnectionName" column="SUPPLIER_CONNECTION_NAME" jdbc-type="VARCHAR"/>
+        <field-descriptor name="defaultPaymentType" column="DEFAULT_PAYMENT_TYPE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedPaymentType1" column="ACCEPTED_PAYMENT_TYPE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedPaymentType2" column="ACCEPTED_PAYMENT_TYPE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedPaymentType3" column="ACCEPTED_PAYMENT_TYPE_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="settlementBankAccount" column="SETTLEMENT_BANK_ACCOUNT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="remitToAddressId" column="REMIT_TO_ADDRESS_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="remitToEmailAddress" column="REMIT_TO_EMAIL_ADDRESS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="payeeAlternateName" column="PAYEE_ALTERNATE_NAME" jdbc-type="VARCHAR"/>
+        <field-descriptor name="alternateNameUsage" column="ALTERNATE_NAME_USAGE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="paymentMemo" column="PAYMENT_MEMO" jdbc-type="VARCHAR"/>
+        <field-descriptor name="isDefault" column="IS_DEFAULT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="defaultPaymentTerms" column="DEFAULT_PAYMENT_TERMS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="alwaysSeparatePayments" column="ALWAYS_SEPARATE_PAYMENTS" jdbc-type="VARCHAR"/>
+    </class-descriptor>
+
+</descriptor-repository>

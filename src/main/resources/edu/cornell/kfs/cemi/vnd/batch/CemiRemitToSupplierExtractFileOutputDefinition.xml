@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cemiOutputDefinition>
+
+    <sheet name="Remit_To_Supplier" num-header-rows="6" start-column-index="1"
+           business-object-class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierBo">
+        <field name="Supplier" type="STRING" key="supplierId"/>
+        <field name="Supplier_Connection_ID" type="STRING" key="supplierConnectionId"/>
+        <field name="Supplier_Connection_Name" type="STRING" key="supplierConnectionName"/>
+        <field name="Default_Payment_Type" type="STRING" key="defaultPaymentType"/>
+        <field name="Accepted_Payment_Type_1" type="STRING" key="acceptedPaymentType1"/>
+        <field name="Accepted_Payment_Type_2" type="STRING" key="acceptedPaymentType2"/>
+        <field name="Accepted_Payment_Type_3" type="STRING" key="acceptedPaymentType3"/>
+        <field name="Settlement_Bank_Account" type="STRING" key="settlementBankAccount"/>
+        <field name="Remit_To_Address_ID" type="STRING" key="remitToAddressId"/>
+        <field name="Remit_To_Email_Address" type="STRING" key="remitToEmailAddress"/>
+        <field name="Payee_Alternate_Name" type="STRING" key="payeeAlternateName"/>
+        <field name="Alternate_Name_Usage" type="STRING" key="alternateNameUsage"/>
+        <field name="Payment_Memo" type="STRING" key="paymentMemo"/>
+        <field name="Is_Default" type="STRING" key="isDefault"/>
+        <field name="Default_Payment_Terms" type="STRING" key="defaultPaymentTerms"/>
+        <field name="Always_Separate_Payments" type="STRING" key="alwaysSeparatePayments"/>
+    </sheet>
+
+</cemiOutputDefinition>

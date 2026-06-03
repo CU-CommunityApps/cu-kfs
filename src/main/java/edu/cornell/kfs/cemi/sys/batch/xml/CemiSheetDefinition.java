@@ -33,6 +33,9 @@ public class CemiSheetDefinition {
     @XmlAttribute(name = "start-column-index", required = true)
     private int startColumnIndex;
 
+    @XmlAttribute(name = "business-object-class", required = false)
+    private String businessObjectClass;
+
     public List<CemiFieldDefinition> getFields() {
         if (fields == null) {
             fields = new ArrayList<>();
@@ -66,6 +69,14 @@ public class CemiSheetDefinition {
 
     public void setStartColumnIndex(final int startColumnIndex) {
         this.startColumnIndex = startColumnIndex;
+    }
+
+    public String getBusinessObjectClass() {
+        return businessObjectClass;
+    }
+
+    public void setBusinessObjectClass(final String businessObjectClass) {
+        this.businessObjectClass = businessObjectClass;
     }
 
     @Override

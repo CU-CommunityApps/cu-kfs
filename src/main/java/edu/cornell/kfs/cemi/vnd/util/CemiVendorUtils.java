@@ -10,7 +10,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
+import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
 
 @SuppressWarnings("deprecation")
 public final class CemiVendorUtils {
@@ -59,11 +61,25 @@ public final class CemiVendorUtils {
         return StringUtils.equals(vendorTypeCode, VendorConstants.VendorTypes.PURCHASE_ORDER);
     }
 
-    private static boolean addressTypeIsActiveAndIsDefaultAndMatches(
+    public static boolean addressTypeIsActiveAndIsDefaultAndMatches(
             final String vendorAddressType, final VendorAddress vendorAddress) {
         return vendorAddress.getVendorAddressTypeCode().equalsIgnoreCase(vendorAddressType)
                 && vendorAddress.isActive()
                 && vendorAddress.isVendorDefaultAddressIndicator();
+    }
+
+    public static String generateAddressKey(final VendorAddress vendorAddress) {
+        return CemiUtils.generateConcatenatedKey(
+                    vendorAddress.getVendorLine1Address(), vendorAddress.getVendorLine2Address(),
+                    vendorAddress.getVendorCityName(), vendorAddress.getVendorStateCode(),
+                    vendorAddress.getVendorZipCode(), vendorAddress.getVendorCountryCode());
+    }
+
+    public static String generateAddressKey(final CemiSupplierAddressBo supplierAddress) {
+        return CemiUtils.generateConcatenatedKey(
+                    supplierAddress.getAddressLine1(), supplierAddress.getAddressLine2(),
+                    supplierAddress.getCity(), supplierAddress.getState(),
+                    supplierAddress.getZipCode(), supplierAddress.getCountryForAddress());
     }
 
 }
