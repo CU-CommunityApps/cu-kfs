@@ -29,6 +29,7 @@ import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierEmailBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierOrderFromBo;
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiSupplierOrderFromDataBuilder;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiSupplierOrderFromDao;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorOrmDao;
 import edu.cornell.kfs.cemi.vnd.util.CemiVendorUtils;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -40,16 +41,24 @@ public class CemiSupplierOrderFromDataBuilderDefaultImpl extends CemiOrmDataBuil
 
     private final String supplierJobRunDate;
     private final CemiVendorOrmDao cemiVendorOrmDao;
+    private final CemiSupplierOrderFromDao cemiSupplierOrderFromDao;
 
     public CemiSupplierOrderFromDataBuilderDefaultImpl(final BusinessObjectService businessObjectService,
-            final String jobRunDate, final String supplierJobRunDate, final CemiVendorOrmDao cemiVendorOrmDao) {
+            final String jobRunDate, final String supplierJobRunDate, final CemiVendorOrmDao cemiVendorOrmDao,
+            final CemiSupplierOrderFromDao cemiSupplierOrderFromDao) {
         super(businessObjectService, jobRunDate, CemiSupplierOrderFromBo.class);
         Validate.notBlank(supplierJobRunDate, "supplierJobRunDate cannot be blank");
         Validate.notNull(cemiVendorOrmDao, "cemiVendorOrmDao cannot be null");
+        Validate.notNull(cemiSupplierOrderFromDao, "cemiSupplierOrderFromDao cannot be null");
         this.supplierJobRunDate = supplierJobRunDate;
         this.cemiVendorOrmDao = cemiVendorOrmDao;
+        this.cemiSupplierOrderFromDao = cemiSupplierOrderFromDao;
     }
 
+    /*
+     * NOTE: It is assumed that the iterator will return all of a given Supplier's eligible addresses
+     *       BEFORE returning any addresses pertaining to the next Supplier.
+     */
     @Override
     public void writeSupplierOrderFromDataToIntermediateStorage(
             final Iterator<CemiSupplierAddressBo> supplierAddresses) {
@@ -92,33 +101,66 @@ public class CemiSupplierOrderFromDataBuilderDefaultImpl extends CemiOrmDataBuil
         return results.iterator().next();
     }
 
+    /*
+     * NOTE: This current implementation assumes that punchout/CXML Suppliers should have exactly 2 connections
+     *       (one for punchouts and one for non-punchouts). It also assumes that each email-based connection
+     *       should have no more than 1 email address, meaning adjustments will be needed if we have to add
+     *       multiple emails per connection.
+     */
     private void createAndStoreSupplierOrderFromRows(final CemiSupplierBo supplier,
             final List<CemiSupplierAddressBo> supplierAddresses, final String spreadsheetKey) {
         if (supplierAddresses.isEmpty()) {
             return;
         }
+        final boolean isPunchoutSupplier = cemiSupplierOrderFromDao.determineIfSupplierIsUsedForPunchouts(
+                supplier.getSupplierId(), supplierJobRunDate);
         final Map<String, List<VendorAddress>> kfsVendorAddresses = getKfsVendorAddresses(supplier.getSupplierId());
         final CemiSupplierEmailBo emailRow = getSupplierEmailRow(supplier.getSupplierId());
         final List<Pair<String, CemiSupplierAddressBo>> addressesWithUniqueEmails = getUniqueEmailsForAddresses(
                 supplierAddresses, kfsVendorAddresses, emailRow);
 
-        final List<CemiSupplierAddressBo> addressesForOutput = new ArrayList<>(supplierAddresses.size());
+        final List<Pair<String, CemiSupplierAddressBo>> addressesForOutput;
+        if (isPunchoutSupplier) {
+            if (addressesWithUniqueEmails.isEmpty()) {
+                LOG.warn("createAndStoreSupplierOrderFromRows, Punchout Supplier {} has no email addresses that are "
+                        + "eligible to be included in the Supplier Order From extract. This Supplier will be "
+                        + "excluded from the extract altogether.", supplier.getSupplierId());
+                addressesForOutput = List.of();
+            } else {
+                // Just duplicate the first address; the loop below will handle the punchout logic accordingly.
+                final Pair<String, CemiSupplierAddressBo> firstAddressWithUniqueEmail = addressesWithUniqueEmails.get(0);
+                addressesForOutput = List.of(firstAddressWithUniqueEmail, firstAddressWithUniqueEmail);
+            }
+        } else {
+            addressesForOutput = addressesWithUniqueEmails;
+        }
 
         int connectionRowId = 1;
 
-        for (final CemiSupplierAddressBo supplierAddress : supplierAddresses) {
-            final String kfsEmailAddress = getKfsVendorEmailAddress(supplierAddress, kfsVendorAddresses);
+        for (final Pair<String, CemiSupplierAddressBo> emailAndAddressPair : addressesForOutput) {
+            final boolean isFirstRowForSupplier = (connectionRowId == 1);
+            final boolean isPunchoutConnection = isPunchoutSupplier && isFirstRowForSupplier;
             final CemiSupplierOrderFromBo supplierOrderFromRow = new CemiSupplierOrderFromBoFactory()
                     .withSupplier(supplier)
-                    //.withSupplierAddress(supplierAddress)
+                    .withSupplierEmailRow(emailRow)
+                    .withEmailFromKfsVendorAddress(emailAndAddressPair.getLeft())
                     .withSpreadsheetKey(spreadsheetKey)
                     .withSupplierConnectionRowId(Integer.toString(connectionRowId))
-                    .withFirstRowForSupplierFlag(connectionRowId == 1)
+                    .withFirstRowForSupplierFlag(isFirstRowForSupplier)
+                    .withPunchoutSupplierFlag(isPunchoutSupplier)
+                    .withPunchoutConnectionFlag(isPunchoutConnection)
                     .createCemiSupplierOrderFromBo();
 
             storeSheetRow(supplierOrderFromRow);
             connectionRowId++;
         }
+    }
+
+    private Map<String, List<VendorAddress>> getKfsVendorAddresses(final String supplierId) {
+        final List<VendorAddress> vendorAddresses = cemiVendorOrmDao.getKfsVendorAddresses(
+                supplierId, supplierJobRunDate);
+        return CemiVendorUtils.groupKfsVendorAddressesByLineDataThenPrioritizeByType(
+                vendorAddresses, AddressTypes.PURCHASE_ORDER);
     }
 
     private CemiSupplierEmailBo getSupplierEmailRow(final String supplierId) {
@@ -141,16 +183,16 @@ public class CemiSupplierOrderFromDataBuilderDefaultImpl extends CemiOrmDataBuil
 
         for (final CemiSupplierAddressBo supplierAddress : supplierAddresses) {
             final String kfsEmailAddress = getKfsVendorEmailAddress(supplierAddress, kfsVendorAddresses);
-            if (StringUtils.isBlank(kfsEmailAddress)
-                    || !encounteredEmails.add(StringUtils.lowerCase(kfsEmailAddress, Locale.US))) {
-                continue;
-            } else if (Strings.CI.equalsAny(kfsEmailAddress, emailRow.getEmailAddress1(), emailRow.getEmailAddress2(),
-                    emailRow.getEmailAddress3())) {
-                addressesWithEmails.add(Pair.of(kfsEmailAddress, supplierAddress));
-            } else {
-                LOG.warn("getUniqueEmailsForAddresses, Supplier Address {} is associated with email {} that is not "
-                        + "among the emails in the related Supplier Email record. This email-and-address pair will "
-                        + "be ignored.", supplierAddress.getAddressId(), kfsEmailAddress);
+            if (StringUtils.isNotBlank(kfsEmailAddress)
+                    && encounteredEmails.add(StringUtils.lowerCase(kfsEmailAddress, Locale.US))) {
+                if (Strings.CI.equalsAny(kfsEmailAddress, emailRow.getEmailAddress1(), emailRow.getEmailAddress2(),
+                        emailRow.getEmailAddress3())) {
+                    addressesWithEmails.add(Pair.of(kfsEmailAddress, supplierAddress));
+                } else {
+                    LOG.warn("getUniqueEmailsForAddresses, Supplier Address {} is associated with email {} that is not "
+                            + "among the emails in the related Supplier Email record. This email-and-address pair will "
+                            + "be ignored.", supplierAddress.getAddressId(), kfsEmailAddress);
+                }
             }
         }
 
@@ -171,13 +213,6 @@ public class CemiSupplierOrderFromDataBuilderDefaultImpl extends CemiOrmDataBuil
                 .filter(StringUtils::isNotBlank)
                 .findFirst()
                 .orElse(KFSConstants.EMPTY_STRING);
-    }
-
-    private Map<String, List<VendorAddress>> getKfsVendorAddresses(final String supplierId) {
-        final List<VendorAddress> vendorAddresses = cemiVendorOrmDao.getKfsVendorAddresses(
-                supplierId, supplierJobRunDate);
-        return CemiVendorUtils.groupKfsVendorAddressesByLineDataThenPrioritizeByType(
-                vendorAddresses, AddressTypes.PURCHASE_ORDER);
     }
 
 }

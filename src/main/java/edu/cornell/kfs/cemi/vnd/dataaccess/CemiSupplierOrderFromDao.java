@@ -1,7 +1,6 @@
 package edu.cornell.kfs.cemi.vnd.dataaccess;
 
-import java.util.function.Supplier;
-import java.util.stream.Stream;
+import java.util.Iterator;
 
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
@@ -17,9 +16,9 @@ public interface CemiSupplierOrderFromDao {
 
     void updateSupplierOrderFromExtractQuerySettings(final String supplierJobRunDate);
 
-    void queryAndStoreListOfKfsVendorAddressLinks(final Supplier<Stream<VendorAddress>> addressQueryRunner);
+    void storeAsListOfKfsVendorAddressLinks(final Iterator<VendorAddress> addressIterator);
 
-    void queryAndStoreListOfSupplierAddressLinks(final Supplier<Stream<CemiSupplierAddressBo>> addressQueryRunner);
+    void storeAsListOfSupplierAddressLinks(final Iterator<CemiSupplierAddressBo> addressIterator);
 
     void queryAndStoreAddressIdsForSupplierOrderFromExtract();
 

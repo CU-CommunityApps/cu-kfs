@@ -3,6 +3,7 @@ package edu.cornell.kfs.cemi.vnd.batch.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.Validate;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
@@ -24,6 +25,7 @@ public class CemiSupplierOrderFromBoFactory {
     private String supplierConnectionRowId;
     private boolean isFirstRowForSupplier;
     private boolean isPunchoutSupplier;
+    private boolean isPunchoutConnection;
 
     private String emailRowId;
     private String emailId;
@@ -64,9 +66,20 @@ public class CemiSupplierOrderFromBoFactory {
         return this;
     }
 
+    public CemiSupplierOrderFromBoFactory withPunchoutConnectionFlag(final boolean isPunchoutConnection) {
+        this.isPunchoutConnection = isPunchoutConnection;
+        return this;
+    }
+
     public CemiSupplierOrderFromBo createCemiSupplierOrderFromBo() {
         Validate.validState(supplier != null, "A supplier was not defined");
         Validate.validState(supplierEmailRow != null, "A supplier email record was not defined");
+        Validate.validState(!isPunchoutConnection || isPunchoutSupplier,
+                "Entries marked as punchout connections must also be marked as having a punchout supplier");
+        Validate.validState(!isPunchoutConnection || isFirstRowForSupplier,
+                "Entries marked as punchout connections must also be marked as being the supplier's first connection");
+
+        initializeEmailData();
 
         final CemiSupplierOrderFromBo supplierOrderFrom = new CemiSupplierOrderFromBo();
 
@@ -110,8 +123,30 @@ public class CemiSupplierOrderFromBoFactory {
         return supplierOrderFrom;
     }
 
+    private void initializeEmailData() {
+        if (isPunchoutConnection) {
+            emailRowId = KFSConstants.EMPTY_STRING;
+            emailId = KFSConstants.EMPTY_STRING;
+            emailAddress = KFSConstants.EMPTY_STRING;
+        } else if (Strings.CI.equals(emailFromKfsVendorAddress, supplierEmailRow.getEmailAddress1())) {
+            emailRowId = Integer.toString(1);
+            emailId = supplierEmailRow.getEmailId1();
+            emailAddress = supplierEmailRow.getEmailAddress1();
+        } else if (Strings.CI.equals(emailFromKfsVendorAddress, supplierEmailRow.getEmailAddress2())) {
+            emailRowId = Integer.toString(1);
+            emailId = supplierEmailRow.getEmailId2();
+            emailAddress = supplierEmailRow.getEmailAddress2();
+        } else if (Strings.CI.equals(emailFromKfsVendorAddress, supplierEmailRow.getEmailAddress3())) {
+            emailRowId = Integer.toString(1);
+            emailId = supplierEmailRow.getEmailId3();
+            emailAddress = supplierEmailRow.getEmailAddress3();
+        } else {
+            throw new IllegalStateException("Email not found for supplier: " + emailFromKfsVendorAddress);
+        }
+    }
+
     private String generateConnectionName() {
-        if (isPunchoutSupplier && isFirstRowForSupplier) {
+        if (isPunchoutConnection) {
             return CemiVendorConstants.ORDER_FROM_CONNECTION_NAME_CATALOG;
         } else {
             return CemiVendorConstants.ORDER_FROM_CONNECTION_NAME_EMAIL_PREFIX + emailAddress;
@@ -125,7 +160,7 @@ public class CemiSupplierOrderFromBoFactory {
 
     private List<String> determineDefaultPOTypes() {
         if (isPunchoutSupplier) {
-            if (isFirstRowForSupplier) {
+            if (isPunchoutConnection) {
                 return List.of(DefaultPOTypes.CATALOG, KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING);
             } else {
                 return List.of(DefaultPOTypes.STANDARD, DefaultPOTypes.BLANKET_ORDER, DefaultPOTypes.SOLE_SOURCE);
@@ -136,7 +171,7 @@ public class CemiSupplierOrderFromBoFactory {
     }
 
     private String determinePurchaseOrderIssueOption() {
-        if (isPunchoutSupplier && isFirstRowForSupplier) {
+        if (isPunchoutConnection) {
             return CemiVendorConstants.PO_ISSUE_OPTION_XML_AUTO;
         } else {
             return CemiVendorConstants.PO_ISSUE_OPTION_EMAIL;

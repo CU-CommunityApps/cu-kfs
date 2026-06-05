@@ -71,7 +71,7 @@ public class CemiSupplierOrderFromDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
     }
 
     @Override
-    public void queryAndStoreListOfKfsVendorAddressLinks(final Supplier<Stream<VendorAddress>> addressQueryRunner) {
+    public void storeAsListOfKfsVendorAddressLinks(final Iterator<VendorAddress> addressIterator) {
         final CuSqlQuery query = new CuSqlChunk()
                 .append("INSERT INTO KFS CU_CEMI_EXTR_SUPP_ORD_FRM_VNDR_ADDR_LNK_T (")
                 .append("VNDR_ADDR_GNRTD_ID, VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, CONCAT_ADDR")
@@ -86,7 +86,7 @@ public class CemiSupplierOrderFromDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
                 .append(")")
                 .toQuery();
 
-        queryAndStoreListOfAddressLinks(VendorAddress.class, query, addressQueryRunner);
+        storeAsListOfAddressLinks(VendorAddress.class, query, addressIterator);
     }
 
     private String getConcatenatedKfsVendorAddressData(final VendorAddress vendorAddress) {
@@ -96,33 +96,28 @@ public class CemiSupplierOrderFromDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
                 vendorAddress.getVendorZipCode(), vendorAddress.getVendorCountryCode());
     }
 
-    private <T> void queryAndStoreListOfAddressLinks(final Class<T> addressClass, final CuSqlQuery query,
-            final Supplier<Stream<T>> addressQueryRunner) {
-        try (
-            final Stream<T> addresses = addressQueryRunner.get();
-        ) {
-            int count = 0;
-            final Iterator<T> addressesIterator = addresses.iterator();
-            final List<T> cachedAddresses = new ArrayList<>(ADDRESS_BATCH_SIZE);
+    private <T> void storeAsListOfAddressLinks(final Class<T> addressClass, final CuSqlQuery query,
+            final Iterator<T> addressIterator) {
+        int count = 0;
+        final List<T> cachedAddresses = new ArrayList<>(ADDRESS_BATCH_SIZE);
 
-            for (final T address : IteratorUtils.asIterable(addressesIterator)) {
-                count++;
-                cachedAddresses.add(address);
-                if (cachedAddresses.size() >= ADDRESS_BATCH_SIZE) {
-                    storeListOfAddressLinks(addressClass, query, cachedAddresses);
-                    cachedAddresses.clear();
-                }
+        for (final T address : IteratorUtils.asIterable(addressIterator)) {
+            count++;
+            cachedAddresses.add(address);
+            if (cachedAddresses.size() >= ADDRESS_BATCH_SIZE) {
+                storeSubListOfAddressLinks(addressClass, query, cachedAddresses);
+                cachedAddresses.clear();
             }
-
-            if (cachedAddresses.size() > 0) {
-                storeListOfAddressLinks(addressClass, query, cachedAddresses);
-            }
-            LOG.info("queryAndStoreListOfAddressLinks, Finished writing {} {} links",
-                    count, addressClass.getSimpleName());
         }
+
+        if (cachedAddresses.size() > 0) {
+            storeSubListOfAddressLinks(addressClass, query, cachedAddresses);
+        }
+        LOG.info("queryAndStoreListOfAddressLinks, Finished writing {} {} links",
+                count, addressClass.getSimpleName());
     }
 
-    private <T> void storeListOfAddressLinks(final Class<T> addressClass, final CuSqlQuery query,
+    private <T> void storeSubListOfAddressLinks(final Class<T> addressClass, final CuSqlQuery query,
             final List<T> addresses) {
         final int[] resultCounts = executeBatchUpdate(query, addresses);
         int index = 0;
@@ -137,8 +132,7 @@ public class CemiSupplierOrderFromDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
     }
 
     @Override
-    public void queryAndStoreListOfSupplierAddressLinks(
-            final Supplier<Stream<CemiSupplierAddressBo>> addressQueryRunner) {
+    public void storeAsListOfSupplierAddressLinks(final Iterator<CemiSupplierAddressBo> addressIterator) {
         final CuSqlQuery query = new CuSqlChunk()
                 .append("INSERT INTO KFS CU_CEMI_EXTR_SUPP_ORD_FRM_SUPP_ADDR_LNK_T (")
                 .append("SUPP_ADDR_ID, VNDR_ADDR_GNRTD_ID, VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, CONCAT_ADDR")
@@ -147,7 +141,8 @@ public class CemiSupplierOrderFromDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
                 .appendAsParameter(Types.VARCHAR, CemiSupplierAddressBo::getAddressId)
                 .append(", ")
                 .appendAsParameter(Types.INTEGER, this::extractKfsVendorId)
-                .append(", VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, ")
+                .append(", ")
+                .append("VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, ")
                 .appendAsParameter(Types.VARCHAR, this::getConcatenatedSupplierAddressData)
                 .append(" FROM KFS.KFS.CU_CEMI_MAPPING_SPLR_VNDR_EXTR_FILE_T ")
                 .append("WHERE WKDY_SPLR_ID = ")
@@ -156,7 +151,7 @@ public class CemiSupplierOrderFromDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
                         .appendAsParameter(Types.VARCHAR, CemiSupplierAddressBo::getJobRunDate)
                 .toQuery();
 
-        queryAndStoreListOfAddressLinks(CemiSupplierAddressBo.class, query, addressQueryRunner);
+        storeAsListOfAddressLinks(CemiSupplierAddressBo.class, query, addressIterator);
     }
 
     private Integer extractKfsVendorId(final CemiSupplierAddressBo supplierAddress) {
