@@ -71,6 +71,11 @@ public class CemiOrderFromSupplierBoFactory {
         return this;
     }
 
+    public CemiOrderFromSupplierBoFactory withMaskingFlag(final boolean maskSensitiveData) {
+        // Does nothing yet; being left here as a hook if we need to mask something in a subsequent tenant build.
+        return this;
+    }
+
     public CemiOrderFromSupplierBo createCemiOrderFromSupplierBo() {
         Validate.validState(supplier != null, "A supplier was not defined");
         Validate.validState(supplierEmailRow != null, "A supplier email record was not defined");

@@ -2,6 +2,13 @@ package edu.cornell.kfs.cemi.vnd;
 
 public final class CemiOrderFromSupplierConstants {
 
+    public static final String ORDER_FROM_SUPPLIER_EXTRACT_FILENAME_PREFIX = "Submit_Order_From_Supplier_Connection_ITH_";
+    public static final String ORDER_FROM_SUPPLIER_EXTRACT_PLAIN_FILENAME = "Submit_Order_From_Supplier_Connection.xlsx";
+    public static final String ORDER_FROM_SUPPLIER_OUTPUT_DEFINITION_PATH_SUFFIX =
+            "vnd/batch/CemiOrderFromSupplierExtractFileOutputDefinition.xml";
+    public static final String ORDER_FROM_SUPPLIER_TEMPLATE_FILE_PATH =
+            "classpath:edu/cornell/kfs/cemi/vnd/batch/Submit_Order_From_Supplier_Connection.xlsx";
+
     public static final String ORDER_FROM_CONNECTION_NAME_CATALOG = "Catalog";
     public static final String ORDER_FROM_CONNECTION_NAME_EMAIL_PREFIX = "Send PO to: ";
 

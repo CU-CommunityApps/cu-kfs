@@ -9,7 +9,6 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.Environment;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.springframework.transaction.annotation.Propagation;
@@ -17,29 +16,30 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
 import edu.cornell.kfs.cemi.sys.batch.service.CemiFileAppenderService;
+import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiDataExtractServiceBase;
+import edu.cornell.kfs.cemi.sys.util.CemiUtils;
+import edu.cornell.kfs.cemi.vnd.CemiOrderFromSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiOrderFromSupplierParameterConstants;
+import edu.cornell.kfs.cemi.vnd.batch.CreateCemiOrderFromSupplierExtractStep;
 import edu.cornell.kfs.cemi.vnd.batch.CreateCemiRemitToSupplierExtractStep;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiOrderFromSupplierExtractService;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiOrderFromSupplierDao;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiOrderFromSupplierOrmDao;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorOrmDao;
 
-public class CemiOrderFromSupplierExtractServiceImpl implements CemiOrderFromSupplierExtractService {
+public class CemiOrderFromSupplierExtractServiceImpl extends CemiDataExtractServiceBase
+        implements CemiOrderFromSupplierExtractService {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private final Environment environment;
-    private String orderFromSupplierFileCreationDirectory;
-    private String orderFromSupplierFileOutboundDirectory;
     private CemiOrderFromSupplierOrmDao cemiOrderFromSupplierOrmDao;
     private CemiOrderFromSupplierDao cemiOrderFromSupplierDao;
-    private CemiFileAppenderService cemiFileAppenderService;
-    private CemiOutputDefinitionFileType cemiOutputDefinitionFileType;
+    private CemiVendorOrmDao cemiVendorOrmDao;
     private BusinessObjectService businessObjectService;
-    private ParameterService parameterService;
 
     public CemiOrderFromSupplierExtractServiceImpl(final Environment environment) {
-        this.environment = environment;
+        super(environment);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -108,20 +108,43 @@ public class CemiOrderFromSupplierExtractServiceImpl implements CemiOrderFromSup
     public void generateIntermediateOrderFromSupplierExtractData(final LocalDateTime jobRunDate) {
         LOG.info("generateIntermediateOrderFromSupplierExtractData, Generating data rows for Order From Supplier "
                 + "spreadsheet and placing in intermediate storage...");
+        try (
+            final Stream<CemiSupplierAddressBo> addresses = cemiOrderFromSupplierOrmDao
+                    .getSupplierAddressesForOrderFromSupplierExtract();
+        ) {
+            final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
+            final String supplierJobRunDate = getSupplierJobRunDate();
+            final CemiOrderFromSupplierDataBuilderDefaultImpl dataBuilder = new CemiOrderFromSupplierDataBuilderDefaultImpl(
+                    businessObjectService, jobRunDateString, supplierJobRunDate, cemiVendorOrmDao,
+                    cemiOrderFromSupplierDao, shouldMaskCemiSensitiveData());
+            final Iterator<CemiSupplierAddressBo> addressesIterator = addresses.iterator();
+            dataBuilder.writeOrderFromSupplierDataToIntermediateStorage(addressesIterator);
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void generateOrderFromSupplierExtractFile(final LocalDateTime jobRunDate) {
-        
+        LOG.info("generateOrderFromSupplierExtractFile, Starting creation of CEMI OrderFromSupplier Extract file...");
+        generateFileForDataExtract(jobRunDate, CemiOrderFromSupplierConstants.ORDER_FROM_SUPPLIER_EXTRACT_PLAIN_FILENAME,
+                CemiOrderFromSupplierConstants.ORDER_FROM_SUPPLIER_EXTRACT_FILENAME_PREFIX);
     }
 
-    public void setOrderFromSupplierFileCreationDirectory(final String orderFromSupplierFileCreationDirectory) {
-        this.orderFromSupplierFileCreationDirectory = orderFromSupplierFileCreationDirectory;
+    @Override
+    protected Class<?> getComponentClassForDataMaskingParameter() {
+        return CreateCemiOrderFromSupplierExtractStep.class;
     }
 
-    public void setOrderFromSupplierFileOutboundDirectory(final String orderFromSupplierFileOutboundDirectory) {
-        this.orderFromSupplierFileOutboundDirectory = orderFromSupplierFileOutboundDirectory;
+    @Override
+    protected String getOutputDefinitionFilePathSuffix() {
+        return CemiOrderFromSupplierConstants.ORDER_FROM_SUPPLIER_OUTPUT_DEFINITION_PATH_SUFFIX;
+    }
+
+    @Override
+    protected boolean shouldCopyDataFileToOutboundDirectory() {
+        return parameterService.getParameterValueAsBoolean(
+                CreateCemiOrderFromSupplierExtractStep.class,
+                CemiOrderFromSupplierParameterConstants.COPY_CEMI_ORDER_FROM_SUPPLIER_FILE_TO_OUTBOUND_FOLDER);
     }
 
     public void setCemiOrderFromSupplierOrmDao(final CemiOrderFromSupplierOrmDao cemiOrderFromSupplierOrmDao) {
@@ -130,6 +153,10 @@ public class CemiOrderFromSupplierExtractServiceImpl implements CemiOrderFromSup
 
     public void setCemiOrderFromSupplierDao(final CemiOrderFromSupplierDao cemiOrderFromSupplierDao) {
         this.cemiOrderFromSupplierDao = cemiOrderFromSupplierDao;
+    }
+
+    public void setCemiVendorOrmDao(final CemiVendorOrmDao cemiVendorOrmDao) {
+        this.cemiVendorOrmDao = cemiVendorOrmDao;
     }
 
     public void setCemiFileAppenderService(final CemiFileAppenderService cemiFileAppenderService) {
@@ -142,10 +169,6 @@ public class CemiOrderFromSupplierExtractServiceImpl implements CemiOrderFromSup
 
     public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
-    }
-
-    public void setParameterService(final ParameterService parameterService) {
-        this.parameterService = parameterService;
     }
 
 }

@@ -153,7 +153,7 @@
     <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiOrderFromSupplierBo"
                       table="CU_CEMI_EXTR_ORD_FRM_SUPP_TAB_ORD_FRM_T">
         <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
-        <field-descriptor name="rowIndex" column="ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
         <field-descriptor name="spreadsheetKey" column="SPREADSHEET_KEY" jdbc-type="VARCHAR"/>
         <field-descriptor name="supplierIdHeader" column="SUPPLIER_ID_HEADER" jdbc-type="VARCHAR"/>
         <field-descriptor name="autoComplete" column="AUTO_COMPLETE" jdbc-type="VARCHAR"/>

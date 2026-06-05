@@ -42,10 +42,11 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
     private final String supplierJobRunDate;
     private final CemiVendorOrmDao cemiVendorOrmDao;
     private final CemiOrderFromSupplierDao cemiOrderFromSupplierDao;
+    private final boolean maskSensitiveData;
 
     public CemiOrderFromSupplierDataBuilderDefaultImpl(final BusinessObjectService businessObjectService,
             final String jobRunDate, final String supplierJobRunDate, final CemiVendorOrmDao cemiVendorOrmDao,
-            final CemiOrderFromSupplierDao cemiOrderFromSupplierDao) {
+            final CemiOrderFromSupplierDao cemiOrderFromSupplierDao, final boolean maskSensitiveData) {
         super(businessObjectService, jobRunDate, CemiOrderFromSupplierBo.class);
         Validate.notBlank(supplierJobRunDate, "supplierJobRunDate cannot be blank");
         Validate.notNull(cemiVendorOrmDao, "cemiVendorOrmDao cannot be null");
@@ -53,6 +54,7 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
         this.supplierJobRunDate = supplierJobRunDate;
         this.cemiVendorOrmDao = cemiVendorOrmDao;
         this.cemiOrderFromSupplierDao = cemiOrderFromSupplierDao;
+        this.maskSensitiveData = maskSensitiveData;
     }
 
     /*
@@ -149,6 +151,7 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
                     .withFirstRowForSupplierFlag(isFirstRowForSupplier)
                     .withPunchoutSupplierFlag(isPunchoutSupplier)
                     .withPunchoutConnectionFlag(isPunchoutConnection)
+                    .withMaskingFlag(maskSensitiveData)
                     .createCemiOrderFromSupplierBo();
 
             storeSheetRow(orderFromSupplierRow);
