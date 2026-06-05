@@ -27,32 +27,32 @@ import edu.cornell.kfs.cemi.vnd.CemiVendorPropertyConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierEmailBo;
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierOrderFromBo;
-import edu.cornell.kfs.cemi.vnd.batch.service.CemiSupplierOrderFromDataBuilder;
-import edu.cornell.kfs.cemi.vnd.dataaccess.CemiSupplierOrderFromDao;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiOrderFromSupplierBo;
+import edu.cornell.kfs.cemi.vnd.batch.service.CemiOrderFromSupplierDataBuilder;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiOrderFromSupplierDao;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorOrmDao;
 import edu.cornell.kfs.cemi.vnd.util.CemiVendorUtils;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
-public class CemiSupplierOrderFromDataBuilderDefaultImpl extends CemiOrmDataBuilderBase
-        implements CemiSupplierOrderFromDataBuilder {
+public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilderBase
+        implements CemiOrderFromSupplierDataBuilder {
 
     private static final Logger LOG = LogManager.getLogger();
 
     private final String supplierJobRunDate;
     private final CemiVendorOrmDao cemiVendorOrmDao;
-    private final CemiSupplierOrderFromDao cemiSupplierOrderFromDao;
+    private final CemiOrderFromSupplierDao cemiOrderFromSupplierDao;
 
-    public CemiSupplierOrderFromDataBuilderDefaultImpl(final BusinessObjectService businessObjectService,
+    public CemiOrderFromSupplierDataBuilderDefaultImpl(final BusinessObjectService businessObjectService,
             final String jobRunDate, final String supplierJobRunDate, final CemiVendorOrmDao cemiVendorOrmDao,
-            final CemiSupplierOrderFromDao cemiSupplierOrderFromDao) {
-        super(businessObjectService, jobRunDate, CemiSupplierOrderFromBo.class);
+            final CemiOrderFromSupplierDao cemiOrderFromSupplierDao) {
+        super(businessObjectService, jobRunDate, CemiOrderFromSupplierBo.class);
         Validate.notBlank(supplierJobRunDate, "supplierJobRunDate cannot be blank");
         Validate.notNull(cemiVendorOrmDao, "cemiVendorOrmDao cannot be null");
-        Validate.notNull(cemiSupplierOrderFromDao, "cemiSupplierOrderFromDao cannot be null");
+        Validate.notNull(cemiOrderFromSupplierDao, "cemiOrderFromSupplierDao cannot be null");
         this.supplierJobRunDate = supplierJobRunDate;
         this.cemiVendorOrmDao = cemiVendorOrmDao;
-        this.cemiSupplierOrderFromDao = cemiSupplierOrderFromDao;
+        this.cemiOrderFromSupplierDao = cemiOrderFromSupplierDao;
     }
 
     /*
@@ -60,7 +60,7 @@ public class CemiSupplierOrderFromDataBuilderDefaultImpl extends CemiOrmDataBuil
      *       BEFORE returning any addresses pertaining to the next Supplier.
      */
     @Override
-    public void writeSupplierOrderFromDataToIntermediateStorage(
+    public void writeOrderFromSupplierDataToIntermediateStorage(
             final Iterator<CemiSupplierAddressBo> supplierAddresses) {
         int supplierAddressCount = 0;
         CemiSupplierBo currentSupplier = new CemiSupplierBo();
@@ -71,12 +71,12 @@ public class CemiSupplierOrderFromDataBuilderDefaultImpl extends CemiOrmDataBuil
         for (final CemiSupplierAddressBo supplierAddress : IteratorUtils.asIterable(supplierAddresses)) {
             supplierAddressCount++;
             if (supplierAddressCount % 1000 == 0) {
-                LOG.info("writeSupplierOrderFromDataToIntermediateStorage, Processing {} supplier addresses and counting...",
+                LOG.info("writeOrderFromSupplierDataToIntermediateStorage, Processing {} supplier addresses and counting...",
                         supplierAddressCount);
             }
             final String supplierId = supplierAddress.getSupplierId();
             if (!Strings.CS.equals(supplierId, currentSupplier.getSupplierId())) {
-                createAndStoreSupplierOrderFromRows(currentSupplier, currentSupplierAddresses,
+                createAndStoreOrderFromSupplierRows(currentSupplier, currentSupplierAddresses,
                         Integer.toString(currentSpreadsheetKey));
                 currentSupplier = getSupplier(supplierId);
                 currentSupplierAddresses = new ArrayList<>();
@@ -85,9 +85,9 @@ public class CemiSupplierOrderFromDataBuilderDefaultImpl extends CemiOrmDataBuil
             currentSupplierAddresses.add(supplierAddress);
         }
 
-        createAndStoreSupplierOrderFromRows(currentSupplier, currentSupplierAddresses,
+        createAndStoreOrderFromSupplierRows(currentSupplier, currentSupplierAddresses,
                 Integer.toString(currentSpreadsheetKey));
-        LOG.info("writeSupplierOrderFromDataToIntermediateStorage, Finished processing {} supplier addresses",
+        LOG.info("writeOrderFromSupplierDataToIntermediateStorage, Finished processing {} supplier addresses",
                 supplierAddressCount);
     }
 
@@ -107,12 +107,12 @@ public class CemiSupplierOrderFromDataBuilderDefaultImpl extends CemiOrmDataBuil
      *       should have no more than 1 email address, meaning adjustments will be needed if we have to add
      *       multiple emails per connection.
      */
-    private void createAndStoreSupplierOrderFromRows(final CemiSupplierBo supplier,
+    private void createAndStoreOrderFromSupplierRows(final CemiSupplierBo supplier,
             final List<CemiSupplierAddressBo> supplierAddresses, final String spreadsheetKey) {
         if (supplierAddresses.isEmpty()) {
             return;
         }
-        final boolean isPunchoutSupplier = cemiSupplierOrderFromDao.determineIfSupplierIsUsedForPunchouts(
+        final boolean isPunchoutSupplier = cemiOrderFromSupplierDao.determineIfSupplierIsUsedForPunchouts(
                 supplier.getSupplierId(), supplierJobRunDate);
         final Map<String, List<VendorAddress>> kfsVendorAddresses = getKfsVendorAddresses(supplier.getSupplierId());
         final CemiSupplierEmailBo emailRow = getSupplierEmailRow(supplier.getSupplierId());
@@ -122,8 +122,8 @@ public class CemiSupplierOrderFromDataBuilderDefaultImpl extends CemiOrmDataBuil
         final List<Pair<String, CemiSupplierAddressBo>> addressesForOutput;
         if (isPunchoutSupplier) {
             if (addressesWithUniqueEmails.isEmpty()) {
-                LOG.warn("createAndStoreSupplierOrderFromRows, Punchout Supplier {} has no email addresses that are "
-                        + "eligible to be included in the Supplier Order From extract. This Supplier will be "
+                LOG.warn("createAndStoreOrderFromSupplierRows, Punchout Supplier {} has no email addresses that are "
+                        + "eligible to be included in the Order From Supplier extract. This Supplier will be "
                         + "excluded from the extract altogether.", supplier.getSupplierId());
                 addressesForOutput = List.of();
             } else {
@@ -140,7 +140,7 @@ public class CemiSupplierOrderFromDataBuilderDefaultImpl extends CemiOrmDataBuil
         for (final Pair<String, CemiSupplierAddressBo> emailAndAddressPair : addressesForOutput) {
             final boolean isFirstRowForSupplier = (connectionRowId == 1);
             final boolean isPunchoutConnection = isPunchoutSupplier && isFirstRowForSupplier;
-            final CemiSupplierOrderFromBo supplierOrderFromRow = new CemiSupplierOrderFromBoFactory()
+            final CemiOrderFromSupplierBo orderFromSupplierRow = new CemiOrderFromSupplierBoFactory()
                     .withSupplier(supplier)
                     .withSupplierEmailRow(emailRow)
                     .withEmailFromKfsVendorAddress(emailAndAddressPair.getLeft())
@@ -149,9 +149,9 @@ public class CemiSupplierOrderFromDataBuilderDefaultImpl extends CemiOrmDataBuil
                     .withFirstRowForSupplierFlag(isFirstRowForSupplier)
                     .withPunchoutSupplierFlag(isPunchoutSupplier)
                     .withPunchoutConnectionFlag(isPunchoutConnection)
-                    .createCemiSupplierOrderFromBo();
+                    .createCemiOrderFromSupplierBo();
 
-            storeSheetRow(supplierOrderFromRow);
+            storeSheetRow(orderFromSupplierRow);
             connectionRowId++;
         }
     }

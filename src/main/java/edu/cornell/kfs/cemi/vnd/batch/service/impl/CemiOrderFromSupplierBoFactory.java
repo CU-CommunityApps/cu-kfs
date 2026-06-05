@@ -9,14 +9,14 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
-import edu.cornell.kfs.cemi.vnd.CemiVendorConstants.DefaultPOTypes;
+import edu.cornell.kfs.cemi.vnd.CemiOrderFromSupplierConstants;
+import edu.cornell.kfs.cemi.vnd.CemiOrderFromSupplierConstants.DefaultPOTypes;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiOrderFromSupplierBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierEmailBo;
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierOrderFromBo;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
-public class CemiSupplierOrderFromBoFactory {
+public class CemiOrderFromSupplierBoFactory {
 
     private CemiSupplierBo supplier;
     private CemiSupplierEmailBo supplierEmailRow;
@@ -31,47 +31,47 @@ public class CemiSupplierOrderFromBoFactory {
     private String emailId;
     private String emailAddress;
 
-    public CemiSupplierOrderFromBoFactory withSupplier(final CemiSupplierBo supplier) {
+    public CemiOrderFromSupplierBoFactory withSupplier(final CemiSupplierBo supplier) {
         this.supplier = supplier;
         return this;
     }
 
-    public CemiSupplierOrderFromBoFactory withSupplierEmailRow(final CemiSupplierEmailBo supplierEmailRow) {
+    public CemiOrderFromSupplierBoFactory withSupplierEmailRow(final CemiSupplierEmailBo supplierEmailRow) {
         this.supplierEmailRow = supplierEmailRow;
         return this;
     }
 
-    public CemiSupplierOrderFromBoFactory withEmailFromKfsVendorAddress(final String emailFromKfsVendorAddress) {
+    public CemiOrderFromSupplierBoFactory withEmailFromKfsVendorAddress(final String emailFromKfsVendorAddress) {
         this.emailFromKfsVendorAddress = emailFromKfsVendorAddress;
         return this;
     }
 
-    public CemiSupplierOrderFromBoFactory withSpreadsheetKey(final String spreadsheetKey) {
+    public CemiOrderFromSupplierBoFactory withSpreadsheetKey(final String spreadsheetKey) {
         this.spreadsheetKey = spreadsheetKey;
         return this;
     }
 
-    public CemiSupplierOrderFromBoFactory withSupplierConnectionRowId(final String supplierConnectionRowId) {
+    public CemiOrderFromSupplierBoFactory withSupplierConnectionRowId(final String supplierConnectionRowId) {
         this.supplierConnectionRowId = supplierConnectionRowId;
         return this;
     }
 
-    public CemiSupplierOrderFromBoFactory withFirstRowForSupplierFlag(final boolean isFirstRowForSupplier) {
+    public CemiOrderFromSupplierBoFactory withFirstRowForSupplierFlag(final boolean isFirstRowForSupplier) {
         this.isFirstRowForSupplier = isFirstRowForSupplier;
         return this;
     }
 
-    public CemiSupplierOrderFromBoFactory withPunchoutSupplierFlag(final boolean isPunchoutSupplier) {
+    public CemiOrderFromSupplierBoFactory withPunchoutSupplierFlag(final boolean isPunchoutSupplier) {
         this.isPunchoutSupplier = isPunchoutSupplier;
         return this;
     }
 
-    public CemiSupplierOrderFromBoFactory withPunchoutConnectionFlag(final boolean isPunchoutConnection) {
+    public CemiOrderFromSupplierBoFactory withPunchoutConnectionFlag(final boolean isPunchoutConnection) {
         this.isPunchoutConnection = isPunchoutConnection;
         return this;
     }
 
-    public CemiSupplierOrderFromBo createCemiSupplierOrderFromBo() {
+    public CemiOrderFromSupplierBo createCemiOrderFromSupplierBo() {
         Validate.validState(supplier != null, "A supplier was not defined");
         Validate.validState(supplierEmailRow != null, "A supplier email record was not defined");
         Validate.validState(!isPunchoutConnection || isPunchoutSupplier,
@@ -81,7 +81,7 @@ public class CemiSupplierOrderFromBoFactory {
 
         initializeEmailData();
 
-        final CemiSupplierOrderFromBo supplierOrderFrom = new CemiSupplierOrderFromBo();
+        final CemiOrderFromSupplierBo orderFromSupplier = new CemiOrderFromSupplierBo();
 
         final String supplierIdForOutput = isFirstRowForSupplier ? supplier.getSupplierId() : KFSConstants.EMPTY_STRING;
         final String autoComplete = isFirstRowForSupplier ? KRADConstants.YES_INDICATOR_VALUE : KFSConstants.EMPTY_STRING;
@@ -91,36 +91,36 @@ public class CemiSupplierOrderFromBoFactory {
         final String poIssueOption = determinePurchaseOrderIssueOption();
         final String isDefault = determineDefaultConnectionSetting();
 
-        supplierOrderFrom.setSpreadsheetKey(spreadsheetKey);
-        supplierOrderFrom.setSupplierIdHeader(supplierIdForOutput);
-        supplierOrderFrom.setAutoComplete(autoComplete);
-        supplierOrderFrom.setComment(KFSConstants.EMPTY_STRING);
-        supplierOrderFrom.setWorker(KFSConstants.EMPTY_STRING);
-        supplierOrderFrom.setSupplierReferenceId(supplierReferenceId);
-        supplierOrderFrom.setSupplierId(supplierIdForOutput);
-        supplierOrderFrom.setSupplierConnectionRowId(supplierConnectionRowId);
-        supplierOrderFrom.setSupplierConnection(KFSConstants.EMPTY_STRING);
-        supplierOrderFrom.setSupplierConnectionId(KFSConstants.EMPTY_STRING);
-        supplierOrderFrom.setSupplierConnectionName(connectionName);
-        supplierOrderFrom.setDefaultForPoType1(defaultPOTypes.get(0));
-        supplierOrderFrom.setDefaultForPoType2(defaultPOTypes.get(1));
-        supplierOrderFrom.setDefaultForPoType3(defaultPOTypes.get(2));
-        supplierOrderFrom.setShippingMethod(KFSConstants.EMPTY_STRING);
-        supplierOrderFrom.setShippingTerms(KFSConstants.EMPTY_STRING);
-        supplierOrderFrom.setPurchaseOrderIssueOption(poIssueOption);
-        supplierOrderFrom.setEmailRowId(emailRowId);
-        supplierOrderFrom.setEmailId(emailId);
-        supplierOrderFrom.setEmailAddress(emailAddress);
-        supplierOrderFrom.setRemitToSupplierConnection(KFSConstants.EMPTY_STRING);
-        supplierOrderFrom.setOrderFromAddressReference(KFSConstants.EMPTY_STRING);
-        supplierOrderFrom.setAlternateNameRowId(KFSConstants.EMPTY_STRING);
-        supplierOrderFrom.setAlternateName(KFSConstants.EMPTY_STRING);
-        supplierOrderFrom.setAlternateNameUsage(KFSConstants.EMPTY_STRING);
-        supplierOrderFrom.setIsDefault(isDefault);
-        supplierOrderFrom.setIsInactive(KFSConstants.EMPTY_STRING);
-        supplierOrderFrom.setMemo(KFSConstants.EMPTY_STRING);
+        orderFromSupplier.setSpreadsheetKey(spreadsheetKey);
+        orderFromSupplier.setSupplierIdHeader(supplierIdForOutput);
+        orderFromSupplier.setAutoComplete(autoComplete);
+        orderFromSupplier.setComment(KFSConstants.EMPTY_STRING);
+        orderFromSupplier.setWorker(KFSConstants.EMPTY_STRING);
+        orderFromSupplier.setSupplierReferenceId(supplierReferenceId);
+        orderFromSupplier.setSupplierId(supplierIdForOutput);
+        orderFromSupplier.setSupplierConnectionRowId(supplierConnectionRowId);
+        orderFromSupplier.setSupplierConnection(KFSConstants.EMPTY_STRING);
+        orderFromSupplier.setSupplierConnectionId(KFSConstants.EMPTY_STRING);
+        orderFromSupplier.setSupplierConnectionName(connectionName);
+        orderFromSupplier.setDefaultForPoType1(defaultPOTypes.get(0));
+        orderFromSupplier.setDefaultForPoType2(defaultPOTypes.get(1));
+        orderFromSupplier.setDefaultForPoType3(defaultPOTypes.get(2));
+        orderFromSupplier.setShippingMethod(KFSConstants.EMPTY_STRING);
+        orderFromSupplier.setShippingTerms(KFSConstants.EMPTY_STRING);
+        orderFromSupplier.setPurchaseOrderIssueOption(poIssueOption);
+        orderFromSupplier.setEmailRowId(emailRowId);
+        orderFromSupplier.setEmailId(emailId);
+        orderFromSupplier.setEmailAddress(emailAddress);
+        orderFromSupplier.setRemitToSupplierConnection(KFSConstants.EMPTY_STRING);
+        orderFromSupplier.setOrderFromAddressReference(KFSConstants.EMPTY_STRING);
+        orderFromSupplier.setAlternateNameRowId(KFSConstants.EMPTY_STRING);
+        orderFromSupplier.setAlternateName(KFSConstants.EMPTY_STRING);
+        orderFromSupplier.setAlternateNameUsage(KFSConstants.EMPTY_STRING);
+        orderFromSupplier.setIsDefault(isDefault);
+        orderFromSupplier.setIsInactive(KFSConstants.EMPTY_STRING);
+        orderFromSupplier.setMemo(KFSConstants.EMPTY_STRING);
 
-        return supplierOrderFrom;
+        return orderFromSupplier;
     }
 
     private void initializeEmailData() {
@@ -147,9 +147,9 @@ public class CemiSupplierOrderFromBoFactory {
 
     private String generateConnectionName() {
         if (isPunchoutConnection) {
-            return CemiVendorConstants.ORDER_FROM_CONNECTION_NAME_CATALOG;
+            return CemiOrderFromSupplierConstants.ORDER_FROM_CONNECTION_NAME_CATALOG;
         } else {
-            return CemiVendorConstants.ORDER_FROM_CONNECTION_NAME_EMAIL_PREFIX + emailAddress;
+            return CemiOrderFromSupplierConstants.ORDER_FROM_CONNECTION_NAME_EMAIL_PREFIX + emailAddress;
         }
     }
 
@@ -172,9 +172,9 @@ public class CemiSupplierOrderFromBoFactory {
 
     private String determinePurchaseOrderIssueOption() {
         if (isPunchoutConnection) {
-            return CemiVendorConstants.PO_ISSUE_OPTION_XML_AUTO;
+            return CemiOrderFromSupplierConstants.PO_ISSUE_OPTION_XML_AUTO;
         } else {
-            return CemiVendorConstants.PO_ISSUE_OPTION_EMAIL;
+            return CemiOrderFromSupplierConstants.PO_ISSUE_OPTION_EMAIL;
         }
     }
 

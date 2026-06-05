@@ -6,12 +6,12 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
 
-public interface CemiSupplierOrderFromOrmDao {
+public interface CemiOrderFromSupplierOrmDao {
 
     Stream<VendorAddress> getKfsVendorAddressesForExtractedSuppliers();
 
     Stream<CemiSupplierAddressBo> getSupplierAddressesForExtractedSuppliers();
 
-    Stream<CemiSupplierAddressBo> getSupplierAddressesForSupplierOrderFromExtract();
+    Stream<CemiSupplierAddressBo> getSupplierAddressesForOrderFromSupplierExtract();
 
 }

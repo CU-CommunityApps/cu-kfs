@@ -57,12 +57,6 @@ public final class CemiVendorConstants {
     public static final String ALTERNATE_NAME_USAGE_DEFAULT_VALUE = "Reference";
     public static final String COUNTRY_CODE_UNITED_STATES = KFSConstants.COUNTRY_CODE_UNITED_STATES;
 
-    public static final String ORDER_FROM_CONNECTION_NAME_CATALOG = "Catalog";
-    public static final String ORDER_FROM_CONNECTION_NAME_EMAIL_PREFIX = "Send PO to: ";
-
-    public static final String PO_ISSUE_OPTION_XML_AUTO = "XML Auto";
-    public static final String PO_ISSUE_OPTION_EMAIL = "Email";
-
     public static final Map<String, List<String>> ADDRESS_USES = Map.ofEntries(
             Map.entry(AddressTypes.PURCHASE_ORDER, List.of("PROCUREMENT", "SHIPPING")),
             Map.entry(AddressTypes.REMIT, List.of("REMIT")),
@@ -168,12 +162,5 @@ public final class CemiVendorConstants {
             Map.entry(AllDefinedPhoneTypes.TECHNICAL_SUPPORT, List.of("Procurement", "Remit_To")),
             Map.entry(AllDefinedPhoneTypes.VENDOR_INFORMATION, List.of("Procurement", "Remit_To", "Shipping", "Billing"))
     );
-
-    public static final class DefaultPOTypes {
-        public static final String CATALOG = "Catalog";
-        public static final String STANDARD = "Standard";
-        public static final String BLANKET_ORDER = "Blanket_Order";
-        public static final String SOLE_SOURCE = "Sole_Source";
-    }
 
 }

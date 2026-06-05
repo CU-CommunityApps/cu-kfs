@@ -4,10 +4,8 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,13 +16,13 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
-import edu.cornell.kfs.cemi.vnd.dataaccess.CemiSupplierOrderFromDao;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiOrderFromSupplierDao;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.util.CuSqlChunk;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
 import edu.cornell.kfs.sys.util.CuSqlQueryPlatformAwareDaoBaseJdbc;
 
-public class CemiSupplierOrderFromDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc implements CemiSupplierOrderFromDao {
+public class CemiOrderFromSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc implements CemiOrderFromSupplierDao {
 
     private static final Logger LOG = LogManager.getLogger();
 
@@ -34,7 +32,7 @@ public class CemiSupplierOrderFromDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
     @Override
     public void clearExistingListOfKfsVendorAddressLinks() {
         LOG.info("clearExistingListOfKfsVendorAddressLinks was called.");
-        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.CU_CEMI_EXTR_SUPP_ORD_FRM_VNDR_ADDR_LNK_T");
+        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.CU_CEMI_EXTR_ORD_FRM_SUPP_VNDR_ADDR_LNK_T");
         executeUpdate(query);
         LOG.info("clearExistingListOfKfsVendorAddressLinks finished truncating table.");
     }
@@ -42,7 +40,7 @@ public class CemiSupplierOrderFromDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
     @Override
     public void clearExistingListOfSupplierAddressLinks() {
         LOG.info("clearExistingListOfSupplierAddressLinks was called.");
-        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.CU_CEMI_EXTR_SUPP_ORD_FRM_SUPP_ADDR_LNK_T");
+        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.CU_CEMI_EXTR_ORD_FRM_SUPP_SUPP_ADDR_LNK_T");
         executeUpdate(query);
         LOG.info("clearExistingListOfSupplierAddressLinks finished truncating table.");
     }
@@ -50,21 +48,21 @@ public class CemiSupplierOrderFromDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
     @Override
     public void clearExistingListOfExtractablePurchaseOrderAddressIds() {
         LOG.info("clearExistingListOfExtractablePurchaseOrderAddressIds was called.");
-        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.CU_CEMI_SUPP_ORD_FRM_ADDR_T");
+        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.CU_CEMI_ORD_FRM_SUPP_ADDR_T");
         executeUpdate(query);
         LOG.info("clearExistingListOfExtractablePurchaseOrderAddressIds finished truncating table.");
     }
 
     @Override
-    public void updateSupplierOrderFromExtractQuerySettings(final String supplierJobRunDate) {
+    public void updateOrderFromSupplierExtractQuerySettings(final String supplierJobRunDate) {
         final CuSqlQuery query = new CuSqlChunk()
-                .append("UPDATE KFS.CU_CEMI_SUPP_ORD_FRM_QUERY_SETTINGS_T ")
+                .append("UPDATE KFS.CU_CEMI_ORD_FRM_SUPP_QUERY_SETTINGS_T ")
                 .append("SET SUPP_EXTR_FILE_RUNDATE = ").appendAsParameter(supplierJobRunDate)
                 .toQuery();
 
         final int numRowsUpdated = executeUpdate(query);
         if (numRowsUpdated != 1) {
-            LOG.error("updateSupplierOrderFromExtractQuerySettings, Query should have updated 1 row, "
+            LOG.error("updateOrderFromSupplierExtractQuerySettings, Query should have updated 1 row, "
                     + "but it updated {} instead", numRowsUpdated);
             throw new RuntimeException("Failed to update Remit To Supplier query settings");
         }
@@ -73,7 +71,7 @@ public class CemiSupplierOrderFromDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
     @Override
     public void storeAsListOfKfsVendorAddressLinks(final Iterator<VendorAddress> addressIterator) {
         final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO KFS CU_CEMI_EXTR_SUPP_ORD_FRM_VNDR_ADDR_LNK_T (")
+                .append("INSERT INTO KFS CU_CEMI_EXTR_ORD_FRM_SUPP_VNDR_ADDR_LNK_T (")
                 .append("VNDR_ADDR_GNRTD_ID, VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, CONCAT_ADDR")
                 .append(") VALUES (")
                 .appendAsParameter(Types.INTEGER, VendorAddress::getVendorAddressGeneratedIdentifier)
@@ -134,7 +132,7 @@ public class CemiSupplierOrderFromDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
     @Override
     public void storeAsListOfSupplierAddressLinks(final Iterator<CemiSupplierAddressBo> addressIterator) {
         final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO KFS CU_CEMI_EXTR_SUPP_ORD_FRM_SUPP_ADDR_LNK_T (")
+                .append("INSERT INTO KFS CU_CEMI_EXTR_ORD_FRM_SUPP_SUPP_ADDR_LNK_T (")
                 .append("SUPP_ADDR_ID, VNDR_ADDR_GNRTD_ID, VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, CONCAT_ADDR")
                 .append(") ")
                 .append("SELECT ")
@@ -174,25 +172,25 @@ public class CemiSupplierOrderFromDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
     }
 
     @Override
-    public void queryAndStoreAddressIdsForSupplierOrderFromExtract() {
+    public void queryAndStoreAddressIdsForOrderFromSupplierExtract() {
         final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO KFS.KFS.CU_CEMI_SUPP_ORD_FRM_ADDR_T (")
+                .append("INSERT INTO KFS.KFS.CU_CEMI_ORD_FRM_SUPP_ADDR_T (")
                 .append("SUPP_EXTR_FILE_RUNDATE, SUPP_ADDRESS_ID, VNDR_ADDR_GNRTD_ID")
                 .append(") ")
                 .append("SELECT EXTR_FILE_RUNDATE, SUPP_ADDRESS_ID, VNDR_ADDR_GNRTD_ID ")
-                .append("FROM KFS.CU_CEMI_SUPP_ORD_FRM_PO_ADDRESSES_FINAL_V")
+                .append("FROM KFS.CU_CEMI_ORD_FRM_SUPP_PO_ADDRESSES_FINAL_V")
                 .toQuery();
 
         final int numRowsInserted = executeUpdate(query);
-        LOG.info("queryAndStoreAddressIdsForSupplierOrderFromExtract, Found {} potential addresses to extract",
+        LOG.info("queryAndStoreAddressIdsForOrderFromSupplierExtract, Found {} potential addresses to extract",
                 numRowsInserted);
-    }    
+    }
 
     @Override
     public boolean determineIfSupplierIsUsedForPunchouts(final String supplierId, final String supplierJobRunDate) {
         final CuSqlQuery query = new CuSqlChunk()
                 .append("SELECT COUNT(1) FROM KFS.CU_CEMI_MAPPING_SPLR_VNDR_EXTR_FILE_T EXT ")
-                .append("JOIN KFS.CU_CEMI_EXTR_SUPP_ORD_FRM_B2B_VNDR_T B2B ")
+                .append("JOIN KFS.CU_CEMI_EXTR_ORD_FRM_SUPP_B2B_VNDR_T B2B ")
                         .append("ON EXT.VNDR_HDR_GNRTD_ID = B2B.VNDR_HDR_GNRTD_ID ")
                         .append("AND EXT.VNDR_DTL_ASND_ID = B2B.VNDR_DTL_ASND_ID ")
                 .append("WHERE EXT.WKDY_SPLR_ID = ").appendAsParameter(supplierId)
