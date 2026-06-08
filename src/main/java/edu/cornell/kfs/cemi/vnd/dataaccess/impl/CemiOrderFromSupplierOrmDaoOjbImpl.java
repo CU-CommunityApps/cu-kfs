@@ -53,7 +53,7 @@ public class CemiOrderFromSupplierOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb 
         final Criteria criteria = new Criteria();
         criteria.addSql("(A0.EXTR_FILE_RUNDATE, A0.ADDRESS_ID) IN ("
                 + "SELECT FRM.SUPP_EXTR_FILE_RUNDATE \"EXTR_FILE_RUNDATE\", FRM.SUPP_ADDRESS_ID \"ADDRESS_ID\" "
-                + "FROM KFS.CU_CEMI_ORD_FRM_SUPP_ADDR_T FRM "
+                + "FROM KFS.CU_CEMI_EXTR_ORD_FRM_SUPP_ADDR_T FRM "
                 + "JOIN KFS.CU_CEMI_ORD_FRM_SUPP_QUERY_SETTINGS_T QST "
                 + "ON FRM.SUPP_EXTR_FILE_RUNDATE = QST.SUPP_EXTR_FILE_RUNDATE)");
 

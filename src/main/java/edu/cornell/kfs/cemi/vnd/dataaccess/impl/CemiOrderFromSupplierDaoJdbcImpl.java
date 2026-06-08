@@ -48,7 +48,7 @@ public class CemiOrderFromSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
     @Override
     public void clearExistingListOfExtractablePurchaseOrderAddressIds() {
         LOG.info("clearExistingListOfExtractablePurchaseOrderAddressIds was called.");
-        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.CU_CEMI_ORD_FRM_SUPP_ADDR_T");
+        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.CU_CEMI_EXTR_ORD_FRM_SUPP_ADDR_T");
         executeUpdate(query);
         LOG.info("clearExistingListOfExtractablePurchaseOrderAddressIds finished truncating table.");
     }
@@ -174,7 +174,7 @@ public class CemiOrderFromSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
     @Override
     public void queryAndStoreAddressIdsForOrderFromSupplierExtract() {
         final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO KFS.KFS.CU_CEMI_ORD_FRM_SUPP_ADDR_T (")
+                .append("INSERT INTO KFS.KFS.CU_CEMI_EXTR_ORD_FRM_SUPP_ADDR_T (")
                 .append("SUPP_EXTR_FILE_RUNDATE, SUPP_ADDRESS_ID, VNDR_ADDR_GNRTD_ID")
                 .append(") ")
                 .append("SELECT EXTR_FILE_RUNDATE, SUPP_ADDRESS_ID, VNDR_ADDR_GNRTD_ID ")

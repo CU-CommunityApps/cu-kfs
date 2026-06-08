@@ -157,7 +157,7 @@
         <field-descriptor name="spreadsheetKey" column="SPREADSHEET_KEY" jdbc-type="VARCHAR"/>
         <field-descriptor name="supplierIdHeader" column="SUPPLIER_ID_HEADER" jdbc-type="VARCHAR"/>
         <field-descriptor name="autoComplete" column="AUTO_COMPLETE" jdbc-type="VARCHAR"/>
-        <field-descriptor name="comment" column="COMMENT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="comment" column="COMMENT_VAL" jdbc-type="VARCHAR"/>
         <field-descriptor name="worker" column="WORKER" jdbc-type="VARCHAR"/>
         <field-descriptor name="supplierReferenceId" column="SUPPLIER_REFERENCE_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="supplierId" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
