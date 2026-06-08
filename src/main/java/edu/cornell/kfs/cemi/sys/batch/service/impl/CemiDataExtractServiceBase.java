@@ -24,7 +24,6 @@ import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
 import edu.cornell.kfs.cemi.sys.batch.service.CemiFileAppenderService;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.cemi.vnd.CemiRemitToSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiVendorParameterConstants;
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -36,7 +35,7 @@ public abstract class CemiDataExtractServiceBase {
     protected final Environment environment;
 
     protected String dataFileCreationDirectory;
-    protected String dataFileOutputDirectory;
+    protected String dataFileOutboundDirectory;
     protected CemiFileAppenderService cemiFileAppenderService;
     protected CemiOutputDefinitionFileType cemiOutputDefinitionFileType;
     protected ParameterService parameterService;
@@ -71,7 +70,7 @@ public abstract class CemiDataExtractServiceBase {
             final String newFileName = CemiUtils.generateFileNameContainingDateTime(
                     jobRunDate, datedFileNamePrefix, FileExtensions.XLSX);
             final File tempFile = qualifyAndGetFilePath(dataFileCreationDirectory, newFileName);
-            final File finalFile = qualifyAndGetFilePath(dataFileOutputDirectory, plainFileName);
+            final File finalFile = qualifyAndGetFilePath(dataFileOutboundDirectory, plainFileName);
             Validate.validState(!tempFile.exists(), "Temporary file already exists: %s", newFileName);
 
             createAndPopulateDataExtractFile(tempFile, jobRunDate);
@@ -103,8 +102,7 @@ public abstract class CemiDataExtractServiceBase {
                 cemiOutputDefinitionFileType, getOutputDefinitionFilePathSuffix());
 
         try (
-            final InputStream templateFileStream = CuCoreUtilities.getResourceAsStream(
-                    CemiRemitToSupplierConstants.REMIT_TO_SUPPLIER_TEMPLATE_FILE_PATH);
+            final InputStream templateFileStream = CuCoreUtilities.getResourceAsStream(getTemplateWorkbookFilePath());
             final CemiExcelWriter writer = new CemiExcelWriter(outputDefinition, templateFileStream, file);
         ) {
             cemiFileAppenderService.populateFileFromOrmDataStorage(writer, outputDefinition, jobRunDateString);
@@ -127,14 +125,16 @@ public abstract class CemiDataExtractServiceBase {
 
     protected abstract String getOutputDefinitionFilePathSuffix();
 
+    protected abstract String getTemplateWorkbookFilePath();
+
     protected abstract boolean shouldCopyDataFileToOutboundDirectory();
 
     public void setDataFileCreationDirectory(final String dataFileCreationDirectory) {
         this.dataFileCreationDirectory = dataFileCreationDirectory;
     }
 
-    public void setDataFileOutputDirectory(final String dataFileOutputDirectory) {
-        this.dataFileOutputDirectory = dataFileOutputDirectory;
+    public void setDataFileOutboundDirectory(final String dataFileOutboundDirectory) {
+        this.dataFileOutboundDirectory = dataFileOutboundDirectory;
     }
 
     public void setCemiFileAppenderService(final CemiFileAppenderService cemiFileAppenderService) {

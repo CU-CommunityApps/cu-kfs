@@ -71,7 +71,7 @@ public class CemiOrderFromSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
     @Override
     public void storeAsListOfKfsVendorAddressLinks(final Iterator<VendorAddress> addressIterator) {
         final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO KFS CU_CEMI_EXTR_ORD_FRM_SUPP_VNDR_ADDR_LNK_T (")
+                .append("INSERT INTO KFS.CU_CEMI_EXTR_ORD_FRM_SUPP_VNDR_ADDR_LNK_T (")
                 .append("VNDR_ADDR_GNRTD_ID, VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, CONCAT_ADDR")
                 .append(") VALUES (")
                 .appendAsParameter(Types.INTEGER, VendorAddress::getVendorAddressGeneratedIdentifier)
@@ -132,7 +132,7 @@ public class CemiOrderFromSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
     @Override
     public void storeAsListOfSupplierAddressLinks(final Iterator<CemiSupplierAddressBo> addressIterator) {
         final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO KFS CU_CEMI_EXTR_ORD_FRM_SUPP_SUPP_ADDR_LNK_T (")
+                .append("INSERT INTO KFS.CU_CEMI_EXTR_ORD_FRM_SUPP_SUPP_ADDR_LNK_T (")
                 .append("SUPP_ADDR_ID, VNDR_ADDR_GNRTD_ID, VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, CONCAT_ADDR")
                 .append(") ")
                 .append("SELECT ")
@@ -142,7 +142,7 @@ public class CemiOrderFromSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
                 .append(", ")
                 .append("VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, ")
                 .appendAsParameter(Types.VARCHAR, this::getConcatenatedSupplierAddressData)
-                .append(" FROM KFS.KFS.CU_CEMI_MAPPING_SPLR_VNDR_EXTR_FILE_T ")
+                .append(" FROM KFS.CU_CEMI_MAPPING_SPLR_VNDR_EXTR_FILE_T ")
                 .append("WHERE WKDY_SPLR_ID = ")
                         .appendAsParameter(Types.VARCHAR, CemiSupplierAddressBo::getSupplierId)
                 .append(" AND EXTR_FILE_RUNDATE = ")
@@ -174,10 +174,10 @@ public class CemiOrderFromSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
     @Override
     public void queryAndStoreAddressIdsForOrderFromSupplierExtract() {
         final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO KFS.KFS.CU_CEMI_EXTR_ORD_FRM_SUPP_ADDR_T (")
-                .append("SUPP_EXTR_FILE_RUNDATE, SUPP_ADDRESS_ID, VNDR_ADDR_GNRTD_ID")
+                .append("INSERT INTO KFS.CU_CEMI_EXTR_ORD_FRM_SUPP_ADDR_T (")
+                .append("SUPP_EXTR_FILE_RUNDATE, SUPP_ADDRESS_ID")
                 .append(") ")
-                .append("SELECT EXTR_FILE_RUNDATE, SUPP_ADDRESS_ID, VNDR_ADDR_GNRTD_ID ")
+                .append("SELECT DISTINCT EXTR_FILE_RUNDATE, SUPP_ADDRESS_ID ")
                 .append("FROM KFS.CU_CEMI_ORD_FRM_SUPP_PO_ADDRESSES_FINAL_V")
                 .toQuery();
 

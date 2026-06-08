@@ -182,6 +182,6 @@
         <field-descriptor name="isDefault" column="IS_DEFAULT" jdbc-type="VARCHAR"/>
         <field-descriptor name="isInactive" column="IS_INACTIVE" jdbc-type="VARCHAR"/>
         <field-descriptor name="memo" column="MEMO" jdbc-type="VARCHAR"/>
-    <class-descriptor>
+    </class-descriptor>
 
 </descriptor-repository>

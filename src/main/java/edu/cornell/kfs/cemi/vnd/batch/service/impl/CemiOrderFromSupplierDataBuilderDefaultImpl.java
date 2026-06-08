@@ -17,6 +17,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.VendorConstants.AddressTypes;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -24,10 +25,10 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import edu.cornell.kfs.cemi.sys.CemiBasePropertyConstants;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiOrmDataBuilderBase;
 import edu.cornell.kfs.cemi.vnd.CemiVendorPropertyConstants;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiOrderFromSupplierBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierEmailBo;
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiOrderFromSupplierBo;
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiOrderFromSupplierDataBuilder;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiOrderFromSupplierDao;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorOrmDao;
@@ -117,7 +118,13 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
         final boolean isPunchoutSupplier = cemiOrderFromSupplierDao.determineIfSupplierIsUsedForPunchouts(
                 supplier.getSupplierId(), supplierJobRunDate);
         final Map<String, List<VendorAddress>> kfsVendorAddresses = getKfsVendorAddresses(supplier.getSupplierId());
-        final CemiSupplierEmailBo emailRow = getSupplierEmailRow(supplier.getSupplierId());
+        final CemiSupplierEmailBo emailRow = getSupplierEmailRowIfPresent(supplier.getSupplierId());
+        if (ObjectUtils.isNull(emailRow)) {
+            LOG.warn("createAndStoreOrderFromSupplierRows, Supplier {} does not have an associated Supplier Email "
+                    + "record. This Supplier will be excluded from the extract altogether.", supplier.getSupplierId());
+            return;
+        }
+
         final List<Pair<String, CemiSupplierAddressBo>> addressesWithUniqueEmails = getUniqueEmailsForAddresses(
                 supplierAddresses, kfsVendorAddresses, emailRow);
 
@@ -166,15 +173,18 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
                 vendorAddresses, AddressTypes.PURCHASE_ORDER);
     }
 
-    private CemiSupplierEmailBo getSupplierEmailRow(final String supplierId) {
+    private CemiSupplierEmailBo getSupplierEmailRowIfPresent(final String supplierId) {
         final Map<String, Object> criteria = Map.ofEntries(
                 Map.entry(CemiVendorPropertyConstants.SUPPLIER_ID, supplierId),
                 Map.entry(CemiBasePropertyConstants.JOB_RUN_DATE, supplierJobRunDate)
         );
         final Collection<CemiSupplierEmailBo> results = businessObjectService.findMatching(
                 CemiSupplierEmailBo.class, criteria);
-        Validate.validState(!results.isEmpty(), "Could not find email data row for PO supplier: %s", supplierId);
-        return results.iterator().next();
+        if (!results.isEmpty()) {
+            return results.iterator().next();
+        } else {
+            return null;
+        }
     }
 
     private List<Pair<String, CemiSupplierAddressBo>> getUniqueEmailsForAddresses(

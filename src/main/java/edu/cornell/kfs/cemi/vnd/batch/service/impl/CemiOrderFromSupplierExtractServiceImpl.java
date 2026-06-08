@@ -21,7 +21,6 @@ import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiOrderFromSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiOrderFromSupplierParameterConstants;
 import edu.cornell.kfs.cemi.vnd.batch.CreateCemiOrderFromSupplierExtractStep;
-import edu.cornell.kfs.cemi.vnd.batch.CreateCemiRemitToSupplierExtractStep;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiOrderFromSupplierExtractService;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiOrderFromSupplierDao;
@@ -61,7 +60,7 @@ public class CemiOrderFromSupplierExtractServiceImpl extends CemiDataExtractServ
 
     private String getSupplierJobRunDate() {
         final String supplierJobRunDate = parameterService.getParameterValueAsString(
-                CreateCemiRemitToSupplierExtractStep.class,
+                CreateCemiOrderFromSupplierExtractStep.class,
                 CemiOrderFromSupplierParameterConstants.CEMI_ORDER_FROM_SUPPLIER_EXTRACT_SUPPLIER_DATETIME);
         Validate.validState(StringUtils.isNotBlank(supplierJobRunDate), "Parameter %s should not have been blank",
                 CemiOrderFromSupplierParameterConstants.CEMI_ORDER_FROM_SUPPLIER_EXTRACT_SUPPLIER_DATETIME);
@@ -138,6 +137,11 @@ public class CemiOrderFromSupplierExtractServiceImpl extends CemiDataExtractServ
     @Override
     protected String getOutputDefinitionFilePathSuffix() {
         return CemiOrderFromSupplierConstants.ORDER_FROM_SUPPLIER_OUTPUT_DEFINITION_PATH_SUFFIX;
+    }
+
+    @Override
+    protected String getTemplateWorkbookFilePath() {
+        return CemiOrderFromSupplierConstants.ORDER_FROM_SUPPLIER_TEMPLATE_FILE_PATH;
     }
 
     @Override
