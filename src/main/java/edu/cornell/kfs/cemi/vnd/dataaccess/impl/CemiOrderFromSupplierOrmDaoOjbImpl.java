@@ -6,7 +6,9 @@ import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
@@ -34,6 +36,7 @@ public class CemiOrderFromSupplierOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb 
         }
 
         final Criteria criteria = new Criteria();
+        criteria.addEqualTo(VendorPropertyConstants.VENDOR_ADDRESS_ACTIVE_INDICATOR, KFSConstants.ACTIVE_INDICATOR);
         criteria.addSql(idCondition);
 
         final QueryByCriteria query = new QueryByCriteria(VendorAddress.class, criteria);

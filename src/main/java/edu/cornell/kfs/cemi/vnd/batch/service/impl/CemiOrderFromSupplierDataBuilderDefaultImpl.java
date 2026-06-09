@@ -69,7 +69,8 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
         CemiSupplierBo currentSupplier = new CemiSupplierBo();
         List<CemiSupplierAddressBo> currentSupplierAddresses = new ArrayList<>();
         currentSupplier.setSupplierId(CUKFSConstants.NULL);
-        int currentSpreadsheetKey = 0;
+        int currentSpreadsheetKey = 1;
+        int orderFromConnectionCount = 0;
 
         for (final CemiSupplierAddressBo supplierAddress : IteratorUtils.asIterable(supplierAddresses)) {
             supplierAddressCount++;
@@ -79,19 +80,23 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
             }
             final String supplierId = supplierAddress.getSupplierId();
             if (!Strings.CS.equals(supplierId, currentSupplier.getSupplierId())) {
-                createAndStoreOrderFromSupplierRows(currentSupplier, currentSupplierAddresses,
-                        Integer.toString(currentSpreadsheetKey));
+                final int numNewConnectionsCreated = createAndStoreOrderFromSupplierRows(currentSupplier,
+                        currentSupplierAddresses, Integer.toString(currentSpreadsheetKey));
+                if (numNewConnectionsCreated > 0) {
+                    currentSpreadsheetKey++;
+                    orderFromConnectionCount += numNewConnectionsCreated;
+                }
                 currentSupplier = getSupplier(supplierId);
                 currentSupplierAddresses = new ArrayList<>();
-                currentSpreadsheetKey++;
             }
             currentSupplierAddresses.add(supplierAddress);
         }
 
-        createAndStoreOrderFromSupplierRows(currentSupplier, currentSupplierAddresses,
+        orderFromConnectionCount += createAndStoreOrderFromSupplierRows(currentSupplier, currentSupplierAddresses,
                 Integer.toString(currentSpreadsheetKey));
-        LOG.info("writeOrderFromSupplierDataToIntermediateStorage, Finished processing {} supplier addresses",
-                supplierAddressCount);
+        LOG.info("writeOrderFromSupplierDataToIntermediateStorage, Finished processing and filtering {} "
+                + "supplier addresses, to create a total of {} Order From Supplier Connections",
+                supplierAddressCount, orderFromConnectionCount);
     }
 
     private CemiSupplierBo getSupplier(final String supplierId) {
@@ -110,10 +115,10 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
      *       should have no more than 1 email address, meaning adjustments will be needed if we have to add
      *       multiple emails per connection.
      */
-    private void createAndStoreOrderFromSupplierRows(final CemiSupplierBo supplier,
+    private int createAndStoreOrderFromSupplierRows(final CemiSupplierBo supplier,
             final List<CemiSupplierAddressBo> supplierAddresses, final String spreadsheetKey) {
         if (supplierAddresses.isEmpty()) {
-            return;
+            return 0;
         }
         final boolean isPunchoutSupplier = cemiOrderFromSupplierDao.determineIfSupplierIsUsedForPunchouts(
                 supplier.getSupplierId(), supplierJobRunDate);
@@ -122,7 +127,7 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
         if (ObjectUtils.isNull(emailRow)) {
             LOG.warn("createAndStoreOrderFromSupplierRows, Supplier {} does not have an associated Supplier Email "
                     + "record. This Supplier will be excluded from the extract altogether.", supplier.getSupplierId());
-            return;
+            return 0;
         }
 
         final List<Pair<String, CemiSupplierAddressBo>> addressesWithUniqueEmails = getUniqueEmailsForAddresses(
@@ -140,6 +145,11 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
                 final Pair<String, CemiSupplierAddressBo> firstAddressWithUniqueEmail = addressesWithUniqueEmails.get(0);
                 addressesForOutput = List.of(firstAddressWithUniqueEmail, firstAddressWithUniqueEmail);
             }
+        } else if (addressesWithUniqueEmails.size() <= 1) {
+            LOG.debug("createAndStoreOrderFromSupplierRows, Supplier {} only has one unique email across its "
+                    + "PO-related addresses. This Supplier will be excluded from the extract altogether.",
+                    supplier.getSupplierId());
+            addressesForOutput = List.of();
         } else {
             addressesForOutput = addressesWithUniqueEmails;
         }
@@ -164,6 +174,8 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
             storeSheetRow(orderFromSupplierRow);
             connectionRowId++;
         }
+
+        return addressesForOutput.size();
     }
 
     private Map<String, List<VendorAddress>> getKfsVendorAddresses(final String supplierId) {
