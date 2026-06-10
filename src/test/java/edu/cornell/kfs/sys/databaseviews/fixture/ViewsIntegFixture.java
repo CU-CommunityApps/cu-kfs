@@ -268,6 +268,14 @@ public enum ViewsIntegFixture {
         expectedResultSetItem.put("ROLE_NAME", "Campus Viewer(cu)");
         expectedResultSetItem.put("ROLE_ID", "100000453");
         expectedResultSetList.add(expectedResultSetItem);
+
+        expectedResultSetItem = new HashMap<String, String>();
+        expectedResultSetItem.put("PRINCIPAL_ID", "50580");
+        expectedResultSetItem.put("NET_ID", "jdh34");
+        expectedResultSetItem.put("ROLE_NAMESPACE", "KFS-SYS");
+        expectedResultSetItem.put("ROLE_NAME", "Parameter Reviewer (cu)");
+        expectedResultSetItem.put("ROLE_ID", "100000170");
+        expectedResultSetList.add(expectedResultSetItem);
         return expectedResultSetList;
     }
     
