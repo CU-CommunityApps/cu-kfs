@@ -1,5 +1,11 @@
 package edu.cornell.kfs.cemi.vnd.batch.service.impl;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.stream.Stream;
@@ -26,12 +32,14 @@ import edu.cornell.kfs.cemi.vnd.batch.service.CemiOrderFromSupplierExtractServic
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiOrderFromSupplierDao;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiOrderFromSupplierOrmDao;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorOrmDao;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CemiOrderFromSupplierExtractServiceImpl extends CemiDataExtractServiceBase
         implements CemiOrderFromSupplierExtractService {
 
     private static final Logger LOG = LogManager.getLogger();
 
+    private String reportsDirectory;
     private CemiOrderFromSupplierOrmDao cemiOrderFromSupplierOrmDao;
     private CemiOrderFromSupplierDao cemiOrderFromSupplierDao;
     private CemiVendorOrmDao cemiVendorOrmDao;
@@ -107,18 +115,30 @@ public class CemiOrderFromSupplierExtractServiceImpl extends CemiDataExtractServ
     public void generateIntermediateOrderFromSupplierExtractData(final LocalDateTime jobRunDate) {
         LOG.info("generateIntermediateOrderFromSupplierExtractData, Generating data rows for Order From Supplier "
                 + "spreadsheet and placing in intermediate storage...");
+        final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
+        final String skippedSuppliersFilePath = buildPathForSkippedSuppliersReportFile(jobRunDateString);
         try (
             final Stream<CemiSupplierAddressBo> addresses = cemiOrderFromSupplierOrmDao
                     .getSupplierAddressesForOrderFromSupplierExtract();
+            final FileOutputStream fileStream = new FileOutputStream(skippedSuppliersFilePath);
+            final OutputStreamWriter streamWriter = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8);
+            final BufferedWriter skippedSuppliersWriter = new BufferedWriter(streamWriter);
         ) {
-            final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
             final String supplierJobRunDate = getSupplierJobRunDate();
             final CemiOrderFromSupplierDataBuilderDefaultImpl dataBuilder = new CemiOrderFromSupplierDataBuilderDefaultImpl(
                     businessObjectService, jobRunDateString, supplierJobRunDate, cemiVendorOrmDao,
-                    cemiOrderFromSupplierDao, shouldMaskCemiSensitiveData());
+                    cemiOrderFromSupplierDao, skippedSuppliersWriter, shouldMaskCemiSensitiveData());
             final Iterator<CemiSupplierAddressBo> addressesIterator = addresses.iterator();
             dataBuilder.writeOrderFromSupplierDataToIntermediateStorage(addressesIterator);
+        } catch (final IOException e) {
+            throw new UncheckedIOException(e);
         }
+    }
+
+    private String buildPathForSkippedSuppliersReportFile(final String jobRunDate) {
+        return StringUtils.join(reportsDirectory,
+                CemiOrderFromSupplierConstants.ORDER_FROM_SUPPLIER_SKIPPED_SUPPLIERS_FILE_PREFIX,
+                jobRunDate, CUKFSConstants.TEXT_FILE_EXTENSION);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -149,6 +169,10 @@ public class CemiOrderFromSupplierExtractServiceImpl extends CemiDataExtractServ
         return parameterService.getParameterValueAsBoolean(
                 CreateCemiOrderFromSupplierExtractStep.class,
                 CemiOrderFromSupplierParameterConstants.COPY_CEMI_ORDER_FROM_SUPPLIER_FILE_TO_OUTBOUND_FOLDER);
+    }
+
+    public void setReportsDirectory(final String reportsDirectory) {
+        this.reportsDirectory = reportsDirectory;
     }
 
     public void setCemiOrderFromSupplierOrmDao(final CemiOrderFromSupplierOrmDao cemiOrderFromSupplierOrmDao) {

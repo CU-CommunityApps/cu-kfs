@@ -1,5 +1,8 @@
 package edu.cornell.kfs.cemi.vnd.batch.service.impl;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -43,18 +46,22 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
     private final String supplierJobRunDate;
     private final CemiVendorOrmDao cemiVendorOrmDao;
     private final CemiOrderFromSupplierDao cemiOrderFromSupplierDao;
+    private final Writer skippedSuppliersWriter;
     private final boolean maskSensitiveData;
 
     public CemiOrderFromSupplierDataBuilderDefaultImpl(final BusinessObjectService businessObjectService,
             final String jobRunDate, final String supplierJobRunDate, final CemiVendorOrmDao cemiVendorOrmDao,
-            final CemiOrderFromSupplierDao cemiOrderFromSupplierDao, final boolean maskSensitiveData) {
+            final CemiOrderFromSupplierDao cemiOrderFromSupplierDao, final Writer skippedSuppliersWriter,
+            final boolean maskSensitiveData) {
         super(businessObjectService, jobRunDate, CemiOrderFromSupplierBo.class);
         Validate.notBlank(supplierJobRunDate, "supplierJobRunDate cannot be blank");
         Validate.notNull(cemiVendorOrmDao, "cemiVendorOrmDao cannot be null");
         Validate.notNull(cemiOrderFromSupplierDao, "cemiOrderFromSupplierDao cannot be null");
+        Validate.notNull(skippedSuppliersWriter, "skippedSuppliersWriter cannot be null");
         this.supplierJobRunDate = supplierJobRunDate;
         this.cemiVendorOrmDao = cemiVendorOrmDao;
         this.cemiOrderFromSupplierDao = cemiOrderFromSupplierDao;
+        this.skippedSuppliersWriter = skippedSuppliersWriter;
         this.maskSensitiveData = maskSensitiveData;
     }
 
@@ -127,6 +134,7 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
         if (ObjectUtils.isNull(emailRow)) {
             LOG.warn("createAndStoreOrderFromSupplierRows, Supplier {} does not have an associated Supplier Email "
                     + "record. This Supplier will be excluded from the extract altogether.", supplier.getSupplierId());
+            writeSkippedSupplierToReportFile(supplier.getSupplierId());
             return 0;
         }
 
@@ -139,6 +147,7 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
                 LOG.warn("createAndStoreOrderFromSupplierRows, Punchout Supplier {} has no email addresses that are "
                         + "eligible to be included in the Order From Supplier extract. This Supplier will be "
                         + "excluded from the extract altogether.", supplier.getSupplierId());
+                writeSkippedSupplierToReportFile(supplier.getSupplierId());
                 addressesForOutput = List.of();
             } else {
                 // Just duplicate the first address; the loop below will handle the punchout logic accordingly.
@@ -149,6 +158,7 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
             LOG.debug("createAndStoreOrderFromSupplierRows, Supplier {} only has one unique email across its "
                     + "PO-related addresses. This Supplier will be excluded from the extract altogether.",
                     supplier.getSupplierId());
+            writeSkippedSupplierToReportFile(supplier.getSupplierId());
             addressesForOutput = List.of();
         } else {
             addressesForOutput = addressesWithUniqueEmails;
@@ -176,6 +186,15 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
         }
 
         return addressesForOutput.size();
+    }
+
+    private void writeSkippedSupplierToReportFile(final String supplierId) {
+        try {
+            skippedSuppliersWriter.write(supplierId);
+            skippedSuppliersWriter.write(KFSConstants.NEWLINE);
+        } catch (final IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     private Map<String, List<VendorAddress>> getKfsVendorAddresses(final String supplierId) {

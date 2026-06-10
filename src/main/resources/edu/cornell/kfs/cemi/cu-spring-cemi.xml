@@ -286,6 +286,7 @@
           p:cemiFileAppenderService-ref="cemiFileAppenderService"
           p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
           p:parameterService-ref="parameterService"
+          p:reportsDirectory="${reports.directory}/cemi/"
           p:cemiOrderFromSupplierOrmDao-ref="cemiOrderFromSupplierOrmDao"
           p:cemiOrderFromSupplierDao-ref="cemiOrderFromSupplierDao"
           p:cemiVendorOrmDao-ref="cemiVendorOrmDao"

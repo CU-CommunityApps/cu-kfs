@@ -97,19 +97,19 @@ public class CemiOrderFromSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
     private <T> void storeAsListOfAddressLinks(final Class<T> addressClass, final CuSqlQuery query,
             final Iterator<T> addressIterator) {
         int count = 0;
-        final List<T> cachedAddresses = new ArrayList<>(ADDRESS_BATCH_SIZE);
+        final List<T> batchedAddresses = new ArrayList<>(ADDRESS_BATCH_SIZE);
 
         for (final T address : IteratorUtils.asIterable(addressIterator)) {
             count++;
-            cachedAddresses.add(address);
-            if (cachedAddresses.size() >= ADDRESS_BATCH_SIZE) {
-                storeSubListOfAddressLinks(addressClass, query, cachedAddresses);
-                cachedAddresses.clear();
+            batchedAddresses.add(address);
+            if (batchedAddresses.size() >= ADDRESS_BATCH_SIZE) {
+                storeSubListOfAddressLinks(addressClass, query, batchedAddresses);
+                batchedAddresses.clear();
             }
         }
 
-        if (cachedAddresses.size() > 0) {
-            storeSubListOfAddressLinks(addressClass, query, cachedAddresses);
+        if (batchedAddresses.size() > 0) {
+            storeSubListOfAddressLinks(addressClass, query, batchedAddresses);
         }
         LOG.info("queryAndStoreListOfAddressLinks, Finished writing {} {} links",
                 count, addressClass.getSimpleName());

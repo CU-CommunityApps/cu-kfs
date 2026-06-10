@@ -8,6 +8,7 @@ public final class CemiOrderFromSupplierConstants {
             "vnd/batch/CemiOrderFromSupplierExtractFileOutputDefinition.xml";
     public static final String ORDER_FROM_SUPPLIER_TEMPLATE_FILE_PATH =
             "classpath:edu/cornell/kfs/cemi/vnd/batch/Submit_Order_From_Supplier_Connection.xlsx";
+    public static final String ORDER_FROM_SUPPLIER_SKIPPED_SUPPLIERS_FILE_PREFIX = "order-from-connection-skipped-suppliers-";
 
     public static final String ORDER_FROM_CONNECTION_NAME_CATALOG = "Catalog";
     public static final String ORDER_FROM_CONNECTION_NAME_EMAIL_PREFIX = "Send PO to: ";

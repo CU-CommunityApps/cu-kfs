@@ -1,7 +1,5 @@
 <descriptor-repository version="1.0">
 
-    <!-- Award Schedule Extract -->
-
     <class-descriptor class="edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardScheduleBo" table="CU_CEMI_EXTR_AWD_SCHD_TAB_AWD_SCHD_T">
         <field-descriptor name="extractTableUniqueRowId" column="EXTR_TBL_ROW_ID" jdbc-type="BIGINT"
                           primarykey="true" ndex="true" 
@@ -57,5 +55,5 @@
         <field-descriptor name="distributionPercentage_2_1" column="DISTRB_PCT_2_1" jdbc-type="VARCHAR" />
         <field-descriptor name="distributionBalance_2_1" column="DISTRIB_BAL_2_1" jdbc-type="VARCHAR" />
     </class-descriptor>
-
+    
 </descriptor-repository>
