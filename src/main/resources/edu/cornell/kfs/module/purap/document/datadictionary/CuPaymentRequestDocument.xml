@@ -9,6 +9,7 @@
     <bean id="PaymentRequestDocument" parent="PaymentRequestDocument-parentBean"
           p:documentClass="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument"
           p:documentPresentationControllerClass="edu.cornell.kfs.module.purap.document.authorization.CuPaymentRequestDocumentPresentationController"
+          p:documentAuthorizerClass="edu.cornell.kfs.module.purap.document.authorization.CuPaymentRequestDocumentAuthorizer"
           p:promptBeforeValidationClass="edu.cornell.kfs.module.purap.document.validation.impl.CuPaymentRequestDocumentPreRules">
         <property name="webScriptFiles">
             <bean parent="commonWebScriptFiles">

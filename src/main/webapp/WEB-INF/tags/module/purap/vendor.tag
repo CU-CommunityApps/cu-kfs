@@ -39,7 +39,7 @@
 <c:set var="restrictFullEntry" value="${(not empty KualiForm.editingMode['restrictFullEntry'])}" />
 <c:set var="tabindexOverrideBase" value="30" />
 <%-- CU Customization: Update value to include FINP-11621 fix. --%>
-<c:set var="canEditVendorAddress" value="${not isPaymentRequest or not empty
+<c:set var="canEditVendorAddress" value="${not empty
 KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS]}" />
 
 <!--  this is a temporary workaround until release 3, where this is fixed more generally -->
