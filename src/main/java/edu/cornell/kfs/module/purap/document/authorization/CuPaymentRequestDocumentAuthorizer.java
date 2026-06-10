@@ -29,18 +29,11 @@ import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.authorization.PurchasingAccountsPayableTransactionalDocumentAuthorizerBase;
 
 /**
- * CU Customization: KFSPTS-38144
- * Custom authorizer for PaymentRequestDocument that allows AP staff to edit
+ * CU Customization: KFSPTS-38144 Custom authorizer for PaymentRequestDocument that allows AP staff to edit
  * vendor address fields when the document is in "Awaiting AP Review" status.
  */
 public class CuPaymentRequestDocumentAuthorizer extends PurchasingAccountsPayableTransactionalDocumentAuthorizerBase {
 
-    /**
-     * Overridden to add CAN_EDIT_VENDOR_ADDRESS document action when the PREQ
-     * is in "Awaiting AP Review" status. This allows AP staff to correct remit-to
-     * addresses that may have been updated in the vendor file but not reflected
-     * on the PO-sourced PREQ.
-     */
     @Override
     public Set<String> getDocumentActions(
             final Document document, final Person user,
@@ -50,7 +43,6 @@ public class CuPaymentRequestDocumentAuthorizer extends PurchasingAccountsPayabl
                 documentActionsFromPresentationController);
 
         final PaymentRequestDocument preqDocument = (PaymentRequestDocument) document;
-        
         if (canEditVendorAddressInApReview(preqDocument)) {
             documentActionsToReturn.add(PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS);
         }
@@ -58,13 +50,6 @@ public class CuPaymentRequestDocumentAuthorizer extends PurchasingAccountsPayabl
         return documentActionsToReturn;
     }
 
-    /**
-     * Determines if the vendor address can be edited during AP review.
-     * Returns true if the document is in "Awaiting AP Review" status.
-     * 
-     * @param preqDocument the PaymentRequestDocument to check
-     * @return true if vendor address editing should be allowed, false otherwise
-     */
     protected boolean canEditVendorAddressInApReview(final PaymentRequestDocument preqDocument) {
         final String applicationDocumentStatus = preqDocument.getApplicationDocumentStatus();
         return StringUtils.equals(PaymentRequestStatuses.APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, 
