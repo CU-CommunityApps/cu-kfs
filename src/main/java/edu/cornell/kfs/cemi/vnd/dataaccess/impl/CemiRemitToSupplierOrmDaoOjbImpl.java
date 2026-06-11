@@ -53,6 +53,7 @@ public class CemiRemitToSupplierOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb im
                 CemiBaseConstants.CU_CEMI_DEVELOPMENT_USE_SMALLER_DATA_SET_KEY);
     }
  
+    // NOTE: We should eventually replace this method with the equivalent one from CemiVendorOrmDaoOjbImpl instead.
     @Override
     public List<VendorAddress> getKfsVendorAddresses(final String supplierId, final String supplierJobRunDate) {
         // OJB plain SQL conditions don't allow for parameterization, so we have to manually clean the supplied values.
