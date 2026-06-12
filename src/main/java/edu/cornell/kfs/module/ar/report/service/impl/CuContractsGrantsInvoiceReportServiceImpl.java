@@ -185,7 +185,7 @@ public class CuContractsGrantsInvoiceReportServiceImpl extends ContractsGrantsIn
         // Cornell customization
         contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
                 ArPropertyConstants.FederalFormReportFields.FEDERAL_GRANT_NUMBER,
-                award.getProposal().getGrantNumber()
+                award.getGrantNumber()
         );
         if (CollectionUtils.isNotEmpty(award.getActiveAwardAccounts())) {
             contractsGrantsBillingUtilityService.putValueOrEmptyString(replacementList,
