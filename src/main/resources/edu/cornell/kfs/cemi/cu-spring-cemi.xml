@@ -62,6 +62,19 @@
           class="edu.cornell.kfs.cemi.sys.batch.service.impl.CemiFileAppenderServiceImpl"
           p:cemiFileAppenderOrmDao-ref="cemiFileAppenderOrmDao"/>
 
+    <bean id="cemiCsvDataImportDao" parent="cemiCsvDataImportDao-parentBean"/>
+    <bean id="cemiCsvDataImportDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.dataaccess.impl.CemiCsvDataImportDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"/>
+
+    <bean id="cemiCsvDataImportService" parent="cemiCsvDataImportService-parentBean"/>
+    <bean id="cemiCsvDataImportService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.batch.service.impl.CemiCsvDataImportServiceImpl"
+          p:cemiCsvDataImportdao-ref="cemiCsvDataImportdao"
+          p:batchInputFileService-ref="batchInputFileService"/>
+
     <!-- Award Schedule -->
 
     <bean id="createCemiAwardScheduleExtractJob" parent="unscheduledJobDescriptor">
