@@ -75,6 +75,10 @@
           p:cemiCsvDataImportdao-ref="cemiCsvDataImportdao"
           p:batchInputFileService-ref="batchInputFileService"/>
 
+    <bean id="cemiCsvBatchInputFileType"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.batch.CemiCsvBatchInputFileType"/>
+
     <!-- Award Schedule -->
 
     <bean id="createCemiAwardScheduleExtractJob" parent="unscheduledJobDescriptor">
