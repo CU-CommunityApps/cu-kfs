@@ -13,6 +13,7 @@ import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import edu.cornell.kfs.cemi.sys.batch.CemiCsvBatchInputFileType;
 import edu.cornell.kfs.cemi.sys.batch.service.CemiCsvDataImportService;
 import edu.cornell.kfs.cemi.sys.dataaccess.CemiCsvDataImportDao;
+import edu.cornell.kfs.sys.batch.CuBatchFileUtils;
 
 public class CemiCsvDataImportServiceImpl implements CemiCsvDataImportService {
 
@@ -39,8 +40,9 @@ public class CemiCsvDataImportServiceImpl implements CemiCsvDataImportService {
         Validate.validState(!inputFiles.isEmpty(), "No input files found for %s", enumClassName);
         Validate.validState(inputFiles.size() == 1, "Found multiple input files for %s", enumClassName);
         final String fileName = inputFiles.get(0);
+        final String simpleFileName = CuBatchFileUtils.getFileNameWithoutPath(fileName);
 
-        LOG.info("importCsvData, Importing data for {} from file: {}", enumClassName, fileName);
+        LOG.info("importCsvData, Importing data for {} from file: {}", enumClassName, simpleFileName);
         try (
             final CemiCsvReader csvReader = new CemiCsvReader(fileName);
         ) {
@@ -49,7 +51,7 @@ public class CemiCsvDataImportServiceImpl implements CemiCsvDataImportService {
         } catch (final IOException e) {
             throw new UncheckedIOException(e);
         }
-        LOG.info("importCsvData, Finished importing data for {} from file: {}", enumClassName, fileName);
+        LOG.info("importCsvData, Finished importing data for {} from file: {}", enumClassName, simpleFileName);
     }
 
     private void validateBatchInputFileTypeSetup(final CemiCsvBatchInputFileType batchInputFileType) {

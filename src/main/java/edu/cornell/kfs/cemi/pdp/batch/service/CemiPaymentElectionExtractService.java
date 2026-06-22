@@ -6,6 +6,8 @@ public interface CemiPaymentElectionExtractService {
     
     void resetState();
     
+    void populateListOfInScopeEmployeeIdsIfNecessary();
+    
     void populateListOfInScopeEmployeePaymentElections();
     
     void generateIntermediatePaymentElectionExtractData(final LocalDateTime jobRunDate);

@@ -42,6 +42,7 @@
             <value>${staging.directory}/cemi</value>
             <value>${staging.directory}/cemi/module/cg/cemiAwardScheduleExtract</value>
             <value>${staging.directory}/cemi/pdp/cemiPaymentElectionExtract</value>
+            <value>${staging.directory}/cemi/pdp/cemiPaymentElectionExtract/externalEmployeeIds</value>
             <value>${staging.directory}/cemi/vnd/cemiSupplierExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiOrderFromSupplierExtract</value>
@@ -72,7 +73,7 @@
     <bean id="cemiCsvDataImportService-parentBean"
           abstract="true"
           class="edu.cornell.kfs.cemi.sys.batch.service.impl.CemiCsvDataImportServiceImpl"
-          p:cemiCsvDataImportdao-ref="cemiCsvDataImportdao"
+          p:cemiCsvDataImportDao-ref="cemiCsvDataImportDao"
           p:batchInputFileService-ref="batchInputFileService"/>
 
     <bean id="cemiCsvBatchInputFileType"
@@ -149,6 +150,15 @@
           class="edu.cornell.kfs.cemi.pdp.dataaccess.impl.CemiPaymentElectionOrmDaoOjbImpl"
           parent="platformAwareDao"/>
 
+    <bean id="externalEmployeeIdDataFileType" parent="externalEmployeeIdDataFileType-parentBean"/>
+    <bean id="externalEmployeeIdDataFileType-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/pdp/cemiPaymentElectionExtract/externalEmployeeIds"
+          p:tableName="CU_CEMI_PYMNT_ELCTN_LGCY_WRKDY_SCOPE_T"
+          p:csvEnumClass="edu.cornell.kfs.cemi.pdp.batch.ExternalEmployeeIdCsv"
+          p:hasHeaderRow="true"/>
+
     <bean id="cemiPaymentElectionExtractService" parent="cemiPaymentElectionExtractService-parentBean"/>
     <bean id="cemiPaymentElectionExtractService-parentBean"
           abstract="true"
@@ -162,7 +172,9 @@
           p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
           p:businessObjectService-ref="businessObjectService"
           p:parameterService-ref="parameterService"
-          p:dateTimeService-ref="dateTimeService"/>
+          p:dateTimeService-ref="dateTimeService"
+          p:externalEmployeeIdDataFileType-ref="externalEmployeeIdDataFileType"
+          p:cemiCsvDataImportService-ref="cemiCsvDataImportService"/>
           
 
 

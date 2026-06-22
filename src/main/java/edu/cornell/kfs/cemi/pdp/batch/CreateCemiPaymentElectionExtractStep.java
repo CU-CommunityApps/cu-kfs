@@ -14,6 +14,7 @@ public class CreateCemiPaymentElectionExtractStep extends AbstractStep {
     public boolean execute(final String jobName, final LocalDateTime jobRunDate) throws InterruptedException {
         //Phase1: Obtain the dataset
         cemiPaymentElectionExtractService.resetState();
+        cemiPaymentElectionExtractService.populateListOfInScopeEmployeeIdsIfNecessary();
         cemiPaymentElectionExtractService.populateListOfInScopeEmployeePaymentElections();
         //Phase 2: Loop through result set to create all the csv files
         cemiPaymentElectionExtractService.generateIntermediatePaymentElectionExtractData(jobRunDate);
