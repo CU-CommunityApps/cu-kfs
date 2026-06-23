@@ -38,8 +38,10 @@
 <c:set var="currentUserCampusCode" value="${sessionScope['userSession'].person.campusCode}" />
 <c:set var="restrictFullEntry" value="${(not empty KualiForm.editingMode['restrictFullEntry'])}" />
 <c:set var="tabindexOverrideBase" value="30" />
-<%-- CU Customization: Backport FINP-11621 fix. --%>
-<c:set var="canEditVendorAddress" value="${fullEntryMode or amendmentEntry}" />
+<%-- CU Customization: Update value to include FINP-11621 fix. --%>
+<c:set var="canEditVendorAddress" value="${not isPaymentRequest or not empty
+KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS]}" />
+
 <%-- CU Customization: KFSPTS-38144 Add separate variable for PREQ vendor address editing. --%>
 <c:set var="canEditVendorAddressForPREQ" value="${not empty KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS]}" />
 
@@ -206,9 +208,9 @@
 					<kul:htmlControlAttribute 
 						attributeEntry="${documentAttributes.vendorPostalCode}" 
 						property="document.vendorPostalCode" 
-                    	readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry or canEditVendorAddressForPREQ) or
-                    	displayCreditMemoFields or (lockB2BEntry and (displayRequisitionFields or
-                    	displayPurchaseOrderFields)) or not canEditVendorAddress}"
+						readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry or canEditVendorAddressForPREQ) or
+						displayCreditMemoFields or (lockB2BEntry and (displayRequisitionFields or
+						displayPurchaseOrderFields)) or not canEditVendorAddress}"
 						tabindexOverride="${tabindexOverrideBase + 3}"/>
 				</td>
             </tr>
@@ -221,8 +223,8 @@
                    <kul:htmlControlAttribute 
                     	attributeEntry="${documentAttributes.vendorAttentionName}" property="document.vendorAttentionName" 
                     	readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry or canEditVendorAddressForPREQ) or
-                    	displayCreditMemoFields or (lockB2BEntry and (displayRequisitionFields or
-                    	displayPurchaseOrderFields))}" tabindexOverride="${tabindexOverrideBase + 0}"/>
+                    	displayCreditMemoFields or (lockB2BEntry and (displayRequisitionFields or displayPurchaseOrderFields))}"
+                        tabindexOverride="${tabindexOverrideBase + 0}"/>
                 </td>
             	<th class="right">
             		<kul:htmlAttributeLabel attributeEntry="${documentAttributes.vendorCountryCode}" />
