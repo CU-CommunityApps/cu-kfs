@@ -43,15 +43,12 @@ public class CuPaymentRequestDocumentAuthorizer extends PaymentRequestDocumentAu
 
         final PaymentRequestDocument preqDocument = (PaymentRequestDocument) document;
         final WorkflowDocument workflowDocument = preqDocument.getDocumentHeader().getWorkflowDocument();
-        
-        // If document is not in INITIATED or SAVED status, check if we need to remove CAN_EDIT_VENDOR_ADDRESS
         if (!workflowDocument.isInitiated() && !workflowDocument.isSaved()) {
             if (!canEditVendorAddressInApReview(preqDocument)) {
                 documentActionsToReturn.remove(PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS);
             }
         }
         
-        // Add CAN_EDIT_VENDOR_ADDRESS if canEditVendorAddressInApReview returns true
         if (canEditVendorAddressInApReview(preqDocument)) {
             documentActionsToReturn.add(PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS);
         }
@@ -62,13 +59,11 @@ public class CuPaymentRequestDocumentAuthorizer extends PaymentRequestDocumentAu
     protected boolean canEditVendorAddressInApReview(final PaymentRequestDocument preqDocument) {
         final WorkflowDocument workflowDocument = preqDocument.getDocumentHeader().getWorkflowDocument();
         
-        // Return false if document is not in ENROUTE status
         if (!workflowDocument.isEnroute()) {
             return false;
         }
         
         final String applicationDocumentStatus = preqDocument.getApplicationDocumentStatus();
-        
         if (!StringUtils.equals(PaymentRequestStatuses.APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, applicationDocumentStatus)) {
             return false;
         }
