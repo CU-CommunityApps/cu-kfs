@@ -43,13 +43,12 @@ public class CuPaymentRequestDocumentAuthorizer extends PaymentRequestDocumentAu
 
         final PaymentRequestDocument preqDocument = (PaymentRequestDocument) document;
         final WorkflowDocument workflowDocument = preqDocument.getDocumentHeader().getWorkflowDocument();
-        if (!workflowDocument.isInitiated() && !workflowDocument.isSaved()) {
-            if (!canEditVendorAddressInApReview(preqDocument)) {
-                documentActionsToReturn.remove(PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS);
-            }
-        }
-        
-        if (canEditVendorAddressInApReview(preqDocument)) {
+
+        final boolean userCanEditVendorAddressInApReview = canEditVendorAddressInApReview(preqDocument);
+
+        if (!workflowDocument.isInitiated() && !workflowDocument.isSaved() && !userCanEditVendorAddressInApReview) {
+            documentActionsToReturn.remove(PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS);
+        } else if (userCanEditVendorAddressInApReview) {
             documentActionsToReturn.add(PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS);
         }
 
