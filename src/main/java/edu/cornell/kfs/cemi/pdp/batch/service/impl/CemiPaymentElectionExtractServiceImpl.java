@@ -33,11 +33,10 @@ import edu.cornell.kfs.cemi.pdp.batch.service.CemiPaymentElectionExtractService;
 import edu.cornell.kfs.cemi.pdp.dataaccess.CemiPaymentElectionDao;
 import edu.cornell.kfs.cemi.pdp.dataaccess.CemiPaymentElectionOrmDao;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
-import edu.cornell.kfs.cemi.sys.CemiBaseConstants.FileExtensions;
 import edu.cornell.kfs.cemi.sys.CemiBaseParameterConstants;
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants.FileExtensions;
 import edu.cornell.kfs.cemi.sys.batch.CemiCsvBatchInputFileType;
 import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
-import edu.cornell.kfs.cemi.sys.batch.service.CemiCsvDataImportService;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
@@ -59,8 +58,6 @@ public class CemiPaymentElectionExtractServiceImpl implements CemiPaymentElectio
     private BusinessObjectService businessObjectService;
     private ParameterService parameterService;
     private DateTimeService dateTimeService;
-    private CemiCsvBatchInputFileType externalEmployeeIdDataFileType;
-    private CemiCsvDataImportService cemiCsvDataImportService;
     
     public CemiPaymentElectionExtractServiceImpl(final Environment environment) {
         this.environment = environment;
@@ -72,21 +69,6 @@ public class CemiPaymentElectionExtractServiceImpl implements CemiPaymentElectio
         LOG.info("resetState, Deleting the list of extractable PayeeACHAccount KFS generated identifiers for"
                 + "Payment Election from the previous run (if present)...");
         getCemiPaymentElectionDao().clearExistingListOfExtractablePayeeAchAccountGeneratedIds();
-        if (shouldImportExternalStagingData()) {
-            LOG.info("resetState, Also deleting the list of in-scope employee IDs (if present)...");
-            cemiCsvDataImportService.truncateDestinationTable(externalEmployeeIdDataFileType);
-        }
-    }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    @Override
-    public void populateListOfInScopeEmployeeIdsIfNecessary() {
-        if (shouldImportExternalStagingData()) {
-            LOG.info("populateListOfInScopeEmployeeIdsIfNecessary, Loading in-scope employee IDs from staged file...");
-            cemiCsvDataImportService.importCsvData(externalEmployeeIdDataFileType);
-        } else {
-            LOG.info("populateListOfInScopeEmployeeIdsIfNecessary, Skipping updates to list of in-scope employee IDs");
-        }
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -190,11 +172,6 @@ public class CemiPaymentElectionExtractServiceImpl implements CemiPaymentElectio
     private boolean shouldCopyPaymentElectionExtractFileToOutboundDirectory() {
         return parameterService.getParameterValueAsBoolean(
                 CreateCemiPaymentElectionExtractStep.class, CemiPaymentElectionParameterConstants.COPY_CEMI_PAYMENT_ELECTION_FILE_TO_OUTBOUND_FOLDER);
-    }
-
-    private boolean shouldImportExternalStagingData() {
-        return parameterService.getParameterValueAsBoolean(
-                CreateCemiPaymentElectionExtractStep.class, CemiBaseParameterConstants.CEMI_LOAD_EXTERNAL_STAGING_DATA);
     }
 
     private boolean isCemiSensitiveDataSetToUnmask() {
@@ -304,14 +281,6 @@ public class CemiPaymentElectionExtractServiceImpl implements CemiPaymentElectio
 
     public void setDateTimeService(DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
-    }
-
-    public void setExternalEmployeeIdDataFileType(CemiCsvBatchInputFileType externalEmployeeIdDataFileType) {
-        this.externalEmployeeIdDataFileType = externalEmployeeIdDataFileType;
-    }
-
-    public void setCemiCsvDataImportService(CemiCsvDataImportService cemiCsvDataImportService) {
-        this.cemiCsvDataImportService = cemiCsvDataImportService;
     }
 
 }
