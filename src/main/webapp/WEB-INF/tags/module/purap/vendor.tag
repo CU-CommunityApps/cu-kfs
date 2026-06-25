@@ -42,9 +42,12 @@
 <c:set var="canEditVendorAddress" value="${not isPaymentRequest or not empty
 KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS]}" />
 
+<%-- CU Customization: KFSPTS-38144 Add separate variable for PREQ vendor address editing. --%>
+<c:set var="canEditVendorAddressForPREQ" value="${displayPaymentRequestFields and not empty KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS]}" />
+
 <!--  this is a temporary workaround until release 3, where this is fixed more generally -->
 <c:set var="fullDocEntryCompleted" value="${(not empty KualiForm.editingMode['fullDocumentEntryCompleted'])}" />
-<c:set var="readOnlyForPREQ" value="${(displayPaymentRequestFields) and (fullDocEntryCompleted)}" />
+<c:set var="readOnlyForPREQ" value="${(displayPaymentRequestFields) and (fullDocEntryCompleted) and (not canEditVendorAddressForPREQ)}" />
 <c:set var="achAccountInfoDisplayed" value="${(not empty KualiForm.editingMode['achAccountInfoDisplayed'])}" />
 
 <c:set var="vendorEditable" value="${(fullEntryMode or amendmentEntry) and canEditVendor}" />
@@ -117,7 +120,7 @@ KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS]}"
                     <kul:htmlControlAttribute 
                     	attributeEntry="${documentAttributes.vendorCityName}" 
                     	property="document.vendorCityName" 
-                    	readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry) or
+                    	readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry or canEditVendorAddressForPREQ) or
                     	displayCreditMemoFields or (lockB2BEntry and (displayRequisitionFields or
                     	displayPurchaseOrderFields)) or not canEditVendorAddress}"
                     	tabindexOverride="${tabindexOverrideBase + 3}"/>
@@ -144,7 +147,7 @@ KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS]}"
                 <td class="datacell">
                     <kul:htmlControlAttribute 
                     	attributeEntry="${documentAttributes.vendorStateCode}" property="document.vendorStateCode" 
-                    	readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry) or
+                    	readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry or canEditVendorAddressForPREQ) or
                     	displayCreditMemoFields or (lockB2BEntry and (displayRequisitionFields or
                     	displayPurchaseOrderFields)) or not canEditVendorAddress}" 
                     	tabindexOverride="${tabindexOverrideBase + 3}"/>
@@ -159,7 +162,7 @@ KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS]}"
                     <kul:htmlControlAttribute 
                     	attributeEntry="${documentAttributes.vendorLine1Address}" 
                     	property="document.vendorLine1Address" 
-                    	readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry) or
+                    	readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry or canEditVendorAddressForPREQ) or
                     	displayCreditMemoFields or (lockB2BEntry and (displayRequisitionFields or
                     	displayPurchaseOrderFields)) or not canEditVendorAddress}"
                     	tabindexOverride="${tabindexOverrideBase + 0}"/>
@@ -177,7 +180,7 @@ KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS]}"
                     <kul:htmlControlAttribute 
                     	attributeEntry="${documentAttributes.vendorAddressInternationalProvinceName}" 
                     	property="document.vendorAddressInternationalProvinceName" 
-                    	readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry) or
+                    	readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry or canEditVendorAddressForPREQ) or
                     	displayCreditMemoFields or (lockB2BEntry and (displayRequisitionFields or
                     	displayPurchaseOrderFields)) or not canEditVendorAddress}" 
                     	tabindexOverride="${tabindexOverrideBase + 3}"/>
@@ -192,7 +195,7 @@ KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS]}"
                     <kul:htmlControlAttribute 
                     	attributeEntry="${documentAttributes.vendorLine2Address}" 
                     	property="document.vendorLine2Address" 
-                    	readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry) or
+                    	readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry or canEditVendorAddressForPREQ) or
                     	displayCreditMemoFields or (lockB2BEntry and (displayRequisitionFields or
                     	displayPurchaseOrderFields)) or not canEditVendorAddress}"
                     	tabindexOverride="${tabindexOverrideBase + 0}"/>
@@ -205,7 +208,7 @@ KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS]}"
 					<kul:htmlControlAttribute 
 						attributeEntry="${documentAttributes.vendorPostalCode}" 
 						property="document.vendorPostalCode" 
-						readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry) or
+						readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry or canEditVendorAddressForPREQ) or
 						displayCreditMemoFields or (lockB2BEntry and (displayRequisitionFields or
 						displayPurchaseOrderFields)) or not canEditVendorAddress}"
 						tabindexOverride="${tabindexOverrideBase + 3}"/>
@@ -219,7 +222,9 @@ KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS]}"
                 <td class="datacell">
                    <kul:htmlControlAttribute 
                     	attributeEntry="${documentAttributes.vendorAttentionName}" property="document.vendorAttentionName" 
-                    	readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry) or displayCreditMemoFields or (lockB2BEntry and (displayRequisitionFields or displayPurchaseOrderFields))}" tabindexOverride="${tabindexOverrideBase + 0}"/>
+                    	readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry or canEditVendorAddressForPREQ) or
+                    	displayCreditMemoFields or (lockB2BEntry and (displayRequisitionFields or displayPurchaseOrderFields))}"
+                        tabindexOverride="${tabindexOverrideBase + 0}"/>
                 </td>
             	<th class="right">
             		<kul:htmlAttributeLabel attributeEntry="${documentAttributes.vendorCountryCode}" />
@@ -228,7 +233,7 @@ KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS]}"
                     <kul:htmlControlAttribute 
                     	attributeEntry="${documentAttributes.vendorCountryCode}" property="document.vendorCountryCode"
                     	extraReadOnlyProperty="document.vendorCountry.name" 
-                    	readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry) or
+                    	readOnly="${(readOnlyForPREQ) or not (fullEntryMode or amendmentEntry or canEditVendorAddressForPREQ) or
                     	displayCreditMemoFields or (lockB2BEntry and (displayRequisitionFields or 
                     	displayPurchaseOrderFields)) or not canEditVendorAddress}"
                     	tabindexOverride="${tabindexOverrideBase + 3}"/>
