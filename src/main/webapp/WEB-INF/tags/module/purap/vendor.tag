@@ -43,7 +43,7 @@
 KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS]}" />
 
 <%-- CU Customization: KFSPTS-38144 Add separate variable for PREQ vendor address editing. --%>
-<c:set var="canEditVendorAddressForPREQ" value="${not empty KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS]}" />
+<c:set var="canEditVendorAddressForPREQ" value="${displayPaymentRequestFields and not empty KualiForm.documentActions[PurapAuthorizationConstants.CAN_EDIT_VENDOR_ADDRESS]}" />
 
 <!--  this is a temporary workaround until release 3, where this is fixed more generally -->
 <c:set var="fullDocEntryCompleted" value="${(not empty KualiForm.editingMode['fullDocumentEntryCompleted'])}" />
