@@ -4,8 +4,10 @@ import edu.cornell.kfs.cemi.sys.batch.CemiCsvBatchInputFileType;
 
 public interface CemiCsvDataImportService {
 
-    void truncateDestinationTable(final CemiCsvBatchInputFileType batchInputFileType);
+    CemiCsvBatchInputFileType getBatchInputFileTypeForProcessing();
 
-    void importCsvData(final CemiCsvBatchInputFileType batchInputFileType);
+    void truncateDestinationTableFor(final CemiCsvBatchInputFileType batchInputFileType);
+
+    void importCsvDataFor(final CemiCsvBatchInputFileType batchInputFileType);
 
 }
