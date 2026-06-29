@@ -34,6 +34,7 @@
                  <value>createCemiSupplierExtractJob</value>
                  <value>createCemiRemitToSupplierExtractJob</value>
                  <value>createCemiOrderFromSupplierExtractJob</value>
+                 <value>importCemiLegacyDataJob</value>
             </list>
         </property>
         <property name="batchFileDirectories">
@@ -42,6 +43,7 @@
             <value>${staging.directory}/cemi</value>
             <value>${staging.directory}/cemi/module/cg/cemiAwardScheduleExtract</value>
             <value>${staging.directory}/cemi/pdp/cemiPaymentElectionExtract</value>
+            <value>${staging.directory}/cemi/pdp/cemiPaymentElectionExtract/importLegacyData</value>
             <value>${staging.directory}/cemi/vnd/cemiSupplierExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiOrderFromSupplierExtract</value>
@@ -61,6 +63,37 @@
           abstract="true"
           class="edu.cornell.kfs.cemi.sys.batch.service.impl.CemiFileAppenderServiceImpl"
           p:cemiFileAppenderOrmDao-ref="cemiFileAppenderOrmDao"/>
+
+    <bean id="cemiCsvDataImportDao" parent="cemiCsvDataImportDao-parentBean"/>
+    <bean id="cemiCsvDataImportDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.dataaccess.impl.CemiCsvDataImportDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"/>
+
+    <bean id="cemiCsvDataImportService" parent="cemiCsvDataImportService-parentBean"/>
+    <bean id="cemiCsvDataImportService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.batch.service.impl.CemiCsvDataImportServiceImpl"
+          p:cemiCsvDataImportDao-ref="cemiCsvDataImportDao"
+          p:batchInputFileService-ref="batchInputFileService"
+          p:parameterService-ref="parameterService"/>
+
+    <bean id="cemiCsvBatchInputFileType"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.batch.CemiCsvBatchInputFileType"/>
+
+    <bean id="importCemiLegacyDataJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="importCemiLegacyDataStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="importCemiLegacyDataStep"
+          class="edu.cornell.kfs.cemi.sys.batch.ImportCemiLegacyDataStep"
+          parent="step"
+          p:cemiCsvDataImportService-ref="cemiCsvDataImportService"/>
 
     <!-- Award Schedule -->
 
@@ -131,6 +164,17 @@
           abstract="true"
           class="edu.cornell.kfs.cemi.pdp.dataaccess.impl.CemiPaymentElectionOrmDaoOjbImpl"
           parent="platformAwareDao"/>
+
+    <bean id="cemiWorkdayEmployeeIdDataFileType" parent="cemiWorkdayEmployeeIdDataFileType-parentBean"/>
+    <bean id="cemiWorkdayEmployeeIdDataFileType-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/pdp/cemiPaymentElectionExtract/importLegacyData"
+          p:legacyDataDestinationTableName="CU_CEMI_LGCY_WRKDY_PYMNT_ELCTN_EMPLIDS_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.pdp.batch.WorkdayEmployeeIdCsvTableColumns"
+          p:hasHeaderRow="true"/>
+
+    <alias name="cemiWorkdayEmployeeIdDataFileType" alias="PaymentElection-WorkdayEmployeeIdFile"/>
 
     <bean id="cemiPaymentElectionExtractService" parent="cemiPaymentElectionExtractService-parentBean"/>
     <bean id="cemiPaymentElectionExtractService-parentBean"
