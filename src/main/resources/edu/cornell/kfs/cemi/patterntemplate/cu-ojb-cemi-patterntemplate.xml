@@ -1,0 +1,62 @@
+<descriptor-repository version="1.0">
+
+    <!-- This table will contain the same information that is placed in the extraction file.
+         
+         A table should exist for every CemiEXTRACTNAMEFileTABNAMERowBo required by the data extraction file.
+         Meaning: 
+            Award Schedule data extract file would need one table for this business object:
+                CemiAwardScheduleFileAwardScheduleRowBo
+            while the Supplier data extract file would require six tables for these business objects
+                CemiSupplierFileSupplierRowBo:
+                CemiSupplierFileAddressesRowBo
+                CemiSupplierFileEmailsRowBo
+                CemiSupplierFilePhonesRowBo
+                CemiSupplierFileBankAccountsRowBo
+                CemiSupplierFileChildrenRowBo
+         
+         Table name should be in the format of CU_CEMI_EXTR_XXX_XXX_TAB_YYY_YYY_T where 
+            XXX_XXX represents the data extract name
+            YYY_YYY represents a tab name in the mapping template for the extract file
+         
+         Table field descriptor items should follow this pattern:
+            First two descriptors should represent the standard CemiIndexedBusinessObjectBase attributes defined as the table's composite primary key:
+                JOB_RUN_ROW_INDEX NUMBER(14,0) NOT NULL from the SQL script would have values:
+                    name="jobRunRowIndex"
+                    column="JOB_RUN_ROW_INDEX"
+                    jdbc-type="BIGINT"
+                    primarykey="true"
+                    index="true
+                JOB_RUN_DATE VARCHAR2(20) NOT NULL from the SQL script would have values
+                    name="jobRunDateAsString"
+                    column="EXTR_FILE_RUNDATE"
+                    jdbc-type="VARCHAR"
+                    primarykey="true"
+                    index="true"
+            The remaining field-descriptors should exist for each attribute defined in CemiEXTRACTNAMEFileTABNAMERowBo where:
+                name = attibute name
+                column = define column name as either a standard KFS column name (for reference data) or have column name reflect attribute name
+                jdbc-type = VARCHAR
+            !!!!!VERY IMPORTANT!!!!!
+                For any data value that should be encrypted, ensure that the following IS present in that item's field-descriptor
+                    conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"
+         Ensure this OJB file is defined as a fully qualified value in:
+            File => resources/edu/cornell/kfs/cemi/cu-spring-cemi.xml
+            Bean => cemiModuleConfiguration-base-parentBean
+            Property list => databaseRepositoryFilePaths
+            
+         Create SQL script to build the phyical database table CU_CEMI_EXTR_XXX_XXX_TAB_XXX_XXX_T
+         That SQL script should be created in folder kfs of repository nonprod-sql. 
+    -->
+    <class-descriptor class="edu.cornell.kfs.cemi.patterntemplate.batch.businessobject.CemiEXTRACTNAMEFileTABNAMERowBo" table="CU_CEMI_EXTR_XXX_XXX_TAB_XXX_XXX_T">
+        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="anyKeyAttributes" column="ANY_KEY_ATTR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="neededToTrackDataRowValues" column="TRCK_ROW_VAL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="eachDataField" column="EACH_DATA_FLD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="fromTheMappingTemplateTab" column="FRM_TMPL_TAB" jdbc-type="VARCHAR"/>
+        <field-descriptor name="thatShouldBe" column="SHLD_BE" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+        <field-descriptor name="populatedByThis" column="POPULT_THIS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="businessObject" column="BUSNS_OBJ" jdbc-type="VARCHAR"/>
+    </class-descriptor>
+    
+</descriptor-repository>
