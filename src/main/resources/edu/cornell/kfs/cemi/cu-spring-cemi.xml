@@ -171,7 +171,7 @@
           parent="cemiCsvBatchInputFileType"
           p:directoryPath="${staging.directory}/cemi/pdp/cemiPaymentElectionExtract/importLegacyData"
           p:legacyDataDestinationTableName="CU_CEMI_LGCY_WRKDY_PYMNT_ELCTN_EMPLIDS_T"
-          p:legacyDataDestinationTableColumnsEnumClass="edu.cornell.kfs.cemi.pdp.batch.WorkdayEmployeeIdCsvTableColumns"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.pdp.batch.WorkdayEmployeeIdCsvTableColumns"
           p:hasHeaderRow="true"/>
 
     <alias name="cemiWorkdayEmployeeIdDataFileType" alias="PaymentElection-WorkdayEmployeeIdFile"/>

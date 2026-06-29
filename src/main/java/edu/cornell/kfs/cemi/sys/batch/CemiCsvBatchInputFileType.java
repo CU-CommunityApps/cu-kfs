@@ -96,13 +96,11 @@ public class CemiCsvBatchInputFileType extends BatchInputFileTypeBase implements
         this.legacyDataDestinationTableColumns = legacyDataDestinationTableColumns;
     }
 
-    public void setLegacyDataDestinationTableColumnsEnumClass(final Class<?> legacyDataDestinationTableColumnsEnumClass) {
-        Validate.notNull(legacyDataDestinationTableColumnsEnumClass,
-                "legacyDataDestinationTableColumnsEnumClass cannot be null");
-        Validate.isTrue(legacyDataDestinationTableColumnsEnumClass.isEnum(),
-                "legacyDataDestinationTableColumnsEnumClass must be an enum class");
-        final Object[] columnConstants = legacyDataDestinationTableColumnsEnumClass.getEnumConstants();
-        final List<String> columnNames = Arrays.stream(columnConstants)
+    public void setLegacyDataDestinationTableColumnsEnum(
+            final Class<? extends Enum<?>> legacyDataDestinationTableColumnsEnum) {
+        Validate.notNull(legacyDataDestinationTableColumnsEnum,
+                "legacyDataDestinationTableColumnsEnum cannot be null");
+        final List<String> columnNames = Arrays.stream(legacyDataDestinationTableColumnsEnum.getEnumConstants())
                 .map(Object::toString)
                 .collect(Collectors.toUnmodifiableList());
         setLegacyDataDestinationTableColumns(columnNames);

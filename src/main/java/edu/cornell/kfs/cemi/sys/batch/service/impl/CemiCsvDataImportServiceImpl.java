@@ -62,27 +62,14 @@ public class CemiCsvDataImportServiceImpl implements CemiCsvDataImportService {
         validateBatchInputFileTypeSetup(batchInputFileType);
 
         final String fileTypeName = batchInputFileType.getFileTypeName();
-        final List<String> inputFiles = batchInputFileService.listInputFileNamesWithDoneFile(batchInputFileType);
-        Validate.validState(!inputFiles.isEmpty(), "No input files found for %s", fileTypeName);
-        Validate.validState(inputFiles.size() == 1, "Found multiple input files for %s", fileTypeName);
-        final String fileName = inputFiles.get(0);
+        final String fileName = findInputFileToProcess(batchInputFileType);
         final String simpleFileName = CuBatchFileUtils.getFileNameWithoutPath(fileName);
 
         LOG.info("importCsvDataFor, Importing data for {} from file: {}", fileTypeName, simpleFileName);
         try (
             final CemiCsvReader csvReader = new CemiCsvReader(fileName);
         ) {
-            final Iterator<String[]> csvIterator = csvReader.iterator();
-            if (csvIterator.hasNext() && batchInputFileType.isHasHeaderRow()) {
-                LOG.info("importCsvDataFor, Skipping header row for file: {}", simpleFileName);
-                final String[] headerRow = csvIterator.next();
-                final int expectedColumnCount = batchInputFileType.getLegacyDataDestinationTableColumns().size();
-                Validate.validState(headerRow.length == expectedColumnCount,
-                        "File %s has the wrong number of headers; expected: %s, actual: %s",
-                        simpleFileName, expectedColumnCount, headerRow.length);
-            }
-            cemiCsvDataImportDao.storeCsvData(batchInputFileType.getLegacyDataDestinationTableName(),
-                    batchInputFileType.getLegacyDataDestinationTableColumns(), csvIterator);
+            processCsvContent(csvReader, batchInputFileType);
         } catch (final IOException e) {
             throw new UncheckedIOException(e);
         } finally {
@@ -100,6 +87,29 @@ public class CemiCsvDataImportServiceImpl implements CemiCsvDataImportService {
         Validate.isTrue(CollectionUtils.isNotEmpty(batchInputFileType.getLegacyDataDestinationTableColumns()),
                 "batchInputFileType cannot have a null or empty list of destination table columns");
         Validate.notBlank(batchInputFileType.getDirectoryPath(), "batchInputFileType cannot have a blank directory path");
+    }
+
+    private String findInputFileToProcess(final CemiCsvBatchInputFileType batchInputFileType) {
+        final String fileTypeName = batchInputFileType.getFileTypeName();
+        final List<String> inputFiles = batchInputFileService.listInputFileNamesWithDoneFile(batchInputFileType);
+        Validate.validState(!inputFiles.isEmpty(), "No input files found for %s", fileTypeName);
+        Validate.validState(inputFiles.size() == 1, "Found multiple input files for %s", fileTypeName);
+        return inputFiles.get(0);
+    }
+
+    private void processCsvContent(final CemiCsvReader csvReader, final CemiCsvBatchInputFileType batchInputFileType) {
+        final Iterator<String[]> csvIterator = csvReader.iterator();
+        if (csvIterator.hasNext() && batchInputFileType.isHasHeaderRow()) {
+            final String simpleFileName = csvReader.getInputFile().getName();
+            LOG.info("processCsvContent, Skipping header row for file: {}", simpleFileName);
+            final String[] headerRow = csvIterator.next();
+            final int expectedColumnCount = batchInputFileType.getLegacyDataDestinationTableColumns().size();
+            Validate.validState(headerRow.length == expectedColumnCount,
+                    "File %s has the wrong number of headers; expected: %s, actual: %s",
+                    simpleFileName, expectedColumnCount, headerRow.length);
+        }
+        cemiCsvDataImportDao.storeCsvData(batchInputFileType.getLegacyDataDestinationTableName(),
+                batchInputFileType.getLegacyDataDestinationTableColumns(), csvIterator);
     }
 
     private void removeDoneFileFor(final String csvFileName) {

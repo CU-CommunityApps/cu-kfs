@@ -37,9 +37,43 @@ public class CemiCsvDataImportDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBase
         final CuSqlQuery query = createBatchDataInsertionQuery(
                 legacyDataDestinationTableName, legacyDataDestinationTableColumns);
         final int expectedRowLength = legacyDataDestinationTableColumns.size();
+
+        LOG.info("storeCsvData, Storing CSV data in table: {}", legacyDataDestinationTableName);
+        final int rowCount = storeCsvDataInBatches(csvIterator, query, expectedRowLength);
+        LOG.info("storeCsvData, Finished storing {} CSV data rows in table: {}", rowCount, legacyDataDestinationTableName);
+    }
+
+    private void validateTableName(final String tableName) {
+        Validate.validState(CemiUtils.valueOnlyContainsWordCharacters(tableName),
+                "Input File Type has an invalid non-word-characters table name: %s", tableName);
+    }
+
+    private void validateColumnNames(final String tableName, final List<String> columnNames) {
+        int index = 0;
+        for (final String columnName : columnNames) {
+            Validate.validState(CemiUtils.valueOnlyContainsWordCharacters(columnName),
+                    "Column name at index %s for table %s contains non-word characters",
+                    index, tableName);
+            index++;
+        }
+    }
+
+    private CuSqlQuery createBatchDataInsertionQuery(final String tableName, final List<String> columnNames) {
+        return new CuSqlChunk()
+                .append("INSERT INTO KFS.")
+                .append(tableName)
+                .append(" (")
+                .append(CemiCuSqlChunk.asListingOfColumnNames(columnNames))
+                .append(") VALUES (")
+                .append(CemiCuSqlChunk.asListingOfStringArrayValuesForBatchUpdate(columnNames.size()))
+                .append(")")
+                .toQuery();
+    }
+
+    private int storeCsvDataInBatches(final Iterator<String[]> csvIterator, final CuSqlQuery query,
+            final int expectedRowLength) {
         final List<String[]> batchedRows = new ArrayList<>();
         int rowNumber = 0;
-        LOG.info("storeCsvData, Storing CSV data in table: {}", legacyDataDestinationTableName);
 
         while (csvIterator.hasNext()) {
             rowNumber++;
@@ -56,36 +90,7 @@ public class CemiCsvDataImportDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBase
             executeBatchUpdate(query, batchedRows);
         }
 
-        LOG.info("storeCsvData, Finished storing {} CSV data rows in table: {}", rowNumber, legacyDataDestinationTableName);
-    }
-
-    private void validateTableName(final String tableName) {
-        Validate.validState(CemiUtils.valueOnlyContainsWordCharacters(tableName),
-                "Input File Type has an invalid non-word-characters table name: %s", tableName);
-    }
-
-    private List<String> validateColumnNames(final String tableName, final List<String> columnNames) {
-        int index = 0;
-        for (final String columnName : columnNames) {
-            Validate.validState(CemiUtils.valueOnlyContainsWordCharacters(columnName),
-                    "Column name at index %s for table %s contains non-word characters",
-                    index, tableName);
-            index++;
-        }
-
-        return columnNames;
-    }
-
-    private CuSqlQuery createBatchDataInsertionQuery(final String tableName, final List<String> columnNames) {
-        return new CuSqlChunk()
-                .append("INSERT INTO KFS.")
-                .append(tableName)
-                .append(" (")
-                .append(CemiCuSqlChunk.asListingOfColumnNames(columnNames))
-                .append(") VALUES (")
-                .append(CemiCuSqlChunk.asListingOfStringArrayValuesForBatchUpdate(columnNames.size()))
-                .append(")")
-                .toQuery();
+        return rowNumber;
     }
 
     private void validateRowLength(final int rowNumber, final int expectedRowLength, final String[] csvRow) {
