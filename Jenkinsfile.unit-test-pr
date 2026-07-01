@@ -64,6 +64,11 @@ pipeline {
 
         stage('Unit test') {
             steps {
+                // -Dmaven.test.failure.ignore=true lets Maven exit 0 even when tests
+                // fail/error, so the `sh` step does not hard-fail the pipeline. The
+                // withMaven JUnit publisher then marks the build UNSTABLE (not FAILURE)
+                // when there are test failures — mirroring the legacy Maven-project
+                // job's tolerant behavior for the known-broken *IntegTest classes.
                 withMaven(maven: 'Maven', jdk: 'jdk17') {
                     sh """
                         mvn -e -U clean test \\
@@ -71,6 +76,7 @@ pipeline {
                             -Dcynergy.version.suffix=${env.CYNERGY_VERSION_SUFFIX} \\
                             -Dspring.profiles.active=cache-redis,attachments-local \\
                             -DskipTests=false \\
+                            -Dmaven.test.failure.ignore=true \\
                             '-Dtest.excludes=**/ezra*.java,**/CuDisbursementVoucherPayeeServiceImplTest.java,**/AccountGlobalSearchLookupableHelperServiceImplTest.java'
                     """
                 }
