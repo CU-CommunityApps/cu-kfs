@@ -38,7 +38,6 @@
         <httpcore.version>5.2.5</httpcore.version>
         <jackson.version>2.22.0</jackson.version>
         <jackson-annotations.version>2.22</jackson-annotations.version>
-
         <jakarta.el.el-api.version>3.0.3</jakarta.el.el-api.version>
         <javassist.version>3.29.2-GA</javassist.version>
         <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
