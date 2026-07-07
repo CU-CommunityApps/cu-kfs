@@ -41,9 +41,10 @@
           <list merge="true">
             <value>${reports.directory}/cemi</value>
             <value>${staging.directory}/cemi</value>
+            <value>${staging.directory}/cemi/legacy</value>
+            <value>${staging.directory}/cemi/legacy/workday/employee</value>
             <value>${staging.directory}/cemi/module/cg/cemiAwardScheduleExtract</value>
             <value>${staging.directory}/cemi/pdp/cemiPaymentElectionExtract</value>
-            <value>${staging.directory}/cemi/pdp/cemiPaymentElectionExtract/importLegacyData</value>
             <value>${staging.directory}/cemi/vnd/cemiSupplierExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiOrderFromSupplierExtract</value>
@@ -169,12 +170,14 @@
     <bean id="cemiWorkdayEmployeeIdDataFileType-parentBean"
           abstract="true"
           parent="cemiCsvBatchInputFileType"
-          p:directoryPath="${staging.directory}/cemi/pdp/cemiPaymentElectionExtract/importLegacyData"
+          p:directoryPath="${staging.directory}/cemi/legacy/workday/employee"
           p:legacyDataDestinationTableName="CU_CEMI_LGCY_WRKDY_PYMNT_ELCTN_EMPLIDS_T"
           p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.pdp.batch.WorkdayEmployeeIdCsvTableColumns"
           p:hasHeaderRow="true"/>
 
     <alias name="cemiWorkdayEmployeeIdDataFileType" alias="PaymentElection-WorkdayEmployeeIdFile"/>
+
+    <alias name="cemiWorkdayEmployeeIdDataFileType" alias="ExampleExtract-TestFile"/>
 
     <bean id="cemiPaymentElectionExtractService" parent="cemiPaymentElectionExtractService-parentBean"/>
     <bean id="cemiPaymentElectionExtractService-parentBean"
