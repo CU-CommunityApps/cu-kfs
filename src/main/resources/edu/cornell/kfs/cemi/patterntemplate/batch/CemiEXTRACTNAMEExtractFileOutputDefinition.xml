@@ -8,14 +8,13 @@
     There are two main types of "field" elements: "STRING" AND "STATIC"
     For simplicity, only the "STRING" "field" "type" will be used.
 
-    NOTE: This XML file doesn't keep track of POJO classes; it only needs to know POJO property names/paths.
     =============================================================
     
     Pattern Template Instructions:
         Define the root element in the file as <cemiOutputDefinition>
         Define a child <sheet> element for every tab in the spreadsheet where the sheet attribute values are:
             name = exact name of the tab in the spreadsheet
-            num-header-rows = 5 or 6 depending on whether the Huron mapping template is an IRB template (5) or CloverDX template (6)
+            num-header-rows = 5 or 6 depending on whether the Huron mapping template is an EIB template (5) or CloverDX template (6)
             start-column-index = 1
             business-object-class = fully qualified business object class holding the data for a single row on that sheet
 

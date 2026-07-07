@@ -1,0 +1,4 @@
+-- At a minimum this "create-tables" script file needs to hold the table definitions for:
+--    (1) Every sheet tab defined in the spreadsheet.
+--    (2) An association table that links the legacy object keys to the new Workday object id in the file.
+--    (3) Any helper table needed to obtaining the information.

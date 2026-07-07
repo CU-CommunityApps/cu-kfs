@@ -12,7 +12,7 @@ import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBa
  *     Start with the clean Huron mapping template spreadsheet.
  *     Create a business object for each tab in the spreadsheet where:
  *         (1) The name of the class follows the convention of
- *                  CemiDATAEXTRACTNAMEFileEXTRACTTABNAMERowBo
+ *                  Cemi{EXTRACTNAME}File{TABNAME}RowBo
  *                  
  *         (2) It should extend abstract class edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBase
  *             (a) Where that class defines the following attributes that need to be assigned values during processing: 
@@ -40,8 +40,9 @@ import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBa
  *
  * Each business object created will require:
  *  (1) A corresponding OJB table definition in file resources/edu/cornell/kfs/cemi/patterntemplate/batch/cu-ojb-cemi-patterntemplate.xml
- *  (2) A corresponding nonprod-sql database table SQL creation script. Details are in that example file
- *  (3) Will be refernced in 
+ *  (2) A corresponding nonprod-sql database table SQL creation script. Details are in that example file.
+ *  (3) Will be referenced in the Cemi{EXTRACTNAME}ExtractFileOutputDefinition.xml
+ *  (4) Will be populated by a corresponding business object factory class. Detail are in that example file.
  *  
  */
 
@@ -59,7 +60,7 @@ public class CemiEXTRACTNAMEFileTABNAMERowBo extends CemiIndexedBusinessObjectBa
     private String businessObject;
     
     
-    public CemiDATAEXTRACTNAMEFileEXTRACTTABNAMERowBo (CemiAwardSchedule cemiAwardScheduleDataRow, String proposalNumberForScheduleRow,
+    public CemiEXTRACTNAMEFileTABNAMERowBo (CemiAwardSchedule cemiAwardScheduleDataRow, String proposalNumberForScheduleRow,
             LocalDateTime jobRunDate, CemiAwardScheduleBoSequence awardScheduleTabTableSequence) {
         
         // These values are to make the row that would appear in an extract spreadsheet seachable as well as
