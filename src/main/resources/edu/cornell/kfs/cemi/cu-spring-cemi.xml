@@ -53,6 +53,24 @@
         </property>
     </bean>
 
+    <!--
+        Added CEMI datasource bean that's needed by the CEMI data extract batch jobs.
+        This is a modified copy of the "dataSource" bean from base code.
+     -->
+    <bean class="org.kuali.kfs.core.framework.persistence.jdbc.datasource.XAPoolDataSource"
+          depends-on="liquibase"
+          id="cemiDataSource"
+          p:driverClassName="${kfs.datasource.driver.name}"
+          p:maxSize="${kfs.datasource.pool.maxSize}"
+          p:maxWait="${kfs.datasource.pool.maxWait}"
+          p:minSize="${kfs.datasource.pool.minSize}"
+          p:password="${cemi.datasource.password}"
+          p:transactionManager-ref="jtaTransactionManager"
+          p:url="${cemi.datasource.url}"
+          p:username="${cemi.datasource.username}"
+          p:validationQuery="${kfs.datasource.validating.query}"
+    />
+
     <bean id="cemiFileAppenderOrmDao" parent="cemiFileAppenderOrmDao-parentBean"/>
     <bean id="cemiFileAppenderOrmDao-parentBean"
           abstract="true"
@@ -200,6 +218,7 @@
           abstract="true"
           class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiVendorDaoJdbcImpl"
           parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"
           p:dateTimeService-ref="dateTimeService"/>
 
     <bean id="cemiVendorOrmDao" parent="cemiVendorOrmDao-parentBean"/>

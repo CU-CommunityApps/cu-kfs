@@ -28,7 +28,7 @@ public class CemiVendorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc im
     @Override
     public void clearExistingListOfBaseVendorData() {
         LOG.info("clearExistingListOfBaseVendorData was called.");
-        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.CU_CEMI_VNDR_BASE_DATA_T");
+        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_VNDR_BASE_DATA_T");
         executeUpdate(query);
         LOG.info("clearExistingListOfBaseVendorData finished truncating table.");
     }
@@ -36,7 +36,7 @@ public class CemiVendorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc im
     @Override
     public void clearExistingListOfExtractableVendorIds() {
         LOG.info("clearExistingListOfExtractableVendorIds was called.");
-        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.CU_CEMI_SPLR_EXTR_VNDR_T");
+        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_SPLR_EXTR_VNDR_T");
         executeUpdate(query);
         LOG.info("clearExistingListOfExtractableVendorIds finished truncating table.");
     }
@@ -56,7 +56,7 @@ public class CemiVendorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc im
                 LocalDate.of(currentDate.getYear() - 1, 9, 1), LocalTime.of(0, 0, 0, 0), easternTimeZone);
 
         final CuSqlQuery query = new CuSqlChunk()
-                .append("UPDATE KFS.CU_CEMI_QUERY_SETTINGS_T ")
+                .append("UPDATE CEMI.CU_CEMI_QUERY_SETTINGS_T ")
                 .append("SET DATETIME_RANGE_FROM = ").appendAsParameter(Types.TIMESTAMP, fromDateTime)
                 .append(", DATETIME_RANGE_TO = ").appendAsParameter(Types.TIMESTAMP, toDateTime)
                 .append(", START_OF_YEAR = ").appendAsParameter(Types.TIMESTAMP, startOfYear)
@@ -75,11 +75,11 @@ public class CemiVendorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc im
     @Override
     public void prepareBaseVendorDataNeededForMainVendorIdQuery() {
         final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO KFS.CU_CEMI_VNDR_BASE_DATA_T ")
+                .append("INSERT INTO CEMI.CU_CEMI_VNDR_BASE_DATA_T ")
                 .append("(VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, PAYEE_ID, VNDR_PARENT_IND, LAST_UPDT_TS) ")
                 .append("SELECT ")
                 .append("VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, PAYEE_ID, VNDR_PARENT_IND, LAST_UPDT_TS ")
-                .append("FROM KFS.CU_CEMI_VNDR_BASE_DATA_SRC_V")
+                .append("FROM CEMI.CU_CEMI_VNDR_BASE_DATA_SRC_V")
                 .toQuery();
 
         final int numRowsInserted = executeUpdate(query);
@@ -89,9 +89,9 @@ public class CemiVendorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc im
     @Override
     public void queryAndStoreVendorIdsForSupplierExtract() {
         final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO KFS.CU_CEMI_SPLR_EXTR_VNDR_T (VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID) ")
+                .append("INSERT INTO CEMI.CU_CEMI_SPLR_EXTR_VNDR_T (VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID) ")
                 .append("SELECT VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID ")
-                .append("FROM KFS.PUR_CEMI_VNDR_EXTRACT_V")
+                .append("FROM CEMI.PUR_CEMI_VNDR_EXTRACT_V")
                 .toQuery();
 
         final int numRowsInserted = executeUpdate(query);
@@ -106,7 +106,7 @@ public class CemiVendorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc im
         String jobRunDateAsString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
 
         final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO KFS.CU_CEMI_MAPPING_SPLR_VNDR_EXTR_FILE_T ")
+                .append("INSERT INTO CEMI.CU_CEMI_MAPPING_SPLR_VNDR_EXTR_FILE_T ")
                 .append("(WKDY_SPLR_ID, VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, EXTR_FILE_RUNDATE) ")
                 .append("VALUES (").appendAsParameter(Types.VARCHAR, supplierId)
                 .append(", ").appendAsParameter(Types.INTEGER, vendorHeaderGeneratedIdentifier)

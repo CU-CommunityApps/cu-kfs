@@ -2,7 +2,7 @@
 
     <!-- Supplier Extract -->
 
-    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo"
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo" schema="CEMI"
                       table="CU_CEMI_EXTR_SUPPLIER_TAB_SUPPLIER_T">
         <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
@@ -59,7 +59,7 @@
         <field-descriptor name="alternateNameUsageBusinessEntity2" column="ALTERNATE_NAME_USAGE_BUSINESS_ENTITY_2" jdbc-type="VARCHAR"/>
     </class-descriptor>
 
-    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo"
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo" schema="CEMI"
                       table="CU_CEMI_EXTR_SUPPLIER_TAB_ADDRESSES_T">
         <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
@@ -84,7 +84,7 @@
         <field-descriptor name="comments" column="COMMENTS" jdbc-type="VARCHAR"/>
     </class-descriptor>
 
-    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierEmailBo"
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierEmailBo" schema="CEMI"
                       table="CU_CEMI_EXTR_SUPPLIER_TAB_EMAILS_T">
         <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
