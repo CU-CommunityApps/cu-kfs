@@ -177,8 +177,6 @@
 
     <alias name="cemiWorkdayEmployeeIdDataFileType" alias="PaymentElection-WorkdayEmployeeIdFile"/>
 
-    <alias name="cemiWorkdayEmployeeIdDataFileType" alias="ExampleExtract-TestFile"/>
-
     <bean id="cemiPaymentElectionExtractService" parent="cemiPaymentElectionExtractService-parentBean"/>
     <bean id="cemiPaymentElectionExtractService-parentBean"
           abstract="true"
