@@ -31,5 +31,7 @@ public final class CemiBaseConstants {
     
     // Date Formats
     public static final String DATE_FORMAT_yyyy_MM_dd = "yyyy-MM-dd";
-    
+
+    public static final int BULK_DATA_BATCH_SIZE = 200;
+
 }
