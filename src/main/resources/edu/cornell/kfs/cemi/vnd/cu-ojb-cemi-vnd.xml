@@ -126,7 +126,7 @@
 
     <!-- Remit To Supplier Extract -->
 
-    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierBo"
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierBo" schema="CEMI"
                       table="CU_CEMI_EXTR_RMT_TO_SUPP_TAB_RMT_TO_SUPP_T">
         <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
@@ -150,7 +150,7 @@
 
     <!-- Order From Supplier Extract -->
 
-    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiOrderFromSupplierBo"
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiOrderFromSupplierBo" schema="CEMI"
                       table="CU_CEMI_EXTR_ORD_FRM_SUPP_TAB_ORD_FRM_T">
         <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>

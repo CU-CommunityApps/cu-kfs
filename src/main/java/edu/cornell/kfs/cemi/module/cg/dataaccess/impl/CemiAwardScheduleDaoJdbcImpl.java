@@ -22,7 +22,7 @@ public class CemiAwardScheduleDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBase
     @Override
     public void clearExistingListOfExtractableProposalNumbers() {
         LOG.info("clearExistingListOfExtractableProposalNumbers was called.");
-        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.CU_CEMI_AWD_SCHDL_EXTR_AWD_T");
+        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_AWD_SCHDL_EXTR_AWD_T");
         executeUpdate(query);
         LOG.info("clearExistingListOfExtractableProposalNumbers finished truncating table.");
     }
@@ -30,9 +30,9 @@ public class CemiAwardScheduleDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBase
     @Override
     public void queryAndStoreAwardProposalNumbersForAwardScheduleExtract() {
         final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO KFS.CU_CEMI_AWD_SCHDL_EXTR_AWD_T (CGPRPSL_NBR) ")
+                .append("INSERT INTO CEMI.CU_CEMI_AWD_SCHDL_EXTR_AWD_T (CGPRPSL_NBR) ")
                 .append("SELECT CGPRPSL_NBR ")
-                .append("FROM KFS.CG_CEMI_AWD_SCHDL_EXTR_V")
+                .append("FROM CEMI.CG_CEMI_AWD_SCHDL_EXTR_V")
                 .toQuery();
 
         final int numRowsInserted = executeUpdate(query);
@@ -46,7 +46,7 @@ public class CemiAwardScheduleDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBase
         String jobRunDateAsString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
 
         final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO KFS.CU_CEMI_MAPPING_AWD_SCHDL_EXTR_FILE_T ")
+                .append("INSERT INTO CEMI.CU_CEMI_MAPPING_AWD_SCHDL_EXTR_FILE_T ")
                 .append("(WKDY_SPRDSHT_KEY_ID, CGPRPSL_NBR, EXTR_FILE_RUNDATE) ")
                 .append("VALUES (").appendAsParameter(Types.VARCHAR, spreadsheetKey)
                 .append(", ").appendAsParameter(Types.VARCHAR, awardProposalNumber)

@@ -129,6 +129,7 @@
           abstract="true"
           class="edu.cornell.kfs.cemi.module.cg.dataaccess.impl.CemiAwardScheduleDaoJdbcImpl"
           parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"
           p:dateTimeService-ref="dateTimeService"/>
 
     <bean id="cemiAwardScheduleOrmDao" parent="cemiAwardScheduleOrmDao-parentBean"/>
@@ -176,6 +177,7 @@
           abstract="true"
           class="edu.cornell.kfs.cemi.pdp.dataaccess.impl.CemiPaymentElectionDaoJdbcImpl"
           parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"
           p:dateTimeService-ref="dateTimeService"/>
 
     <bean id="cemiPaymentElectionOrmDao" parent="cemiPaymentElectionOrmDao-parentBean"/>
@@ -289,7 +291,8 @@
     <bean id="cemiRemitToSupplierDao-parentBean"
           abstract="true"
           class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiRemitToSupplierDaoJdbcImpl"
-          parent="platformAwareDaoJdbc"/>
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
 
     <bean id="cemiRemitToSupplierOrmDao" parent="cemiRemitToSupplierOrmDao-parentBean"/>
     <bean id="cemiRemitToSupplierOrmDao-parentBean"
@@ -331,7 +334,8 @@
     <bean id="cemiOrderFromSupplierDao-parentBean"
           abstract="true"
           class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiOrderFromSupplierDaoJdbcImpl"
-          parent="platformAwareDaoJdbc"/>
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
 
     <bean id="cemiOrderFromSupplierOrmDao" parent="cemiOrderFromSupplierOrmDao-parentBean"/>
     <bean id="cemiOrderFromSupplierOrmDao-parentBean"

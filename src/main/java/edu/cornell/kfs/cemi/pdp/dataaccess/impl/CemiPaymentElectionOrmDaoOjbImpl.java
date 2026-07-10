@@ -24,11 +24,11 @@ public class CemiPaymentElectionOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb im
             // The values were chosen for the WHERE clause to restrict the result set to roughly 1000 rows as
             // well as provide both old and new data that had a variety of attributes for local verification. 
             payeeAchAcountIdsCondition = "(A0.ACH_ACCT_GNRTD_ID) IN ("
-                    + "SELECT ACH_ACCT_GNRTD_ID FROM KFS.CU_CEMI_PYMNT_ELCTN_EXTR_ACH_ACCT_T"
+                    + "SELECT ACH_ACCT_GNRTD_ID FROM CEMI.CU_CEMI_PYMNT_ELCTN_EXTR_ACH_ACCT_T"
                     + " WHERE ACH_ACCT_GNRTD_ID <= 10003683 OR ACH_ACCT_GNRTD_ID >= 10205000)";
         } else {
             payeeAchAcountIdsCondition = "(A0.ACH_ACCT_GNRTD_ID) IN ("
-                    + "SELECT ACH_ACCT_GNRTD_ID FROM KFS.CU_CEMI_PYMNT_ELCTN_EXTR_ACH_ACCT_T)";
+                    + "SELECT ACH_ACCT_GNRTD_ID FROM CEMI.CU_CEMI_PYMNT_ELCTN_EXTR_ACH_ACCT_T)";
         }
         final Criteria criteria = new Criteria();
         criteria.addSql(payeeAchAcountIdsCondition);
