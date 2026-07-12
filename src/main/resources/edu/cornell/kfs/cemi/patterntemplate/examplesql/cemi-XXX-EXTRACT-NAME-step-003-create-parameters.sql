@@ -1,4 +1,6 @@
 -- At a minimum this "create-parameters" script file needs to define the two system parameters listed below.
+-- The constants defined in edu.cornell.kfs.cemi.sys.CemiBaseParameterConstants correlate to the two system
+-- parameter names being defined by SQL script for the batch job step being coded.
 --    Replace {EXTRACTNAME} in both parameter definitions below for the data extraction being created.
 INSERT INTO KFS.KRCR_PARM_T (
     NMSPC_CD,
@@ -14,7 +16,7 @@ INSERT INTO KFS.KRCR_PARM_T (
 VALUES (
     'KFS-CEMI',
     'CreateCemi{EXTRACTNAME}ExtractStep',
-    'COPY_CEMI_{EXTRACT_NAME}_FILE_TO_OUTBOUND_FOLDER',
+    'COPY_CEMI_FILE_TO_OUTBOUND_FOLDER',
     SYS_GUID(),
     1,
     'CONFG',

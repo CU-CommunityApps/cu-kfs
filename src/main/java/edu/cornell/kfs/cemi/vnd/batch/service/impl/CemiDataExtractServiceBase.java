@@ -1,4 +1,4 @@
-package edu.cornell.kfs.cemi.sys.batch.service.impl;
+package edu.cornell.kfs.cemi.vnd.batch.service.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,11 +20,11 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants.FileExtensions;
-import edu.cornell.kfs.cemi.sys.CemiBaseParameterConstants;
 import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
 import edu.cornell.kfs.cemi.sys.batch.service.CemiFileAppenderService;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
+import edu.cornell.kfs.cemi.vnd.CemiVendorParameterConstants;
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -60,7 +60,7 @@ public abstract class CemiDataExtractServiceBase {
     protected boolean isCemiSensitiveDataSetToUnmask() {
         String maskingParameterValue = parameterService.getParameterValueAsString(
                 getComponentClassForDataMaskingParameter(),
-                CemiBaseParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
+                CemiVendorParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
         return Strings.CI.equals(maskingParameterValue, CemiBaseConstants.UNMASK);
     }
 
@@ -109,12 +109,6 @@ public abstract class CemiDataExtractServiceBase {
             writer.commit();
         }
     }
-    
-    protected boolean shouldCopyDataFileToOutboundDirectory() {
-        return parameterService.getParameterValueAsBoolean(
-                getComponentClassForCopyFileToOutboundFolderParameter(),
-                CemiBaseParameterConstants.COPY_CEMI_FILE_TO_OUTBOUND_FOLDER);
-    }
 
     protected void copyDataExtractFileToOutboundDirectory(final File sourceFile, final File targetFile) {
         try {
@@ -128,15 +122,13 @@ public abstract class CemiDataExtractServiceBase {
     }
 
     protected abstract Class<?> getComponentClassForDataMaskingParameter();
-    
-    protected abstract Class<?> getComponentClassForCopyFileToOutboundFolderParameter();
 
     protected abstract String getOutputDefinitionFilePathSuffix();
 
     protected abstract String getTemplateWorkbookFilePath();
 
-    // All of the items below require defining Spring beans for concrete class Cemi{EXTRACTNAME}ExtractServiceImpl.
-    // Refer to the PatternTemplateReadMe.txt file for more specifics.
+    protected abstract boolean shouldCopyDataFileToOutboundDirectory();
+
     public void setDataFileCreationDirectory(final String dataFileCreationDirectory) {
         this.dataFileCreationDirectory = dataFileCreationDirectory;
     }

@@ -24,34 +24,35 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.cornell.kfs.cemi.patterntemplate.CemiEXTRACTNAMEConstants;
+import edu.cornell.kfs.cemi.patterntemplate.batch.CreateCemiEXTRACTNAMEExtractStep;
+import edu.cornell.kfs.cemi.patterntemplate.batch.businessobject.CemiEXTRACTNAMEFileTABNAMERowBo;
 import edu.cornell.kfs.cemi.patterntemplate.batch.service.CemiEXTRACTNAMEExtractService;
+import edu.cornell.kfs.cemi.patterntemplate.dataaccess.CemiEXTRACTNAMEDao;
+import edu.cornell.kfs.cemi.patterntemplate.dataaccess.CemiEXTRACTNAMEOrmDao;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.CemiBaseParameterConstants;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants.FileExtensions;
 import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
-import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
-import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
-import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.core.api.util.CuCoreUtilities;
+import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiDataExtractServiceBase;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
-public class CemiEXTRACTNAMEExtractServiceImpl implements CemiEXTRACTNAMEExtractService {
-    
+// {EXTRACTNAME} is throughout this file and needs to be replaced with the correct value for the
+// data extraction being created.
+//
+// Class CemiBaseExtractServiceImpl should not be modified/customized when using this pattern.
+// First consult with the rest of the team and only then should you override any method in 
+// base class which you believe requries specialization.
+
+public class CemiEXTRACTNAMEExtractServiceImpl extends CemiDataExtractServiceBase implements CemiEXTRACTNAMEExtractService {
     private static final Logger LOG = LogManager.getLogger();
 
-    private final Environment environment;
-    
-    private String awardScheduleFileCreationDirectory;
-    private String awardScheduleFileOutboundDirectory;
-    private CemiAwardScheduleOrmDao cemiAwardScheduleOrmDao;
-    private CemiEXTRACTNAMEDao getCemiEXTRACTNAMEDao;
-    private CemiOutputDefinitionFileType cemiOutputDefinitionFileType;
-    private BusinessObjectService businessObjectService;
-    private ParameterService parameterService;
+    private CemiEXTRACTNAMEOrmDao cemiEXTRACTNAMEOrmDao;
+    private CemiEXTRACTNAMEDao cemiEXTRACTNAMEDao;
     private DateTimeService dateTimeService;
     
     public CemiEXTRACTNAMEExtractServiceImpl(final Environment environment) {
-        this.environment = environment;
+        super(environment);
     }
     
     // This routine should clear and/or reset all values so that the batch job extraction runs cleanly.
@@ -60,170 +61,128 @@ public class CemiEXTRACTNAMEExtractServiceImpl implements CemiEXTRACTNAMEExtract
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void resetState(String dataExtractName) {
-        LOG.info("resetState, Deleting the list keys representing extractable business objects for {} from the previous run (if present)...", dataExtractName);
+        LOG.info("resetState, Deleting the list keys representing extractable business objects for {} "
+                + "from the previous run (if present)...", dataExtractName);
         getCemiEXTRACTNAMEDao().clearAnyExistingInScopeBusinessObjectKeysFromPreviousExecution();
     }
     
+    // This routine will utilize database atrifacts (tables, views, etc) to obtain the population of data defined
+    // to be in scope for the data extraction.
+    //
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void captureInScopeBusinessObjectKeysToProcessingTable(String dataExtractName) {
-        LOG.info("captureInScopeBusinessObjectKeysToProcessingTable, Querying and storing the list of keys representing the extractable business objects for {}...", dataExtractName);
+        LOG.info("captureInScopeBusinessObjectKeysToProcessingTable, Querying and storing the list of keys "
+                + "representing the extractable business objects for {}...", dataExtractName);
         getCemiEXTRACTNAMEDao().queryAndStoreInScopeBusinessObjectKeysForDataExtract(CemiEXTRACTNAMEConstants.CEMI_IN_SCOPE_BUSINESS_OBJECT_NAME);
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public void generateIntermediateAwardScheduleExtractData(final LocalDateTime jobRunDate) {
-        LOG.info("generateIntermediateAwardScheduleExtractData, Generating data rows for Award Schedule spreadsheet "
-                + "and placing in intermediate storage...");
+    public void generateIntermediateExtractData(String dataExtractName, final LocalDateTime jobRunDate) {
+        LOG.info("generateIntermediateExtractData, Generating data rows for {} spreadsheet "
+                + "and placing in intermediate storage...", dataExtractName);
         try {
-            final CemiOutputDefinition outputDefinition = getOutputDefinitionForAwardScheduleExtract();
-            generateAwardScheduleExtractData(outputDefinition, jobRunDate);
+            generateEXTRACTNAMEExtractData(jobRunDate);
         } catch (final Exception e) {
-            LOG.error("generateIntermediateAwardScheduleExtractData, Creation of Award Schedule Extract data failed", e);
+            LOG.error("generateIntermediateExtractData, Creation of {} Extract data failed", dataExtractName, e);
             throw new RuntimeException(e);
         }
     }
 
-    private void generateAwardScheduleExtractData(final CemiOutputDefinition outputDefinition,
-            final LocalDateTime jobRunDate) throws IOException {
+    //THIS STILL NEED WORK TRYING TO RECONCILE AWARD SCHEDULE csv with table population.
+    // Actual KFS classes should be used wherever CemiEXTRACTNAMEOrmDao.LEGACYOBJECT is used.
+    // That class is a pattern template only class created and required to get the pattern template code to compile.
+    private void generateEXTRACTNAMEExtractData(final LocalDateTime jobRunDate) throws IOException {
         try (
-            // Replace this builder with a temp table implementation when ready.
-            final CemiAwardScheduleDataBuilderCsvImpl dataBuilder = new CemiAwardScheduleDataBuilderCsvImpl(
-                    getOutputDefinitionForAwardScheduleExtract(), getCemiAwardScheduleDao(), getDateTimeService(),
-                    getBusinessObjectService(), jobRunDate, getAwardScheduleFileCreationDirectory(), shouldMaskCemiSensitiveData());
-            final Stream<Award> awards = getCemiAwardScheduleOrmDao().getAwardsForCemiAwardScheduleExtractAsCloseableStream();
-        ) {
-            final Iterator<Award> awardsIterator = awards.iterator();
-            dataBuilder.writeAwardScheduleDataToIntermediateStorage(awardsIterator, jobRunDate);
-        }
+                final Stream<CemiEXTRACTNAMEOrmDao.LEGACYOBJECT> legacyObjectForEachRow = cemiEXTRACTNAMEOrmDao
+                        .getLEGACYOBJECTForCemiEXTRACTNAMEExtractAsCloseableStream();
+            ) {
+                final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
+                final String supplierJobRunDate = getSupplierJobRunDate();
+                final CemiEXTRACTNAMEDataBuilderDefaultImpl dataBuilder = new CemiEXTRACTNAMEDataBuilderDefaultImpl(
+                        businessObjectService, jobRunDateString, cemiRemitToSupplierOrmDao, supplierJobRunDate,
+                        shouldMaskCemiSensitiveData());
+                final Iterator<CemiSupplierAddressBo> addressesIterator = addresses.iterator();
+                dataBuilder.writeRemitToSupplierDataToIntermediateStorage(addressesIterator);
+            }
+//        try (
+//            // Replace this builder with a temp table implementation when ready.
+//            final CemiEXTRACTNAMEDataBuilderDefaultImpl dataBuilder = new CemiEXTRACTNAMEDataBuilderDefaultImpl(
+//                    getOutputDefinitionForAwardScheduleExtract(), getCemiEXTRACTNAMEDao(), getDateTimeService(),
+//                    getBusinessObjectService(), jobRunDate, getEXTRACTNAMEFileCreationDirectory(), super.shouldMaskCemiSensitiveData());
+//            final Stream<Award> awards = getCemiAwardScheduleOrmDao().getAwardsForCemiAwardScheduleExtractAsCloseableStream();
+//        ) {
+//            final Iterator<Award> awardsIterator = awards.iterator();
+//            dataBuilder.writeAwardScheduleDataToIntermediateStorage(awardsIterator, jobRunDate);
+//        }
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public void generateAwardScheduleExtractFile(final LocalDateTime jobRunDate) {
+    public void generateDataConversionExtractFile(String dataExtractName, final LocalDateTime jobRunDate) {
         try {
-            LOG.info("generateAwardScheduleExtractFile, Starting creation of CEMI Award Schedule Extract file...");
-            final String newFileName = CemiUtils.generateFileNameContainingDateTime(
-                    jobRunDate, CemiAwardScheduleConstants.AWARD_SCHEDULE_EXTRACT_FILENAME_PREFIX, FileExtensions.XLSX);
-            final File tempFile = qualifyAndGetFilePath(awardScheduleFileCreationDirectory, newFileName);
-            final File finalFile = qualifyAndGetFilePath(
-                    awardScheduleFileOutboundDirectory, CemiAwardScheduleConstants.AWARD_SCHEDULE_EXTRACT_PLAIN_FILENAME);
+            LOG.info("generateDataConversionExtractFile, Starting creation of CEMI {} Extract file...", dataExtractName);
+            final String newFileName = CemiUtils.generateFileNameContainingDateTime(jobRunDate, 
+                    CemiEXTRACTNAMEConstants.EXTRACTNAME_EXTRACT_FILENAME_PREFIX, FileExtensions.XLSX);
+            
+            final File tempFile = qualifyAndGetFilePath(EXTRACTNAMEFileCreationDirectory, newFileName);
+            final File finalFile = qualifyAndGetFilePath(EXTRACTNAMEFileOutboundDirectory, CemiEXTRACTNAMEConstants.EXTRACTNAME_EXTRACT_PLAIN_FILENAME);
+            
             Validate.validState(!tempFile.exists(), "Temporary file already exists: %s", newFileName);
 
             createAndPopulateAwardScheduleExtractFile(tempFile, jobRunDate);
 
-            if (shouldCopyAwardScheduleExtractFileToOutboundDirectory()) {
-                LOG.info("generateAwardScheduleExtractFile, Copying file to outbound folder under the {} name...", CemiAwardScheduleConstants.AWARD_SCHEDULE_EXTRACT_PLAIN_FILENAME);
-                copyAwardScheduleExtractFileToOutboundDirectory(tempFile, finalFile);
+            if (super.shouldCopyAwardScheduleExtractFileToOutboundDirectory(
+                    CemiEXTRACTNAMEParameterConstants.COPY_CEMI_EXTRACTNAME_FILE_TO_OUTBOUND_FOLDER)) {
+                LOG.info("generateDataConversionExtractFile, Copying file to outbound folder under the {} name...",
+                        CemiEXTRACTNAMEConstants.EXTRACTNAME_EXTRACT_PLAIN_FILENAME);
+                copyExtractFileToOutboundDirectory(tempFile, finalFile, dataExtractName);
             } else {
-                LOG.info("generateAwardScheduleExtractFile, Copying of the file to the outbound folder has been disabled. "
-                        + "The copying operation will be skipped.");
+                LOG.info("generateDataConversionExtractFile, Copying of the data extract file to the outbound folder"
+                        + " has been disabled. The copying operation will be skipped for data extract {}.", dataExtractName );
             }
-
-            LOG.info("generateAwardScheduleExtractFile, Success! Created the following extract file: {}", newFileName);
+            LOG.info("generateDataConversionExtractFile, Success! Created the following extract file: {}", newFileName);
         } catch (final Exception e) {
-            LOG.error("generateAwardScheduleExtractFile, Creation of Award Schedule Extract file failed", e);
+            LOG.error("generateDataConversionExtractFile, Creation of {} Extract file failed", dataExtractName, e);
             throw new RuntimeException(e);
         }
     }
-
-    private File qualifyAndGetFilePath(final String prefix, final String fileName) {
-        return new File(StringUtils.join(prefix, CUKFSConstants.SLASH, fileName));
+   
+    @Override
+    protected Class<?> getComponentClassForDataMaskingParameter() {
+        return CreateCemiEXTRACTNAMEExtractStep.class;
     }
     
-    private void createAndPopulateAwardScheduleExtractFile(final File file, final LocalDateTime jobRunDate)
-            throws IOException, InvalidFormatException {
-        final CemiOutputDefinition outputDefinition = getOutputDefinitionForAwardScheduleExtract();
-
-        try (
-            final InputStream templateFileStream = CuCoreUtilities.getResourceAsStream(
-                    CemiAwardScheduleConstants.AWARD_SCHEDULE_TEMPLATE_FILE_PATH);
-            final CemiExcelWriter writer = new CemiExcelWriter(outputDefinition, templateFileStream, file);
-        ) {
-            // Replace this appender with a temp table implementation when ready.
-            final CemiAwardScheduleFileAppenderCsvImpl awardScheduleFileAppender = new CemiAwardScheduleFileAppenderCsvImpl(
-                outputDefinition, jobRunDate, awardScheduleFileCreationDirectory);
-            awardScheduleFileAppender.populateAwardScheduleFileFromIntermediateDataStorage(writer);
-            writer.commit();
-            awardScheduleFileAppender.cleanUpIntermediateStorage();
-        }
+    @Override
+    protected Class<?> getComponentClassForCopyFileToOutboundFolderParameter() {
+        return CreateCemiEXTRACTNAMEExtractStep.class;
     }
 
-    private CemiOutputDefinition getOutputDefinitionForAwardScheduleExtract() throws IOException {
-        try (
-            final InputStream inputStream = CuCoreUtilities.getResourceAsStream(
-                    CemiAwardScheduleConstants.AWARD_SCHEDULE_OUTPUT_DEFINITION_FILE_PATH);
-        ) {
-            final byte[] fileContents = IOUtils.toByteArray(inputStream);
-            return cemiOutputDefinitionFileType.parse(fileContents);
-        }
+    @Override
+    protected String getOutputDefinitionFilePathSuffix() {
+        return CemiEXTRACTNAMEConstants.EXTRACTNAME_OUTPUT_DEFINITION_FILE_PATH_SUFFIX;
     }
 
-    private boolean shouldCopyAwardScheduleExtractFileToOutboundDirectory() {
-        return parameterService.getParameterValueAsBoolean(
-                CreateCemiAwardScheduleExtractStep.class, CemiAwardScheduleParameterConstants.COPY_CEMI_AWARD_SCHEDULE_FILE_TO_OUTBOUND_FOLDER);
+    @Override
+    protected String getTemplateWorkbookFilePath() {
+        return CemiEXTRACTNAMEConstants.EXTRACTNAME_TEMPLATE_WORKBOOK_FILE_PATH;
     }
 
-    private boolean isCemiSensitiveDataSetToUnmask() {
-        String maskingParameterValue =  parameterService.getParameterValueAsString(
-                CreateCemiAwardScheduleExtractStep.class, CemiBaseParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
-        return StringUtils.equalsIgnoreCase(maskingParameterValue, CemiBaseConstants.UNMASK);
+    public CemiEXTRACTNAMEOrmDao getCemiEXTRACTNAMEOrmDao() {
+        return cemiEXTRACTNAMEOrmDao;
     }
 
-    private boolean isCemiEnvironment() {
-        return StringUtils.equalsIgnoreCase(environment.getLane(), CemiBaseConstants.CEMI_ENVIRONMENT_LANE_NAME);
+    public void setCemiEXTRACTNAMEOrmDao(CemiEXTRACTNAMEOrmDao cemiEXTRACTNAMEOrmDao) {
+        this.cemiEXTRACTNAMEOrmDao = cemiEXTRACTNAMEOrmDao;
     }
 
-    private boolean shouldUnmaskCemiSensitiveData() {
-        return isCemiEnvironment() && isCemiSensitiveDataSetToUnmask();
+    public CemiEXTRACTNAMEDao getCemiEXTRACTNAMEDao() {
+        return cemiEXTRACTNAMEDao;
     }
 
-    private boolean shouldMaskCemiSensitiveData() {
-        return !shouldUnmaskCemiSensitiveData();
-    }
-    
-    private void copyAwardScheduleExtractFileToOutboundDirectory(final File sourceFile, final File targetFile) {
-        try {
-            final Path creationFilePath = sourceFile.toPath();
-            final Path outboundFilePath = targetFile.toPath();
-            Files.copy(creationFilePath, outboundFilePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            LOG.error("copyAwardExtractExtractFileToOutboundDirectory, Failed to copy file to outbound directory", e);
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    public String getAwardScheduleFileCreationDirectory() {
-        return awardScheduleFileCreationDirectory;
-    }
-
-    public void setAwardScheduleFileCreationDirectory(String awardScheduleFileCreationDirectory) {
-        this.awardScheduleFileCreationDirectory = awardScheduleFileCreationDirectory;
-    }
-
-    public String getAwardScheduleFileOutboundDirectory() {
-        return awardScheduleFileOutboundDirectory;
-    }
-
-    public void setAwardScheduleFileOutboundDirectory(String awardScheduleFileOutboundDirectory) {
-        this.awardScheduleFileOutboundDirectory = awardScheduleFileOutboundDirectory;
-    }
-
-    public CemiAwardScheduleOrmDao getCemiAwardScheduleOrmDao() {
-        return cemiAwardScheduleOrmDao;
-    }
-
-    public void setCemiAwardScheduleOrmDao(CemiAwardScheduleOrmDao cemiAwardScheduleOrmDao) {
-        this.cemiAwardScheduleOrmDao = cemiAwardScheduleOrmDao;
-    }
-
-    public CemiAwardScheduleDao getCemiAwardScheduleDao() {
-        return cemiAwardScheduleDao;
-    }
-
-    public void setCemiAwardScheduleDao(CemiAwardScheduleDao cemiAwardScheduleDao) {
-        this.cemiAwardScheduleDao = cemiAwardScheduleDao;
+    public void setCemiEXTRACTNAMEDao(CemiEXTRACTNAMEDao cemiEXTRACTNAMEDao) {
+        this.cemiEXTRACTNAMEDao = cemiEXTRACTNAMEDao;
     }
 
     public CemiOutputDefinitionFileType getCemiOutputDefinitionFileType() {
@@ -257,6 +216,5 @@ public class CemiEXTRACTNAMEExtractServiceImpl implements CemiEXTRACTNAMEExtract
     public void setDateTimeService(DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
     }
-
 
 }

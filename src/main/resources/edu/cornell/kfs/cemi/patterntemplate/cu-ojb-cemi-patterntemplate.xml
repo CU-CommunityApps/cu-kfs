@@ -32,13 +32,17 @@
                     jdbc-type="VARCHAR"
                     primarykey="true"
                     index="true"
+                    
             The remaining field-descriptors should exist for each attribute defined in Cemi{EXTRACTNAME}File{TABNAME}RowBo where:
                 name = attibute name
                 column = define column name as either a standard KFS column name (for reference data) or have column name reflect attribute name
                 jdbc-type = VARCHAR
+                
             !!!!!VERY IMPORTANT!!!!!
-                For any data value that should be encrypted, ensure that the following IS present in that item's field-descriptor
-                    conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"
+                (a) For any data value that should be encrypted, ensure that the following IS present in that item's field-descriptor
+                        conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"
+                (b) Add scrubbing SQL to nonprod-sql script in manual/kfs to scrub that particular field.
+                    
          Ensure this OJB file is defined as a fully qualified value in:
             File => resources/edu/cornell/kfs/cemi/cu-spring-cemi.xml
             Bean => cemiModuleConfiguration-base-parentBean
@@ -58,8 +62,8 @@
     <class-descriptor class="edu.cornell.kfs.cemi.patterntemplate.batch.businessobject.CemiEXTRACTNAMEFileTABNAMERowBo" table="CU_CEMI_EXTR_XXX_XXX_TAB_XXX_XXX_T">
         <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
-        <field-descriptor name="businessObject1LookupKey" column="ANY_KEY_ATTR" jdbc-type="VARCHAR"/>
-        <field-descriptor name="businessObject2LookupKey" column="TRCK_ROW_VAL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="anyKeyAttributes" column="ANY_KEY_ATTR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="neededToTrackDataRowValues" column="TRCK_ROW_VAL" jdbc-type="VARCHAR"/>
         <field-descriptor name="eachDataField" column="EACH_DATA_FLD" jdbc-type="VARCHAR"/>
         <field-descriptor name="fromTheMappingTemplateTab" column="FRM_TMPL_TAB" jdbc-type="VARCHAR"/>
         <field-descriptor name="thatShouldBe" column="SHLD_BE" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>

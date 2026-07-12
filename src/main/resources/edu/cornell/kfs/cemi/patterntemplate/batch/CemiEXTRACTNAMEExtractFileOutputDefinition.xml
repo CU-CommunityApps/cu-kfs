@@ -3,7 +3,7 @@
     This is the main file for defining how the actual business object(s) information will map
     to the data extraction spreadsheet/workbook.
 
-    Each "sheet" element should correspond to one of the sheets/tabs in the workbook.
+    Each "sheet" element should correspond to one of the sheets/tabs in the Excel workbook.
 
     There are two main types of "field" elements: "STRING" AND "STATIC"
     For simplicity, only the "STRING" "field" "type" will be used.
@@ -19,7 +19,7 @@
             business-object-class = fully qualified business object class holding the data for a single row on that sheet
 
         Within the <sheet> tag, define a <field> for every field in the spreadsheet tab where the field attribute values are:
-            name = exact name of the field from the spreadsheet
+            name = EXACT name of the field from the spreadsheet
             type = STRING
             key = attribute name from the business object listed in the sheet business-object-class
             

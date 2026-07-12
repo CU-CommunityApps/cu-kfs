@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
 import edu.cornell.kfs.cemi.sys.batch.service.CemiFileAppenderService;
-import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiDataExtractServiceBase;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiOrderFromSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiOrderFromSupplierParameterConstants;

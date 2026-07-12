@@ -6,14 +6,18 @@
      extraction batch job when proper customization for a specific data extraction is added.
     
      DO NOT customize anything in this pattern template to be used by any runnable data 
-     extraction batch job. The ONLY changes that should be made to these files and folders
-     are those required to enhance or further refine the pattern base upon the future patterns
-     that may be exposed during later data extraction development. 
+     extraction batch job. The ONLY changes that should be made to these pattern template files
+     and folders are those changes required to enhance or further refine the pattern base upon
+     future patterns that may be exposed during later data extraction development.
     
      NONE of this template code in this part of the package structure should be executed as
      a batch job as-is and in fact should fail if executed in its current and all future forms.
     
      Remove all patterntemplate exmaples and comments as you are coding, including this instruction documentation.
+     
+     When customizing this pattern template for a specific data extraction, keep all of you changes within
+     this copied patten structure and do not change any code in any other package structure without first
+     consulting with the rest of the team. 
     
     ==============================================================================================================
      Steps 1 & 2 to follow when using this patterntemplate to create the FIRST data extraction batch job
@@ -75,13 +79,22 @@
               Register_Asset.xlsx ==> EXTRACTNAME = RegisterAsset ==> CemiRegisterAssetExtractFileOutputDefinition.xml
               Update_Asset_Book_Configuration.xlsx ==>  EXTRACTNAME = AssetBookConfiguration ==> CemiAssetBookConfigExtractFileOutputDefinition.xml
     
+     (5) Rename copied file "cu-ojb-cemi-patterntemplate.xml" to pertain to the extract being developed.
+         Follow the instuctions in that file.
+         !!!!!VERY IMPORTANT!!!!!
+            If there are any encrypted fields, add update statements which will scrub those fields to nonprod-sql 
+            repository file :    manual / kfs/ KFSPTS-38305-cemiMaualScrub.sql
     
-     (5) In a separate GitHub branch checked out from repository nonprod-sql, copy the three SQL example files at
+     (6) In a separate GitHub branch checked out from repository nonprod-sql, copy the three SQL example files at
          location "resources/edu/cornell/kfs/cemi/module/patterntemplate/examplesql" to the "kfs" folder for nonprod-sql.
+         
          These three Oracle SQL files will be used to create the database artifacts required to support the processing
          for the EXTRACTNAME data extraction. The contents of the "create-tables" and "create-views" files will be very
          specific to extraction under development. The "create-parameters" file contains the two system parameters that
          must exist for each data extraction batch job to function correctly.
+         
+         References to any database artifacts (tables, views, sequences, ...) in these SQL scripts must include the
+         schmea those artifacts are located in.
          
          Rename all three files in the following manner:
             (a) Replace XXX in the name with the next three digit numeric value specific to the extract being created.
@@ -96,22 +109,89 @@
                     cemi-001-suppliers-step-003-create-parameters.sql
                     cemi-002-award-schedule-step-001-create-tables.sql
                     cemi-002-award-schedule-step-002-create-views.sql
-                    cemi-002-award-schedule-step-003-create-parameters.sq
+                    cemi-002-award-schedule-step-003-create-parameters.sql
                             ...
                     cemi-005-order-from-step-001-create-tables.sql
                     cemi-005-order-from-step-002-create-views.sql
                     cemi-005-order-from-step-003-create-parameters.sql
                     
-            (c) Keep comments in the SQL files to a minimum. 
+            (c) Keep comments in the SQL files to an absolute minimum. Preferably, there should not be any comments in
+                the SQL files with all existing comments there from these template instructions being fully removed. 
             
             (d) At a minimum the "create-tables" script file needs to hold the table definitions for:
-                    (1) Every sheet tab defined in the spreadsheet.
-                    (2) An association table that links the legacy object keys to the new Workday object id in the file.
-                    (3) Any helper table needed to obtaining the information.
+                    (1) Every sheet tab defined in the spreadsheet where the table names follow the pattern:
+                            CU_CEMI_EXTR_{EXTRACT_NAME}_TAB_{TAB_NAME}_T
+                            
+                    (2) An association table that links the legacy object keys to new Workday object keys for the
+                        file run date. Table names for this data would follow the pattern:
+                            CU_CEMI_MAPPING_{EXTRACT_NAME}_EXTR_FILE_T
+                            
+                    (3) Any data scope tables or helper tables needed for obtaining the information would follow the pattern:
+                            CU_CEMI_{EXTRACT_NAME}_EXTR_{DATA_OBJECT}_T
 
             (e) At a minimum the "create-views" script file needs to hold the definition that creates the view used to
                 obtain the keys defining the scope of objects to used for the data extraction.
                 
-            (f) The "create-parameters" file contains definitions for the base parameters required by the batch job.
-                Adjust those definitons to make them specific to the extraction being developed.
+            (f) The "create-parameters" file contains definitions for the base parameters required by all batch jobs.
+                Adjust those definitons to make the batch job step names specific to the extraction being developed.
+                The parameer names are defined in constants class edu.cornell.kfs.cemi.sys.CemiBaseParametersConstants
+                
+                
+     (7) Rename copied class Cemi{EXTRACTNAME}File{TABENAME}RowBo to the appropriate {EXTRACTNAME} for the data conversion
+         being created. Follow the instrctions in that file to properly create the business object class(es) that will 
+         represent each tab/sheet in the spreadsheet.
+         Note: 
+         The concrete business object we are creating extends abstract class CemiIndexBusinessObejctBase. Do NOT 
+         modify any common code in that abstract class as you will affect the porcessing of other data extractions.
+     
+     
+     (8) Rename copied interface Cemi{EXTRACTNAME}ExtractService and its implementation class 
+         Cemi{EXTRACTNAME}ExtractServiceImpl appropriately. The set of services in the interface defines minimum
+         processing necessary for a SPECIFIC data conversion extraction file. Those services would normally be called
+         from the batch job's step class.
+         
+         The pattern template file Cemi{EXTRACTNAME}ExtractServiceImpl also extends class CemiDataExtractServiceBase.
+         That abstract class contains the default common processing that should be used by all data conversion batch 
+         job as well as a number of items requiring configuration or specification by the unique data conversion batch 
+         job coding. 
+             (a) Spring setup of concrete Cemi{EXTRACTNAME}ExtractService class deals with configuring the specific
+                 data values required by abstract class CemiDataExtractServiceBase in a manner that makes those values
+                 unquie to the data extraction being coded. These items requrie that kind of Spring configuration:
+                    dataFileCreationDirectory
+                    dataFileOutboundDirectory
+                    cemiFileAppenderService
+                    cemiOutputDefinitionFileType
+                    parameterService
+                    
+                     Example:
+                         <bean id="cemiOrderFromSupplierExtractService" parent="cemiOrderFromSupplierExtractService-parentBean"/>
+                         <bean id="cemiOrderFromSupplierExtractService-parentBean"
+                               abstract="true"
+                               class="edu.cornell.kfs.cemi.vnd.batch.service.impl.CemiOrderFromSupplierExtractServiceImpl"
+                               c:environment-ref="environment"
+                               p:dataFileCreationDirectory="${staging.directory}/cemi/vnd/cemiOrderFromSupplierExtract"
+                               p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+                               p:cemiFileAppenderService-ref="cemiFileAppenderService"
+                               p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+                               p:parameterService-ref="parameterService"
+                               p:reportsDirectory="${reports.directory}/cemi/"
+                               p:cemiOrderFromSupplierOrmDao-ref="cemiOrderFromSupplierOrmDao"
+                               p:cemiOrderFromSupplierDao-ref="cemiOrderFromSupplierDao"
+                               p:cemiVendorOrmDao-ref="cemiVendorOrmDao"
+                               p:businessObjectService-ref="businessObjectService"/>
+             (b)   
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
     ==============================================================================================================

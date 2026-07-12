@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
 
+import edu.cornell.kfs.cemi.patterntemplate.CemiEXTRACTNAMEConstants;
 import edu.cornell.kfs.cemi.patterntemplate.batch.service.CemiEXTRACTNAMEExtractService;
 
 public class CreateCemiEXTRACTNAMEExtractStep extends AbstractStep {
@@ -25,8 +26,6 @@ public class CreateCemiEXTRACTNAMEExtractStep extends AbstractStep {
     @Override
     public boolean execute(final String jobName, final LocalDateTime jobRunDate) throws InterruptedException {
         
-        
-        
         // Phase1: Obtain the dataset
         
         // Method required for every extraction. 
@@ -34,7 +33,9 @@ public class CreateCemiEXTRACTNAMEExtractStep extends AbstractStep {
         //      At a minimum, on every execution of the batch job after the first one, this method should clear the
         //      table populated by routine captureInScopeBusinessObjectKeysToProcessingTable (called below) from the
         //      previous execution of the job.
-        CemiEXTRACTNAMEExtractService.resetState(CemiEXTRACTNAMEConstants.CEMI_DATA_EXTRACT_NAME);
+        getCemiEXTRACTNAMEExtractService().resetState(CemiEXTRACTNAMEConstants.CEMI_DATA_EXTRACT_NAME);
+        
+        
         
         // Not defined for this pattern example
         // One-to-many optional methods may be needed which sort, filter, or obtain dependent information
@@ -44,17 +45,17 @@ public class CreateCemiEXTRACTNAMEExtractStep extends AbstractStep {
         // Intended processing of this method is to
         //      (1) obtain the keys for the business objects meeting required in scope data mapping criteria
         //      (2) place those identified keys into a table so the associated objects can be obtained by downstream processing
-        CemiEXTRACTNAMEExtractService.captureInScopeBusinessObjectKeysToProcessingTable(CemiEXTRACTNAMEConstants.CEMI_DATA_EXTRACT_NAME); 
+        getCemiEXTRACTNAMEExtractService().captureInScopeBusinessObjectKeysToProcessingTable(CemiEXTRACTNAMEConstants.CEMI_DATA_EXTRACT_NAME); 
         
         
         
         // Phase 2: Loop through result set to create all the csv files
-        CemiEXTRACTNAMEExtractService.generateIntermediateAwardScheduleExtractData(jobRunDate);
+        getCemiEXTRACTNAMEExtractService().generateIntermediateExtractData(CemiEXTRACTNAMEConstants.CEMI_DATA_EXTRACT_NAME, jobRunDate);
         
         
         
         // Phase 3: Create single multi-tabbed file.
-        CemiEXTRACTNAMEExtractService.generateAwardScheduleExtractFile(jobRunDate);
+        getCemiEXTRACTNAMEExtractService().generateDataConversionExtractFile(CemiEXTRACTNAMEConstants.CEMI_DATA_EXTRACT_NAME, jobRunDate);
         return true;
     }
 

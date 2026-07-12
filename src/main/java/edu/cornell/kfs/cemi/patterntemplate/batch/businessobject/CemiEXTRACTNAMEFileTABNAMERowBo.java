@@ -51,7 +51,7 @@ public class CemiEXTRACTNAMEFileTABNAMERowBo extends CemiIndexedBusinessObjectBa
     // Attributes jobRunRowIndex and jobRunDate are defined in super class. Uses its access methods
     
     private String anyKeyAttributes;                 // These items are business object keys needed to
-    private String neededToTrackDataRowValues;      // get the data representing the tab row values below.
+    private String neededToTrackDataRowValues;       // get the data representing the tab row values below.
     
     private String eachDataField;
     private String fromTheMappingTemplateTab;

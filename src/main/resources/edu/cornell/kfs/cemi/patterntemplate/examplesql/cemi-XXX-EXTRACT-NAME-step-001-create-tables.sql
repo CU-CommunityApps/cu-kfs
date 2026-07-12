@@ -1,4 +1,10 @@
 -- At a minimum this "create-tables" script file needs to hold the table definitions for:
---    (1) Every sheet tab defined in the spreadsheet.
---    (2) An association table that links the legacy object keys to the new Workday object id in the file.
---    (3) Any helper table needed to obtaining the information.
+--    (1) Every sheet tab defined in the spreadsheet where the table names follow the pattern:
+--          CU_CEMI_EXTR_{EXTRACT_NAME}_TAB_{TAB_NAME}_T
+--
+--    (2) An association table that links the legacy object keys to new Workday object keys for the
+--        file run date. Table names for this data would follow the pattern:
+--          CU_CEMI_MAPPING_{EXTRACT_NAME}_EXTR_FILE_T
+--
+--    (3) Any data scope tables or helper tables needed for obtaining the information would follow the pattern:
+--          CU_CEMI_{EXTRACT_NAME}_EXTR_{DATA_OBJECT}_T
