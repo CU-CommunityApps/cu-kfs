@@ -26,8 +26,8 @@ public class CemiOrderFromSupplierOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb 
     public Stream<VendorAddress> getKfsVendorAddressesForExtractedSuppliers() {
         String idCondition = "(A0.VNDR_HDR_GNRTD_ID, A0.VNDR_DTL_ASND_ID) IN ("
                 + "SELECT VMP.VNDR_HDR_GNRTD_ID, VMP.VNDR_DTL_ASND_ID "
-                + "FROM KFS.CU_CEMI_MAPPING_SPLR_VNDR_EXTR_FILE_T VMP "
-                + "JOIN KFS.CU_CEMI_ORD_FRM_SUPP_QUERY_SETTINGS_T QST "
+                + "FROM CEMI.CU_CEMI_MAPPING_SPLR_VNDR_EXTR_FILE_T VMP "
+                + "JOIN CEMI.CU_CEMI_ORD_FRM_SUPP_QUERY_SETTINGS_T QST "
                 + "ON VMP.EXTR_FILE_RUNDATE = QST.SUPP_EXTR_FILE_RUNDATE";
         if (shouldUseLessDataDuringCemiDevelopment()) {
             idCondition += " WHERE VMP.WKDY_SPLR_ID <= 'SUPP001000' OR VMP.WKDY_SPLR_ID >= 'SUPP015000')";
@@ -50,8 +50,8 @@ public class CemiOrderFromSupplierOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb 
     public Stream<CemiSupplierAddressBo> getSupplierAddressesForExtractedSuppliers() {
         String idCondition = "(A0.EXTR_FILE_RUNDATE, A0.SUPPLIER_ID) IN ("
                 + "SELECT VMP.EXTR_FILE_RUNDATE, VMP.WKDY_SPLR_ID \"SUPPLIER_ID\" "
-                + "FROM KFS.CU_CEMI_MAPPING_SPLR_VNDR_EXTR_FILE_T VMP "
-                + "JOIN KFS.CU_CEMI_ORD_FRM_SUPP_QUERY_SETTINGS_T QST "
+                + "FROM CEMI.CU_CEMI_MAPPING_SPLR_VNDR_EXTR_FILE_T VMP "
+                + "JOIN CEMI.CU_CEMI_ORD_FRM_SUPP_QUERY_SETTINGS_T QST "
                 + "ON VMP.EXTR_FILE_RUNDATE = QST.SUPP_EXTR_FILE_RUNDATE";
         if (shouldUseLessDataDuringCemiDevelopment()) {
             idCondition += " WHERE VMP.WKDY_SPLR_ID <= 'SUPP001000' OR VMP.WKDY_SPLR_ID >= 'SUPP015000')";
@@ -73,8 +73,8 @@ public class CemiOrderFromSupplierOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb 
     public Stream<CemiSupplierAddressBo> getSupplierAddressesForOrderFromSupplierExtract() {
         String idCondition = "(A0.EXTR_FILE_RUNDATE, A0.ADDRESS_ID) IN ("
                 + "SELECT FRM.SUPP_EXTR_FILE_RUNDATE \"EXTR_FILE_RUNDATE\", FRM.SUPP_ADDRESS_ID \"ADDRESS_ID\" "
-                + "FROM KFS.CU_CEMI_EXTR_ORD_FRM_SUPP_ADDR_T FRM "
-                + "JOIN KFS.CU_CEMI_ORD_FRM_SUPP_QUERY_SETTINGS_T QST "
+                + "FROM CEMI.CU_CEMI_EXTR_ORD_FRM_SUPP_ADDR_T FRM "
+                + "JOIN CEMI.CU_CEMI_ORD_FRM_SUPP_QUERY_SETTINGS_T QST "
                 + "ON FRM.SUPP_EXTR_FILE_RUNDATE = QST.SUPP_EXTR_FILE_RUNDATE)";
         if (shouldUseLessDataDuringCemiDevelopment()) {
             idCondition += " AND (A0.SUPPLIER_ID <= 'SUPP001000' OR A0.SUPPLIER_ID >= 'SUPP015000')";

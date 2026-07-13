@@ -87,7 +87,8 @@
     <bean id="cemiCsvDataImportDao-parentBean"
           abstract="true"
           class="edu.cornell.kfs.cemi.sys.dataaccess.impl.CemiCsvDataImportDaoJdbcImpl"
-          parent="platformAwareDaoJdbc"/>
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
 
     <bean id="cemiCsvDataImportService" parent="cemiCsvDataImportService-parentBean"/>
     <bean id="cemiCsvDataImportService-parentBean"
