@@ -7,13 +7,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 
-import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleDao;
+import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleExtractDao;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.sys.util.CuSqlChunk;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
 import edu.cornell.kfs.sys.util.CuSqlQueryPlatformAwareDaoBaseJdbc;
 
-public class CemiAwardScheduleDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc implements CemiAwardScheduleDao {
+public class CemiAwardScheduleExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc implements CemiAwardScheduleExtractDao {
 
     private static final Logger LOG = LogManager.getLogger();
     

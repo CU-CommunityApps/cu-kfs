@@ -2,7 +2,7 @@ package edu.cornell.kfs.cemi.module.cg.dataaccess;
 
 import java.time.LocalDateTime;
 
-public interface CemiAwardScheduleDao {
+public interface CemiAwardScheduleExtractDao {
     
     void clearExistingListOfExtractableProposalNumbers();
    

@@ -9,11 +9,11 @@ import org.kuali.kfs.krad.service.KRADServiceLocator;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
-import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleOrmDao;
+import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleExtractOrmDao;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.sys.util.CuOjbUtils;
 
-public class CemiAwardScheduleOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb implements CemiAwardScheduleOrmDao {
+public class CemiAwardScheduleExtractOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb implements CemiAwardScheduleExtractOrmDao {
 
     @Override
     public Stream<Award> getAwardsForCemiAwardScheduleExtractAsCloseableStream() {
