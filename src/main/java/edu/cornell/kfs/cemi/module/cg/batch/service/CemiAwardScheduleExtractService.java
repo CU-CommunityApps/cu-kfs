@@ -6,10 +6,10 @@ public interface CemiAwardScheduleExtractService {
     
     void resetState();
     
-    void populateListOfInScopeAwards();
+    void captureInScopeBusinessObjectKeysToProcessingTable();
     
-    void generateIntermediateAwardScheduleExtractData(final LocalDateTime jobRunDate);
+    void generateIntermediateExtractData(final LocalDateTime jobRunDate);
     
-    void generateAwardScheduleExtractFile(final LocalDateTime jobRunDate);
+    void generateDataConversionExtractFile(final LocalDateTime jobRunDate);
     
 }

@@ -1,29 +1,13 @@
 package  edu.cornell.kfs.cemi.module.cg.batch.service.impl;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.springframework.transaction.annotation.Propagation;
@@ -31,20 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.cemi.module.cg.CemiAwardScheduleConstants;
 import edu.cornell.kfs.cemi.module.cg.batch.CreateCemiAwardScheduleExtractStep;
-import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardScheduleFileAwardScheduleTabRowBo;
 import edu.cornell.kfs.cemi.module.cg.batch.service.CemiAwardScheduleExtractService;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleExtractDao;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleExtractOrmDao;
-import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
-import edu.cornell.kfs.cemi.sys.CemiBaseParameterConstants;
-import edu.cornell.kfs.cemi.sys.CemiBaseConstants.FileExtensions;
-import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiDataExtractServiceBase;
-import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
-import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.core.api.util.CuCoreUtilities;
-import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CemiAwardScheduleExtractServiceImpl extends CemiDataExtractServiceBase
         implements CemiAwardScheduleExtractService {
@@ -69,33 +44,28 @@ public class CemiAwardScheduleExtractServiceImpl extends CemiDataExtractServiceB
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public void populateListOfInScopeAwards() {
-        LOG.info("populateListOfInScopeAwards, Querying and storing the list of extractable Awards for Award Schedule...");
+    public void captureInScopeBusinessObjectKeysToProcessingTable() {
+        LOG.info("captureInScopeBusinessObjectKeysToProcessingTable, Querying and storing the list of extractable Awards for Award Schedule...");
         cemiAwardScheduleExtractDao.queryAndStoreAwardProposalNumbersForAwardScheduleExtract();
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public void generateIntermediateAwardScheduleExtractData(final LocalDateTime jobRunDate) {
-        LOG.info("generateIntermediateAwardScheduleExtractData, Generating data rows for Award Schedule spreadsheet "
+    public void generateIntermediateExtractData(final LocalDateTime jobRunDate) {
+        LOG.info("generateIntermediateExtractData, Generating data rows for Award Schedule spreadsheet "
                 + "and placing in intermediate storage...");
         final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
-        try (
-            final Stream<Award> awards = cemiAwardScheduleExtractOrmDao.getAwardsForCemiAwardScheduleExtractAsCloseableStream();
-        ) {
-            final CemiAwardScheduleExtractDataBuilderDefaultImpl dataBuilder = new CemiAwardScheduleExtractDataBuilderDefaultImpl(
-                    businessObjectService, jobRunDateString, dateTimeService, cemiAwardScheduleExtractOrmDao,
-                    cemiAwardScheduleExtractDao, shouldMaskCemiSensitiveData());
-            final Iterator<Award> awardsIterator = awards.iterator();
-            dataBuilder.writeAwardScheduleExtractDataToIntermediateStorage(awardsIterator, jobRunDateString);
-        } catch (final IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        final Stream<Award> awards = cemiAwardScheduleExtractOrmDao.getAwardsForCemiAwardScheduleExtractAsCloseableStream();
+        final CemiAwardScheduleExtractDataBuilderDefaultImpl dataBuilder = new CemiAwardScheduleExtractDataBuilderDefaultImpl(
+                businessObjectService, jobRunDateString, dateTimeService, cemiAwardScheduleExtractOrmDao,
+                cemiAwardScheduleExtractDao, shouldMaskCemiSensitiveData());
+        final Iterator<Award> awardsIterator = awards.iterator();
+        dataBuilder.writeAwardScheduleExtractDataToIntermediateStorage(awardsIterator, jobRunDateString);
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public void generateAwardScheduleExtractFile(final LocalDateTime jobRunDate) {
+    public void generateDataConversionExtractFile(final LocalDateTime jobRunDate) {
         LOG.info("generateAwardSchedulerExtractFile, Starting creation of CEMI AwardSchedule Extract file...");
         generateFileForDataExtract(jobRunDate, CemiAwardScheduleConstants.AWARD_SCHEDULE_EXTRACT_PLAIN_FILENAME,
                 CemiAwardScheduleConstants.AWARD_SCHEDULE_EXTRACT_FILENAME_PREFIX);
@@ -121,10 +91,9 @@ public class CemiAwardScheduleExtractServiceImpl extends CemiDataExtractServiceB
 
     // Required overriding method for base class CemiDataExtractServiceBase
     @Override
-    protected String getTemplateWorkbookFilePath() {
-        CemiAwardScheduleConstants
+    protected String getTemplateWorkbookFilePathSuffix() {
+        return CemiAwardScheduleConstants.AWARD_SCHEDULE_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX;
     }
-    
 
     public void setCemiAwardScheduleExtractOrmDao(CemiAwardScheduleExtractOrmDao cemiAwardScheduleExtractOrmDao) {
         this.cemiAwardScheduleExtractOrmDao = cemiAwardScheduleExtractOrmDao;
