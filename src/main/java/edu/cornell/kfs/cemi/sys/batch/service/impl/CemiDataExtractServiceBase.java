@@ -100,9 +100,10 @@ public abstract class CemiDataExtractServiceBase {
         final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
         final CemiOutputDefinition outputDefinition = CemiUtils.getOutputDefinitionFromCemiResourcesFile(
                 cemiOutputDefinitionFileType, getOutputDefinitionFilePathSuffix());
+        final String templateWorkbookFullFilePath = CemiUtils.getTemplateWorkbookFullFilePath(getTemplateWorkbookFilePathSuffix());
 
         try (
-            final InputStream templateFileStream = CuCoreUtilities.getResourceAsStream(getTemplateWorkbookFilePath());
+            final InputStream templateFileStream = CuCoreUtilities.getResourceAsStream(templateWorkbookFullFilePath);
             final CemiExcelWriter writer = new CemiExcelWriter(outputDefinition, templateFileStream, file);
         ) {
             cemiFileAppenderService.populateFileFromOrmDataStorage(writer, outputDefinition, jobRunDateString);
@@ -133,7 +134,7 @@ public abstract class CemiDataExtractServiceBase {
 
     protected abstract String getOutputDefinitionFilePathSuffix();
 
-    protected abstract String getTemplateWorkbookFilePath();
+    protected abstract String getTemplateWorkbookFilePathSuffix();
 
     // All of the items below require defining Spring beans for concrete class Cemi{EXTRACTNAME}ExtractServiceImpl.
     // Refer to the PatternTemplateReadMe.txt file for more specifics.

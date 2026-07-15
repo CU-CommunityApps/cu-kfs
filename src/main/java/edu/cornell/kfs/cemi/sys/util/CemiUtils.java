@@ -135,6 +135,11 @@ public final class CemiUtils {
         }
     }
 
+    public static String getTemplateWorkbookFullFilePath(final String subPath) {
+        Validate.isTrue(isFormattedAsValidFilePath(subPath), "CEMI Template Workbook subPath was blank or malformed.");
+        return CemiBaseConstants.CEMI_TEMPLATE_WORKBOOK_FILE_PATH_PREFIX + subPath;
+    }
+
     public static boolean isFormattedAsValidFilePath(final String path) {
         return StringUtils.isNotBlank(path) && FILE_PATH_PATTERN.matcher(path).matches();
     }
