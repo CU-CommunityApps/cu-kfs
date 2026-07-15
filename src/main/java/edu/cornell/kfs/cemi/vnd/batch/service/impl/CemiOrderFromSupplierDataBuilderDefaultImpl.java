@@ -26,13 +26,13 @@ import org.kuali.kfs.vnd.VendorConstants.AddressTypes;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
 import edu.cornell.kfs.cemi.sys.CemiBasePropertyConstants;
-import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiOrmDataBuilderBase;
 import edu.cornell.kfs.cemi.vnd.CemiVendorPropertyConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiOrderFromSupplierBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierEmailBo;
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiOrderFromSupplierDataBuilder;
+import edu.cornell.kfs.cemi.vnd.batch.service.impl.CemiOrmDataBuilderBase;  //CHANGE THIS TO USE VERSION edu.cornell.kfs.cemi.sys.batch.service.impl
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiOrderFromSupplierDao;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorOrmDao;
 import edu.cornell.kfs.cemi.vnd.util.CemiVendorUtils;

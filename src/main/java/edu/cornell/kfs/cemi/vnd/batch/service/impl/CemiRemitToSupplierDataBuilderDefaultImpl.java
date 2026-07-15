@@ -22,7 +22,7 @@ import org.kuali.kfs.vnd.VendorConstants.AddressTypes;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
 import edu.cornell.kfs.cemi.sys.CemiBasePropertyConstants;
-import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiOrmDataBuilderBase;
+import edu.cornell.kfs.cemi.vnd.batch.service.impl.CemiOrmDataBuilderBase;  //CHANGE THIS TO USE VERSION edu.cornell.kfs.cemi.sys.batch.service.impl
 import edu.cornell.kfs.cemi.vnd.CemiVendorPropertyConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
