@@ -3,13 +3,21 @@ package edu.cornell.kfs.cemi.module.cg.batch.businessobject;
 import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBase;
 
 /*
- *  This class is the business object representation for CemiAwardScheduleExtractFileOutputDefinition
+ *  This class is the business object representation for 
+ *  CemiAwardScheduleExtractFileOutputDefinition
  *  Service class CemiAwardScheduleBoFactory controls all aspects of this business object.
  */
 public class CemiAwardScheduleFileAwardScheduleTabRowBo extends CemiIndexedBusinessObjectBase {
     
     private static final long serialVersionUID = -7478232634840096057L;
     
+    // Attributes to make the data extract spreadsheet row database searchable and
+    // identifiable by data extraction run date and legacy data source ley.
+    private Long extractTableUniqueRowId;
+    private String jobRunDateAsString;
+    private String proposalNumberUsedForDataRow; 
+    
+    // Attributes representing a single data extract spreadsheet row
     private String spreadsheetKey;
     private String addOnly;
     private String awardSchedule;
@@ -28,6 +36,30 @@ public class CemiAwardScheduleFileAwardScheduleTabRowBo extends CemiIndexedBusin
     private String awardIntervalEndDate;
     private String isAwardContractStartDate;
     private String isAwardContractEndDate;
+
+    public Long getExtractTableUniqueRowId() {
+        return extractTableUniqueRowId;
+    }
+
+    public void setExtractTableUniqueRowId(Long extractTableUniqueRowId) {
+        this.extractTableUniqueRowId = extractTableUniqueRowId;
+    }
+
+    public String getJobRunDateAsString() {
+        return jobRunDateAsString;
+    }
+
+    public void setJobRunDateAsString(String jobRunDateAsString) {
+        this.jobRunDateAsString = jobRunDateAsString;
+    }
+
+    public String getProposalNumberUsedForDataRow() {
+        return proposalNumberUsedForDataRow;
+    }
+
+    public void setProposalNumberUsedForDataRow(String proposalNumberUsedForDataRow) {
+        this.proposalNumberUsedForDataRow = proposalNumberUsedForDataRow;
+    }
 
     public String getSpreadsheetKey() {
         return spreadsheetKey;

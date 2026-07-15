@@ -56,11 +56,11 @@ public class CemiAwardScheduleExtractServiceImpl extends CemiDataExtractServiceB
                 + "and placing in intermediate storage...");
         final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
         final Stream<Award> awards = cemiAwardScheduleExtractOrmDao.getAwardsForCemiAwardScheduleExtractAsCloseableStream();
-        final CemiAwardScheduleExtractDataBuilderDefaultImpl dataBuilder = new CemiAwardScheduleExtractDataBuilderDefaultImpl(
+        final CemiAwardScheduleFileExtractDataBuilderDefaultImpl dataBuilder = new CemiAwardScheduleFileExtractDataBuilderDefaultImpl(
                 businessObjectService, jobRunDateString, dateTimeService, cemiAwardScheduleExtractOrmDao,
                 cemiAwardScheduleExtractDao, shouldMaskCemiSensitiveData());
         final Iterator<Award> awardsIterator = awards.iterator();
-        dataBuilder.writeAwardScheduleExtractDataToIntermediateStorage(awardsIterator, jobRunDateString);
+        dataBuilder.writeAwardScheduleFileAwardScheduleTabExtractDataToIntermediateStorage(awardsIterator, jobRunDateString);
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)

@@ -18,7 +18,7 @@ import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.cemi.module.cg.CemiAwardScheduleConstants;
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardScheduleFileAwardScheduleTabRowBo;
-import edu.cornell.kfs.cemi.module.cg.batch.service.CemiAwardScheduleExtractDataBuilder;
+import edu.cornell.kfs.cemi.module.cg.batch.service.CemiAwardScheduleFileExtractDataBuilder;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleExtractDao;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleExtractOrmDao;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
@@ -27,37 +27,42 @@ import edu.cornell.kfs.cemi.sys.batch.xml.CemiFieldDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
-public class CemiAwardScheduleExtractDataBuilderDefaultImpl extends CemiOrmDataBuilderBase
-         implements CemiAwardScheduleExtractDataBuilder {
+public class CemiAwardScheduleFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuilderBase
+         implements CemiAwardScheduleFileExtractDataBuilder {
 
     private static final Logger LOG = LogManager.getLogger();
    
     protected CemiAwardScheduleExtractOrmDao cemiAwardScheduleExtractOrmDao;
     protected CemiAwardScheduleExtractDao cemiAwardScheduleExtractDao;
+    protected DateTimeService dateTimeService;
     protected final boolean maskSensitiveData;
-    protected int awardScheduleTabRowCount;
 
-    public CemiAwardScheduleExtractDataBuilderDefaultImpl(
+    public CemiAwardScheduleFileExtractDataBuilderDefaultImpl(
             final BusinessObjectService businessObjectService, final String jobRunDate,
             final DateTimeService dateTimeService,
             final CemiAwardScheduleExtractOrmDao cemiAwardScheduleExtractOrmDao,
             final CemiAwardScheduleExtractDao cemiAwardScheduleExtractDao, final boolean maskSensitiveData) {
         super(businessObjectService, jobRunDate, CemiAwardScheduleFileAwardScheduleTabRowBo.class);
+        Validate.notNull(dateTimeService, "dateTimeService cannot be null");
         Validate.notNull(cemiAwardScheduleExtractOrmDao, "cemiAwardScheduleExtractOrmDao cannot be null");
         Validate.notNull(cemiAwardScheduleExtractDao, "cemiAwardScheduleExtractDao cannot be null");
+        this.dateTimeService = dateTimeService;
         this.cemiAwardScheduleExtractOrmDao = cemiAwardScheduleExtractOrmDao;
         this.cemiAwardScheduleExtractDao = cemiAwardScheduleExtractDao;
         this.maskSensitiveData = maskSensitiveData;
     }
 
-    @Override nkk4
-    public void writeAwardScheduleExtractDataToIntermediateStorage(final Iterator<Award> awards, String jobRunDateString) {
+    @Override
+    public void writeAwardScheduleFileAwardScheduleTabExtractDataToIntermediateStorage(
+            final Iterator<Award> awards, String jobRunDateString) {
+
+        int awardScheduleTabRowCount;
         
         for (final Award award : IteratorUtils.asIterable(awards)) {
-            awardScheduleTabRowCount++;
+            
             if (awardScheduleTabRowCount % 1000 == 0) {
-                LOG.info("writeAwardScheduleExtractDataToIntermediateStorage, Processed {} Awards for Award Schedule "
-                        + "and counting...", awardScheduleTabRowCount);
+                LOG.info("writeAwardScheduleFileAwardScheduleTabExtractDataToIntermediateStorage, Processed {} "
+                        + "Awards for Award Schedule and counting...", awardScheduleTabRowCount);
             }
             
             //Award Schedule Tab
@@ -66,7 +71,7 @@ public class CemiAwardScheduleExtractDataBuilderDefaultImpl extends CemiOrmDataB
             awardScheduleReferenceId, awardIntervalStartDate, awardIntervalEndDate, maskSensitiveData);
   
             //Database table storage of data extract
-            saveAwardScheduleRowToTable(awardSchedule, award.getProposalNumber(), jobRunDate, awardScheduleTabTableSequence);
+            createAndStoreAwardScheduleFileAwardScheduleTabRows(awardSchedule, award.getProposalNumber(), jobRunDate, awardScheduleTabTableSequence);
   
             //Record identifier associations for Award Schedule extract file based upon batch job run date
             recordAwardScheduleIdentifiersInLegacyAssociationTable(spreadsheetKey, awardScheduleReferenceId, jobRunDate);
@@ -90,18 +95,14 @@ public class CemiAwardScheduleExtractDataBuilderDefaultImpl extends CemiOrmDataB
 //            //Record identifier associations for Award Schedule extract file based upon batch job run date
 //            recordAwardScheduleIdentifiersInLegacyAssociationTable(spreadsheetKey, awardScheduleReferenceId, jobRunDate);
         }
-        LOG.info("writeAwardScheduleExtractDataToIntermediateStorage, Finished writing {} Awards for Award Schedule", awardScheduleCount);
+        LOG.info("writeAwardScheduleFileAwardScheduleTabExtractDataToIntermediateStorage, Finished writing {} "
+                + "Awards for Award Schedule", awardScheduleTabRowCount);
     }
     
-    protected void saveAwardScheduleRowToTable(CemiAwardSchedule awardSchedule, String proposalNumberUsed,
+    protected void createAndStoreAwardScheduleFileAwardScheduleTabRows(CemiAwardSchedule awardSchedule, String proposalNumberUsed,
             LocalDateTime jobRunDate, CemiAwardScheduleBoSequence awardScheduleTabTableSequence) {
         CemiAwardScheduleFileAwardScheduleTabRowBo dataToSave = new CemiAwardScheduleFileAwardScheduleTabRowBo(awardSchedule, proposalNumberUsed, jobRunDate, awardScheduleTabTableSequence);
          dataToSave = getBusinessObjectService().save(dataToSave);
-    }
-
-    
-    protected void writeAwardScheduleRowToFiles(final CemiAwardSchedule awardSchedule) throws IOException {
-        writeDataToIntermediateStorage(CemiAwardScheduleConstants.AwardScheduleExtractSheets.AWARD_SCHEDULE, awardSchedule);
     }
     
     // Retain in the database an association between the new Workday data key - legacy system data key - extraction run date
@@ -117,14 +118,6 @@ public class CemiAwardScheduleExtractDataBuilderDefaultImpl extends CemiOrmDataB
 
     public void setCemiAwardScheduleExtractDao(CemiAwardScheduleExtractDao cemiAwardScheduleExtractDao) {
         this.cemiAwardScheduleExtractDao = cemiAwardScheduleExtractDao;
-    }
-
-    public BusinessObjectService getBusinessObjectService() {
-        return businessObjectService;
-    }
-
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
-        this.businessObjectService = businessObjectService;
     }
 
 }
