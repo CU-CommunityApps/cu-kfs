@@ -20,27 +20,22 @@ import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 @SuppressWarnings("deprecation")
 public class CemiAwardScheduleFileAwardScheduleTabRowBoFactory {
     
-    private DateTimeService dateTimeService;
-    
     private Award award;
     private AwardExtendedAttribute awardExtendedAttribute;
+    private String jobRunDateString;
+    private int awardScheduleTabRowCount;
+    private DateTimeService dateTimeService;
+    private boolean maskSensitiveData = true;   // Default is to mask in the event KFS system parameter has not been created.
 
-    private boolean maskSensitiveData;
-    
-    //moved from CemiAwardScheduleBo during restructuring
-//    private Long extractTableUniqueRowId;
-//    private String jobRunDateAsString;
-//    private String proposalNumberUsedForDataRow; 
-    
      //moved from CemiAwardScheduleBo during restructuring
 //    public CemiAwardScheduleBo (CemiAwardSchedule cemiAwardScheduleDataRow, String proposalNumberForScheduleRow,
 //            LocalDateTime jobRunDate, CemiAwardScheduleBoSequence awardScheduleTabTableSequence) {
 //        
 //        // These values are to make the row that would appear in an extract spreadsheet seachable as well as
 //        // identifiable by the actual KFS data object keys used to create that row and date-time of the extract file.
-        this.extractTableUniqueRowId = awardScheduleTabTableSequence.getLongValue();
-        this.jobRunDateAsString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
-        this.proposalNumberUsedForDataRow = proposalNumberForScheduleRow;
+////        this.extractTableUniqueRowId = awardScheduleTabTableSequence.getLongValue();
+////        this.jobRunDateAsString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
+////        this.proposalNumberUsedForDataRow = proposalNumberForScheduleRow;
 //        
 //        // These table data values should be the same as what would be in the extract file tabbed sheet columns.
 //        this.spreadsheetKey = cemiAwardScheduleDataRow.getSpreadsheetKey();
@@ -66,20 +61,22 @@ public class CemiAwardScheduleFileAwardScheduleTabRowBoFactory {
     
     
     public CemiAwardScheduleFileAwardScheduleTabRowBoFactory (final Award award, 
-            final AwardExtendedAttribute awardExtendedAttribute,
-            final DateTimeService dateTimeService, final boolean maskSensitiveData) { 
-        //Were input pararmeteters
-        //final String awardScheduleReferenceId, String spreadsheetKey, String awardIntervalStartDate, String awardIntervalEndDate,
+            final AwardExtendedAttribute awardExtendedAttribute, final String jobRunDateString, 
+            final int awardScheduleTabRowCount, final DateTimeService dateTimeService, final boolean maskSensitiveData) {
         
         this.award = award;
         this.awardExtendedAttribute = awardExtendedAttribute;
+        this.jobRunDateString = jobRunDateString;
+        this.awardScheduleTabRowCount = awardScheduleTabRowCount;
         this.dateTimeService = dateTimeService;
         this.maskSensitiveData = maskSensitiveData;
     }
      
     public CemiAwardScheduleFileAwardScheduleTabRowBo createCemiAwardScheduleFileAwardScheduleTabRowBo() {
-        Validate.validState(award != null, "An Award was not defined.");
-        Validate.validState(awardExtendedAttribute != null, "An AwardExtendedAttribute was not defined.");
+        Validate.validState(award != null, "Award cannot be null.");
+        Validate.validState(awardExtendedAttribute != null, "AwardExtension cannot be null.");
+        Validate.validState(jobRunDateString != null, "jobRunDateString cannot be null.");
+        Validate.validState(dateTimeService != null, "DateTimeService cannot be null.");
         
         final CemiAwardScheduleFileAwardScheduleTabRowBo awardScheduleTabDataRow = new CemiAwardScheduleFileAwardScheduleTabRowBo();
         
@@ -91,6 +88,12 @@ public class CemiAwardScheduleFileAwardScheduleTabRowBoFactory {
         final String rowAwardIntervalStartDate = determineFormattedDate(awardExtendedAttribute.getBudgetBeginningDate());
         final String rowAwardIntervalEndDate = determineFormattedDate(awardExtendedAttribute.getBudgetEndingDate());
         
+        //Set these values based upon the 
+        awardScheduleTabDataRow.setExtractTableUniqueRowId();
+        awardScheduleTabDataRow.setJobRunDateString(jobRunDateString);
+        awardScheduleTabDataRow.setProposalNumberUsedForDataRow();
+        
+        //Format and assign data values for these attributes as defined by the Huron mapping template specification.
         awardScheduleTabDataRow.setSpreadsheetKey(rowSpreadsheetKey);
         awardScheduleTabDataRow.setAddOnly(CemiBaseConstants.YES);
         awardScheduleTabDataRow.setAwardSchedule(CemiBaseConstants.EMPTY_STRING);

@@ -12,9 +12,10 @@ public class CemiAwardScheduleFileAwardScheduleTabRowBo extends CemiIndexedBusin
     private static final long serialVersionUID = -7478232634840096057L;
     
     // Attributes to make the data extract spreadsheet row database searchable and
-    // identifiable by data extraction run date and legacy data source ley.
-    private Long extractTableUniqueRowId;
-    private String jobRunDateAsString;
+    // identifiable by data extraction run date and legacy data source .
+    // Abstract class attributes that MUST be set
+    //    private String jobRunDate;
+    //    private Long jobRunRowIndex;    //nkk4fix    private Long extractTableUniqueRowId; to become jobRunRowIndex
     private String proposalNumberUsedForDataRow; 
     
     // Attributes representing a single data extract spreadsheet row

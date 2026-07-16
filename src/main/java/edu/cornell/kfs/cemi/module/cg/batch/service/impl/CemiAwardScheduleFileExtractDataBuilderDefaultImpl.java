@@ -56,7 +56,7 @@ public class CemiAwardScheduleFileExtractDataBuilderDefaultImpl extends CemiOrmD
     public void writeAwardScheduleFileAwardScheduleTabExtractDataToIntermediateStorage(
             final Iterator<Award> awards, String jobRunDateString) {
 
-        int awardScheduleTabRowCount;
+        int awardScheduleTabRowCount = 0; // MAY NEED TO SET TO PREVIOUS RUN STARTING POINT
         
         for (final Award award : IteratorUtils.asIterable(awards)) {
             
@@ -67,12 +67,14 @@ public class CemiAwardScheduleFileExtractDataBuilderDefaultImpl extends CemiOrmD
             
             //Award Schedule Tab
             AwardExtendedAttribute awardExtendedAttribute = (AwardExtendedAttribute) award.getExtension();
-            final CemiAwardScheduleFileAwardScheduleTabRowBo awardSchedule = new CemiAwardScheduleFileAwardScheduleTabRowBo(award, spreadsheetKey, 
-            awardScheduleReferenceId, awardIntervalStartDate, awardIntervalEndDate, maskSensitiveData);
+            
+//            final CemiAwardScheduleFileAwardScheduleTabRowBo awardSchedule = new CemiAwardScheduleFileAwardScheduleTabRowBo(award, spreadsheetKey, 
+//            awardScheduleReferenceId, awardIntervalStartDate, awardIntervalEndDate, maskSensitiveData);
   
             //Database table storage of data extract
-            createAndStoreAwardScheduleFileAwardScheduleTabRows(awardSchedule, award.getProposalNumber(), jobRunDate, awardScheduleTabTableSequence);
-  
+//original   createAndStoreAwardScheduleFileAwardScheduleTabRows(awardSchedule, award.getProposalNumber(), jobRunDate, awardScheduleTabTableSequence);
+            createAndStoreAwardScheduleFileAwardScheduleTabRows(award, awardExtendedAttribute, jobRunDateString, awardScheduleTabRowCount);
+            
             //Record identifier associations for Award Schedule extract file based upon batch job run date
             recordAwardScheduleIdentifiersInLegacyAssociationTable(spreadsheetKey, awardScheduleReferenceId, jobRunDate);
 
@@ -80,11 +82,11 @@ public class CemiAwardScheduleFileExtractDataBuilderDefaultImpl extends CemiOrmD
 //
 //            //Award Schedule Tab
 //            AwardExtendedAttribute awardExtendedAttribute = (AwardExtendedAttribute) award.getExtension();
-//            String awardIntervalStartDateString = determineFormattedDate(awardExtendedAttribute.getBudgetBeginningDate());
-//            String awardIntervalEndDateString = determineFormattedDate(awardExtendedAttribute.getBudgetEndingDate());
-//            String spreadsheetKey = buildSpreadsheetKey(award.getProposalNumber());
-//            String awardScheduleReferenceId = buildAwardScheduleReferenceId(award.getProposalNumber());
-//            final CemiAwardSchedule awardSchedule = new CemiAwardSchedule(award, spreadsheetKey, 
+//  in foctory          String awardIntervalStartDateString = determineFormattedDate(awardExtendedAttribute.getBudgetBeginningDate());
+//   in factory         String awardIntervalEndDateString = determineFormattedDate(awardExtendedAttribute.getBudgetEndingDate());
+//   in factory         String spreadsheetKey = buildSpreadsheetKey(award.getProposalNumber());
+//    in factory        String awardScheduleReferenceId = buildAwardScheduleReferenceId(award.getProposalNumber());
+//   was dto         final CemiAwardSchedule awardSchedule = new CemiAwardSchedule(award, spreadsheetKey, 
 //                    awardScheduleReferenceId, awardIntervalStartDate, awardIntervalEndDate, maskSensitiveData);
 //            //Database table storage of data extract
 //            saveAwardScheduleRowToTable(awardSchedule, award.getProposalNumber(), jobRunDate, awardScheduleTabTableSequence);
@@ -92,17 +94,21 @@ public class CemiAwardScheduleFileExtractDataBuilderDefaultImpl extends CemiOrmD
 //            //csv storage of data extract
 //            writeAwardScheduleRowToFiles(awardSchedule);
 //            
-//            //Record identifier associations for Award Schedule extract file based upon batch job run date
-//            recordAwardScheduleIdentifiersInLegacyAssociationTable(spreadsheetKey, awardScheduleReferenceId, jobRunDate);
+            //Record identifier associations for Award Schedule extract file based upon batch job run date
+            recordAwardScheduleIdentifiersInLegacyAssociationTable(spreadsheetKey, awardScheduleReferenceId, jobRunDate);
         }
         LOG.info("writeAwardScheduleFileAwardScheduleTabExtractDataToIntermediateStorage, Finished writing {} "
                 + "Awards for Award Schedule", awardScheduleTabRowCount);
     }
     
-    protected void createAndStoreAwardScheduleFileAwardScheduleTabRows(CemiAwardSchedule awardSchedule, String proposalNumberUsed,
-            LocalDateTime jobRunDate, CemiAwardScheduleBoSequence awardScheduleTabTableSequence) {
-        CemiAwardScheduleFileAwardScheduleTabRowBo dataToSave = new CemiAwardScheduleFileAwardScheduleTabRowBo(awardSchedule, proposalNumberUsed, jobRunDate, awardScheduleTabTableSequence);
-         dataToSave = getBusinessObjectService().save(dataToSave);
+    protected void createAndStoreAwardScheduleFileAwardScheduleTabRows(final Award award, 
+            final AwardExtendedAttribute awardExtendedAttribute, final String jobRunDateString, final int awardScheduleTabRowCount) {
+
+        CemiAwardScheduleFileAwardScheduleTabRowBo awardScheduleTabRow = 
+//                new CemiAwardScheduleFileAwardScheduleTabRowBoFactory(award, awardExtendedAttribute, proposalNumberUsed, jobRunDate, awardScheduleTabTableSequence);
+                new CemiAwardScheduleFileAwardScheduleTabRowBoFactory(award, awardExtendedAttribute, jobRunDateString, awardScheduleTabRowCount);
+        
+        storeSheetRow(awardScheduleTabRow);
     }
     
     // Retain in the database an association between the new Workday data key - legacy system data key - extraction run date
