@@ -2,7 +2,6 @@ package edu.cornell.kfs.cemi.module.cg.batch.service.impl;
 
 import java.sql.Date;
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -14,7 +13,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import edu.cornell.kfs.cemi.module.cg.CemiAwardScheduleConstants;
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardScheduleFileAwardScheduleTabRowBo;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
-import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
 @SuppressWarnings("deprecation")
@@ -23,51 +21,16 @@ public class CemiAwardScheduleFileAwardScheduleTabRowBoFactory {
     private Award award;
     private AwardExtendedAttribute awardExtendedAttribute;
     private String jobRunDateString;
-    private int awardScheduleTabRowCount;
     private DateTimeService dateTimeService;
-    private boolean maskSensitiveData = true;   // Default is to mask in the event KFS system parameter has not been created.
+    private boolean maskSensitiveData = true;   // Initialize default processing to mask in the event 
+                                                // KFS system parameter has not been created. 
 
-     //moved from CemiAwardScheduleBo during restructuring
-//    public CemiAwardScheduleBo (CemiAwardSchedule cemiAwardScheduleDataRow, String proposalNumberForScheduleRow,
-//            LocalDateTime jobRunDate, CemiAwardScheduleBoSequence awardScheduleTabTableSequence) {
-//        
-//        // These values are to make the row that would appear in an extract spreadsheet seachable as well as
-//        // identifiable by the actual KFS data object keys used to create that row and date-time of the extract file.
-////        this.extractTableUniqueRowId = awardScheduleTabTableSequence.getLongValue();
-////        this.jobRunDateAsString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
-////        this.proposalNumberUsedForDataRow = proposalNumberForScheduleRow;
-//        
-//        // These table data values should be the same as what would be in the extract file tabbed sheet columns.
-//        this.spreadsheetKey = cemiAwardScheduleDataRow.getSpreadsheetKey();
-//        this.addOnly = cemiAwardScheduleDataRow.getAddOnly();
-//        this.awardSchedule = cemiAwardScheduleDataRow .getAwardSchedule();
-//        this.awardScheduleReferenceId = cemiAwardScheduleDataRow.getAwardScheduleReferenceId();
-//        this.awardScheduleName = cemiAwardScheduleDataRow.getAwardScheduleName();
-//        this.awardPostingIntervalGroup = cemiAwardScheduleDataRow.getAwardPostingIntervalGroup();
-//        this.awardPeriodDataRowId = cemiAwardScheduleDataRow.getAwardPeriodDataRowId();
-//        this.awardPeriodReferenceId = cemiAwardScheduleDataRow.getAwardPeriodReferenceId();
-//        this.awardPeriodName = cemiAwardScheduleDataRow.getAwardPeriodName();
-//        this.awardPeriodNumber = cemiAwardScheduleDataRow.getAwardPeriodNumber();
-//        this.awardIntervalRowId = cemiAwardScheduleDataRow.getAwardIntervalRowId();
-//        this.awardPostingInterval = cemiAwardScheduleDataRow.getAwardPostingInterval();
-//        this.awardPostingIntervalId = cemiAwardScheduleDataRow.getAwardPostingIntervalId();
-//        this.awardPostingIntervalName = cemiAwardScheduleDataRow.getAwardPostingIntervalName();
-//        this.awardIntervalStartDate = cemiAwardScheduleDataRow.getAwardIntervalStartDate();
-//        this.awardIntervalEndDate = cemiAwardScheduleDataRow.getAwardIntervalEndDate();
-//        this.isAwardContractStartDate = cemiAwardScheduleDataRow.getIsAwardContractStartDate();
-//        this.isAwardContractEndDate = cemiAwardScheduleDataRow.getIsAwardContractEndDate();
-//    }    
-    
-    
-    
     public CemiAwardScheduleFileAwardScheduleTabRowBoFactory (final Award award, 
             final AwardExtendedAttribute awardExtendedAttribute, final String jobRunDateString, 
-            final int awardScheduleTabRowCount, final DateTimeService dateTimeService, final boolean maskSensitiveData) {
-        
+            final DateTimeService dateTimeService, final boolean maskSensitiveData) {
         this.award = award;
         this.awardExtendedAttribute = awardExtendedAttribute;
         this.jobRunDateString = jobRunDateString;
-        this.awardScheduleTabRowCount = awardScheduleTabRowCount;
         this.dateTimeService = dateTimeService;
         this.maskSensitiveData = maskSensitiveData;
     }
@@ -88,10 +51,10 @@ public class CemiAwardScheduleFileAwardScheduleTabRowBoFactory {
         final String rowAwardIntervalStartDate = determineFormattedDate(awardExtendedAttribute.getBudgetBeginningDate());
         final String rowAwardIntervalEndDate = determineFormattedDate(awardExtendedAttribute.getBudgetEndingDate());
         
-        //Set these values based upon the 
-        awardScheduleTabDataRow.setExtractTableUniqueRowId();
+        // Reference information related to business object being created that must be specified.
+        //      attribute runRowIndex is being set by abstract class CemiIndexedBusinessObjectBase.
         awardScheduleTabDataRow.setJobRunDateString(jobRunDateString);
-        awardScheduleTabDataRow.setProposalNumberUsedForDataRow();
+        awardScheduleTabDataRow.setProposalNumberUsedForDataRow(award.getProposalNumber());
         
         //Format and assign data values for these attributes as defined by the Huron mapping template specification.
         awardScheduleTabDataRow.setSpreadsheetKey(rowSpreadsheetKey);

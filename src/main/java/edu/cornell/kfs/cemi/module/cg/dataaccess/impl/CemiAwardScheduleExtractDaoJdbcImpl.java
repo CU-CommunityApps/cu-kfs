@@ -1,14 +1,11 @@
 package edu.cornell.kfs.cemi.module.cg.dataaccess.impl;
 
 import java.sql.Types;
-import java.time.LocalDateTime;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
 
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleExtractDao;
-import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.sys.util.CuSqlChunk;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
 import edu.cornell.kfs.sys.util.CuSqlQueryPlatformAwareDaoBaseJdbc;
@@ -16,8 +13,6 @@ import edu.cornell.kfs.sys.util.CuSqlQueryPlatformAwareDaoBaseJdbc;
 public class CemiAwardScheduleExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc implements CemiAwardScheduleExtractDao {
 
     private static final Logger LOG = LogManager.getLogger();
-    
-    protected DateTimeService dateTimeService;
 
     @Override
     public void clearExistingListOfExtractableProposalNumbers() {
@@ -41,16 +36,14 @@ public class CemiAwardScheduleExtractDaoJdbcImpl extends CuSqlQueryPlatformAware
     
     @Override
     public void storeSpreadsheetKeyProposalNumberAwardScheduleExtractRunDateMapping(final String spreadsheetKey,
-            final String awardProposalNumber, final LocalDateTime jobRunDate) {
-
-        String jobRunDateAsString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
+            final String awardProposalNumber, final String jobRunDateString) {
 
         final CuSqlQuery query = new CuSqlChunk()
                 .append("INSERT INTO KFS.CU_CEMI_MAPPING_AWD_SCHDL_EXTR_FILE_T ")
                 .append("(WKDY_SPRDSHT_KEY_ID, CGPRPSL_NBR, EXTR_FILE_RUNDATE) ")
                 .append("VALUES (").appendAsParameter(Types.VARCHAR, spreadsheetKey)
                 .append(", ").appendAsParameter(Types.VARCHAR, awardProposalNumber)
-                .append(", ").appendAsParameter(Types.VARCHAR, jobRunDateAsString)
+                .append(", ").appendAsParameter(Types.VARCHAR, jobRunDateString)
                 .append(")")
                 .toQuery();
 
@@ -60,16 +53,8 @@ public class CemiAwardScheduleExtractDaoJdbcImpl extends CuSqlQueryPlatformAware
                     + " but it inserted {} rows instead", numRowsInserted);
             throw new RuntimeException(String.format("Failed to insert SpreadsheeyKey-ProposaNumber-JobRunDate row for:"
                     + " Spreadsheet Key %s, Proposal Number %s, extraction job run datetime %s.", spreadsheetKey,
-                    awardProposalNumber, jobRunDateAsString));
+                    awardProposalNumber, jobRunDateString));
         }
-    }
-
-    public DateTimeService getDateTimeService() {
-        return dateTimeService;
-    }
-
-    public void setDateTimeService(DateTimeService dateTimeService) {
-        this.dateTimeService = dateTimeService;
     }
 
 }

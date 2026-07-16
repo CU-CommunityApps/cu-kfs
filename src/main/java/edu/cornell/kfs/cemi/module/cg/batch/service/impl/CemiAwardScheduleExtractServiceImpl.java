@@ -60,7 +60,7 @@ public class CemiAwardScheduleExtractServiceImpl extends CemiDataExtractServiceB
                 businessObjectService, jobRunDateString, dateTimeService, cemiAwardScheduleExtractOrmDao,
                 cemiAwardScheduleExtractDao, shouldMaskCemiSensitiveData());
         final Iterator<Award> awardsIterator = awards.iterator();
-        dataBuilder.writeAwardScheduleFileAwardScheduleTabExtractDataToIntermediateStorage(awardsIterator, jobRunDateString);
+        dataBuilder.writeAwardScheduleFileAwardScheduleTabExtractDataToIntermediateStorage(awardsIterator);
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)

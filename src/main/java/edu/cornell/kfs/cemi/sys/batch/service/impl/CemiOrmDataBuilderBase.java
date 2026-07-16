@@ -35,9 +35,13 @@ public abstract class CemiOrmDataBuilderBase {
         Validate.validState(rowCount != null, "Could not find sheet row counter for %s", sheetRow.getClass().getName());
 
         final long nextCountValue = rowCount.incrementAndGet();
-        sheetRow.setJobRunDate(jobRunDateString);
+        sheetRow.setJobRunDateString(jobRunDateString);
         sheetRow.setJobRunRowIndex(nextCountValue);
         businessObjectService.save(sheetRow);
+    }
+
+    public String getJobRunDateString() {
+        return jobRunDateString;
     }
 
 }

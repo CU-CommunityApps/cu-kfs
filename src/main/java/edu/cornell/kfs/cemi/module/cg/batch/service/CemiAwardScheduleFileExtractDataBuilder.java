@@ -6,6 +6,6 @@ import org.kuali.kfs.module.cg.businessobject.Award;
 
 public interface CemiAwardScheduleFileExtractDataBuilder {
 
-    void writeAwardScheduleFileAwardScheduleTabExtractDataToIntermediateStorage(final Iterator<Award> awards, String jobRunDateString);
+    void writeAwardScheduleFileAwardScheduleTabExtractDataToIntermediateStorage(final Iterator<Award> awards);
 
 }

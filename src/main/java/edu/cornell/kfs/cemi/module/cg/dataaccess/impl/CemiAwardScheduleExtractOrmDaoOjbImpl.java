@@ -4,21 +4,21 @@ import java.util.stream.Stream;
 
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
-import org.kuali.kfs.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
-import org.kuali.kfs.krad.service.KRADServiceLocator;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleExtractOrmDao;
-import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
+import edu.cornell.kfs.cemi.sys.dataaccess.impl.CemiOrmDaoOjbImplBase;
 import edu.cornell.kfs.sys.util.CuOjbUtils;
 
-public class CemiAwardScheduleExtractOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb implements CemiAwardScheduleExtractOrmDao {
+public class CemiAwardScheduleExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase implements CemiAwardScheduleExtractOrmDao {
 
     @Override
     public Stream<Award> getAwardsForCemiAwardScheduleExtractAsCloseableStream() {
         final String proposalNumberCondition;
 
+        // Local environment configuration property setting used by base class method call 
+        // to reduce processing time for local development during CEMI project work.
         if (shouldUseLessDataDuringCemiDevelopment()) {
             // This conditional was added to reduce processing time for local development during CEMI project work.
             // The values were chosen for the WHERE clause to restrict the result set to roughly 1000 rows as
@@ -45,17 +45,7 @@ public class CemiAwardScheduleExtractOrmDaoOjbImpl extends PlatformAwareDaoBaseO
 
         return CuOjbUtils.buildCloseableStreamForQueryResults(
                 Award.class,
-                () -> getPersistenceBrokerTemplate().getIteratorByQuery(query));
+                () -> super.getPersistenceBrokerTemplate().getIteratorByQuery(query));
     }
 
-    // This was added to reduce processing time for local development during CEMI project work.
-    private static boolean shouldUseLessDataDuringCemiDevelopment() {
-        return getBooleanProperty(CemiBaseConstants.CU_CEMI_DEVELOPMENT_USE_SMALLER_DATA_SET_KEY);
-    }
-
-    // This was added to reduce processing time for local development during CEMI project work.
-    private static boolean getBooleanProperty(String propertyName) {
-        return KRADServiceLocator.getKualiConfigurationService().getPropertyValueAsBoolean(propertyName);
-    }
-    
 }
