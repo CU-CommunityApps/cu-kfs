@@ -1,2 +1,0 @@
--- At a minimum this "create-views" script file needs to hold the definition that creates the view used to
--- obtain the keys defining the scope of objects to used for the data extraction.
