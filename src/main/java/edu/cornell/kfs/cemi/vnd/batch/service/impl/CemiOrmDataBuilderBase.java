@@ -1,4 +1,6 @@
 package edu.cornell.kfs.cemi.vnd.batch.service.impl;
+//CHANGE extends TO USE edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBase
+//MAKE ALL RELATED CODING CHANGES NEEDED TO MAKE abstract class FOLLOW PATTERN. 
 
 import java.util.Map;
 import java.util.function.Function;
@@ -9,7 +11,7 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.mutable.MutableLong;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 
-import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBase;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiIndexedBusinessObjectBase;
 
 public abstract class CemiOrmDataBuilderBase {
 
