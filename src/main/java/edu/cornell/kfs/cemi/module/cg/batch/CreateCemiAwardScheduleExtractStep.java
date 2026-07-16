@@ -18,7 +18,7 @@ public class CreateCemiAwardScheduleExtractStep extends AbstractStep {
         //Phase 2: Loop through result set to create all the csv files
         cemiAwardScheduleExtractService.generateIntermediateExtractData(jobRunDate);
         //Phase 3: Create single multi-tabbed file.
-        cemiAwardScheduleExtractService.generateAwardScheduleExtractFile(jobRunDate);
+        cemiAwardScheduleExtractService.generateDataConversionExtractFile(jobRunDate);
         return true;
     }
 
