@@ -21,6 +21,10 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     private static final String TEXT_OF_ERROR_MESSAGE = "Text of error message";
     private static final String REQUEST_FILE_EXAMPLE = "SupplierSyncMessage-RequestMessage-JaggaerTestData.xml";
     private static final String RESPONSE_FILE_EXAMPLE = "SupplierSyncMessage-ResponseMessage-JaggaerTestData.xml";
+
+    protected  String buildFullOutputFilePath() {
+        return "test/SupplierSyncMessageJaggaerTest/";
+    }
     
     @ParameterizedTest
     @MethodSource("testSupplierSyncMessageArguments")
@@ -38,7 +42,7 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
             supplierSyncMessage.getSupplierSyncMessageItems().add(buildSupplierResponseMessage());
         }
 
-        File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, OUTPUT_FILE_PATH + "test.xml");
+        File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, buildFullOutputFilePath() + "test.xml");
         CuXMLUnitTestUtils.compareXML(expectedRequestXmlFile, actualXmlFile);
         validateFileContainsExpectedHeader(actualXmlFile);
     }
