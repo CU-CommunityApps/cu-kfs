@@ -1,6 +1,8 @@
 package edu.cornell.kfs.cemi.vnd.batch.businessobject;
 
-import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBase;
+// CHANGE extends TO USE edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBase
+// MAKE ALL RELATED CODING CHANGES NEEDED TO MAKE BO FOLLOW PATTERN. 
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiIndexedBusinessObjectBase;
 
 public class CemiSupplierEmailBo extends CemiIndexedBusinessObjectBase {
 

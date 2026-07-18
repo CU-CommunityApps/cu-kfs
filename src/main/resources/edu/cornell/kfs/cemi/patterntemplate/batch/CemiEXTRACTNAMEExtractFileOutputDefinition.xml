@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This is the main file for defining how the actual business object(s) information will map
+    to the data extraction spreadsheet/workbook.
+
+    Each "sheet" element should correspond to one of the sheets/tabs in the Excel workbook.
+
+    There are two main types of "field" elements: "STRING" AND "STATIC"
+    For simplicity, only the "STRING" "field" "type" will be used.
+
+    =============================================================
+    
+    Pattern Template Instructions:
+        Define the root element in the file as <cemiOutputDefinition>
+        Define a child <sheet> element for every tab in the spreadsheet where the sheet attribute values are:
+            name = exact name of the tab in the spreadsheet
+            num-header-rows = 5 or 6 depending on whether the Huron mapping template is an EIB template (5) or CloverDX template (6)
+            start-column-index = 1
+            business-object-class = fully qualified business object class holding the data for a single row on that sheet
+
+        Within the <sheet> tag, define a <field> for every field in the spreadsheet tab where the field attribute values are:
+            name = EXACT name of the field from the spreadsheet
+            type = STRING
+            key = attribute name from the business object listed in the sheet business-object-class
+            
+    NOTE: Each sheet tag should be associated with a different fully qualified business object.
+
+EXAMPLE :
+    <sheet name="Award Schedule" num-header-rows="5" start-column-index="1">
+        <field name="Spreadsheet Key" type="STRING" key="spreadsheetKey"/>
+        <field name="Add Only" type="STRING" key="addOnly"/>
+        <field name="Award Schedule" type="STRING" key="awardSchedule"/>
+        <field name="Award Schedule Reference ID" type="STRING" key="awardScheduleReferenceId"/>
+        <field name="Award Schedule Name" type="STRING" key="awardScheduleName"/>
+        <field name="Award Posting Interval Group" type="STRING" key="awardPostingIntervalGroup"/>
+        <field name="Row ID" type="STRING" key="awardPeriodDataRowId"/> 
+        <field name="Award Period Reference ID" type="STRING" key="awardPeriodReferenceId"/>
+        <field name="Award Period Name" type="STRING" key="awardPeriodName"/>
+        <field name="Award Period Number" type="STRING" key="awardPeriodNumber"/>
+        <field name="Row ID" type="STRING" key="awardIntervalRowId"/> 
+        <field name="Award Posting Interval" type="STRING" key="awardPostingInterval"/>
+        <field name="Award Posting Interval ID" type="STRING" key="awardPostingIntervalId"/>
+        <field name="Award Posting Interval Name" type="STRING" key="awardPostingIntervalName"/>
+        <field name="Award Interval Start Date" type="STRING" key="awardIntervalStartDate"/>
+        <field name="Award Interval End Date" type="STRING" key="awardIntervalEndDate"/>
+        <field name="Is Award Contract Start Date" type="STRING" key="isAwardContractStartDate"/>
+        <field name="Is Award Contract End Date" type="STRING" key="isAwardContractEndDate"/>
+    </sheet>
+
+ -->
+<cemiOutputDefinition>
+
+    <sheet name="Pattern_Template_Sheet1" num-header-rows="5" start-column-index="1"
+           business-object-class="edu.cornell.kfs.cemi.patterntemplate.batch.businessobject.CemiEXTRACTNAMEFileTABNAMERowBo">
+        <field name="From The Mapping Template Tab" type="STRING" key="fromTheMappingTemplateTab"/>
+        <field name="That Should Be" type="STRING" key="thatShouldBe"/>
+        <field name="Populated_By_This" type="STRING" key="populatedByThis"/>
+        <field name="Business_Object" type="STRING" key="businessObject"/>
+    </sheet>
+
+</cemiOutputDefinition>

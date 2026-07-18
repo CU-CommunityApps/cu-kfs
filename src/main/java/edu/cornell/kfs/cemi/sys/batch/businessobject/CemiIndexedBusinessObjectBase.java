@@ -6,15 +6,15 @@ public abstract class CemiIndexedBusinessObjectBase extends PersistableBusinessO
 
     private static final long serialVersionUID = 2446925945540509482L;
 
-    private String jobRunDate;
+    private String jobRunDateString;
     private Long jobRunRowIndex;
 
-    public String getJobRunDate() {
-        return jobRunDate;
+    public String getJobRunDateString() {
+        return jobRunDateString;
     }
 
-    public void setJobRunDate(final String jobRunDate) {
-        this.jobRunDate = jobRunDate;
+    public void setJobRunDateString(final String jobRunDateString) {
+        this.jobRunDateString = jobRunDateString;
     }
 
     public Long getJobRunRowIndex() {
