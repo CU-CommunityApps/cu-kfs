@@ -78,11 +78,10 @@ public class CuRequisitionDocument extends RequisitionDocument {
         }
 
         if (nodeName.equals(CUPurapWorkflowConstants.B2B_AUTO_PURCHASE_ORDER)) { 
-            final boolean isB2BAutoPurchaseOrder = isB2BAutoPurchaseOrder();
             if (isB2BPositivePayRequired()) {
                 this.paymentRequestPositiveApprovalIndicator = true;
             }
-            return isB2BAutoPurchaseOrder;
+            return isB2BAutoPurchaseOrder();
         }
         
         return super.answerSplitNodeQuestion(nodeName);
