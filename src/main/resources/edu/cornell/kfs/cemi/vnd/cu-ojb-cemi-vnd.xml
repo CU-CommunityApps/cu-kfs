@@ -4,7 +4,7 @@
 
     <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo"
                       table="CU_CEMI_EXTR_SUPPLIER_TAB_SUPPLIER_T">
-        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
         <field-descriptor name="supplierId" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="supplierReferenceId" column="SUPPLIER_REFERENCE_ID" jdbc-type="VARCHAR"/>
@@ -61,7 +61,7 @@
 
     <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo"
                       table="CU_CEMI_EXTR_SUPPLIER_TAB_ADDRESSES_T">
-        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
         <field-descriptor name="supplierId" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="addressId" column="ADDRESS_ID" jdbc-type="VARCHAR"/>
@@ -86,7 +86,7 @@
 
     <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierEmailBo"
                       table="CU_CEMI_EXTR_SUPPLIER_TAB_EMAILS_T">
-        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
         <field-descriptor name="supplierId" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="emailId1" column="EMAIL_ID_1" jdbc-type="VARCHAR"/>
@@ -128,7 +128,7 @@
 
     <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierBo"
                       table="CU_CEMI_EXTR_RMT_TO_SUPP_TAB_RMT_TO_SUPP_T">
-        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
         <field-descriptor name="supplierId" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="supplierConnectionId" column="SUPPLIER_CONNECTION_ID" jdbc-type="VARCHAR"/>
@@ -152,7 +152,7 @@
 
     <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiOrderFromSupplierBo"
                       table="CU_CEMI_EXTR_ORD_FRM_SUPP_TAB_ORD_FRM_T">
-        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
         <field-descriptor name="spreadsheetKey" column="SPREADSHEET_KEY" jdbc-type="VARCHAR"/>
         <field-descriptor name="supplierIdHeader" column="SUPPLIER_ID_HEADER" jdbc-type="VARCHAR"/>

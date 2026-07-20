@@ -146,7 +146,7 @@ public class CemiOrderFromSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
                 .append("WHERE WKDY_SPLR_ID = ")
                         .appendAsParameter(Types.VARCHAR, CemiSupplierAddressBo::getSupplierId)
                 .append(" AND EXTR_FILE_RUNDATE = ")
-                        .appendAsParameter(Types.VARCHAR, CemiSupplierAddressBo::getJobRunDate)
+                        .appendAsParameter(Types.VARCHAR, CemiSupplierAddressBo::getJobRunDateString)
                 .toQuery();
 
         storeAsListOfAddressLinks(CemiSupplierAddressBo.class, query, addressIterator);

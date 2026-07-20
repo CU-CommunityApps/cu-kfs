@@ -27,7 +27,7 @@ public class CemiFileAppenderOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb imple
         final Class<? extends CemiIndexedBusinessObjectBase> sheetBoClass = getSheetBoClass(sheetDefinition);
 
         final Criteria criteria = new Criteria();
-        criteria.addEqualTo(CemiBasePropertyConstants.JOB_RUN_DATE, jobRunDate);
+        criteria.addEqualTo(CemiBasePropertyConstants.JOB_RUN_DATE_STRING, jobRunDate);
 
         final ReportQueryByCriteria query = new ReportQueryByCriteria(sheetBoClass, criteria);
         query.setAttributes(getFieldNamesToQuery(sheetDefinition));
