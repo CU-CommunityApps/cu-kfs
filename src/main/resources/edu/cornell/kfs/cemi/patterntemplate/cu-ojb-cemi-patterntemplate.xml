@@ -21,7 +21,7 @@
          Table field descriptor items should follow this pattern:
             First two descriptors should represent the standard CemiIndexedBusinessObjectBase attributes defined as the table's composite primary key:
                 EXTR_FILE_RUNDATE VARCHAR2(20) NOT NULL from the SQL script would have values
-                    name="jobRunDateAsString"
+                    name="jobRunDateString"
                     column="EXTR_FILE_RUNDATE"
                     jdbc-type="VARCHAR"
                     primarykey="true"
@@ -61,7 +61,7 @@
                     cemi-005-order-from-step-001-create-tables.sql
     -->
     <class-descriptor class="edu.cornell.kfs.cemi.patterntemplate.batch.businessobject.CemiEXTRACTNAMEFileTABNAMERowBo" table="CU_CEMI_EXTR_XXX_XXX_TAB_XXX_XXX_T">
-        <field-descriptor name="jobRunDate" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
         <field-descriptor name="anyKeyAttributes" column="ANY_KEY_ATTR" jdbc-type="VARCHAR"/>
         <field-descriptor name="neededToTrackDataRowValues" column="TRCK_ROW_VAL" jdbc-type="VARCHAR"/>

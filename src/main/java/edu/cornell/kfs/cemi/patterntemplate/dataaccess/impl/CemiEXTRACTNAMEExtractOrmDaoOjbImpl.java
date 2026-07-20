@@ -4,7 +4,6 @@ import java.util.stream.Stream;
 
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
-import org.kuali.kfs.sys.KFSPropertyConstants;
 
 import edu.cornell.kfs.cemi.patterntemplate.batch.businessobject.CemiExampleLEGACYOBJECT;
 import edu.cornell.kfs.cemi.patterntemplate.dataaccess.CemiEXTRACTNAMEExtractOrmDao;
@@ -20,6 +19,9 @@ import edu.cornell.kfs.sys.util.CuOjbUtils;
 //          (2) Method name : shouldUseLessDataDuringCemiDevelopment
 //
 //       You will also need to determine the boundaries to include in the "if" portion of the query.
+//
+//       Abstract class CemiOrmDaoOjbImplBase contains attribute configurationService which REQUIRES 
+//       a Spring bean definition in every concrete class created.
 //
 
 public class CemiEXTRACTNAMEExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase implements CemiEXTRACTNAMEExtractOrmDao {

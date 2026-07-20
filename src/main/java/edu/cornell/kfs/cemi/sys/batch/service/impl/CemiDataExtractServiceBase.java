@@ -59,7 +59,7 @@ public abstract class CemiDataExtractServiceBase {
 
     protected boolean isCemiSensitiveDataSetToUnmask() {
         String maskingParameterValue = parameterService.getParameterValueAsString(
-                getComponentClassForDataMaskingParameter(),
+                getComponentClassForDataExtractParameter(),
                 CemiBaseParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
         return Strings.CI.equals(maskingParameterValue, CemiBaseConstants.UNMASK);
     }
@@ -113,7 +113,7 @@ public abstract class CemiDataExtractServiceBase {
     
     protected boolean shouldCopyDataFileToOutboundDirectory() {
         return parameterService.getParameterValueAsBoolean(
-                getComponentClassForCopyFileToOutboundFolderParameter(),
+                getComponentClassForDataExtractParameter(),
                 CemiBaseParameterConstants.COPY_CEMI_FILE_TO_OUTBOUND_FOLDER);
     }
 
@@ -128,9 +128,7 @@ public abstract class CemiDataExtractServiceBase {
         }
     }
 
-    protected abstract Class<?> getComponentClassForDataMaskingParameter();
-    
-    protected abstract Class<?> getComponentClassForCopyFileToOutboundFolderParameter();
+    protected abstract Class<?> getComponentClassForDataExtractParameter();
 
     protected abstract String getOutputDefinitionFilePathSuffix();
 

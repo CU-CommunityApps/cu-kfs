@@ -57,7 +57,7 @@ public final class CemiEXTRACTNAMEConstants {
     // the first folder AFTER "cemi" where that XLSX file is located. When creating this constant, DO NOT include 
     // a forward slash in this definition.
     //     Example:
-    //        public static final String AWARD_SCHEDULE_TEMPLATE_FILE_PATH = "classpath:edu/cornell/kfs/cemi/module/cg/batch/Put_Award_Schedule.xlsx";
+    //        public static final String AWARD_SCHEDULE_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX = "module/cg/batch/Put_Award_Schedule.xlsx";
     //
     // Full path definition pertaining to Award Schedule mapping template XLSX to populate is below for comparison to 
     // show how this parameter would need to be configured.

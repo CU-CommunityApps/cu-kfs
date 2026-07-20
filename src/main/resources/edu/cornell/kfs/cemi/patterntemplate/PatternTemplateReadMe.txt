@@ -84,7 +84,7 @@
          Follow the instuctions in that file.
          !!!!!VERY IMPORTANT!!!!!
             If there are any encrypted fields, add update statements which will scrub those fields to nonprod-sql 
-            repository file :    manual / kfs/ KFSPTS-38305-cemiMaualScrub.sql
+            repository file :    manual / kfs/ KFSPTS-38305-cemiManualScrub.sql
     
      (6) In a separate GitHub branch checked out from repository nonprod-sql, copy the three SQL example files at
          location "resources/edu/cornell/kfs/cemi/module/patterntemplate/examplesql" to the "kfs" folder for nonprod-sql.

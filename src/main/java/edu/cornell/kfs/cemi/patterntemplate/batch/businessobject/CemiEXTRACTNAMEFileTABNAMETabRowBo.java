@@ -17,7 +17,7 @@ import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBa
  *                  
  *         (2) It should extend abstract class edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBase
  *             (a) Where the abstract class defines the following attributes which need to be assigned values during processing: 
- *                      String jobRunDate
+ *                      String jobRunDateString
  *                      Long jobRunRowIndex
  *                      
  *         (3) Any legeacy data object reference keys should be part of the attributes defined in the concrete business object.

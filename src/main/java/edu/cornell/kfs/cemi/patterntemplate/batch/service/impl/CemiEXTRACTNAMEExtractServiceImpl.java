@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.module.cg.businessobject.Award;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +28,7 @@ import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 // First consult with the rest of the team and only then should you override that base classes standard implementation.
 //
 // The general terms used in this class file should be adjusted to correctly reflect the types and kind of data 
-// being processed. Meaning, If the routine being called returns a stream of awards or accounting lines or supppliers,
+// being processed. Meaning, if the routine being called returns a stream of awards or accounting lines or supppliers,
 // replace the generic terms legacyObjects with ones that correctly reflect the objects so that odwn stream code 
 // is self documenting.
 //
@@ -70,15 +69,20 @@ public class CemiEXTRACTNAMEExtractServiceImpl extends CemiDataExtractServiceBas
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void generateIntermediateExtractData(final LocalDateTime jobRunDate) {
-        LOG.info("generateIntermediateExtractData, Generating data rows for Award Schedule spreadsheet "
-                + "and placing in intermediate storage...");
-        final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
-        final Stream<CemiExampleLEGACYOBJECT> legacyObjects = cemiEXTRACTNAMEExtractOrmDao.getLEGACYOBJECTForCemiEXTRACTNAMEExtractAsCloseableStream();
-        final CemiEXTRACTNAMEFileExtractDataBuilderDefaultImpl dataBuilder = new CemiEXTRACTNAMEFileExtractDataBuilderDefaultImpl(
-                businessObjectService, jobRunDateString, dateTimeService, cemiEXTRACTNAMEExtractOrmDao,
-                cemiEXTRACTNAMEExtractDao, shouldMaskCemiSensitiveData());
-        final Iterator<CemiExampleLEGACYOBJECT> legacyObjectIterator = legacyObjects.iterator();
-        dataBuilder.writeEXTRACTNAMEFileTABNAMETabExtractDataToIntermediateStorage(legacyObjectIterator);
+        LOG.info("generateIntermediateExtractData, Generating data rows for {} spreadsheet and placing in "
+                + "intermediate storage...", CemiEXTRACTNAMEConstants.EXTRACTNAME_EXTRACT_PLAIN_FILENAME);
+        
+        try ( 
+                final Stream<CemiExampleLEGACYOBJECT> legacyObjects = 
+                        cemiEXTRACTNAMEExtractOrmDao.getLEGACYOBJECTForCemiEXTRACTNAMEExtractAsCloseableStream();
+        ) {
+            final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
+            final CemiEXTRACTNAMEFileExtractDataBuilderDefaultImpl dataBuilder = new CemiEXTRACTNAMEFileExtractDataBuilderDefaultImpl(
+                    businessObjectService, jobRunDateString, dateTimeService, cemiEXTRACTNAMEExtractOrmDao,
+                    cemiEXTRACTNAMEExtractDao, shouldMaskCemiSensitiveData());
+            final Iterator<CemiExampleLEGACYOBJECT> legacyObjectIterator = legacyObjects.iterator();
+            dataBuilder.writeEXTRACTNAMEFileTABNAMETabExtractDataToIntermediateStorage(legacyObjectIterator);
+        }
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -92,13 +96,7 @@ public class CemiEXTRACTNAMEExtractServiceImpl extends CemiDataExtractServiceBas
     
     // Required overriding method for base class CemiDataExtractServiceBase
     @Override
-    protected Class<?> getComponentClassForDataMaskingParameter() {
-        return CreateCemiEXTRACTNAMEExtractStep.class;
-    }
-    
-    // Required overriding method for base class CemiDataExtractServiceBase
-    @Override
-    protected Class<?> getComponentClassForCopyFileToOutboundFolderParameter() {
+    protected Class<?> getComponentClassForDataExtractParameter() {
         return CreateCemiEXTRACTNAMEExtractStep.class;
     }
 

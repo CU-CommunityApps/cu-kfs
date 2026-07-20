@@ -43,7 +43,7 @@ public class CemiEXTRACTNAMEExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDa
     }
     
     @Override
-    public void storeSpreadsheetRowItemKeyLegecyObjectKeyExractRunDateMapping(final String spreadsheetKey,
+    public void storeSpreadsheetRowItemKeyLegacyObjectKeyExtractRunDateMapping(final String spreadsheetKey,
             final String awardProposalNumber, final String jobRunDateString) {
 
 // Actual example from working data extraction

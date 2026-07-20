@@ -26,7 +26,8 @@
     NOTE: Each sheet tag should be associated with a different fully qualified business object.
 
 EXAMPLE :
-    <sheet name="Award Schedule" num-header-rows="5" start-column-index="1">
+    <sheet name="Award Schedule" num-header-rows="5" start-column-index="1"
+           business-object-class="edu.cornell.kfs.cemi.cg.batch.businessobject.CemiAwardScheduleFileAwardScheduleTabRowBo">
         <field name="Spreadsheet Key" type="STRING" key="spreadsheetKey"/>
         <field name="Add Only" type="STRING" key="addOnly"/>
         <field name="Award Schedule" type="STRING" key="awardSchedule"/>

@@ -8,7 +8,7 @@ public interface CemiEXTRACTNAMEExtractDao {
    
     void queryAndStoreInScopeBusinessObjectKeysForDataExtract();
     
-    void storeSpreadsheetRowItemKeyLegecyObjectKeyExractRunDateMapping(final String spreadsheetKey,
+    void storeSpreadsheetRowItemKeyLegacyObjectKeyExtractRunDateMapping(final String spreadsheetKey,
             final String legacyObjectKey, final String jobRunDateString);
 
 }
