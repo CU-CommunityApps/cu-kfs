@@ -14,10 +14,10 @@
      NONE of this template code in this part of the package structure should be executed as
      a batch job as-is and in fact should fail if executed in its current and all future forms.
     
-     Remove all patterntemplate exmaples and comments as you are coding, including this instruction documentation.
+     Remove all patterntemplate examples and comments as you are coding, including this instruction documentation.
      
-     When customizing this pattern template for a specific data extraction, keep all of you changes within
-     this copied patten structure. Do not change any code in any other package structures or abstrct base classes
+     When customizing this pattern template for a specific data extraction, keep all of your changes within
+     this copied patten structure. Do not change any code in any other package structures or abstract base classes
      without first consulting with the rest of the team.
     
     ==============================================================================================================
@@ -25,7 +25,7 @@
      for a module area:
     
      (1) Copy the "patterntemplate" folder located at "java/edu/cornell/kfs/cemi" to the appropriate
-         location under the "cemi" folder in the KFS package heirarchy where it should reside based 
+         location under the "cemi" folder in the KFS package hierarchy where it should reside based 
          upon the information the job will be processing.
          Example: 
          If you are creating the FIRST data extraction associated with Assets, copy Java "patterntemplate" 
@@ -33,7 +33,7 @@
     
     
      (2) Copy the "patterntemplate" folder located at "resources/edu/cornell/kfs/cemi" to the appropriate
-         location under the "cemi" folder in the KFS package heirarchy where it should reside based 
+         location under the "cemi" folder in the KFS package hierarchy where it should reside based 
          upon the information the job will be processing.
          Example: 
          If you are creating the FIRST data extraction associated with Assets, copy resources "patterntemplate" 
@@ -45,7 +45,7 @@
      NOTE: These steps are more tedious and you will need to ensure you are obtaining ALL the files.
     
      (1) Copy EVERY file from the "patterntemplate" folder located at "java/edu/cornell/kfs/cemi" to 
-         the appropriate location under the "cemi" folder in the KFS package heirarchy where it should 
+         the appropriate location under the "cemi" folder in the KFS package hierarchy where it should 
          reside based upon the information the job will be processing.
          Example: 
          If you are creating subsequent data extractions associated with Assets, copy EVERY file in the Java
@@ -53,7 +53,7 @@
     
     
      (2) Copy EVERY file from the "patterntemplate" folder located at "resources/edu/cornell/kfs/cemi" to
-         the appropriate location under the "cemi" folder in the KFS package heirarchy where it should
+         the appropriate location under the "cemi" folder in the KFS package hierarchy where it should
          reside based upon the information the job will be processing.
          Example: 
          If you are creating subsequent data extractions associated with Assets, copy EVERY file in the resources
@@ -134,7 +134,7 @@
                 obtain the keys defining the scope of objects to used for the data extraction.
                 
             (f) The "create-parameters" file contains definitions for the base parameters required by all batch jobs.
-                Adjust those definitons to make the batch job step names specific to the extraction being developed.
+                Adjust those definitions to make the batch job step names specific to the extraction being developed.
                 The parameer names are defined in constants class edu.cornell.kfs.cemi.sys.CemiBaseParametersConstants
                 
                 
@@ -164,7 +164,7 @@
          job coding. 
              (a) Spring setup of concrete Cemi{EXTRACTNAME}ExtractService class deals with configuring the specific
                  data values required by abstract class CemiDataExtractServiceBase in a manner that makes those values
-                 unquie to the data extraction being coded. These items require that kind of Spring configuration:
+                 unique to the data extraction being coded. These items require that kind of Spring configuration:
                     dataFileCreationDirectory
                     dataFileOutboundDirectory
                     cemiFileAppenderService

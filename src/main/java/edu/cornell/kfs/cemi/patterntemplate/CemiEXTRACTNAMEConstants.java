@@ -9,7 +9,7 @@ public final class CemiEXTRACTNAMEConstants {
     // contained in the business object factory:
     //      workdayStringValue = MessageFormat.format(Cemi{EXTRACTNAME}Constants.WORKDAY_OBJECT_REFERENCE_ID_FORMAT, legacyObjectSequenceNumber);
     //
-    //    Examples of the constantt definitions:
+    //    Examples of the constant definitions:
     //        public static final String SPREADSHEET_KEY_FORMAT = "AS_ITH_{0}";
     //        public static final String AWARD_SCHEDULE_REFERENCE_ID_FORMAT = "AS_ITH_{0}";
     //        public static final String AWARD_PERIOD_REFERENCE_ID_FORMAT = "AS_ITH_{0}_Period";
@@ -36,13 +36,13 @@ public final class CemiEXTRACTNAMEConstants {
     //
     // The partial file path in this constant should start at the first folder after the directory path: "edu/cornell/kfs/cemi/"
     // This partial file path is then used with a base constant in an abstract class to construct the full file path
-    // to the XML output definintion. 
+    // to the XML output definition. 
     //    Example:
     //        public static final String AWARD_SCHEDULE_OUTPUT_DEFINITION_PATH_SUFFIX = "module/cg/batch/CemiAwardScheduleExtractFileOutputDefinition.xml";
     //
     // Full path definition pertaining to Award Schedule output defintion file is below for comparison to show
     // how this parameter would need to be configured.
-    //    (1) Abstract class CemiDataExtractServiceBase contains abstrct method:
+    //    (1) Abstract class CemiDataExtractServiceBase contains abstract method:
     //              protected abstract String getOutputDefinitionFilePathSuffix();
     //    (2) Concrete class CemiAwardScheduleExtractServiceImpl returns constant 
     //              CemiAwardScheduleConstants.AWARD_SCHEDULE_OUTPUT_DEFINITION_PATH_SUFFIX
@@ -52,16 +52,15 @@ public final class CemiEXTRACTNAMEConstants {
     public static final String EXTRACTNAME_OUTPUT_DEFINITION_PATH_SUFFIX = "module/patterntemplate/batch/CemiEXTRACTNAMEExtractFileOutputDefinition.xml";
     
     // Where to find the empty mapping template version of the Excel spreadsheet provided by Huron to populate.
-    // The definition should include both the filename and the file extension. The XLSX file should be placed in
-    // the resources folder. The definition here is a partial path to that location stating from the starting from
-    // the first folder AFTER "cemi" where that XLSX file is located. When creating this constant, DO NOT include 
-    // a forward slash in this definition.
+    // The definition should include both the filename and the file extension. The XLSX file should be placed in the
+    // resources folder. The definition here is a partial path to that location starting from the first folder AFTER
+    // "cemi" where that XLSX file is located. When creating this constant, DO NOT include a forward slash in this definition.
     //     Example:
     //        public static final String AWARD_SCHEDULE_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX = "module/cg/batch/Put_Award_Schedule.xlsx";
     //
     // Full path definition pertaining to Award Schedule mapping template XLSX to populate is below for comparison to 
     // show how this parameter would need to be configured.
-    //  (1) Abstract class CemiDataExtractServiceBase contains abstrct method:
+    //  (1) Abstract class CemiDataExtractServiceBase contains abstract method:
     //            protected abstract String getTemplateWorkbookFilePathSuffix();
     //  (2) Concrete class CemiAwardScheduleExtractServiceImpl returns constant 
     //            CemiAwardScheduleConstants.AWARD_SCHEDULE_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX
@@ -79,7 +78,7 @@ public final class CemiEXTRACTNAMEConstants {
      //    Example:
      //        public static final String AWARD_SCHEDULE_EXTRACT_FILENAME_PREFIX = "Put_Award_Schedule_ITH_";
      //
-     public static final String EXTRACTNAME_EXTRACT_FILENAME_PREFIX = "ActualXlsxFilenme_ITH_";
+     public static final String EXTRACTNAME_EXTRACT_FILENAME_PREFIX = "ActualXlsxFilename_ITH_";
      
      
      // Actual file name including file extension for the data extraction spreadsheet file that will be

@@ -24,7 +24,7 @@ import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBa
  *                      
  *         (4) All field names on a particular tab should become "private String" attributes in the concrete business object.
  *         
- *         (5) Getters and setters should be generated for every attribute created in the concreate business object.
+ *         (5) Getters and setters should be generated for every attribute created in the concrete business object.
  *
  * Example of business object names for Huron mapping templates with a single spreadsheet tab  
  *      Award Schedule data extract file would have this business object:
@@ -39,7 +39,7 @@ import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBa
  *          CemiSupplierFileBankAccountsRowBo
  *          CemiSupplierFileChildrenRowBo
  *
- * Each concreate business object created will:
+ * Each concrete business object created will:
  *  (1) Require a corresponding OJB table definition in file resources/edu/cornell/kfs/cemi/patterntemplate/batch/cu-ojb-cemi-patterntemplate.xml
  *  (2) Require a corresponding nonprod-sql database table SQL creation script. Details are in that example file.
  *  (3) Be referenced in a Cemi{EXTRACTNAME}ExtractFileOutputDefinition.xml

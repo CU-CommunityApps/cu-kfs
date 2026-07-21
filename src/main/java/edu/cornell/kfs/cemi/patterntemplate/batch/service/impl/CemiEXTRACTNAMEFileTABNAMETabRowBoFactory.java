@@ -6,7 +6,7 @@ import org.kuali.kfs.module.cg.businessobject.Award;
 
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
-// The factory class deals with converting the legacgy data values to the new data value representation.
+// The factory class deals with converting the legacy data values to the new data value representation.
 // Depending upon how the data needs to be placed in the data extraction file, multiple business object factories
 // may be required to transform the information, one per business object type.
 // Ensure that your classes, attributes, method names, business object factories and business objects have

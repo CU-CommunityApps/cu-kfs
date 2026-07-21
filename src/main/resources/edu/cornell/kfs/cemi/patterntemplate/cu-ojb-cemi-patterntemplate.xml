@@ -51,7 +51,7 @@
             
          Create SQL script to build the physical database table CU_CEMI_EXTR_XXX_XXX_TAB_XXX_XXX_T
             (1) That SQL script should be created in folder kfs of repository nonprod-sql.
-            (2) That SQL script should following the file naming convention of
+            (2) That SQL script should follow the file naming convention of
                 cemi-AAA-EXTRACT-NAME-step-001-create-tables.sql
                 where AAA is a numeric value that representing that SQL extract in the overall SQL run order.
                 Example:

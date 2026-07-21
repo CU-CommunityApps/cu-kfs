@@ -29,7 +29,7 @@ import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 //
 // The general terms used in this class file should be adjusted to correctly reflect the types and kind of data 
 // being processed. Meaning, if the routine being called returns a stream of awards or accounting lines or supppliers,
-// replace the generic terms legacyObjects with ones that correctly reflect the objects so that odwn stream code 
+// replace the generic terms legacyObjects with ones that correctly reflect the objects so that down stream code 
 // is self documenting.
 //
 // There are four base class abstract methods that must be implemented in this concrete class. There is NO default
