@@ -32,7 +32,7 @@ import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 // tabs or could need to be dealt with on a single tab. This service implementation would deal with that complexity.
 //
 // This service would also perform the call to the business object factory/factories needed to appropriately store 
-// the data rows in tables(s) that represent the the actual sheets of the data extract spreadsheet being created.
+// the data rows in table(s) that represent the actual sheets of the data extract spreadsheet being created.
 
 public class CemiEXTRACTNAMEFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuilderBase
          implements CemiEXTRACTNAMEFileExtractDataBuilder {

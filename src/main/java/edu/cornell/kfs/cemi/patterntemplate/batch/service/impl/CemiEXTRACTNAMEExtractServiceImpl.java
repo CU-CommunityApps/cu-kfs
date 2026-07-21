@@ -28,7 +28,7 @@ import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 // First consult with the rest of the team and only then should you override that base classes standard implementation.
 //
 // The general terms used in this class file should be adjusted to correctly reflect the types and kind of data 
-// being processed. Meaning, if the routine being called returns a stream of awards or accounting lines or supppliers,
+// being processed. Meaning, if the routine being called returns a stream of awards or accounting lines or suppliers,
 // replace the generic terms legacyObjects with ones that correctly reflect the objects so that down stream code 
 // is self documenting.
 //

@@ -17,7 +17,7 @@
      Remove all patterntemplate examples and comments as you are coding, including this instruction documentation.
      
      When customizing this pattern template for a specific data extraction, keep all of your changes within
-     this copied patten structure. Do not change any code in any other package structures or abstract base classes
+     this copied pattern structure. Do not change any code in any other package structures or abstract base classes
      without first consulting with the rest of the team.
     
     ==============================================================================================================
@@ -95,7 +95,7 @@
          must exist for each data extraction batch job to function correctly.
          
          References to any database artifacts (tables, views, sequences, ...) in these SQL scripts must include the
-         schmea those artifacts are located in.
+         schema those artifacts are located in.
          
          Rename all three files in the following manner:
             (a) Replace XXX in the name with the next three digit numeric value specific to the extract being created.
@@ -157,7 +157,7 @@
                 
             (f) The "create-parameters" file contains definitions for the base parameters required by all batch jobs.
                 Adjust those definitions to make the batch job step names specific to the extraction being developed.
-                The parameer names are defined in constants class edu.cornell.kfs.cemi.sys.CemiBaseParametersConstants
+                The parameter names are defined in constants class edu.cornell.kfs.cemi.sys.CemiBaseParameterConstants
                 
                 
      (7) Rename copied class Cemi{EXTRACTNAME}File{TABENAME}TabRowBo to the appropriate {EXTRACTNAME} and {TABNAME}
@@ -182,32 +182,45 @@
          
          The pattern template file Cemi{EXTRACTNAME}ExtractServiceImpl also extends class CemiDataExtractServiceBase.
          That abstract class contains the default common processing that should be used by all data conversion batch 
-         job as well as a number of items requiring configuration or specification by the unique data conversion batch 
-         job coding. 
+         jobs as well as a number of items requiring configuration or specification by the unique data conversion batch 
+         job coding. This assortment of Spring beans and their setup is described below.
+         
              (a) Spring setup of concrete Cemi{EXTRACTNAME}ExtractService class deals with configuring the specific
                  data values required by abstract class CemiDataExtractServiceBase in a manner that makes those values
-                 unique to the data extraction being coded. These items require that kind of Spring configuration:
-                    dataFileCreationDirectory
-                    dataFileOutboundDirectory
-                    cemiFileAppenderService
-                    cemiOutputDefinitionFileType
-                    parameterService
+                 unique to the data extraction being coded. 
+                 These items require that kind of Spring configuration:
+                      (i) dataFileCreationDirectory
+                     (ii) dataFileOutboundDirectory
+                     
+             (b) The Spring definition of the concrete class needs to include beans defining the service attributes
+                 from the abstrct class.
+                 These items require that kind of Spring configuration:
+                       (i) environment
+                      (ii) cemiFileAppenderService
+                     (iii) cemiOutputDefinitionFileType
+                      (iv) parameterService
                     
-                     Example:
-                         <bean id="cemiAwardScheduleExtractService" parent="cemiAwardScheduleExtractService-parentBean"/>
-                         <bean id="cemiAwardScheduleExtractService-parentBean"
-                               abstract="true"
-                               class="edu.cornell.kfs.cemi.module.cg.batch.service.impl.CemiAwardScheduleExtractServiceImpl"
-                               c:environment-ref="environment"
-                               p:dataFileCreationDirectory="${staging.directory}/cemi/module/cg/cemiAwardScheduleExtract"
-                               p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
-                               p:cemiFileAppenderService-ref="cemiFileAppenderService"
-                               p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
-                               p:parameterService-ref="parameterService"
-                               p:cemiAwardScheduleOrmDao-ref="cemiAwardScheduleOrmDao"
-                               p:cemiAwardScheduleDao-ref="cemiAwardScheduleDao"
-                               p:businessObjectService-ref="businessObjectService"
-                               p:dateTimeService-ref="dateTimeService"/>
+             (c) The services specific to the actual data extraction being coded in the concrete class will also require
+                 Spring bean definitions.
+                     
+             This is an actual Spring setup example for a concrete class associated with a working data extraction
+             containing all three of those bean setup types:
+             
+                 Example:
+                     <bean id="cemiAwardScheduleExtractService" parent="cemiAwardScheduleExtractService-parentBean"/>
+                     <bean id="cemiAwardScheduleExtractService-parentBean"
+                           abstract="true"
+                           class="edu.cornell.kfs.cemi.module.cg.batch.service.impl.CemiAwardScheduleExtractServiceImpl"
+                           c:environment-ref="environment"
+                           p:dataFileCreationDirectory="${staging.directory}/cemi/module/cg/cemiAwardScheduleExtract"
+                           p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+                           p:cemiFileAppenderService-ref="cemiFileAppenderService"
+                           p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+                           p:parameterService-ref="parameterService"
+                           p:cemiAwardScheduleOrmDao-ref="cemiAwardScheduleOrmDao"
+                           p:cemiAwardScheduleDao-ref="cemiAwardScheduleDao"
+                           p:businessObjectService-ref="businessObjectService"
+                           p:dateTimeService-ref="dateTimeService"/>
      
   ==============================================================================================================
   ==============================================================================================================

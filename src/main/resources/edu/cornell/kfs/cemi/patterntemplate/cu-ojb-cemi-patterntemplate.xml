@@ -53,7 +53,7 @@
             (1) That SQL script should be created in folder kfs of repository nonprod-sql.
             (2) That SQL script should follow the file naming convention of
                 cemi-AAA-EXTRACT-NAME-step-001-create-tables.sql
-                where AAA is a numeric value that representing that SQL extract in the overall SQL run order.
+                where AAA is a numeric value representing that SQL extract in the overall SQL run order.
                 Example:
                     cemi-001-suppliers-step-001-create-tables.sql
                     cemi-002-award-schedule-step-001-create-tables.sql

@@ -40,7 +40,7 @@ public final class CemiEXTRACTNAMEConstants {
     //    Example:
     //        public static final String AWARD_SCHEDULE_OUTPUT_DEFINITION_PATH_SUFFIX = "module/cg/batch/CemiAwardScheduleExtractFileOutputDefinition.xml";
     //
-    // Full path definition pertaining to Award Schedule output defintion file is below for comparison to show
+    // Full path definition pertaining to Award Schedule output definition file is below for comparison to show
     // how this parameter would need to be configured.
     //    (1) Abstract class CemiDataExtractServiceBase contains abstract method:
     //              protected abstract String getOutputDefinitionFilePathSuffix();

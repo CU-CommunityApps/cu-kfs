@@ -4,7 +4,7 @@ import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBa
 
 /*
  * Business object representing information for a specific row on a specific tab in a specific data extraction spreadsheet file.
- * It also contains any references to legacgy objects used to obtain the information contained in that row.
+ * It also contains any references to legacy objects used to obtain the information contained in that row.
  *
  * Abstract class CemiIndexedBusinessObjectBase this concrete class is extended from contains common data attributes 
  * used across all business objects of this kind.
