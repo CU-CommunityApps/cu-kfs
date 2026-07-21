@@ -123,12 +123,34 @@
                     (1) Every sheet tab defined in the spreadsheet where the table names follow the pattern:
                             CU_CEMI_EXTR_{EXTRACT_NAME}_TAB_{TAB_NAME}_T
                             
-                    (2) An association table that links the legacy object keys to new Workday object keys for the
-                        file run date. Table names for this data would follow the pattern:
-                            CU_CEMI_MAPPING_{EXTRACT_NAME}_EXTR_FILE_T
-                            
-                    (3) Any data scope tables or helper tables needed for obtaining the information would follow the pattern:
+                    (2) Any data scope tables or helper tables needed for obtaining the information would follow the pattern:
                             CU_CEMI_{EXTRACT_NAME}_EXTR_{DATA_OBJECT}_T
+                            
+                    (3) If associations for legacyDataIdentifiers-to-WorkdayDataIdentifiers-to-extractionRunDate
+                        cannot be tracked as information in table CU_CEMI_EXTR_{EXTRACT_NAME}_TAB_{TAB_NAME}_T then 
+                        is not included by the business object factory in the data extractino file, then an
+                        that key association table which  links all that key information needs to be created with
+                        service methods also added and/or adjusted. An Actual EXAMPLE of how to implement this has
+                        been provided in this pattern template.
+                        
+                            (a) The table names for that data would follow the pattern:
+                                    CU_CEMI_MAPPING_{EXTRACT_NAME}_EXTR_FILE_T
+                                    
+                            (b) This SQL file would need to contain the script to create that table:
+                                    cemi-XXX-EXTRACT-NAME-step-001-create-tables.sql
+                                    
+                            (c) This data access service method, interface definition, and JDBC implementation would
+                                need to be created in these three files. An actual example of how this would be used by
+                                the Award Schedule data extract is present in this pattern template even though that
+                                data extract does not utilize this functionality.
+                                    Method Name         ==> storeSpreadsheetRowItemKeyLegacyObjectKeyExtractRunDateMapping
+                                    Interface File      ==> CemiEXTRACTNAMEExtractDao.java
+                                    Implementation Name ==> CemiEXTRACTNAMEExtractDaoJdbcImpl.java
+                                    
+                            (d) The call to that data access service method would be placed in this service method. 
+                                An actual example of that service call is present in this pattern template.
+                                    Method Name                 ==> createAndStoreAwardScheduleFileAwardScheduleTabRows
+                                    Service Implementation Name ==> CemiEXTRACTNAMEFileExtractDataBuilderDefaultImpl
 
             (e) At a minimum the "create-views" script file needs to hold the definition that creates the view used to
                 obtain the keys defining the scope of objects to used for the data extraction.

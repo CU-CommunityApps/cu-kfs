@@ -41,12 +41,11 @@ public class CemiEXTRACTNAMEExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDa
 //        final int numRowsInserted = executeUpdate(query);
 //        LOG.info("queryAndStoreInScopeBusinessObjectKeysForDataExtract, Found {} in scope business object to extract", numRowsInserted);
     }
-    
-    @Override
-    public void storeSpreadsheetRowItemKeyLegacyObjectKeyExtractRunDateMapping(final String spreadsheetKey,
-            final String awardProposalNumber, final String jobRunDateString) {
-
-// Actual example from working data extraction
+ 
+//    EXAMPLE: Actual example that would work for a data extraction
+//    @Override
+//    public void storeSpreadsheetRowItemKeyLegacyObjectKeyExtractRunDateMapping(final String spreadsheetKey,
+//            final String awardProposalNumber, final String jobRunDateString) {
 //
 //        final CuSqlQuery query = new CuSqlChunk()
 //                .append("INSERT INTO KFS.CU_CEMI_MAPPING_AWD_SCHDL_EXTR_FILE_T ")
@@ -65,6 +64,6 @@ public class CemiEXTRACTNAMEExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDa
 //                    + " Spreadsheet Key %s, Proposal Number %s, extraction job run datetime %s.", spreadsheetKey,
 //                    awardProposalNumber, jobRunDateString));
 //        }
-    }
+//    }
 
 }

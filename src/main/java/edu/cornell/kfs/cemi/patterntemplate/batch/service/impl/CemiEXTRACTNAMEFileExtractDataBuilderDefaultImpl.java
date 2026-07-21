@@ -87,17 +87,21 @@ public class CemiEXTRACTNAMEFileExtractDataBuilderDefaultImpl extends CemiOrmDat
 //        CemiAwardScheduleFileAwardScheduleTabRowBo awardScheduleTabRow = factoryForBo.createCemiAwardScheduleFileAwardScheduleTabRowBo();
 //        storeSheetRow(awardScheduleTabRow);
 //        
-//        //Record identifier associations for Award Schedule extract file based upon batch job run date
+//        // EXAMPLE:
+//        // Record identifier associations for Award Schedule extract file based upon batch job run date in this 
+//        // separate table only if is NOT already being tracked. 
 //        recordAwardScheduleIdentifiersInLegacyAssociationTable(awardScheduleTabRow.getSpreadsheetKey(), 
 //                awardScheduleTabRow.getAwardScheduleReferenceId(), awardScheduleTabRow.getJobRunDateString());
     }
     
+    // EXAMPLE:
     // Retain in the database an association between the new Workday data key - legacy system data key - extraction run date
-    protected void recordAwardScheduleIdentifiersInLegacyAssociationTable(final String spreadsheetKey,
-            final String  awardProposalNumber, final String jobRunDateString) {
-//        getCemiAwardScheduleExtractDao().storeSpreadsheetKeyProposalNumberAwardScheduleExtractRunDateMapping(spreadsheetKey,
-//                awardProposalNumber, jobRunDateString);
-    }
+    // only if it is not already being tracked in the table used to maintain the data extraction information.
+    //protected void recordAwardScheduleIdentifiersInLegacyAssociationTable(final String spreadsheetKey,
+    //        final String  awardProposalNumber, final String jobRunDateString) {
+    //    getCemiAwardScheduleExtractDao().storeSpreadsheetKeyProposalNumberAwardScheduleExtractRunDateMapping(spreadsheetKey,
+    //            awardProposalNumber, jobRunDateString);
+    //}
 
     public CemiEXTRACTNAMEExtractDao getCemiAwardScheduleExtractDao() {
         return cemiEXTRACTNAMEExtractDao;
