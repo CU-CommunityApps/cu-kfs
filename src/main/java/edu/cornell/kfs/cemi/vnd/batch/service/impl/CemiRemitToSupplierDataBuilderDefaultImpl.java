@@ -84,7 +84,7 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
     private CemiSupplierBo getSupplier(final String supplierId) {
         final Map<String, Object> criteria = Map.ofEntries(
                 Map.entry(CemiVendorPropertyConstants.SUPPLIER_ID, supplierId),
-                Map.entry(CemiBasePropertyConstants.JOB_RUN_DATE, supplierJobRunDate)
+                Map.entry(CemiBasePropertyConstants.JOB_RUN_DATE_STRING, supplierJobRunDate)
         );
         final Collection<CemiSupplierBo> results = businessObjectService.findMatching(CemiSupplierBo.class, criteria);
         Validate.validState(!results.isEmpty(), "Could not find data row for supplier: %s", supplierId);

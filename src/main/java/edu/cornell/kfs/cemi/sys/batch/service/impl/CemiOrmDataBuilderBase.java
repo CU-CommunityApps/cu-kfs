@@ -14,17 +14,17 @@ import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBa
 public abstract class CemiOrmDataBuilderBase {
 
     protected final BusinessObjectService businessObjectService;
-    protected final String jobRunDate;
+    protected final String jobRunDateString;
     protected final Map<Class<? extends CemiIndexedBusinessObjectBase>, MutableLong> sheetRowCounts;
 
     @SafeVarargs
-    protected CemiOrmDataBuilderBase(final BusinessObjectService businessObjectService, final String jobRunDate,
+    protected CemiOrmDataBuilderBase(final BusinessObjectService businessObjectService, final String jobRunDateString,
             final Class<? extends CemiIndexedBusinessObjectBase>... sheetRowClasses) {
         Validate.notNull(businessObjectService, "businessObjectService cannot be null");
-        Validate.notBlank(jobRunDate, "jobRunDate string cannot be blank");
+        Validate.notBlank(jobRunDateString, "jobRunDateString cannot be blank");
         Validate.notEmpty(sheetRowClasses, "sheetRowClasses cannot be null or empty");
         this.businessObjectService = businessObjectService;
-        this.jobRunDate = jobRunDate;
+        this.jobRunDateString = jobRunDateString;
         this.sheetRowCounts = Stream.of(sheetRowClasses)
                 .collect(Collectors.toUnmodifiableMap(Function.identity(), sheetRowClass -> new MutableLong(0L)));
     }
@@ -35,7 +35,7 @@ public abstract class CemiOrmDataBuilderBase {
         Validate.validState(rowCount != null, "Could not find sheet row counter for %s", sheetRow.getClass().getName());
 
         final long nextCountValue = rowCount.incrementAndGet();
-        sheetRow.setJobRunDate(jobRunDate);
+        sheetRow.setJobRunDateString(jobRunDateString);
         sheetRow.setJobRunRowIndex(nextCountValue);
         businessObjectService.save(sheetRow);
     }

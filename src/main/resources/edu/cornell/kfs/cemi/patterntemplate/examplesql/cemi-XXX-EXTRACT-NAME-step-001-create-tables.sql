@@ -1,0 +1,15 @@
+-- At a minimum this "create-tables" script file needs to hold the table definitions for:
+--    (1) Every sheet tab defined in the spreadsheet where the table names follow the pattern:
+--          CU_CEMI_EXTR_{EXTRACT_NAME}_TAB_{TAB_NAME}_T
+--
+--              The first two column definitions should represent the standard CemiIndexedBusinessObjectBase attributes as the table's composite primary key:
+--                JOB_RUN_ROW_INDEX NUMBER(14,0) NOT NULL,
+--                EXTR_FILE_RUNDATE VARCHAR2(20) NOT NULL,
+--
+--    (2) Any data scope tables or helper tables needed for obtaining the information would follow the pattern:
+--          CU_CEMI_{EXTRACT_NAME}_EXTR_{DATA_OBJECT}_T
+--
+--    (3) OPTIONAL: 
+--        An association table that links the legacy object keys to new Workday object keys for the
+--        file run date. Table names for this data would follow the pattern:
+--          CU_CEMI_MAPPING_{EXTRACT_NAME}_EXTR_FILE_T
