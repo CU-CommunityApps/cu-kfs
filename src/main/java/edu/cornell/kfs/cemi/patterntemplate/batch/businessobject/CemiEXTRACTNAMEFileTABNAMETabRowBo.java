@@ -20,7 +20,7 @@ import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBa
  *                      String jobRunDateString
  *                      Long jobRunRowIndex
  *                      
- *         (3) Any legeacy data object reference keys should be part of the attributes defined in the concrete business object.
+ *         (3) Any legacy data object reference keys should be part of the attributes defined in the concrete business object.
  *                      
  *         (4) All field names on a particular tab should become "private String" attributes in the concrete business object.
  *         
