@@ -86,8 +86,10 @@
             If there are any encrypted fields, add update statements which will scrub those fields to nonprod-sql 
             repository file :    manual / kfs/ KFSPTS-38305-cemiManualScrub.sql
     
-     (6) In a separate GitHub branch checked out from repository nonprod-sql, copy the three SQL example files at
-         location "resources/edu/cornell/kfs/cemi/module/patterntemplate/examplesql" to the "kfs" folder for nonprod-sql.
+     (6) In a separate GitHub feature branch checked out from repository nonprod-sql, 
+         move the three SQL example files 
+         from the cu-kfs repository location "resources/edu/cornell/kfs/cemi/module/patterntemplate/examplesql"
+         to the nonprod-sql repository folder "kfs"
          
          These three Oracle SQL files will be used to create the database artifacts required to support the processing
          for the EXTRACTNAME data extraction. The contents of the "create-tables" and "create-views" files will be very

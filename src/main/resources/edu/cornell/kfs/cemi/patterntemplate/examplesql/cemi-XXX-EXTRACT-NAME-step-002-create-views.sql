@@ -2,7 +2,7 @@
 -- obtain the keys defining the scope of objects to used for the data extraction. 
 --
 -- Views should follow this example format where they always begin with "CREATE OR REPLACE" 
--- and have and ending of "WITH READ ONLY".
+-- and have an ending of "WITH READ ONLY".
 --
 -- Example of an actual view used in a data extraction:
 --

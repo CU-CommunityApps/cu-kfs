@@ -64,7 +64,7 @@ public final class CemiEXTRACTNAMEConstants {
     //            protected abstract String getTemplateWorkbookFilePathSuffix();
     //  (2) Concrete class CemiAwardScheduleExtractServiceImpl returns constant 
     //            CemiAwardScheduleConstants.AWARD_SCHEDULE_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX
-    //  (3) A method within abstract classs CemiDataExtractServiceBase then makes utility class call 
+    //  (3) A method within abstract class CemiDataExtractServiceBase then makes utility class call 
     //      CemiUtils.getTemplateWorkbookFullFilePath to generate the full path of:
     //            classpath:edu/cornell/kfs/cemi/module/cg/batch/Put_Award_Schedule.xlsx
      public static final String EXTRACTNAME_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX = "module/patterntemplate/batch/ACTUAL_EXTRACT_FILE_NAME.xlsx";
