@@ -62,8 +62,9 @@ public class CemiEXTRACTNAMEFileExtractDataBuilderDefaultImpl extends CemiOrmDat
 
     @Override
     public void writeEXTRACTNAMEFileTABNAMETabExtractDataToIntermediateStorage(final Iterator<CemiExampleLEGACYOBJECT> legacyObjects){
-//        int awardScheduleTabRowCount = 0; // MAY NEED TO SET TO PREVIOUS RUN STARTING POINT
+//        int awardScheduleTabRowCount = 0;
 //        for (final Award award : IteratorUtils.asIterable(awards)) {
+//            awardScheduleTabRowCount++;
 //            if (awardScheduleTabRowCount % 1000 == 0) {
 //                LOG.info("writeAwardScheduleFileAwardScheduleTabExtractDataToIntermediateStorage, Processed {} "
 //                        + "Awards for Award Schedule and counting...", awardScheduleTabRowCount);
@@ -71,14 +72,14 @@ public class CemiEXTRACTNAMEFileExtractDataBuilderDefaultImpl extends CemiOrmDat
 //            //Award Schedule Tab
 //            AwardExtendedAttribute awardExtendedAttribute = (AwardExtendedAttribute) award.getExtension();
 //            //Database table storage of data extract
-//            createAndStoreAwardScheduleFileAwardScheduleTabRows(award, awardExtendedAttribute, getJobRunDateString(), awardScheduleTabRowCount);
+//            createAndStoreAwardScheduleFileAwardScheduleTabRows(award, awardExtendedAttribute, getJobRunDateString());
 //        }
 //        LOG.info("writeAwardScheduleFileAwardScheduleTabExtractDataToIntermediateStorage, Finished writing {} "
 //                + "Awards for Award Schedule", awardScheduleTabRowCount);
     }
     
     protected void createAndStoreAwardScheduleFileAwardScheduleTabRows(final CemiExampleLEGACYOBJECT legacyObject, 
-            final AwardExtendedAttribute awardExtendedAttribute, final String jobRunDateString, final int awardScheduleTabRowCount) {
+            final AwardExtendedAttribute awardExtendedAttribute, final String jobRunDateString) {
 //
 //        CemiAwardScheduleFileAwardScheduleTabRowBoFactory factoryForBo = 
 //                new CemiAwardScheduleFileAwardScheduleTabRowBoFactory(award, awardExtendedAttribute, jobRunDateString,
@@ -102,21 +103,5 @@ public class CemiEXTRACTNAMEFileExtractDataBuilderDefaultImpl extends CemiOrmDat
     //    getCemiAwardScheduleExtractDao().storeSpreadsheetKeyProposalNumberAwardScheduleExtractRunDateMapping(spreadsheetKey,
     //            awardProposalNumber, jobRunDateString);
     //}
-
-    public CemiEXTRACTNAMEExtractDao getCemiAwardScheduleExtractDao() {
-        return cemiEXTRACTNAMEExtractDao;
-    }
-
-    public void setCemiEXTRACTNAMEExtractDao(CemiEXTRACTNAMEExtractDao cemiEXTRACTNAMEExtractDao) {
-        this.cemiEXTRACTNAMEExtractDao = cemiEXTRACTNAMEExtractDao;
-    }
-
-    public DateTimeService getDateTimeService() {
-        return dateTimeService;
-    }
-
-    public void setDateTimeService(DateTimeService dateTimeService) {
-        this.dateTimeService = dateTimeService;
-    }
 
 }

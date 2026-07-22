@@ -46,7 +46,7 @@ public final class CemiEXTRACTNAMEConstants {
     //              protected abstract String getOutputDefinitionFilePathSuffix();
     //    (2) Concrete class CemiAwardScheduleExtractServiceImpl returns constant 
     //              CemiAwardScheduleConstants.AWARD_SCHEDULE_OUTPUT_DEFINITION_PATH_SUFFIX
-    //    (3) A method within abstract classs CemiDataExtractServiceBase then makes utility class call 
+    //    (3) A method within abstract class CemiDataExtractServiceBase then makes utility class call 
     //        CemiUtils.getOutputDefinitionFromCemiResourcesFile to generate the full path of:
     //              classpath:edu/cornell/kfs/cemi/module/cg/batch/CemiAwardScheduleExtractFileOutputDefinition.xml
     public static final String EXTRACTNAME_OUTPUT_DEFINITION_PATH_SUFFIX = "module/patterntemplate/batch/CemiEXTRACTNAMEExtractFileOutputDefinition.xml";

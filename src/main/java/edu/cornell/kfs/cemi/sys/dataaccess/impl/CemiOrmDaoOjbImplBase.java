@@ -9,7 +9,7 @@ public abstract class CemiOrmDaoOjbImplBase extends PlatformAwareDaoBaseOjb {
     
     private ConfigurationService configurationService;
     
-    // These two methods were added to reduce processing time for local development during CEMI project work.
+    // These three methods were added to reduce processing time for local development during CEMI project work.
     protected boolean shouldUseLessDataDuringCemiDevelopment() {
         return getBooleanProperty(CemiBaseConstants.CU_CEMI_DEVELOPMENT_USE_SMALLER_DATA_SET_KEY);
     }

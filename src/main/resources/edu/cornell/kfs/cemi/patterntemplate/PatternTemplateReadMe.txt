@@ -127,11 +127,12 @@
                             CU_CEMI_{EXTRACT_NAME}_EXTR_{DATA_OBJECT}_T
                             
                     (3) If associations for legacyDataIdentifiers-to-WorkdayDataIdentifiers-to-extractionRunDate
-                        cannot be tracked as information in table CU_CEMI_EXTR_{EXTRACT_NAME}_TAB_{TAB_NAME}_T then 
-                        is not included by the business object factory in the data extractino file, then an
-                        that key association table which  links all that key information needs to be created with
-                        service methods also added and/or adjusted. An Actual EXAMPLE of how to implement this has
-                        been provided in this pattern template.
+                        cannot be tracked as information in table CU_CEMI_EXTR_{EXTRACT_NAME}_TAB_{TAB_NAME}_T then
+                        another table and associated JDBC service methods need to be created to load it. The interaction
+                        with this table should not be included in the business object factory utilized to create the  
+                        data extraction file. JDBC service methods which invoke a CU customization need to be created to 
+                        provide this functionality. An actual EXAMPLE of how to implement has been provided in this
+                        pattern template.
                         
                             (a) The table names for that data would follow the pattern:
                                     CU_CEMI_MAPPING_{EXTRACT_NAME}_EXTR_FILE_T
@@ -193,7 +194,7 @@
                      (ii) dataFileOutboundDirectory
                      
              (b) The Spring definition of the concrete class needs to include beans defining the service attributes
-                 from the abstrct class.
+                 from the abstract class.
                  These items require that kind of Spring configuration:
                        (i) environment
                       (ii) cemiFileAppenderService

@@ -43,7 +43,7 @@ import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBa
  *  (1) Require a corresponding OJB table definition in file resources/edu/cornell/kfs/cemi/patterntemplate/batch/cu-ojb-cemi-patterntemplate.xml
  *  (2) Require a corresponding nonprod-sql database table SQL creation script. Details are in that example file.
  *  (3) Be referenced in a Cemi{EXTRACTNAME}ExtractFileOutputDefinition.xml
- *  (4) Be populated by a corresponding business object factory class Cemi{EXTRACTNAME}File{TABNAME}TabRowBoFactory. Detail are in that example file.
+ *  (4) Be populated by a corresponding business object factory class Cemi{EXTRACTNAME}File{TABNAME}TabRowBoFactory. Details are in that example file.
  */
 
 public class CemiEXTRACTNAMEFileTABNAMETabRowBo extends CemiIndexedBusinessObjectBase {

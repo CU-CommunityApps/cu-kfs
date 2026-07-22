@@ -1,2 +1,15 @@
 -- At a minimum this "create-views" script file needs to hold the definition that creates the view used to
--- obtain the keys defining the scope of objects to used for the data extraction.
+-- obtain the keys defining the scope of objects to used for the data extraction. 
+--
+-- Views should follow this example format where they always begin with "CREATE OR REPLACE" 
+-- and have and ending of "WITH READ ONLY".
+--
+-- Example of an actual view used in a data extraction:
+--
+--      CREATE OR REPLACE VIEW KFS.CG_CEMI_AWD_SCHDL_EXTR_V AS
+--      SELECT 
+--          AWD.CGPRPSL_NBR 
+--      FROM 
+--          KFS.CG_AWD_T AWD
+--      WHERE AWD.ROW_ACTV_IND = 'Y'
+--      WITH READ ONLY;
