@@ -40,4 +40,8 @@ public abstract class CemiOrmDataBuilderBase {
         businessObjectService.save(sheetRow);
     }
 
+    public String getJobRunDateString() {
+        return jobRunDateString;
+    }
+
 }
