@@ -2,7 +2,7 @@
 
     <!-- Award Schedule Extract -->
     <class-descriptor class="edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardScheduleFileAwardScheduleTabRowBo" table="CU_CEMI_EXTR_AWD_SCHD_TAB_AWD_SCHD_T">
-        <field-descriptor name="jobRunRowIndex" column="EXTR_TBL_ROW_ID" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
         <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="proposalNumberUsedForDataRow" column="CGPRPSL_NBR" jdbc-type="VARCHAR" />
         <field-descriptor name="spreadsheetKey" column="WKDY_SPRDSHT_KEY_ID" jdbc-type="VARCHAR" />
