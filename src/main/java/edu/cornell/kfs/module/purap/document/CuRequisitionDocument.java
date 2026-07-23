@@ -154,7 +154,7 @@ public class CuRequisitionDocument extends RequisitionDocument {
         return returnValue;
     }
 
-    // KFSPTS-37306 PREQ Positive Pay Threshold Parameter
+    // KFSPTS-38452 PREQ Positive Pay Threshold Parameter
     protected boolean isB2BPositivePayRequired() {
         final VendorDetail vendorDetail = getVendorDetail();
         if (vendorDetail == null || !vendorDetail.isB2BVendor()) {
