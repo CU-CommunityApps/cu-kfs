@@ -34,18 +34,14 @@ public class CemiAwardScheduleExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase
         criteria.addSql(proposalNumberCondition);
 
         /*
-         * NOTE: The sort order below is crucial to simplify processing the Vendors in a streaming manner.
-         * When iterating over the Vendors below, a parent Vendor will be immediately followed
-         * by its children BEFORE the next parent Vendor is encountered. That way, when the processing code,
-         * iterates over the data but needs to populate child Vendor data based on what's in its parent,
-         * only a single parent Vendor needs its reference kept short-term.
+         * NOTE: There is sort order included in the query below that will affect the order of the Awards returned.
          */
         final QueryByCriteria query = new QueryByCriteria(Award.class, criteria);
         query.addOrderByAscending(KFSPropertyConstants.PROPOSAL_NUMBER);
 
         return CuOjbUtils.buildCloseableStreamForQueryResults(
                 Award.class,
-                () -> super.getPersistenceBrokerTemplate().getIteratorByQuery(query));
+                () -> getPersistenceBrokerTemplate().getIteratorByQuery(query));
     }
 
 }

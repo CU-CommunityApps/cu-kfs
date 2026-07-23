@@ -54,19 +54,25 @@ public class CemiAwardScheduleExtractServiceImpl extends CemiDataExtractServiceB
     public void generateIntermediateExtractData(final LocalDateTime jobRunDate) {
         LOG.info("generateIntermediateExtractData, Generating data rows for Award Schedule spreadsheet "
                 + "and placing in intermediate storage...");
-        final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
-        final Stream<Award> awards = cemiAwardScheduleExtractOrmDao.getAwardsForCemiAwardScheduleExtractAsCloseableStream();
-        final CemiAwardScheduleFileExtractDataBuilderDefaultImpl dataBuilder = new CemiAwardScheduleFileExtractDataBuilderDefaultImpl(
-                businessObjectService, jobRunDateString, dateTimeService, cemiAwardScheduleExtractOrmDao,
-                cemiAwardScheduleExtractDao, shouldMaskCemiSensitiveData());
-        final Iterator<Award> awardsIterator = awards.iterator();
-        dataBuilder.writeAwardScheduleFileAwardScheduleTabExtractDataToIntermediateStorage(awardsIterator);
+
+        try (
+                final Stream<Award> awards = 
+                        cemiAwardScheduleExtractOrmDao.getAwardsForCemiAwardScheduleExtractAsCloseableStream();
+        ) {
+            final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
+            final CemiAwardScheduleFileExtractDataBuilderDefaultImpl dataBuilder = 
+                    new CemiAwardScheduleFileExtractDataBuilderDefaultImpl(
+                            businessObjectService, jobRunDateString, dateTimeService, cemiAwardScheduleExtractOrmDao,
+                            cemiAwardScheduleExtractDao, shouldMaskCemiSensitiveData());
+            final Iterator<Award> awardsIterator = awards.iterator();
+            dataBuilder.writeAwardScheduleFileAwardScheduleTabExtractDataToIntermediateStorage(awardsIterator);
+        }
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void generateDataConversionExtractFile(final LocalDateTime jobRunDate) {
-        LOG.info("generateAwardSchedulerExtractFile, Starting creation of CEMI AwardSchedule Extract file...");
+        LOG.info("generateDataConversionExtractFile, Starting creation of CEMI AwardSchedule Extract file...");
         generateFileForDataExtract(jobRunDate, CemiAwardScheduleConstants.AWARD_SCHEDULE_EXTRACT_PLAIN_FILENAME,
                 CemiAwardScheduleConstants.AWARD_SCHEDULE_EXTRACT_FILENAME_PREFIX);
     }

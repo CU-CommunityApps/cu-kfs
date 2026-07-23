@@ -72,18 +72,25 @@ public class CemiEXTRACTNAMEFileExtractDataBuilderDefaultImpl extends CemiOrmDat
 //            //Award Schedule Tab
 //            AwardExtendedAttribute awardExtendedAttribute = (AwardExtendedAttribute) award.getExtension();
 //            //Database table storage of data extract
-//            createAndStoreAwardScheduleFileAwardScheduleTabRows(award, awardExtendedAttribute, getJobRunDateString());
+//            createAndStoreAwardScheduleFileAwardScheduleTabRow(award, awardExtendedAttribute, jobRunDateString);
 //        }
 //        LOG.info("writeAwardScheduleFileAwardScheduleTabExtractDataToIntermediateStorage, Finished writing {} "
 //                + "Awards for Award Schedule", awardScheduleTabRowCount);
     }
-    
-    protected void createAndStoreAwardScheduleFileAwardScheduleTabRows(final CemiExampleLEGACYOBJECT legacyObject, 
-            final AwardExtendedAttribute awardExtendedAttribute, final String jobRunDateString) {
+
+//
+// EXAMPLE: 
+// This is an actual example used by a data extract. The method is called by the public routine above to create
+// and store to a database table a SINGLE row of information representing a data extraction spreadsheet line.
+// Depending upon this method's logic and the data objects used, this method could generate MULTIPLE lines of
+// information; therefore you will need to name this protected method accordingly.
+//
+//    protected void createAndStoreAwardScheduleFileAwardScheduleTabRow(final CemiExampleLEGACYOBJECT legacyObject, 
+//            final AwardExtendedAttribute awardExtendedAttribute, final String jobRunDateString) {
 //
 //        CemiAwardScheduleFileAwardScheduleTabRowBoFactory factoryForBo = 
 //                new CemiAwardScheduleFileAwardScheduleTabRowBoFactory(award, awardExtendedAttribute, jobRunDateString,
-//                        getDateTimeService(), maskSensitiveData);
+//                        dateTimeService, maskSensitiveData);
 //        
 //        CemiAwardScheduleFileAwardScheduleTabRowBo awardScheduleTabRow = factoryForBo.createCemiAwardScheduleFileAwardScheduleTabRowBo();
 //        storeSheetRow(awardScheduleTabRow);
@@ -93,15 +100,15 @@ public class CemiEXTRACTNAMEFileExtractDataBuilderDefaultImpl extends CemiOrmDat
 //        // separate table only if is NOT already being tracked. 
 //        recordAwardScheduleIdentifiersInLegacyAssociationTable(awardScheduleTabRow.getSpreadsheetKey(), 
 //                awardScheduleTabRow.getAwardScheduleReferenceId(), awardScheduleTabRow.getJobRunDateString());
-    }
-    
-    // EXAMPLE:
-    // Retain in the database an association between the new Workday data key - legacy system data key - extraction run date
-    // only if it is not already being tracked in the table used to maintain the data extraction information.
-    //protected void recordAwardScheduleIdentifiersInLegacyAssociationTable(final String spreadsheetKey,
-    //        final String  awardProposalNumber, final String jobRunDateString) {
-    //    getCemiAwardScheduleExtractDao().storeSpreadsheetKeyProposalNumberAwardScheduleExtractRunDateMapping(spreadsheetKey,
-    //            awardProposalNumber, jobRunDateString);
-    //}
+//    }
+//    
+//    // EXAMPLE:
+//    // Retain in the database an association between the new Workday data key - legacy system data key - extraction run date
+//    // only if it is not already being tracked in the table used to maintain the data extraction information.
+//    //protected void recordAwardScheduleIdentifiersInLegacyAssociationTable(final String spreadsheetKey,
+//    //        final String  awardProposalNumber, final String jobRunDateString) {
+//    //    getCemiAwardScheduleExtractDao().storeSpreadsheetKeyProposalNumberAwardScheduleExtractRunDateMapping(spreadsheetKey,
+//    //            awardProposalNumber, jobRunDateString);
+//    //}
 
 }

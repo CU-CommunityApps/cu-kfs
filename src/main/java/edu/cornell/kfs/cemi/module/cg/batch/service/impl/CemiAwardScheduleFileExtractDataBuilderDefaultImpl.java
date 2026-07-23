@@ -55,37 +55,21 @@ public class CemiAwardScheduleFileExtractDataBuilderDefaultImpl extends CemiOrmD
             //Award Schedule Tab
             AwardExtendedAttribute awardExtendedAttribute = (AwardExtendedAttribute) award.getExtension();
             //Database table storage of data extract
-            createAndStoreAwardScheduleFileAwardScheduleTabRows(award, awardExtendedAttribute, getJobRunDateString());
+            createAndStoreAwardScheduleFileAwardScheduleTabRow(award, awardExtendedAttribute, jobRunDateString);
         }
         LOG.info("writeAwardScheduleFileAwardScheduleTabExtractDataToIntermediateStorage, Finished writing {} "
                 + "Awards for Award Schedule", awardScheduleTabRowCount);
     }
     
-    protected void createAndStoreAwardScheduleFileAwardScheduleTabRows(final Award award, 
+    protected void createAndStoreAwardScheduleFileAwardScheduleTabRow(final Award award, 
             final AwardExtendedAttribute awardExtendedAttribute, final String jobRunDateString) {
 
         CemiAwardScheduleFileAwardScheduleTabRowBoFactory factoryForBo = 
                 new CemiAwardScheduleFileAwardScheduleTabRowBoFactory(award, awardExtendedAttribute, jobRunDateString,
-                        getDateTimeService(), maskSensitiveData);
+                        dateTimeService, maskSensitiveData);
         
         CemiAwardScheduleFileAwardScheduleTabRowBo awardScheduleTabRow = factoryForBo.createCemiAwardScheduleFileAwardScheduleTabRowBo();
         storeSheetRow(awardScheduleTabRow);
-    }
-    
-    public CemiAwardScheduleExtractDao getCemiAwardScheduleExtractDao() {
-        return cemiAwardScheduleExtractDao;
-    }
-
-    public void setCemiAwardScheduleExtractDao(CemiAwardScheduleExtractDao cemiAwardScheduleExtractDao) {
-        this.cemiAwardScheduleExtractDao = cemiAwardScheduleExtractDao;
-    }
-
-    public DateTimeService getDateTimeService() {
-        return dateTimeService;
-    }
-
-    public void setDateTimeService(DateTimeService dateTimeService) {
-        this.dateTimeService = dateTimeService;
     }
 
 }

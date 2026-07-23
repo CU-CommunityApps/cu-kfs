@@ -53,7 +53,7 @@ public class CemiAwardScheduleFileAwardScheduleTabRowBoFactory {
         
         // Reference information related to business object being created that must be specified.
         //      attribute runRowIndex is being set by abstract class CemiIndexedBusinessObjectBase.
-        awardScheduleTabDataRow.setJobRunDateString(jobRunDateString);
+        //      attribute jobRunDateString is being set by abstract class CemiOrmDataBuilderBase when storeSheetRow is invoked.
         awardScheduleTabDataRow.setProposalNumberUsedForDataRow(award.getProposalNumber());
         
         //Format and assign data values for these attributes as defined by the Huron mapping template specification.
