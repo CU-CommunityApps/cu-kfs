@@ -24,7 +24,7 @@
         <property name="databaseRepositoryFilePaths">
             <list merge= "true">
                 <value>edu/cornell/kfs/cemi/cu-ojb-cemi.xml</value>
-                <value>edu/cornell/kfs/cemi/module/cg/cu-ojb-cemi-cg.xml</value>
+                <value>edu/cornell/kfs/cemi/module/cg/cu-ojb-cemi-award-template.xml</value>
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-vnd.xml</value>
             </list>
         </property>

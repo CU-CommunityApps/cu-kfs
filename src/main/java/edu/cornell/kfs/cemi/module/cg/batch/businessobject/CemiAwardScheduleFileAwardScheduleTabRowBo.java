@@ -2,16 +2,6 @@ package edu.cornell.kfs.cemi.module.cg.batch.businessobject;
 
 import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBase;
 
-/*
- *  This class is the business object representation of
- *      CemiAwardScheduleExtractFileOutputDefinition
- *  With additional attribute for
- *      date job was executed
- *      a row number identifier for the spreasheet line
- *      legacy data object key values to allow for trace back
- *      
- *  Service class CemiAwardScheduleBoFactory controls all aspects of this business object.
- */
 public class CemiAwardScheduleFileAwardScheduleTabRowBo extends CemiIndexedBusinessObjectBase {
     
     private static final long serialVersionUID = -7478232634840096057L;
