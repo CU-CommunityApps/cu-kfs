@@ -73,17 +73,18 @@ public class CuRequisitionDocument extends RequisitionDocument {
 
     @Override
     public boolean answerSplitNodeQuestion(final String nodeName) throws UnsupportedOperationException {
-        if (nodeName.equals(PurapWorkflowConstants.AWARD_REVIEW_REQUIRED)) return isAwardReviewRequired();
+        if (nodeName.equals(PurapWorkflowConstants.AWARD_REVIEW_REQUIRED)) {
+            return isAwardReviewRequired();
+        }
+
         if (nodeName.equals(CUPurapWorkflowConstants.B2B_AUTO_PURCHASE_ORDER)) { 
-            final boolean isB2BAutoPurchaseOrder =  isB2BAutoPurchaseOrder();
-            if(isB2BAutoPurchaseOrder) this.paymentRequestPositiveApprovalIndicator=true;
-            return isB2BAutoPurchaseOrder;
+            if (isB2BPositivePayRequired()) {
+                this.paymentRequestPositiveApprovalIndicator = true;
+            }
+            return isB2BAutoPurchaseOrder();
         }
         
-        
-        
         return super.answerSplitNodeQuestion(nodeName);
-        
     }
 
     /**
@@ -151,6 +152,34 @@ public class CuRequisitionDocument extends RequisitionDocument {
             returnValue =  false;
         }
         return returnValue;
+    }
+
+    // KFSPTS-38452 PREQ Positive Pay Threshold Parameter
+    protected boolean isB2BPositivePayRequired() {
+        final VendorDetail vendorDetail = getVendorDetail();
+        if (vendorDetail == null || !vendorDetail.isB2BVendor()) {
+            return false;
+        }
+        
+        final KualiDecimal positivePayThreshold = getPositivePayThresholdAmount();
+        final KualiDecimal totalAmount = getDocumentHeader().getFinancialDocumentTotalAmount();
+        if (ObjectUtils.isNotNull(positivePayThreshold) && ObjectUtils.isNotNull(totalAmount)) {
+            return totalAmount.isGreaterThan(positivePayThreshold);
+        }
+        
+        return true;
+    }
+
+    private KualiDecimal getPositivePayThresholdAmount() {
+        final ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+        final String positivePayAmountString = parameterService.getParameterValueAsString(RequisitionDocument.class,
+                CUPurapParameterConstants.B2B_TOTAL_AMOUNT_FOR_POSITIVE_PAY);
+
+        if (StringUtils.isBlank(positivePayAmountString)) {
+            return null;
+        }
+
+        return new KualiDecimal(positivePayAmountString);
     }
     
     public String getRoutedByPrincipalId() {
