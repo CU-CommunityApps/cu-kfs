@@ -22,8 +22,7 @@ public class CemiAwardScheduleFileAwardScheduleTabRowBoFactory {
     private AwardExtendedAttribute awardExtendedAttribute;
     private String jobRunDateString;
     private DateTimeService dateTimeService;
-    private boolean maskSensitiveData = true;   // Initialize default processing to mask in the event 
-                                                // KFS system parameter has not been created. 
+    private boolean maskSensitiveData = true;
 
     public CemiAwardScheduleFileAwardScheduleTabRowBoFactory (final Award award, 
             final AwardExtendedAttribute awardExtendedAttribute, final String jobRunDateString, 
@@ -52,8 +51,9 @@ public class CemiAwardScheduleFileAwardScheduleTabRowBoFactory {
         final String rowAwardIntervalEndDate = determineFormattedDate(awardExtendedAttribute.getBudgetEndingDate());
         
         // Reference information related to business object being created that must be specified.
-        //      attribute runRowIndex is being set by abstract class CemiIndexedBusinessObjectBase.
-        //      attribute jobRunDateString is being set by abstract class CemiOrmDataBuilderBase when storeSheetRow is invoked.
+        // Both of these attributes are being set by abstract class CemiOrmDataBuilderBase when storeSheetRow is invoked.
+        //      attribute jobRunRowIndex
+        //      attribute jobRunDateString
         awardScheduleTabDataRow.setProposalNumberUsedForDataRow(award.getProposalNumber());
         
         //Format and assign data values for these attributes as defined by the Huron mapping template specification.

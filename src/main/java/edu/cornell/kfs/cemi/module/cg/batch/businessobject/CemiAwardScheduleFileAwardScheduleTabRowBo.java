@@ -8,7 +8,8 @@ public class CemiAwardScheduleFileAwardScheduleTabRowBo extends CemiIndexedBusin
     
     // Attributes to make the data extract spreadsheet row database searchable and
     // identifiable by data extraction run date and legacy data source.
-    // Abstract class attributes that MUST be set in the factory class:
+    // Abstract class attributes that are controlled by the CemiOrmDataBuilderBase class
+    // and not the business object factory:
     //    private String jobRunDateString;
     //    private Long jobRunRowIndex;
     private String proposalNumberUsedForDataRow; 
