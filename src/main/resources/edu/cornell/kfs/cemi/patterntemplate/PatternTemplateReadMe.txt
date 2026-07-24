@@ -121,7 +121,7 @@
             (c) Keep comments in the SQL files to an absolute minimum. Preferably, there should not be any comments in
                 the SQL files with all existing comments there from these template instructions being fully removed. 
             
-            (d) At a minimum the "create-tables" script file needs to hold the table definitions for:
+            (d) At a minimum the "create-tables" script file needs to hold the CEMI-schema-side table definitions for:
                     (1) Every sheet tab defined in the spreadsheet where the table names follow the pattern:
                             CU_CEMI_EXTR_{EXTRACT_NAME}_TAB_{TAB_NAME}_T
                             
@@ -156,10 +156,12 @@
                                     Service Implementation Name ==> CemiEXTRACTNAMEFileExtractDataBuilderDefaultImpl
 
             (e) At a minimum the "create-views" script file needs to hold the definition that creates the view used to
-                obtain the keys defining the scope of objects to used for the data extraction.
+                obtain the keys defining the scope of objects to used for the data extraction. Such views should be
+                created in the CEMI schema.
                 
             (f) The "create-parameters" file contains definitions for the base parameters required by all batch jobs.
                 Adjust those definitions to make the batch job step names specific to the extraction being developed.
+                Note that such parameters should be created in the KFS schema, not the CEMI schema.
                 The parameter names are defined in constants class edu.cornell.kfs.cemi.sys.CemiBaseParameterConstants
                 
                 
@@ -180,7 +182,10 @@
          Data access objects (DAOs) will most likely be utilized via service calls to Cemi{EXTRACTNAME}ExtractDao 
          routines in the Cemi{EXTRACTNAME}ExtractService "captureInScopeBusinessObjectKeysToProcessingTable" and 
          "resetState" methods while service calls to Cemi{EXTRACTNAME}ExtractOrmDao will most likely be used in methods 
-         "generateIntermediateExtractData" and "generateDataConversionExtractFile". 
+         "generateIntermediateExtractData" and "generateDataConversionExtractFile". Plain JDBC DAOs (those ending
+         in "ExtractDao") need to add the attribute p:dataSource-ref="cemiDataSource" to their bean XML, so that the DAOs
+         will run their SQL using the CEMI schema user instead of the KFS schema user. (Even though the KFS and CEMI schemas
+         can read/write each other's data, they cannot truncate each other's tables, which is why this change is needed.)
          
          
          The pattern template file Cemi{EXTRACTNAME}ExtractServiceImpl also extends class CemiDataExtractServiceBase.

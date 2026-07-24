@@ -3,7 +3,7 @@
     <class-descriptor class="edu.cornell.kfs.cemi.pdp.batch.businessobject.CemiPaymentElectionGroupTwoBo" table="CU_CEMI_EXTR_GRP_TWO_TAB_PYMNT_ELCTN_T" schema="CEMI">
         <field-descriptor name="extractTableUniqueRowId" column="EXTR_TBL_ROW_ID" jdbc-type="BIGINT"
                           primarykey="true" index="true" 
-                          autoincrement="true" sequence-name="CEMI.CU_CEMI_EXTR_GRP_TWO_TAB_PYMNT_ELCTN_SEQ"/>
+                          autoincrement="true" sequence-name="KFS.CU_CEMI_EXTR_GRP_TWO_TAB_PYMNT_ELCTN_SEQ"/>
         <field-descriptor name="jobRunDateAsString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" />
         <field-descriptor name="achAccountGeneratedIdentifierUsedForDataRow" column="ACH_ACCT_GNRTD_ID" jdbc-type="BIGINT" />
         <field-descriptor name="employeeId" column="EMPL_ID" jdbc-type="VARCHAR" />

@@ -2,6 +2,8 @@
 -- The constants defined in edu.cornell.kfs.cemi.sys.CemiBaseParameterConstants correlate to the two system
 -- parameter names being defined by SQL script for the batch job step being coded.
 --    Replace {EXTRACTNAME} in both parameter definitions below for the data extraction being created.
+--
+-- These parameters should be created in the KFS schema, not the CEMI schema.
 INSERT INTO KFS.KRCR_PARM_T (
     NMSPC_CD,
     CMPNT_CD,

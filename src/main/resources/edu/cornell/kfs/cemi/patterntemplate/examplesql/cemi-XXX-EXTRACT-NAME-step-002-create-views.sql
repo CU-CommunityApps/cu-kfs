@@ -4,9 +4,11 @@
 -- Views should follow this example format where they always begin with "CREATE OR REPLACE" 
 -- and have an ending of "WITH READ ONLY".
 --
+-- The views should be created in the CEMI schema, but they can still reference tables from the KFS schema.
+--
 -- Example of an actual view used in a data extraction:
 --
---      CREATE OR REPLACE VIEW KFS.CG_CEMI_AWD_SCHDL_EXTR_V AS
+--      CREATE OR REPLACE VIEW CEMI.CG_CEMI_AWD_SCHDL_EXTR_V AS
 --      SELECT 
 --          AWD.CGPRPSL_NBR 
 --      FROM 
