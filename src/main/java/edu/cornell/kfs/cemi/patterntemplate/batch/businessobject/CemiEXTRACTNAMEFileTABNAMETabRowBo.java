@@ -48,7 +48,9 @@ import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBa
 
 public class CemiEXTRACTNAMEFileTABNAMETabRowBo extends CemiIndexedBusinessObjectBase {
     
-    // These attributes are defined in the abstract class. Uses its accessor methods
+    // These attributes are defined in abstract class CemiIndexedBusinessObjectBase. Use its accessor methods.
+    // These attributes are used to make the data extract spreadsheet row database searchable and identifiable 
+    // by data extraction run date and legacy data source. They are controlled by the CemiOrmDataBuilderBase class.
     // private String jobRunDateString;
     // private Long jobRunRowIndex;
     

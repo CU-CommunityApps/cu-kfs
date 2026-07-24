@@ -52,7 +52,7 @@ public class CemiEXTRACTNAMEExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase i
         //
         return CuOjbUtils.buildCloseableStreamForQueryResults(
                 CemiExampleLEGACYOBJECT.class,
-                () -> super.getPersistenceBrokerTemplate().getIteratorByQuery(query));
+                () -> getPersistenceBrokerTemplate().getIteratorByQuery(query));
     }
 
 }

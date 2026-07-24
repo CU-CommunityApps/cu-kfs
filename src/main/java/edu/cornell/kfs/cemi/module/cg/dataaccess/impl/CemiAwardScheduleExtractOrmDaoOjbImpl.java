@@ -4,21 +4,21 @@ import java.util.stream.Stream;
 
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
-import org.kuali.kfs.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
-import org.kuali.kfs.krad.service.KRADServiceLocator;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
-import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleOrmDao;
-import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
+import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleExtractOrmDao;
+import edu.cornell.kfs.cemi.sys.dataaccess.impl.CemiOrmDaoOjbImplBase;
 import edu.cornell.kfs.sys.util.CuOjbUtils;
 
-public class CemiAwardScheduleOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb implements CemiAwardScheduleOrmDao {
+public class CemiAwardScheduleExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase implements CemiAwardScheduleExtractOrmDao {
 
     @Override
     public Stream<Award> getAwardsForCemiAwardScheduleExtractAsCloseableStream() {
         final String proposalNumberCondition;
 
+        // Local environment configuration property setting used by base class method call 
+        // to reduce processing time for local development during CEMI project work.
         if (shouldUseLessDataDuringCemiDevelopment()) {
             // This conditional was added to reduce processing time for local development during CEMI project work.
             // The values were chosen for the WHERE clause to restrict the result set to roughly 1000 rows as
@@ -34,11 +34,7 @@ public class CemiAwardScheduleOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb impl
         criteria.addSql(proposalNumberCondition);
 
         /*
-         * NOTE: The sort order below is crucial to simplify processing the Vendors in a streaming manner.
-         * When iterating over the Vendors below, a parent Vendor will be immediately followed
-         * by its children BEFORE the next parent Vendor is encountered. That way, when the processing code,
-         * iterates over the data but needs to populate child Vendor data based on what's in its parent,
-         * only a single parent Vendor needs its reference kept short-term.
+         * NOTE: There is sort order included in the query below that will affect the order of the Awards returned.
          */
         final QueryByCriteria query = new QueryByCriteria(Award.class, criteria);
         query.addOrderByAscending(KFSPropertyConstants.PROPOSAL_NUMBER);
@@ -48,14 +44,4 @@ public class CemiAwardScheduleOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb impl
                 () -> getPersistenceBrokerTemplate().getIteratorByQuery(query));
     }
 
-    // This was added to reduce processing time for local development during CEMI project work.
-    private static boolean shouldUseLessDataDuringCemiDevelopment() {
-        return getBooleanProperty(CemiBaseConstants.CU_CEMI_DEVELOPMENT_USE_SMALLER_DATA_SET_KEY);
-    }
-
-    // This was added to reduce processing time for local development during CEMI project work.
-    private static boolean getBooleanProperty(String propertyName) {
-        return KRADServiceLocator.getKualiConfigurationService().getPropertyValueAsBoolean(propertyName);
-    }
-    
 }

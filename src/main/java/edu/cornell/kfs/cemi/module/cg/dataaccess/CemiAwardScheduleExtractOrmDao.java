@@ -4,7 +4,7 @@ import java.util.stream.Stream;
 
 import org.kuali.kfs.module.cg.businessobject.Award;
 
-public interface CemiAwardScheduleOrmDao {
+public interface CemiAwardScheduleExtractOrmDao {
 
     Stream<Award> getAwardsForCemiAwardScheduleExtractAsCloseableStream();
 

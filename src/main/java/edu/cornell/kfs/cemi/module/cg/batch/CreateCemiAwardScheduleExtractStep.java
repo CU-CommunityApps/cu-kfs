@@ -14,11 +14,11 @@ public class CreateCemiAwardScheduleExtractStep extends AbstractStep {
     public boolean execute(final String jobName, final LocalDateTime jobRunDate) throws InterruptedException {
         //Phase1: Obtain the dataset
         cemiAwardScheduleExtractService.resetState();
-        cemiAwardScheduleExtractService.populateListOfInScopeAwards();
+        cemiAwardScheduleExtractService.captureInScopeBusinessObjectKeysToProcessingTable();
         //Phase 2: Loop through result set to create all the csv files
-        cemiAwardScheduleExtractService.generateIntermediateAwardScheduleExtractData(jobRunDate);
+        cemiAwardScheduleExtractService.generateIntermediateExtractData(jobRunDate);
         //Phase 3: Create single multi-tabbed file.
-        cemiAwardScheduleExtractService.generateAwardScheduleExtractFile(jobRunDate);
+        cemiAwardScheduleExtractService.generateDataConversionExtractFile(jobRunDate);
         return true;
     }
 

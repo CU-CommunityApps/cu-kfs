@@ -24,6 +24,7 @@
         <property name="databaseRepositoryFilePaths">
             <list merge= "true">
                 <value>edu/cornell/kfs/cemi/cu-ojb-cemi.xml</value>
+                <value>edu/cornell/kfs/cemi/module/cg/cu-ojb-cemi-award-schedule.xml</value>
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-vnd.xml</value>
             </list>
         </property>
@@ -106,31 +107,32 @@
         </property>
     </bean>
 
-    <bean id="cemiAwardScheduleDao" parent="cemiAwardScheduleDao-parentBean"/>
-    <bean id="cemiAwardScheduleDao-parentBean"
+    <bean id="cemiAwardScheduleExtractDao" parent="cemiAwardScheduleExtractDao-parentBean"/>
+    <bean id="cemiAwardScheduleExtractDao-parentBean"
           abstract="true"
-          class="edu.cornell.kfs.cemi.module.cg.dataaccess.impl.CemiAwardScheduleDaoJdbcImpl"
-          parent="platformAwareDaoJdbc"
-          p:dateTimeService-ref="dateTimeService"/>
+          class="edu.cornell.kfs.cemi.module.cg.dataaccess.impl.CemiAwardScheduleExtractDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"/>
 
-    <bean id="cemiAwardScheduleOrmDao" parent="cemiAwardScheduleOrmDao-parentBean"/>
-    <bean id="cemiAwardScheduleOrmDao-parentBean"
+    <bean id="cemiAwardScheduleExtractOrmDao" parent="cemiAwardScheduleExtractOrmDao-parentBean"/>
+    <bean id="cemiAwardScheduleExtractOrmDao-parentBean"
           abstract="true"
-          class="edu.cornell.kfs.cemi.module.cg.dataaccess.impl.CemiAwardScheduleOrmDaoOjbImpl"
-          parent="platformAwareDao"/>
+          class="edu.cornell.kfs.cemi.module.cg.dataaccess.impl.CemiAwardScheduleExtractOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
 
     <bean id="cemiAwardScheduleExtractService" parent="cemiAwardScheduleExtractService-parentBean"/>
     <bean id="cemiAwardScheduleExtractService-parentBean"
           abstract="true"
           class="edu.cornell.kfs.cemi.module.cg.batch.service.impl.CemiAwardScheduleExtractServiceImpl"
           c:environment-ref="environment"
-          p:awardScheduleFileCreationDirectory="${staging.directory}/cemi/module/cg/cemiAwardScheduleExtract"
-          p:awardScheduleFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
-          p:cemiAwardScheduleOrmDao-ref="cemiAwardScheduleOrmDao"
-          p:cemiAwardScheduleDao-ref="cemiAwardScheduleDao"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/module/cg/cemiAwardScheduleExtract"
+          p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
           p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
-          p:businessObjectService-ref="businessObjectService"
           p:parameterService-ref="parameterService"
+          p:cemiAwardScheduleExtractOrmDao-ref="cemiAwardScheduleExtractOrmDao"
+          p:cemiAwardScheduleExtractDao-ref="cemiAwardScheduleExtractDao"
+          p:businessObjectService-ref="businessObjectService"
           p:dateTimeService-ref="dateTimeService"/>
           
     <bean id="createCemiAwardScheduleExtractStep"
