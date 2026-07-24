@@ -54,6 +54,24 @@
         </property>
     </bean>
 
+    <!--
+        Added CEMI datasource bean that's needed by the CEMI data extract batch jobs.
+        This is a modified copy of the "dataSource" bean from base code.
+     -->
+    <bean class="org.kuali.kfs.core.framework.persistence.jdbc.datasource.XAPoolDataSource"
+          depends-on="liquibase"
+          id="cemiDataSource"
+          p:driverClassName="${kfs.datasource.driver.name}"
+          p:maxSize="${kfs.datasource.pool.maxSize}"
+          p:maxWait="${kfs.datasource.pool.maxWait}"
+          p:minSize="${kfs.datasource.pool.minSize}"
+          p:password="${cemi.datasource.password}"
+          p:transactionManager-ref="jtaTransactionManager"
+          p:url="${cemi.datasource.url}"
+          p:username="${cemi.datasource.username}"
+          p:validationQuery="${kfs.datasource.validating.query}"
+    />
+
     <bean id="cemiFileAppenderOrmDao" parent="cemiFileAppenderOrmDao-parentBean"/>
     <bean id="cemiFileAppenderOrmDao-parentBean"
           abstract="true"
@@ -70,7 +88,8 @@
     <bean id="cemiCsvDataImportDao-parentBean"
           abstract="true"
           class="edu.cornell.kfs.cemi.sys.dataaccess.impl.CemiCsvDataImportDaoJdbcImpl"
-          parent="platformAwareDaoJdbc"/>
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
 
     <bean id="cemiCsvDataImportService" parent="cemiCsvDataImportService-parentBean"/>
     <bean id="cemiCsvDataImportService-parentBean"
@@ -111,7 +130,8 @@
     <bean id="cemiAwardScheduleExtractDao-parentBean"
           abstract="true"
           class="edu.cornell.kfs.cemi.module.cg.dataaccess.impl.CemiAwardScheduleExtractDaoJdbcImpl"
-          parent="platformAwareDaoJdbc"/>
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
 
     <bean id="cemiAwardScheduleExtractOrmDao" parent="cemiAwardScheduleExtractOrmDao-parentBean"/>
     <bean id="cemiAwardScheduleExtractOrmDao-parentBean"
@@ -160,6 +180,7 @@
           abstract="true"
           class="edu.cornell.kfs.cemi.pdp.dataaccess.impl.CemiPaymentElectionDaoJdbcImpl"
           parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"
           p:dateTimeService-ref="dateTimeService"/>
 
     <bean id="cemiPaymentElectionOrmDao" parent="cemiPaymentElectionOrmDao-parentBean"/>
@@ -202,6 +223,7 @@
           abstract="true"
           class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiVendorDaoJdbcImpl"
           parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"
           p:dateTimeService-ref="dateTimeService"/>
 
     <bean id="cemiVendorOrmDao" parent="cemiVendorOrmDao-parentBean"/>
@@ -272,7 +294,8 @@
     <bean id="cemiRemitToSupplierDao-parentBean"
           abstract="true"
           class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiRemitToSupplierDaoJdbcImpl"
-          parent="platformAwareDaoJdbc"/>
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
 
     <bean id="cemiRemitToSupplierOrmDao" parent="cemiRemitToSupplierOrmDao-parentBean"/>
     <bean id="cemiRemitToSupplierOrmDao-parentBean"
@@ -314,7 +337,8 @@
     <bean id="cemiOrderFromSupplierDao-parentBean"
           abstract="true"
           class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiOrderFromSupplierDaoJdbcImpl"
-          parent="platformAwareDaoJdbc"/>
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
 
     <bean id="cemiOrderFromSupplierOrmDao" parent="cemiOrderFromSupplierOrmDao-parentBean"/>
     <bean id="cemiOrderFromSupplierOrmDao-parentBean"

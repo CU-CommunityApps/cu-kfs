@@ -23,7 +23,7 @@ public class CemiPaymentElectionDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBa
     @Override
     public void clearExistingListOfExtractablePayeeAchAccountGeneratedIds() {
         LOG.info("clearExistingListOfExtractablePayeeAchAccountGeneratedIds was called.");
-        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.CU_CEMI_PYMNT_ELCTN_EXTR_ACH_ACCT_T");
+        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_PYMNT_ELCTN_EXTR_ACH_ACCT_T");
         executeUpdate(query);
         LOG.info("clearExistingListOfExtractablePayeeAchAccountGeneratedIds finished truncating table.");
     }
@@ -31,9 +31,9 @@ public class CemiPaymentElectionDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBa
     @Override
     public void queryAndStorePayeeAchAccountGeneratedIdsForPaymentElectionExtract() {
         final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO KFS.CU_CEMI_PYMNT_ELCTN_EXTR_ACH_ACCT_T (ACH_ACCT_GNRTD_ID) ")
+                .append("INSERT INTO CEMI.CU_CEMI_PYMNT_ELCTN_EXTR_ACH_ACCT_T (ACH_ACCT_GNRTD_ID) ")
                 .append("SELECT ACH_ACCT_GNRTD_ID ")
-                .append("FROM KFS.CU_CEMI_PYMNT_ELCTN_EXTR_V")
+                .append("FROM CEMI.CU_CEMI_PYMNT_ELCTN_EXTR_V")
                 .toQuery();
 
         final int numRowsInserted = executeUpdate(query);
@@ -47,7 +47,7 @@ public class CemiPaymentElectionDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBa
         String jobRunDateAsString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
 
         final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO KFS.CU_CEMI_MAPPING_PYMNT_ELCTN_EXTR_FILE_T ")
+                .append("INSERT INTO CEMI.CU_CEMI_MAPPING_PYMNT_ELCTN_EXTR_FILE_T ")
                 .append("(EMPLOYEE_ID, ACH_ACCT_GNRTD_ID, EXTR_FILE_RUNDATE) ")
                 .append("VALUES (").appendAsParameter(Types.VARCHAR, employeeId)
                 .append(", ").appendAsParameter(Types.INTEGER, achAccountGeneratdIdentifier)

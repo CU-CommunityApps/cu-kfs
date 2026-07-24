@@ -33,6 +33,6 @@ public class CemiPaymentElectionConstants {
         public static final String GROUP_TWO = "Group_TWO";
     }
     
-    public static final String CU_CEMI_EXTR_GRP_TWO_TAB_PYMNT_ELCTN_SEQ = "CU_CEMI_EXTR_GRP_TWO_TAB_PYMNT_ELCTN_SEQ";
+    public static final String CU_CEMI_EXTR_GRP_TWO_TAB_PYMNT_ELCTN_SEQ = "CEMI.CU_CEMI_EXTR_GRP_TWO_TAB_PYMNT_ELCTN_SEQ";
     
 }

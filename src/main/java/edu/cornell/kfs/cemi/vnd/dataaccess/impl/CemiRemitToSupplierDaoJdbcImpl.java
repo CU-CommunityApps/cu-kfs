@@ -14,7 +14,7 @@ public class CemiRemitToSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBa
     @Override
     public void clearExistingListOfExtractableRemitAddressIds() {
         LOG.info("clearExistingListOfExtractableRemitAddressIds was called.");
-        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.CU_CEMI_EXTR_RMT_TO_SUPP_RMT_TO_ADDR_T");
+        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_EXTR_RMT_TO_SUPP_RMT_TO_ADDR_T");
         executeUpdate(query);
         LOG.info("clearExistingListOfExtractableRemitAddressIds finished truncating table.");
     }
@@ -22,7 +22,7 @@ public class CemiRemitToSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBa
     @Override
     public void updateRemitToSupplierExtractQuerySettings(final String supplierJobRunDate) {
         final CuSqlQuery query = new CuSqlChunk()
-                .append("UPDATE KFS.CU_CEMI_RMT_TO_SUPP_QUERY_SETTINGS_T ")
+                .append("UPDATE CEMI.CU_CEMI_RMT_TO_SUPP_QUERY_SETTINGS_T ")
                 .append("SET SUPP_EXTR_FILE_RUNDATE = ").appendAsParameter(supplierJobRunDate)
                 .toQuery();
 
@@ -37,9 +37,9 @@ public class CemiRemitToSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBa
     @Override
     public void queryAndStoreAddressIdsForRemitToSupplierExtract() {
         final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO KFS.CU_CEMI_EXTR_RMT_TO_SUPP_RMT_TO_ADDR_T (EXTR_FILE_RUNDATE, SUPP_ADDRESS_ID) ")
+                .append("INSERT INTO CEMI.CU_CEMI_EXTR_RMT_TO_SUPP_RMT_TO_ADDR_T (EXTR_FILE_RUNDATE, SUPP_ADDRESS_ID) ")
                 .append("SELECT EXTR_FILE_RUNDATE, SUPP_ADDRESS_ID ")
-                .append("FROM KFS.CU_CEMI_RMT_TO_SUPP_EXTR_SUPP_ADDR_V")
+                .append("FROM CEMI.CU_CEMI_RMT_TO_SUPP_EXTR_SUPP_ADDR_V")
                 .toQuery();
 
         final int numRowsInserted = executeUpdate(query);
