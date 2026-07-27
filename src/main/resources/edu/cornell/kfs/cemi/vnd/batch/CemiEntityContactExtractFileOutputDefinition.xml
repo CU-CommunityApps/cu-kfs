@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cemiOutputDefinition>
+
+    <sheet name="Business Entity Contact" num-header-rows="5" start-column-index="1"
+           business-object-class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactFileContactNameTabRowBo">
+        <field name="Spreadsheet Key*" type="STRING" key="spreadsheetKey"/>
+        <field name="Add Only" type="STRING" key="addOnly"/>
+        <field name="Business Entity Contact" type="STRING" key="existingBusinessEntityContactId"/>
+        <field name="Primary Bill To Contact" type="STRING" key="primaryBillToContact"/>
+        <field name="Default Bill To Contact" type="STRING" key="defaultBillToContact"/>
+        <field name="Business Entity Contact ID" type="STRING" key="newBusinessEntityContactId"/>
+        <field name="Supplier*" type="STRING" key="supplier"/>
+        <field name="Billable Entity*" type="STRING" key="billableEntity"/>
+        <field name="Financial Institution*" type="STRING" key="financialInstitution"/>
+        <field name="Tax Authority*" type="STRING" key="taxAuthority"/>
+        <field name="Row ID**" type="STRING" key="nameRowId"/>
+        <field name="Formatted Name" type="STRING" key="formattedName"/>
+        <field name="Reporting Name" type="STRING" key="reportingName"/>
+        <field name="Country*" type="STRING" key="country"/>
+        <field name="Title" type="STRING" key="title"/>
+        <field name="Title Descriptor" type="STRING" key="titleDescriptor"/>
+        <field name="Salutation" type="STRING" key="salutation"/>
+        <field name="First Name" type="STRING" key="firstName"/>
+        <field name="Middle Name" type="STRING" key="middleName"/>
+        <field name="Last Name" type="STRING" key="lastName"/>
+        <field name="Secondary Last Name" type="STRING" key="secondaryLastName"/>
+        <field name="Tertiary Last Name" type="STRING" key="tertiaryLastName"/>
+        <field name="Local Name" type="STRING" key="localName"/>
+        <field name="Local Script" type="STRING" key="localScript"/>
+        <field name="First Name" type="STRING" key="localFirstName"/>
+        <field name="Middle Name" type="STRING" key="localMiddleName"/>
+        <field name="Last Name" type="STRING" key="localLastName"/>
+        <field name="Secondary Last Name" type="STRING" key="localSecondaryLastName"/>
+        <field name="First Name 2" type="STRING" key="localFirstName2"/>
+        <field name="Middle Name 2" type="STRING" key="localMiddleName2"/>
+        <field name="Last Name 2" type="STRING" key="localLastName2"/>
+        <field name="Secondary Last Name 2" type="STRING" key="localSecondaryLastName2"/>
+        <field name="Social Suffix" type="STRING" key="socialSuffix"/>
+        <field name="Social Suffix Descriptor" type="STRING" key="socialSuffixDescriptor"/>
+        <field name="Academic Suffix" type="STRING" key="academicSuffix"/>
+        <field name="Hereditary Suffix" type="STRING" key="hereditarySuffix"/>
+        <field name="Honorary Suffix" type="STRING" key="honorarySuffix"/>
+        <field name="Professional Suffix" type="STRING" key="professionalSuffix"/>
+        <field name="Religious Suffix" type="STRING" key="religiousSuffix"/>
+        <field name="Royal Suffix" type="STRING" key="royalSuffix"/>
+        <field name="Full Name for Singapore and Malaysia" type="STRING" key="fullNameForSingaporeAndMalaysia"/>
+        <field name="Row ID*" type="STRING" key="addressRowId"/>
+        <field name="Formatted Address" type="STRING" key="formattedAddress"/>
+        <field name="Address Format Type" type="STRING" key="addressFormatType"/>
+        <field name="Defaulted Business Site Address" type="STRING" key="defaultedBusinessSiteAddress"/>
+        <field name="Delete" type="STRING" key="deleteAddress"/>
+        <field name="Do Not Replace All" type="STRING" key="doNotReplaceAllAddress"/>
+        <field name="Effective Date" type="STRING" key="addressEffectiveDate"/>
+        <field name="Country" type="STRING" key="addressCountry"/>
+        <field name="Last Modified" type="STRING" key="addressLastModified"/>
+        <field name="Row ID*" type="STRING" key="addressLineRowId"/>
+        <field name="Descriptor" type="STRING" key="addressLineDescriptor"/>
+        <field name="Type" type="STRING" key="addressLineType"/>
+        <field name="Address Line Data" type="STRING" key="addressLineData"/>
+        <field name="Municipality" type="STRING" key="addressMunicipality"/>
+        <field name="Country City" type="STRING" key="addressCountryCity"/>
+        <field name="ISO 3166 1 Alpha 2 Code" type="STRING" key="addressIso31661Alpha2Code"/>
+        <field name="Row ID*" type="STRING" key="submunicipalityRowId"/>
+        <field name="Address Component Name" type="STRING" key="submunicipalityAddressComponentName"/>
+        <field name="Type" type="STRING" key="submunicipalityType"/>
+        <field name="Submunicipality Data" type="STRING" key="submunicipalityData"/>
+        <field name="Country Region" type="STRING" key="countryRegion"/>
+        <field name="Country Region Descriptor" type="STRING" key="countryRegionDescriptor"/>
+        <field name="Row ID*" type="STRING" key="subregionRowId"/>
+        <field name="Descriptor" type="STRING" key="subregionDescriptor"/>
+        <field name="Type" type="STRING" key="subregionType"/>
+        <field name="Subregion Data" type="STRING" key="subregionData"/>
+        <field name="Postal Code" type="STRING" key="postalCode"/>
+        <field name="Row ID*" type="STRING" key="addressUsageRowId"/>
+        <field name="Public" type="STRING" key="addressUsagePublic"/>
+        <field name="Row ID**" type="STRING" key="addressUsageTypeRowId"/>
+        <field name="Primary" type="STRING" key="addressUsageTypePrimary"/>
+        <field name="Type*" type="STRING" key="addressUsageType"/>
+        <field name="Use For+" type="STRING" key="addressUseFor"/>
+        <field name="Use For Tenanted+" type="STRING" key="addressUseForTenanted"/>
+        <field name="Comments" type="STRING" key="addressUsageComments"/>
+        <field name="Number of Days" type="STRING" key="addressNumberOfDays"/>
+        <field name="Municipality Local" type="STRING" key="addressMunicipalityLocal"/>
+        <field name="Address" type="STRING" key="existingAddressId"/>
+        <field name="Address ID" type="STRING" key="newAddressId"/>
+        <field name="Row ID*" type="STRING" key="phoneRowId"/>
+        <field name="Area Code" type="STRING" key="phoneAreaCode"/>
+        <field name="Tenant Formatted Phone" type="STRING" key="tenantFormattedPhone"/>
+        <field name="International Formatted Phone" type="STRING" key="internationalFormattedPhone"/>
+        <field name="Phone Number Without Area Code" type="STRING" key="phoneNumberWithoutAreaCode"/>
+        <field name="National Formatted Phone" type="STRING" key="nationalFormattedPhone"/>
+        <field name="E164 Formatted Phone" type="STRING" key="e164FormattedPhone"/>
+        <field name="Workday Traditional Formatted Phone" type="STRING" key="workdayTraditionalFormattedPhone"/>
+        <field name="Delete" type="STRING" key="deletePhone"/>
+        <field name="Do Not Replace All" type="STRING" key="doNotReplaceAllPhone"/>
+        <field name="Country ISO Code" type="STRING" key="phoneCountryIsoCode"/>
+        <field name="International Phone Code" type="STRING" key="internationalPhoneCode"/>
+        <field name="Phone Number" type="STRING" key="phoneNumber"/>
+        <field name="Phone Extension" type="STRING" key="phoneExtension"/>
+        <field name="Phone Device Type" type="STRING" key="phoneDeviceType"/>
+        <field name="Row ID*" type="STRING" key="phoneUsageRowId"/>
+        <field name="Public" type="STRING" key="phoneUsagePublic"/>
+        <field name="Row ID**" type="STRING" key="phoneUsageTypeRowId"/>
+        <field name="Primary" type="STRING" key="phoneUsageTypePrimary"/>
+        <field name="Type*" type="STRING" key="phoneUsageType"/>
+        <field name="Use For+" type="STRING" key="phoneUseFor"/>
+        <field name="Use For Tenanted+" type="STRING" key="phoneUseForTenanted"/>
+        <field name="Comments" type="STRING" key="phoneUsageComments"/>
+        <field name="Phone" type="STRING" key="existingPhoneId"/>
+        <field name="ID" type="STRING" key="newPhoneId"/>
+        <field name="Row ID*" type="STRING" key="emailRowId"/>
+        <field name="Delete" type="STRING" key="deleteEmail"/>
+        <field name="Do Not Replace All" type="STRING" key="doNotReplaceAllEmail"/>
+        <field name="Email Address" type="STRING" key="emailAddress"/>
+        <field name="Email Comment" type="STRING" key="emailComment"/>
+        <field name="Row ID*" type="STRING" key="emailUsageRowId"/>
+        <field name="Public" type="STRING" key="emailUsagePublic"/>
+        <field name="Row ID**" type="STRING" key="emailUsageTypeRowId"/>
+        <field name="Primary" type="STRING" key="emailUsageTypePrimary"/>
+        <field name="Type*" type="STRING" key="emailUsageType"/>
+        <field name="Use For+" type="STRING" key="emailUseFor"/>
+        <field name="Use For Tenanted+" type="STRING" key="emailUseForTenanted"/>
+        <field name="Comments" type="STRING" key="emailUsageComments"/>
+        <field name="Email" type="STRING" key="existingEmailId"/>
+        <field name="ID" type="STRING" key="newEmailId"/>
+        <field name="Row ID*" type="STRING" key="instantMessengerRowId"/>
+        <field name="Delete" type="STRING" key="deleteInstantMessenger"/>
+        <field name="Do Not Replace All" type="STRING" key="doNotReplaceAllInstantMessenger"/>
+        <field name="Instant Messenger Address" type="STRING" key="instantMessengerAddress"/>
+        <field name="Instant Messenger Type" type="STRING" key="instantMessengerType"/>
+        <field name="Instant Messenger Comment" type="STRING" key="instantMessengerComment"/>
+        <field name="Row ID*" type="STRING" key="instantMessengerUsageRowId"/>
+        <field name="Public" type="STRING" key="instantMessengerUsagePublic"/>
+        <field name="Row ID**" type="STRING" key="instantMessengerUsageTypeRowId"/>
+        <field name="Primary" type="STRING" key="instantMessengerUsageTypePrimary"/>
+        <field name="Type*" type="STRING" key="instantMessengerUsageType"/>
+        <field name="Use For+" type="STRING" key="instantMessengerUseFor"/>
+        <field name="Use For Tenanted+" type="STRING" key="instantMessengerUseForTenanted"/>
+        <field name="Comments" type="STRING" key="instantMessengerUsageComments"/>
+        <field name="Instant Messenger" type="STRING" key="existingInstantMessengerId"/>
+        <field name="ID" type="STRING" key="newInstantMessengerId"/>
+        <field name="Row ID*" type="STRING" key="webAddressRowId"/>
+        <field name="Delete" type="STRING" key="deleteWebAddress"/>
+        <field name="Do Not Replace All" type="STRING" key="doNotReplaceAllWebAddress"/>
+        <field name="Web Address" type="STRING" key="webAddress"/>
+        <field name="Web Address Comment" type="STRING" key="webAddressComment"/>
+        <field name="Row ID*" type="STRING" key="webAddressUsageRowId"/>
+        <field name="Public" type="STRING" key="webAddressUsagePublic"/>
+        <field name="Row ID**" type="STRING" key="webAddressUsageTypeRowId"/>
+        <field name="Primary" type="STRING" key="webAddressUsageTypePrimary"/>
+        <field name="Type*" type="STRING" key="webAddressUsageType"/>
+        <field name="Use For+" type="STRING" key="webAddressUseFor"/>
+        <field name="Use For Tenanted+" type="STRING" key="webAddressUseForTenanted"/>
+        <field name="Comments" type="STRING" key="webAddressUsageComments"/>
+        <field name="Web Address" type="STRING" key="existingWebAddressId"/>
+        <field name="ID" type="STRING" key="newWebAddressId"/>
+        <field name="Row ID*" type="STRING" key="contactTypeRowId"/>
+        <field name="Contact Type Tenanted+" type="STRING" key="contactTypeTenanted"/>
+        <field name="Business Entity Contact Type+" type="STRING" key="businessEntityContactType"/>
+        <field name="System ID" type="STRING" key="externalSystemId"/>
+        <field name="ID" type="STRING" key="externalId"/>
+    </sheet>
+
+</cemiOutputDefinition>
