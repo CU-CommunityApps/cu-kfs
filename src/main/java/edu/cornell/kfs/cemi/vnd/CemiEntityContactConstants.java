@@ -34,10 +34,27 @@ public final class CemiEntityContactConstants {
 
     public static final String ENTITY_CONTACT_EXTRACT_FILENAME_PREFIX = "Submit_Business_Entity_Contact_ITH_";
 
-    public static final String EXTRACTNAME_EXTRACT_PLAIN_FILENAME = "Submit_Business_Entity_Contact.xlsx";
+    public static final String ENTITY_CONTACT_EXTRACT_PLAIN_FILENAME = "Submit_Business_Entity_Contact.xlsx";
  
+    public static final int EXPECTED_PHONE_LENGTH = 10;
+    public static final int AREA_CODE_LENGTH = 3;
+
+    public static final String INTERNATIONAL_PHONE_CODE_UNITED_STATES = "1";
+
+    public static final String ROW_ID_1 = "1";
+
+    public static final String MAIN_PHONE_NUMBER_TYPE = "PH";
+
     public static final class EntityContactExtractSheets {
         public static final String BUSINESS_ENTITY_CONTACT = "Business Entity Contact";
+    }
+
+    public static final class PhoneDeviceTypes {
+        public static final String TELEPHONE = "Telephone";
+    }
+
+    public static final class CommunicationUsageTypes {
+        public static final String WORK = "WORK";
     }
 
 }

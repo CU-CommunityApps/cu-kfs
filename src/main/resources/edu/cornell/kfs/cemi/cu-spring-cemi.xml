@@ -36,6 +36,7 @@
                  <value>createCemiSupplierExtractJob</value>
                  <value>createCemiRemitToSupplierExtractJob</value>
                  <value>createCemiOrderFromSupplierExtractJob</value>
+                 <value>createCemiBusinessEntityContactExtractJob</value>
                  <value>importCemiLegacyDataJob</value>
             </list>
         </property>
@@ -50,6 +51,7 @@
             <value>${staging.directory}/cemi/vnd/cemiSupplierExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiOrderFromSupplierExtract</value>
+            <value>${staging.directory}/cemi/vnd/cemiBusinessEntityContactExtract</value>
             <value>${staging.directory}/cemi/conversions/outbound</value>
           </list>
         </property>
@@ -363,5 +365,48 @@
           p:cemiOrderFromSupplierDao-ref="cemiOrderFromSupplierDao"
           p:cemiVendorOrmDao-ref="cemiVendorOrmDao"
           p:businessObjectService-ref="businessObjectService"/>
+
+    <!-- Business Entity Contact (Supplier Contact) -->
+
+    <bean id="createCemiBusinessEntityContactExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiEntityContactExtractStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cemiEntityContactExtractDao" parent="cemiEntityContactExtractDao-parentBean"/>
+    <bean id="cemiEntityContactExtractDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiEntityContactExtractDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
+
+    <bean id="cemiEntityContactExtractOrmDao" parent="cemiEntityContactExtractOrmDao-parentBean"/>
+    <bean id="cemiEntityContactExtractOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiEntityContactExtractOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="cemiEntityContactExtractService" parent="cemiEntityContactExtractService-parentBean"/>
+    <bean id="cemiEntityContactExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.batch.service.impl.CemiEntityContactExtractServiceImpl"
+          c:environment-ref="environment"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/module/cg/cemiBusinessEntityContactExtract"
+          p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:parameterService-ref="parameterService"
+          p:cemiEntityContactExtractOrmDao-ref="cemiEntityContactExtractOrmDao"
+          p:cemiEntityContactExtractDao-ref="cemiEntityContactExtractDao"
+          p:businessObjectService-ref="businessObjectService"/>
+          
+    <bean id="createCemiEntityContactExtractStep"
+          class="edu.cornell.kfs.cemi.vnd.batch.CreateCemiEntityContactExtractStep"
+          parent="step"
+          p:cemiEntityContactExtractService-ref="cemiEntityContactExtractService"/>
 
 </beans>

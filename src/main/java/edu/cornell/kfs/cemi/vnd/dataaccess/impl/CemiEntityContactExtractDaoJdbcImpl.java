@@ -26,6 +26,21 @@ public class CemiEntityContactExtractDaoJdbcImpl extends CuSqlQueryPlatformAware
     }
 
     @Override
+    public void updateEntityContactExtractQuerySettings(final String supplierJobRunDateString) {
+        final CuSqlQuery query = new CuSqlChunk()
+                .append("UPDATE CEMI.CU_CEMI_EXTR_ENT_CNTCT_QUERY_SETTINGS_T ")
+                .append("SET SUPP_EXTR_FILE_RUNDATE = ").appendAsParameter(supplierJobRunDateString)
+                .toQuery();
+
+        final int numRowsUpdated = executeUpdate(query);
+        if (numRowsUpdated != 1) {
+            LOG.error("updateEntityContactExtractQuerySettings, Query should have updated 1 row, "
+                    + "but it updated {} instead", numRowsUpdated);
+            throw new RuntimeException("Failed to update Business Entity Contact query settings");
+        }
+    }
+
+    @Override
     public void queryAndStoreInScopeVendorContactKeysForDataExtract() {
         final CuSqlQuery query = new CuSqlChunk()
                 .append("INSERT INTO CEMI.CU_CEMI_EXTR_ENT_CNTCT_VNDR_CNTCT_T (VNDR_CNTCT_GNRTD_ID) ")

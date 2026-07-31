@@ -2,7 +2,7 @@ package edu.cornell.kfs.cemi.vnd.batch.service;
 
 import java.util.Iterator;
 
-import edu.cornell.kfs.cemi.patterntemplate.batch.businessobject.CemiExampleLEGACYOBJECT;
+import org.kuali.kfs.vnd.businessobject.VendorContact;
 
 // This service's implementation deals with all the logic required to gather the information required for the
 // data extraction file. This method will contain all of the control logic properly manage parent-child data 
@@ -12,6 +12,7 @@ import edu.cornell.kfs.cemi.patterntemplate.batch.businessobject.CemiExampleLEGA
 
 public interface CemiEntityContactFileExtractDataBuilder {
 
-    void writeEXTRACTNAMEFileTABNAMETabExtractDataToIntermediateStorage(final Iterator<CemiExampleLEGACYOBJECT> legacyObjects);
+    void writeEntityContactFileEntityContactTabExtractDataToIntermediateStorage(
+            final Iterator<VendorContact> legacyVendorContacts);
 
 }

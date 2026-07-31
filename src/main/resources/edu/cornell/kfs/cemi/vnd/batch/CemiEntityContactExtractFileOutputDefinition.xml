@@ -2,7 +2,7 @@
 <cemiOutputDefinition>
 
     <sheet name="Business Entity Contact" num-header-rows="5" start-column-index="1"
-           business-object-class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactFileContactNameTabRowBo">
+           business-object-class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactFileEntityContactTabRowBo">
         <field name="Spreadsheet Key*" type="STRING" key="spreadsheetKey"/>
         <field name="Add Only" type="STRING" key="addOnly"/>
         <field name="Business Entity Contact" type="STRING" key="existingBusinessEntityContactId"/>

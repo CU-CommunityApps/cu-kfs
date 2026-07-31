@@ -1,6 +1,6 @@
 <descriptor-repository version="1.0">
 
-    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactFileEntityContactRowBo"
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactFileEntityContactTabRowBo"
                       table="CU_CEMI_EXTR_ENT_CNTCT_TAB_ENT_CNTCT_T"
                       schema="CEMI">
         <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>

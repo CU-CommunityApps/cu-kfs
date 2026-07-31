@@ -4,6 +4,8 @@ public interface CemiEntityContactExtractDao {
 
     void clearAnyExistingInScopeVendorContactKeysFromPreviousExecution();
 
+    void updateEntityContactExtractQuerySettings(final String supplierJobRunDateString);
+
     void queryAndStoreInScopeVendorContactKeysForDataExtract();
 
     String findSupplierIdForVendorContact(final Integer vendorContactGeneratedIdentifier,
