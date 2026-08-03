@@ -76,7 +76,6 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
         CemiSupplierBo currentSupplier = new CemiSupplierBo();
         List<CemiSupplierAddressBo> currentSupplierAddresses = new ArrayList<>();
         currentSupplier.setSupplierId(CUKFSConstants.NULL);
-        int currentSpreadsheetKey = 1;
         int orderFromConnectionCount = 0;
 
         for (final CemiSupplierAddressBo supplierAddress : IteratorUtils.asIterable(supplierAddresses)) {
@@ -88,9 +87,8 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
             final String supplierId = supplierAddress.getSupplierId();
             if (!Strings.CS.equals(supplierId, currentSupplier.getSupplierId())) {
                 final int numNewConnectionsCreated = createAndStoreOrderFromSupplierRows(currentSupplier,
-                        currentSupplierAddresses, Integer.toString(currentSpreadsheetKey));
+                        currentSupplierAddresses);
                 if (numNewConnectionsCreated > 0) {
-                    currentSpreadsheetKey++;
                     orderFromConnectionCount += numNewConnectionsCreated;
                 }
                 currentSupplier = getSupplier(supplierId);
@@ -99,8 +97,7 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
             currentSupplierAddresses.add(supplierAddress);
         }
 
-        orderFromConnectionCount += createAndStoreOrderFromSupplierRows(currentSupplier, currentSupplierAddresses,
-                Integer.toString(currentSpreadsheetKey));
+        orderFromConnectionCount += createAndStoreOrderFromSupplierRows(currentSupplier, currentSupplierAddresses);
         LOG.info("writeOrderFromSupplierDataToIntermediateStorage, Finished processing and filtering {} "
                 + "supplier addresses, to create a total of {} Order From Supplier Connections",
                 supplierAddressCount, orderFromConnectionCount);
@@ -123,7 +120,7 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
      *       multiple emails per connection.
      */
     private int createAndStoreOrderFromSupplierRows(final CemiSupplierBo supplier,
-            final List<CemiSupplierAddressBo> supplierAddresses, final String spreadsheetKey) {
+            final List<CemiSupplierAddressBo> supplierAddresses) {
         if (supplierAddresses.isEmpty()) {
             return 0;
         }
@@ -173,7 +170,6 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
                     .withSupplier(supplier)
                     .withSupplierEmailRow(emailRow)
                     .withEmailFromKfsVendorAddress(emailAndAddressPair.getLeft())
-                    .withSpreadsheetKey(spreadsheetKey)
                     .withSupplierConnectionRowId(Integer.toString(connectionRowId))
                     .withFirstRowForSupplierFlag(isFirstRowForSupplier)
                     .withPunchoutSupplierFlag(isPunchoutSupplier)
