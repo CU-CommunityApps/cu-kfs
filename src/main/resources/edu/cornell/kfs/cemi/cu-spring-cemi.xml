@@ -395,7 +395,7 @@
           abstract="true"
           class="edu.cornell.kfs.cemi.vnd.batch.service.impl.CemiEntityContactExtractServiceImpl"
           c:environment-ref="environment"
-          p:dataFileCreationDirectory="${staging.directory}/cemi/module/cg/cemiBusinessEntityContactExtract"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/vnd/cemiBusinessEntityContactExtract"
           p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
           p:cemiFileAppenderService-ref="cemiFileAppenderService"
           p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
