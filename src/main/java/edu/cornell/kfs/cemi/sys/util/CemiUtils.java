@@ -153,7 +153,11 @@ public final class CemiUtils {
     }
 
     public static String formatAsValueContainingOnlyWordChars(final String value) {
-        return NON_WORD_CHARS_FRAGMENT_PATTERN.matcher(value).replaceAll(CUKFSConstants.UNDERSCORE);
+        if (StringUtils.isBlank(value)) {
+            return KFSConstants.EMPTY_STRING;
+        } else {
+            return NON_WORD_CHARS_FRAGMENT_PATTERN.matcher(value).replaceAll(CUKFSConstants.UNDERSCORE);
+        }
     }
 
 }
