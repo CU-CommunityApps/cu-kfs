@@ -21,7 +21,6 @@ public class CemiOrderFromSupplierBoFactory {
     private CemiSupplierBo supplier;
     private CemiSupplierEmailBo supplierEmailRow;
     private String emailFromKfsVendorAddress;
-    private String spreadsheetKey;
     private String supplierConnectionRowId;
     private boolean isFirstRowForSupplier;
     private boolean isPunchoutSupplier;
@@ -43,11 +42,6 @@ public class CemiOrderFromSupplierBoFactory {
 
     public CemiOrderFromSupplierBoFactory withEmailFromKfsVendorAddress(final String emailFromKfsVendorAddress) {
         this.emailFromKfsVendorAddress = emailFromKfsVendorAddress;
-        return this;
-    }
-
-    public CemiOrderFromSupplierBoFactory withSpreadsheetKey(final String spreadsheetKey) {
-        this.spreadsheetKey = spreadsheetKey;
         return this;
     }
 
@@ -88,10 +82,11 @@ public class CemiOrderFromSupplierBoFactory {
 
         final CemiOrderFromSupplierBo orderFromSupplier = new CemiOrderFromSupplierBo();
 
+        final String spreadsheetKey = supplier.getSupplierId();
         final String supplierIdForOutput = isFirstRowForSupplier ? supplier.getSupplierId() : KFSConstants.EMPTY_STRING;
         final String autoComplete = isFirstRowForSupplier ? KRADConstants.YES_INDICATOR_VALUE : KFSConstants.EMPTY_STRING;
         final String connectionName = generateConnectionName();
-        final String supplierReferenceId = generateSupplierReferenceId(connectionName);
+        final String supplierConnectionId = generateSupplierConnectionId(connectionName);
         final List<String> defaultPOTypes = determineDefaultPOTypes();
         final String poIssueOption = determinePurchaseOrderIssueOption();
         final String isDefault = determineDefaultConnectionSetting();
@@ -101,11 +96,11 @@ public class CemiOrderFromSupplierBoFactory {
         orderFromSupplier.setAutoComplete(autoComplete);
         orderFromSupplier.setComment(KFSConstants.EMPTY_STRING);
         orderFromSupplier.setWorker(KFSConstants.EMPTY_STRING);
-        orderFromSupplier.setSupplierReferenceId(supplierReferenceId);
+        orderFromSupplier.setSupplierReferenceId(KFSConstants.EMPTY_STRING);
         orderFromSupplier.setSupplierId(supplierIdForOutput);
         orderFromSupplier.setSupplierConnectionRowId(supplierConnectionRowId);
         orderFromSupplier.setSupplierConnection(KFSConstants.EMPTY_STRING);
-        orderFromSupplier.setSupplierConnectionId(KFSConstants.EMPTY_STRING);
+        orderFromSupplier.setSupplierConnectionId(supplierConnectionId);
         orderFromSupplier.setSupplierConnectionName(connectionName);
         orderFromSupplier.setDefaultForPoType1(defaultPOTypes.get(0));
         orderFromSupplier.setDefaultForPoType2(defaultPOTypes.get(1));
@@ -158,9 +153,10 @@ public class CemiOrderFromSupplierBoFactory {
         }
     }
 
-    private String generateSupplierReferenceId(final String connectionName) {
-        return StringUtils.joinWith(CUKFSConstants.UNDERSCORE,
+    private String generateSupplierConnectionId(final String connectionName) {
+        final String concatenatedId = StringUtils.joinWith(CUKFSConstants.UNDERSCORE,
                 supplier.getSupplierId(), connectionName, supplierConnectionRowId);
+        return CemiUtils.formatAsValueContainingOnlyWordChars(concatenatedId);
     }
 
     private List<String> determineDefaultPOTypes() {

@@ -39,6 +39,8 @@ public final class CemiUtils {
 
     private static final Pattern WORD_CHARS_PATTERN = Pattern.compile("^\\w+$");
 
+    private static final Pattern NON_WORD_CHARS_FRAGMENT_PATTERN = Pattern.compile("\\W+");
+
     private static final String generateDateTimeInConsistentFormat(final LocalDateTime dateTime) {
         return FILE_DATE_TIME_FORMATTER.format(dateTime);
     }
@@ -148,6 +150,10 @@ public final class CemiUtils {
 
     public static boolean valueOnlyContainsWordCharacters(final String value) {
         return StringUtils.isNotBlank(value) && WORD_CHARS_PATTERN.matcher(value).matches();
+    }
+
+    public static String formatAsValueContainingOnlyWordChars(final String value) {
+        return NON_WORD_CHARS_FRAGMENT_PATTERN.matcher(value).replaceAll(CUKFSConstants.UNDERSCORE);
     }
 
 }
