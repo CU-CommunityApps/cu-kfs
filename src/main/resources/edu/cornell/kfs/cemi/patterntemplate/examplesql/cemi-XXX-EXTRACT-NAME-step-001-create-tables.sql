@@ -1,4 +1,4 @@
--- At a minimum this "create-tables" script file needs to hold the table definitions for:
+-- At a minimum this "create-tables" script file needs to hold the CEMI-schema-side table definitions for:
 --    (1) Every sheet tab defined in the spreadsheet where the table names follow the pattern:
 --          CU_CEMI_EXTR_{EXTRACT_NAME}_TAB_{TAB_NAME}_T
 --

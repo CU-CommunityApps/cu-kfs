@@ -32,7 +32,7 @@ public class CemiRemitToSupplierOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb im
     @Override
     public Stream<CemiSupplierAddressBo> getAddressesForCemiRemitToSupplierExtractAsCloseableStream() {
         String idCondition = "(A0.EXTR_FILE_RUNDATE, A0.ADDRESS_ID) IN ("
-                + "SELECT EXTR_FILE_RUNDATE, SUPP_ADDRESS_ID FROM KFS.CU_CEMI_EXTR_RMT_TO_SUPP_RMT_TO_ADDR_T)";
+                + "SELECT EXTR_FILE_RUNDATE, SUPP_ADDRESS_ID FROM CEMI.CU_CEMI_EXTR_RMT_TO_SUPP_RMT_TO_ADDR_T)";
         if (shouldUseLessDataDuringCemiDevelopment()) {
             idCondition += " AND (A0.SUPPLIER_ID <= 'SUPP001000' OR A0.SUPPLIER_ID >= 'SUPP015000')";
         }
@@ -65,7 +65,7 @@ public class CemiRemitToSupplierOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb im
         final String vendorIdCondition = StringUtils.join(
                 "(A0.VNDR_HDR_GNRTD_ID, A0.VNDR_DTL_ASND_ID) IN (",
                         "SELECT VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID ",
-                        "FROM KFS.CU_CEMI_MAPPING_SPLR_VNDR_EXTR_FILE_T ",
+                        "FROM CEMI.CU_CEMI_MAPPING_SPLR_VNDR_EXTR_FILE_T ",
                         "WHERE WKDY_SPLR_ID = '", supplierId, "' ",
                         "AND EXTR_FILE_RUNDATE = '", supplierJobRunDate, "'",
                 ")"

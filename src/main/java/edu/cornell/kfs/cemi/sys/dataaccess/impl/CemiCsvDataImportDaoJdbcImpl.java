@@ -24,7 +24,7 @@ public class CemiCsvDataImportDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBase
     public void truncateDestinationTable(final String legacyDataDestinationTableName) {
         validateTableName(legacyDataDestinationTableName);
         LOG.info("truncateDestinationTable, Truncating table: {}", legacyDataDestinationTableName);
-        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.", legacyDataDestinationTableName);
+        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE CEMI.", legacyDataDestinationTableName);
         executeUpdate(query);
         LOG.info("truncateDestinationTable, Finished truncating table: {}", legacyDataDestinationTableName);
     }
@@ -60,7 +60,7 @@ public class CemiCsvDataImportDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBase
 
     private CuSqlQuery createBatchDataInsertionQuery(final String tableName, final List<String> columnNames) {
         return new CuSqlChunk()
-                .append("INSERT INTO KFS.")
+                .append("INSERT INTO CEMI.")
                 .append(tableName)
                 .append(" (")
                 .append(CemiCuSqlChunk.asListingOfColumnNames(columnNames))

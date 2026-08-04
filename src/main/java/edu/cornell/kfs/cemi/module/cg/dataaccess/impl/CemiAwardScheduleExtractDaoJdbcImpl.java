@@ -17,7 +17,7 @@ public class CemiAwardScheduleExtractDaoJdbcImpl extends CuSqlQueryPlatformAware
     @Override
     public void clearExistingListOfExtractableProposalNumbers() {
         LOG.info("clearExistingListOfExtractableProposalNumbers was called.");
-        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE KFS.CU_CEMI_AWD_SCHDL_EXTR_AWD_T");
+        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_AWD_SCHDL_EXTR_AWD_T");
         executeUpdate(query);
         LOG.info("clearExistingListOfExtractableProposalNumbers finished truncating table.");
     }
@@ -25,9 +25,9 @@ public class CemiAwardScheduleExtractDaoJdbcImpl extends CuSqlQueryPlatformAware
     @Override
     public void queryAndStoreAwardProposalNumbersForAwardScheduleExtract() {
         final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO KFS.CU_CEMI_AWD_SCHDL_EXTR_AWD_T (CGPRPSL_NBR) ")
+                .append("INSERT INTO CEMI.CU_CEMI_AWD_SCHDL_EXTR_AWD_T (CGPRPSL_NBR) ")
                 .append("SELECT CGPRPSL_NBR ")
-                .append("FROM KFS.CG_CEMI_AWD_SCHDL_EXTR_V")
+                .append("FROM CEMI.CG_CEMI_AWD_SCHDL_EXTR_V")
                 .toQuery();
 
         final int numRowsInserted = executeUpdate(query);

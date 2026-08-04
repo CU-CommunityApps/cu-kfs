@@ -35,11 +35,11 @@ public class CemiVendorOrmDaoOjbImpl extends CuVendorDaoOjb implements CemiVendo
             // The values were chosen for the WHERE clause to restrict the result set to roughly 1000 rows as
             // well as provide both old and new vendors that had a variety of attributes for local verification. 
             vendorIdCondition = "(A0.VNDR_HDR_GNRTD_ID, A0.VNDR_DTL_ASND_ID) IN ("
-                    + "SELECT VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID FROM KFS.CU_CEMI_SPLR_EXTR_VNDR_T"
+                    + "SELECT VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID FROM CEMI.CU_CEMI_SPLR_EXTR_VNDR_T"
                     + " WHERE VNDR_HDR_GNRTD_ID <= 5000 OR VNDR_HDR_GNRTD_ID >= 160000)";
         } else {
             vendorIdCondition = "(A0.VNDR_HDR_GNRTD_ID, A0.VNDR_DTL_ASND_ID) IN ("
-                    + "SELECT VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID FROM KFS.CU_CEMI_SPLR_EXTR_VNDR_T)";
+                    + "SELECT VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID FROM CEMI.CU_CEMI_SPLR_EXTR_VNDR_T)";
         }
         final Criteria criteria = new Criteria();
         criteria.addSql(vendorIdCondition);
@@ -82,7 +82,7 @@ public class CemiVendorOrmDaoOjbImpl extends CuVendorDaoOjb implements CemiVendo
         final String vendorIdCondition = StringUtils.join(
                 "(A0.VNDR_HDR_GNRTD_ID, A0.VNDR_DTL_ASND_ID) IN (",
                         "SELECT VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID ",
-                        "FROM KFS.CU_CEMI_MAPPING_SPLR_VNDR_EXTR_FILE_T ",
+                        "FROM CEMI.CU_CEMI_MAPPING_SPLR_VNDR_EXTR_FILE_T ",
                         "WHERE WKDY_SPLR_ID = '", supplierId, "' ",
                         "AND EXTR_FILE_RUNDATE = '", supplierJobRunDate, "'",
                 ")"
