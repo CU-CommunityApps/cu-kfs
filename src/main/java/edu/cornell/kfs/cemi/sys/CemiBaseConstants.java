@@ -38,5 +38,7 @@ public final class CemiBaseConstants {
     public static final String DATE_FORMAT_yyyy_MM_dd = "yyyy-MM-dd";
 
     public static final int BULK_DATA_BATCH_SIZE = 200;
+    
+    public static final String LAST_UPDT_TS = "LAST_UPDT_TS";
 
 }

@@ -77,6 +77,18 @@ public class CemiCsvDataImportServiceImpl implements CemiCsvDataImportService {
         }
         LOG.info("importCsvDataFor, Finished importing data for {} from file: {}", fileTypeName, simpleFileName);
     }
+    
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public void setTranslateTableLastUpdateTimestamp(final CemiCsvBatchInputFileType batchInputFileType) {
+        final String fileTypeName = batchInputFileType.getFileTypeName();
+        if (batchInputFileType.isLastUpdateTimestampInTable()) {
+            LOG.info("setTranslateTableLastUpdateTimestamp, Before attempting to set last update timestamp for translate table {}", fileTypeName);
+            cemiCsvDataImportDao.setLastUpdateTimestampToNow(batchInputFileType.getLegacyDataDestinationTableName());
+        } else {
+            LOG.info("setTranslateTableLastUpdateTimestamp, Spring bean not configured to set last update timestamp for translate table {}", fileTypeName);
+        }
+    }
 
     private void validateBatchInputFileTypeSetup(final CemiCsvBatchInputFileType batchInputFileType) {
         Validate.notNull(batchInputFileType, "batchInputFileType cannot be null");

@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.dataaccess.CemiCsvDataImportDao;
@@ -41,6 +42,18 @@ public class CemiCsvDataImportDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBase
         LOG.info("storeCsvData, Storing CSV data in table: {}", legacyDataDestinationTableName);
         final int rowCount = storeCsvDataInBatches(csvIterator, query, expectedRowLength);
         LOG.info("storeCsvData, Finished storing {} CSV data rows in table: {}", rowCount, legacyDataDestinationTableName);
+    }
+    
+    @Override
+    public void setLastUpdateTimestampToNow(final String legacyDataDestinationTableName) {
+        if (lastUpdateTimestampColumnExists(legacyDataDestinationTableName)) {
+            LOG.info("setLastUpdateTimestampToNow, Setting LAST_UPDT_TS for all rows in table {}", legacyDataDestinationTableName);
+            final CuSqlQuery query = createUpdateAllRowsTimestampQuery(legacyDataDestinationTableName);
+            final int numRowsUpdated = executeUpdate(query);
+            LOG.info("setLastUpdateTimestampToNow, LAST_UPDT_TS was set for {} rows in table {}", numRowsUpdated, legacyDataDestinationTableName);
+        } else {
+            LOG.info("setLastUpdateTimestampToNow, Column LAST_UPDT_TS does not exist in table {}. Could not update to job run date.", legacyDataDestinationTableName);
+        }
     }
 
     private void validateTableName(final String tableName) {
@@ -97,6 +110,32 @@ public class CemiCsvDataImportDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBase
         Validate.validState(expectedRowLength == csvRow.length,
                 "Row %s has the wrong number of columns; expected: %s, actual: %s",
                 rowNumber, expectedRowLength, csvRow.length);
+    }
+    
+    private boolean lastUpdateTimestampColumnExists(final String tableName) {
+        CuSqlQuery sqlQuery = createSelectAllTableColumnsQuery(tableName);
+        List<String> columnNamesResults = queryForValues(sqlQuery, SingleColumnRowMapper.newInstance(String.class));
+        
+        if (!columnNamesResults.isEmpty() && columnNamesResults.contains(CemiBaseConstants.LAST_UPDT_TS)) {
+            return true;
+        }
+        return false;
+    }
+    
+    private CuSqlQuery createSelectAllTableColumnsQuery(final String tableName) {
+        return new CuSqlChunk()
+                .append("SELECT COLUMN_NAME FROM ALL_TAB_COLS WHERE OWNER = 'CEMI' AND COLUMN_NAME LIKE 'LAST_UPDT_TS' AND TABLE_NAME LIKE '")
+                .append(tableName)
+                .append("'")
+                .toQuery();
+    }
+    
+    private CuSqlQuery createUpdateAllRowsTimestampQuery(final String tableName) {
+        return new CuSqlChunk()
+                .append("UPDATE CEMI.")
+                .append(tableName)
+                .append(" SET LAST_UPDT_TS = SYSDATE")
+                .toQuery();
     }
 
 }

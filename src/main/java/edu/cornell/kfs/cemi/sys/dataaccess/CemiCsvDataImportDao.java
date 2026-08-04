@@ -10,4 +10,6 @@ public interface CemiCsvDataImportDao {
     void storeCsvData(final String legacyDataDestinationTableName,
             final List<String> legacyDataDestinationTableColumns, final Iterator<String[]> csvIterator);
 
+    void setLastUpdateTimestampToNow(final String legacyDataDestinationTableName);
+
 }

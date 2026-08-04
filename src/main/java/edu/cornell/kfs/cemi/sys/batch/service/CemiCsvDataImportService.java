@@ -9,5 +9,7 @@ public interface CemiCsvDataImportService {
     void truncateDestinationTableFor(final CemiCsvBatchInputFileType batchInputFileType);
 
     void importCsvDataFor(final CemiCsvBatchInputFileType batchInputFileType);
+    
+    void setTranslateTableLastUpdateTimestamp(final CemiCsvBatchInputFileType batchInputFileType);
 
 }

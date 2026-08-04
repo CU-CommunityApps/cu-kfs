@@ -50,6 +50,7 @@
             <value>${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiOrderFromSupplierExtract</value>
             <value>${staging.directory}/cemi/conversions/outbound</value>
+            <value>${staging.directory}/cemi/translatetable/award</value>
           </list>
         </property>
     </bean>
@@ -362,5 +363,18 @@
           p:cemiOrderFromSupplierDao-ref="cemiOrderFromSupplierDao"
           p:cemiVendorOrmDao-ref="cemiVendorOrmDao"
           p:businessObjectService-ref="businessObjectService"/>
+          
+    <!--  Award Translate Tables -->
+    <bean id="cemiWorkdayAwardSponsorAwardType" parent="cemiWorkdayAwardSponsorAwardType-parentBean"/>
+    <bean id="cemiWorkdayAwardSponsorAwardType-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/award"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_AWD_SPNSR_AWD_TYP_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.module.cg.batch.translatetable.KfsToWorkdayAwardCommonCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+          
+    <alias name="cemiWorkdayAwardSponsorAwardType" alias="Award_KfsAwardType-TranslateWorkdaySponsorAwardType"/>
 
 </beans>
