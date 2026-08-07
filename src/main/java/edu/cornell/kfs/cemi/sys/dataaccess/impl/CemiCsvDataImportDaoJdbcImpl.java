@@ -1,5 +1,6 @@
 package edu.cornell.kfs.cemi.sys.dataaccess.impl;
 
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -46,7 +47,8 @@ public class CemiCsvDataImportDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBase
     
     @Override
     public void setLastUpdateTimestampToNow(final String legacyDataDestinationTableName) {
-        if (lastUpdateTimestampColumnExists(legacyDataDestinationTableName)) {
+        validateTableName(legacyDataDestinationTableName);
+        if (lastUpdateTimestampColumnExistsInTable(legacyDataDestinationTableName)) {
             LOG.info("setLastUpdateTimestampToNow, Setting LAST_UPDT_TS for all rows in table {}", legacyDataDestinationTableName);
             final CuSqlQuery query = createUpdateAllRowsTimestampQuery(legacyDataDestinationTableName);
             final int numRowsUpdated = executeUpdate(query);
@@ -112,21 +114,17 @@ public class CemiCsvDataImportDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBase
                 rowNumber, expectedRowLength, csvRow.length);
     }
     
-    private boolean lastUpdateTimestampColumnExists(final String tableName) {
+    private boolean lastUpdateTimestampColumnExistsInTable(final String tableName) {
         CuSqlQuery sqlQuery = createSelectAllTableColumnsQuery(tableName);
         List<String> columnNamesResults = queryForValues(sqlQuery, SingleColumnRowMapper.newInstance(String.class));
         
-        if (!columnNamesResults.isEmpty() && columnNamesResults.contains(CemiBaseConstants.LAST_UPDT_TS)) {
-            return true;
-        }
-        return false;
+        return !columnNamesResults.isEmpty() && columnNamesResults.contains(CemiBaseConstants.LAST_UPDT_TS);
     }
     
     private CuSqlQuery createSelectAllTableColumnsQuery(final String tableName) {
         return new CuSqlChunk()
-                .append("SELECT COLUMN_NAME FROM ALL_TAB_COLS WHERE OWNER = 'CEMI' AND COLUMN_NAME LIKE 'LAST_UPDT_TS' AND TABLE_NAME LIKE '")
-                .append(tableName)
-                .append("'")
+                .append("SELECT COLUMN_NAME FROM ALL_TAB_COLS WHERE OWNER = 'CEMI' AND COLUMN_NAME = 'LAST_UPDT_TS' AND TABLE_NAME = ")
+                .appendAsParameter(Types.VARCHAR, tableName)
                 .toQuery();
     }
     

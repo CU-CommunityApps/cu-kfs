@@ -10,6 +10,6 @@ public interface CemiCsvDataImportService {
 
     void importCsvDataFor(final CemiCsvBatchInputFileType batchInputFileType);
     
-    void setTranslateTableLastUpdateTimestamp(final CemiCsvBatchInputFileType batchInputFileType);
+    void setLastUpdateTimestampFor(final CemiCsvBatchInputFileType batchInputFileType);
 
 }
