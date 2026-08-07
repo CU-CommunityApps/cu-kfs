@@ -15,6 +15,7 @@ public class ImportCemiLegacyDataStep extends AbstractStep {
         final CemiCsvBatchInputFileType inputFileType = cemiCsvDataImportService.getBatchInputFileTypeForProcessing();
         cemiCsvDataImportService.truncateDestinationTableFor(inputFileType);
         cemiCsvDataImportService.importCsvDataFor(inputFileType);
+        cemiCsvDataImportService.setLastUpdateTimestampFor(inputFileType);
         return true;
     }
 

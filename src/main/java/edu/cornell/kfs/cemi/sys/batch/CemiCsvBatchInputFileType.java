@@ -20,6 +20,7 @@ public class CemiCsvBatchInputFileType extends BatchInputFileTypeBase implements
     private String legacyDataDestinationTableName;
     private List<String> legacyDataDestinationTableColumns;
     private boolean hasHeaderRow;
+    private boolean lastUpdateTimestampInTable = false;
 
     public CemiCsvBatchInputFileType() {
         super();
@@ -112,6 +113,14 @@ public class CemiCsvBatchInputFileType extends BatchInputFileTypeBase implements
 
     public void setHasHeaderRow(final boolean hasHeaderRow) {
         this.hasHeaderRow = hasHeaderRow;
+    }
+
+    public boolean isLastUpdateTimestampInTable() {
+        return lastUpdateTimestampInTable;
+    }
+
+    public void setLastUpdateTimestampInTable(boolean lastUpdateTimestampInTable) {
+        this.lastUpdateTimestampInTable = lastUpdateTimestampInTable;
     }
 
 }
