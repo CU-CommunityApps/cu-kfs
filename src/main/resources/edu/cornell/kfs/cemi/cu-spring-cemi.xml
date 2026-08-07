@@ -43,6 +43,7 @@
             <value>${reports.directory}/cemi</value>
             <value>${staging.directory}/cemi</value>
             <value>${staging.directory}/cemi/legacy</value>
+            <value>${staging.directory}/cemi/legacy/novelution/award</value>
             <value>${staging.directory}/cemi/legacy/workday/employee</value>
             <value>${staging.directory}/cemi/module/cg/cemiAwardScheduleExtract</value>
             <value>${staging.directory}/cemi/pdp/cemiPaymentElectionExtract</value>
@@ -376,5 +377,18 @@
           p:lastUpdateTimestampInTable="true"/>
           
     <alias name="cemiWorkdayAwardSponsorAwardType" alias="Award_KfsAwardType-TranslateWorkdaySponsorAwardType"/>
+
+    <!-- Novelution Award Legacy Data Import -->
+    <bean id="cemiNovelutionAward" parent="cemiNovelutionAward-parentBean"/>
+    <bean id="cemiNovelutionAward-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/legacy/novelution/award"
+          p:legacyDataDestinationTableName="CU_CEMI_LGCY_NOVELUTION_AWARD_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.module.cg.batch.legacy.NovelutionAwardCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+          
+    <alias name="cemiNovelutionAward" alias="Award-NovelutionAward"/>
 
 </beans>
