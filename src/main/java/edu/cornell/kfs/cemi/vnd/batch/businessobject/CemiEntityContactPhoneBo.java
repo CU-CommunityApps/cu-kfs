@@ -1,10 +1,13 @@
 package edu.cornell.kfs.cemi.vnd.batch.businessobject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
 
 public class CemiEntityContactPhoneBo extends TransientBusinessObjectBase {
 
-    private static final long serialVersionUID = -567948222811391547L;
+    private static final long serialVersionUID = 1L;
 
     private String phoneRowId;
     private String phoneAreaCode;
@@ -21,16 +24,10 @@ public class CemiEntityContactPhoneBo extends TransientBusinessObjectBase {
     private String phoneNumber;
     private String phoneExtension;
     private String phoneDeviceType;
-    private String phoneUsageRowId;
-    private String phoneUsagePublic;
-    private String phoneUsageTypeRowId;
-    private String phoneUsageTypePrimary;
-    private String phoneUsageType;
-    private String phoneUseFor;
-    private String phoneUseForTenanted;
-    private String phoneUsageComments;
     private String existingPhoneId;
     private String newPhoneId;
+
+    private List<CemiEntityContactGenericUsageBo> phoneUsages;
 
     public String getPhoneRowId() {
         return phoneRowId;
@@ -152,70 +149,6 @@ public class CemiEntityContactPhoneBo extends TransientBusinessObjectBase {
         this.phoneDeviceType = phoneDeviceType;
     }
 
-    public String getPhoneUsageRowId() {
-        return phoneUsageRowId;
-    }
-
-    public void setPhoneUsageRowId(final String phoneUsageRowId) {
-        this.phoneUsageRowId = phoneUsageRowId;
-    }
-
-    public String getPhoneUsagePublic() {
-        return phoneUsagePublic;
-    }
-
-    public void setPhoneUsagePublic(final String phoneUsagePublic) {
-        this.phoneUsagePublic = phoneUsagePublic;
-    }
-
-    public String getPhoneUsageTypeRowId() {
-        return phoneUsageTypeRowId;
-    }
-
-    public void setPhoneUsageTypeRowId(final String phoneUsageTypeRowId) {
-        this.phoneUsageTypeRowId = phoneUsageTypeRowId;
-    }
-
-    public String getPhoneUsageTypePrimary() {
-        return phoneUsageTypePrimary;
-    }
-
-    public void setPhoneUsageTypePrimary(final String phoneUsageTypePrimary) {
-        this.phoneUsageTypePrimary = phoneUsageTypePrimary;
-    }
-
-    public String getPhoneUsageType() {
-        return phoneUsageType;
-    }
-
-    public void setPhoneUsageType(final String phoneUsageType) {
-        this.phoneUsageType = phoneUsageType;
-    }
-
-    public String getPhoneUseFor() {
-        return phoneUseFor;
-    }
-
-    public void setPhoneUseFor(final String phoneUseFor) {
-        this.phoneUseFor = phoneUseFor;
-    }
-
-    public String getPhoneUseForTenanted() {
-        return phoneUseForTenanted;
-    }
-
-    public void setPhoneUseForTenanted(final String phoneUseForTenanted) {
-        this.phoneUseForTenanted = phoneUseForTenanted;
-    }
-
-    public String getPhoneUsageComments() {
-        return phoneUsageComments;
-    }
-
-    public void setPhoneUsageComments(final String phoneUsageComments) {
-        this.phoneUsageComments = phoneUsageComments;
-    }
-
     public String getExistingPhoneId() {
         return existingPhoneId;
     }
@@ -230,6 +163,21 @@ public class CemiEntityContactPhoneBo extends TransientBusinessObjectBase {
 
     public void setNewPhoneId(final String newPhoneId) {
         this.newPhoneId = newPhoneId;
+    }
+
+    public List<CemiEntityContactGenericUsageBo> getPhoneUsages() {
+        if (phoneUsages == null) {
+            phoneUsages = new ArrayList<>();
+        }
+        return phoneUsages;
+    }
+
+    public void setPhoneUsages(final List<CemiEntityContactGenericUsageBo> phoneUsages) {
+        this.phoneUsages = phoneUsages;
+    }
+
+    public void addPhoneUsage(final CemiEntityContactGenericUsageBo phoneUsage) {
+        getPhoneUsages().add(phoneUsage);
     }
 
 }

@@ -3,6 +3,7 @@ package edu.cornell.kfs.cemi.vnd.batch.service.impl;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -13,7 +14,6 @@ import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 //import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
@@ -23,6 +23,7 @@ import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiOrmDataBuilderBase;
 import edu.cornell.kfs.cemi.vnd.CemiEntityContactConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactEmailBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactFileEntityContactTabRowBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactGenericUsageBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactHeaderBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactPhoneBo;
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiEntityContactFileExtractDataBuilder;
@@ -31,7 +32,6 @@ import edu.cornell.kfs.cemi.vnd.batch.service.impl.factory.CemiEntityContactFile
 import edu.cornell.kfs.cemi.vnd.batch.service.impl.factory.CemiEntityContactHeaderBoFactory;
 import edu.cornell.kfs.cemi.vnd.batch.service.impl.factory.CemiEntityContactPhoneBoFactory;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiEntityContactExtractDao;
-import edu.cornell.kfs.cemi.vnd.dataaccess.CemiEntityContactExtractOrmDao;
 
 public class CemiEntityContactFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuilderBase
          implements CemiEntityContactFileExtractDataBuilder {
@@ -62,9 +62,9 @@ public class CemiEntityContactFileExtractDataBuilderDefaultImpl extends CemiOrmD
     }
 
     private int comparePhoneTypes(final String phoneType1, final String phoneType2) {
-        if (Strings.CS.equals(phoneType1, CemiEntityContactConstants.MAIN_PHONE_NUMBER_TYPE)) {
-            return Strings.CS.equals(phoneType2, CemiEntityContactConstants.MAIN_PHONE_NUMBER_TYPE) ? 0 : -1;
-        } else if (Strings.CS.equals(phoneType2, CemiEntityContactConstants.MAIN_PHONE_NUMBER_TYPE)) {
+        if (Strings.CS.equals(phoneType1, CemiEntityContactConstants.KFS_MAIN_PHONE_NUMBER_TYPE)) {
+            return Strings.CS.equals(phoneType2, CemiEntityContactConstants.KFS_MAIN_PHONE_NUMBER_TYPE) ? 0 : -1;
+        } else if (Strings.CS.equals(phoneType2, CemiEntityContactConstants.KFS_MAIN_PHONE_NUMBER_TYPE)) {
             return 1;
         } else {
             return Strings.CS.compare(phoneType1, phoneType2);
@@ -128,21 +128,46 @@ public class CemiEntityContactFileExtractDataBuilderDefaultImpl extends CemiOrmD
 
         for (final VendorContactPhoneNumber phoneNumber : phoneNumbers) {
             phoneIndex++;
-            numRowsForContact++;
             final CemiEntityContactPhoneBo phoneBo = CemiEntityContactPhoneBoFactory.createCemiEntityContactPhoneBoFrom(
                     Optional.of(phoneNumber), phoneIndex);
             final CemiEntityContactEmailBo emailBo = CemiEntityContactEmailBoFactory.createEmailBoFrom(
                     vendorContact, false);
-            createAndStoreEntityContactBo(vendorContact, headerBo, phoneBo, emailBo);
+            Validate.validState(!phoneBo.getPhoneUsages().isEmpty(),
+                    "Did not derive any usage BOs for Vendor Phone %s on Vendor Contact %s; this should NEVER happen!",
+                    phoneNumber.getVendorContactPhoneGeneratedIdentifier(),
+                    vendorContact.getVendorContactGeneratedIdentifier());
+            Validate.validState(!emailBo.getEmailUsages().isEmpty(),
+                    "Empty email BO is missing an empty usage BO; this should NEVER happen!");
+            
+            for (final CemiEntityContactGenericUsageBo phoneUsage : phoneBo.getPhoneUsages()) {
+                numRowsForContact++;
+                final Map<Class<?>, CemiEntityContactGenericUsageBo> usages = Map.ofEntries(
+                        Map.entry(CemiEntityContactPhoneBo.class, phoneUsage),
+                        Map.entry(CemiEntityContactEmailBo.class, emailBo.getEmailUsages().get(0))
+                );
+                createAndStoreEntityContactBo(vendorContact, headerBo, phoneBo, emailBo, usages);
+            }
         }
 
         if (hasEmailAddress) {
-            numRowsForContact++;
             final CemiEntityContactPhoneBo phoneBo = CemiEntityContactPhoneBoFactory.createCemiEntityContactPhoneBoFrom(
                     Optional.empty(), -1);
             final CemiEntityContactEmailBo emailBo = CemiEntityContactEmailBoFactory.createEmailBoFrom(
                     vendorContact, true);
-            createAndStoreEntityContactBo(vendorContact, headerBo, phoneBo, emailBo);
+            Validate.validState(!phoneBo.getPhoneUsages().isEmpty(),
+                    "Empty phone BO is missing an empty usage BO; this should NEVER happen!");
+            Validate.validState(!emailBo.getEmailUsages().isEmpty(),
+                    "Did not derive any usage BOs for the email on Vendor Contact %s; this should NEVER happen!",
+                    vendorContact.getVendorContactGeneratedIdentifier());
+
+            for (final CemiEntityContactGenericUsageBo emailUsage : emailBo.getEmailUsages()) {
+                numRowsForContact++;
+                final Map<Class<?>, CemiEntityContactGenericUsageBo> usages = Map.ofEntries(
+                        Map.entry(CemiEntityContactPhoneBo.class, phoneBo.getPhoneUsages().get(0)),
+                        Map.entry(CemiEntityContactEmailBo.class, emailUsage)
+                );
+                createAndStoreEntityContactBo(vendorContact, headerBo, phoneBo, emailBo, usages);
+            }
         }
 
         return numRowsForContact;
@@ -162,9 +187,9 @@ public class CemiEntityContactFileExtractDataBuilderDefaultImpl extends CemiOrmD
 
     private void createAndStoreEntityContactBo(final VendorContact vendorContact,
             final CemiEntityContactHeaderBo headerBo, final CemiEntityContactPhoneBo phoneBo,
-            final CemiEntityContactEmailBo emailBo) {
+            final CemiEntityContactEmailBo emailBo, final Map<Class<?>, CemiEntityContactGenericUsageBo> usages) {
         final CemiEntityContactFileEntityContactTabRowBo tabRowBo = CemiEntityContactFileEntityContactTabRowBoFactory
-                .createTabRowBoFrom(vendorContact, headerBo, phoneBo, emailBo, maskSensitiveData);
+                .createTabRowBoFrom(vendorContact, headerBo, phoneBo, emailBo, usages, maskSensitiveData);
         storeSheetRow(tabRowBo);
     }
 

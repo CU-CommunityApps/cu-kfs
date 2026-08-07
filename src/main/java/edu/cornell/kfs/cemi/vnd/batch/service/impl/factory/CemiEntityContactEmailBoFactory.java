@@ -7,6 +7,7 @@ import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.vnd.CemiEntityContactConstants;
 import edu.cornell.kfs.cemi.vnd.CemiEntityContactConstants.CommunicationUsageTypes;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactEmailBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactGenericUsageBo;
 
 public class CemiEntityContactEmailBoFactory {
 
@@ -27,25 +28,24 @@ public class CemiEntityContactEmailBoFactory {
 
     public CemiEntityContactEmailBo createCemiEntityContactEmailBo() {
         final CemiEntityContactEmailBo emailBo = new CemiEntityContactEmailBo();
-        if (!writeEmailDataIfPresent || StringUtils.isBlank(vendorContact.getVendorContactEmailAddress())) {
-            return emailBo;
-        }
+        final boolean writeEmailData = (writeEmailDataIfPresent
+                && StringUtils.isNotBlank(vendorContact.getVendorContactEmailAddress()));
+        final CemiEntityContactGenericUsageBo emailUsage = writeEmailData
+                ? CemiEntityContactGenericUsageBoFactory.createUsageBoFrom(
+                        CemiEntityContactConstants.ROW_ID_1, CommunicationUsageTypes.WORK, CemiBaseConstants.EMPTY_STRING)
+                : CemiEntityContactGenericUsageBoFactory.createEmptyUsageBo();
+        final String emailRowId = writeEmailData ? CemiEntityContactConstants.ROW_ID_1 : CemiBaseConstants.EMPTY_STRING;
+        final String emailAddress = writeEmailData
+                ? vendorContact.getVendorContactEmailAddress() : CemiBaseConstants.EMPTY_STRING;
 
-        emailBo.setEmailRowId(CemiEntityContactConstants.ROW_ID_1);
-        emailBo.setDeleteEmail(null);
-        emailBo.setDoNotReplaceAllEmail(null);
-        emailBo.setEmailAddress(vendorContact.getVendorContactEmailAddress());
-        emailBo.setEmailComment(null);
-        emailBo.setEmailUsageRowId(CemiEntityContactConstants.ROW_ID_1);
-        emailBo.setEmailUsagePublic(CemiBaseConstants.YES);
-        emailBo.setEmailUsageTypeRowId(CemiEntityContactConstants.ROW_ID_1);
-        emailBo.setEmailUsageTypePrimary(CemiBaseConstants.YES);
-        emailBo.setEmailUsageType(CommunicationUsageTypes.WORK);
-        emailBo.setEmailUseFor(null);
-        emailBo.setEmailUseForTenanted(null);
-        emailBo.setEmailUsageComments(null);
-        emailBo.setExistingEmailId(null);
-        emailBo.setNewEmailId(null);
+        emailBo.setEmailRowId(emailRowId);
+        emailBo.setDeleteEmail(CemiBaseConstants.EMPTY_STRING);
+        emailBo.setDoNotReplaceAllEmail(CemiBaseConstants.EMPTY_STRING);
+        emailBo.setEmailAddress(emailAddress);
+        emailBo.setEmailComment(CemiBaseConstants.EMPTY_STRING);
+        emailBo.setExistingEmailId(CemiBaseConstants.EMPTY_STRING);
+        emailBo.setNewEmailId(CemiBaseConstants.EMPTY_STRING);
+        emailBo.addEmailUsage(emailUsage);
 
         return emailBo;
     }

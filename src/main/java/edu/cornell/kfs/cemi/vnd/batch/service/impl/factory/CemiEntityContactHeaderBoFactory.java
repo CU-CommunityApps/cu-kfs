@@ -9,6 +9,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
 
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactHeaderBo;
 
@@ -44,46 +45,46 @@ public class CemiEntityContactHeaderBoFactory {
         final CemiEntityContactHeaderBo headerBo = new CemiEntityContactHeaderBo();
 
         headerBo.setSpreadsheetKey(spreadsheetKey);
-        headerBo.setAddOnly(null);
-        headerBo.setExistingBusinessEntityContactId(null);
-        headerBo.setPrimaryBillToContact(null);
-        headerBo.setDefaultBillToContact(null);
-        headerBo.setNewBusinessEntityContactId(null);
+        headerBo.setAddOnly(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setExistingBusinessEntityContactId(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setPrimaryBillToContact(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setDefaultBillToContact(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setNewBusinessEntityContactId(CemiBaseConstants.EMPTY_STRING);
         headerBo.setSupplier(supplierId);
-        headerBo.setBillableEntity(null);
-        headerBo.setFinancialInstitution(null);
-        headerBo.setTaxAuthority(null);
+        headerBo.setBillableEntity(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setFinancialInstitution(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setTaxAuthority(CemiBaseConstants.EMPTY_STRING);
         headerBo.setNameRowId(nameRowId);
-        headerBo.setFormattedName(null);
-        headerBo.setReportingName(null);
+        headerBo.setFormattedName(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setReportingName(CemiBaseConstants.EMPTY_STRING);
         headerBo.setCountry(CemiVendorConstants.COUNTRY_CODE_UNITED_STATES);
-        headerBo.setTitle(null);
-        headerBo.setTitleDescriptor(null);
-        headerBo.setSalutation(null);
+        headerBo.setTitle(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setTitleDescriptor(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setSalutation(CemiBaseConstants.EMPTY_STRING);
         headerBo.setFirstName(nameSegments.get(0));
-        headerBo.setMiddleName(null);
+        headerBo.setMiddleName(CemiBaseConstants.EMPTY_STRING);
         headerBo.setLastName(nameSegments.get(1));
-        headerBo.setSecondaryLastName(null);
-        headerBo.setTertiaryLastName(null);
-        headerBo.setLocalName(null);
-        headerBo.setLocalScript(null);
-        headerBo.setLocalFirstName(null);
-        headerBo.setLocalMiddleName(null);
-        headerBo.setLocalLastName(null);
-        headerBo.setLocalSecondaryLastName(null);
-        headerBo.setLocalFirstName2(null);
-        headerBo.setLocalMiddleName2(null);
-        headerBo.setLocalLastName2(null);
-        headerBo.setLocalSecondaryLastName2(null);
-        headerBo.setSocialSuffix(null);
-        headerBo.setSocialSuffixDescriptor(null);
-        headerBo.setAcademicSuffix(null);
-        headerBo.setHereditarySuffix(null);
-        headerBo.setHonorarySuffix(null);
-        headerBo.setProfessionalSuffix(null);
-        headerBo.setReligiousSuffix(null);
-        headerBo.setRoyalSuffix(null);
-        headerBo.setFullNameForSingaporeAndMalaysia(null);
+        headerBo.setSecondaryLastName(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setTertiaryLastName(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setLocalName(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setLocalScript(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setLocalFirstName(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setLocalMiddleName(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setLocalLastName(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setLocalSecondaryLastName(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setLocalFirstName2(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setLocalMiddleName2(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setLocalLastName2(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setLocalSecondaryLastName2(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setSocialSuffix(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setSocialSuffixDescriptor(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setAcademicSuffix(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setHereditarySuffix(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setHonorarySuffix(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setProfessionalSuffix(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setReligiousSuffix(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setRoyalSuffix(CemiBaseConstants.EMPTY_STRING);
+        headerBo.setFullNameForSingaporeAndMalaysia(CemiBaseConstants.EMPTY_STRING);
 
         return headerBo;
     }
@@ -99,7 +100,7 @@ public class CemiEntityContactHeaderBoFactory {
                     StringUtils.substringAfter(vendorContactName, KFSConstants.BLANK_SPACE)
             );
         } else {
-            return List.of(StringUtils.defaultString(vendorContactName), KFSConstants.EMPTY_STRING);
+            return List.of(StringUtils.defaultString(vendorContactName), CemiBaseConstants.EMPTY_STRING);
         }
     }
 

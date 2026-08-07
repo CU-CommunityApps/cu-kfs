@@ -76,6 +76,7 @@
         <log4j.version>2.25.3</log4j.version>
         <cxf.version>3.5.11</cxf.version>
         <wss4j.version>2.4.3</wss4j.version>
+        <libphonenumber.version>9.0.36</libphonenumber.version>
         <!--
             We're using Apache POI for Excel file generation, so we're also forcibly upgrading
             certain conflicting dependencies to the same or newer versions that POI uses.
@@ -1769,6 +1770,11 @@
                     <artifactId>gson</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.libphonenumber</groupId>
+            <artifactId>libphonenumber</artifactId>
+            <version>${libphonenumber.version}</version>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>
