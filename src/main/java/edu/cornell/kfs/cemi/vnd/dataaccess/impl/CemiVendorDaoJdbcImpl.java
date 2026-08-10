@@ -16,7 +16,7 @@ import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.sys.util.CuSqlChunk;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
 import edu.cornell.kfs.sys.util.CuSqlQueryPlatformAwareDaoBaseJdbc;
-import edu.cornell.kfs.cemi.vnd.CemiVendorConstants.CemiQuerySettingsIds;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants.CemiQuerySettingsIds;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorDao;
 
 public class CemiVendorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc implements CemiVendorDao {

@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.util.CemiVendorUtils;
 
 public class CemiSupplierAddress {
@@ -48,18 +48,18 @@ public class CemiSupplierAddress {
         this.stateCode = firstAddress.getVendorStateCode();
         this.zipCode = firstAddress.getVendorZipCode();
         this.addressPrimary = determineWhetherAtLeastOneAddressIsPrimary(vendorTypeCode, matchingVendorAddresses);
-        this.addressType = CemiVendorConstants.DEFAULT_ADDRESS_TYPE;
+        this.addressType = CemiSupplierConstants.DEFAULT_ADDRESS_TYPE;
         this.addressUses = determineAddressUseValuesBasedOnAddressTypes(matchingVendorAddresses,
                 firstAddress.getVendorHeaderGeneratedIdentifier(), firstAddress.getVendorDetailAssignedIdentifier());
         this.addressTenantedUses = determineAddressTenantedUseValuesBasedOnAddressTypes(matchingVendorAddresses,
                 firstAddress.getVendorHeaderGeneratedIdentifier(), firstAddress.getVendorDetailAssignedIdentifier());
         
         //columns not populated with this load
-        this.comments = CemiVendorConstants.EMPTY_STRING;
+        this.comments = CemiSupplierConstants.EMPTY_STRING;
     }
     
     private static String buildSupplierAddressId(final VendorAddress vendorAddress, String supplierId, int addressCount) {
-        return MessageFormat.format(CemiVendorConstants.ADDRESS_ID_FORMAT,
+        return MessageFormat.format(CemiSupplierConstants.ADDRESS_ID_FORMAT,
                 supplierId,
                 Integer.toString(vendorAddress.getVendorAddressGeneratedIdentifier()),
                 Integer.toString(addressCount));
@@ -75,29 +75,29 @@ public class CemiSupplierAddress {
     private static List<String> determineAddressUseValuesBasedOnAddressTypes(final List<VendorAddress> vendorAddresses,
             final Integer vendorHeaderGeneratedIdentifier, final Integer vendorDetailAssignedIdentifier) {
         final String[] matchingAddressUses = CemiUtils.getDistinctValuesFromMatchingSubLists(
-                CemiVendorConstants.ADDRESS_USES, vendorAddresses, VendorAddress::getVendorAddressTypeCode);
-        if (matchingAddressUses.length > CemiVendorConstants.MAX_ADDRESS_USES) {
+                CemiSupplierConstants.ADDRESS_USES, vendorAddresses, VendorAddress::getVendorAddressTypeCode);
+        if (matchingAddressUses.length > CemiSupplierConstants.MAX_ADDRESS_USES) {
             LOG.warn("determineAddressUseValuesBasedOnAddressTypes, Found a total of {} address uses across {} "
                     + "duplicate addresses for Vendor {}-{}; only the first {} will be used in the output",
                     matchingAddressUses.length, vendorAddresses.size(), vendorHeaderGeneratedIdentifier,
-                    vendorDetailAssignedIdentifier, CemiVendorConstants.MAX_ADDRESS_USES);
+                    vendorDetailAssignedIdentifier, CemiSupplierConstants.MAX_ADDRESS_USES);
         }
         return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
-                CemiVendorConstants.MAX_ADDRESS_USES, matchingAddressUses);
+                CemiSupplierConstants.MAX_ADDRESS_USES, matchingAddressUses);
     }
 
     private static List<String> determineAddressTenantedUseValuesBasedOnAddressTypes(final List<VendorAddress> vendorAddresses,
             final Integer vendorHeaderGeneratedIdentifier, final Integer vendorDetailAssignedIdentifier) {
         final String[] matchingAddressTenantedUses = CemiUtils.getDistinctValuesFromMatchingSubLists(
-                CemiVendorConstants.ADDRESS_TENANTED_USES, vendorAddresses, VendorAddress::getVendorAddressTypeCode);
-        if (matchingAddressTenantedUses.length > CemiVendorConstants.MAX_ADDRESS_TENANTED_USES) {
+                CemiSupplierConstants.ADDRESS_TENANTED_USES, vendorAddresses, VendorAddress::getVendorAddressTypeCode);
+        if (matchingAddressTenantedUses.length > CemiSupplierConstants.MAX_ADDRESS_TENANTED_USES) {
             LOG.warn("determineAddressUseValuesBasedOnAddressTypes, Found a total of {} address tenanted uses across {} "
                     + "duplicate addresses for Vendor {}-{}; only the first {} will be used in the output",
                     matchingAddressTenantedUses.length, vendorAddresses.size(), vendorHeaderGeneratedIdentifier,
-                    vendorDetailAssignedIdentifier, CemiVendorConstants.MAX_ADDRESS_TENANTED_USES);
+                    vendorDetailAssignedIdentifier, CemiSupplierConstants.MAX_ADDRESS_TENANTED_USES);
         }
         return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
-                CemiVendorConstants.MAX_ADDRESS_TENANTED_USES, matchingAddressTenantedUses);
+                CemiSupplierConstants.MAX_ADDRESS_TENANTED_USES, matchingAddressTenantedUses);
     }
 
     public List<VendorAddress> getMatchingVendorAddresses() {
