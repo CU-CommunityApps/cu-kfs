@@ -10,7 +10,7 @@ import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 
 public class CemiSupplierBankAccountSubEntry {
 
@@ -33,18 +33,18 @@ public class CemiSupplierBankAccountSubEntry {
 
     private CemiSupplierBankAccountSubEntry() {
         this.vendorAccount = null;
-        this.supplierId = CemiVendorConstants.EMPTY_STRING;
-        this.bankName = CemiVendorConstants.EMPTY_STRING;
-        this.bankRoutingNumber = CemiVendorConstants.EMPTY_STRING;
-        this.bankAccountNumber = CemiVendorConstants.EMPTY_STRING;
-        this.bankAccountName = CemiVendorConstants.EMPTY_STRING;
-        this.bankAccountId = CemiVendorConstants.EMPTY_STRING;
-        this.bankAccountType = CemiVendorConstants.EMPTY_STRING;
-        this.branchId = CemiVendorConstants.EMPTY_STRING;
-        this.branchName = CemiVendorConstants.EMPTY_STRING;
+        this.supplierId = CemiSupplierConstants.EMPTY_STRING;
+        this.bankName = CemiSupplierConstants.EMPTY_STRING;
+        this.bankRoutingNumber = CemiSupplierConstants.EMPTY_STRING;
+        this.bankAccountNumber = CemiSupplierConstants.EMPTY_STRING;
+        this.bankAccountName = CemiSupplierConstants.EMPTY_STRING;
+        this.bankAccountId = CemiSupplierConstants.EMPTY_STRING;
+        this.bankAccountType = CemiSupplierConstants.EMPTY_STRING;
+        this.branchId = CemiSupplierConstants.EMPTY_STRING;
+        this.branchName = CemiSupplierConstants.EMPTY_STRING;
         this.acceptedPaymentTypes = CemiUtils.createListOfEmptyStrings(
-                CemiVendorConstants.MAX_ACCOUNT_ACCEPTED_PAYMENT_TYPES);
-        this.paymentTypes = CemiUtils.createListOfEmptyStrings(CemiVendorConstants.MAX_ACCOUNT_PAYMENT_TYPES);
+                CemiSupplierConstants.MAX_ACCOUNT_ACCEPTED_PAYMENT_TYPES);
+        this.paymentTypes = CemiUtils.createListOfEmptyStrings(CemiSupplierConstants.MAX_ACCOUNT_PAYMENT_TYPES);
     }
 
     public CemiSupplierBankAccountSubEntry(final PayeeACHAccount vendorAccount, final String supplierId,
@@ -57,18 +57,18 @@ public class CemiSupplierBankAccountSubEntry {
         this.bankAccountName = determineBankAccountName(bankName, bankAccountNumber);
         this.bankAccountId = determineBankAccountId(supplierId, (vendorAccount.getAchAccountGeneratedIdentifier()).toString(), accountIndex);
         this.bankAccountType = determineBankAccountType(vendorAccount);
-        this.branchId = CemiVendorConstants.EMPTY_STRING;
-        this.branchName = CemiVendorConstants.EMPTY_STRING;
+        this.branchId = CemiSupplierConstants.EMPTY_STRING;
+        this.branchName = CemiSupplierConstants.EMPTY_STRING;
         this.acceptedPaymentTypes = CemiUtils.createListOfEmptyStrings(
-                CemiVendorConstants.MAX_ACCOUNT_ACCEPTED_PAYMENT_TYPES);
-        this.paymentTypes = CemiUtils.createListOfEmptyStrings(CemiVendorConstants.MAX_ACCOUNT_PAYMENT_TYPES);
+                CemiSupplierConstants.MAX_ACCOUNT_ACCEPTED_PAYMENT_TYPES);
+        this.paymentTypes = CemiUtils.createListOfEmptyStrings(CemiSupplierConstants.MAX_ACCOUNT_PAYMENT_TYPES);
     }
 
     private static String determineBankAccountNumber(final PayeeACHAccount vendorAccount, final boolean maskSensitiveData) {
         if (!maskSensitiveData) {
             return vendorAccount.getBankAccountNumber();
         }
-        return CemiVendorConstants.DUMMY_ACCOUNT_NUMBER;
+        return CemiSupplierConstants.DUMMY_ACCOUNT_NUMBER;
     }
 
     private static String determineBankAccountName(final String bankName, final String bankAccountNumber) {
@@ -78,7 +78,7 @@ public class CemiSupplierBankAccountSubEntry {
 
     private static String determineBankAccountId(final String supplierId, final String accountSystemGeneratedIdentifier,
             final int accountIndex) {
-        return MessageFormat.format(CemiVendorConstants.BANK_ACCOUNT_ID_FORMAT,
+        return MessageFormat.format(CemiSupplierConstants.BANK_ACCOUNT_ID_FORMAT,
                 supplierId, 
                 accountSystemGeneratedIdentifier, 
                 Integer.toString(accountIndex));
@@ -86,12 +86,12 @@ public class CemiSupplierBankAccountSubEntry {
 
     private static String determineBankAccountType(final PayeeACHAccount vendorAccount) {
         final String kfsAccountType = StringUtils.defaultString(vendorAccount.getBankAccountTypeCode());
-        final String cemiAccountType = CemiVendorConstants.BANK_ACCOUNT_TYPES.get(kfsAccountType);
+        final String cemiAccountType = CemiSupplierConstants.BANK_ACCOUNT_TYPES.get(kfsAccountType);
         if (StringUtils.isBlank(cemiAccountType)) {
             LOG.warn("determineBankAccountType, Payee ACH Account with ID {} for Vendor {} had a missing "
                     + "or unrecognized account type; defaulting to Checking account type",
                     vendorAccount.getAchAccountGeneratedIdentifier(), vendorAccount.getPayeeIdNumber());
-            return CemiVendorConstants.CHECKING_ACCOUNT_TYPE;
+            return CemiSupplierConstants.CHECKING_ACCOUNT_TYPE;
         }
         return cemiAccountType;
     }

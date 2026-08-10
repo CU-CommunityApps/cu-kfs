@@ -32,7 +32,7 @@ import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiRemitToSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiRemitToSupplierParameterConstants;
-import edu.cornell.kfs.cemi.vnd.CemiVendorParameterConstants;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierParameterConstants;
 import edu.cornell.kfs.cemi.vnd.batch.CreateCemiRemitToSupplierExtractStep;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiRemitToSupplierExtractService;
@@ -192,7 +192,7 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
     private boolean isCemiSensitiveDataSetToUnmask() {
         String maskingParameterValue =  parameterService.getParameterValueAsString(
                 CreateCemiRemitToSupplierExtractStep.class,
-                CemiVendorParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
+                CemiSupplierParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
         return Strings.CI.equals(maskingParameterValue, CemiBaseConstants.UNMASK);
     }
 

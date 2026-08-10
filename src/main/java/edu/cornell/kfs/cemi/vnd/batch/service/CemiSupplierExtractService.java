@@ -12,7 +12,7 @@ public interface CemiSupplierExtractService {
 
     void populateListOfInScopeVendors();
 
-    void generateIntermediateSupplierExtractData(final LocalDateTime jobRunDate);
+    void generateIntermediateExtractData(final LocalDateTime jobRunDate);
 
     void generateSupplierExtractFile(final LocalDateTime jobRunDate);
 

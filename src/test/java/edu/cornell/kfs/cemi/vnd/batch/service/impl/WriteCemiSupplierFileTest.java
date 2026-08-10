@@ -40,7 +40,7 @@ import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiSheetDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.util.CreateTestDirectories;
@@ -84,7 +84,7 @@ public class WriteCemiSupplierFileTest {
         outputDefinition = GlobalResourceLoaderUtils.doWithResourceRetrievalDelegatedToKradResourceLoaderUtil(() -> {
             try (
                 final InputStream definitionStream = CuCoreUtilities.getResourceAsStream(
-                        CemiVendorConstants.SUPPLIER_OUTPUT_DEFINITION_FILE_PATH);
+                        CemiSupplierConstants.SUPPLIER_OUTPUT_DEFINITION_FILE_PATH);
             ) {
                 final byte[] fileContents = IOUtils.toByteArray(definitionStream);
                 return outputDefinitionFileType.parse(fileContents);
@@ -119,7 +119,7 @@ public class WriteCemiSupplierFileTest {
     private void createAndPopulateExcelFileFromTemplate(final File file) throws Exception {
         try (
             final InputStream templateStream = CuCoreUtilities.getResourceAsStream(
-                    CemiVendorConstants.SUPPLIER_TEMPLATE_FILE_PATH);
+                    CemiSupplierConstants.SUPPLIER_TEMPLATE_FILE_PATH);
             final CemiExcelWriter excelWriter = new CemiExcelWriter(outputDefinition, templateStream, file);
         ) {
             for (final CemiSheetDefinition sheet : outputDefinition.getSheets()) {
@@ -154,7 +154,7 @@ public class WriteCemiSupplierFileTest {
     private void assertGeneratedFileHasExpectedStructureInModifiedSheets(final File file) throws Exception {
         try (
             final InputStream oldFileStream = CuCoreUtilities.getResourceAsStream(
-                    CemiVendorConstants.SUPPLIER_TEMPLATE_FILE_PATH);
+                    CemiSupplierConstants.SUPPLIER_TEMPLATE_FILE_PATH);
             final InputStream newFileStream = new FileInputStream(file);
             final OPCPackage oldOpcPackage = OPCPackage.open(oldFileStream);
             final OPCPackage newOpcPackage = OPCPackage.open(newFileStream);

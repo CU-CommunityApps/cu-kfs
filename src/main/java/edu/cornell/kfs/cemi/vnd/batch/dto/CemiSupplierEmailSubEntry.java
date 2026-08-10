@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 
 public class CemiSupplierEmailSubEntry {
 
@@ -28,12 +28,12 @@ public class CemiSupplierEmailSubEntry {
     
     private CemiSupplierEmailSubEntry() {
         this.vendorAddresses = List.of();
-        this.supplierId = CemiVendorConstants.EMPTY_STRING;
-        this.emailId = CemiVendorConstants.EMPTY_STRING;
-        this.emailAddress = CemiVendorConstants.EMPTY_STRING;
-        this.emailPrimary = CemiVendorConstants.EMPTY_STRING;
-        this.emailUseFor = CemiUtils.createListOfEmptyStrings(CemiVendorConstants.MAX_EMAIL_USES);
-        this.useForTenanted = CemiUtils.createListOfEmptyStrings(CemiVendorConstants.MAX_EMAIL_TENANTED_USES);
+        this.supplierId = CemiSupplierConstants.EMPTY_STRING;
+        this.emailId = CemiSupplierConstants.EMPTY_STRING;
+        this.emailAddress = CemiSupplierConstants.EMPTY_STRING;
+        this.emailPrimary = CemiSupplierConstants.EMPTY_STRING;
+        this.emailUseFor = CemiUtils.createListOfEmptyStrings(CemiSupplierConstants.MAX_EMAIL_USES);
+        this.useForTenanted = CemiUtils.createListOfEmptyStrings(CemiSupplierConstants.MAX_EMAIL_TENANTED_USES);
     }
     
     public CemiSupplierEmailSubEntry(final List<VendorAddress> vendorAddresses, final String supplierId,
@@ -55,19 +55,19 @@ public class CemiSupplierEmailSubEntry {
     private static List<String> determineUsesForTenanted(final List<VendorAddress> vendorAddresses,
             final Integer vendorHeaderGeneratedIdentifier, final Integer vendorDetailAssignedIdentifier) {
         final String[] matchingEmailTenantedUses = CemiUtils.getDistinctValuesFromMatchingSubLists(
-                CemiVendorConstants.ADDRESS_TENANTED_USES, vendorAddresses, VendorAddress::getVendorAddressTypeCode);
-        if (matchingEmailTenantedUses.length > CemiVendorConstants.MAX_EMAIL_TENANTED_USES) {
+                CemiSupplierConstants.ADDRESS_TENANTED_USES, vendorAddresses, VendorAddress::getVendorAddressTypeCode);
+        if (matchingEmailTenantedUses.length > CemiSupplierConstants.MAX_EMAIL_TENANTED_USES) {
             LOG.warn("determineUsesForTenanted, Found a total of {} email tenanted uses across {} "
                     + "duplicate emails for Vendor {}-{}; only the first {} will be used in the output",
                     matchingEmailTenantedUses.length, vendorAddresses.size(), vendorHeaderGeneratedIdentifier,
-                    vendorDetailAssignedIdentifier, CemiVendorConstants.MAX_EMAIL_TENANTED_USES);
+                    vendorDetailAssignedIdentifier, CemiSupplierConstants.MAX_EMAIL_TENANTED_USES);
         }
         return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
-                CemiVendorConstants.MAX_EMAIL_TENANTED_USES, matchingEmailTenantedUses);
+                CemiSupplierConstants.MAX_EMAIL_TENANTED_USES, matchingEmailTenantedUses);
     }
 
     private String determineEmailId(String supplierId, Integer vendorAddressGeneratedIdentifier, int index) {
-        return MessageFormat.format(CemiVendorConstants.EMAIL_ID_FORMAT,
+        return MessageFormat.format(CemiSupplierConstants.EMAIL_ID_FORMAT,
                 supplierId, 
                 Integer.toString(vendorAddressGeneratedIdentifier),
                 Integer.toString(index));
@@ -76,15 +76,15 @@ public class CemiSupplierEmailSubEntry {
     private static List<String> determineEmailUseFor(final List<VendorAddress> vendorAddresses,
             final Integer vendorHeaderGeneratedIdentifier, final Integer vendorDetailAssignedIdentifier) {
         final String[] matchingEmailUses = CemiUtils.getDistinctValuesFromMatchingSubLists(
-                CemiVendorConstants.ADDRESS_USES, vendorAddresses, VendorAddress::getVendorAddressTypeCode);
-        if (matchingEmailUses.length > CemiVendorConstants.MAX_EMAIL_USES) {
+                CemiSupplierConstants.ADDRESS_USES, vendorAddresses, VendorAddress::getVendorAddressTypeCode);
+        if (matchingEmailUses.length > CemiSupplierConstants.MAX_EMAIL_USES) {
             LOG.warn("determineEmailUseFor, Found a total of {} email uses across {} "
                     + "duplicate emails for Vendor {}-{}; only the first {} will be used in the output",
                     matchingEmailUses.length, vendorAddresses.size(), vendorHeaderGeneratedIdentifier,
-                    vendorDetailAssignedIdentifier, CemiVendorConstants.MAX_EMAIL_USES);
+                    vendorDetailAssignedIdentifier, CemiSupplierConstants.MAX_EMAIL_USES);
         }
         return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
-                CemiVendorConstants.MAX_EMAIL_USES, matchingEmailUses);
+                CemiSupplierConstants.MAX_EMAIL_USES, matchingEmailUses);
     }
 
     public List<VendorAddress> getVendorAddresses() {

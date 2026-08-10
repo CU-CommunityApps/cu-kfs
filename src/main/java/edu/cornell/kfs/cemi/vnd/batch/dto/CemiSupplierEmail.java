@@ -5,7 +5,7 @@ import java.util.List;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 
 public class CemiSupplierEmail {
     
@@ -19,7 +19,7 @@ public class CemiSupplierEmail {
         this.vendorDetail = vendorDetail;
         this.supplierId = supplierId;
         this.supplierEmails = CemiUtils.createListPaddedToMinimumSizeIfNecessary(
-                CemiSupplierEmailSubEntry.EMPTY, CemiVendorConstants.MAX_SUPPLIER_EMAIL_ENTRIES, supplierEmails);
+                CemiSupplierEmailSubEntry.EMPTY, CemiSupplierConstants.MAX_SUPPLIER_EMAIL_ENTRIES, supplierEmails);
     }
 
     public VendorDetail getVendorDetail() {

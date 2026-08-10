@@ -25,7 +25,7 @@ import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiFieldDefinition;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierParentIdentifiersReference;
 import edu.cornell.kfs.cemi.vnd.batch.dto.CemiSupplier;
 import edu.cornell.kfs.cemi.vnd.batch.dto.CemiSupplierAddress;
@@ -63,7 +63,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
         this.cemiVendorDao = cemiVendorDao;
         this.jobRunDate = jobRunDate;
         this.maskSensitiveData = maskSensitiveData;
-        this.supplierIdFormatter = new DecimalFormat(CemiVendorConstants.SUPPLIER_ID_FORMAT);
+        this.supplierIdFormatter = new DecimalFormat(CemiSupplierConstants.SUPPLIER_ID_FORMAT);
     }
 
     /*
@@ -111,7 +111,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     }
 
     protected void writeSupplierRow(final CemiSupplier supplier) throws IOException {
-        writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.SUPPLIER, supplier);
+        writeDataToIntermediateStorage(CemiSupplierConstants.SupplierExtractSheets.SUPPLIER, supplier);
     }
     
     protected void recordSupplierIdentifiersInLegacyAssociationTable(final String supplierId,
@@ -122,15 +122,15 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     }
     
     protected void writeSupplierAddressRow(final CemiSupplierAddress supplierAddress) throws IOException {
-        writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.ADDRESSES, supplierAddress);
+        writeDataToIntermediateStorage(CemiSupplierConstants.SupplierExtractSheets.ADDRESSES, supplierAddress);
     }
     
     protected void writeSupplierEmailRow(final CemiSupplierEmail supplierEmail) throws IOException {
-        writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.EMAILS, supplierEmail);
+        writeDataToIntermediateStorage(CemiSupplierConstants.SupplierExtractSheets.EMAILS, supplierEmail);
     }
     
     protected void writeSupplierPhoneRow(final CemiSupplierPhone supplierPhone) throws IOException {
-        writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.PHONES, supplierPhone);
+        writeDataToIntermediateStorage(CemiSupplierConstants.SupplierExtractSheets.PHONES, supplierPhone);
     }
 
     protected void writeAllSupplierAddressRowsFor(final VendorDetail vendor, final String supplierId) throws IOException {
@@ -139,7 +139,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
         for (final VendorAddress vendorAddress : vendor.getVendorAddresses()) {
             // Restricting addresses by country = US
             if (!vendorAddress.isActive() ||
-                    !vendorAddress.getVendorCountryCode().equalsIgnoreCase(CemiVendorConstants.COUNTRY_CODE_UNITED_STATES)) {
+                    !vendorAddress.getVendorCountryCode().equalsIgnoreCase(CemiSupplierConstants.COUNTRY_CODE_UNITED_STATES)) {
                 LOG.debug("writeAllSupplierAddressRowsFor, Vendor Address {} for Vendor {}-{} was NOT written to conversion file.", 
                         vendorAddress.getVendorAddressGeneratedIdentifier(),
                         vendor.getVendorHeaderGeneratedIdentifier(),
@@ -214,11 +214,11 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
             emailEntries.add(emailEntry);
         }
 
-        if (emailCount > CemiVendorConstants.MAX_SUPPLIER_EMAIL_ENTRIES) {
+        if (emailCount > CemiSupplierConstants.MAX_SUPPLIER_EMAIL_ENTRIES) {
             LOG.warn("writeSupplierEmailsAsSingleRow, Found {} distinct active emails for KFS Vendor {}-{}; "
                     + "only the first {} will be written",
                     emailCount, vendor.getVendorHeaderGeneratedIdentifier(),
-                    vendor.getVendorDetailAssignedIdentifier(), CemiVendorConstants.MAX_SUPPLIER_EMAIL_ENTRIES);
+                    vendor.getVendorDetailAssignedIdentifier(), CemiSupplierConstants.MAX_SUPPLIER_EMAIL_ENTRIES);
         }
 
         final CemiSupplierEmail supplierEmail = new CemiSupplierEmail(vendor, supplierId, toEmailArray(emailEntries));
@@ -261,7 +261,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     }
     
     protected void writeSupplierChildrenRow(final CemiSupplierChildren supplierChildren) throws IOException {
-        writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.CHILDREN, supplierChildren);
+        writeDataToIntermediateStorage(CemiSupplierConstants.SupplierExtractSheets.CHILDREN, supplierChildren);
     }
     
     protected void writeSupplierChildrenRowWhenVendorIsChild(VendorDetail currentVendor, String currentSupplierId,
@@ -331,11 +331,11 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
                     + "a corresponding Supplier Bank Account row will NOT be written",
                     vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
             return;
-        } else if (numAccounts > CemiVendorConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES) {
+        } else if (numAccounts > CemiSupplierConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES) {
             LOG.warn("writeSupplierBankAccountsAsSingleRow, Found {} active Payee ACH Accounts for KFS Vendor {}-{}; "
                     + "only the first {} will be written",
                     numAccounts, vendor.getVendorHeaderGeneratedIdentifier(),
-                    vendor.getVendorDetailAssignedIdentifier(), CemiVendorConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES);
+                    vendor.getVendorDetailAssignedIdentifier(), CemiSupplierConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES);
         }
 
         final CemiSupplierBankAccount supplierAccount = new CemiSupplierBankAccount(
@@ -344,7 +344,7 @@ public abstract class CemiSupplierDataBuilderBase implements CemiSupplierDataBui
     }
 
     protected void writeSupplierBankAccountRow(final CemiSupplierBankAccount supplierAccount) throws IOException {
-        writeDataToIntermediateStorage(CemiVendorConstants.SupplierExtractSheets.BANK_ACCOUNTS, supplierAccount);
+        writeDataToIntermediateStorage(CemiSupplierConstants.SupplierExtractSheets.BANK_ACCOUNTS, supplierAccount);
     }
 
     protected CemiSupplierBankAccountSubEntry[] toAccountArray(
