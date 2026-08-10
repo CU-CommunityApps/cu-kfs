@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 
 public class CemiSupplierPhone {
 
@@ -38,11 +38,11 @@ public class CemiSupplierPhone {
         this.matchingVendorPhoneNumbers = matchingVendorPhoneNumbers;
         this.supplierId = supplierId;
         this.phoneId = buildSupplierPhoneId(firstPhoneNumber, supplierId, phoneNumberCount);
-        this.country = CemiVendorConstants.COUNTRY_CODE_UNITED_STATES;
-        this.internationalPhoneCode = CemiVendorConstants.DEFAULT_INTERNATIONAL_PHONE_TYPE;
+        this.country = CemiSupplierConstants.COUNTRY_CODE_UNITED_STATES;
+        this.internationalPhoneCode = CemiSupplierConstants.DEFAULT_INTERNATIONAL_PHONE_TYPE;
         this.phoneNumber = firstPhoneNumber.getVendorPhoneNumber();
         this.phoneExtension = firstPhoneNumber.getVendorPhoneExtensionNumber();
-        this.phoneDeviceType = CemiVendorConstants.DEFAULT_PHONE_DEVICE_TYPE;
+        this.phoneDeviceType = CemiSupplierConstants.DEFAULT_PHONE_DEVICE_TYPE;
         this.phonePrimary = determineIfFirstPhoneNumberForSettingPrimaryIndicator(phoneNumberCount);
         this.phoneUses = determinePhoneUseValuesBasedOnPhoneTypes(matchingVendorPhoneNumbers,
                 firstPhoneNumber.getVendorHeaderGeneratedIdentifier(), firstPhoneNumber.getVendorDetailAssignedIdentifier());
@@ -50,11 +50,11 @@ public class CemiSupplierPhone {
                 firstPhoneNumber.getVendorHeaderGeneratedIdentifier(), firstPhoneNumber.getVendorDetailAssignedIdentifier());
         
         //columns not populated with this load
-        this.comments = CemiVendorConstants.EMPTY_STRING;
+        this.comments = CemiSupplierConstants.EMPTY_STRING;
     }
     
     private static String buildSupplierPhoneId(final VendorPhoneNumber vendorPhoneNumber, final String supplierId, int phoneNumberCount) {
-        return MessageFormat.format(CemiVendorConstants.PHONE_ID_FORMAT,
+        return MessageFormat.format(CemiSupplierConstants.PHONE_ID_FORMAT,
                 supplierId,
                 Integer.toString(vendorPhoneNumber.getVendorPhoneGeneratedIdentifier()),
                 Integer.toString(phoneNumberCount));
@@ -68,29 +68,29 @@ public class CemiSupplierPhone {
     private static List<String> determinePhoneUseValuesBasedOnPhoneTypes(final List<VendorPhoneNumber> vendorPhoneNumbers,
             final Integer vendorHeaderGeneratedIdentifier, final Integer vendorDetailAssignedIdentifier) {
         final String[] matchingPhoneUses = CemiUtils.getDistinctValuesFromMatchingSubLists(
-                CemiVendorConstants.PHONE_USES, vendorPhoneNumbers, VendorPhoneNumber::getVendorPhoneTypeCode);
-        if (matchingPhoneUses.length > CemiVendorConstants.MAX_PHONE_USES) {
+                CemiSupplierConstants.PHONE_USES, vendorPhoneNumbers, VendorPhoneNumber::getVendorPhoneTypeCode);
+        if (matchingPhoneUses.length > CemiSupplierConstants.MAX_PHONE_USES) {
             LOG.warn("determinePhoneUseValuesBasedOnPhoneTypes, Found a total of {} phone uses across {} "
                     + "duplicate phones for Vendor {}-{}; only the first {} will be used in the output",
                     matchingPhoneUses.length, vendorPhoneNumbers.size(), vendorHeaderGeneratedIdentifier,
-                    vendorDetailAssignedIdentifier, CemiVendorConstants.MAX_PHONE_USES);
+                    vendorDetailAssignedIdentifier, CemiSupplierConstants.MAX_PHONE_USES);
         }
         return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
-                CemiVendorConstants.MAX_PHONE_USES, matchingPhoneUses);
+                CemiSupplierConstants.MAX_PHONE_USES, matchingPhoneUses);
     }
 
     private static List<String> determinePhoneTenantedUseValuesBasedOnPhoneTypes(final List<VendorPhoneNumber> vendorPhoneNumbers,
             final Integer vendorHeaderGeneratedIdentifier, final Integer vendorDetailAssignedIdentifier) {
         final String[] matchingPhoneTenantedUses = CemiUtils.getDistinctValuesFromMatchingSubLists(
-                CemiVendorConstants.PHONE_TENANTED_USES, vendorPhoneNumbers, VendorPhoneNumber::getVendorPhoneTypeCode);
-        if (matchingPhoneTenantedUses.length > CemiVendorConstants.MAX_PHONE_TENANTED_USES) {
+                CemiSupplierConstants.PHONE_TENANTED_USES, vendorPhoneNumbers, VendorPhoneNumber::getVendorPhoneTypeCode);
+        if (matchingPhoneTenantedUses.length > CemiSupplierConstants.MAX_PHONE_TENANTED_USES) {
             LOG.warn("determinePhoneUseTenantedValuesBasedOnPhoneTypes, Found a total of {} phone tenanted uses across {} "
                     + "duplicate phones for Vendor {}-{}; only the first {} will be used in the output",
                     matchingPhoneTenantedUses.length, vendorPhoneNumbers.size(), vendorHeaderGeneratedIdentifier,
-                    vendorDetailAssignedIdentifier, CemiVendorConstants.MAX_PHONE_TENANTED_USES);
+                    vendorDetailAssignedIdentifier, CemiSupplierConstants.MAX_PHONE_TENANTED_USES);
         }
         return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
-                CemiVendorConstants.MAX_PHONE_TENANTED_USES, matchingPhoneTenantedUses);
+                CemiSupplierConstants.MAX_PHONE_TENANTED_USES, matchingPhoneTenantedUses);
     }
 
     public List<VendorPhoneNumber> getMatchingVendorPhoneNumbers() {

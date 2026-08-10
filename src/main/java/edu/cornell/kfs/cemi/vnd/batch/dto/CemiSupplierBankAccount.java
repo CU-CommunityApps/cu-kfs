@@ -3,7 +3,7 @@ package edu.cornell.kfs.cemi.vnd.batch.dto;
 import java.util.List;
 
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 
 public class CemiSupplierBankAccount {
 
@@ -14,7 +14,7 @@ public class CemiSupplierBankAccount {
     public CemiSupplierBankAccount(final String supplierId, final CemiSupplierBankAccountSubEntry... accounts) {
         this.supplierId = supplierId;
         this.accounts = CemiUtils.createListPaddedToMinimumSizeIfNecessary(
-                CemiSupplierBankAccountSubEntry.EMPTY, CemiVendorConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES, accounts);
+                CemiSupplierBankAccountSubEntry.EMPTY, CemiSupplierConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES, accounts);
     }
 
     public String getSupplierId() {

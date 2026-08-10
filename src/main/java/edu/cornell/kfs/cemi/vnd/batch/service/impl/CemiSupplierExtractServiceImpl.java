@@ -40,8 +40,8 @@ import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
-import edu.cornell.kfs.cemi.vnd.CemiVendorParameterConstants;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierParameterConstants;
 import edu.cornell.kfs.cemi.vnd.batch.CreateCemiSupplierExtractStep;
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiSupplierExtractService;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorDao;
@@ -82,16 +82,16 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
     public void initializeVendorActivityDateRangeSettings() {
         LOG.info("initializeVendorActivityDateRangeSettings, Setting from/to date range from parameter value...");
         final Collection<String> parameterValues = parameterService.getParameterValuesAsString(
-                CreateCemiSupplierExtractStep.class, CemiVendorParameterConstants.CEMI_SUPPLIER_EXTRACT_DATE_RANGE);
+                CreateCemiSupplierExtractStep.class, CemiSupplierParameterConstants.CEMI_SUPPLIER_EXTRACT_DATE_RANGE);
         final String[] dateStrings = parameterValues.toArray(String[]::new);
         Validate.validState(dateStrings.length == 2, "Parameter %s should have had 2 values, but had %s instead",
-                CemiVendorParameterConstants.CEMI_SUPPLIER_EXTRACT_DATE_RANGE, dateStrings.length);
+                CemiSupplierParameterConstants.CEMI_SUPPLIER_EXTRACT_DATE_RANGE, dateStrings.length);
 
         final LocalDate fromDate = parseDate(dateStrings[0]);
         final LocalDate toDate = parseDate(dateStrings[1]);
         Validate.validState(fromDate.compareTo(toDate) <= 0,
                 "Parameter %s contained a 'from' date that is later than the 'to' date",
-                CemiVendorParameterConstants.CEMI_SUPPLIER_EXTRACT_DATE_RANGE);
+                CemiSupplierParameterConstants.CEMI_SUPPLIER_EXTRACT_DATE_RANGE);
 
         getCemiVendorDao().updateSupplierExtractQuerySettings(fromDate, toDate);
     }
@@ -118,33 +118,36 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
         LOG.info("populateListOfInScopeVendors, Querying and storing the list of extractable Vendors...");
         getCemiVendorDao().queryAndStoreVendorIdsForSupplierExtract();
     }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    
     @Override
-    public void generateIntermediateSupplierExtractData(final LocalDateTime jobRunDate) {
-        LOG.info("generateIntermediateSupplierExtractData, Generating data rows for Supplier spreadsheet "
+    public void generateIntermediateExtractData(LocalDateTime jobRunDate) {
+        LOG.info("generateIntermediateExtractData, Generating data rows for Supplier spreadsheet "
                 + "and placing in intermediate storage...");
         try {
-            final CemiOutputDefinition outputDefinition = getOutputDefinitionForSupplierExtract();
-            generateSupplierExtractData(outputDefinition, jobRunDate);
+            generateSupplierExtractData(jobRunDate);
         } catch (final Exception e) {
-            LOG.error("generateIntermediateSupplierExtractData, Creation of Supplier Extract data failed", e);
+            LOG.error("generateIntermediateExtractData, Creation of Supplier Extract data failed", e);
             throw new RuntimeException(e);
         }
+        
     }
 
-    private void generateSupplierExtractData(final CemiOutputDefinition outputDefinition,
+    private void generateSupplierExtractData(
             final LocalDateTime jobRunDate) throws IOException {
         try (
             // Replace this builder with a temp table implementation when ready.
-            final CemiSupplierDataBuilderCsvImpl dataBuilder = new CemiSupplierDataBuilderCsvImpl(
-                    getOutputDefinitionForSupplierExtract(), getCemiVendorDao(), jobRunDate, supplierFileCreationDirectory, 
-                    shouldMaskCemiSensitiveData());
+//            final CemiSupplierDataBuilderCsvImpl dataBuilder = new CemiSupplierDataBuilderCsvImpl(
+//                    getOutputDefinitionForSupplierExtract(), getCemiVendorDao(), jobRunDate, supplierFileCreationDirectory, 
+//                    shouldMaskCemiSensitiveData());
             final Stream<VendorDetail> vendors = getCemiVendorOrmDao().getVendorsForCemiSupplierExtractAsCloseableStream();
         ) {
             final Iterator<VendorDetail> vendorsIterator = vendors.iterator();
-            dataBuilder.writeSupplierDataToIntermediateStorage(
-                    vendorsIterator, this::findAllActiveAccountsForVendor, jobRunDate);
+            final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
+            CemiSupplierFileExtractDataBuilderDefaultImpl dataBuilder = new CemiSupplierFileExtractDataBuilderDefaultImpl(businessObjectService, jobRunDateString, dateTimeService, shouldMaskCemiSensitiveData());
+            dataBuilder.writeSupplierFileSupplierTabExtractDataToIntermediateStorage(vendorsIterator);
+            
+//            dataBuilder.writeSupplierDataToIntermediateStorage(
+//                    vendorsIterator, this::findAllActiveAccountsForVendor, jobRunDate);
         }
     }
 
@@ -167,10 +170,10 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
         try {
             LOG.info("generateSupplierExtractFile, Starting creation of CEMI Supplier Extract file...");
             final String newFileName = CemiUtils.generateFileNameContainingDateTime(
-                    jobRunDate, CemiVendorConstants.SUPPLIER_EXTRACT_FILENAME_PREFIX, FileExtensions.XLSX);
+                    jobRunDate, CemiSupplierConstants.SUPPLIER_EXTRACT_FILENAME_PREFIX, FileExtensions.XLSX);
             final File tempFile = qualifyAndGetFilePath(supplierFileCreationDirectory, newFileName);
             final File finalFile = qualifyAndGetFilePath(
-                    supplierFileOutboundDirectory, CemiVendorConstants.SUPPLIER_EXTRACT_PLAIN_FILENAME);
+                    supplierFileOutboundDirectory, CemiSupplierConstants.SUPPLIER_EXTRACT_PLAIN_FILENAME);
             Validate.validState(!tempFile.exists(), "Temporary file already exists: %s", newFileName);
 
             createAndPopulateSupplierExtractFile(tempFile, jobRunDate);
@@ -200,7 +203,7 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
 
         try (
             final InputStream templateFileStream = CuCoreUtilities.getResourceAsStream(
-                    CemiVendorConstants.SUPPLIER_TEMPLATE_FILE_PATH);
+                    CemiSupplierConstants.SUPPLIER_TEMPLATE_FILE_PATH);
             final CemiExcelWriter writer = new CemiExcelWriter(outputDefinition, templateFileStream, file);
         ) {
             // Replace this appender with a temp table implementation when ready.
@@ -215,7 +218,7 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
     private CemiOutputDefinition getOutputDefinitionForSupplierExtract() throws IOException {
         try (
             final InputStream inputStream = CuCoreUtilities.getResourceAsStream(
-                    CemiVendorConstants.SUPPLIER_OUTPUT_DEFINITION_FILE_PATH);
+                    CemiSupplierConstants.SUPPLIER_OUTPUT_DEFINITION_FILE_PATH);
         ) {
             final byte[] fileContents = IOUtils.toByteArray(inputStream);
             return cemiOutputDefinitionFileType.parse(fileContents);
@@ -224,12 +227,12 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
 
     private boolean shouldCopySupplierExtractFileToOutboundDirectory() {
         return parameterService.getParameterValueAsBoolean(
-                CreateCemiSupplierExtractStep.class, CemiVendorParameterConstants.COPY_CEMI_SUPPLIER_FILE_TO_OUTBOUND_FOLDER);
+                CreateCemiSupplierExtractStep.class, CemiSupplierParameterConstants.COPY_CEMI_SUPPLIER_FILE_TO_OUTBOUND_FOLDER);
     }
 
     private boolean isCemiSensitiveDataSetToUnmask() {
         String maskingParameterValue =  parameterService.getParameterValueAsString(
-                CreateCemiSupplierExtractStep.class, CemiVendorParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
+                CreateCemiSupplierExtractStep.class, CemiSupplierParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
         return StringUtils.equalsIgnoreCase(maskingParameterValue, CemiBaseConstants.UNMASK);
     }
 

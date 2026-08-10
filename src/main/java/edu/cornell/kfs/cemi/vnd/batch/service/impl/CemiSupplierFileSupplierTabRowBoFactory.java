@@ -1,10 +1,13 @@
-package edu.cornell.kfs.cemi.vnd.batch.dto;
+package edu.cornell.kfs.cemi.vnd.batch.service.impl;
 
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -16,61 +19,60 @@ import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiForeignTaxIdType;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants.TaxAuthorityFormTypes;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileSupplierTabRowBo;
 import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 import edu.cornell.kfs.vnd.CUVendorConstants.VendorOwnershipCodes;
 
-@SuppressWarnings("deprecation")
-public class CemiSupplier {
 
-    private final VendorDetail vendorDetail;
-    private final String supplierId;
-    private final String supplierReferenceId;
-    private final String taxAuthorityFormType;
-    private final String taxIdType;
-    private final String taxIdValue;
-    private final String transactionTaxId;
-    private final String primaryTaxId;
-    private final String countryTaxId;
-    private final String dunsNumber;
-    private final String paymentTerms;
-    private final String alias0Name;
-    private final String alias0Usage;
-    private final String alias1Name;
-    private final String alias1Usage;
+public class CemiSupplierFileSupplierTabRowBoFactory {
+    
+    private VendorDetail vendor;
+    private String jobRunDateString;
+    private DateTimeService dateTimeService;
+    protected final DecimalFormat supplierIdFormatter;
     private static ISOFIPSConversionService conversionService;
+    private int vendorCount;
+    private boolean maskSensitiveData = true;
 
-    /*
-     * For POJO properties that need to go into the spreadsheet (and the future temp table),
-     * either create a related getter, or retrieve it from a Vendor Header/Detail getter.
-     * When using the latter, specify a nested "vendorHeader.propName" or "vendorDetail.propName"
-     * property in the XML definition.
-     * 
-     * This particular POJO populates derived values via static methods and keeps such values immutable.
-     * If necessary, this object can be modified into a mutable one and/or a different mechanism could
-     * be implemented to compute the derived values.
-     */
-    public CemiSupplier(final VendorDetail vendorDetail, final String supplierId, boolean maskCemiSensitiveData) {
-        this.vendorDetail = vendorDetail;
-        this.supplierId = supplierId;
-        this.supplierReferenceId = buildSupplierReferenceId(vendorDetail);
-        this.taxAuthorityFormType = determineTaxAuthorityFormType(vendorDetail);
-        this.taxIdValue = determineTaxIdValue(vendorDetail, maskCemiSensitiveData);
-        this.taxIdType = determineTaxIdType(vendorDetail, this.taxIdValue);
-        this.transactionTaxId = determineTransactionTaxId(vendorDetail, this.taxIdValue, this.taxIdType);
-        this.primaryTaxId = determinePrimaryTaxId(vendorDetail, this.taxIdValue);
-        this.countryTaxId = determineCountryTaxId(vendorDetail, this.taxIdValue);
-        this.dunsNumber = vendorDetail.getVendorDunsNumber();
-        this.paymentTerms = determineVendorPaymentTerms(vendorDetail);
+    public CemiSupplierFileSupplierTabRowBoFactory(final VendorDetail vendor, final String jobRunDateString, 
+            final DateTimeService dateTimeService, final int vendorCount, final boolean maskSensitiveData) {
+        this.vendor = vendor;
+        this.jobRunDateString = jobRunDateString;
+        this.dateTimeService = dateTimeService;
+        this.vendorCount = vendorCount;
+        this.supplierIdFormatter = new DecimalFormat(CemiSupplierConstants.SUPPLIER_ID_FORMAT);
+        this.maskSensitiveData = maskSensitiveData;
+    }
+    
+    public CemiSupplierFileSupplierTabRowBo createCemiSupplierFileSupplierTabRowBo() {
+        Validate.validState(vendor != null, "Vendor cannot be null.");
+        Validate.validState(jobRunDateString != null, "jobRunDateString cannot be null.");
+        Validate.validState(dateTimeService != null, "DateTimeService cannot be null.");
         
-        List<VendorAlias> vendorAliases = vendorDetail.getVendorAliases().stream()
+        final CemiSupplierFileSupplierTabRowBo supplierTabDataRow = new CemiSupplierFileSupplierTabRowBo();
+        supplierTabDataRow.setSupplierId(supplierIdFormatter.format(vendorCount));;
+        supplierTabDataRow.setSupplierReferenceId(buildSupplierReferenceId(vendor));
+        supplierTabDataRow.setTaxAuthorityFormType(determineTaxAuthorityFormType(vendor));
+        supplierTabDataRow.setTaxIdText(determineTaxIdText(vendor, maskSensitiveData));
+        supplierTabDataRow.setTaxIdType(determineTaxIdType(vendor, supplierTabDataRow.getTaxIdText()));
+        supplierTabDataRow.setTransactionTaxId(determineTransactionTaxId(vendor, supplierTabDataRow.getTaxIdText(), supplierTabDataRow.getTaxIdType()));
+        supplierTabDataRow.setPrimaryTaxId(determinePrimaryTaxId(vendor, supplierTabDataRow.getTaxIdText()));
+        supplierTabDataRow.setCountryTaxId(determineCountryTaxId(vendor, supplierTabDataRow.getTaxIdText()));
+        supplierTabDataRow.setDunsNumber(vendor.getVendorDunsNumber());
+        supplierTabDataRow.setPaymentTerms(determineVendorPaymentTerms(vendor));
+        
+        List<VendorAlias> vendorAliases = vendor.getVendorAliases().stream()
                 .filter(VendorAlias::isActive)
                 .collect(Collectors.toList());
-        this.alias0Name  = getAliasName(vendorAliases, 0);
-        this.alias0Usage = getAliasUsage(vendorAliases, 0);
-        this.alias1Name  = getAliasName(vendorAliases, 1);
-        this.alias1Usage = getAliasUsage(vendorAliases, 1);
+        supplierTabDataRow.setAlternateNameBusinessEntity1(getAliasName(vendorAliases, 0));
+        supplierTabDataRow.setAlternateNameUsageBusinessEntity1(getAliasUsage(vendorAliases, 0));
+        supplierTabDataRow.setAlternateNameBusinessEntity2(getAliasName(vendorAliases, 1));
+        supplierTabDataRow.setAlternateNameUsageBusinessEntity2(getAliasUsage(vendorAliases, 1));
+        
+        return supplierTabDataRow;
     }
 
+    
     private String determineCountryTaxId(VendorDetail vendorDetail, String taxIdValue) {
         VendorHeader vendorHeader = vendorDetail.getVendorHeader();
         if (StringUtils.isNotBlank(taxIdValue) && StringUtils.isNotBlank(vendorHeader.getVendorCorpCitizenCode())) {
@@ -80,7 +82,7 @@ public class CemiSupplier {
         }
     }
 
-    private static String determineTaxIdValue(VendorDetail vendorDetail, boolean maskCemiSensitiveData) {
+    private static String determineTaxIdText(VendorDetail vendorDetail, boolean maskCemiSensitiveData) {
         if (!maskCemiSensitiveData) {
             VendorHeader vendorHeader = vendorDetail.getVendorHeader();
             if (vendorHeader.getVendorForeignIndicator()) {
@@ -174,10 +176,6 @@ public class CemiSupplier {
         return "";
     }
 
-    public String getIrs1099SupplierFlag() {
-        return CemiUtils.convertToBooleanValueForFileExtract(
-                StringUtils.equals(taxAuthorityFormType, TaxAuthorityFormTypes.FORM_1099_MISC));
-    }
     
     public static ISOFIPSConversionService getConversionService(){
         if (conversionService == null) {
@@ -185,5 +183,4 @@ public class CemiSupplier {
         }
         return conversionService;
     }
-
 }

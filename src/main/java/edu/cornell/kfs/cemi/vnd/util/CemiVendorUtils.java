@@ -26,7 +26,7 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -68,10 +68,10 @@ public final class CemiVendorUtils {
     public static boolean isPrimaryVendorAddress(final String vendorTypeCode, final VendorAddress vendorAddress) {
         if (isPurchaseOrderVendor(vendorTypeCode)) {
             return addressTypeIsActiveAndIsDefaultAndMatches(
-                    CemiVendorConstants.AllDefinedAddressTypes.PURCHASE_ORDER, vendorAddress);
+                    CemiSupplierConstants.AllDefinedAddressTypes.PURCHASE_ORDER, vendorAddress);
         } else {
             return addressTypeIsActiveAndIsDefaultAndMatches(
-                    CemiVendorConstants.AllDefinedAddressTypes.REMIT, vendorAddress);
+                    CemiSupplierConstants.AllDefinedAddressTypes.REMIT, vendorAddress);
         }
     }
 

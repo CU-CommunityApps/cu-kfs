@@ -18,7 +18,7 @@ public class CreateCemiSupplierExtractStep extends AbstractStep {
         cemiSupplierExtractService.populateListOfBaseVendorData();
         cemiSupplierExtractService.populateListOfInScopeVendors();
         //Phase 2: Loop through result set to create all the csv files
-        cemiSupplierExtractService.generateIntermediateSupplierExtractData(jobRunDate);
+        cemiSupplierExtractService.generateIntermediateExtractData(jobRunDate);
         //Phase 3: Create single multi-tabbed file.
         cemiSupplierExtractService.generateSupplierExtractFile(jobRunDate);
         return true;

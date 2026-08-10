@@ -11,7 +11,7 @@ import edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder.
 import edu.cornell.kfs.vnd.CUVendorConstants;
 import edu.cornell.kfs.vnd.CUVendorConstants.CUAddressTypes;
 
-public final class CemiVendorConstants {
+public final class CemiSupplierConstants {
 
     public static final String EMPTY_STRING = KFSConstants.EMPTY_STRING;
     
