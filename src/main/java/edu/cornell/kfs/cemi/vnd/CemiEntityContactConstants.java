@@ -29,13 +29,13 @@ public final class CemiEntityContactConstants {
     //        public static final String NUMERIC_ONE = "1";
 
     public static final String ENTITY_CONTACT_OUTPUT_DEFINITION_PATH_SUFFIX = "vnd/batch/CemiEntityContactExtractFileOutputDefinition.xml";
-    public static final String ENTITY_CONTACT_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX = "vnd/batch/Submit_Business_Entity_Contact.xlsx";
-    public static final String ENTITY_CONTACT_EXTRACT_FILENAME_PREFIX = "Submit_Business_Entity_Contact_ITH_";
-    public static final String ENTITY_CONTACT_EXTRACT_PLAIN_FILENAME = "Submit_Business_Entity_Contact.xlsx";
+    public static final String ENTITY_CONTACT_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX = "vnd/batch/Business_Entity_Contact_Supplier.xlsx";
+    public static final String ENTITY_CONTACT_EXTRACT_FILENAME_PREFIX = "Business_Entity_Contact_Supplier_ITH_";
+    public static final String ENTITY_CONTACT_EXTRACT_PLAIN_FILENAME = "Business_Entity_Contact_Supplier.xlsx";
  
     public static final int US_AREA_CODE_LENGTH = 3;
+    public static final int MAX_TENANTED_TYPES = 10;
     public static final String ROW_ID_1 = "1";
-    public static final String KFS_MAIN_PHONE_NUMBER_TYPE = "PH";
     public static final String PHONE_PARSE_ERROR_MESSAGE = "An error occurred when parsing the phone number";
 
     public static final class EntityContactExtractSheets {

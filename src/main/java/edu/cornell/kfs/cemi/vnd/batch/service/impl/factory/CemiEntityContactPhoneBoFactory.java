@@ -1,5 +1,6 @@
 package edu.cornell.kfs.cemi.vnd.batch.service.impl.factory;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,27 +27,31 @@ public class CemiEntityContactPhoneBoFactory {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private Optional<VendorContactPhoneNumber> vendorContactPhoneNumber;
+    private List<VendorContactPhoneNumber> mergedPhoneNumbers;
+    private Optional<VendorContactPhoneNumber> firstPhoneNumber;
     private int phoneIndex;
     private PhoneNumberUtil phoneNumberUtil;
     private Optional<PhoneNumber> parsedPhoneNumber;
 
-    public CemiEntityContactPhoneBoFactory(final Optional<VendorContactPhoneNumber> vendorContactPhoneNumber,
+    public CemiEntityContactPhoneBoFactory(final List<VendorContactPhoneNumber> mergedPhoneNumbers,
             final int phoneIndex) {
-        Validate.notNull(vendorContactPhoneNumber, "vendorContactPhoneNumber wrapper object cannot be null");
-        this.vendorContactPhoneNumber = vendorContactPhoneNumber;
+        Validate.notNull(mergedPhoneNumbers, "mergedPhoneNumbers list cannot be null");
+        Validate.isTrue(mergedPhoneNumbers.isEmpty() == phoneIndex <= 0,
+                "phoneIndex must be a positive value if, and only if, mergedPhoneNumbers is non-empty");
+        this.mergedPhoneNumbers = mergedPhoneNumbers;
+        this.firstPhoneNumber = !mergedPhoneNumbers.isEmpty() ? Optional.of(mergedPhoneNumbers.get(0)) : Optional.empty();
         this.phoneIndex = phoneIndex;
         this.phoneNumberUtil = PhoneNumberUtil.getInstance();
-        this.parsedPhoneNumber = vendorContactPhoneNumber.map(this::parsePhoneNumberIfPossible)
+        this.parsedPhoneNumber = firstPhoneNumber.map(this::parsePhoneNumberIfPossible)
                 .orElseGet(Optional::empty);
     }
 
-    private Optional<PhoneNumber> parsePhoneNumberIfPossible(final VendorContactPhoneNumber vendorPhone) {
-        final String rawPhoneNumber = vendorPhone.getVendorPhoneNumber();
+    private Optional<PhoneNumber> parsePhoneNumberIfPossible(final VendorContactPhoneNumber vendorContactPhone) {
+        final String rawPhoneNumber = vendorContactPhone.getVendorPhoneNumber();
         Validate.validState(StringUtils.isNotBlank(rawPhoneNumber),
                 "Phone BO %s for Vendor Contact %s has a blank phone number; this should NEVER happen",
-                vendorPhone.getVendorContactPhoneGeneratedIdentifier(),
-                vendorPhone.getVendorContactGeneratedIdentifier());
+                vendorContactPhone.getVendorContactPhoneGeneratedIdentifier(),
+                vendorContactPhone.getVendorContactGeneratedIdentifier());
 
         try {
             final String tentativeExplicitRegion = isPhoneNumberUsingInternationalFormat(rawPhoneNumber)
@@ -57,23 +62,36 @@ public class CemiEntityContactPhoneBoFactory {
         } catch (final NumberParseException | RuntimeException e) {
             LOG.error("parsePhoneNumberIfPossible, Could not parse phone number from Phone BO {} for Vendor Contact {}; "
                     + "will mark as an error row and only print the raw phone number",
-                    vendorPhone.getVendorContactPhoneGeneratedIdentifier(),
-                    vendorPhone.getVendorContactGeneratedIdentifier(), e);
+                    vendorContactPhone.getVendorContactPhoneGeneratedIdentifier(),
+                    vendorContactPhone.getVendorContactGeneratedIdentifier(), e);
             return Optional.empty();
         }
     }
 
     public static CemiEntityContactPhoneBo createCemiEntityContactPhoneBoFrom(
-            final Optional<VendorContactPhoneNumber> vendorContactPhoneNumber, final int phoneIndex) {
+            final List<VendorContactPhoneNumber> mergedPhoneNumbers, final int phoneIndex) {
         final CemiEntityContactPhoneBoFactory factory = new CemiEntityContactPhoneBoFactory(
-                vendorContactPhoneNumber, phoneIndex);
+                mergedPhoneNumbers, phoneIndex);
         return factory.createCemiEntityContactPhoneBo();
     }
 
     public CemiEntityContactPhoneBo createCemiEntityContactPhoneBo() {
         final CemiEntityContactPhoneBo phoneBo = new CemiEntityContactPhoneBo();
+        if (mergedPhoneNumbers.size() > 1) {
+            LOG.debug("createCemiEntityContactPhoneBo, Creating Entity Contact Phone for Vendor Contact {} using {} "
+                    + "merged phone numbers", firstPhoneNumber.get().getVendorContactGeneratedIdentifier(),
+                    mergedPhoneNumbers.size());
+        }
+
+        if (firstPhoneNumber.isPresent()) {
+            final VendorContactPhoneNumber vendorContactPhone = firstPhoneNumber.get();
+            phoneBo.setVendorContactGeneratedIdentifier(vendorContactPhone.getVendorContactGeneratedIdentifier());
+            phoneBo.setVendorContactPhoneGeneratedIdentifier(
+                    vendorContactPhone.getVendorContactPhoneGeneratedIdentifier());
+        }
+
         final String phoneUsageComments = determinePhoneUsageComments();
-        final CemiEntityContactGenericUsageBo phoneUsage = vendorContactPhoneNumber.isPresent()
+        final CemiEntityContactGenericUsageBo phoneUsage = firstPhoneNumber.isPresent()
                 ? CemiEntityContactGenericUsageBoFactory.createUsageBoFrom(
                         CemiEntityContactConstants.ROW_ID_1, CommunicationUsageTypes.WORK, phoneUsageComments)
                 : CemiEntityContactGenericUsageBoFactory.createEmptyUsageBo();
@@ -101,12 +119,12 @@ public class CemiEntityContactPhoneBoFactory {
     }
 
     private String determinePhoneRowId() {
-        return (vendorContactPhoneNumber.isPresent() && phoneIndex > 0)
+        return (firstPhoneNumber.isPresent() && phoneIndex > 0)
                 ? Integer.toString(phoneIndex) : CemiBaseConstants.EMPTY_STRING;
     }
 
     private String determineAreaCode() {
-        if (vendorContactPhoneNumber.isEmpty() || parsedPhoneNumber.isEmpty()) {
+        if (firstPhoneNumber.isEmpty() || parsedPhoneNumber.isEmpty()) {
             return CemiBaseConstants.EMPTY_STRING;
         }
         final PhoneNumber phoneNumber = parsedPhoneNumber.get();
@@ -128,10 +146,10 @@ public class CemiEntityContactPhoneBoFactory {
 
     private String determineFormattedPhone(final Optional<PhoneNumber> parsedPhoneNumber,
             final boolean internationalFormatStateToMatchOn) {
-        if (vendorContactPhoneNumber.isEmpty()) {
+        if (firstPhoneNumber.isEmpty()) {
             return CemiBaseConstants.EMPTY_STRING;
         }
-        final VendorContactPhoneNumber vendorPhoneNumber = vendorContactPhoneNumber.get();
+        final VendorContactPhoneNumber vendorPhoneNumber = firstPhoneNumber.get();
         final String rawPhoneNumber = vendorPhoneNumber.getVendorPhoneNumber();
         final boolean isUsingInternationalFormat = isPhoneNumberUsingInternationalFormat(rawPhoneNumber);
         return (isUsingInternationalFormat == internationalFormatStateToMatchOn)
@@ -139,7 +157,7 @@ public class CemiEntityContactPhoneBoFactory {
     }
 
     private String determinePhoneNumberWithoutAreaCode() {
-        if (vendorContactPhoneNumber.isEmpty() || parsedPhoneNumber.isEmpty()) {
+        if (firstPhoneNumber.isEmpty() || parsedPhoneNumber.isEmpty()) {
             return CemiBaseConstants.EMPTY_STRING;
         }
         final PhoneNumber phoneNumber = parsedPhoneNumber.get();
@@ -161,7 +179,7 @@ public class CemiEntityContactPhoneBoFactory {
     }
 
     private String determinePhoneCountryIsoCode() {
-        if (vendorContactPhoneNumber.isEmpty() || parsedPhoneNumber.isEmpty()) {
+        if (firstPhoneNumber.isEmpty() || parsedPhoneNumber.isEmpty()) {
             return CemiBaseConstants.EMPTY_STRING;
         }
         final PhoneNumber phoneNumber = parsedPhoneNumber.get();
@@ -170,7 +188,7 @@ public class CemiEntityContactPhoneBoFactory {
     }
 
     private String determineInternationalPhoneCode() {
-        if (vendorContactPhoneNumber.isEmpty() || parsedPhoneNumber.isEmpty()) {
+        if (firstPhoneNumber.isEmpty() || parsedPhoneNumber.isEmpty()) {
             return CemiBaseConstants.EMPTY_STRING;
         }
         final PhoneNumber phoneNumber = parsedPhoneNumber.get();
@@ -183,7 +201,7 @@ public class CemiEntityContactPhoneBoFactory {
     }
 
     private String determinePlainUnprefixedPhoneNumber() {
-        if (vendorContactPhoneNumber.isEmpty() || parsedPhoneNumber.isEmpty()) {
+        if (firstPhoneNumber.isEmpty() || parsedPhoneNumber.isEmpty()) {
             return CemiBaseConstants.EMPTY_STRING;
         }
         final PhoneNumber phoneNumber = parsedPhoneNumber.get();
@@ -191,13 +209,13 @@ public class CemiEntityContactPhoneBoFactory {
     }
 
     private String determinePhoneExtension() {
-        if (vendorContactPhoneNumber.isEmpty() || parsedPhoneNumber.isEmpty()) {
+        if (firstPhoneNumber.isEmpty() || parsedPhoneNumber.isEmpty()) {
             return CemiBaseConstants.EMPTY_STRING;
         }
 
-        final VendorContactPhoneNumber vendorPhoneNumber = vendorContactPhoneNumber.get();
-        if (StringUtils.isNotBlank(vendorPhoneNumber.getVendorPhoneExtensionNumber())) {
-            return vendorPhoneNumber.getVendorPhoneExtensionNumber();
+        final VendorContactPhoneNumber vendorContactPhone = firstPhoneNumber.get();
+        if (StringUtils.isNotBlank(vendorContactPhone.getVendorPhoneExtensionNumber())) {
+            return vendorContactPhone.getVendorPhoneExtensionNumber();
         } else {
             final PhoneNumber phoneNumber = parsedPhoneNumber.get();
             return StringUtils.defaultIfBlank(phoneNumber.getExtension(), CemiBaseConstants.EMPTY_STRING);
@@ -205,7 +223,7 @@ public class CemiEntityContactPhoneBoFactory {
     }
 
     private String determinePhoneDeviceType() {
-        return vendorContactPhoneNumber.isPresent() ? PhoneDeviceTypes.TELEPHONE : CemiBaseConstants.EMPTY_STRING;
+        return firstPhoneNumber.isPresent() ? PhoneDeviceTypes.TELEPHONE : CemiBaseConstants.EMPTY_STRING;
     }
 
     private String determinePhoneUsageComments() {
@@ -214,7 +232,7 @@ public class CemiEntityContactPhoneBoFactory {
     }
 
     private boolean didErrorOccurWhenParsingPhoneNumber() {
-        return vendorContactPhoneNumber.isPresent() && parsedPhoneNumber.isEmpty();
+        return firstPhoneNumber.isPresent() && parsedPhoneNumber.isEmpty();
     }
 
 }

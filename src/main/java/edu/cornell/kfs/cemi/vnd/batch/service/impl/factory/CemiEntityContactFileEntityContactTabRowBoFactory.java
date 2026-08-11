@@ -1,9 +1,10 @@
 package edu.cornell.kfs.cemi.vnd.batch.service.impl.factory;
 
-import java.util.Map;
+import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
 
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
@@ -16,54 +17,58 @@ import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactPhoneBo;
 
 public class CemiEntityContactFileEntityContactTabRowBoFactory {
 
-    private VendorContact vendorContact;
     private CemiEntityContactHeaderBo headerBo;
     private CemiEntityContactPhoneBo phoneBo;
     private CemiEntityContactEmailBo emailBo;
-    private Map<Class<?>, CemiEntityContactGenericUsageBo> usages;
     @SuppressWarnings("unused")
     private boolean maskSensitiveData = true;
 
-    public CemiEntityContactFileEntityContactTabRowBoFactory (final VendorContact vendorContact,
+    public CemiEntityContactFileEntityContactTabRowBoFactory (
             final CemiEntityContactHeaderBo headerBo, final CemiEntityContactPhoneBo phoneBo,
-            final CemiEntityContactEmailBo emailBo, final Map<Class<?>, CemiEntityContactGenericUsageBo> usages,
-            final boolean maskSensitiveData) {
-        this.vendorContact = vendorContact;
+            final CemiEntityContactEmailBo emailBo, final boolean maskSensitiveData) {
+        Validate.notNull(headerBo, "headerBo cannot be null");
+        Validate.notNull(phoneBo, "phoneBo cannot be null; must provide an empty BO if the row has no phone number");
+        Validate.notNull(emailBo, "emailBo cannot be null; must provide an empty BO if the row has no email address");
         this.headerBo = headerBo;
         this.phoneBo = phoneBo;
         this.emailBo = emailBo;
-        this.usages = usages;
         this.maskSensitiveData = maskSensitiveData;
     }
 
-    public static CemiEntityContactFileEntityContactTabRowBo createTabRowBoFrom(final VendorContact vendorContact,
+    public static CemiEntityContactFileEntityContactTabRowBo createTabRowBoFrom(
             final CemiEntityContactHeaderBo headerBo, final CemiEntityContactPhoneBo phoneBo,
-            final CemiEntityContactEmailBo emailBo, final Map<Class<?>, CemiEntityContactGenericUsageBo> usages,
-            final boolean maskSensitiveData) {
+            final CemiEntityContactEmailBo emailBo, final boolean maskSensitiveData) {
         final CemiEntityContactFileEntityContactTabRowBoFactory factory = new CemiEntityContactFileEntityContactTabRowBoFactory(
-                vendorContact, headerBo, phoneBo, emailBo, usages, maskSensitiveData);
+                headerBo, phoneBo, emailBo, maskSensitiveData);
         return factory.createCemiEntityContactFileEntityContactTabRowBo();
     }
 
     public CemiEntityContactFileEntityContactTabRowBo createCemiEntityContactFileEntityContactTabRowBo() {
-        Validate.validState(ObjectUtils.isNotNull(vendorContact), "Vendor Contact cannot be null");
-        Validate.validState(ObjectUtils.isNotNull(headerBo), "Header BO cannot be null");
-        Validate.validState(ObjectUtils.isNotNull(phoneBo),
-                "Phone BO cannot be null; must provide an empty BO if the row has no phone number");
-        Validate.validState(ObjectUtils.isNotNull(emailBo),
-                "Email BO cannot be null; must provide an empty BO if the row has no email address");
+        final List<String> tenantedContactTypes = headerBo.getMergedTenantedContactTypes();
 
-        final CemiEntityContactGenericUsageBo phoneUsage = usages.get(CemiEntityContactPhoneBo.class);
-        final CemiEntityContactGenericUsageBo emailUsage = usages.get(CemiEntityContactEmailBo.class);
-        Validate.validState(ObjectUtils.isNotNull(phoneUsage),
-                "Phone usage data cannot be null; must provide an empty BO if the row has no phone number");
-        Validate.validState(ObjectUtils.isNotNull(emailUsage),
-                "Email usage data cannot be null; must provide an empty BO if the row has no email address");
+        Validate.validState(CollectionUtils.isNotEmpty(headerBo.getMergedContacts()),
+                "Header BO's list of merged Vendor Contacts cannot be null or empty");
+        Validate.validState(CollectionUtils.size(tenantedContactTypes) >= CemiEntityContactConstants.MAX_TENANTED_TYPES,
+                "Header BO's list of tenanted contact types should have been padded to a size of at least %s",
+                CemiEntityContactConstants.MAX_TENANTED_TYPES);
+        Validate.validState(CollectionUtils.isNotEmpty(phoneBo.getPhoneUsages()),
+                "Phone BO's list of phone usages cannot be null or empty");
+        Validate.validState(CollectionUtils.isNotEmpty(emailBo.getEmailUsages()),
+                "Email BO's list of phone usages cannot be null or empty");
+        Validate.validState(!StringUtils.isAllBlank(phoneBo.getPhoneRowId(), emailBo.getEmailRowId()),
+                "Row must at least contain data values for either a phone number or an email address");
+
+        final VendorContact firstVendorContact = headerBo.getMergedContacts().get(0);
+        final CemiEntityContactGenericUsageBo phoneUsage = phoneBo.getPhoneUsages().get(0);
+        final CemiEntityContactGenericUsageBo emailUsage = emailBo.getEmailUsages().get(0);
 
         final CemiEntityContactFileEntityContactTabRowBo entityContactRow
                 = new CemiEntityContactFileEntityContactTabRowBo();
 
-        entityContactRow.setVendorContactGeneratedIdentifier(vendorContact.getVendorContactGeneratedIdentifier());
+        entityContactRow.setVendorContactGeneratedIdentifier(firstVendorContact.getVendorContactGeneratedIdentifier());
+        entityContactRow.setVendorContactGeneratedIdentifierForEmail(emailBo.getVendorContactGeneratedIdentifier());
+        entityContactRow.setVendorContactGeneratedIdentifierForPhone(phoneBo.getVendorContactGeneratedIdentifier());
+        entityContactRow.setVendorContactPhoneGeneratedIdentifier(phoneBo.getVendorContactPhoneGeneratedIdentifier());
 
         entityContactRow.setSpreadsheetKey(headerBo.getSpreadsheetKey());
         entityContactRow.setAddOnly(headerBo.getAddOnly());
@@ -217,7 +222,16 @@ public class CemiEntityContactFileEntityContactTabRowBoFactory {
         entityContactRow.setExistingWebAddressId(CemiBaseConstants.EMPTY_STRING);
         entityContactRow.setNewWebAddressId(CemiBaseConstants.EMPTY_STRING);
         entityContactRow.setContactTypeRowId(CemiEntityContactConstants.ROW_ID_1);
-        entityContactRow.setContactTypeTenanted(vendorContact.getVendorContactTypeCode());
+        entityContactRow.setContactTypeTenanted1(tenantedContactTypes.get(0));
+        entityContactRow.setContactTypeTenanted2(tenantedContactTypes.get(1));
+        entityContactRow.setContactTypeTenanted3(tenantedContactTypes.get(2));
+        entityContactRow.setContactTypeTenanted4(tenantedContactTypes.get(3));
+        entityContactRow.setContactTypeTenanted5(tenantedContactTypes.get(4));
+        entityContactRow.setContactTypeTenanted6(tenantedContactTypes.get(5));
+        entityContactRow.setContactTypeTenanted7(tenantedContactTypes.get(6));
+        entityContactRow.setContactTypeTenanted8(tenantedContactTypes.get(7));
+        entityContactRow.setContactTypeTenanted9(tenantedContactTypes.get(8));
+        entityContactRow.setContactTypeTenanted10(tenantedContactTypes.get(9));
         entityContactRow.setBusinessEntityContactType(CemiBaseConstants.EMPTY_STRING);
         entityContactRow.setExternalSystemId(CemiBaseConstants.EMPTY_STRING);
         entityContactRow.setExternalId(CemiBaseConstants.EMPTY_STRING);

@@ -9,6 +9,9 @@ public class CemiEntityContactPhoneBo extends TransientBusinessObjectBase {
 
     private static final long serialVersionUID = 1L;
 
+    private Integer vendorContactGeneratedIdentifier;
+    private Integer vendorContactPhoneGeneratedIdentifier;
+
     private String phoneRowId;
     private String phoneAreaCode;
     private String tenantFormattedPhone;
@@ -28,6 +31,22 @@ public class CemiEntityContactPhoneBo extends TransientBusinessObjectBase {
     private String newPhoneId;
 
     private List<CemiEntityContactGenericUsageBo> phoneUsages;
+
+    public Integer getVendorContactGeneratedIdentifier() {
+        return vendorContactGeneratedIdentifier;
+    }
+
+    public void setVendorContactGeneratedIdentifier(final Integer vendorContactGeneratedIdentifier) {
+        this.vendorContactGeneratedIdentifier = vendorContactGeneratedIdentifier;
+    }
+
+    public Integer getVendorContactPhoneGeneratedIdentifier() {
+        return vendorContactPhoneGeneratedIdentifier;
+    }
+
+    public void setVendorContactPhoneGeneratedIdentifier(final Integer vendorContactPhoneGeneratedIdentifier) {
+        this.vendorContactPhoneGeneratedIdentifier = vendorContactPhoneGeneratedIdentifier;
+    }
 
     public String getPhoneRowId() {
         return phoneRowId;

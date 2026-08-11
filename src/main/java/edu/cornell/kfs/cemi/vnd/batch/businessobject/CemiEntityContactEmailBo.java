@@ -9,6 +9,8 @@ public class CemiEntityContactEmailBo extends TransientBusinessObjectBase {
 
     private static final long serialVersionUID = 1L;
 
+    private Integer vendorContactGeneratedIdentifier;
+
     private String emailRowId;
     private String deleteEmail;
     private String doNotReplaceAllEmail;
@@ -18,6 +20,14 @@ public class CemiEntityContactEmailBo extends TransientBusinessObjectBase {
     private String newEmailId;
 
     private List<CemiEntityContactGenericUsageBo> emailUsages;
+
+    public Integer getVendorContactGeneratedIdentifier() {
+        return vendorContactGeneratedIdentifier;
+    }
+
+    public void setVendorContactGeneratedIdentifier(final Integer vendorContactGeneratedIdentifier) {
+        this.vendorContactGeneratedIdentifier = vendorContactGeneratedIdentifier;
+    }
 
     public String getEmailRowId() {
         return emailRowId;

@@ -155,7 +155,16 @@
         <field name="Web Address" type="STRING" key="existingWebAddressId"/>
         <field name="ID" type="STRING" key="newWebAddressId"/>
         <field name="Row ID*" type="STRING" key="contactTypeRowId"/>
-        <field name="Contact Type Tenanted+" type="STRING" key="contactTypeTenanted"/>
+        <field name="Business Entity Contact Type Tenanted 1" type="STRING" key="contactTypeTenanted1"/>
+        <field name="Business Entity Contact Type Tenanted 2" type="STRING" key="contactTypeTenanted2"/>
+        <field name="Business Entity Contact Type Tenanted 3" type="STRING" key="contactTypeTenanted3"/>
+        <field name="Business Entity Contact Type Tenanted 4" type="STRING" key="contactTypeTenanted4"/>
+        <field name="Business Entity Contact Type Tenanted 5" type="STRING" key="contactTypeTenanted5"/>
+        <field name="Business Entity Contact Type Tenanted 6" type="STRING" key="contactTypeTenanted6"/>
+        <field name="Business Entity Contact Type Tenanted 7" type="STRING" key="contactTypeTenanted7"/>
+        <field name="Business Entity Contact Type Tenanted 8" type="STRING" key="contactTypeTenanted8"/>
+        <field name="Business Entity Contact Type Tenanted 9" type="STRING" key="contactTypeTenanted9"/>
+        <field name="Business Entity Contact Type Tenanted 10" type="STRING" key="contactTypeTenanted10"/>
         <field name="Business Entity Contact Type+" type="STRING" key="businessEntityContactType"/>
         <field name="System ID" type="STRING" key="externalSystemId"/>
         <field name="ID" type="STRING" key="externalId"/>

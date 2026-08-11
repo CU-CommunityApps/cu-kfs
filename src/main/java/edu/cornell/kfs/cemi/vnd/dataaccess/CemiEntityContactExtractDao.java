@@ -1,5 +1,7 @@
 package edu.cornell.kfs.cemi.vnd.dataaccess;
 
+import java.util.Map;
+
 public interface CemiEntityContactExtractDao {
 
     void clearAnyExistingInScopeVendorContactKeysFromPreviousExecution();
@@ -10,5 +12,7 @@ public interface CemiEntityContactExtractDao {
 
     String findSupplierIdForVendorContact(final Integer vendorContactGeneratedIdentifier,
             final String supplierJobRunDateString);
+
+    Map<String, String> getTenantedContactTypeMappings();
 
 }

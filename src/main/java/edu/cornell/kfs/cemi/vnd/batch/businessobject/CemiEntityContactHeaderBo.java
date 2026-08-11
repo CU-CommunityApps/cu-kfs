@@ -1,10 +1,17 @@
 package edu.cornell.kfs.cemi.vnd.batch.businessobject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
+import org.kuali.kfs.vnd.businessobject.VendorContact;
 
 public class CemiEntityContactHeaderBo extends TransientBusinessObjectBase {
 
     private static final long serialVersionUID = -6869123386201406230L;
+
+    private List<VendorContact> mergedContacts;
+    private List<String> mergedTenantedContactTypes;
 
     private String spreadsheetKey;
     private String addOnly;
@@ -47,6 +54,28 @@ public class CemiEntityContactHeaderBo extends TransientBusinessObjectBase {
     private String religiousSuffix;
     private String royalSuffix;
     private String fullNameForSingaporeAndMalaysia;
+
+    public List<VendorContact> getMergedContacts() {
+        if (mergedContacts == null) {
+            mergedContacts = new ArrayList<>();
+        }
+        return mergedContacts;
+    }
+
+    public void setMergedContacts(final List<VendorContact> mergedContacts) {
+        this.mergedContacts = mergedContacts;
+    }
+
+    public List<String> getMergedTenantedContactTypes() {
+        if (mergedTenantedContactTypes == null) {
+            mergedTenantedContactTypes = new ArrayList<>();
+        }
+        return mergedTenantedContactTypes;
+    }
+
+    public void setMergedTenantedContactTypes(final List<String> mergedTenantedContactTypes) {
+        this.mergedTenantedContactTypes = mergedTenantedContactTypes;
+    }
 
     public String getSpreadsheetKey() {
         return spreadsheetKey;

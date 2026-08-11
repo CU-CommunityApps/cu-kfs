@@ -1,12 +1,17 @@
 package edu.cornell.kfs.cemi.vnd.dataaccess.impl;
 
 import java.sql.Types;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import edu.cornell.kfs.cemi.vnd.batch.translatetable.KfsToWorkdayTenantedEntityContactTypeCsvTableColumns;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiEntityContactExtractDao;
 import edu.cornell.kfs.sys.util.CuSqlChunk;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
@@ -78,6 +83,26 @@ public class CemiEntityContactExtractDaoJdbcImpl extends CuSqlQueryPlatformAware
         });
 
         return supplierId;
+    }
+
+    @Override
+    public Map<String, String> getTenantedContactTypeMappings() {
+        final CuSqlQuery query = new CuSqlChunk()
+                .append("SELECT VNDR_CNTCT_TYP_CD, WRKDY_TNTD_CNTCT_TYP_REF_ID ")
+                .append("FROM CEMI.CU_CEMI_TRANS_KFS_WRKDY_TNTD_ENT_CNTCT_TYP_T")
+                .toQuery();
+
+        return queryForResults(query, resultSet -> {
+            final Stream.Builder<Pair<String, String>> mappingEntries = Stream.builder();
+            while (resultSet.next()) {
+                final String vendorContactType = resultSet.getString(
+                        KfsToWorkdayTenantedEntityContactTypeCsvTableColumns.VNDR_CNTCT_TYP_CD.name());
+                final String workdayTenantedContactType = resultSet.getString(
+                        KfsToWorkdayTenantedEntityContactTypeCsvTableColumns.WRKDY_TNTD_CNTCT_TYP_REF_ID.name());
+                mappingEntries.add(Pair.of(vendorContactType, workdayTenantedContactType));
+            }
+            return mappingEntries.build().collect(Collectors.toUnmodifiableMap(Pair::getLeft, Pair::getRight));
+        });
     }
 
 }

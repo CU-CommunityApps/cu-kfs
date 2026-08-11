@@ -7,6 +7,9 @@ public class CemiEntityContactFileEntityContactTabRowBo extends CemiIndexedBusin
     private static final long serialVersionUID = -9044387307952799994L;
 
     private Integer vendorContactGeneratedIdentifier;
+    private Integer vendorContactGeneratedIdentifierForEmail;
+    private Integer vendorContactGeneratedIdentifierForPhone;
+    private Integer vendorContactPhoneGeneratedIdentifier;
 
     private String spreadsheetKey;
     private String addOnly;
@@ -160,7 +163,16 @@ public class CemiEntityContactFileEntityContactTabRowBo extends CemiIndexedBusin
     private String existingWebAddressId;
     private String newWebAddressId;
     private String contactTypeRowId;
-    private String contactTypeTenanted;
+    private String contactTypeTenanted1;
+    private String contactTypeTenanted2;
+    private String contactTypeTenanted3;
+    private String contactTypeTenanted4;
+    private String contactTypeTenanted5;
+    private String contactTypeTenanted6;
+    private String contactTypeTenanted7;
+    private String contactTypeTenanted8;
+    private String contactTypeTenanted9;
+    private String contactTypeTenanted10;
     private String businessEntityContactType;
     private String externalSystemId;
     private String externalId;
@@ -171,6 +183,30 @@ public class CemiEntityContactFileEntityContactTabRowBo extends CemiIndexedBusin
 
     public void setVendorContactGeneratedIdentifier(final Integer vendorContactGeneratedIdentifier) {
         this.vendorContactGeneratedIdentifier = vendorContactGeneratedIdentifier;
+    }
+
+    public Integer getVendorContactGeneratedIdentifierForEmail() {
+        return vendorContactGeneratedIdentifierForEmail;
+    }
+
+    public void setVendorContactGeneratedIdentifierForEmail(final Integer vendorContactGeneratedIdentifierForEmail) {
+        this.vendorContactGeneratedIdentifierForEmail = vendorContactGeneratedIdentifierForEmail;
+    }
+
+    public Integer getVendorContactGeneratedIdentifierForPhone() {
+        return vendorContactGeneratedIdentifierForPhone;
+    }
+
+    public void setVendorContactGeneratedIdentifierForPhone(final Integer vendorContactGeneratedIdentifierForPhone) {
+        this.vendorContactGeneratedIdentifierForPhone = vendorContactGeneratedIdentifierForPhone;
+    }
+
+    public Integer getVendorContactPhoneGeneratedIdentifier() {
+        return vendorContactPhoneGeneratedIdentifier;
+    }
+
+    public void setVendorContactPhoneGeneratedIdentifier(final Integer vendorContactPhoneGeneratedIdentifier) {
+        this.vendorContactPhoneGeneratedIdentifier = vendorContactPhoneGeneratedIdentifier;
     }
 
     public String getSpreadsheetKey() {
@@ -1389,12 +1425,84 @@ public class CemiEntityContactFileEntityContactTabRowBo extends CemiIndexedBusin
         this.contactTypeRowId = contactTypeRowId;
     }
 
-    public String getContactTypeTenanted() {
-        return contactTypeTenanted;
+    public String getContactTypeTenanted1() {
+        return contactTypeTenanted1;
     }
 
-    public void setContactTypeTenanted(final String contactTypeTenanted) {
-        this.contactTypeTenanted = contactTypeTenanted;
+    public void setContactTypeTenanted1(final String contactTypeTenanted1) {
+        this.contactTypeTenanted1 = contactTypeTenanted1;
+    }
+
+    public String getContactTypeTenanted2() {
+        return contactTypeTenanted2;
+    }
+
+    public void setContactTypeTenanted2(final String contactTypeTenanted2) {
+        this.contactTypeTenanted2 = contactTypeTenanted2;
+    }
+
+    public String getContactTypeTenanted3() {
+        return contactTypeTenanted3;
+    }
+
+    public void setContactTypeTenanted3(final String contactTypeTenanted3) {
+        this.contactTypeTenanted3 = contactTypeTenanted3;
+    }
+
+    public String getContactTypeTenanted4() {
+        return contactTypeTenanted4;
+    }
+
+    public void setContactTypeTenanted4(final String contactTypeTenanted4) {
+        this.contactTypeTenanted4 = contactTypeTenanted4;
+    }
+
+    public String getContactTypeTenanted5() {
+        return contactTypeTenanted5;
+    }
+
+    public void setContactTypeTenanted5(final String contactTypeTenanted5) {
+        this.contactTypeTenanted5 = contactTypeTenanted5;
+    }
+
+    public String getContactTypeTenanted6() {
+        return contactTypeTenanted6;
+    }
+
+    public void setContactTypeTenanted6(final String contactTypeTenanted6) {
+        this.contactTypeTenanted6 = contactTypeTenanted6;
+    }
+
+    public String getContactTypeTenanted7() {
+        return contactTypeTenanted7;
+    }
+
+    public void setContactTypeTenanted7(final String contactTypeTenanted7) {
+        this.contactTypeTenanted7 = contactTypeTenanted7;
+    }
+
+    public String getContactTypeTenanted8() {
+        return contactTypeTenanted8;
+    }
+
+    public void setContactTypeTenanted8(final String contactTypeTenanted8) {
+        this.contactTypeTenanted8 = contactTypeTenanted8;
+    }
+
+    public String getContactTypeTenanted9() {
+        return contactTypeTenanted9;
+    }
+
+    public void setContactTypeTenanted9(final String contactTypeTenanted9) {
+        this.contactTypeTenanted9 = contactTypeTenanted9;
+    }
+
+    public String getContactTypeTenanted10() {
+        return contactTypeTenanted10;
+    }
+
+    public void setContactTypeTenanted10(final String contactTypeTenanted10) {
+        this.contactTypeTenanted10 = contactTypeTenanted10;
     }
 
     public String getBusinessEntityContactType() {

@@ -1,48 +1,60 @@
 package edu.cornell.kfs.cemi.vnd.batch.service.impl.factory;
 
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.Validate;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
 
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
+import edu.cornell.kfs.cemi.sys.util.CemiUtils;
+import edu.cornell.kfs.cemi.vnd.CemiEntityContactConstants;
 import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactHeaderBo;
 
 public class CemiEntityContactHeaderBoFactory {
 
-    private VendorContact vendorContact;
+    private List<VendorContact> mergedContacts;
+    private Map<String, String> tenantedContactTypeMappings;
     private String supplierId;
     private int contactIndex;
 
-    public CemiEntityContactHeaderBoFactory(final VendorContact vendorContact, final String supplierId,
-            final int contactIndex) {
-        this.vendorContact = vendorContact;
+    public CemiEntityContactHeaderBoFactory(final List<VendorContact> mergedContacts,
+            final Map<String, String> tenantedContactTypeMappings, final String supplierId, final int contactIndex) {
+        Validate.isTrue(CollectionUtils.isNotEmpty(mergedContacts), "mergedContacts cannot be null or empty");
+        Validate.isTrue(MapUtils.isNotEmpty(tenantedContactTypeMappings),
+                "tenantedContactTypeMappings cannot be null or empty");
+        Validate.notBlank(supplierId, "supplierId cannot be blank");
+        Validate.isTrue(contactIndex > 0, "contactIndex must be a positive integer");
+        this.mergedContacts = mergedContacts;
+        this.tenantedContactTypeMappings = tenantedContactTypeMappings;
         this.supplierId = supplierId;
         this.contactIndex = contactIndex;
     }
 
-    public static CemiEntityContactHeaderBo createHeaderBoFrom(final VendorContact vendorContact,
-            final String supplierId, final int contactIndex) {
+    public static CemiEntityContactHeaderBo createHeaderBoFrom(final List<VendorContact> mergedContacts,
+            final Map<String, String> tenantedContactTypeMappings, final String supplierId, final int contactIndex) {
         final CemiEntityContactHeaderBoFactory factory = new CemiEntityContactHeaderBoFactory(
-                vendorContact, supplierId, contactIndex);
+                mergedContacts, tenantedContactTypeMappings, supplierId, contactIndex);
         return factory.createCemiEntityContactHeaderBo();
     }
 
     public CemiEntityContactHeaderBo createCemiEntityContactHeaderBo() {
-        Validate.validState(ObjectUtils.isNotNull(vendorContact), "Vendor Contact cannot be null");
-        Validate.validState(StringUtils.isNotBlank(supplierId), "Supplier ID cannot be blank");
-        Validate.validState(contactIndex > 0, "Contact Index must be a positive integer");
-
         final String spreadsheetKey = supplierId;
         final String nameRowId = Integer.toString(contactIndex);
-        final List<String> nameSegments = determineNameSegments(vendorContact.getVendorContactName());
+        final VendorContact firstVendorContact = mergedContacts.get(0);
+        final List<String> nameSegments = determineNameSegments(firstVendorContact.getVendorContactName());
+        final List<String> tenantedContactTypes = determineTenantedContactTypes();
 
         final CemiEntityContactHeaderBo headerBo = new CemiEntityContactHeaderBo();
+
+        headerBo.setMergedContacts(mergedContacts);
+        headerBo.setMergedTenantedContactTypes(tenantedContactTypes);
 
         headerBo.setSpreadsheetKey(spreadsheetKey);
         headerBo.setAddOnly(CemiBaseConstants.EMPTY_STRING);
@@ -102,6 +114,19 @@ public class CemiEntityContactHeaderBoFactory {
         } else {
             return List.of(StringUtils.defaultString(vendorContactName), CemiBaseConstants.EMPTY_STRING);
         }
+    }
+
+    private List<String> determineTenantedContactTypes() {
+        final String[] tenantedTypes = mergedContacts.stream()
+                .map(VendorContact::getVendorContactTypeCode)
+                .filter(StringUtils::isNotBlank)
+                .map(tenantedContactTypeMappings::get)
+                .filter(StringUtils::isNotBlank)
+                .distinct()
+                .toArray(String[]::new);
+
+        return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
+                CemiEntityContactConstants.MAX_TENANTED_TYPES, tenantedTypes);
     }
 
 }

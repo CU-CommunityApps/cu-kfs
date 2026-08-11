@@ -53,6 +53,7 @@
             <value>${staging.directory}/cemi/vnd/cemiOrderFromSupplierExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiBusinessEntityContactExtract</value>
             <value>${staging.directory}/cemi/conversions/outbound</value>
+            <value>${staging.directory}/cemi/translatetable/supplier</value>
           </list>
         </property>
     </bean>
@@ -408,5 +409,17 @@
           class="edu.cornell.kfs.cemi.vnd.batch.CreateCemiEntityContactExtractStep"
           parent="step"
           p:cemiEntityContactExtractService-ref="cemiEntityContactExtractService"/>
+
+    <bean id="cemiWorkdayTenantedEntityContactType" parent="cemiWorkdayTenantedEntityContactType-parentBean"/>
+    <bean id="cemiWorkdayTenantedEntityContactType-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/supplier"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_TNTD_ENT_CNTCT_TYP_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.vnd.batch.translatetable.KfsToWorkdayTenantedEntityContactTypeCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdayTenantedEntityContactType" alias="Supplier_KfsContactType-TranslateWorkdayTenantedContactType"/>
 
 </beans>

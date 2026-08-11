@@ -80,7 +80,7 @@
         <field-descriptor name="addressUsageTypePrimary" column="ADDR_USG_TYP_PRMRY" jdbc-type="VARCHAR"/>
         <field-descriptor name="addressUsageType" column="ADDR_USG_TYP" jdbc-type="VARCHAR"/>
         <field-descriptor name="addressUseFor" column="ADDR_US_FOR" jdbc-type="VARCHAR"/>
-        <field-descriptor name="addressUseForTenanted" column="ADDR_US_FOR_TNNTD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressUseForTenanted" column="ADDR_US_FOR_TNTD" jdbc-type="VARCHAR"/>
         <field-descriptor name="addressUsageComments" column="ADDR_USG_CMMNTS" jdbc-type="VARCHAR"/>
         <field-descriptor name="addressNumberOfDays" column="ADDR_NBR_OF_DYS" jdbc-type="VARCHAR"/>
         <field-descriptor name="addressMunicipalityLocal" column="ADDR_MNCPLTY_LCL" jdbc-type="VARCHAR"/>
@@ -88,7 +88,7 @@
         <field-descriptor name="newAddressId" column="NEW_ADDR_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="phoneRowId" column="PHN_ROW_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="phoneAreaCode" column="PHN_AR_CD" jdbc-type="VARCHAR"/>
-        <field-descriptor name="tenantFormattedPhone" column="TNNT_FRMTTD_PHN" jdbc-type="VARCHAR"/>
+        <field-descriptor name="tenantFormattedPhone" column="TNT_FRMTTD_PHN" jdbc-type="VARCHAR"/>
         <field-descriptor name="internationalFormattedPhone" column="INTRNTNL_FRMTTD_PHN" jdbc-type="VARCHAR"/>
         <field-descriptor name="phoneNumberWithoutAreaCode" column="PHN_NBR_WTHT_AR_CD" jdbc-type="VARCHAR"/>
         <field-descriptor name="nationalFormattedPhone" column="NTNL_FRMTTD_PHN" jdbc-type="VARCHAR"/>
@@ -107,7 +107,7 @@
         <field-descriptor name="phoneUsageTypePrimary" column="PHN_USG_TYP_PRMRY" jdbc-type="VARCHAR"/>
         <field-descriptor name="phoneUsageType" column="PHN_USG_TYP" jdbc-type="VARCHAR"/>
         <field-descriptor name="phoneUseFor" column="PHN_US_FOR" jdbc-type="VARCHAR"/>
-        <field-descriptor name="phoneUseForTenanted" column="PHN_US_FOR_TNNTD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneUseForTenanted" column="PHN_US_FOR_TNTD" jdbc-type="VARCHAR"/>
         <field-descriptor name="phoneUsageComments" column="PHN_USG_CMMNTS" jdbc-type="VARCHAR"/>
         <field-descriptor name="existingPhoneId" column="XSTNG_PHN_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="newPhoneId" column="NEW_PHN_ID" jdbc-type="VARCHAR"/>
@@ -122,7 +122,7 @@
         <field-descriptor name="emailUsageTypePrimary" column="EML_USG_TYP_PRMRY" jdbc-type="VARCHAR"/>
         <field-descriptor name="emailUsageType" column="EML_USG_TYP" jdbc-type="VARCHAR"/>
         <field-descriptor name="emailUseFor" column="EML_US_FOR" jdbc-type="VARCHAR"/>
-        <field-descriptor name="emailUseForTenanted" column="EML_US_FOR_TNNTD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseForTenanted" column="EML_US_FOR_TNTD" jdbc-type="VARCHAR"/>
         <field-descriptor name="emailUsageComments" column="EML_USG_CMMNTS" jdbc-type="VARCHAR"/>
         <field-descriptor name="existingEmailId" column="EXSTNG_EML_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="newEmailId" column="NEW_EML_ID" jdbc-type="VARCHAR"/>
@@ -138,7 +138,7 @@
         <field-descriptor name="instantMessengerUsageTypePrimary" column="INSTNT_MSSNGR_USG_TYP_PRMRY" jdbc-type="VARCHAR"/>
         <field-descriptor name="instantMessengerUsageType" column="INSTNT_MSSNGR_USG_TYP" jdbc-type="VARCHAR"/>
         <field-descriptor name="instantMessengerUseFor" column="INSTNT_MSSNGR_US_FOR" jdbc-type="VARCHAR"/>
-        <field-descriptor name="instantMessengerUseForTenanted" column="INSTNT_MSSNGR_US_FOR_TNNTD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="instantMessengerUseForTenanted" column="INSTNT_MSSNGR_US_FOR_TNTD" jdbc-type="VARCHAR"/>
         <field-descriptor name="instantMessengerUsageComments" column="INSTNT_MSSNGR_USG_CMMNTS" jdbc-type="VARCHAR"/>
         <field-descriptor name="existingInstantMessengerId" column="EXSTNG_INSTNT_MSSNGR_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="newInstantMessengerId" column="NEW_INSTNT_MSSNGR_ID" jdbc-type="VARCHAR"/>
@@ -153,12 +153,21 @@
         <field-descriptor name="webAddressUsageTypePrimary" column="WEB_ADDR_USG_TYP_PRMRY" jdbc-type="VARCHAR"/>
         <field-descriptor name="webAddressUsageType" column="WEB_ADDR_USG_TYP" jdbc-type="VARCHAR"/>
         <field-descriptor name="webAddressUseFor" column="WEB_ADDR_US_FOR" jdbc-type="VARCHAR"/>
-        <field-descriptor name="webAddressUseForTenanted" column="WEB_ADDR_US_FOR_TNNTD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="webAddressUseForTenanted" column="WEB_ADDR_US_FOR_TNTD" jdbc-type="VARCHAR"/>
         <field-descriptor name="webAddressUsageComments" column="WEB_ADDR_USG_CMMNTS" jdbc-type="VARCHAR"/>
         <field-descriptor name="existingWebAddressId" column="EXSTNG_WEB_ADDR_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="newWebAddressId" column="NEW_WEB_ADDR_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="contactTypeRowId" column="CNTCT_TYP_ROW_ID" jdbc-type="VARCHAR"/>
-        <field-descriptor name="contactTypeTenanted" column="CNTCT_TYP_TNNTD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="contactTypeTenanted1" column="CNTCT_TYP_TNTD_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="contactTypeTenanted2" column="CNTCT_TYP_TNTD_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="contactTypeTenanted3" column="CNTCT_TYP_TNTD_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="contactTypeTenanted4" column="CNTCT_TYP_TNTD_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="contactTypeTenanted5" column="CNTCT_TYP_TNTD_5" jdbc-type="VARCHAR"/>
+        <field-descriptor name="contactTypeTenanted6" column="CNTCT_TYP_TNTD_6" jdbc-type="VARCHAR"/>
+        <field-descriptor name="contactTypeTenanted7" column="CNTCT_TYP_TNTD_7" jdbc-type="VARCHAR"/>
+        <field-descriptor name="contactTypeTenanted8" column="CNTCT_TYP_TNTD_8" jdbc-type="VARCHAR"/>
+        <field-descriptor name="contactTypeTenanted9" column="CNTCT_TYP_TNTD_9" jdbc-type="VARCHAR"/>
+        <field-descriptor name="contactTypeTenanted10" column="CNTCT_TYP_TNTD_10" jdbc-type="VARCHAR"/>
         <field-descriptor name="businessEntityContactType" column="BUS_ENT_CNTCT_TYP" jdbc-type="VARCHAR"/>
         <field-descriptor name="externalSystemId" column="EXTRNL_SYS_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="externalId" column="EXTRNL_ID" jdbc-type="VARCHAR"/>
