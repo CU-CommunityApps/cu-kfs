@@ -36,7 +36,7 @@ public final class CemiEntityContactConstants {
     public static final int US_AREA_CODE_LENGTH = 3;
     public static final int MAX_TENANTED_TYPES = 10;
     public static final String ROW_ID_1 = "1";
-    public static final String PHONE_PARSE_ERROR_MESSAGE = "An error occurred when parsing the phone number";
+    public static final String PHONE_PARSE_ERROR_MESSAGE = "Error_Parsing_Phone";
 
     public static final class EntityContactExtractSheets {
         public static final String BUSINESS_ENTITY_CONTACT = "Business Entity Contact";

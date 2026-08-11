@@ -90,10 +90,9 @@ public class CemiEntityContactPhoneBoFactory {
                     vendorContactPhone.getVendorContactPhoneGeneratedIdentifier());
         }
 
-        final String phoneUsageComments = determinePhoneUsageComments();
         final CemiEntityContactGenericUsageBo phoneUsage = firstPhoneNumber.isPresent()
                 ? CemiEntityContactGenericUsageBoFactory.createUsageBoFrom(
-                        CemiEntityContactConstants.ROW_ID_1, CommunicationUsageTypes.WORK, phoneUsageComments)
+                        CemiEntityContactConstants.ROW_ID_1, CommunicationUsageTypes.WORK, CemiBaseConstants.EMPTY_STRING)
                 : CemiEntityContactGenericUsageBoFactory.createEmptyUsageBo();
 
         phoneBo.setPhoneRowId(determinePhoneRowId());
@@ -201,11 +200,18 @@ public class CemiEntityContactPhoneBoFactory {
     }
 
     private String determinePlainUnprefixedPhoneNumber() {
-        if (firstPhoneNumber.isEmpty() || parsedPhoneNumber.isEmpty()) {
+        if (didErrorOccurWhenParsingPhoneNumber()) {
+            return CemiEntityContactConstants.PHONE_PARSE_ERROR_MESSAGE;
+        } else if (firstPhoneNumber.isEmpty() || parsedPhoneNumber.isEmpty()) {
             return CemiBaseConstants.EMPTY_STRING;
+        } else {
+            final PhoneNumber phoneNumber = parsedPhoneNumber.get();
+            return phoneNumberUtil.getNationalSignificantNumber(phoneNumber);
         }
-        final PhoneNumber phoneNumber = parsedPhoneNumber.get();
-        return phoneNumberUtil.getNationalSignificantNumber(phoneNumber);
+    }
+
+    private boolean didErrorOccurWhenParsingPhoneNumber() {
+        return firstPhoneNumber.isPresent() && parsedPhoneNumber.isEmpty();
     }
 
     private String determinePhoneExtension() {
@@ -224,15 +230,6 @@ public class CemiEntityContactPhoneBoFactory {
 
     private String determinePhoneDeviceType() {
         return firstPhoneNumber.isPresent() ? PhoneDeviceTypes.TELEPHONE : CemiBaseConstants.EMPTY_STRING;
-    }
-
-    private String determinePhoneUsageComments() {
-        return didErrorOccurWhenParsingPhoneNumber()
-                ? CemiEntityContactConstants.PHONE_PARSE_ERROR_MESSAGE : CemiBaseConstants.EMPTY_STRING;
-    }
-
-    private boolean didErrorOccurWhenParsingPhoneNumber() {
-        return firstPhoneNumber.isPresent() && parsedPhoneNumber.isEmpty();
     }
 
 }
