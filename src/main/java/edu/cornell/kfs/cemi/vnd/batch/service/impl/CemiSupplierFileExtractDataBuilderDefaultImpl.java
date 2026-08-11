@@ -1,8 +1,6 @@
 package edu.cornell.kfs.cemi.vnd.batch.service.impl;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -14,38 +12,38 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.module.cg.businessobject.Award;
-import org.kuali.kfs.pdp.PdpPropertyConstants;
 import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
+import org.kuali.kfs.pdp.PdpPropertyConstants;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
-import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardScheduleFileAwardScheduleTabRowBo;
-import edu.cornell.kfs.cemi.module.cg.batch.service.impl.CemiAwardScheduleFileAwardScheduleTabRowBoFactory;
-import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBase;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiOrmDataBuilderBase;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
-import edu.cornell.kfs.cemi.vnd.batch.dto.CemiSupplier;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileSupplierTabRowBo;
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiSupplierFileExtractDataBuilder;
-import edu.cornell.kfs.cemi.vnd.util.VendorAccountFinder;
-import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorDao;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorOrmDao;
 
 public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuilderBase implements CemiSupplierFileExtractDataBuilder{
 
     private static final Logger LOG = LogManager.getLogger();
     
     protected DateTimeService dateTimeService;
+    protected CemiVendorOrmDao cemiVendorOrmDao;
+    protected CemiVendorDao cemiVendorDao;
     protected final boolean maskSensitiveData;
     protected final DecimalFormat supplierIdFormatter;
     protected int vendorCount;
     
     protected CemiSupplierFileExtractDataBuilderDefaultImpl(final BusinessObjectService businessObjectService, final String jobRunDateString,
             final DateTimeService dateTimeService,
+            CemiVendorOrmDao cemiVendorOrmDao,
+            CemiVendorDao cemiVendorDao,
             final boolean maskSensitiveData) { 
-        super(businessObjectService, jobRunDateString);
+        super(businessObjectService, jobRunDateString, CemiSupplierFileSupplierTabRowBo.class);
         Validate.notNull(dateTimeService, "dateTimeService cannot be null");
         this.supplierIdFormatter = new DecimalFormat(CemiSupplierConstants.SUPPLIER_ID_FORMAT);
         this.dateTimeService = dateTimeService;
@@ -98,25 +96,29 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
             if (vendorCount % 1000 == 0) {
                 LOG.info("writeSupplierDataToIntermediateStorage, Writing {} Vendors and counting...", vendorCount);
             }
-            final Collection<PayeeACHAccount> vendorAccounts = findAllActiveAccountsForVendor(
-                    vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
+//            final Collection<PayeeACHAccount> vendorAccounts = findAllActiveAccountsForVendor(
+//                    vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
 
             //Suppliers Tab
             final String supplierId = supplierIdFormatter.format(vendorCount);
-            final CemiSupplier supplier = new CemiSupplier(vendor, supplierId, maskSensitiveData);
+//            final CemiSupplier supplier = new CemiSupplier(vendor, supplierId, maskSensitiveData);
+            createAndStoreSupplierFileSupplierTabRow(vendor, supplierId);
         }
         
     }
     
-    protected void createAndStoreSupplierFileSupplierTabRow(final Award award, 
-            final AwardExtendedAttribute awardExtendedAttribute, final String jobRunDateString) {
+    protected void createAndStoreSupplierFileSupplierTabRow(final VendorDetail vendor, final String jobRunDateString) {
 
-        CemiAwardScheduleFileAwardScheduleTabRowBoFactory factoryForBo = 
-                new CemiAwardScheduleFileAwardScheduleTabRowBoFactory(award, awardExtendedAttribute, jobRunDateString,
-                        dateTimeService, maskSensitiveData);
+//        CemiAwardScheduleFileAwardScheduleTabRowBoFactory factoryForBo = 
+//                new CemiAwardScheduleFileAwardScheduleTabRowBoFactory(award, awardExtendedAttribute, jobRunDateString,
+//                        dateTimeService, maskSensitiveData);
         
-        CemiAwardScheduleFileAwardScheduleTabRowBo awardScheduleTabRow = factoryForBo.createCemiAwardScheduleFileAwardScheduleTabRowBo();
-        storeSheetRow(awardScheduleTabRow);
+        CemiSupplierFileSupplierTabRowBoFactory factoryForBo = new CemiSupplierFileSupplierTabRowBoFactory(vendor, jobRunDateString, dateTimeService, vendorCount, maskSensitiveData);
+        
+//        CemiAwardScheduleFileAwardScheduleTabRowBo awardScheduleTabRow = factoryForBo.createCemiAwardScheduleFileAwardScheduleTabRowBo();
+//        
+        CemiSupplierFileSupplierTabRowBo supplierTabRow = factoryForBo.createCemiSupplierFileSupplierTabRowBo();
+        storeSheetRow(supplierTabRow);
     }
     
     private Collection<PayeeACHAccount> findAllActiveAccountsForVendor(final Integer vendorHeaderGeneratedIdentifier,
