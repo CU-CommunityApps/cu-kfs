@@ -119,37 +119,30 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
         getCemiVendorDao().queryAndStoreVendorIdsForSupplierExtract();
     }
     
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void generateIntermediateExtractData(LocalDateTime jobRunDate) {
         LOG.info("generateIntermediateExtractData, Generating data rows for Supplier spreadsheet "
                 + "and placing in intermediate storage...");
-        try {
-            generateSupplierExtractData(jobRunDate);
-        } catch (final Exception e) {
-            LOG.error("generateIntermediateExtractData, Creation of Supplier Extract data failed", e);
-            throw new RuntimeException(e);
-        }
+        try (
+                // Replace this builder with a temp table implementation when ready.
+//                final CemiSupplierDataBuilderCsvImpl dataBuilder = new CemiSupplierDataBuilderCsvImpl(
+//                        getOutputDefinitionForSupplierExtract(), getCemiVendorDao(), jobRunDate, supplierFileCreationDirectory, 
+//                        shouldMaskCemiSensitiveData());
+                final Stream<VendorDetail> vendors = getCemiVendorOrmDao().getVendorsForCemiSupplierExtractAsCloseableStream();
+            ) {
+                final Iterator<VendorDetail> vendorsIterator = vendors.iterator();
+                final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
+                CemiSupplierFileExtractDataBuilderDefaultImpl dataBuilder = new CemiSupplierFileExtractDataBuilderDefaultImpl(businessObjectService, jobRunDateString, dateTimeService, cemiVendorOrmDao,
+                cemiVendorDao, shouldMaskCemiSensitiveData());
+                dataBuilder.writeSupplierFileSupplierTabExtractDataToIntermediateStorage(vendorsIterator);
+                
+//                dataBuilder.writeSupplierDataToIntermediateStorage(
+//                        vendorsIterator, this::findAllActiveAccountsForVendor, jobRunDate);
+            }
         
     }
 
-    private void generateSupplierExtractData(
-            final LocalDateTime jobRunDate) throws IOException {
-        try (
-            // Replace this builder with a temp table implementation when ready.
-//            final CemiSupplierDataBuilderCsvImpl dataBuilder = new CemiSupplierDataBuilderCsvImpl(
-//                    getOutputDefinitionForSupplierExtract(), getCemiVendorDao(), jobRunDate, supplierFileCreationDirectory, 
-//                    shouldMaskCemiSensitiveData());
-            final Stream<VendorDetail> vendors = getCemiVendorOrmDao().getVendorsForCemiSupplierExtractAsCloseableStream();
-        ) {
-            final Iterator<VendorDetail> vendorsIterator = vendors.iterator();
-            final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
-            CemiSupplierFileExtractDataBuilderDefaultImpl dataBuilder = new CemiSupplierFileExtractDataBuilderDefaultImpl(businessObjectService, jobRunDateString, dateTimeService, shouldMaskCemiSensitiveData());
-            dataBuilder.writeSupplierFileSupplierTabExtractDataToIntermediateStorage(vendorsIterator);
-            
-//            dataBuilder.writeSupplierDataToIntermediateStorage(
-//                    vendorsIterator, this::findAllActiveAccountsForVendor, jobRunDate);
-        }
-    }
 
     private Collection<PayeeACHAccount> findAllActiveAccountsForVendor(final Integer vendorHeaderGeneratedIdentifier,
             final Integer vendorDetailAssignedIdentifier) throws IOException {
