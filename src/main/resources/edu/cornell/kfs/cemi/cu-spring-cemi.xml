@@ -52,6 +52,7 @@
             <value>${staging.directory}/cemi/vnd/cemiOrderFromSupplierExtract</value>
             <value>${staging.directory}/cemi/conversions/outbound</value>
             <value>${staging.directory}/cemi/translatetable/award</value>
+            <value>${staging.directory}/cemi/translatetable/country</value>
           </list>
         </property>
     </bean>
@@ -390,5 +391,32 @@
           p:lastUpdateTimestampInTable="true"/>
           
     <alias name="cemiNovelutionAward" alias="Award-NovelutionAward"/>
+
+    <!-- ISO 3-Character Country Code Mapping Import and related service -->
+
+    <bean id="cemiIso3CharCountryCodes" parent="cemiIso3CharCountryCodes-parentBean"/>
+    <bean id="cemiIso3CharCountryCodes-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/country"
+          p:legacyDataDestinationTableName="CU_CEMI_ISO_CNTRY_MAPPING_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.sys.batch.translatetable.Iso2CharTo3CharCountryCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiIso3CharCountryCodes" alias="Country_Iso2CharCountry-TranslateIso3CharCountry"/>
+
+    <bean id="cemiIsoCountryService" parent="cemiIsoCountryService-parentBean"/>
+    <bean id="cemiIsoCountryService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.batch.service.impl.CemiIsoCountryServiceImpl"
+          p:cemiIsoCountryDao-ref="cemiIsoCountryDao"/>
+
+    <bean id="cemiIsoCountryDao" parent="cemiIsoCountryDao-parentBean"/>
+    <bean id="cemiIsoCountryDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.dataaccess.impl.CemiIsoCountryDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
 
 </beans>

@@ -24,7 +24,8 @@ public final class CemiBaseConstants {
     public static final String CU_CEMI_DEVELOPMENT_USE_SMALLER_DATA_SET_KEY = "cu.cemi.development.use.smaller.data.set";
     
     public static final String UNMASK = "UNMASK";
-    
+
+    public static final String ISO_3_CHAR_COUNTRY_CODE_UNKNOWN = "ZZZ";
 
     public static final class FileExtensions {
         public static final String XLSX = ".xlsx";
