@@ -73,8 +73,8 @@
         <plugin.dependency.version>3.7.1</plugin.dependency.version>
         <plugin.war.version>3.4.0</plugin.war.version>
         <jaxws-ri.version>2.3.0</jaxws-ri.version>
-        <log4j.version>2.25.3</log4j.version>
-        <cxf.version>3.5.11</cxf.version>
+        <log4j.version>2.25.4</log4j.version>
+        <cxf.version>3.6.12</cxf.version>
         <wss4j.version>2.4.3</wss4j.version>
         <libphonenumber.version>9.0.36</libphonenumber.version>
         <!--
