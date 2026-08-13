@@ -52,7 +52,7 @@
             <value>${staging.directory}/cemi/vnd/cemiOrderFromSupplierExtract</value>
             <value>${staging.directory}/cemi/conversions/outbound</value>
             <value>${staging.directory}/cemi/translatetable/award</value>
-            <value>${staging.directory}/cemi/translatetable/country</value>
+            <value>${staging.directory}/cemi/translatetable/common</value>
           </list>
         </property>
     </bean>
@@ -398,7 +398,7 @@
     <bean id="cemiIso3CharCountryCodes-parentBean"
           abstract="true"
           parent="cemiCsvBatchInputFileType"
-          p:directoryPath="${staging.directory}/cemi/translatetable/country"
+          p:directoryPath="${staging.directory}/cemi/translatetable/common"
           p:legacyDataDestinationTableName="CU_CEMI_ISO_CNTRY_MAPPING_T"
           p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.sys.batch.translatetable.Iso2CharTo3CharCountryCsvTableColumns"
           p:hasHeaderRow="true"
