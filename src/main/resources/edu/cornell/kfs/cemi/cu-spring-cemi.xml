@@ -459,7 +459,8 @@
           p:parameterService-ref="parameterService"
           p:cemiEntityContactExtractOrmDao-ref="cemiEntityContactExtractOrmDao"
           p:cemiEntityContactExtractDao-ref="cemiEntityContactExtractDao"
-          p:businessObjectService-ref="businessObjectService"/>
+          p:businessObjectService-ref="businessObjectService"
+          p:cemiIsoCountryService-ref="cemiIsoCountryService"/>
 
     <bean id="createCemiEntityContactExtractStep"
           class="edu.cornell.kfs.cemi.vnd.batch.CreateCemiEntityContactExtractStep"

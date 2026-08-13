@@ -14,6 +14,7 @@ import org.kuali.kfs.vnd.businessobject.VendorContact;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.cornell.kfs.cemi.sys.batch.service.CemiIsoCountryService;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiDataExtractServiceBase;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiEntityContactConstants;
@@ -31,6 +32,7 @@ public class CemiEntityContactExtractServiceImpl extends CemiDataExtractServiceB
     private CemiEntityContactExtractOrmDao cemiEntityContactExtractOrmDao;
     private CemiEntityContactExtractDao cemiEntityContactExtractDao;
     private BusinessObjectService businessObjectService;
+    private CemiIsoCountryService cemiIsoCountryService;
 
     public CemiEntityContactExtractServiceImpl(final Environment environment) {
         super(environment);
@@ -81,7 +83,7 @@ public class CemiEntityContactExtractServiceImpl extends CemiDataExtractServiceB
             final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
             final String supplierJobRunDateString = getSupplierJobRunDateString();
             final CemiEntityContactFileExtractDataBuilderDefaultImpl dataBuilder = new CemiEntityContactFileExtractDataBuilderDefaultImpl(
-                    businessObjectService, jobRunDateString, supplierJobRunDateString,
+                    businessObjectService, jobRunDateString, supplierJobRunDateString, cemiIsoCountryService,
                     cemiEntityContactExtractDao, shouldMaskCemiSensitiveData());
             final Iterator<VendorContact> vendorContactIterator = vendorContacts.iterator();
             dataBuilder.writeEntityContactFileEntityContactTabExtractDataToIntermediateStorage(vendorContactIterator);
@@ -122,6 +124,10 @@ public class CemiEntityContactExtractServiceImpl extends CemiDataExtractServiceB
 
     public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
+    }
+
+    public void setCemiIsoCountryService(final CemiIsoCountryService cemiIsoCountryService) {
+        this.cemiIsoCountryService = cemiIsoCountryService;
     }
 
 }

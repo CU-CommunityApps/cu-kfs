@@ -18,6 +18,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
 import org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber;
 
+import edu.cornell.kfs.cemi.sys.batch.service.CemiIsoCountryService;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiOrmDataBuilderBase;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiEntityContactConstants;
@@ -39,18 +40,21 @@ public class CemiEntityContactFileExtractDataBuilderDefaultImpl extends CemiOrmD
     private static final Logger LOG = LogManager.getLogger();
    
     private String supplierJobRunDateString;
+    private CemiIsoCountryService cemiIsoCountryService;
     private CemiEntityContactExtractDao cemiEntityContactExtractDao;
     private boolean maskSensitiveData;
     private Map<String, String> tenantedContactTypeMappings;
 
     public CemiEntityContactFileExtractDataBuilderDefaultImpl(
             final BusinessObjectService businessObjectService, final String jobRunDateString,
-            final String supplierJobRunDateString, final CemiEntityContactExtractDao cemiEntityContactExtractDao,
-            final boolean maskSensitiveData) {
+            final String supplierJobRunDateString, final CemiIsoCountryService cemiIsoCountryService,
+            final CemiEntityContactExtractDao cemiEntityContactExtractDao, final boolean maskSensitiveData) {
         super(businessObjectService, jobRunDateString, CemiEntityContactFileEntityContactTabRowBo.class);
         Validate.notBlank(supplierJobRunDateString, "supplierJobRunDateString cannot be blank");
+        Validate.notNull(cemiIsoCountryService, "cemiIsoCountryService cannot be null");
         Validate.notNull(cemiEntityContactExtractDao, "cemiEntityContactExtractDao cannot be null");
         this.supplierJobRunDateString = supplierJobRunDateString;
+        this.cemiIsoCountryService = cemiIsoCountryService;
         this.cemiEntityContactExtractDao = cemiEntityContactExtractDao;
         this.maskSensitiveData = maskSensitiveData;
         this.tenantedContactTypeMappings = cemiEntityContactExtractDao.getTenantedContactTypeMappings();
@@ -127,7 +131,7 @@ public class CemiEntityContactFileExtractDataBuilderDefaultImpl extends CemiOrmD
 
             contactCount++;
             final CemiEntityContactHeaderBo headerBo = CemiEntityContactHeaderBoFactory.createHeaderBoFrom(
-                    mergedVendorContact.getMergedContacts(), tenantedContactTypeMappings, supplierId, contactCount);
+                    mergedVendorContact, tenantedContactTypeMappings, supplierId, contactCount);
 
             final int tenantedContactTypeCount = CollectionUtils.size(headerBo.getMergedTenantedContactTypes());
             if (headerBo.getMergedTenantedContactTypes().size() > CemiEntityContactConstants.MAX_TENANTED_TYPES) {
@@ -140,7 +144,7 @@ public class CemiEntityContactFileExtractDataBuilderDefaultImpl extends CemiOrmD
             for (final List<VendorContact> itemsForMergedEmail : mergedEmails.values()) {
                 emailCount++;
                 final CemiEntityContactPhoneBo emptyPhoneBo = CemiEntityContactPhoneBoFactory
-                        .createCemiEntityContactPhoneBoFrom(List.of(), -1);
+                        .createCemiEntityContactPhoneBoFrom(List.of(), -1, cemiIsoCountryService);
                 final CemiEntityContactEmailBo emailBo = CemiEntityContactEmailBoFactory
                         .createEmailBoFrom(itemsForMergedEmail, emailCount);
                 createAndStoreEntityContactBo(headerBo, emptyPhoneBo, emailBo);
@@ -151,7 +155,7 @@ public class CemiEntityContactFileExtractDataBuilderDefaultImpl extends CemiOrmD
             for (final List<VendorContactPhoneNumber> itemsForMergedPhone : mergedPhones.values()) {
                 phoneCount++;
                 final CemiEntityContactPhoneBo phoneBo = CemiEntityContactPhoneBoFactory
-                        .createCemiEntityContactPhoneBoFrom(itemsForMergedPhone, phoneCount);
+                        .createCemiEntityContactPhoneBoFrom(itemsForMergedPhone, phoneCount, cemiIsoCountryService);
                 final CemiEntityContactEmailBo emptyEmailBo = CemiEntityContactEmailBoFactory
                         .createEmailBoFrom(List.of(), -1);
                 createAndStoreEntityContactBo(headerBo, phoneBo, emptyEmailBo);

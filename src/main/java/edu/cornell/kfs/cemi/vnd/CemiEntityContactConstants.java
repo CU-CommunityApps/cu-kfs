@@ -33,7 +33,6 @@ public final class CemiEntityContactConstants {
     public static final String ENTITY_CONTACT_EXTRACT_FILENAME_PREFIX = "Business_Entity_Contact_Supplier_ITH_";
     public static final String ENTITY_CONTACT_EXTRACT_PLAIN_FILENAME = "Business_Entity_Contact_Supplier.xlsx";
  
-    public static final int US_AREA_CODE_LENGTH = 3;
     public static final int MAX_TENANTED_TYPES = 10;
     public static final String ROW_ID_1 = "1";
     public static final String PHONE_PARSE_ERROR_MESSAGE = "Error_Parsing_Phone";
@@ -43,7 +42,7 @@ public final class CemiEntityContactConstants {
     }
 
     public static final class PhoneDeviceTypes {
-        public static final String TELEPHONE = "Telephone";
+        public static final String MOBILE = "Mobile";
     }
 
     public static final class CommunicationUsageTypes {

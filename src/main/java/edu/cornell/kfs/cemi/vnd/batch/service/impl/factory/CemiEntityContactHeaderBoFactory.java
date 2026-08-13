@@ -2,6 +2,7 @@ package edu.cornell.kfs.cemi.vnd.batch.service.impl.factory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -10,50 +11,58 @@ import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.Validate;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
+import org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber;
 
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiEntityContactConstants;
 import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactHeaderBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.MergedVendorContact;
+import edu.cornell.kfs.cemi.vnd.util.CemiVendorUtils;
 
 public class CemiEntityContactHeaderBoFactory {
 
-    private List<VendorContact> mergedContacts;
+    private List<VendorContact> mergedContactBos;
+    private Map<String, List<VendorContactPhoneNumber>> mergedPhoneNumbers;
     private Map<String, String> tenantedContactTypeMappings;
     private String supplierId;
     private int contactIndex;
 
-    public CemiEntityContactHeaderBoFactory(final List<VendorContact> mergedContacts,
+    public CemiEntityContactHeaderBoFactory(final MergedVendorContact mergedVendorContact,
             final Map<String, String> tenantedContactTypeMappings, final String supplierId, final int contactIndex) {
-        Validate.isTrue(CollectionUtils.isNotEmpty(mergedContacts), "mergedContacts cannot be null or empty");
+        Validate.notNull(mergedVendorContact, "mergedVendorContact cannot be null");
+        Validate.isTrue(CollectionUtils.isNotEmpty(mergedVendorContact.getMergedContacts()),
+                "mergedVendorContact's list of merged contact BOs cannot be null or empty");
         Validate.isTrue(MapUtils.isNotEmpty(tenantedContactTypeMappings),
                 "tenantedContactTypeMappings cannot be null or empty");
         Validate.notBlank(supplierId, "supplierId cannot be blank");
         Validate.isTrue(contactIndex > 0, "contactIndex must be a positive integer");
-        this.mergedContacts = mergedContacts;
+        this.mergedContactBos = mergedVendorContact.getMergedContacts();
+        this.mergedPhoneNumbers = mergedVendorContact.getMergedPhoneNumbers();
         this.tenantedContactTypeMappings = tenantedContactTypeMappings;
         this.supplierId = supplierId;
         this.contactIndex = contactIndex;
     }
 
-    public static CemiEntityContactHeaderBo createHeaderBoFrom(final List<VendorContact> mergedContacts,
+    public static CemiEntityContactHeaderBo createHeaderBoFrom(final MergedVendorContact mergedVendorContact,
             final Map<String, String> tenantedContactTypeMappings, final String supplierId, final int contactIndex) {
         final CemiEntityContactHeaderBoFactory factory = new CemiEntityContactHeaderBoFactory(
-                mergedContacts, tenantedContactTypeMappings, supplierId, contactIndex);
+                mergedVendorContact, tenantedContactTypeMappings, supplierId, contactIndex);
         return factory.createCemiEntityContactHeaderBo();
     }
 
     public CemiEntityContactHeaderBo createCemiEntityContactHeaderBo() {
         final String spreadsheetKey = supplierId;
         final String nameRowId = Integer.toString(contactIndex);
-        final VendorContact firstVendorContact = mergedContacts.get(0);
+        final VendorContact firstVendorContact = mergedContactBos.get(0);
         final List<String> nameSegments = determineNameSegments(firstVendorContact.getVendorContactName());
         final List<String> tenantedContactTypes = determineTenantedContactTypes();
+        final String countryCode = determineCountryCodeForContact();
 
         final CemiEntityContactHeaderBo headerBo = new CemiEntityContactHeaderBo();
 
-        headerBo.setMergedContacts(mergedContacts);
+        headerBo.setMergedContacts(mergedContactBos);
         headerBo.setMergedTenantedContactTypes(tenantedContactTypes);
 
         headerBo.setSpreadsheetKey(spreadsheetKey);
@@ -69,7 +78,7 @@ public class CemiEntityContactHeaderBoFactory {
         headerBo.setNameRowId(nameRowId);
         headerBo.setFormattedName(CemiBaseConstants.EMPTY_STRING);
         headerBo.setReportingName(CemiBaseConstants.EMPTY_STRING);
-        headerBo.setCountry(CemiVendorConstants.COUNTRY_CODE_UNITED_STATES);
+        headerBo.setCountry(countryCode);
         headerBo.setTitle(CemiBaseConstants.EMPTY_STRING);
         headerBo.setTitleDescriptor(CemiBaseConstants.EMPTY_STRING);
         headerBo.setSalutation(CemiBaseConstants.EMPTY_STRING);
@@ -101,6 +110,19 @@ public class CemiEntityContactHeaderBoFactory {
         return headerBo;
     }
 
+    private String determineCountryCodeForContact() {
+        return mergedPhoneNumbers.values().stream()
+                .filter(CollectionUtils::isNotEmpty)
+                .map(mergedEntriesForPhone -> mergedEntriesForPhone.get(0))
+                .map(CemiVendorUtils::parsePhoneNumberIfPossible)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(CemiVendorUtils::getRegionCode)
+                .filter(StringUtils::isNotBlank)
+                .findFirst()
+                .orElse(CemiVendorConstants.COUNTRY_CODE_UNITED_STATES);
+    }
+
     /*
      * TODO: In future extracts, we may need more in-depth name-splitting logic to handle special cases
      *       (middle names, multiple concatenated names, company names, etc.)
@@ -117,7 +139,7 @@ public class CemiEntityContactHeaderBoFactory {
     }
 
     private List<String> determineTenantedContactTypes() {
-        final String[] tenantedTypes = mergedContacts.stream()
+        final String[] tenantedTypes = mergedContactBos.stream()
                 .map(VendorContact::getVendorContactTypeCode)
                 .filter(StringUtils::isNotBlank)
                 .map(tenantedContactTypeMappings::get)

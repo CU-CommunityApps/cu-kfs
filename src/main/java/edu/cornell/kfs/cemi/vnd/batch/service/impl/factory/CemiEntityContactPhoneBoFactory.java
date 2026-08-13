@@ -4,24 +4,23 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber;
 
-import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
+import edu.cornell.kfs.cemi.sys.batch.service.CemiIsoCountryService;
 import edu.cornell.kfs.cemi.vnd.CemiEntityContactConstants;
 import edu.cornell.kfs.cemi.vnd.CemiEntityContactConstants.CommunicationUsageTypes;
 import edu.cornell.kfs.cemi.vnd.CemiEntityContactConstants.PhoneDeviceTypes;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactGenericUsageBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactPhoneBo;
-import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.cemi.vnd.util.CemiVendorUtils;
 
 public class CemiEntityContactPhoneBoFactory {
 
@@ -30,48 +29,30 @@ public class CemiEntityContactPhoneBoFactory {
     private List<VendorContactPhoneNumber> mergedPhoneNumbers;
     private Optional<VendorContactPhoneNumber> firstPhoneNumber;
     private int phoneIndex;
+    private CemiIsoCountryService cemiIsoCountryService;
     private PhoneNumberUtil phoneNumberUtil;
     private Optional<PhoneNumber> parsedPhoneNumber;
 
     public CemiEntityContactPhoneBoFactory(final List<VendorContactPhoneNumber> mergedPhoneNumbers,
-            final int phoneIndex) {
+            final int phoneIndex, final CemiIsoCountryService cemiIsoCountryService) {
         Validate.notNull(mergedPhoneNumbers, "mergedPhoneNumbers list cannot be null");
-        Validate.isTrue(mergedPhoneNumbers.isEmpty() == phoneIndex <= 0,
+        Validate.isTrue(mergedPhoneNumbers.isEmpty() == (phoneIndex <= 0),
                 "phoneIndex must be a positive value if, and only if, mergedPhoneNumbers is non-empty");
+        Validate.notNull(cemiIsoCountryService, "cemiIsoCountryService cannot be null");
         this.mergedPhoneNumbers = mergedPhoneNumbers;
         this.firstPhoneNumber = !mergedPhoneNumbers.isEmpty() ? Optional.of(mergedPhoneNumbers.get(0)) : Optional.empty();
         this.phoneIndex = phoneIndex;
-        this.phoneNumberUtil = PhoneNumberUtil.getInstance();
-        this.parsedPhoneNumber = firstPhoneNumber.map(this::parsePhoneNumberIfPossible)
+        this.cemiIsoCountryService = cemiIsoCountryService;
+        this.phoneNumberUtil = CemiVendorUtils.getPhoneNumberUtil();
+        this.parsedPhoneNumber = firstPhoneNumber.map(CemiVendorUtils::parsePhoneNumberIfPossible)
                 .orElseGet(Optional::empty);
     }
 
-    private Optional<PhoneNumber> parsePhoneNumberIfPossible(final VendorContactPhoneNumber vendorContactPhone) {
-        final String rawPhoneNumber = vendorContactPhone.getVendorPhoneNumber();
-        Validate.validState(StringUtils.isNotBlank(rawPhoneNumber),
-                "Phone BO %s for Vendor Contact %s has a blank phone number; this should NEVER happen",
-                vendorContactPhone.getVendorContactPhoneGeneratedIdentifier(),
-                vendorContactPhone.getVendorContactGeneratedIdentifier());
-
-        try {
-            final String tentativeExplicitRegion = isPhoneNumberUsingInternationalFormat(rawPhoneNumber)
-                    ? null : KFSConstants.COUNTRY_CODE_UNITED_STATES;
-            final PhoneNumber parsedPhoneNumber = phoneNumberUtil.parseAndKeepRawInput(
-                    rawPhoneNumber, tentativeExplicitRegion);
-            return Optional.of(parsedPhoneNumber);
-        } catch (final NumberParseException | RuntimeException e) {
-            LOG.error("parsePhoneNumberIfPossible, Could not parse phone number from Phone BO {} for Vendor Contact {}; "
-                    + "will mark as an error row and only print the raw phone number",
-                    vendorContactPhone.getVendorContactPhoneGeneratedIdentifier(),
-                    vendorContactPhone.getVendorContactGeneratedIdentifier(), e);
-            return Optional.empty();
-        }
-    }
-
     public static CemiEntityContactPhoneBo createCemiEntityContactPhoneBoFrom(
-            final List<VendorContactPhoneNumber> mergedPhoneNumbers, final int phoneIndex) {
+            final List<VendorContactPhoneNumber> mergedPhoneNumbers, final int phoneIndex,
+            final CemiIsoCountryService cemiIsoCountryService) {
         final CemiEntityContactPhoneBoFactory factory = new CemiEntityContactPhoneBoFactory(
-                mergedPhoneNumbers, phoneIndex);
+                mergedPhoneNumbers, phoneIndex, cemiIsoCountryService);
         return factory.createCemiEntityContactPhoneBo();
     }
 
@@ -90,17 +71,19 @@ public class CemiEntityContactPhoneBoFactory {
                     vendorContactPhone.getVendorContactPhoneGeneratedIdentifier());
         }
 
+        final Pair<String, String> areaCodeRelatedSegments = determineAreaCodeRelatedPhoneSegments();
+
         final CemiEntityContactGenericUsageBo phoneUsage = firstPhoneNumber.isPresent()
                 ? CemiEntityContactGenericUsageBoFactory.createUsageBoFrom(
                         CemiEntityContactConstants.ROW_ID_1, CommunicationUsageTypes.WORK, CemiBaseConstants.EMPTY_STRING)
                 : CemiEntityContactGenericUsageBoFactory.createEmptyUsageBo();
 
         phoneBo.setPhoneRowId(determinePhoneRowId());
-        phoneBo.setPhoneAreaCode(determineAreaCode());
+        phoneBo.setPhoneAreaCode(areaCodeRelatedSegments.getLeft());
         phoneBo.setTenantFormattedPhone(CemiBaseConstants.EMPTY_STRING);
-        phoneBo.setInternationalFormattedPhone(determineInternationalFormattedPhone());
-        phoneBo.setPhoneNumberWithoutAreaCode(determinePhoneNumberWithoutAreaCode());
-        phoneBo.setNationalFormattedPhone(determineNationalFormattedPhone());
+        phoneBo.setInternationalFormattedPhone(CemiBaseConstants.EMPTY_STRING);
+        phoneBo.setPhoneNumberWithoutAreaCode(areaCodeRelatedSegments.getRight());
+        phoneBo.setNationalFormattedPhone(CemiBaseConstants.EMPTY_STRING);
         phoneBo.setE164FormattedPhone(CemiBaseConstants.EMPTY_STRING);
         phoneBo.setWorkdayTraditionalFormattedPhone(CemiBaseConstants.EMPTY_STRING);
         phoneBo.setDeletePhone(CemiBaseConstants.EMPTY_STRING);
@@ -122,59 +105,20 @@ public class CemiEntityContactPhoneBoFactory {
                 ? Integer.toString(phoneIndex) : CemiBaseConstants.EMPTY_STRING;
     }
 
-    private String determineAreaCode() {
+    private Pair<String, String> determineAreaCodeRelatedPhoneSegments() {
         if (firstPhoneNumber.isEmpty() || parsedPhoneNumber.isEmpty()) {
-            return CemiBaseConstants.EMPTY_STRING;
+            return Pair.of(CemiBaseConstants.EMPTY_STRING, CemiBaseConstants.EMPTY_STRING);
         }
         final PhoneNumber phoneNumber = parsedPhoneNumber.get();
-        if (isUnitedStatesPhoneNumber(phoneNumber)) {
-            final String usPhoneNumber = phoneNumberUtil.getNationalSignificantNumber(phoneNumber);
-            return StringUtils.substring(usPhoneNumber, 0, CemiEntityContactConstants.US_AREA_CODE_LENGTH);
+        final String nationalSignificantNumber = phoneNumberUtil.getNationalSignificantNumber(phoneNumber);
+        final int areaCodeLength = phoneNumberUtil.getLengthOfGeographicalAreaCode(phoneNumber);
+        if (areaCodeLength > 0 && StringUtils.length(nationalSignificantNumber) > areaCodeLength) {
+            final String areaCode = nationalSignificantNumber.substring(0, areaCodeLength);
+            final String nonAreaCodeSegment = nationalSignificantNumber.substring(areaCodeLength);
+            return Pair.of(areaCode, nonAreaCodeSegment);
         } else {
-            return CemiBaseConstants.EMPTY_STRING;
+            return Pair.of(CemiBaseConstants.EMPTY_STRING, CemiBaseConstants.EMPTY_STRING);
         }
-    }
-
-    private String determineInternationalFormattedPhone() {
-        return determineFormattedPhone(parsedPhoneNumber, true);
-    }
-
-    private String determineNationalFormattedPhone() {
-        return determineFormattedPhone(parsedPhoneNumber, false);
-    }
-
-    private String determineFormattedPhone(final Optional<PhoneNumber> parsedPhoneNumber,
-            final boolean internationalFormatStateToMatchOn) {
-        if (firstPhoneNumber.isEmpty()) {
-            return CemiBaseConstants.EMPTY_STRING;
-        }
-        final VendorContactPhoneNumber vendorPhoneNumber = firstPhoneNumber.get();
-        final String rawPhoneNumber = vendorPhoneNumber.getVendorPhoneNumber();
-        final boolean isUsingInternationalFormat = isPhoneNumberUsingInternationalFormat(rawPhoneNumber);
-        return (isUsingInternationalFormat == internationalFormatStateToMatchOn)
-                ? rawPhoneNumber : CemiBaseConstants.EMPTY_STRING;
-    }
-
-    private String determinePhoneNumberWithoutAreaCode() {
-        if (firstPhoneNumber.isEmpty() || parsedPhoneNumber.isEmpty()) {
-            return CemiBaseConstants.EMPTY_STRING;
-        }
-        final PhoneNumber phoneNumber = parsedPhoneNumber.get();
-        if (isUnitedStatesPhoneNumber(phoneNumber)) {
-            final String usPhoneNumber = phoneNumberUtil.getNationalSignificantNumber(phoneNumber);
-            return StringUtils.substring(usPhoneNumber, CemiEntityContactConstants.US_AREA_CODE_LENGTH);
-        } else {
-            return CemiBaseConstants.EMPTY_STRING;
-        }
-    }
-
-    private boolean isUnitedStatesPhoneNumber(final PhoneNumber phoneNumber) {
-        final String regionCode = phoneNumberUtil.getRegionCodeForNumber(phoneNumber);
-        return Strings.CI.equals(regionCode, KFSConstants.COUNTRY_CODE_UNITED_STATES);
-    }
-
-    private boolean isPhoneNumberUsingInternationalFormat(final String rawPhoneNumber) {
-        return Strings.CI.startsWith(rawPhoneNumber, CUKFSConstants.PLUS_SIGN);
     }
 
     private String determinePhoneCountryIsoCode() {
@@ -182,8 +126,12 @@ public class CemiEntityContactPhoneBoFactory {
             return CemiBaseConstants.EMPTY_STRING;
         }
         final PhoneNumber phoneNumber = parsedPhoneNumber.get();
-        final String regionCode = phoneNumberUtil.getRegionCodeForNumber(phoneNumber);
-        return StringUtils.defaultIfBlank(regionCode, CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN);
+        final String regionCode = CemiVendorUtils.getRegionCode(phoneNumber);
+        String iso3CharCountryCode = null;
+        if (StringUtils.isNotBlank(regionCode)) {
+            iso3CharCountryCode = cemiIsoCountryService.getIso3CharCountryCode(regionCode);
+        }
+        return StringUtils.defaultIfBlank(iso3CharCountryCode, CemiBaseConstants.ISO_3_CHAR_COUNTRY_CODE_UNKNOWN);
     }
 
     private String determineInternationalPhoneCode() {
@@ -191,12 +139,12 @@ public class CemiEntityContactPhoneBoFactory {
             return CemiBaseConstants.EMPTY_STRING;
         }
         final PhoneNumber phoneNumber = parsedPhoneNumber.get();
-        final String regionCode = phoneNumberUtil.getRegionCodeForNumber(phoneNumber);
+        final String regionCode = CemiVendorUtils.getRegionCode(phoneNumber);
         if (StringUtils.isBlank(regionCode)) {
             return CemiBaseConstants.EMPTY_STRING;
         }
         final int countryCallingCode = phoneNumberUtil.getCountryCodeForRegion(regionCode);
-        return (countryCallingCode != 0) ? Integer.toString(countryCallingCode) : CemiBaseConstants.EMPTY_STRING;
+        return (countryCallingCode > 0) ? Integer.toString(countryCallingCode) : CemiBaseConstants.EMPTY_STRING;
     }
 
     private String determinePlainUnprefixedPhoneNumber() {
@@ -229,7 +177,7 @@ public class CemiEntityContactPhoneBoFactory {
     }
 
     private String determinePhoneDeviceType() {
-        return firstPhoneNumber.isPresent() ? PhoneDeviceTypes.TELEPHONE : CemiBaseConstants.EMPTY_STRING;
+        return firstPhoneNumber.isPresent() ? PhoneDeviceTypes.MOBILE : CemiBaseConstants.EMPTY_STRING;
     }
 
 }
