@@ -29,7 +29,7 @@
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <hibernate-validator-annotation-processor.version>6.2.5.Final</hibernate-validator-annotation-processor.version>
         <hsqldb.version>2.7.4</hsqldb.version>
-        <httpclient.version>5.3.1</httpclient.version>
+        <httpclient.version>5.6.3</httpclient.version>
         <httpcore.version>5.2.5</httpcore.version>
         <jackson.version>2.22.1</jackson.version>
         <jackson-annotations.version>2.22</jackson-annotations.version>
