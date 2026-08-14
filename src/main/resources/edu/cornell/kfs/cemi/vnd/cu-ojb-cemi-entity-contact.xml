@@ -6,6 +6,9 @@
         <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
         <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="vendorContactGeneratedIdentifier" column="VNDR_CNTCT_GNRTD_ID" jdbc-type="INTEGER" index="true"/>
+        <field-descriptor name="vendorContactGeneratedIdentifierForEmail" column="VNDR_CNTCT_GNRTD_ID_FOR_EMAIL" jdbc-type="INTEGER" index="true"/>
+        <field-descriptor name="vendorContactGeneratedIdentifierForPhone" column="VNDR_CNTCT_GNRTD_ID_FOR_PHN" jdbc-type="INTEGER" index="true"/>
+        <field-descriptor name="vendorContactPhoneGeneratedIdentifier" column="VNDR_CNTCT_PHN_GNRTD_ID" jdbc-type="INTEGER" index="true"/>
         <field-descriptor name="spreadsheetKey" column="SPRDSHT_KEY" jdbc-type="VARCHAR"/>
         <field-descriptor name="addOnly" column="ADD_ONLY" jdbc-type="VARCHAR"/>
         <field-descriptor name="existingBusinessEntityContactId" column="EXSTNG_BUS_ENT_CNTCT_ID" jdbc-type="VARCHAR"/>

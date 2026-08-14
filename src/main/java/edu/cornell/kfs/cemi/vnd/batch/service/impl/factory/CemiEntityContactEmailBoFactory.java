@@ -3,6 +3,8 @@ package edu.cornell.kfs.cemi.vnd.batch.service.impl.factory;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
 
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
@@ -13,12 +15,14 @@ import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactGenericUsa
 
 public class CemiEntityContactEmailBoFactory {
 
+    private static final Logger LOG = LogManager.getLogger();
+
     private List<VendorContact> mergedEmailContacts;
     private int emailIndex;
 
     public CemiEntityContactEmailBoFactory(final List<VendorContact> mergedEmailContacts, final int emailIndex) {
         Validate.notNull(mergedEmailContacts, "mergedEmailContacts cannot be null");
-        Validate.isTrue(mergedEmailContacts.isEmpty() == emailIndex <= 0,
+        Validate.isTrue(mergedEmailContacts.isEmpty() == (emailIndex <= 0),
                 "emailIndex must be a positive value if, and only if, mergedEmailContacts is non-empty");
         this.mergedEmailContacts = mergedEmailContacts;
         this.emailIndex = emailIndex;
@@ -43,7 +47,11 @@ public class CemiEntityContactEmailBoFactory {
                 ? mergedEmailContacts.get(0).getVendorContactEmailAddress() : CemiBaseConstants.EMPTY_STRING;
 
         if (writeEmailData) {
-            emailBo.setVendorContactGeneratedIdentifier(mergedEmailContacts.get(0).getVendorContactGeneratedIdentifier());
+            final VendorContact firstEmailContact = mergedEmailContacts.get(0);
+            emailBo.setVendorContactGeneratedIdentifier(firstEmailContact.getVendorContactGeneratedIdentifier());
+            LOG.debug("createCemiEntityContactEmailBo, Creating Entity Contact Email for Vendor Contact {} using {} "
+                    + "merged email addresses", firstEmailContact.getVendorContactGeneratedIdentifier(),
+                    mergedEmailContacts.size());
         }
 
         emailBo.setEmailRowId(emailRowId);

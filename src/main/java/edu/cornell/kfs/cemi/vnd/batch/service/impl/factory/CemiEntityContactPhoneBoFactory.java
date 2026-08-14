@@ -116,6 +116,13 @@ public class CemiEntityContactPhoneBoFactory {
             final String areaCode = nationalSignificantNumber.substring(0, areaCodeLength);
             final String nonAreaCodeSegment = nationalSignificantNumber.substring(areaCodeLength);
             return Pair.of(areaCode, nonAreaCodeSegment);
+        } else if (determineInternationalPhoneCodeAsInteger() == CemiEntityContactConstants.USA_CANADA_PHONE_CODE
+                && StringUtils.length(nationalSignificantNumber) == CemiEntityContactConstants.USA_CANADA_PHONE_LENGTH) {
+            final String areaCode = nationalSignificantNumber.substring(
+                    0, CemiEntityContactConstants.USA_CANADA_AREA_CODE_LENGTH);
+            final String nonAreaCodeSegment = nationalSignificantNumber.substring(
+                    CemiEntityContactConstants.USA_CANADA_AREA_CODE_LENGTH);
+            return Pair.of(areaCode, nonAreaCodeSegment);
         } else {
             return Pair.of(CemiBaseConstants.EMPTY_STRING, CemiBaseConstants.EMPTY_STRING);
         }
@@ -135,16 +142,20 @@ public class CemiEntityContactPhoneBoFactory {
     }
 
     private String determineInternationalPhoneCode() {
+        final int internationalPhoneCode = determineInternationalPhoneCodeAsInteger();
+        return (internationalPhoneCode > 0) ? Integer.toString(internationalPhoneCode) : CemiBaseConstants.EMPTY_STRING;
+    }
+
+    private int determineInternationalPhoneCodeAsInteger() {
         if (firstPhoneNumber.isEmpty() || parsedPhoneNumber.isEmpty()) {
-            return CemiBaseConstants.EMPTY_STRING;
+            return -1;
         }
         final PhoneNumber phoneNumber = parsedPhoneNumber.get();
         final String regionCode = CemiVendorUtils.getRegionCode(phoneNumber);
         if (StringUtils.isBlank(regionCode)) {
-            return CemiBaseConstants.EMPTY_STRING;
+            return -1;
         }
-        final int countryCallingCode = phoneNumberUtil.getCountryCodeForRegion(regionCode);
-        return (countryCallingCode > 0) ? Integer.toString(countryCallingCode) : CemiBaseConstants.EMPTY_STRING;
+        return phoneNumberUtil.getCountryCodeForRegion(regionCode);
     }
 
     private String determinePlainUnprefixedPhoneNumber() {
