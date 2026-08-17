@@ -51,6 +51,7 @@
         <jotm-core.version>2.1.10-kuali-1</jotm-core.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
         <junit.version>5.11.0</junit.version>
+        <junit-platform.version>1.11.0</junit-platform.version>
         <ojdbc.version>19.18.0.0</ojdbc.version>
         <opencsv.version>5.9</opencsv.version>
         <mockito.version>5.13.0</mockito.version>
@@ -903,6 +904,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <version>${junit-platform.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
             <version>${junit.version}</version>
@@ -1161,7 +1168,6 @@
             <groupId>org.apache.httpcomponents.core5</groupId>
             <artifactId>httpcore5-h2</artifactId>
             <version>${httpcore.version}</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
