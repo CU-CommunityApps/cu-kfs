@@ -29,8 +29,8 @@
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <hibernate-validator-annotation-processor.version>6.2.5.Final</hibernate-validator-annotation-processor.version>
         <hsqldb.version>2.7.4</hsqldb.version>
-        <httpclient.version>5.3.1</httpclient.version>
-        <httpcore.version>5.2.5</httpcore.version>
+        <httpclient.version>5.6.4</httpclient.version>
+        <httpcore.version>5.4.3</httpcore.version>
         <jackson.version>2.22.1</jackson.version>
         <jackson-annotations.version>2.22</jackson-annotations.version>
         <jakarta.el.el-api.version>3.0.3</jakarta.el.el-api.version>
@@ -51,6 +51,7 @@
         <jotm-core.version>2.1.10-kuali-1</jotm-core.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
         <junit.version>5.11.0</junit.version>
+        <junit-platform.version>1.11.0</junit-platform.version>
         <ojdbc.version>19.18.0.0</ojdbc.version>
         <opencsv.version>5.9</opencsv.version>
         <mockito.version>5.13.0</mockito.version>
@@ -72,7 +73,7 @@
         <plugin.dependency.version>3.7.1</plugin.dependency.version>
         <plugin.war.version>3.4.0</plugin.war.version>
         <jaxws-ri.version>2.3.0</jaxws-ri.version>
-        <log4j.version>2.25.4</log4j.version>
+        <log4j.version>2.25.5</log4j.version>
         <cxf.version>3.6.12</cxf.version>
         <wss4j.version>2.4.3</wss4j.version>
     </properties>
@@ -237,6 +238,8 @@
                             <excludes>
                                 <exclude>WEB-INF/lib/log4j-*-2.*.jar</exclude>
                                 <exclude>WEB-INF/lib/httpclient-4.5.5.jar</exclude>
+                                <exclude>WEB-INF/lib/httpclient5-*.jar</exclude>
+                                <exclude>WEB-INF/lib/httpcore5-*.jar</exclude>
                                 <exclude>WEB-INF/lib/commons-logging-*.jar</exclude>
                                 <exclude>WEB-INF/lib/gson-*.jar</exclude>
                                 <exclude>WEB-INF/lib/pw-iso20022-*.jar</exclude>
@@ -901,6 +904,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <version>${junit-platform.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
             <version>${junit.version}</version>
@@ -1144,6 +1153,21 @@
                     <artifactId>guava</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5</artifactId>
+            <version>${httpcore.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5-reactive</artifactId>
+            <version>${httpcore.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5-h2</artifactId>
+            <version>${httpcore.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
