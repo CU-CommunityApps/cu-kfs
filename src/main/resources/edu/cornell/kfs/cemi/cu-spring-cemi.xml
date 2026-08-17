@@ -379,6 +379,18 @@
           
     <alias name="cemiWorkdayAwardSponsorAwardType" alias="Award_KfsAwardType-TranslateWorkdaySponsorAwardType"/>
 
+    <bean id="cemiWorkdayAwardPurpose" parent="cemiWorkdayAwardPurpose-parentBean"/>
+    <bean id="cemiWorkdayAwardPurpose-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/award"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_AWD_AWD_PURPOSE_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.module.cg.batch.translatetable.KfsToWorkdayAwardCommonCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdayAwardPurpose" alias="Award_KfsAwardPurpose-TranslateWorkdayAwardPurpose"/>
+
     <!-- Novelution Award Legacy Data Import -->
     <bean id="cemiNovelutionAward" parent="cemiNovelutionAward-parentBean"/>
     <bean id="cemiNovelutionAward-parentBean"
