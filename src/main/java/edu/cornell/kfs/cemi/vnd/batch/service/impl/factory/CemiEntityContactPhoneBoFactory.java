@@ -81,7 +81,7 @@ public class CemiEntityContactPhoneBoFactory {
         phoneBo.setPhoneRowId(determinePhoneRowId());
         phoneBo.setPhoneAreaCode(areaCodeRelatedSegments.getLeft());
         phoneBo.setTenantFormattedPhone(CemiBaseConstants.EMPTY_STRING);
-        phoneBo.setInternationalFormattedPhone(determineInternationalFormattedPhone());
+        phoneBo.setInternationalFormattedPhone(CemiBaseConstants.EMPTY_STRING);
         phoneBo.setPhoneNumberWithoutAreaCode(areaCodeRelatedSegments.getRight());
         phoneBo.setNationalFormattedPhone(CemiBaseConstants.EMPTY_STRING);
         phoneBo.setE164FormattedPhone(CemiBaseConstants.EMPTY_STRING);
@@ -126,16 +126,6 @@ public class CemiEntityContactPhoneBoFactory {
         } else {
             return Pair.of(CemiBaseConstants.EMPTY_STRING, CemiBaseConstants.EMPTY_STRING);
         }
-    }
-
-    private String determineInternationalFormattedPhone() {
-        if (firstPhoneNumber.isEmpty()) {
-            return CemiBaseConstants.EMPTY_STRING;
-        }
-        final VendorContactPhoneNumber vendorContactPhone = firstPhoneNumber.get();
-        final String phoneNumberString = vendorContactPhone.getVendorPhoneNumber();
-        return CemiVendorUtils.isPhoneNumberUsingInternationalFormat(phoneNumberString)
-                ? phoneNumberString : CemiBaseConstants.EMPTY_STRING;
     }
 
     private String determinePhoneCountryIsoCode() {
