@@ -7,21 +7,33 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
+import org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber;
+
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 @SuppressWarnings("deprecation")
 public final class CemiVendorUtils {
+
+    private static final Logger LOG = LogManager.getLogger();
 
     public static List<List<VendorAddress>> reorderAddressGroupsToPutPrimaryGroupFirst(
             final String vendorTypeCode, final Collection<List<VendorAddress>> addressGroups) {
@@ -127,6 +139,46 @@ public final class CemiVendorUtils {
         } else {
             return Strings.CS.compare(addressType1, addressType2);
         }
+    }
+
+    public static Optional<PhoneNumber> parsePhoneNumberIfPossible(final VendorContactPhoneNumber vendorContactPhone) {
+        try {
+            final PhoneNumber parsedPhoneNumber = parsePhoneNumber(vendorContactPhone);
+            return Optional.of(parsedPhoneNumber);
+        } catch (final NumberParseException | RuntimeException e) {
+            LOG.error("parsePhoneNumberIfPossible, Could not parse phone number from Phone BO {} for Vendor Contact {}; "
+                    + "this phone number will be skipped",
+                    vendorContactPhone.getVendorContactPhoneGeneratedIdentifier(),
+                    vendorContactPhone.getVendorContactGeneratedIdentifier(), e);
+            return Optional.empty();
+        }
+    }
+
+    public static PhoneNumber parsePhoneNumber(final VendorContactPhoneNumber vendorContactPhone)
+            throws NumberParseException {
+        final String rawPhoneNumber = vendorContactPhone.getVendorPhoneNumber();
+        Validate.validState(StringUtils.isNotBlank(rawPhoneNumber),
+                "Phone BO %s for Vendor Contact %s has a blank phone number; this should NEVER happen",
+                vendorContactPhone.getVendorContactPhoneGeneratedIdentifier(),
+                vendorContactPhone.getVendorContactGeneratedIdentifier());
+        final String tentativeExplicitRegion = isPhoneNumberUsingInternationalFormat(rawPhoneNumber)
+                ? null : CemiVendorConstants.COUNTRY_CODE_UNITED_STATES;
+        final PhoneNumber parsedPhoneNumber = getPhoneNumberUtil().parseAndKeepRawInput(
+                rawPhoneNumber, tentativeExplicitRegion);
+        return parsedPhoneNumber;
+    }
+
+    public static boolean isPhoneNumberUsingInternationalFormat(final String rawPhoneNumber) {
+        return Strings.CI.startsWith(rawPhoneNumber, CUKFSConstants.PLUS_SIGN);
+    }
+
+    public static String getRegionCode(final PhoneNumber phoneNumber) {
+        return getPhoneNumberUtil().getRegionCodeForNumber(phoneNumber);
+    }
+
+    public static PhoneNumberUtil getPhoneNumberUtil() {
+        // The method call below should always return the same singleton instance.
+        return PhoneNumberUtil.getInstance();
     }
 
 }

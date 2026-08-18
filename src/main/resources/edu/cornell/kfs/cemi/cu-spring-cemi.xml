@@ -26,6 +26,7 @@
                 <value>edu/cornell/kfs/cemi/cu-ojb-cemi.xml</value>
                 <value>edu/cornell/kfs/cemi/module/cg/cu-ojb-cemi-award-schedule.xml</value>
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-vnd.xml</value>
+                <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-entity-contact.xml</value>
             </list>
         </property>
         <property name="jobNames">
@@ -35,6 +36,7 @@
                  <value>createCemiSupplierExtractJob</value>
                  <value>createCemiRemitToSupplierExtractJob</value>
                  <value>createCemiOrderFromSupplierExtractJob</value>
+                 <value>createCemiBusinessEntityContactExtractJob</value>
                  <value>importCemiLegacyDataJob</value>
             </list>
         </property>
@@ -50,9 +52,11 @@
             <value>${staging.directory}/cemi/vnd/cemiSupplierExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiOrderFromSupplierExtract</value>
+            <value>${staging.directory}/cemi/vnd/cemiBusinessEntityContactExtract</value>
             <value>${staging.directory}/cemi/conversions/outbound</value>
             <value>${staging.directory}/cemi/translatetable/award</value>
             <value>${staging.directory}/cemi/translatetable/common</value>
+            <value>${staging.directory}/cemi/translatetable/supplier</value>
           </list>
         </property>
     </bean>
@@ -418,5 +422,61 @@
           class="edu.cornell.kfs.cemi.sys.dataaccess.impl.CemiIsoCountryDaoJdbcImpl"
           parent="platformAwareDaoJdbc"
           p:dataSource-ref="cemiDataSource"/>
+
+    <!-- Business Entity Contact (Supplier Contact) -->
+
+    <bean id="createCemiBusinessEntityContactExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiEntityContactExtractStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cemiEntityContactExtractDao" parent="cemiEntityContactExtractDao-parentBean"/>
+    <bean id="cemiEntityContactExtractDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiEntityContactExtractDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
+
+    <bean id="cemiEntityContactExtractOrmDao" parent="cemiEntityContactExtractOrmDao-parentBean"/>
+    <bean id="cemiEntityContactExtractOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiEntityContactExtractOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="cemiEntityContactExtractService" parent="cemiEntityContactExtractService-parentBean"/>
+    <bean id="cemiEntityContactExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.batch.service.impl.CemiEntityContactExtractServiceImpl"
+          c:environment-ref="environment"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/vnd/cemiBusinessEntityContactExtract"
+          p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:parameterService-ref="parameterService"
+          p:cemiEntityContactExtractOrmDao-ref="cemiEntityContactExtractOrmDao"
+          p:cemiEntityContactExtractDao-ref="cemiEntityContactExtractDao"
+          p:businessObjectService-ref="businessObjectService"
+          p:cemiIsoCountryService-ref="cemiIsoCountryService"/>
+
+    <bean id="createCemiEntityContactExtractStep"
+          class="edu.cornell.kfs.cemi.vnd.batch.CreateCemiEntityContactExtractStep"
+          parent="step"
+          p:cemiEntityContactExtractService-ref="cemiEntityContactExtractService"/>
+
+    <bean id="cemiWorkdayTenantedEntityContactType" parent="cemiWorkdayTenantedEntityContactType-parentBean"/>
+    <bean id="cemiWorkdayTenantedEntityContactType-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/supplier"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_TNTD_ENT_CNTCT_TYP_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.vnd.batch.translatetable.KfsToWorkdayTenantedEntityContactTypeCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdayTenantedEntityContactType" alias="Supplier_KfsContactType-TranslateWorkdayTenantedContactType"/>
 
 </beans>
