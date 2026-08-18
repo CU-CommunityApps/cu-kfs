@@ -162,7 +162,7 @@ public final class CemiVendorUtils {
                 vendorContactPhone.getVendorContactPhoneGeneratedIdentifier(),
                 vendorContactPhone.getVendorContactGeneratedIdentifier());
         final String tentativeExplicitRegion = isPhoneNumberUsingInternationalFormat(rawPhoneNumber)
-                ? null : CemiVendorConstants.COUNTRY_CODE_UNITED_STATES;
+                ? null : CemiSupplierConstants.COUNTRY_CODE_UNITED_STATES;
         final PhoneNumber parsedPhoneNumber = getPhoneNumberUtil().parseAndKeepRawInput(
                 rawPhoneNumber, tentativeExplicitRegion);
         return parsedPhoneNumber;

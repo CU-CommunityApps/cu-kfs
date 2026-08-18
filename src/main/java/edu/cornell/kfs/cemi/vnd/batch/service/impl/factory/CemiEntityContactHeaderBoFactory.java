@@ -16,7 +16,7 @@ import org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiEntityContactConstants;
-import edu.cornell.kfs.cemi.vnd.CemiVendorConstants;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactHeaderBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.MergedVendorContact;
 import edu.cornell.kfs.cemi.vnd.util.CemiVendorUtils;
@@ -120,7 +120,7 @@ public class CemiEntityContactHeaderBoFactory {
                 .map(CemiVendorUtils::getRegionCode)
                 .filter(StringUtils::isNotBlank)
                 .findFirst()
-                .orElse(CemiVendorConstants.COUNTRY_CODE_UNITED_STATES);
+                .orElse(CemiSupplierConstants.COUNTRY_CODE_UNITED_STATES);
     }
 
     /*
