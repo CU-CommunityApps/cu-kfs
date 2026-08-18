@@ -4,14 +4,14 @@ import java.util.stream.Stream;
 
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
 
 public interface CemiOrderFromSupplierOrmDao {
 
     Stream<VendorAddress> getKfsVendorAddressesForExtractedSuppliers();
 
-    Stream<CemiSupplierAddressBo> getSupplierAddressesForExtractedSuppliers();
+    Stream<CemiSupplierFileAddressesTabRowBo> getSupplierAddressesForExtractedSuppliers();
 
-    Stream<CemiSupplierAddressBo> getSupplierAddressesForOrderFromSupplierExtract();
+    Stream<CemiSupplierFileAddressesTabRowBo> getSupplierAddressesForOrderFromSupplierExtract();
 
 }

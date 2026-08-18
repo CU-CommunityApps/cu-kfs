@@ -25,8 +25,8 @@ import edu.cornell.kfs.cemi.sys.CemiBasePropertyConstants;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiOrmDataBuilderBase;
 import edu.cornell.kfs.cemi.vnd.CemiVendorPropertyConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierBo;
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileSupplierTabRowBo;
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiRemitToSupplierDataBuilder;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiRemitToSupplierOrmDao;
 import edu.cornell.kfs.cemi.vnd.util.CemiVendorUtils;
@@ -55,13 +55,13 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
      * all such addresses BEFORE returning an address associated with a different supplier.
      */
     @Override
-    public void writeRemitToSupplierDataToIntermediateStorage(final Iterator<CemiSupplierAddressBo> addresses) {
+    public void writeRemitToSupplierDataToIntermediateStorage(final Iterator<CemiSupplierFileAddressesTabRowBo> addresses) {
         int supplierAddressCount = 0;
-        CemiSupplierBo currentSupplier = new CemiSupplierBo();
-        List<CemiSupplierAddressBo> currentSupplierAddresses = new ArrayList<>();
+        CemiSupplierFileSupplierTabRowBo currentSupplier = new CemiSupplierFileSupplierTabRowBo();
+        List<CemiSupplierFileAddressesTabRowBo> currentSupplierAddresses = new ArrayList<>();
         currentSupplier.setSupplierId(CUKFSConstants.NULL);
 
-        for (final CemiSupplierAddressBo address : IteratorUtils.asIterable(addresses)) {
+        for (final CemiSupplierFileAddressesTabRowBo address : IteratorUtils.asIterable(addresses)) {
             supplierAddressCount++;
             if (supplierAddressCount % 1000 == 0) {
                 LOG.info("writeRemitToSupplierDataToIntermediateStorage, Processing {} supplier addresses and counting...",
@@ -81,18 +81,18 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
                 supplierAddressCount);
     }
 
-    private CemiSupplierBo getSupplier(final String supplierId) {
+    private CemiSupplierFileSupplierTabRowBo getSupplier(final String supplierId) {
         final Map<String, Object> criteria = Map.ofEntries(
                 Map.entry(CemiVendorPropertyConstants.SUPPLIER_ID, supplierId),
                 Map.entry(CemiBasePropertyConstants.JOB_RUN_DATE_STRING, supplierJobRunDate)
         );
-        final Collection<CemiSupplierBo> results = businessObjectService.findMatching(CemiSupplierBo.class, criteria);
+        final Collection<CemiSupplierFileSupplierTabRowBo> results = businessObjectService.findMatching(CemiSupplierFileSupplierTabRowBo.class, criteria);
         Validate.validState(!results.isEmpty(), "Could not find data row for supplier: %s", supplierId);
         return results.iterator().next();
     }
 
-    private void createAndStoreRemitToSupplierRows(final CemiSupplierBo supplier,
-            final List<CemiSupplierAddressBo> supplierAddresses) {
+    private void createAndStoreRemitToSupplierRows(final CemiSupplierFileSupplierTabRowBo supplier,
+            final List<CemiSupplierFileAddressesTabRowBo> supplierAddresses) {
         if (supplierAddresses.isEmpty()) {
             return;
         }
@@ -100,7 +100,7 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
         ensureExplicitDefaultRemitAddressIsListedFirstIfPresent(supplierAddresses, kfsVendorAddresses);
 
         int remitIndexForSupplier = 1;
-        for (final CemiSupplierAddressBo supplierAddress : supplierAddresses) {
+        for (final CemiSupplierFileAddressesTabRowBo supplierAddress : supplierAddresses) {
             final String emailAddress = getEmailAddress(supplierAddress, kfsVendorAddresses);
             final boolean defaultConnection = (remitIndexForSupplier == 1);
             final CemiRemitToSupplierBo remitToSupplierRow = new CemiRemitToSupplierBoFactory()
@@ -138,19 +138,19 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
     }
 
     private void ensureExplicitDefaultRemitAddressIsListedFirstIfPresent(
-            final List<CemiSupplierAddressBo> supplierAddresses,
+            final List<CemiSupplierFileAddressesTabRowBo> supplierAddresses,
             final Map<String, List<VendorAddress>> kfsVendorAddresses) {
         final int defaultRemitAddressListIndex = getListIndexOfExplicitDefaultRemitAddressIfPresent(
                 supplierAddresses, kfsVendorAddresses);
         if (defaultRemitAddressListIndex > 0) {
-            final CemiSupplierAddressBo defaultRemitAddress = supplierAddresses
+            final CemiSupplierFileAddressesTabRowBo defaultRemitAddress = supplierAddresses
                     .remove(defaultRemitAddressListIndex);
             supplierAddresses.add(0, defaultRemitAddress);
         }
     }
 
     private int getListIndexOfExplicitDefaultRemitAddressIfPresent(
-            final List<CemiSupplierAddressBo> supplierAddresses,
+            final List<CemiSupplierFileAddressesTabRowBo> supplierAddresses,
             final Map<String, List<VendorAddress>> kfsVendorAddresses) {
         final String defaultRemitAddressKey = kfsVendorAddresses.values().stream()
                 .flatMap(List::stream)
@@ -171,7 +171,7 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
         }
     }
 
-    private String getEmailAddress(final CemiSupplierAddressBo supplierAddress,
+    private String getEmailAddress(final CemiSupplierFileAddressesTabRowBo supplierAddress,
             final Map<String, List<VendorAddress>> groupedVendorAddresses) {
         final String addressKey = CemiVendorUtils.generateAddressKey(supplierAddress);
         final List<VendorAddress> addressGroup = groupedVendorAddresses.get(addressKey);

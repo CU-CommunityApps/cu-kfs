@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
 
 public interface CemiOrderFromSupplierDao {
 
@@ -18,7 +18,7 @@ public interface CemiOrderFromSupplierDao {
 
     void storeAsListOfKfsVendorAddressLinks(final Iterator<VendorAddress> addressIterator);
 
-    void storeAsListOfSupplierAddressLinks(final Iterator<CemiSupplierAddressBo> addressIterator);
+    void storeAsListOfSupplierAddressLinks(final Iterator<CemiSupplierFileAddressesTabRowBo> addressIterator);
 
     void queryAndStoreAddressIdsForOrderFromSupplierExtract();
 

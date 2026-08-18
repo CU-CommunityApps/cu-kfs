@@ -10,23 +10,23 @@ import org.kuali.kfs.sys.KFSConstants;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiRemitToSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierBo;
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileSupplierTabRowBo;
 
 public class CemiRemitToSupplierBoFactory {
 
-    private CemiSupplierAddressBo supplierAddress;
-    private CemiSupplierBo supplier;
+    private CemiSupplierFileAddressesTabRowBo supplierAddress;
+    private CemiSupplierFileSupplierTabRowBo supplier;
     private String emailAddress;
     private int remitIndexForSupplier;
     private boolean defaultConnection;
 
-    public CemiRemitToSupplierBoFactory withSupplierAddress(final CemiSupplierAddressBo supplierAddress) {
+    public CemiRemitToSupplierBoFactory withSupplierAddress(final CemiSupplierFileAddressesTabRowBo supplierAddress) {
         this.supplierAddress = supplierAddress;
         return this;
     }
 
-    public CemiRemitToSupplierBoFactory withSupplier(final CemiSupplierBo supplier) {
+    public CemiRemitToSupplierBoFactory withSupplier(final CemiSupplierFileSupplierTabRowBo supplier) {
         this.supplier = supplier;
         return this;
     }

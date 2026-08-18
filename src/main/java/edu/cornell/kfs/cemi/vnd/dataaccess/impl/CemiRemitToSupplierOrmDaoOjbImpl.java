@@ -19,7 +19,7 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.CemiBasePropertyConstants;
 import edu.cornell.kfs.cemi.vnd.CemiVendorPropertyConstants;
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiRemitToSupplierOrmDao;
 import edu.cornell.kfs.sys.util.CuOjbUtils;
 
@@ -30,7 +30,7 @@ public class CemiRemitToSupplierOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb im
     private ConfigurationService configurationService;
 
     @Override
-    public Stream<CemiSupplierAddressBo> getAddressesForCemiRemitToSupplierExtractAsCloseableStream() {
+    public Stream<CemiSupplierFileAddressesTabRowBo> getAddressesForCemiRemitToSupplierExtractAsCloseableStream() {
         String idCondition = "(A0.EXTR_FILE_RUNDATE, A0.ADDRESS_ID) IN ("
                 + "SELECT EXTR_FILE_RUNDATE, SUPP_ADDRESS_ID FROM CEMI.CU_CEMI_EXTR_RMT_TO_SUPP_RMT_TO_ADDR_T)";
         if (shouldUseLessDataDuringCemiDevelopment()) {
@@ -40,11 +40,11 @@ public class CemiRemitToSupplierOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb im
         final Criteria criteria = new Criteria();
         criteria.addSql(idCondition);
 
-        final QueryByCriteria query = new QueryByCriteria(CemiSupplierAddressBo.class, criteria);
+        final QueryByCriteria query = new QueryByCriteria(CemiSupplierFileAddressesTabRowBo.class, criteria);
         query.addOrderByAscending(CemiVendorPropertyConstants.SUPPLIER_ID);
         query.addOrderByAscending(CemiBasePropertyConstants.JOB_RUN_ROW_INDEX);
 
-        return CuOjbUtils.buildCloseableStreamForQueryResults(CemiSupplierAddressBo.class,
+        return CuOjbUtils.buildCloseableStreamForQueryResults(CemiSupplierFileAddressesTabRowBo.class,
                 () -> getPersistenceBrokerTemplate().getIteratorByQuery(query));
     }
 

@@ -26,6 +26,7 @@
                 <value>edu/cornell/kfs/cemi/cu-ojb-cemi.xml</value>
                 <value>edu/cornell/kfs/cemi/module/cg/cu-ojb-cemi-award-schedule.xml</value>
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-vnd.xml</value>
+                <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-supplier.xml</value>
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-entity-contact.xml</value>
             </list>
         </property>

@@ -27,7 +27,7 @@ import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 @SuppressWarnings("deprecation")
@@ -93,7 +93,7 @@ public final class CemiVendorUtils {
                     vendorAddress.getVendorZipCode(), vendorAddress.getVendorCountryCode());
     }
 
-    public static String generateAddressKey(final CemiSupplierAddressBo supplierAddress) {
+    public static String generateAddressKey(final CemiSupplierFileAddressesTabRowBo supplierAddress) {
         return CemiUtils.generateConcatenatedKey(
                     supplierAddress.getAddressLine1(), supplierAddress.getAddressLine2(),
                     supplierAddress.getCity(), supplierAddress.getState(),

@@ -26,7 +26,7 @@ import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiOrderFromSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiOrderFromSupplierParameterConstants;
 import edu.cornell.kfs.cemi.vnd.batch.CreateCemiOrderFromSupplierExtractStep;
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiOrderFromSupplierExtractService;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiOrderFromSupplierDao;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiOrderFromSupplierOrmDao;
@@ -94,10 +94,10 @@ public class CemiOrderFromSupplierExtractServiceImpl extends CemiDataExtractServ
         LOG.info("populateListOfSupplierAddressMappings, Populating helper table for mapping Supplier Addresses "
                 + "to concatenated address field data...");
         try (
-            final Stream<CemiSupplierAddressBo> supplierAddresses = cemiOrderFromSupplierOrmDao
+            final Stream<CemiSupplierFileAddressesTabRowBo> supplierAddresses = cemiOrderFromSupplierOrmDao
                     .getSupplierAddressesForExtractedSuppliers();
         ) {
-            final Iterator<CemiSupplierAddressBo> addressIterator = supplierAddresses.iterator();
+            final Iterator<CemiSupplierFileAddressesTabRowBo> addressIterator = supplierAddresses.iterator();
             cemiOrderFromSupplierDao.storeAsListOfSupplierAddressLinks(addressIterator);
         }
     }
@@ -117,7 +117,7 @@ public class CemiOrderFromSupplierExtractServiceImpl extends CemiDataExtractServ
         final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
         final String skippedSuppliersFilePath = buildPathForSkippedSuppliersReportFile(jobRunDateString);
         try (
-            final Stream<CemiSupplierAddressBo> addresses = cemiOrderFromSupplierOrmDao
+            final Stream<CemiSupplierFileAddressesTabRowBo> addresses = cemiOrderFromSupplierOrmDao
                     .getSupplierAddressesForOrderFromSupplierExtract();
             final FileOutputStream fileStream = new FileOutputStream(skippedSuppliersFilePath);
             final OutputStreamWriter streamWriter = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8);
@@ -127,7 +127,7 @@ public class CemiOrderFromSupplierExtractServiceImpl extends CemiDataExtractServ
             final CemiOrderFromSupplierDataBuilderDefaultImpl dataBuilder = new CemiOrderFromSupplierDataBuilderDefaultImpl(
                     businessObjectService, jobRunDateString, supplierJobRunDate, cemiVendorOrmDao,
                     cemiOrderFromSupplierDao, skippedSuppliersWriter, shouldMaskCemiSensitiveData());
-            final Iterator<CemiSupplierAddressBo> addressesIterator = addresses.iterator();
+            final Iterator<CemiSupplierFileAddressesTabRowBo> addressesIterator = addresses.iterator();
             dataBuilder.writeOrderFromSupplierDataToIntermediateStorage(addressesIterator);
         } catch (final IOException e) {
             throw new UncheckedIOException(e);
