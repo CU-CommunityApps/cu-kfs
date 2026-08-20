@@ -6,14 +6,10 @@ public interface CemiSupplierExtractService {
 
     void resetState();
 
-    void initializeVendorActivityDateRangeSettings();
-
-    void populateListOfBaseVendorData();
-
-    void populateListOfInScopeVendors();
+    void captureInScopeBusinessObjectKeysToProcessingTable();
 
     void generateIntermediateExtractData(final LocalDateTime jobRunDate);
 
-    void generateSupplierExtractFile(final LocalDateTime jobRunDate);
+    void generateDataConversionExtractFile(final LocalDateTime jobRunDate);
 
 }

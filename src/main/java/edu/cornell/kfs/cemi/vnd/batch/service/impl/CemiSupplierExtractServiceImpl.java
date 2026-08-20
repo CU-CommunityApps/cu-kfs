@@ -37,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants.FileExtensions;
 import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
+import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiDataExtractServiceBase;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
@@ -50,11 +51,9 @@ import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 @SuppressWarnings("deprecation")
-public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractService {
+public class CemiSupplierExtractServiceImpl extends CemiDataExtractServiceBase implements CemiSupplierExtractService {
 
     private static final Logger LOG = LogManager.getLogger();
-
-    private final Environment environment;
 
     private String supplierFileCreationDirectory;
     private String supplierFileOutboundDirectory;
@@ -66,7 +65,7 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
     private DateTimeService dateTimeService;
 
     public CemiSupplierExtractServiceImpl(final Environment environment) {
-        this.environment = environment;
+        super(environment);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -79,7 +78,13 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public void initializeVendorActivityDateRangeSettings() {
+    public void captureInScopeBusinessObjectKeysToProcessingTable() {
+        initializeVendorActivityDateRangeSettings();
+        populateListOfBaseVendorData();
+        populateListOfInScopeVendors();
+    }
+    
+    private void initializeVendorActivityDateRangeSettings() {
         LOG.info("initializeVendorActivityDateRangeSettings, Setting from/to date range from parameter value...");
         final Collection<String> parameterValues = parameterService.getParameterValuesAsString(
                 CreateCemiSupplierExtractStep.class, CemiSupplierParameterConstants.CEMI_SUPPLIER_EXTRACT_DATE_RANGE);
@@ -105,16 +110,12 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    @Override
-    public void populateListOfBaseVendorData() {
+    private void populateListOfBaseVendorData() {
         LOG.info("populateListOfBaseVendorData, Preparing base Vendor data needed for subsequent Vendor query...");
         getCemiVendorDao().prepareBaseVendorDataNeededForMainVendorIdQuery();
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    @Override
-    public void populateListOfInScopeVendors() {
+    private void populateListOfInScopeVendors() {
         LOG.info("populateListOfInScopeVendors, Querying and storing the list of extractable Vendors...");
         getCemiVendorDao().queryAndStoreVendorIdsForSupplierExtract();
     }
@@ -143,7 +144,6 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
         
     }
 
-
     private Collection<PayeeACHAccount> findAllActiveAccountsForVendor(final Integer vendorHeaderGeneratedIdentifier,
             final Integer vendorDetailAssignedIdentifier) throws IOException {
         final String vendorId = StringUtils.join(
@@ -159,9 +159,9 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public void generateSupplierExtractFile(final LocalDateTime jobRunDate) {
+    public void generateDataConversionExtractFile(final LocalDateTime jobRunDate) {
         try {
-            LOG.info("generateSupplierExtractFile, Starting creation of CEMI Supplier Extract file...");
+            LOG.info("generateDataConversionExtractFile, Starting creation of CEMI Supplier Extract file...");
             final String newFileName = CemiUtils.generateFileNameContainingDateTime(
                     jobRunDate, CemiSupplierConstants.SUPPLIER_EXTRACT_FILENAME_PREFIX, FileExtensions.XLSX);
             final File tempFile = qualifyAndGetFilePath(supplierFileCreationDirectory, newFileName);
@@ -172,27 +172,23 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
             createAndPopulateSupplierExtractFile(tempFile, jobRunDate);
 
             if (shouldCopySupplierExtractFileToOutboundDirectory()) {
-                LOG.info("generateSupplierExtractFile, Copying file to outbound folder under the Supplier.xlsx name...");
+                LOG.info("generateDataConversionExtractFile, Copying file to outbound folder under the Supplier.xlsx name...");
                 copySupplierExtractFileToOutboundDirectory(tempFile, finalFile);
             } else {
-                LOG.info("generateSupplierExtractFile, Copying of the file to the outbound folder has been disabled. "
+                LOG.info("generateDataConversionExtractFile, Copying of the file to the outbound folder has been disabled. "
                         + "The copying operation will be skipped.");
             }
 
-            LOG.info("generateSupplierExtractFile, Success! Created the following extract file: {}", newFileName);
+            LOG.info("generateDataConversionExtractFile, Success! Created the following extract file: {}", newFileName);
         } catch (final Exception e) {
-            LOG.error("generateSupplierExtractFile, Creation of Supplier Extract file failed", e);
+            LOG.error("generateDataConversionExtractFile, Creation of Supplier Extract file failed", e);
             throw new RuntimeException(e);
         }
     }
 
-    private File qualifyAndGetFilePath(final String prefix, final String fileName) {
-        return new File(StringUtils.join(prefix, CUKFSConstants.SLASH, fileName));
-    }
-
     private void createAndPopulateSupplierExtractFile(final File file, final LocalDateTime jobRunDate)
             throws IOException, InvalidFormatException {
-        final CemiOutputDefinition outputDefinition = getOutputDefinitionForSupplierExtract();
+        /*final CemiOutputDefinition outputDefinition = getOutputDefinitionForSupplierExtract();
 
         try (
             final InputStream templateFileStream = CuCoreUtilities.getResourceAsStream(
@@ -205,40 +201,12 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
             supplierFileAppender.populateSupplierFileFromIntermediateDataStorage(writer);
             writer.commit();
             supplierFileAppender.cleanUpIntermediateStorage();
-        }
-    }
-
-    private CemiOutputDefinition getOutputDefinitionForSupplierExtract() throws IOException {
-        try (
-            final InputStream inputStream = CuCoreUtilities.getResourceAsStream(
-                    CemiSupplierConstants.SUPPLIER_OUTPUT_DEFINITION_FILE_PATH);
-        ) {
-            final byte[] fileContents = IOUtils.toByteArray(inputStream);
-            return cemiOutputDefinitionFileType.parse(fileContents);
-        }
+        }*/
     }
 
     private boolean shouldCopySupplierExtractFileToOutboundDirectory() {
         return parameterService.getParameterValueAsBoolean(
                 CreateCemiSupplierExtractStep.class, CemiSupplierParameterConstants.COPY_CEMI_SUPPLIER_FILE_TO_OUTBOUND_FOLDER);
-    }
-
-    private boolean isCemiSensitiveDataSetToUnmask() {
-        String maskingParameterValue =  parameterService.getParameterValueAsString(
-                CreateCemiSupplierExtractStep.class, CemiSupplierParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
-        return StringUtils.equalsIgnoreCase(maskingParameterValue, CemiBaseConstants.UNMASK);
-    }
-
-    private boolean isCemiEnvironment() {
-        return StringUtils.equalsIgnoreCase(environment.getLane(), CemiBaseConstants.CEMI_ENVIRONMENT_LANE_NAME);
-    }
-
-    private boolean shouldUnmaskCemiSensitiveData() {
-        return isCemiEnvironment() && isCemiSensitiveDataSetToUnmask();
-    }
-
-    private boolean shouldMaskCemiSensitiveData() {
-        return !shouldUnmaskCemiSensitiveData();
     }
 
     private void copySupplierExtractFileToOutboundDirectory(final File sourceFile, final File targetFile) {
@@ -252,6 +220,21 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
         }
     }
 
+    @Override
+    protected Class<?> getComponentClassForDataExtractParameter() {
+        return CreateCemiSupplierExtractStep.class;
+    }
+
+    @Override
+    protected String getOutputDefinitionFilePathSuffix() {
+        return CemiSupplierConstants.SUPPLIER_OUTPUT_DEFINITION_FILE_PATH_SUFFIX;
+    }
+
+    @Override
+    protected String getTemplateWorkbookFilePathSuffix() {
+        return CemiSupplierConstants.SUPPLIER_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX;
+    }
+
     public void setSupplierFileCreationDirectory(final String supplierFileCreationDirectory) {
         this.supplierFileCreationDirectory = supplierFileCreationDirectory;
     }
@@ -259,7 +242,6 @@ public class CemiSupplierExtractServiceImpl implements CemiSupplierExtractServic
     public void setSupplierFileOutboundDirectory(final String supplierFileOutboundDirectory) {
         this.supplierFileOutboundDirectory = supplierFileOutboundDirectory;
     }
-
 
     public void setCemiOutputDefinitionFileType(final CemiOutputDefinitionFileType cemiOutputDefinitionFileType) {
         this.cemiOutputDefinitionFileType = cemiOutputDefinitionFileType;

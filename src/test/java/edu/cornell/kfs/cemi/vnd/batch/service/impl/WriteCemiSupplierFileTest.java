@@ -35,6 +35,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetDimension;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
@@ -82,9 +83,10 @@ public class WriteCemiSupplierFileTest {
                 CemiOutputDefinitionFileType.class);
 
         outputDefinition = GlobalResourceLoaderUtils.doWithResourceRetrievalDelegatedToKradResourceLoaderUtil(() -> {
+            final String definitionFilePath = CemiBaseConstants.CEMI_OUTPUT_DEFINITION_FILE_PATH_PREFIX
+                    + CemiSupplierConstants.SUPPLIER_OUTPUT_DEFINITION_FILE_PATH_SUFFIX;
             try (
-                final InputStream definitionStream = CuCoreUtilities.getResourceAsStream(
-                        CemiSupplierConstants.SUPPLIER_OUTPUT_DEFINITION_FILE_PATH);
+                final InputStream definitionStream = CuCoreUtilities.getResourceAsStream(definitionFilePath);
             ) {
                 final byte[] fileContents = IOUtils.toByteArray(definitionStream);
                 return outputDefinitionFileType.parse(fileContents);
@@ -117,9 +119,10 @@ public class WriteCemiSupplierFileTest {
     }
 
     private void createAndPopulateExcelFileFromTemplate(final File file) throws Exception {
+        final String templateFilePath = CemiBaseConstants.CEMI_TEMPLATE_WORKBOOK_FILE_PATH_PREFIX
+                + CemiSupplierConstants.SUPPLIER_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX;
         try (
-            final InputStream templateStream = CuCoreUtilities.getResourceAsStream(
-                    CemiSupplierConstants.SUPPLIER_TEMPLATE_FILE_PATH);
+            final InputStream templateStream = CuCoreUtilities.getResourceAsStream(templateFilePath);
             final CemiExcelWriter excelWriter = new CemiExcelWriter(outputDefinition, templateStream, file);
         ) {
             for (final CemiSheetDefinition sheet : outputDefinition.getSheets()) {
@@ -152,9 +155,10 @@ public class WriteCemiSupplierFileTest {
     }
 
     private void assertGeneratedFileHasExpectedStructureInModifiedSheets(final File file) throws Exception {
+        final String templateFilePath = CemiBaseConstants.CEMI_TEMPLATE_WORKBOOK_FILE_PATH_PREFIX
+                + CemiSupplierConstants.SUPPLIER_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX;
         try (
-            final InputStream oldFileStream = CuCoreUtilities.getResourceAsStream(
-                    CemiSupplierConstants.SUPPLIER_TEMPLATE_FILE_PATH);
+            final InputStream oldFileStream = CuCoreUtilities.getResourceAsStream(templateFilePath);
             final InputStream newFileStream = new FileInputStream(file);
             final OPCPackage oldOpcPackage = OPCPackage.open(oldFileStream);
             final OPCPackage newOpcPackage = OPCPackage.open(newFileStream);

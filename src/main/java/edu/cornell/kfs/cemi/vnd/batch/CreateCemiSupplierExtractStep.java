@@ -14,13 +14,11 @@ public class CreateCemiSupplierExtractStep extends AbstractStep {
     public boolean execute(final String jobName, final LocalDateTime jobRunDate) throws InterruptedException {
         //Phase1: Obtain the dataset
         cemiSupplierExtractService.resetState();
-        cemiSupplierExtractService.initializeVendorActivityDateRangeSettings();
-        cemiSupplierExtractService.populateListOfBaseVendorData();
-        cemiSupplierExtractService.populateListOfInScopeVendors();
+        cemiSupplierExtractService.captureInScopeBusinessObjectKeysToProcessingTable();
         //Phase 2: Loop through result set to create all the csv files
         cemiSupplierExtractService.generateIntermediateExtractData(jobRunDate);
         //Phase 3: Create single multi-tabbed file.
-        cemiSupplierExtractService.generateSupplierExtractFile(jobRunDate);
+        cemiSupplierExtractService.generateDataConversionExtractFile(jobRunDate);
         return true;
     }
 

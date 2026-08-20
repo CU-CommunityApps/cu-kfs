@@ -33,8 +33,8 @@ public final class CemiSupplierConstants {
     public static final int MAX_ACCOUNT_ACCEPTED_PAYMENT_TYPES = 3;
     public static final int MAX_ACCOUNT_PAYMENT_TYPES = 3;
 
-    public static final String SUPPLIER_OUTPUT_DEFINITION_FILE_PATH = "classpath:edu/cornell/kfs/cemi/vnd/batch/CemiSupplierExtractFileOutputDefinition.xml";
-    public static final String SUPPLIER_TEMPLATE_FILE_PATH = "classpath:edu/cornell/kfs/cemi/vnd/batch/Supplier.xlsx";
+    public static final String SUPPLIER_OUTPUT_DEFINITION_FILE_PATH_SUFFIX = "vnd/batch/CemiSupplierExtractFileOutputDefinition.xml";
+    public static final String SUPPLIER_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX = "vnd/batch/Supplier.xlsx";
     public static final String SUPPLIER_EXTRACT_FILENAME_PREFIX = "Supplier_ITH_";
     public static final String SUPPLIER_EXTRACT_PLAIN_FILENAME = "Supplier.xlsx";
 
