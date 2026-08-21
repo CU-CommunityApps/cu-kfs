@@ -6,6 +6,9 @@ public class CemiSupplierFileSupplierTabRowBo extends CemiIndexedBusinessObjectB
 
     private static final long serialVersionUID = 8273259452867160348L;
 
+    private Integer vendorHeaderGeneratedIdentifier;
+    private Integer vendorDetailAssignedIdentifier;
+
     private String supplierId;
     private String supplierReferenceId;
     private String supplierName;
@@ -57,6 +60,22 @@ public class CemiSupplierFileSupplierTabRowBo extends CemiIndexedBusinessObjectB
     private String alternateNameUsageBusinessEntity1;
     private String alternateNameBusinessEntity2;
     private String alternateNameUsageBusinessEntity2;
+
+    public Integer getVendorHeaderGeneratedIdentifier() {
+        return vendorHeaderGeneratedIdentifier;
+    }
+
+    public void setVendorHeaderGeneratedIdentifier(final Integer vendorHeaderGeneratedIdentifier) {
+        this.vendorHeaderGeneratedIdentifier = vendorHeaderGeneratedIdentifier;
+    }
+
+    public Integer getVendorDetailAssignedIdentifier() {
+        return vendorDetailAssignedIdentifier;
+    }
+
+    public void setVendorDetailAssignedIdentifier(final Integer vendorDetailAssignedIdentifier) {
+        this.vendorDetailAssignedIdentifier = vendorDetailAssignedIdentifier;
+    }
 
     public String getSupplierId() {
         return supplierId;

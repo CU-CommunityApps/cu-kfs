@@ -63,6 +63,9 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         final CemiSupplierAliasBo alias1 = aliases.get(0);
         final CemiSupplierAliasBo alias2 = aliases.get(1);
 
+        supplierRowBo.setVendorHeaderGeneratedIdentifier(vendorDetail.getVendorHeaderGeneratedIdentifier());
+        supplierRowBo.setVendorDetailAssignedIdentifier(vendorDetail.getVendorDetailAssignedIdentifier());
+
         supplierRowBo.setSupplierId(supplierId);
         supplierRowBo.setSupplierReferenceId(determineSupplierReferenceId());
         supplierRowBo.setSupplierName(vendorDetail.getVendorName());
