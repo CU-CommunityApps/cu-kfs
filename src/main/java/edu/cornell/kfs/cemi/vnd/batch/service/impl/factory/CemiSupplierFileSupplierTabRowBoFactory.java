@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAlias;
@@ -16,12 +18,15 @@ import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiForeignTaxIdType;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants.TaxAuthorityFormTypes;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAliasBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileSupplierTabRowBo;
 import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 import edu.cornell.kfs.vnd.CUVendorConstants.VendorOwnershipCodes;
 
 @SuppressWarnings("deprecation")
 public class CemiSupplierFileSupplierTabRowBoFactory {
+
+    private static final Logger LOG = LogManager.getLogger();
 
     private VendorDetail vendorDetail;
     private String supplierId;
@@ -53,6 +58,10 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         final String taxAuthorityFormType = determineTaxAuthorityFormType();
         final String taxIdText = determineTaxIdText();
         final String taxIdType = determineTaxIdType(taxIdText);
+
+        final List<CemiSupplierAliasBo> aliases = determineSupplierAliases();
+        final CemiSupplierAliasBo alias1 = aliases.get(0);
+        final CemiSupplierAliasBo alias2 = aliases.get(1);
 
         supplierRowBo.setSupplierId(supplierId);
         supplierRowBo.setSupplierReferenceId(determineSupplierReferenceId());
@@ -101,11 +110,10 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         supplierRowBo.setFieldTextValue2(CemiBaseConstants.EMPTY_STRING);
         supplierRowBo.setFieldSingleSelectChoice2(CemiBaseConstants.EMPTY_STRING);
         supplierRowBo.setFieldMultiSelectChoice2(CemiBaseConstants.EMPTY_STRING);
-        // TODO: Fill in alternate name values!
-        supplierRowBo.setAlternateNameBusinessEntity1(null);
-        supplierRowBo.setAlternateNameUsageBusinessEntity1(null);
-        supplierRowBo.setAlternateNameBusinessEntity2(null);
-        supplierRowBo.setAlternateNameUsageBusinessEntity2(null);
+        supplierRowBo.setAlternateNameBusinessEntity1(alias1.getAliasName());
+        supplierRowBo.setAlternateNameUsageBusinessEntity1(alias1.getAliasUsage());
+        supplierRowBo.setAlternateNameBusinessEntity2(alias2.getAliasName());
+        supplierRowBo.setAlternateNameUsageBusinessEntity2(alias2.getAliasUsage());
 
         return supplierRowBo;
     }
@@ -136,14 +144,6 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         } else {
             return vendorHeader.getVendorTaxNumber();
         }
-    }
-
-    private String getAliasName(final List<VendorAlias> aliases, final int index) {
-        return index < aliases.size() ? aliases.get(index).getVendorAliasName() : "";
-    }
-
-    private String getAliasUsage(final List<VendorAlias> aliases, final int index) {
-        return index < aliases.size() ? CemiSupplierConstants.ALTERNATE_NAME_USAGE_DEFAULT_VALUE : "";
     }
 
     // default to true if tax id is present, FALSE if tax type USA_SSN
@@ -220,9 +220,33 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         return "";
     }
 
-    public String determineIrs1099SupplierFlag(final String taxAuthorityFormType) {
+    private String determineIrs1099SupplierFlag(final String taxAuthorityFormType) {
         return CemiUtils.convertToBooleanValueForFileExtract(
                 StringUtils.equals(taxAuthorityFormType, TaxAuthorityFormTypes.FORM_1099_MISC));
+    }
+
+    private List<CemiSupplierAliasBo> determineSupplierAliases() {
+        final CemiSupplierAliasBo emptyAlias = CemiSupplierAliasBoFactory.createAliasBoFrom(
+                CemiBaseConstants.EMPTY_STRING, CemiBaseConstants.EMPTY_STRING);
+        final CemiSupplierAliasBo[] convertedAliases = vendorDetail.getVendorAliases().stream()
+                .filter(VendorAlias::isActive)
+                .map(this::createCemiSupplierAliasBoFromVendorAlias)
+                .toArray(CemiSupplierAliasBo[]::new);
+
+        if (convertedAliases.length > CemiSupplierConstants.MAX_SUPPLIER_ALIASES) {
+            LOG.warn("determineSupplierAliases, Found a total of {} active aliases for Vendor {}-{}; only the first {} "
+                    + "will be used in the output",
+                    convertedAliases.length, vendorDetail.getVendorHeaderGeneratedIdentifier(),
+                    vendorDetail.getVendorDetailAssignedIdentifier(), CemiSupplierConstants.MAX_SUPPLIER_ALIASES);
+        }
+
+        return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
+                emptyAlias, CemiSupplierConstants.MAX_SUPPLIER_ALIASES, convertedAliases);
+    }
+
+    private CemiSupplierAliasBo createCemiSupplierAliasBoFromVendorAlias(final VendorAlias vendorAlias) {
+        return CemiSupplierAliasBoFactory.createAliasBoFrom(
+                vendorAlias.getVendorAliasName(), CemiSupplierConstants.ALTERNATE_NAME_USAGE_DEFAULT_VALUE);
     }
 
 }
