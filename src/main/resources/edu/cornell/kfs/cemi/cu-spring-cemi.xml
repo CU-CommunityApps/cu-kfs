@@ -227,19 +227,20 @@
 
     <!-- Suppliers -->
 
-    <bean id="cemiVendorDao" parent="cemiVendorDao-parentBean"/>
-    <bean id="cemiVendorDao-parentBean"
+    <bean id="cemiSupplierDao" parent="cemiSupplierDao-parentBean"/>
+    <bean id="cemiSupplierDao-parentBean"
           abstract="true"
-          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiVendorDaoJdbcImpl"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiSupplierDaoJdbcImpl"
           parent="platformAwareDaoJdbc"
           p:dataSource-ref="cemiDataSource"
           p:dateTimeService-ref="dateTimeService"/>
 
-    <bean id="cemiVendorOrmDao" parent="cemiVendorOrmDao-parentBean"/>
-    <bean id="cemiVendorOrmDao-parentBean"
+    <bean id="cemiSupplierOrmDao" parent="cemiSupplierOrmDao-parentBean"/>
+    <bean id="cemiSupplierOrmDao-parentBean"
           abstract="true"
-          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiVendorOrmDaoOjbImpl"
-          parent="vendorDaoOjb"/>
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiSupplierOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
 
     <bean id="cemiModuleService" parent="cemiModuleService-parentBean"/>
     <bean id="cemiModuleService-parentBean" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl" abstract="true"
@@ -268,8 +269,8 @@
           p:cemiFileAppenderService-ref="cemiFileAppenderService"
           p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
           p:parameterService-ref="parameterService"
-          p:cemiVendorOrmDao-ref="cemiVendorOrmDao"
-          p:cemiVendorDao-ref="cemiVendorDao"
+          p:cemiSupplierOrmDao-ref="cemiSupplierOrmDao"
+          p:cemiSupplierDao-ref="cemiSupplierDao"
           p:businessObjectService-ref="businessObjectService"
           p:dateTimeService-ref="dateTimeService"
           p:isoFipsConversionService-ref="isoFipsConversionService"/>
@@ -370,7 +371,6 @@
           p:reportsDirectory="${reports.directory}/cemi/"
           p:cemiOrderFromSupplierOrmDao-ref="cemiOrderFromSupplierOrmDao"
           p:cemiOrderFromSupplierDao-ref="cemiOrderFromSupplierDao"
-          p:cemiVendorOrmDao-ref="cemiVendorOrmDao"
           p:businessObjectService-ref="businessObjectService"/>
           
     <!--  Award Translate Tables -->

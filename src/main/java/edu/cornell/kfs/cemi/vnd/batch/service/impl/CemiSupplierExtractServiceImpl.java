@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.Environment;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.springframework.transaction.annotation.Propagation;
@@ -25,18 +24,17 @@ import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierParameterConstants;
 import edu.cornell.kfs.cemi.vnd.batch.CreateCemiSupplierExtractStep;
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiSupplierExtractService;
-import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorDao;
-import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorOrmDao;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiSupplierOrmDao;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiSupplierDao;
 import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 
 public class CemiSupplierExtractServiceImpl extends CemiDataExtractServiceBase implements CemiSupplierExtractService {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private CemiVendorOrmDao cemiVendorOrmDao;
-    private CemiVendorDao cemiVendorDao;
+    private CemiSupplierOrmDao cemiSupplierOrmDao;
+    private CemiSupplierDao cemiSupplierDao;
     private BusinessObjectService businessObjectService;
-    private ParameterService parameterService;
     private DateTimeService dateTimeService;
     private ISOFIPSConversionService isoFipsConversionService;
 
@@ -48,8 +46,8 @@ public class CemiSupplierExtractServiceImpl extends CemiDataExtractServiceBase i
     @Override
     public void resetState() {
         LOG.info("resetState, Deleting the list of extractable Vendors from the previous run (if present)...");
-        getCemiVendorDao().clearExistingListOfBaseVendorData();
-        getCemiVendorDao().clearExistingListOfExtractableVendorIds();
+        cemiSupplierDao.clearExistingListOfBaseVendorData();
+        cemiSupplierDao.clearExistingListOfExtractableVendorIds();
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -74,7 +72,7 @@ public class CemiSupplierExtractServiceImpl extends CemiDataExtractServiceBase i
                 "Parameter %s contained a 'from' date that is later than the 'to' date",
                 CemiSupplierParameterConstants.CEMI_SUPPLIER_EXTRACT_DATE_RANGE);
 
-        getCemiVendorDao().updateSupplierExtractQuerySettings(fromDate, toDate);
+        cemiSupplierDao.updateSupplierExtractQuerySettings(fromDate, toDate);
     }
 
     private LocalDate parseDate(final String value) {
@@ -88,12 +86,12 @@ public class CemiSupplierExtractServiceImpl extends CemiDataExtractServiceBase i
 
     private void populateListOfBaseVendorData() {
         LOG.info("populateListOfBaseVendorData, Preparing base Vendor data needed for subsequent Vendor query...");
-        getCemiVendorDao().prepareBaseVendorDataNeededForMainVendorIdQuery();
+        cemiSupplierDao.prepareBaseVendorDataNeededForMainVendorIdQuery();
     }
 
     private void populateListOfInScopeVendors() {
         LOG.info("populateListOfInScopeVendors, Querying and storing the list of extractable Vendors...");
-        getCemiVendorDao().queryAndStoreVendorIdsForSupplierExtract();
+        cemiSupplierDao.queryAndStoreVendorIdsForSupplierExtract();
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -102,7 +100,7 @@ public class CemiSupplierExtractServiceImpl extends CemiDataExtractServiceBase i
         LOG.info("generateIntermediateExtractData, Generating data rows for {} spreadsheet and placing in "
                 + "intermediate storage...", CemiSupplierConstants.SUPPLIER_EXTRACT_PLAIN_FILENAME);
         try (
-                final Stream<VendorDetail> vendors = getCemiVendorOrmDao()
+                final Stream<VendorDetail> vendors = cemiSupplierOrmDao
                         .getVendorsForCemiSupplierExtractAsCloseableStream();
         ) {
             final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
@@ -146,28 +144,16 @@ public class CemiSupplierExtractServiceImpl extends CemiDataExtractServiceBase i
         this.businessObjectService = businessObjectService;
     }
 
-    public void setParameterService(final ParameterService parameterService) {
-        this.parameterService = parameterService;
-    }
-
     public void setDateTimeService(final DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
     }
 
-    public CemiVendorDao getCemiVendorDao() {
-        return cemiVendorDao;
+    public void setCemiSupplierDao(CemiSupplierDao cemiSupplierDao) {
+        this.cemiSupplierDao = cemiSupplierDao;
     }
 
-    public void setCemiVendorDao(CemiVendorDao cemiVendorDao) {
-        this.cemiVendorDao = cemiVendorDao;
-    }
-
-    public CemiVendorOrmDao getCemiVendorOrmDao() {
-        return cemiVendorOrmDao;
-    }
-
-    public void setCemiVendorOrmDao(CemiVendorOrmDao cemiVendorOrmDao) {
-        this.cemiVendorOrmDao = cemiVendorOrmDao;
+    public void setCemiSupplierOrmDao(CemiSupplierOrmDao cemiSupplierOrmDao) {
+        this.cemiSupplierOrmDao = cemiSupplierOrmDao;
     }
 
     public void setIsoFipsConversionService(final ISOFIPSConversionService isoFipsConversionService) {

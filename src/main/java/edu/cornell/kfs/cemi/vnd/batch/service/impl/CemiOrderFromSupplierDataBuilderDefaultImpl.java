@@ -34,7 +34,7 @@ import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileEmailsTabRo
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileSupplierTabRowBo;
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiOrderFromSupplierDataBuilder;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiOrderFromSupplierDao;
-import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorOrmDao;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiOrderFromSupplierOrmDao;
 import edu.cornell.kfs.cemi.vnd.util.CemiVendorUtils;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -44,22 +44,22 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
     private static final Logger LOG = LogManager.getLogger();
 
     private final String supplierJobRunDate;
-    private final CemiVendorOrmDao cemiVendorOrmDao;
+    private final CemiOrderFromSupplierOrmDao cemiOrderFromSupplierOrmDao;
     private final CemiOrderFromSupplierDao cemiOrderFromSupplierDao;
     private final Writer skippedSuppliersWriter;
     private final boolean maskSensitiveData;
 
     public CemiOrderFromSupplierDataBuilderDefaultImpl(final BusinessObjectService businessObjectService,
-            final String jobRunDate, final String supplierJobRunDate, final CemiVendorOrmDao cemiVendorOrmDao,
+            final String jobRunDate, final String supplierJobRunDate, final CemiOrderFromSupplierOrmDao cemiOrderFromSupplierOrmDao,
             final CemiOrderFromSupplierDao cemiOrderFromSupplierDao, final Writer skippedSuppliersWriter,
             final boolean maskSensitiveData) {
         super(businessObjectService, jobRunDate, CemiOrderFromSupplierBo.class);
         Validate.notBlank(supplierJobRunDate, "supplierJobRunDate cannot be blank");
-        Validate.notNull(cemiVendorOrmDao, "cemiVendorOrmDao cannot be null");
+        Validate.notNull(cemiOrderFromSupplierOrmDao, "cemiOrderFromSupplierOrmDao cannot be null");
         Validate.notNull(cemiOrderFromSupplierDao, "cemiOrderFromSupplierDao cannot be null");
         Validate.notNull(skippedSuppliersWriter, "skippedSuppliersWriter cannot be null");
         this.supplierJobRunDate = supplierJobRunDate;
-        this.cemiVendorOrmDao = cemiVendorOrmDao;
+        this.cemiOrderFromSupplierOrmDao = cemiOrderFromSupplierOrmDao;
         this.cemiOrderFromSupplierDao = cemiOrderFromSupplierDao;
         this.skippedSuppliersWriter = skippedSuppliersWriter;
         this.maskSensitiveData = maskSensitiveData;
@@ -194,7 +194,7 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
     }
 
     private Map<String, List<VendorAddress>> getKfsVendorAddresses(final String supplierId) {
-        final List<VendorAddress> vendorAddresses = cemiVendorOrmDao.getKfsVendorAddresses(
+        final List<VendorAddress> vendorAddresses = cemiOrderFromSupplierOrmDao.getKfsVendorAddresses(
                 supplierId, supplierJobRunDate);
         return CemiVendorUtils.groupKfsVendorAddressesByLineDataThenPrioritizeByType(
                 vendorAddresses, AddressTypes.PURCHASE_ORDER);

@@ -2,7 +2,6 @@ package edu.cornell.kfs.cemi.vnd.dataaccess.impl;
 
 import java.sql.Types;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -11,15 +10,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 
+import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants.CemiQuerySettingsIds;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiSupplierDao;
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.sys.util.CuSqlChunk;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
 import edu.cornell.kfs.sys.util.CuSqlQueryPlatformAwareDaoBaseJdbc;
-import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants.CemiQuerySettingsIds;
-import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorDao;
 
-public class CemiVendorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc implements CemiVendorDao {
+public class CemiSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc implements CemiSupplierDao {
 
     private static final Logger LOG = LogManager.getLogger();
 
@@ -56,7 +54,7 @@ public class CemiVendorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc im
                 LocalDate.of(currentDate.getYear() - 1, 9, 1), LocalTime.of(0, 0, 0, 0), easternTimeZone);
 
         final CuSqlQuery query = new CuSqlChunk()
-                .append("UPDATE CEMI.CU_CEMI_QUERY_SETTINGS_T ")
+                .append("UPDATE CEMI.CU_CEMI_SUPPLIER_QUERY_SETTINGS_T ")
                 .append("SET DATETIME_RANGE_FROM = ").appendAsParameter(Types.TIMESTAMP, fromDateTime)
                 .append(", DATETIME_RANGE_TO = ").appendAsParameter(Types.TIMESTAMP, toDateTime)
                 .append(", START_OF_YEAR = ").appendAsParameter(Types.TIMESTAMP, startOfYear)
@@ -96,34 +94,6 @@ public class CemiVendorDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc im
 
         final int numRowsInserted = executeUpdate(query);
         LOG.info("queryAndStoreVendorIdsForSupplierExtract, Found {} vendors to extract", numRowsInserted);
-    }
-
-    @Override
-    public void storeSupplierIdVendorIdSupplierExtractRunDateMapping(final String supplierId,
-            final Integer vendorHeaderGeneratedIdentifier, final Integer vendorDetailAssignedIdentifier,
-            final LocalDateTime jobRunDate) {
-
-        String jobRunDateAsString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
-
-        final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO CEMI.CU_CEMI_MAPPING_SPLR_VNDR_EXTR_FILE_T ")
-                .append("(WKDY_SPLR_ID, VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, EXTR_FILE_RUNDATE) ")
-                .append("VALUES (").appendAsParameter(Types.VARCHAR, supplierId)
-                .append(", ").appendAsParameter(Types.INTEGER, vendorHeaderGeneratedIdentifier)
-                .append(", ").appendAsParameter(Types.INTEGER, vendorDetailAssignedIdentifier)
-                .append(", ").appendAsParameter(Types.VARCHAR, jobRunDateAsString)
-                .append(")")
-                .toQuery();
-
-        final int numRowsInserted = executeUpdate(query);
-        if (numRowsInserted != 1) {
-            LOG.error("storeSupplierIdVendorIdSupplierExtractRunDateMapping, Query should have inserted 1 row,"
-                    + " but it inserted {} instead", numRowsInserted);
-            throw new RuntimeException(String.format("Failed to insert Supplier-Vendor-JobRunDate row for:"
-                    + " supplierId %s, vendor id %s-%s, extraction job run datetime %s.", supplierId,
-                    vendorHeaderGeneratedIdentifier.intValue(), vendorDetailAssignedIdentifier.intValue(),
-                    jobRunDateAsString));
-        }
     }
 
     public void setDateTimeService(final DateTimeService dateTimeService) {

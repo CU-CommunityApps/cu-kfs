@@ -24,6 +24,8 @@ public class CemiSupplierFileBankAccountsTabRowBoFactory {
         Validate.isTrue(CollectionUtils.size(bankAccounts) >= CemiSupplierConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES,
                 "bankAccounts list must have at least %s entries, with empty placeholder BOs for any absent accounts",
                 CemiSupplierConstants.MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES);
+        this.supplierId = supplierId;
+        this.bankAccounts = bankAccounts;
     }
 
     public static CemiSupplierFileBankAccountsTabRowBo creatTabRowBoFrom(final String supplierId,

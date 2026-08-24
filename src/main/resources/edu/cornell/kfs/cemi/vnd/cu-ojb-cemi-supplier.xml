@@ -4,6 +4,8 @@
                       table="CU_CEMI_EXTR_SUPPLIER_TAB_SUPPLIER_T">
         <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="vendorHeaderGeneratedIdentifier" column="VNDR_HDR_GNRTD_ID" jdbc-type="INTEGER" index="true"/>
+        <field-descriptor name="vendorDetailAssignedIdentifier" column="VNDR_DTL_ASND_ID" jdbc-type="INTEGER" index="true"/>
         <field-descriptor name="supplierId" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="supplierReferenceId" column="SUPPLIER_REFERENCE_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="supplierName" column="SUPPLIER_NAME" jdbc-type="VARCHAR"/>

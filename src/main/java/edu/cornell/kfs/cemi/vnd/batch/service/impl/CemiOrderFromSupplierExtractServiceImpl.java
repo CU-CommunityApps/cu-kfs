@@ -30,7 +30,6 @@ import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTa
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiOrderFromSupplierExtractService;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiOrderFromSupplierDao;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiOrderFromSupplierOrmDao;
-import edu.cornell.kfs.cemi.vnd.dataaccess.CemiVendorOrmDao;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CemiOrderFromSupplierExtractServiceImpl extends CemiDataExtractServiceBase
@@ -41,7 +40,6 @@ public class CemiOrderFromSupplierExtractServiceImpl extends CemiDataExtractServ
     private String reportsDirectory;
     private CemiOrderFromSupplierOrmDao cemiOrderFromSupplierOrmDao;
     private CemiOrderFromSupplierDao cemiOrderFromSupplierDao;
-    private CemiVendorOrmDao cemiVendorOrmDao;
     private BusinessObjectService businessObjectService;
 
     public CemiOrderFromSupplierExtractServiceImpl(final Environment environment) {
@@ -125,7 +123,7 @@ public class CemiOrderFromSupplierExtractServiceImpl extends CemiDataExtractServ
         ) {
             final String supplierJobRunDate = getSupplierJobRunDate();
             final CemiOrderFromSupplierDataBuilderDefaultImpl dataBuilder = new CemiOrderFromSupplierDataBuilderDefaultImpl(
-                    businessObjectService, jobRunDateString, supplierJobRunDate, cemiVendorOrmDao,
+                    businessObjectService, jobRunDateString, supplierJobRunDate, cemiOrderFromSupplierOrmDao,
                     cemiOrderFromSupplierDao, skippedSuppliersWriter, shouldMaskCemiSensitiveData());
             final Iterator<CemiSupplierFileAddressesTabRowBo> addressesIterator = addresses.iterator();
             dataBuilder.writeOrderFromSupplierDataToIntermediateStorage(addressesIterator);
@@ -180,10 +178,6 @@ public class CemiOrderFromSupplierExtractServiceImpl extends CemiDataExtractServ
 
     public void setCemiOrderFromSupplierDao(final CemiOrderFromSupplierDao cemiOrderFromSupplierDao) {
         this.cemiOrderFromSupplierDao = cemiOrderFromSupplierDao;
-    }
-
-    public void setCemiVendorOrmDao(final CemiVendorOrmDao cemiVendorOrmDao) {
-        this.cemiVendorOrmDao = cemiVendorOrmDao;
     }
 
     public void setCemiFileAppenderService(final CemiFileAppenderService cemiFileAppenderService) {
