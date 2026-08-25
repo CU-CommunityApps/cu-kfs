@@ -15,7 +15,7 @@ public class CreateCemiSupplierExtractStep extends AbstractStep {
         //Phase1: Obtain the dataset
         cemiSupplierExtractService.resetState();
         cemiSupplierExtractService.captureInScopeBusinessObjectKeysToProcessingTable();
-        //Phase 2: Loop through result set to create all the csv files
+        //Phase 2: Loop through result set to generate the tab/sheet data and save it in database tables.
         cemiSupplierExtractService.generateIntermediateExtractData(jobRunDate);
         //Phase 3: Create single multi-tabbed file.
         cemiSupplierExtractService.generateDataConversionExtractFile(jobRunDate);
