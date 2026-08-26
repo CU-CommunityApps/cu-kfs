@@ -32,9 +32,9 @@ import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiRemitToSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiRemitToSupplierParameterConstants;
-import edu.cornell.kfs.cemi.vnd.CemiVendorParameterConstants;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierParameterConstants;
 import edu.cornell.kfs.cemi.vnd.batch.CreateCemiRemitToSupplierExtractStep;
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiRemitToSupplierExtractService;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiRemitToSupplierDao;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiRemitToSupplierOrmDao;
@@ -105,7 +105,7 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
 
     private void generateRemitToSupplierExtractData(final LocalDateTime jobRunDate) throws IOException {
         try (
-            final Stream<CemiSupplierAddressBo> addresses = cemiRemitToSupplierOrmDao
+            final Stream<CemiSupplierFileAddressesTabRowBo> addresses = cemiRemitToSupplierOrmDao
                     .getAddressesForCemiRemitToSupplierExtractAsCloseableStream();
         ) {
             final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
@@ -113,7 +113,7 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
             final CemiRemitToSupplierDataBuilderDefaultImpl dataBuilder = new CemiRemitToSupplierDataBuilderDefaultImpl(
                     businessObjectService, jobRunDateString, cemiRemitToSupplierOrmDao, supplierJobRunDate,
                     shouldMaskCemiSensitiveData());
-            final Iterator<CemiSupplierAddressBo> addressesIterator = addresses.iterator();
+            final Iterator<CemiSupplierFileAddressesTabRowBo> addressesIterator = addresses.iterator();
             dataBuilder.writeRemitToSupplierDataToIntermediateStorage(addressesIterator);
         }
     }
@@ -192,7 +192,7 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
     private boolean isCemiSensitiveDataSetToUnmask() {
         String maskingParameterValue =  parameterService.getParameterValueAsString(
                 CreateCemiRemitToSupplierExtractStep.class,
-                CemiVendorParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
+                CemiSupplierParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
         return Strings.CI.equals(maskingParameterValue, CemiBaseConstants.UNMASK);
     }
 

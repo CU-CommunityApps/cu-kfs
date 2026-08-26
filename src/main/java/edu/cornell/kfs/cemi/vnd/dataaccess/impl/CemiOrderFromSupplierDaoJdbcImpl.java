@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiOrderFromSupplierDao;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.util.CuSqlChunk;
@@ -130,13 +130,13 @@ public class CemiOrderFromSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
     }
 
     @Override
-    public void storeAsListOfSupplierAddressLinks(final Iterator<CemiSupplierAddressBo> addressIterator) {
+    public void storeAsListOfSupplierAddressLinks(final Iterator<CemiSupplierFileAddressesTabRowBo> addressIterator) {
         final CuSqlQuery query = new CuSqlChunk()
                 .append("INSERT INTO CEMI.CU_CEMI_EXTR_ORD_FRM_SUPP_SUPP_ADDR_LNK_T (")
                 .append("SUPP_ADDR_ID, VNDR_ADDR_GNRTD_ID, VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID, CONCAT_ADDR")
                 .append(") ")
                 .append("SELECT ")
-                .appendAsParameter(Types.VARCHAR, CemiSupplierAddressBo::getAddressId)
+                .appendAsParameter(Types.VARCHAR, CemiSupplierFileAddressesTabRowBo::getAddressId)
                 .append(", ")
                 .appendAsParameter(Types.INTEGER, this::extractKfsVendorId)
                 .append(", ")
@@ -144,15 +144,15 @@ public class CemiOrderFromSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
                 .appendAsParameter(Types.VARCHAR, this::getConcatenatedSupplierAddressData)
                 .append(" FROM CEMI.CU_CEMI_MAPPING_SPLR_VNDR_EXTR_FILE_T ")
                 .append("WHERE WKDY_SPLR_ID = ")
-                        .appendAsParameter(Types.VARCHAR, CemiSupplierAddressBo::getSupplierId)
+                        .appendAsParameter(Types.VARCHAR, CemiSupplierFileAddressesTabRowBo::getSupplierId)
                 .append(" AND EXTR_FILE_RUNDATE = ")
-                        .appendAsParameter(Types.VARCHAR, CemiSupplierAddressBo::getJobRunDateString)
+                        .appendAsParameter(Types.VARCHAR, CemiSupplierFileAddressesTabRowBo::getJobRunDateString)
                 .toQuery();
 
-        storeAsListOfAddressLinks(CemiSupplierAddressBo.class, query, addressIterator);
+        storeAsListOfAddressLinks(CemiSupplierFileAddressesTabRowBo.class, query, addressIterator);
     }
 
-    private Integer extractKfsVendorId(final CemiSupplierAddressBo supplierAddress) {
+    private Integer extractKfsVendorId(final CemiSupplierFileAddressesTabRowBo supplierAddress) {
         final String supplierAddressId = supplierAddress.getAddressId();
         final Matcher addressIdMatcher = SUPPLIER_ADDRESS_ID_PATTERN.matcher(supplierAddressId);
         String kfsAddressId = null;
@@ -164,7 +164,7 @@ public class CemiOrderFromSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
         return Integer.valueOf(kfsAddressId);
     }
 
-    private String getConcatenatedSupplierAddressData(final CemiSupplierAddressBo supplierAddress) {
+    private String getConcatenatedSupplierAddressData(final CemiSupplierFileAddressesTabRowBo supplierAddress) {
         return CemiUtils.generateConcatenatedKey(
                     supplierAddress.getAddressLine1(), supplierAddress.getAddressLine2(),
                     supplierAddress.getCity(), supplierAddress.getState(),

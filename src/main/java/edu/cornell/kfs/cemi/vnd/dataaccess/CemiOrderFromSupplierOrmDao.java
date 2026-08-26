@@ -1,17 +1,20 @@
 package edu.cornell.kfs.cemi.vnd.dataaccess;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
 
 public interface CemiOrderFromSupplierOrmDao {
 
     Stream<VendorAddress> getKfsVendorAddressesForExtractedSuppliers();
 
-    Stream<CemiSupplierAddressBo> getSupplierAddressesForExtractedSuppliers();
+    Stream<CemiSupplierFileAddressesTabRowBo> getSupplierAddressesForExtractedSuppliers();
 
-    Stream<CemiSupplierAddressBo> getSupplierAddressesForOrderFromSupplierExtract();
+    Stream<CemiSupplierFileAddressesTabRowBo> getSupplierAddressesForOrderFromSupplierExtract();
+
+    List<VendorAddress> getKfsVendorAddresses(final String supplierId, final String supplierJobRunDate);
 
 }

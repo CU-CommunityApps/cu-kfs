@@ -2,9 +2,9 @@ package edu.cornell.kfs.cemi.vnd.batch.businessobject;
 
 import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBase;
 
-public class CemiSupplierAddressBo extends CemiIndexedBusinessObjectBase {
+public class CemiSupplierFileAddressesTabRowBo extends CemiIndexedBusinessObjectBase {
 
-    private static final long serialVersionUID = 3111569769858194235L;
+    private static final long serialVersionUID = 5799855472019249224L;
 
     private String supplierId;
     private String addressId;

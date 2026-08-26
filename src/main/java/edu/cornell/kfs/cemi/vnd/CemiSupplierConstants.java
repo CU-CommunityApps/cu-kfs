@@ -11,7 +11,7 @@ import edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder.
 import edu.cornell.kfs.vnd.CUVendorConstants;
 import edu.cornell.kfs.vnd.CUVendorConstants.CUAddressTypes;
 
-public final class CemiVendorConstants {
+public final class CemiSupplierConstants {
 
     public static final String EMPTY_STRING = KFSConstants.EMPTY_STRING;
     
@@ -32,9 +32,10 @@ public final class CemiVendorConstants {
     public static final int MAX_EMAIL_TENANTED_USES = 4;
     public static final int MAX_ACCOUNT_ACCEPTED_PAYMENT_TYPES = 3;
     public static final int MAX_ACCOUNT_PAYMENT_TYPES = 3;
+    public static final int MAX_SUPPLIER_ALIASES = 2;
 
-    public static final String SUPPLIER_OUTPUT_DEFINITION_FILE_PATH = "classpath:edu/cornell/kfs/cemi/vnd/batch/CemiSupplierExtractFileOutputDefinition.xml";
-    public static final String SUPPLIER_TEMPLATE_FILE_PATH = "classpath:edu/cornell/kfs/cemi/vnd/batch/Supplier.xlsx";
+    public static final String SUPPLIER_OUTPUT_DEFINITION_FILE_PATH_SUFFIX = "vnd/batch/CemiSupplierExtractFileOutputDefinition.xml";
+    public static final String SUPPLIER_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX = "vnd/batch/Supplier.xlsx";
     public static final String SUPPLIER_EXTRACT_FILENAME_PREFIX = "Supplier_ITH_";
     public static final String SUPPLIER_EXTRACT_PLAIN_FILENAME = "Supplier.xlsx";
 

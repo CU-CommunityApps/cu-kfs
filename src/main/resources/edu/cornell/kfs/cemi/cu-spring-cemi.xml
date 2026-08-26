@@ -26,6 +26,7 @@
                 <value>edu/cornell/kfs/cemi/cu-ojb-cemi.xml</value>
                 <value>edu/cornell/kfs/cemi/module/cg/cu-ojb-cemi-award-schedule.xml</value>
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-vnd.xml</value>
+                <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-supplier.xml</value>
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-entity-contact.xml</value>
             </list>
         </property>
@@ -225,20 +226,22 @@
 
 
     <!-- Suppliers -->
-    <bean id="cemiVendorDao" parent="cemiVendorDao-parentBean"/>
-    <bean id="cemiVendorDao-parentBean"
+
+    <bean id="cemiSupplierDao" parent="cemiSupplierDao-parentBean"/>
+    <bean id="cemiSupplierDao-parentBean"
           abstract="true"
-          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiVendorDaoJdbcImpl"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiSupplierDaoJdbcImpl"
           parent="platformAwareDaoJdbc"
           p:dataSource-ref="cemiDataSource"
           p:dateTimeService-ref="dateTimeService"/>
 
-    <bean id="cemiVendorOrmDao" parent="cemiVendorOrmDao-parentBean"/>
-    <bean id="cemiVendorOrmDao-parentBean"
+    <bean id="cemiSupplierOrmDao" parent="cemiSupplierOrmDao-parentBean"/>
+    <bean id="cemiSupplierOrmDao-parentBean"
           abstract="true"
-          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiVendorOrmDaoOjbImpl"
-          parent="vendorDaoOjb"/>
-    
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiSupplierOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
+
     <bean id="cemiModuleService" parent="cemiModuleService-parentBean"/>
     <bean id="cemiModuleService-parentBean" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl" abstract="true"
           p:moduleConfiguration-ref="cemiModuleConfiguration"/>
@@ -261,15 +264,16 @@
           abstract="true"
           class="edu.cornell.kfs.cemi.vnd.batch.service.impl.CemiSupplierExtractServiceImpl"
           c:environment-ref="environment"
-          p:supplierFileCreationDirectory="${staging.directory}/cemi/vnd/cemiSupplierExtract"
-          p:supplierFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
-          p:cemiVendorOrmDao-ref="cemiVendorOrmDao"
-          p:cemiVendorDao-ref="cemiVendorDao"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/vnd/cemiSupplierExtract"
+          p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
           p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
-          p:businessObjectService-ref="businessObjectService"
           p:parameterService-ref="parameterService"
-          p:dateTimeService-ref="dateTimeService"/>
-
+          p:cemiSupplierOrmDao-ref="cemiSupplierOrmDao"
+          p:cemiSupplierDao-ref="cemiSupplierDao"
+          p:businessObjectService-ref="businessObjectService"
+          p:dateTimeService-ref="dateTimeService"
+          p:isoFipsConversionService-ref="isoFipsConversionService"/>
 
     <bean id="cemiOutputDefinitionFileType" parent="cemiOutputDefinitionFileType-parentBean"/>
     <bean id="cemiOutputDefinitionFileType-parentBean"
@@ -367,7 +371,6 @@
           p:reportsDirectory="${reports.directory}/cemi/"
           p:cemiOrderFromSupplierOrmDao-ref="cemiOrderFromSupplierOrmDao"
           p:cemiOrderFromSupplierDao-ref="cemiOrderFromSupplierDao"
-          p:cemiVendorOrmDao-ref="cemiVendorOrmDao"
           p:businessObjectService-ref="businessObjectService"/>
           
     <!--  Award Translate Tables -->

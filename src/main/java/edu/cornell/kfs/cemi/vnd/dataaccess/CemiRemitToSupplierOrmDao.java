@@ -5,11 +5,11 @@ import java.util.stream.Stream;
 
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAddressBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
 
 public interface CemiRemitToSupplierOrmDao {
 
-    Stream<CemiSupplierAddressBo> getAddressesForCemiRemitToSupplierExtractAsCloseableStream();
+    Stream<CemiSupplierFileAddressesTabRowBo> getAddressesForCemiRemitToSupplierExtractAsCloseableStream();
 
     List<VendorAddress> getKfsVendorAddresses(final String supplierId, final String supplierJobRunDate);
 

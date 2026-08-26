@@ -12,14 +12,14 @@ import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiOrderFromSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiOrderFromSupplierConstants.DefaultPOTypes;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiOrderFromSupplierBo;
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBo;
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierEmailBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileEmailsTabRowBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileSupplierTabRowBo;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CemiOrderFromSupplierBoFactory {
 
-    private CemiSupplierBo supplier;
-    private CemiSupplierEmailBo supplierEmailRow;
+    private CemiSupplierFileSupplierTabRowBo supplier;
+    private CemiSupplierFileEmailsTabRowBo supplierEmailRow;
     private String emailFromKfsVendorAddress;
     private String supplierConnectionRowId;
     private boolean isFirstRowForSupplier;
@@ -30,12 +30,12 @@ public class CemiOrderFromSupplierBoFactory {
     private String emailId;
     private String emailAddress;
 
-    public CemiOrderFromSupplierBoFactory withSupplier(final CemiSupplierBo supplier) {
+    public CemiOrderFromSupplierBoFactory withSupplier(final CemiSupplierFileSupplierTabRowBo supplier) {
         this.supplier = supplier;
         return this;
     }
 
-    public CemiOrderFromSupplierBoFactory withSupplierEmailRow(final CemiSupplierEmailBo supplierEmailRow) {
+    public CemiOrderFromSupplierBoFactory withSupplierEmailRow(final CemiSupplierFileEmailsTabRowBo supplierEmailRow) {
         this.supplierEmailRow = supplierEmailRow;
         return this;
     }
