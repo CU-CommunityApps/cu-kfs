@@ -1,0 +1,108 @@
+<descriptor-repository version="1.0">
+
+    <!-- The OJB database table defined by this file will contain all of the attribute data for the business object class described.
+         
+         A table should exist for every Cemi{EXTRACTNAME}File{TABNAME}TabRowBo required by the data extraction spreadsheet file.
+         Meaning: 
+            Award Schedule data extract file would need one table for its business object:
+                CemiAwardScheduleFileAwardScheduleTabRowBo
+            while the Supplier data extract file would require six tables for its business objects (not in the template format yet)
+                CemiSupplierFileSupplierRowBo:
+                CemiSupplierFileAddressesRowBo
+                CemiSupplierFileEmailsRowBo
+                CemiSupplierFilePhonesRowBo
+                CemiSupplierFileBankAccountsRowBo
+                CemiSupplierFileChildrenRowBo
+         
+         Table names should be in the format of CU_CEMI_EXTR_XXX_XXX_TAB_YYY_YYY_T where 
+            XXX_XXX represents the data extract name
+            YYY_YYY represents a tab name in the mapping template spreadsheet of the extract file
+         
+         Class descriptor items should set the "schema" attribute to "CEMI" so that OJB knows to access the table
+         on the CEMI schema side.
+
+         Table field descriptor items should follow this pattern:
+            First two descriptors should represent the standard CemiIndexedBusinessObjectBase attributes defined as the table's composite primary key:
+                EXTR_FILE_RUNDATE VARCHAR2(20) NOT NULL from the SQL script would have values
+                    name="jobRunDateString"
+                    column="EXTR_FILE_RUNDATE"
+                    jdbc-type="VARCHAR"
+                    primarykey="true"
+                    index="true"
+                JOB_RUN_ROW_INDEX NUMBER(14,0) NOT NULL from the SQL script would have values:
+                    name="jobRunRowIndex"
+                    column="JOB_RUN_ROW_INDEX"
+                    jdbc-type="BIGINT"
+                    primarykey="true"
+                    index="true
+                    
+            The remaining field-descriptors should exist for each legacy object key attribute as well as 
+            mapping template spreadsheet field attribute defined in Cemi{EXTRACTNAME}File{TABNAME}TabRowBo where:
+                name = attibute name
+                column = define column name as either a standard KFS column name (for reference data) or have column name reflect attribute name
+                jdbc-type = VARCHAR
+                
+            !!!!!VERY IMPORTANT!!!!!
+                (a) For any data value that should be encrypted, ensure that the following IS present in that item's field-descriptor
+                        conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"
+                (b) Add scrubbing SQL to nonprod-sql script in manual/kfs to scrub that particular field.
+                    
+         Ensure this OJB file is defined as a fully qualified value in:
+            File => resources/edu/cornell/kfs/cemi/cu-spring-cemi.xml
+            Bean => cemiModuleConfiguration-base-parentBean
+            Property list => databaseRepositoryFilePaths
+            
+         Create SQL script to build the physical database table CU_CEMI_EXTR_XXX_XXX_TAB_XXX_XXX_T
+            (1) That SQL script should be created in folder kfs of repository nonprod-sql.
+            (2) That SQL script should follow the file naming convention of
+                cemi-AAA-EXTRACT-NAME-step-001-create-tables.sql
+                where AAA is a numeric value representing that SQL extract in the overall SQL run order.
+                Example:
+                    cemi-001-suppliers-step-001-create-tables.sql
+                    cemi-002-award-schedule-step-001-create-tables.sql
+                            ...
+                    cemi-005-order-from-step-001-create-tables.sql
+    -->
+    <class-descriptor class="edu.cornell.kfs.cemi.module.cam.batch.businessobject.CemiRegisterAssetFileRegisterAssetTabRowBo" table="CU_CEMI_EXTR_REGISTER_ASSET_TAB_REGISTER_ASSET_T" schema="CEMI">
+        <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="businessAssetNumber" column="BSNSS_ASST_NMBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="businessAssetID" column="BSNSS_ASST_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="company" column="COMPANY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="businessAssetName" column="BSNSS_ASST_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="businessAssetDescription" column="BSNSS_ASST_DESC" jdbc-type="VARCHAR"/>
+        <field-descriptor name="spendCategory" column="SPEND_CTGRY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="accountingTreatment" column="ACCTNG_TRTMNT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acquisitionMethod" column="ACQSTN_MTHD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="memo" column="MEMO" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acquisitionCost" column="ACQSTN_COST" jdbc-type="VARCHAR"/>
+        <field-descriptor name="residualValue" column="RSDL_VAL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="fairMarketValue" column="FAIR_MKT_VAL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="quantity" column="QUANTITY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="worktagType1" column="WRK_TAG_TYP_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="worktagValue1" column="WRK_TAG_VAL_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="worktagType2" column="WRK_TAG_TYP_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="worktagValue2" column="WRK_TAG_VAL_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="worktagType3" column="WRK_TAG_TYP_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="worktagValue3" column="WRK_TAG_VAL_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="dateAcquired" column="DT_ACQRD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="datePlacedInService" column="DT_PLCD_IN_SRVC" jdbc-type="VARCHAR"/>
+        <field-descriptor name="location" column="LCTN" jdbc-type="VARCHAR"/>
+        <field-descriptor name="assetIdentifier" column="ASST_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="serialNumber" column="SRL_NMBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="manufacturer" column="MNFCTR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="assetClass" column="ASST_CLS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="assetType" column="ASST_TYP" jdbc-type="VARCHAR"/>
+        <field-descriptor name="coordinatingCostCenter" column="CRDNTNG_CST_CNTR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="poNumber" column="PO_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="depreciationProfileOverride" column="DEPR_PRFL_OVRD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="depreciationMethodOverride" column="DEPR_MTHD_OVRD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="depreciationPercentOverride" column="DEPR_PCT_OVRD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="usefulLifeInPeriodsOverride" column="USEFL_LIFE_IN_PRDS_OVRD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="depreciationThresholdOverride" column="DEPR_THRLD_OVRD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="depreciationStartDate" column="DEPR_STRT_DT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="remainingDepreciationPeriods" column="RMNG_DEPR_PRDS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="accumulatedDepreciation" column="ACCMLTN_DEPR" jdbc-type="VARCHAR"/>
+    </class-descriptor>
+    
+</descriptor-repository>

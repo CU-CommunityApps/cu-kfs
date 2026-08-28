@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This is the main file for defining how the Register Asset data will map to the Register Asset spreadsheet/workbook.
+
+    Each "sheet" element should correspond to one of the sheets/tabs in the workbook.
+
+    There are two main types of "field" elements:
+
+    [1] POJO-derived value - Has the "STRING" type and uses the "key" attribute to specify the POJO property.
+    [2] Literal value - Has the "STATIC" type and uses the "value" attribute to specify the literal. Can be empty.
+
+    NOTE: This XML file doesn't keep track of POJO classes; it only needs to know POJO property names/paths.
+ -->
+<cemiOutputDefinition>
+
+    <sheet name="Register_Asset" num-header-rows="5" start-column-index="1"
+           business-object-class="edu.cornell.kfs.cemi.module.cam.batch.businessobject.CemiRegisterAssetFileRegisterAssetTabRowBo">
+        <field name="Business_Asset_Number" type="STRING" key="businessAssetNumber"/>
+        <field name="Business_Asset_ID" type="STRING" key="businessAssetID"/>
+        <field name="Company" type="STRING" key="company"/>
+        <field name="Business_Asset_Name" type="STRING" key="businessAssetName"/>
+        <field name="Business_Asset_Description" type="STRING" key="businessAssetDescription"/>
+        <field name="Spend_Category" type="STRING" key="spendCategory"/>
+        <field name="Accounting_Treatment" type="STRING" key="accountingTreatment"/> 
+        <field name="Acquisition_Method" type="STRING" key="acquisitionMethod"/>
+        <field name="Memo" type="STRING" key="memo"/>
+        <field name="Acquisition_Cost" type="STRING" key="acquisitionCost"/>
+        <field name="Residual_Value" type="STRING" key="residualValue"/> 
+        <field name="Fair_Market_Value" type="STRING" key="fairMarketValue"/>
+        <field name="Quantity" type="STRING" key="quantity"/>
+        <field name="Worktag_Type_1" type="STRING" key="worktagType1"/>
+        <field name="Worktag_Value_1" type="STRING" key="worktagValue1"/>
+        <field name="Worktag_Type_2" type="STRING" key="worktagType2"/>
+        <field name="Worktag_Value_2" type="STRING" key="worktagValue2"/>
+        <field name="Worktag_Type_3" type="STRING" key="worktagType3"/>
+        <field name="Worktag_Value_3" type="STRING" key="worktagValue3"/>
+        <field name="Date_Acquired" type="STRING" key="dateAcquired"/>
+        <field name="Date_Placed_in_Service" type="STRING" key="datePlacedinService"/>
+        <field name="Location" type="STRING" key="location"/>
+        <field name="Asset_Identifier" type="STRING" key="assetIdentifier"/>
+        <field name="Serial_Number" type="STRING" key="serialNumber"/>
+        <field name="Manufacturer" type="STRING" key="manufacturer"/>
+        <field name="Asset_Class" type="STRING" key="assetClass"/>
+        <field name="Asset_Type" type="STRING" key="assetType"/>
+        <field name="Coordinating_Cost_Center" type="STRING" key="coordinatingCostCenter"/>
+        <field name="Asset_Coordinator" type="STRING" key="assetCoordinator"/>
+        <field name="PO_Number" type="STRING" key="poNumber"/>
+        <field name="Depreciation_Profile_Override" type="STRING" key="depreciationProfileOverride"/>
+        <field name="Depreciation_Method_Override" type="STRING" key="depreciationMethodOverride"/>
+        <field name="Depreciation_Percent_Override" type="STRING" key="depreciationPercentOverride"/>
+        <field name="Useful_Life_in_Periods_Override" type="STRING" key="usefulLifeInPeriodsOverride"/>
+        <field name="Depreciation_Threshold_Override" type="STRING" key="depreciationThresholdOverride"/>
+        <field name="Depreciation_Start_Date" type="STRING" key="depreciationStartDate"/>
+        <field name="Remaining_Depreciation_Periods" type="STRING" key="remainingDepreciationPeriods"/>
+        <field name="Accumulated_Depreciation" type="STRING" key="accumulatedDepreciation"/>
+    </sheet>
+
+</cemiOutputDefinition>
