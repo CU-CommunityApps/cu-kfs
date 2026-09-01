@@ -63,7 +63,7 @@
                             ...
                     cemi-005-order-from-step-001-create-tables.sql
     -->
-    <class-descriptor class="edu.cornell.kfs.cemi.module.cam.batch.businessobject.CemiRegisterAssetFileRegisterAssetTabRowBo" table="CU_CEMI_EXTR_REGISTER_ASSET_TAB_REGISTER_ASSET_T" schema="CEMI">
+    <class-descriptor class="edu.cornell.kfs.cemi.module.cam.batch.businessobject.CemiRegisterAssetFileRegisterAssetTabRowBo" table="CU_CEMI_EXTR_REGISTER_ASST_TAB_REGISTER_ASST_T" schema="CEMI">
         <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
         <field-descriptor name="businessAssetNumber" column="BSNSS_ASST_NMBR" jdbc-type="VARCHAR"/>
@@ -94,6 +94,7 @@
         <field-descriptor name="assetClass" column="ASST_CLS" jdbc-type="VARCHAR"/>
         <field-descriptor name="assetType" column="ASST_TYP" jdbc-type="VARCHAR"/>
         <field-descriptor name="coordinatingCostCenter" column="CRDNTNG_CST_CNTR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="assetCoordinator" column="ASST_CRDNTR" jdbc-type="VARCHAR"/>
         <field-descriptor name="poNumber" column="PO_NBR" jdbc-type="VARCHAR"/>
         <field-descriptor name="depreciationProfileOverride" column="DEPR_PRFL_OVRD" jdbc-type="VARCHAR"/>
         <field-descriptor name="depreciationMethodOverride" column="DEPR_MTHD_OVRD" jdbc-type="VARCHAR"/>

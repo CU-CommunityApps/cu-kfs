@@ -35,7 +35,7 @@
         <field name="Worktag_Type_3" type="STRING" key="worktagType3"/>
         <field name="Worktag_Value_3" type="STRING" key="worktagValue3"/>
         <field name="Date_Acquired" type="STRING" key="dateAcquired"/>
-        <field name="Date_Placed_in_Service" type="STRING" key="datePlacedinService"/>
+        <field name="Date_Placed_in_Service" type="STRING" key="datePlacedInService"/>
         <field name="Location" type="STRING" key="location"/>
         <field name="Asset_Identifier" type="STRING" key="assetIdentifier"/>
         <field name="Serial_Number" type="STRING" key="serialNumber"/>
