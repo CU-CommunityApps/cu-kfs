@@ -24,7 +24,7 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBo extends CemiIndexedBusin
     private String worktagType3;
     private String worktagValue3;
     private String dateAcquired;
-    private String datePlacedinService;
+    private String datePlacedInService;
     private String location;
     private String assetIdentifier;
     private String serialNumber;
@@ -42,6 +42,7 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBo extends CemiIndexedBusin
     private String depreciationStartDate;
     private String remainingDepreciationPeriods;
     private String accumulatedDepreciation;
+    
     public String getBusinessAssetNumber() {
         return businessAssetNumber;
     }
@@ -162,11 +163,11 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBo extends CemiIndexedBusin
     public void setDateAcquired(String dateAcquired) {
         this.dateAcquired = dateAcquired;
     }
-    public String getDatePlacedinService() {
-        return datePlacedinService;
+    public String getDatePlacedInService() {
+        return datePlacedInService;
     }
-    public void setDatePlacedinService(String datePlacedinService) {
-        this.datePlacedinService = datePlacedinService;
+    public void setDatePlacedInService(String datePlacedInService) {
+        this.datePlacedInService = datePlacedInService;
     }
     public String getLocation() {
         return location;
