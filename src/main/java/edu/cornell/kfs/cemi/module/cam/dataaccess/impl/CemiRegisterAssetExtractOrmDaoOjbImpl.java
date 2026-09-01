@@ -39,7 +39,7 @@ public class CemiRegisterAssetExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase
             // well as provide both old and new awards that had a variety of attributes for local verification. 
             assetNumberCondition = "(A0.CPTLAST_NBR) IN ("
                     + "SELECT CPTLAST_NBR FROM CEMI.CU_CEMI_REGISTER_ASST_EXTR_ASST_T"
-                    + " WHERE CPTLAST_NBR <= 3000 OR ASST_ID >= 500000)";
+                    + " WHERE CPTLAST_NBR <= 3000)";
         } else {
             assetNumberCondition = "(A0.CPTLAST_NBR) IN ("
                     + "SELECT CPTLAST_NBR FROM KFS.CU_CEMI_REGISTER_ASST_EXTR_ASST_T)";

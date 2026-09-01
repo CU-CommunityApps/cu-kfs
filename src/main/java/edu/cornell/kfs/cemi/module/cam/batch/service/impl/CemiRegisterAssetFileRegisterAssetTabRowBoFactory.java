@@ -2,9 +2,14 @@ package edu.cornell.kfs.cemi.module.cam.batch.service.impl;
 
 import edu.cornell.kfs.cemi.module.cam.batch.businessobject.CemiRegisterAssetFileRegisterAssetTabRowBo;
 import edu.cornell.kfs.cemi.patterntemplate.batch.businessobject.CemiEXTRACTNAMEFileTABNAMETabRowBo;
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.module.cg.businessobject.Award;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.module.cam.businessobject.AssetExtension;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
@@ -18,31 +23,30 @@ import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 @SuppressWarnings("deprecation")
 public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
     
-//    private Award award;
-//    private AwardExtendedAttribute awardExtendedAttribute;
-//    private String jobRunDateString;
-//    private DateTimeService dateTimeService;
-//    private boolean maskSensitiveData = true;   // Initialize default processing to mask in the event 
-//                                                // KFS system parameter has not been created. 
+    private Asset asset;
+    private AssetExtension assetExtendedAttribute;
+    private String jobRunDateString;
+    private DateTimeService dateTimeService;
+    private boolean maskSensitiveData = true;   // Initialize default processing to mask in the event 
+                                                // KFS system parameter has not been created. 
 
     public CemiRegisterAssetFileRegisterAssetTabRowBoFactory (final Asset asset, 
             final AssetExtension assetExtendedAttribute, final String jobRunDateString, 
             final DateTimeService dateTimeService, final boolean maskSensitiveData) {
-//        this.award = award;
-//        this.awardExtendedAttribute = awardExtendedAttribute;
-//        this.jobRunDateString = jobRunDateString;
-//        this.dateTimeService = dateTimeService;
-//        this.maskSensitiveData = maskSensitiveData;
+        this.asset = asset;
+        this.assetExtendedAttribute = assetExtendedAttribute;
+        this.jobRunDateString = jobRunDateString;
+        this.dateTimeService = dateTimeService;
+        this.maskSensitiveData = maskSensitiveData;
     }
      
     public CemiRegisterAssetFileRegisterAssetTabRowBo createCemiRegisterAssetFileRegisterAssetTabRowBo() {
-//        Validate.validState(award != null, "Award cannot be null.");
-//        Validate.validState(awardExtendedAttribute != null, "AwardExtension cannot be null.");
-//        Validate.validState(jobRunDateString != null, "jobRunDateString cannot be null.");
-//        Validate.validState(dateTimeService != null, "DateTimeService cannot be null.");
-//        
-//        final CemiAwardScheduleFileAwardScheduleTabRowBo awardScheduleTabDataRow = new CemiAwardScheduleFileAwardScheduleTabRowBo();
-          final CemiRegisterAssetFileRegisterAssetTabRowBo extractNameTabDataRow = new CemiRegisterAssetFileRegisterAssetTabRowBo();
+        Validate.validState(asset != null, "Asset cannot be null.");
+        Validate.validState(assetExtendedAttribute != null, "AssetExtension cannot be null.");
+        Validate.validState(jobRunDateString != null, "jobRunDateString cannot be null.");
+        Validate.validState(dateTimeService != null, "DateTimeService cannot be null.");
+
+          final CemiRegisterAssetFileRegisterAssetTabRowBo registerAssetTabDataRow = new CemiRegisterAssetFileRegisterAssetTabRowBo();
 //        
 //        final String rowSpreadsheetKey = buildSpreadsheetKey(award.getProposalNumber());
 //        final String rowAwardScheduleReferenceId = buildAwardScheduleReferenceId(award.getProposalNumber());
@@ -59,9 +63,47 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
 //        awardScheduleTabDataRow.setProposalNumberUsedForDataRow(award.getProposalNumber());
 //        
 //        //Format and assign data values for these attributes as defined by the Huron mapping template specification.
-//        awardScheduleTabDataRow.setSpreadsheetKey(rowSpreadsheetKey);
-//        awardScheduleTabDataRow.setAddOnly(CemiBaseConstants.YES);
-//        awardScheduleTabDataRow.setAwardSchedule(CemiBaseConstants.EMPTY_STRING);
+//          private String businessAssetNumber;
+//          private String businessAssetID;
+//          private String company;
+//          private String businessAssetName;
+//          private String businessAssetDescription;
+//          private String spendCategory;
+//          private String accountingTreatment;
+//          private String acquisitionMethod;
+//          private String memo;
+//          private String acquisitionCost;
+//          private String residualValue;
+//          private String fairMarketValue;
+//          private String quantity;
+//          private String worktagType1;
+//          private String worktagValue1;
+//          private String worktagType2;
+//          private String worktagValue2;
+//          private String worktagType3;
+//          private String worktagValue3;
+//          private String dateAcquired;
+//          private String datePlacedInService;
+//          private String location;
+//          private String assetIdentifier;
+//          private String serialNumber;
+//          private String manufacturer;
+//          private String assetClass;
+//          private String assetType;
+//          private String coordinatingCostCenter;
+//          private String assetCoordinator;
+//          private String poNumber;
+//          private String depreciationProfileOverride;
+//          private String depreciationMethodOverride;
+//          private String depreciationPercentOverride;
+//          private String usefulLifeInPeriodsOverride;
+//          private String depreciationThresholdOverride;
+//          private String depreciationStartDate;
+//          private String remainingDepreciationPeriods;
+//          private String accumulatedDepreciation;
+          registerAssetTabDataRow.setBusinessAssetNumber(determineBusinessAssetNumber(asset.getCapitalAssetNumber()));;
+          registerAssetTabDataRow.setBusinessAssetID(determineBusinessAssetID(asset.getCapitalAssetNumber()));
+          registerAssetTabDataRow.setCompany(CemiBaseConstants.EMPTY_STRING);//TBD
 //        awardScheduleTabDataRow.setAwardScheduleReferenceId(rowAwardScheduleReferenceId);
 //        awardScheduleTabDataRow.setAwardScheduleName(rowAwardScheduleName);
 //        awardScheduleTabDataRow.setAwardPostingIntervalGroup(CemiAwardScheduleConstants.BUDGET_PERIOD);
@@ -78,7 +120,15 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
 //        awardScheduleTabDataRow.setIsAwardContractStartDate(CemiBaseConstants.YES);
 //        awardScheduleTabDataRow.setIsAwardContractEndDate(CemiBaseConstants.YES);
 //        
-        return extractNameTabDataRow;
+        return registerAssetTabDataRow;
+    }
+    
+    private String determineBusinessAssetNumber(Long businessAssetNumber) {
+        return businessAssetNumber !=null ? businessAssetNumber.toString() : KFSConstants.EMPTY_STRING;
+    }
+    
+    private String determineBusinessAssetID(Long businessAssetNumber) {
+        return businessAssetNumber !=null ? businessAssetNumber.toString() : KFSConstants.EMPTY_STRING;
     }
 
 //

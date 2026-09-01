@@ -15,7 +15,7 @@ public class CemiRegisterAssetExtractDaoJdbcImpl extends CuSqlQueryPlatformAware
     @Override
     public void clearAnyExistingInScopeBusinessObjectKeysFromPreviousExecution() {
         LOG.info("clearAnyExistingInScopeBusinessObjectKeysFromPreviousExecution was called.");
-        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_EXTR_REGISTER_ASST_TAB_REGISTER_ASST_T");
+        final CuSqlQuery query = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_REGISTER_ASST_EXTR_ASST_T");
         executeUpdate(query);
         LOG.info("clearAnyExistingInScopeBusinessObjectKeysFromPreviousExecution finished truncating table.");
     }

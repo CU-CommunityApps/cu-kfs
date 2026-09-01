@@ -76,7 +76,7 @@ public class CemiRegisterAssetExtractServiceImpl extends CemiDataExtractServiceB
     @Override
     public void generateIntermediateExtractData(final LocalDateTime jobRunDate) {
         LOG.info("generateIntermediateExtractData, Generating data rows for {} spreadsheet and placing in "
-                + "intermediate storage...", CemiEXTRACTNAMEConstants.EXTRACTNAME_EXTRACT_PLAIN_FILENAME);
+                + "intermediate storage...", CemiRegisterAssetConstants.REGISTER_ASSET_EXTRACT_PLAIN_FILENAME);
         
         try ( 
                 final Stream<Asset> legacyObjects = 
@@ -94,7 +94,7 @@ public class CemiRegisterAssetExtractServiceImpl extends CemiDataExtractServiceB
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void generateDataConversionExtractFile(final LocalDateTime jobRunDate) {
-        LOG.info("generateEXTRACTNAMErExtractFile, Starting creation of CEMI Extract file {}",
+        LOG.info("generateRegisterAssetExtractFile, Starting creation of CEMI Extract file {}",
                 CemiRegisterAssetConstants.REGISTER_ASSET_EXTRACT_PLAIN_FILENAME);
         generateFileForDataExtract(jobRunDate, CemiRegisterAssetConstants.REGISTER_ASSET_EXTRACT_PLAIN_FILENAME,
                 CemiRegisterAssetConstants.REGISTER_ASSET_EXTRACT_FILENAME_PREFIX);

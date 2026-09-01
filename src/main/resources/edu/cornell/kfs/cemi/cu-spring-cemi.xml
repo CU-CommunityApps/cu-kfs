@@ -27,6 +27,7 @@
                 <value>edu/cornell/kfs/cemi/module/cg/cu-ojb-cemi-award-schedule.xml</value>
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-vnd.xml</value>
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-entity-contact.xml</value>
+                <value>edu/cornell/kfs/cemi/module/cam/cu-ojb-cemi-register-asset.xml</value>
             </list>
         </property>
         <property name="jobNames">
@@ -37,6 +38,7 @@
                  <value>createCemiRemitToSupplierExtractJob</value>
                  <value>createCemiOrderFromSupplierExtractJob</value>
                  <value>createCemiBusinessEntityContactExtractJob</value>
+                 <value>createCemiRegisterAssetExtractJob</value>
                  <value>importCemiLegacyDataJob</value>
             </list>
         </property>
@@ -53,6 +55,7 @@
             <value>${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiOrderFromSupplierExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiBusinessEntityContactExtract</value>
+            <value>${staging.directory}/cemi/module/cam/cemiRegisterAssetExtract</value>
             <value>${staging.directory}/cemi/conversions/outbound</value>
             <value>${staging.directory}/cemi/translatetable/award</value>
             <value>${staging.directory}/cemi/translatetable/common</value>
@@ -503,5 +506,51 @@
           p:lastUpdateTimestampInTable="true"/>
 
     <alias name="cemiWorkdayTenantedEntityContactType" alias="Supplier_KfsContactType-TranslateWorkdayTenantedContactType"/>
+    
+    <!-- Register Asset -->
+
+    <bean id="createCemiRegisterAssetExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiRegisterAssetExtractStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cemiRegisterAssetExtractDao" parent="cemiRegisterAssetExtractDao-parentBean"/>
+    <bean id="cemiRegisterAssetExtractDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cam.dataaccess.impl.CemiRegisterAssetExtractDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
+
+    <bean id="cemiRegisterAssetExtractOrmDao" parent="cemiRegisterAssetExtractOrmDao-parentBean"/>
+    <bean id="cemiRegisterAssetExtractOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cam.dataaccess.impl.CemiRegisterAssetExtractOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="cemiRegisterAssetExtractService" parent="cemiRegisterAssetExtractService-parentBean"/>
+    <bean id="cemiRegisterAssetExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cam.batch.service.impl.CemiRegisterAssetExtractServiceImpl"
+          c:environment-ref="environment"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/module/cam/cemiRegisterAssetExtract"
+          p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:parameterService-ref="parameterService"
+          p:cemiRegisterAssetExtractOrmDao-ref="cemiRegisterAssetExtractOrmDao"
+          p:cemiRegisterAssetExtractDao-ref="cemiRegisterAssetExtractDao"
+          p:businessObjectService-ref="businessObjectService"
+          p:dateTimeService-ref="dateTimeService"/>
+          
+    <bean id="createCemiRegisterAssetExtractStep"
+          class="edu.cornell.kfs.cemi.module.cam.batch.CreateCemiRegisterAssetExtractStep"
+          parent="step"
+          p:cemiRegisterAssetExtractService-ref="cemiRegisterAssetExtractService"/>
+
+    
 
 </beans>

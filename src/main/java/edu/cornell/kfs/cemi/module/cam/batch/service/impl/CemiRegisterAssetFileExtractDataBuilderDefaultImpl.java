@@ -11,20 +11,12 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 //import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 
-import edu.cornell.kfs.cemi.patterntemplate.batch.businessobject.CemiExampleLEGACYOBJECT;
+import edu.cornell.kfs.cemi.module.cam.batch.businessobject.CemiRegisterAssetFileRegisterAssetTabRowBo;
 import edu.cornell.kfs.cemi.module.cam.batch.service.CemiRegisterAssetFileExtractDataBuilder;
 import edu.cornell.kfs.cemi.module.cam.dataaccess.CemiRegisterAssetExtractDao;
 import edu.cornell.kfs.cemi.module.cam.dataaccess.CemiRegisterAssetExtractOrmDao;
-import edu.cornell.kfs.cemi.patterntemplate.batch.businessobject.CemiEXTRACTNAMEFileTABNAMETabRowBo;
-//import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardScheduleFileAwardScheduleTabRowBo;
-//import edu.cornell.kfs.cemi.module.cg.batch.service.CemiAwardScheduleFileExtractDataBuilder;
-//import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleExtractDao;
-//import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleExtractOrmDao;
-import edu.cornell.kfs.cemi.patterntemplate.batch.service.CemiEXTRACTNAMEFileExtractDataBuilder;
-import edu.cornell.kfs.cemi.patterntemplate.dataaccess.CemiEXTRACTNAMEExtractDao;
-import edu.cornell.kfs.cemi.patterntemplate.dataaccess.CemiEXTRACTNAMEExtractOrmDao;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiOrmDataBuilderBase;
-import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
+import edu.cornell.kfs.module.cam.businessobject.AssetExtension;
 
 // The code from an existing data extract was left as comments in each method to provide specific examples.
 // The constructor for this class will need to accept and verify as valid any and all services required to perform
@@ -54,10 +46,10 @@ public class CemiRegisterAssetFileExtractDataBuilderDefaultImpl extends CemiOrmD
             final DateTimeService dateTimeService,
             final CemiRegisterAssetExtractOrmDao cemiRegisterAssetExtractOrmDao,
             final CemiRegisterAssetExtractDao cemiRegisterAssetExtractDao, final boolean maskSensitiveData) {
-        super(businessObjectService, jobRunDateString, CemiEXTRACTNAMEFileTABNAMETabRowBo.class);
+        super(businessObjectService, jobRunDateString, CemiRegisterAssetFileRegisterAssetTabRowBo.class);
         Validate.notNull(dateTimeService, "dateTimeService cannot be null");
         Validate.notNull(cemiRegisterAssetExtractOrmDao, "CemiRegisterAssetExtractOrmDao cannot be null");
-        Validate.notNull(cemiRegisterAssetExtractDao, "cemiAwardScheduleExtractDao cannot be null");
+        Validate.notNull(cemiRegisterAssetExtractDao, "cemiRegisterAssetExtractDao cannot be null");
         this.dateTimeService = dateTimeService;
         this.cemiRegisterAssetExtractOrmDao = cemiRegisterAssetExtractOrmDao;
         this.cemiRegisterAssetExtractDao = cemiRegisterAssetExtractDao;
@@ -66,20 +58,20 @@ public class CemiRegisterAssetFileExtractDataBuilderDefaultImpl extends CemiOrmD
 
     @Override
     public void writeRegisterAssetFileRegisterAssetTabExtractDataToIntermediateStorage(final Iterator<Asset> legacyObjects){
-//        int awardScheduleTabRowCount = 0;
-//        for (final Award award : IteratorUtils.asIterable(awards)) {
-//            awardScheduleTabRowCount++;
-//            if (awardScheduleTabRowCount % 1000 == 0) {
-//                LOG.info("writeAwardScheduleFileAwardScheduleTabExtractDataToIntermediateStorage, Processed {} "
-//                        + "Awards for Award Schedule and counting...", awardScheduleTabRowCount);
-//            }
-//            //Award Schedule Tab
-//            AwardExtendedAttribute awardExtendedAttribute = (AwardExtendedAttribute) award.getExtension();
-//            //Database table storage of data extract
-//            createAndStoreAwardScheduleFileAwardScheduleTabRow(award, awardExtendedAttribute, jobRunDateString);
-//        }
-//        LOG.info("writeAwardScheduleFileAwardScheduleTabExtractDataToIntermediateStorage, Finished writing {} "
-//                + "Awards for Award Schedule", awardScheduleTabRowCount);
+        int registerAssetTabRowCount = 0;
+        for (final Asset asset : IteratorUtils.asIterable(legacyObjects)) {
+            registerAssetTabRowCount++;
+            if (registerAssetTabRowCount % 1000 == 0) {
+                LOG.info("writeRegisterAssetFileRegisterAssetTabExtractDataToIntermediateStorage, Processed {} "
+                        + "Assets for Register Asset and counting...", registerAssetTabRowCount);
+            }
+            //Register Asset Tab
+            AssetExtension assetExtendedAttribute = (AssetExtension) asset.getExtension();
+            //Database table storage of data extract
+            createAndStoreRegisterAssetFileRegisterAssetTabRow(asset, assetExtendedAttribute, jobRunDateString);
+        }
+        LOG.info("writeRegisterAssetFileRegisterAssetTabExtractDataToIntermediateStorage, Finished writing {} "
+                + "Assets for Register Asset", registerAssetTabRowCount);
     }
 
 //
@@ -89,30 +81,15 @@ public class CemiRegisterAssetFileExtractDataBuilderDefaultImpl extends CemiOrmD
 // Depending upon this method's logic and the data objects used, this method could generate MULTIPLE lines of
 // information; therefore you will need to name this protected method accordingly.
 //
-//    protected void createAndStoreAwardScheduleFileAwardScheduleTabRow(final CemiExampleLEGACYOBJECT legacyObject, 
-//            final AwardExtendedAttribute awardExtendedAttribute, final String jobRunDateString) {
-//
-//        CemiAwardScheduleFileAwardScheduleTabRowBoFactory factoryForBo = 
-//                new CemiAwardScheduleFileAwardScheduleTabRowBoFactory(award, awardExtendedAttribute, jobRunDateString,
-//                        dateTimeService, maskSensitiveData);
-//        
-//        CemiAwardScheduleFileAwardScheduleTabRowBo awardScheduleTabRow = factoryForBo.createCemiAwardScheduleFileAwardScheduleTabRowBo();
-//        storeSheetRow(awardScheduleTabRow);
-//        
-//        // EXAMPLE:
-//        // Record identifier associations for Award Schedule extract file based upon batch job run date in this 
-//        // separate table only if is NOT already being tracked. 
-//        recordAwardScheduleIdentifiersInLegacyAssociationTable(awardScheduleTabRow.getSpreadsheetKey(), 
-//                awardScheduleTabRow.getAwardScheduleReferenceId(), awardScheduleTabRow.getJobRunDateString());
-//    }
-//    
-//    // EXAMPLE:
-//    // Retain in the database an association between the new Workday data key - legacy system data key - extraction run date
-//    // only if it is not already being tracked in the table used to maintain the data extraction information.
-//    //protected void recordAwardScheduleIdentifiersInLegacyAssociationTable(final String spreadsheetKey,
-//    //        final String  awardProposalNumber, final String jobRunDateString) {
-//    //    getCemiAwardScheduleExtractDao().storeSpreadsheetKeyProposalNumberAwardScheduleExtractRunDateMapping(spreadsheetKey,
-//    //            awardProposalNumber, jobRunDateString);
-//    //}
+    protected void createAndStoreRegisterAssetFileRegisterAssetTabRow(final Asset legacyObject, 
+            final AssetExtension assetExtendedAttribute, final String jobRunDateString) {
+
+        CemiRegisterAssetFileRegisterAssetTabRowBoFactory factoryForBo = 
+                new CemiRegisterAssetFileRegisterAssetTabRowBoFactory(legacyObject, assetExtendedAttribute, jobRunDateString,
+                        dateTimeService, maskSensitiveData);
+        
+        CemiRegisterAssetFileRegisterAssetTabRowBo registerAssetTabRow = factoryForBo.createCemiRegisterAssetFileRegisterAssetTabRowBo();
+        storeSheetRow(registerAssetTabRow);
+    }
 
 }
