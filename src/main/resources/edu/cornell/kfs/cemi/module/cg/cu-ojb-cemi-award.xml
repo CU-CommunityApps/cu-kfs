@@ -1,0 +1,198 @@
+<descriptor-repository version="1.0">
+
+    <!-- Award Extract -->
+        <class-descriptor class="edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardLegacyNovelutionBo" schema="CEMI"
+                      table="CU_CEMI_LGCY_NOVELUTION_AWARD_T">
+        <field-descriptor name="spreadsheetKey" column="SPREADSHEET_KEY" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="awardSignedDate column" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="costShareTotalAmount" column="ADDRESS_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="anticipatedSponsorDirectCostAmount" column="COUNTRY_FOR_ADDRESS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="anticipatedFacilitiesAndAdministrationAmount" column="ADDRESS_LINE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="federalAwardIdNumber" column="ADDRESS_LINE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="cfdaNumber" column="CITY" jdbc-type="VARCHAR"/>
+    </class-descriptor>
+    
+    <class-descriptor class="edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardFileSubmitAwardTabRowBo" 
+                  schema="CEMI" table="CU_CEMI_EXTR_AWD_TAB_SUBMIT_AWD_T">
+        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunDateString" column="JOB_RUN_DATE_STRING" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="proposalNumberUsedForDataRow" column="CGPRPSL_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="spreadsheetKey" column="WKDY_SPRDSHT_KEY_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="addOnly" column="ADD_ONLY" jdbc-type="VARCHAR" />
+        <field-descriptor name="award" column="AWARD" jdbc-type="VARCHAR" />
+        <field-descriptor name="autoComplete" column="AUTO_CMPLT" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardReferenceId" column="AWD_REF_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardNumber" column="AWD_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="company" column="COMPANY" jdbc-type="VARCHAR" />
+        <field-descriptor name="sponsorAwardReferenceNumber" column="SPNSR_AWD_REF_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardName" column="AWD_NM" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardDescription" column="AWD_DESC" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardEffectiveDate" column="AWD_EFFDT" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardSignedDate" column="AWD_SIGN_DT" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardType" column="AWD_TYP" jdbc-type="VARCHAR" />
+        <field-descriptor name="purposeCode" column="PURPOSE_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="paymentTerms" column="PYMNT_TERMS" jdbc-type="VARCHAR" />
+        <field-descriptor name="institutionalId" column="INSTUTNL_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardSalaryCapDefault" column="AWD_SAL_CAP_DFLT" jdbc-type="VARCHAR" />
+        <field-descriptor name="spendRestrictionDefault" column="SPND_RSTR_DFLT" jdbc-type="VARCHAR" />
+        <field-descriptor name="relatedAward" column="RELATED_AWD" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardGroup" column="AWD_GRP" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardCostCenter" column="AWD_COST_CNTR" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardFund" column="AWD_FUND" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardProgram" column="AWD_PROGRAM" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardContractOwner" column="AWD_CNTRCT_OWNR" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardLifecycleStatus" column="AWD_LIFE_CYCL_STATUS" jdbc-type="VARCHAR" />
+        <field-descriptor name="subAward" column="SUB_AWD" jdbc-type="VARCHAR" />
+        <field-descriptor name="primeSponsor" column="PRIME_SPNSR" jdbc-type="VARCHAR" />
+        <field-descriptor name="sponsor" column="SPONSOR" jdbc-type="VARCHAR" />
+        <field-descriptor name="billToSponsor" column="BILL_TO_SPNSR" jdbc-type="VARCHAR" />
+        <field-descriptor name="paymentType" column="PYMNT_TYP" jdbc-type="VARCHAR" />
+        <field-descriptor name="letterOfCredit" column="LTR_OF_CRDT" jdbc-type="VARCHAR" />
+        <field-descriptor name="letterOfCreditDocumentId" column="LTR_OF_CRDT_DOC_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardSequenceBillingActiveReference" column="AWD_SEQ_BILL_ACTV_REF" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardBillingSequenceNumberFormatSyntaxReference" column="AWD_BILL_SEQ_NBR_FRMT_SYNTX_REF" jdbc-type="VARCHAR" />
+        <field-descriptor name="currentAwardBillingSequenceNumberUsedReference" column="CURR_AWD_BILL_SEQ_NBR_USED_REF" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardBillingSequenceGeneratorRule" column="AWD_BILL_SEQ_GNRTR_RULE" jdbc-type="VARCHAR" />
+        <field-descriptor name="currency" column="CURRENCY" jdbc-type="VARCHAR" />
+        <field-descriptor name="zeroAmountAward" column="ZERO_AMT_AWD" jdbc-type="VARCHAR" />
+        <field-descriptor name="sponsorDirectCostAmount" column="SPNSR_DRCT_COST_AMT" jdbc-type="VARCHAR" />
+        <field-descriptor name="sponsorFacilitiesAndAdministrationAmount" column="SPNSR_FACLTY_ADMIN_AMT" jdbc-type="VARCHAR" />
+        <field-descriptor name="costShareTotalAmount" column="COST_SHR_TOT_AMT" jdbc-type="VARCHAR" />
+        <field-descriptor name="authorizedAmount" column="AUTH_AMT" jdbc-type="VARCHAR" />
+        <field-descriptor name="billingLimitOverride" column="BILL_LMT_OVRD" jdbc-type="VARCHAR" />
+        <field-descriptor name="costShareRequiredBySponsor" column="COST_SHR_REQ_BY_SPNSR" jdbc-type="VARCHAR" />
+        <field-descriptor name="anticipatedSponsorDirectCostAmount" column="ANTCPTD_SPNSR_DIRCT_COST_AMT" jdbc-type="VARCHAR" />
+        <field-descriptor name="anticipatedFacilitiesAndAdministrationAmount" column="ANTCPTD_FAC_ADMIN_AMT" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardSchedule" column="AWD_SCHDL" jdbc-type="VARCHAR" />
+        <field-descriptor name="federalAwardIdNumber" column="FED_AWD_ID_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="cfdaNumber" column="CFDA_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="proposalId" column="PRPSL_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="proposalVersion" column="PRPSL_VER" jdbc-type="VARCHAR" />
+        <field-descriptor name="originalProposal" column="ORGNL_PRPSL" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardAmendmentReason" column="AWD_AMEND_RSN" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardAmendmentEffectiveDate" column="AWD_AMEND_EFFDT" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardNotes" column="AWD_NOTES" jdbc-type="VARCHAR" />
+        <field-descriptor name="billingNotes" column="BILL_NOTES" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardLineDataRowId" column="AWD_LN_DATA_ROW_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="receivableContractLine" column="RCVABL_CONTRCT_LN" jdbc-type="VARCHAR" />
+        <field-descriptor name="receivableContractLineReferenceId" column="RCVABL_CONTRCT_LN_REF_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="lineNumber" column="LN_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="intercompanyAffiliate" column="INTR_COMPANY_AFFILIATE" jdbc-type="VARCHAR" />
+        <field-descriptor name="revenueCategory" column="REVENUE_CATGRY" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardLineDataAwardLifecycleStatus" column="AWD_LN_DATA_AWD_LIFE_CYCL_STATUS" jdbc-type="VARCHAR" />
+        <field-descriptor name="lineType" column="LN_TYP" jdbc-type="VARCHAR" />
+        <field-descriptor name="spendRestriction" column="SPEND_RESTRCT" jdbc-type="VARCHAR" />
+        <field-descriptor name="lineItemDescriptionOverride" column="LN_ITM_DESC_OVRD" jdbc-type="VARCHAR" />
+        <field-descriptor name="deferredRevenue" column="DEFERRED_REVENUE" jdbc-type="VARCHAR" />
+        <field-descriptor name="lineStatus" column="LN_STATUS" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardLineDocumentStatus" column="AWD_LN_DOC_STATUS" jdbc-type="VARCHAR" />
+        <field-descriptor name="primaryGrant" column="PRIMARY_GRANT" jdbc-type="VARCHAR" />
+        <field-descriptor name="lineCfdaNumber" column="LINE_CFDA_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="grantId" column="GRANT_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="lineAmount" column="LN_AMT" jdbc-type="VARCHAR" />
+        <field-descriptor name="rateAgreement" column="RATE_AGRMNT" jdbc-type="VARCHAR" />
+        <field-descriptor name="costRateType" column="COST_RATE_TYP" jdbc-type="VARCHAR" />
+        <field-descriptor name="exception" column="EXCPTN" jdbc-type="VARCHAR" />
+        <field-descriptor name="revenueAllocationProfile" column="REVENUE_ALLOCAT_PROFL" jdbc-type="VARCHAR" />
+        <field-descriptor name="delete" column="DELET" jdbc-type="VARCHAR" />
+        <field-descriptor name="basisLimit" column="BASIS_LMT" jdbc-type="VARCHAR" />
+        <field-descriptor name="basisLimitId" column="BASIS_LMT_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="basisLimitName" column="BASIS_LMT_NM" jdbc-type="VARCHAR" />
+        <field-descriptor name="basisLimitAmount" column="BASIS_LMT_AMT" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardLineStartDate" column="AWD_LN_START_DT" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardLineEndDate" column="AWD_LN_END_DT" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardLineDescription" column="AWD_LN_DESC" jdbc-type="VARCHAR" />
+        <field-descriptor name="lineInvoiceMemoOverride" column="LN_INV_MEMO_OVRD" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardLineDataCostCenter" column="AWD_LN_DATA_COST_CNTR" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardLineDataFund" column="AWD_LN_DATA_FUND" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardLineDataProgram" column="AWD_LN_DATA_PRGM" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardLineSalaryCap" column="AWD_LN_SALARY_CAP" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardLineSalaryCapOverride" column="AWD_LN_SALARY_CAP_OVRD" jdbc-type="VARCHAR" />
+        <field-descriptor name="subrecipient" column="SUBRECIPIENT" jdbc-type="VARCHAR" />
+        <field-descriptor name="lineFederalAwardIdNumber" column="LN_FED_AWD_ID_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="lineBillingNotes" column="LN_BILL_NOTES" jdbc-type="VARCHAR" />
+        <field-descriptor name="revenueRecognitionLineNotes" column="REVENUE_RECOG_LN_NOTES" jdbc-type="VARCHAR" />
+        <field-descriptor name="specialConditionDataRowId" column="SPECL_COND_DATA_ROW_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="specialConditionDataDelete" column="SPECL_COND_DATA_DEL" jdbc-type="VARCHAR" />
+        <field-descriptor name="specialCondition" column="SPECL_COND" jdbc-type="VARCHAR" />
+        <field-descriptor name="specialConditionReferenceId" column="SPECL_COND_REF_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="specialConditionType" column="SPECL_COND_TYP" jdbc-type="VARCHAR" />
+        <field-descriptor name="specialConditionComment" column="SPECL_COND_CMNT" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardBudgetDataRowId" column="AWD_BUDGT_DATA_ROW_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="defaultBudgetStructure" column="DFLT_BUDGT_STRUCT" jdbc-type="VARCHAR" />
+        <field-descriptor name="defaultBudgetType" column="DFLT_BUDGT_TYP" jdbc-type="VARCHAR" />
+        <field-descriptor name="defaultBalancedAmendment" column="DFLT_BAL_AMENDMNT" jdbc-type="VARCHAR" />
+        <field-descriptor name="nsfCodeAllocationDataRowId" column="NSF_CD_ALLOCATN_DATA_ROW_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="nsfCodeAllocationDataDelete" column="NSF_CD_ALLOCATN_DATA_DEL" jdbc-type="VARCHAR" />
+        <field-descriptor name="nsfCodeAllocation" column="NSF_CD_ALLOCATN" jdbc-type="VARCHAR" />
+        <field-descriptor name="nsfCodeAllocationId" column="NSF_CD_ALLOCATN_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="nsfCodeAllocationPercentage" column="NSF_CD_ALLOCATN_PCT" jdbc-type="VARCHAR" />
+        <field-descriptor name="nsfCode" column="NSF_CD" jdbc-type="VARCHAR" />
+    </class-descriptor>
+
+<!--  
+    <class-descriptor class="org.kuali.kfs.cemi.module.cg.businessobject.CemiAwardFileRawAwardHeaderFieldsRowBo"
+                  schema="CEMI" table="CU_CEMI_INTRM_AWD_HDR_RAW_FLDS_T">
+        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunDateString" column="JOB_RUN_DATE_STRING" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="proposalNumberUsedForDataRow" column="CGPRPSL_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="spreadsheetKey" column="WKDY_SPRDSHT_KEY_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="addOnly" column="ADD_ONLY" jdbc-type="VARCHAR" />
+        <field-descriptor name="award" column="AWARD" jdbc-type="VARCHAR" />
+        <field-descriptor name="autoComplete" column="AUTO_CMPLT" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardReferenceId" column="AWD_REF_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardNumber" column="AWD_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="company" column="COMPANY" jdbc-type="VARCHAR" />
+        <field-descriptor name="sponsorAwardReferenceNumber" column="SPNSR_AWD_REF_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardName" column="AWD_NM" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardDescription" column="AWD_DESC" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardEffectiveDate" column="AWD_EFFDT" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardSignedDate" column="AWD_SIGN_DT" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardType" column="AWD_TYP" jdbc-type="VARCHAR" />
+        <field-descriptor name="purposeCode" column="PURPOSE_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="paymentTerms" column="PYMNT_TERMS" jdbc-type="VARCHAR" />
+        <field-descriptor name="institutionalId" column="INSTUTNL_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardSalaryCapDefault" column="AWD_SAL_CAP_DFLT" jdbc-type="VARCHAR" />
+        <field-descriptor name="spendRestrictionDefault" column="SPND_RSTR_DFLT" jdbc-type="VARCHAR" />
+        <field-descriptor name="relatedAward" column="RELATED_AWD" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardGroup" column="AWD_GRP" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardCostCenter" column="AWD_COST_CNTR" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardFund" column="AWD_FUND" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardProgram" column="AWD_PROGRAM" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardContractOwner" column="AWD_CNTRCT_OWNR" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardLifecycleStatus" column="AWD_LIFE_CYCL_STATUS" jdbc-type="VARCHAR" />
+        <field-descriptor name="subAward" column="SUB_AWD" jdbc-type="VARCHAR" />
+        <field-descriptor name="primeSponsor" column="PRIME_SPNSR" jdbc-type="VARCHAR" />
+        <field-descriptor name="sponsor" column="SPONSOR" jdbc-type="VARCHAR" />
+        <field-descriptor name="billToSponsor" column="BILL_TO_SPNSR" jdbc-type="VARCHAR" />
+        <field-descriptor name="paymentType" column="PYMNT_TYP" jdbc-type="VARCHAR" />
+        <field-descriptor name="letterOfCredit" column="LTR_OF_CRDT" jdbc-type="VARCHAR" />
+        <field-descriptor name="letterOfCreditDocumentId" column="LTR_OF_CRDT_DOC_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardSequenceBillingActiveReference" column="AWD_SEQ_BILL_ACTV_REF" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardBillingSequenceNumberFormatSyntaxReference" column="AWD_BILL_SEQ_NBR_FRMT_SYNTX_REF" jdbc-type="VARCHAR" />
+        <field-descriptor name="currentAwardBillingSequenceNumberUsedReference" column="CURR_AWD_BILL_SEQ_NBR_USED_REF" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardBillingSequenceGeneratorRule" column="AWD_BILL_SEQ_GNRTR_RULE" jdbc-type="VARCHAR" />
+        <field-descriptor name="currency" column="CURRENCY" jdbc-type="VARCHAR" />
+        <field-descriptor name="zeroAmountAward" column="ZERO_AMT_AWD" jdbc-type="VARCHAR" />
+        <field-descriptor name="sponsorDirectCostAmount" column="SPNSR_DRCT_COST_AMT" jdbc-type="VARCHAR" />
+        <field-descriptor name="sponsorFacilitiesAndAdministrationAmount" column="SPNSR_FACLTY_ADMIN_AMT" jdbc-type="VARCHAR" />
+        <field-descriptor name="costShareTotalAmount" column="COST_SHR_TOT_AMT" jdbc-type="VARCHAR" />
+        <field-descriptor name="authorizedAmount" column="AUTH_AMT" jdbc-type="VARCHAR" />
+        <field-descriptor name="billingLimitOverride" column="BILL_LMT_OVRD" jdbc-type="VARCHAR" />
+        <field-descriptor name="costShareRequiredBySponsor" column="COST_SHR_REQ_BY_SPNSR" jdbc-type="VARCHAR" />
+        <field-descriptor name="anticipatedSponsorDirectCostAmount" column="ANTCPTD_SPNSR_DIRCT_COST_AMT" jdbc-type="VARCHAR" />
+        <field-descriptor name="anticipatedFacilitiesAndAdministrationAmount" column="ANTCPTD_FAC_ADMIN_AMT" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardSchedule" column="AWD_SCHDL" jdbc-type="VARCHAR" />
+        <field-descriptor name="federalAwardIdNumber" column="FED_AWD_ID_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="cfdaNumber" column="CFDA_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="proposalId" column="PRPSL_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="proposalVersion" column="PRPSL_VER" jdbc-type="VARCHAR" />
+        <field-descriptor name="originalProposal" column="ORGNL_PRPSL" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardAmendmentReason" column="AWD_AMEND_RSN" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardAmendmentEffectiveDate" column="AWD_AMEND_EFFDT" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardNotes" column="AWD_NOTES" jdbc-type="VARCHAR" />
+        <field-descriptor name="billingNotes" column="BILL_NOTES" jdbc-type="VARCHAR" />
+    </class-descriptor>
+-->
+    
+</descriptor-repository>

@@ -24,6 +24,7 @@
         <property name="databaseRepositoryFilePaths">
             <list merge= "true">
                 <value>edu/cornell/kfs/cemi/cu-ojb-cemi.xml</value>
+                <value>edu/cornell/kfs/cemi/module/cg/cu-ojb-cemi-award.xml</value>
                 <value>edu/cornell/kfs/cemi/module/cg/cu-ojb-cemi-award-schedule.xml</value>
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-vnd.xml</value>
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-supplier.xml</value>
@@ -32,6 +33,7 @@
         </property>
         <property name="jobNames">
             <list merge="true">
+                 <value>createCemiAwardExtractJob</value>
                  <value>createCemiAwardScheduleExtractJob</value>
                  <value>createCemiPaymentElectionExtractJob</value>
                  <value>createCemiSupplierExtractJob</value>
@@ -49,6 +51,7 @@
             <value>${staging.directory}/cemi/legacy/novelution/award</value>
             <value>${staging.directory}/cemi/legacy/workday/employee</value>
             <value>${staging.directory}/cemi/module/cg/cemiAwardScheduleExtract</value>
+            <value>${staging.directory}/cemi/module/cg/cemiAwardExtract</value>
             <value>${staging.directory}/cemi/pdp/cemiPaymentElectionExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiSupplierExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract</value>
@@ -517,5 +520,50 @@
           p:lastUpdateTimestampInTable="true"/>
 
     <alias name="cemiWorkdayTenantedEntityContactType" alias="Supplier_KfsContactType-TranslateWorkdayTenantedContactType"/>
+
+
+   <!-- Award -->
+   
+    <bean id="cemiAwardExtractDao" parent="cemiAwardExtractDao-parentBean"/>
+    <bean id="cemiAwardExtractDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cg.dataaccess.impl.CemiAwardExtractDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
+
+    <bean id="cemiAwardExtractOrmDao" parent="cemiAwardExtractOrmDao-parentBean"/>
+    <bean id="cemiAwardExtractOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cg.dataaccess.impl.CemiAwardExtractOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="cemiAwardExtractService" parent="cemiAwardExtractService-parentBean"/>
+    <bean id="cemiAwardExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cg.batch.service.impl.CemiAwardExtractServiceImpl"
+          c:environment-ref="environment"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/module/cg/cemiAwardExtract"
+          p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:parameterService-ref="parameterService"
+          p:cemiAwardExtractOrmDao-ref="cemiAwardExtractOrmDao"
+          p:cemiAwardExtractDao-ref="cemiAwardExtractDao"
+          p:businessObjectService-ref="businessObjectService"
+          p:dateTimeService-ref="dateTimeService"/>
+          
+    <bean id="createCemiAwardExtractStep"
+          class="edu.cornell.kfs.cemi.module.cg.batch.CreateCemiAwardExtractStep"
+          parent="step"
+          p:cemiAwardExtractService-ref="cemiAwardExtractService"/>
+          
+    <bean id="createCemiAwardExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiAwardExtractStep"/>
+            </list>
+        </property>
+    </bean>
 
 </beans>

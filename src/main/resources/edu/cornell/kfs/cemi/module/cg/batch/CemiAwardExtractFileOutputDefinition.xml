@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This is the main file for defining how the Award data will map to the Award spreadsheet/workbook.
+
+    Each "sheet" element should correspond to one of the sheets/tabs in the workbook.
+
+    There are two main types of "field" elements:
+
+    [1] POJO-derived value - Has the "STRING" type and uses the "key" attribute to specify the POJO property.
+    [2] Literal value - Has the "STATIC" type and uses the "value" attribute to specify the literal. Can be empty.
+
+    NOTE: This XML file doesn't keep track of POJO classes; it only needs to know POJO property names/paths.
+ -->
+<cemiOutputDefinition>
+
+    <sheet name="Submit Award" num-header-rows="5" start-column-index="1"
+           business-object-class="edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardFileSubmitAwardTabRowBo">
+        <field name="Spreadsheet Key*" type="STRING" key="spreadsheetKey"/>
+        <field name="Add Only" type="STRING" key="addOnly"/>
+        <field name="Award" type="STRING" key="award"/>
+        <field name="Auto Complete" type="STRING" key="autoComplete"/>
+        <field name="Award Reference ID" type="STRING" key="awardReferenceId"/>
+        <field name="Award Number" type="STRING" key="awardNumber"/>
+        <field name="Company*" type="STRING" key="company"/>
+        <field name="Sponsor Award Reference Number" type="STRING" key="sponsorAwardReferenceNumber"/>
+        <field name="Award Name" type="STRING" key="awardName"/>
+        <field name="Award Description" type="STRING" key="awardDescription"/>
+        <field name="Award Effective Date*" type="STRING" key="awardEffectiveDate"/>
+        <field name="Award Signed Date" type="STRING" key="awardSignedDate"/>
+        <field name="Award Type" type="STRING" key="awardType"/>
+        <field name="Purpose Code+" type="STRING" key="purposeCode"/>
+        <field name="Payment Terms" type="STRING" key="paymentTerms"/>
+        <field name="Institutional ID" type="STRING" key="institutionalId"/>
+        <field name="Award Salary Cap Default" type="STRING" key="awardSalaryCapDefault"/>
+        <field name="Spend Restriction Default+" type="STRING" key="spendRestrictionDefault"/>
+        <field name="Related Award" type="STRING" key="relatedAward"/>
+        <field name="Award Group+" type="STRING" key="awardGroup"/>
+        <field name="Cost Center" type="STRING" key="awardCostCenter"/>
+        <field name="Fund" type="STRING" key="awardFund"/>
+        <field name="Program" type="STRING" key="awardProgram"/>
+        <field name="Award Contract Owner" type="STRING" key="awardContractOwner"/>
+        <field name="Award Lifecycle Status" type="STRING" key="awardLifecycleStatus"/>
+        <field name="Sub Award" type="STRING" key="subAward"/>
+        <field name="Prime Sponsor" type="STRING" key="primeSponsor"/>
+        <field name="Sponsor" type="STRING" key="sponsor"/>
+        <field name="Bill To Sponsor*" type="STRING" key="billToSponsor"/>
+        <field name="Payment Type" type="STRING" key="paymentType"/>
+        <field name="Letter Of Credit" type="STRING" key="letterOfCredit"/>
+        <field name="Letter of Credit Document ID" type="STRING" key="letterOfCreditDocumentId"/>
+        <field name="Award Sequence Billing Active Reference" type="STRING" key="awardSequenceBillingActiveReference"/>
+        <field name="Award Billing Sequence Number Format Syntax Reference" type="STRING" key="awardBillingSequenceNumberFormatSyntaxReference"/>
+        <field name="Current Award Billing Sequence Number Used Reference" type="STRING" key="currentAwardBillingSequenceNumberUsedReference"/>
+        <field name="Award Billing Sequence Generator Rule" type="STRING" key="awardBillingSequenceGeneratorRule"/>
+        <field name="Currency*" type="STRING" key="currency"/>
+        <field name="Zero Amount Award" type="STRING" key="zeroAmountAward"/>
+        <field name="Sponsor Direct Cost Amount" type="STRING" key="sponsorDirectCostAmount"/>
+        <field name="Sponsor Facilities and Administration Amount" type="STRING" key="sponsorFacilitiesAndAdministrationAmount"/>
+        <field name="Cost Share Total Amount" type="STRING" key="costShareTotalAmount"/>
+        <field name="Authorized Amount" type="STRING" key="authorizedAmount"/>
+        <field name="Billing Limit Override" type="STRING" key="billingLimitOverride"/>
+        <field name="Cost Share Required by Sponsor" type="STRING" key="costShareRequiredBySponsor"/>
+        <field name="Anticipated Sponsor Direct Cost Amount" type="STRING" key="anticipatedSponsorDirectCostAmount"/>
+        <field name="Anticipated Facilities and Administration Amount" type="STRING" key="anticipatedFacilitiesAndAdministrationAmount"/>
+        <field name="Award Schedule*" type="STRING" key="awardSchedule"/>
+        <field name="Federal Award ID Number" type="STRING" key="federalAwardIdNumber"/>
+        <field name="CFDA Number" type="STRING" key="cfdaNumber"/>
+        <field name="Proposal ID" type="STRING" key="proposalId"/>
+        <field name="Proposal Version" type="STRING" key="proposalVersion"/>
+        <field name="Original Proposal" type="STRING" key="originalProposal"/>
+        <field name="Award Amendment Reason*" type="STRING" key="awardAmendmentReason"/>
+        <field name="Award Amendment Effective Date*" type="STRING" key="awardAmendmentEffectiveDate"/>
+        <field name="Award Notes" type="STRING" key="awardNotes"/>
+        <field name="Billing Notes" type="STRING" key="billingNotes"/>
+        
+        <field name="Row ID*" type="STRING" key="awardLineDataRowId"/> 
+        <field name="Receivable Contract Line" type="STRING" key="receivableContractLine"/>
+        <field name="Receivable Contract Line Reference ID" type="STRING" key="receivableContractLineReferenceId"/>
+        <field name="Line Number" type="STRING" key="lineNumber"/>
+        <field name="Intercompany Affiliate" type="STRING" key="intercompanyAffiliate"/>
+        <field name="Revenue Category*" type="STRING" key="revenueCategory"/>
+        <field name="Award Lifecycle Status" type="STRING" key="awardLineDataAwardLifecycleStatus"/>
+        <field name="Line Type*" type="STRING" key="lineType"/>
+        <field name="Spend Restriction+" type="STRING" key="spendRestriction"/>
+        <field name="Line Item Description Override" type="STRING" key="lineItemDescriptionOverride"/>
+        <field name="Deferred Revenue" type="STRING" key="deferredRevenue"/>
+        <field name="Line Status" type="STRING" key="lineStatus"/>
+        <field name="Award Line Document Status" type="STRING" key="awardLineDocumentStatus"/>
+        <field name="Primary Grant" type="STRING" key="primaryGrant"/>
+        <field name="Line CFDA Number" type="STRING" key="lineCfdaNumber"/>
+        <field name="Grant" type="STRING" key="grantId"/>
+        <field name="Line Amount" type="STRING" key="lineAmount"/>
+        <field name="Rate Agreement" type="STRING" key="rateAgreement"/>
+        <field name="Cost Rate Type" type="STRING" key="costRateType"/>
+        <field name="Exception" type="STRING" key="exception"/>
+        <field name="Revenue Allocation Profile" type="STRING" key="revenueAllocationProfile"/>
+        <field name="Delete" type="STRING" key="delete"/>
+        <field name="Basis Limit" type="STRING" key="basisLimit"/>
+        <field name="Basis Limit ID" type="STRING" key="basisLimitId"/>
+        <field name="Basis Limit Name" type="STRING" key="basisLimitName"/>
+        <field name="Basis Limit Amount" type="STRING" key="basisLimitAmount"/>
+        <field name="Award Line Start Date" type="STRING" key="awardLineStartDate"/>
+        <field name="Award Line End Date" type="STRING" key="awardLineEndDate"/>
+        <field name="Award Line Description" type="STRING" key="awardLineDescription"/>
+        <field name="Line Invoice Memo Override" type="STRING" key="lineInvoiceMemoOverride"/>
+        <field name="Cost Center" type="STRING" key="awardLineDataCostCenter"/>
+        <field name="Fund" type="STRING" key="awardLineDataFund"/>
+        <field name="Program" type="STRING" key="awardLineDataProgram"/>
+        <field name="Award Line Salary Cap" type="STRING" key="awardLineSalaryCap"/>
+        <field name="Award Line Salary Cap Override" type="STRING" key="awardLineSalaryCapOverride"/>
+        <field name="Subrecipient" type="STRING" key="subrecipient"/>
+        <field name="Line Federal Award ID Number" type="STRING" key="lineFederalAwardIdNumber"/>
+        <field name="Line Billing Notes" type="STRING" key="lineBillingNotes"/>
+        <field name="Revenue Recognition Line Notes" type="STRING" key="revenueRecognitionLineNotes"/>
+        
+        <field name="Row ID*" type="STRING" key="specialConditionDataRowId"/> 
+        <field name="Delete" type="STRING" key="specialConditionDataDelete"/>
+        <field name="Special Condition" type="STRING" key="specialCondition"/>
+        <field name="Special Condition Reference ID" type="STRING" key="specialConditionReferenceId"/>
+        <field name="Special Condition Type*" type="STRING" key="specialConditionType"/>
+        <field name="Special Condition Comment" type="STRING" key="specialConditionComment"/>
+        
+        <field name="Row ID*" type="STRING" key="awardBudgetDataRowId"/> 
+        <field name="Default Budget Structure" type="STRING" key="defaultBudgetStructure"/>
+        <field name="Default Budget Type" type="STRING" key="defaultBudgetType"/>
+        <field name="Default Balanced Amendment" type="STRING" key="defaultBalancedAmendment"/>
+        
+        <field name="Row ID*" type="STRING" key="nsfCodeAllocationDataRowId"/> 
+        <field name="Delete" type="STRING" key="nsfCodeAllocationDataDelete"/>
+        <field name="NSF Code Allocation" type="STRING" key="nsfCodeAllocation"/>
+        <field name="NSF Code Allocation ID" type="STRING" key="nsfCodeAllocationId"/>
+        <field name="NSF Code Allocation Percentage*" type="STRING" key="nsfCodeAllocationPercentage"/>
+        <field name="NSF Code*" type="STRING" key="nsfCode"/>
+    </sheet>
+</cemiOutputDefinition>
