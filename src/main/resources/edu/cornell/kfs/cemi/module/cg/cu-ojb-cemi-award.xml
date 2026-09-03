@@ -4,12 +4,12 @@
         <class-descriptor class="edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardLegacyNovelutionBo" schema="CEMI"
                       table="CU_CEMI_LGCY_NOVELUTION_AWARD_T">
         <field-descriptor name="spreadsheetKey" column="SPREADSHEET_KEY" jdbc-type="VARCHAR" primarykey="true" index="true"/>
-        <field-descriptor name="awardSignedDate column" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
-        <field-descriptor name="costShareTotalAmount" column="ADDRESS_ID" jdbc-type="VARCHAR"/>
-        <field-descriptor name="anticipatedSponsorDirectCostAmount" column="COUNTRY_FOR_ADDRESS" jdbc-type="VARCHAR"/>
-        <field-descriptor name="anticipatedFacilitiesAndAdministrationAmount" column="ADDRESS_LINE_1" jdbc-type="VARCHAR"/>
-        <field-descriptor name="federalAwardIdNumber" column="ADDRESS_LINE_2" jdbc-type="VARCHAR"/>
-        <field-descriptor name="cfdaNumber" column="CITY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="awardSignedDate column" column="AWARD_SIGNED_DATE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="costShareTotalAmount" column="COST_SHARE_TOTAL_AMOUNT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="anticipatedSponsorDirectCostAmount" column="ANTICIPATED_SPONSOR_DIRECT_COST_AMOUNT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="anticipatedFacilitiesAndAdministrationAmount" column="ANTICIPATED_SPONSOR_FACILITIES_AND_ADMINISTRATION_AMOUNT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="federalAwardIdNumber" column="FEDERAL_AWARD_ID_NUMBER" jdbc-type="VARCHAR"/>
+        <field-descriptor name="cfdaNumber" column="CFDA_NUMBER" jdbc-type="VARCHAR"/>
     </class-descriptor>
     
     <class-descriptor class="edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardFileSubmitAwardTabRowBo" 

@@ -29,6 +29,8 @@ public final class CemiAwardConstants {
     public static final String AWARD_EXTRACT_FILENAME_PREFIX = "Submit_Award_ITH_";
     public static final String AWARD_EXTRACT_PLAIN_FILENAME = "Submit_Award.xlsx";
     
+    public static final String AWARD_EXTRACT_SKIPPED_AWARDS_FILE_PREFIX = "award-extract-skipped-awards-";
+    
     public static final class AwardExtractSheets {
         public static final String SUBMIT_AWARD = "Submit Award";
     }

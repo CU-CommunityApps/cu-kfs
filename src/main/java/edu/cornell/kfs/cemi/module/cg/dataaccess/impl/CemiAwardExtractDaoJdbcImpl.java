@@ -2,6 +2,7 @@ package edu.cornell.kfs.cemi.module.cg.dataaccess.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,13 +23,16 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
     private static final Logger LOG = LogManager.getLogger();
 
     @Override
-    public void clearAnyExistingInScopeBusinessObjectKeysFromPreviousExecution() {
-        LOG.info("clearAnyExistingInScopeBusinessObjectKeysFromPreviousExecution was called.");
-        final CuSqlQuery headerKeysQuery = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_AWD_EXTR_AWD_T");
-        executeUpdate(headerKeysQuery);
+    public void clearingAllExistingBusinessObjectKeysAndSetupDataFromPreviousExecution() {
+        LOG.info("clearingAllExistingBusinessObjectKeysAndSetupDataFromPreviousExecution was called.");
+        final CuSqlQuery dependentAwardScheduleQuerySettingsClearingQuery = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_AWD_EXTR_AWD_SCHD_QUERY_SETTINGS_T");
+        executeUpdate(dependentAwardScheduleQuerySettingsClearingQuery);
         
-        final CuSqlQuery orgCodeLookupQuery = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_AWD_EXTR_AWD_ORG_T");
-        executeUpdate(orgCodeLookupQuery);
+        final CuSqlQuery headerKeysClearingQuery = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_AWD_EXTR_AWD_T");
+        executeUpdate(headerKeysClearingQuery);
+        
+        final CuSqlQuery orgCodeLookupClearingQuery = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_AWD_EXTR_AWD_ORG_T");
+        executeUpdate(orgCodeLookupClearingQuery);
         
         //TODO: place truncation of award lines key table here
         LOG.info("clearAnyExistingInScopeBusinessObjectKeysFromPreviousExecution finished truncating previous run key tables.");
@@ -36,17 +40,18 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
     
     
     @Override
-    public void updateAwardScheduleExtractDependentQuerySettings(String awardScheduleJobRunDate) {
+    public void storeAwardScheduleExtractDependentQuerySettings(String awardScheduleJobRunDate) {
         final CuSqlQuery query = new CuSqlChunk()
-                .append("UPDATE CEMI.CU_CEMI_AWD_EXTR_AWD_SCHD_QUERY_SETTINGS_T ")
-                .append("SET AWD_SCHD_EXTR_FILE_RUNDATE = ").appendAsParameter(awardScheduleJobRunDate)
+                .append("INSERT INTO CEMI.CU_CEMI_AWD_EXTR_AWD_SCHD_QUERY_SETTINGS_T ")
+                .append("VALUES (").appendAsParameter(Types.VARCHAR, awardScheduleJobRunDate)
+                .append(")")
                 .toQuery();
 
-        final int numRowsUpdated = executeUpdate(query);
-        if (numRowsUpdated != 1) {
-            LOG.error("updateAwardScheduleExtractDependentQuerySettings, Query should have updated 1 row, "
-                    + "but it updated {} instead", numRowsUpdated);
-            throw new RuntimeException("Failed to update award schedule extract dependent query settings");
+        final int numRowsInserted = executeUpdate(query);
+        if (numRowsInserted != 1) {
+            LOG.error("storeAwardScheduleExtractDependentQuerySettings, Query should have inserted 1 row, "
+                    + "but it inserted {} rows instead", numRowsInserted);
+            throw new RuntimeException("Failed to insert award schedule extract query settings that award schedule extract requires.");
         }
     }
     

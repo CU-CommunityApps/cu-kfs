@@ -6,9 +6,9 @@ import edu.cornell.kfs.cemi.module.cg.CemiAwardConstants.AwardTranslateTables;
 
 public interface CemiAwardExtractDao {
     
-    void clearAnyExistingInScopeBusinessObjectKeysFromPreviousExecution();
+    void clearingAllExistingBusinessObjectKeysAndSetupDataFromPreviousExecution();
     
-    void updateAwardScheduleExtractDependentQuerySettings(final String awardScheduleJobRunDate);
+    void storeAwardScheduleExtractDependentQuerySettings(final String awardScheduleJobRunDate);
    
     void queryAndStoreInScopeBusinessObjectKeysForDataExtract();
     

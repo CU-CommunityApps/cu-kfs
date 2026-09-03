@@ -1,5 +1,11 @@
 package  edu.cornell.kfs.cemi.module.cg.batch.service.impl;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.stream.Stream;
@@ -17,45 +23,44 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.cemi.module.cg.CemiAwardConstants;
 import edu.cornell.kfs.cemi.module.cg.CemiAwardParameterConstants;
-import edu.cornell.kfs.cemi.module.cg.CemiAwardConstants.AwardTranslateTables;
 import edu.cornell.kfs.cemi.module.cg.batch.CreateCemiAwardExtractStep;
 import edu.cornell.kfs.cemi.module.cg.batch.service.CemiAwardExtractService;
-import edu.cornell.kfs.cemi.module.cg.batch.translatetable.CemiAwardTranslateTableFactory;
-import edu.cornell.kfs.cemi.module.cg.batch.translatetable.CemiAwardTranslateTableMaps;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardExtractDao;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardExtractOrmDao;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiDataExtractServiceBase;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
+import edu.cornell.kfs.cemi.vnd.CemiOrderFromSupplierConstants;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CemiAwardExtractServiceImpl extends CemiDataExtractServiceBase implements CemiAwardExtractService {
     
     private static final Logger LOG = LogManager.getLogger();
     
+    private String reportsDirectory;
     private CemiAwardExtractOrmDao cemiAwardExtractOrmDao;
     private CemiAwardExtractDao cemiAwardExtractDao;
     private BusinessObjectService businessObjectService;
     private DateTimeService dateTimeService;
-    private CemiAwardTranslateTableMaps allAwardTranslateTableMaps;
     
     public CemiAwardExtractServiceImpl(final Environment environment) {
         super(environment);
-        populateAllAwardTranslateTableMaps();
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void resetState() {
-        LOG.info("resetState, Deleting the list of keys representing extractable business objects from"
-                + " the previous run (if present)...");
-        cemiAwardExtractDao.clearAnyExistingInScopeBusinessObjectKeysFromPreviousExecution();
+        LOG.info("resetState, Removing all transient data values from previous run (...if it exists)");
+        cemiAwardExtractDao.clearingAllExistingBusinessObjectKeysAndSetupDataFromPreviousExecution();
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void initializeExtractDateSettings() {
-        LOG.info("initializeExtractDateSettings, Setting Award Schedule extraction date-time to use for any dependent queries...");
         final String awardScheduleJobRunDate = getAwardScheduleJobRunDate();
-        cemiAwardExtractDao.updateAwardScheduleExtractDependentQuerySettings(awardScheduleJobRunDate);
+        LOG.info("initializeExtractDateSettings, Setting Award Schedule extraction date-time used by any Award Extract "
+                + "dependent queries to system parameter CEMI_AWARD_EXTRACT_AWARD_SCHEDULE_DATETIME value {}",
+                awardScheduleJobRunDate);
+        cemiAwardExtractDao.storeAwardScheduleExtractDependentQuerySettings(awardScheduleJobRunDate);
 
     }
     
@@ -82,19 +87,31 @@ public class CemiAwardExtractServiceImpl extends CemiDataExtractServiceBase impl
     public void generateIntermediateExtractData(final LocalDateTime jobRunDate) {
         LOG.info("generateIntermediateExtractData, Generating data rows for Award spreadsheet "
                 + "and placing in intermediate database table storage...");
-
+        
+        final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
+        final String skippedAwardsFilePath = buildPathForSkippedAwardsReportFile(jobRunDateString);
         try (
                 final Stream<Award> awards = 
                         cemiAwardExtractOrmDao.getAwardsForCemiAwardExtractAsCloseableStream();
+                final FileOutputStream fileStream = new FileOutputStream(skippedAwardsFilePath);
+                final OutputStreamWriter streamWriter = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8);
+                final BufferedWriter skippedAwardsWriter = new BufferedWriter(streamWriter);
         ) {
-            final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
+            
             final CemiAwardFileExtractDataBuilderDefaultImpl dataBuilder = 
                     new CemiAwardFileExtractDataBuilderDefaultImpl(
                             businessObjectService, jobRunDateString, dateTimeService, cemiAwardExtractOrmDao,
-                            cemiAwardExtractDao, allAwardTranslateTableMaps, shouldMaskCemiSensitiveData());
+                            cemiAwardExtractDao, skippedAwardsWriter, shouldMaskCemiSensitiveData());
             final Iterator<Award> awardsIterator = awards.iterator();
             dataBuilder.writeAwardFileSubmitAwardTabExtractDataToIntermediateStorage(awardsIterator);
+        } catch (final IOException e) {
+            throw new UncheckedIOException(e);
         }
+    }
+    
+    private String buildPathForSkippedAwardsReportFile(final String jobRunDate) {
+        return StringUtils.join(reportsDirectory, CemiAwardConstants.AWARD_EXTRACT_SKIPPED_AWARDS_FILE_PREFIX,
+                jobRunDate, CUKFSConstants.TEXT_FILE_EXTENSION);
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -124,6 +141,14 @@ public class CemiAwardExtractServiceImpl extends CemiDataExtractServiceBase impl
         return CemiAwardConstants.AWARD_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX;
     }
 
+    public String getReportsDirectory() {
+        return reportsDirectory;
+    }
+
+    public void setReportsDirectory(String reportsDirectory) {
+        this.reportsDirectory = reportsDirectory;
+    }
+
     public void setCemiAwardExtractOrmDao(CemiAwardExtractOrmDao cemiAwardExtractOrmDao) {
         this.cemiAwardExtractOrmDao = cemiAwardExtractOrmDao;
     }
@@ -138,22 +163,6 @@ public class CemiAwardExtractServiceImpl extends CemiDataExtractServiceBase impl
 
     public void setDateTimeService(DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
-    }
-
-    private void populateAllAwardTranslateTableMaps() {
-        allAwardTranslateTableMaps = new CemiAwardTranslateTableMaps();
-        
-        allAwardTranslateTableMaps.setSponsorAwardTypesMap(CemiAwardTranslateTableFactory.createAwardTranslateTableFor(
-                AwardTranslateTables.SPONSOR_AWARD_TYPES_QUERY, cemiAwardExtractDao));
-        
-        allAwardTranslateTableMaps.setAwardPurposeMap(CemiAwardTranslateTableFactory.createAwardTranslateTableFor(
-                AwardTranslateTables.AWARD_PURPOSE_QUERY, cemiAwardExtractDao));
-        
-        allAwardTranslateTableMaps.setAwardLineLifecycleStatusMap(CemiAwardTranslateTableFactory.createAwardTranslateTableFor(
-                AwardTranslateTables.AWARD_LINE_LIFECYCLE_STATUS_QUERY, cemiAwardExtractDao));
-        
-        allAwardTranslateTableMaps.setAwardLineTypesMap(CemiAwardTranslateTableFactory.createAwardTranslateTableFor(
-                AwardTranslateTables.AWARD_LINE_TYPES_QUERY, cemiAwardExtractDao));
     }
 
     public CemiAwardExtractOrmDao getCemiAwardExtractOrmDao() {

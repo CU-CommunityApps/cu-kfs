@@ -1,18 +1,21 @@
 package edu.cornell.kfs.cemi.module.cg.batch.service.impl;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.businessobject.Award;
-import org.kuali.kfs.module.cg.businessobject.AwardAccount;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.cemi.module.cg.batch.service.CemiAwardFileExtractDataBuilder;
 import edu.cornell.kfs.cemi.module.cg.batch.translatetable.CemiAwardTranslateTableFactory;
@@ -37,37 +40,33 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
 
     private static final Logger LOG = LogManager.getLogger();
    
+    protected DateTimeService dateTimeService;
     protected CemiAwardExtractOrmDao cemiAwardExtractOrmDao;
     protected CemiAwardExtractDao cemiAwardExtractDao;
-    protected CemiAwardTranslateTableMaps allAwardTranslateTableMaps;
-    protected DateTimeService dateTimeService;
+    protected Writer skippedAwardsWriter;
     protected final boolean maskSensitiveData;
     
+    protected CemiAwardTranslateTableMaps allAwardTranslateTableMaps;
 
     public CemiAwardFileExtractDataBuilderDefaultImpl(
             final BusinessObjectService businessObjectService, final String jobRunDateString,
             final DateTimeService dateTimeService,
             final CemiAwardExtractOrmDao cemiAwardExtractOrmDao,
             final CemiAwardExtractDao cemiAwardExtractDao,
-            final CemiAwardTranslateTableMaps allAwardTranslateTableMaps,
+            final Writer skippedAwardsWriter,
             final boolean maskSensitiveData) {
         super(businessObjectService, jobRunDateString, CemiAwardFileSubmitAwardTabRowBo.class);
         Validate.notNull(dateTimeService, "dateTimeService cannot be null");
         Validate.notNull(cemiAwardExtractOrmDao, "cemiAwardExtractOrmDao cannot be null");
-//        Validate.notNull(cemiAwardExtractDao, "cemiAwardExtractDao cannot be null");
-        Validate.notNull(allAwardTranslateTableMaps, "allAwardTranslateTableMaps cannot be null");
-        
-        //validate each translate tables map has been loaded
-        Validate.notNull(allAwardTranslateTableMaps.getAwardLineLifecycleStatusMap(), "allAwardTranslateTableMaps.awardLineLifecycleStatusMap cannot be null");
-        Validate.notNull(allAwardTranslateTableMaps.getAwardLineTypesMap(), "allAwardTranslateTableMaps.awardLineTypesMap cannot be null");
-        Validate.notNull(allAwardTranslateTableMaps.getAwardPurposeMap(), "allAwardTranslateTableMaps.awardPurposeMap cannot be null");
-        Validate.notNull(allAwardTranslateTableMaps.getSponsorAwardTypesMap(), "allAwardTranslateTableMaps.sponsorAwardTypesMap cannot be null");
-        
+        Validate.notNull(cemiAwardExtractDao, "cemiAwardExtractDao cannot be null");
+        Validate.notNull(skippedAwardsWriter, "skippedAwardsWriter cannot be null");
         this.dateTimeService = dateTimeService;
         this.cemiAwardExtractOrmDao = cemiAwardExtractOrmDao;
         this.cemiAwardExtractDao = cemiAwardExtractDao;
-        this.allAwardTranslateTableMaps = allAwardTranslateTableMaps;
+        this.skippedAwardsWriter = skippedAwardsWriter;
         this.maskSensitiveData = maskSensitiveData;
+        
+        populateAllAwardTranslateTableMaps();
     }
     
     @Override
@@ -84,7 +83,12 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
             
             //Gather all the data specific to the award being converted. 
             AwardExtendedAttribute awardExtendedAttribute = (AwardExtendedAttribute) award.getExtension();
-            CemiAwardLegacyNovelutionBo awardNovelutionAttributes = obtainAssociatedNovelutionData(award.getProposalNumber());
+            CemiAwardLegacyNovelutionBo awardNovelutionAttributes = 
+                    obtainAssociatedNovelutionData(award.getProposalNumber(), skippedAwardsWriter);
+            if (ObjectUtils.isNull(awardNovelutionAttributes)) {
+                //problem encountered retrieving Novelution data for award, skip (downstream processing will fail 
+                continue;
+            }
             
             //Database table storage of data extract
             totalRowsWritten += createAndStoreAwardFileSubmitAwardTabRowsFor(award, awardExtendedAttribute, 
@@ -125,15 +129,29 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
         return numAwardFileLinesGenerated;
     }
     
-    private CemiAwardLegacyNovelutionBo obtainAssociatedNovelutionData(String awardProposalNumber) {
-        List<CemiAwardLegacyNovelutionBo> novelutionAttributes = 
+//    private CemiAwardLegacyNovelutionBo obtainAssociatedNovelutionData(
+//            final String awardProposalNumber, final Writer skippedAwardsWriter) {
+//        Stream<CemiAwardLegacyNovelutionBo> novelutionAttributes = 
+//                cemiAwardExtractOrmDao.getAwardNovelutionAtributesForCemiAwardExtractAsCloseableStream(awardProposalNumber);
+//        if (ObjectUtils.isNull(novelutionAttributes) || novelutionAttributes.count() == 0) {
+//            writeSkippedAwardToReportFile(awardProposalNumber, "No Novelution data was found for the award.");
+//            return null;
+//        } else if (novelutionAttributes.count() == 1) {
+//            return novelutionAttributes.findFirst().orElse(null);
+//        } 
+//        writeSkippedAwardToReportFile(awardProposalNumber, "More than one row of Novelution data was found for the award.");
+//        return null;
+//    }
+    
+    private CemiAwardLegacyNovelutionBo obtainAssociatedNovelutionData(
+            final String awardProposalNumber, final Writer skippedAwardsWriter) {
+        CemiAwardLegacyNovelutionBo novelutionAttributes = 
                 cemiAwardExtractOrmDao.getAwardNovelutionAtributesForCemiAwardExtractAsCloseableStream(awardProposalNumber);
-        if (novelutionAttributes.isEmpty()) {
-            throw new IllegalStateException("This should never happen. No Novelution data was found for award: " + awardProposalNumber);
-        } else if (novelutionAttributes.size() != 1) {
-            throw new IllegalStateException("This should never happen. More than one row of Novelution data was found for award: " + awardProposalNumber);
-        } 
-        return novelutionAttributes.get(0);
+        if (ObjectUtils.isNull(novelutionAttributes)) {
+            writeSkippedAwardToReportFile(awardProposalNumber, "No Novelution data was found for the award " + awardProposalNumber);
+            return null;
+        }
+        return novelutionAttributes;
     }
 
     private void createAndStoreAwardFileSubmitAwardTabRowBo(
@@ -142,6 +160,33 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
             final CemiAwardAllocationDataBo allocationBo) {
         final CemiAwardFileSubmitAwardTabRowBo tabRowBo = CemiAwardFileSubmitAwardTabRowBoFactory.createTabRowBoFrom(headerBo, awardLineBo, specialConditionBo, budgetBo, allocationBo);
         storeSheetRow(tabRowBo);
+    }
+    
+    private void populateAllAwardTranslateTableMaps() {
+        allAwardTranslateTableMaps = new CemiAwardTranslateTableMaps();
+        
+        allAwardTranslateTableMaps.setSponsorAwardTypesMap(CemiAwardTranslateTableFactory.createAwardTranslateTableFor(
+                AwardTranslateTables.SPONSOR_AWARD_TYPES_QUERY, cemiAwardExtractDao));
+        
+        allAwardTranslateTableMaps.setAwardPurposeMap(CemiAwardTranslateTableFactory.createAwardTranslateTableFor(
+                AwardTranslateTables.AWARD_PURPOSE_QUERY, cemiAwardExtractDao));
+        
+        allAwardTranslateTableMaps.setAwardLineLifecycleStatusMap(CemiAwardTranslateTableFactory.createAwardTranslateTableFor(
+                AwardTranslateTables.AWARD_LINE_LIFECYCLE_STATUS_QUERY, cemiAwardExtractDao));
+        
+        allAwardTranslateTableMaps.setAwardLineTypesMap(CemiAwardTranslateTableFactory.createAwardTranslateTableFor(
+                AwardTranslateTables.AWARD_LINE_TYPES_QUERY, cemiAwardExtractDao));
+    }
+    
+    private void writeSkippedAwardToReportFile(final String awardProposalNumber, final String errorMessage) {
+        try {
+            String errorToLog = String.join(
+                    KFSConstants.BLANK_SPACE, awardProposalNumber, "was skipped. Processing encountered:", errorMessage );
+            skippedAwardsWriter.write(errorToLog);
+            skippedAwardsWriter.write(KFSConstants.NEWLINE);
+        } catch (final IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
 //
