@@ -129,30 +129,30 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
         return numAwardFileLinesGenerated;
     }
     
-//    private CemiAwardLegacyNovelutionBo obtainAssociatedNovelutionData(
-//            final String awardProposalNumber, final Writer skippedAwardsWriter) {
-//        Stream<CemiAwardLegacyNovelutionBo> novelutionAttributes = 
-//                cemiAwardExtractOrmDao.getAwardNovelutionAtributesForCemiAwardExtractAsCloseableStream(awardProposalNumber);
-//        if (ObjectUtils.isNull(novelutionAttributes) || novelutionAttributes.count() == 0) {
-//            writeSkippedAwardToReportFile(awardProposalNumber, "No Novelution data was found for the award.");
-//            return null;
-//        } else if (novelutionAttributes.count() == 1) {
-//            return novelutionAttributes.findFirst().orElse(null);
-//        } 
-//        writeSkippedAwardToReportFile(awardProposalNumber, "More than one row of Novelution data was found for the award.");
-//        return null;
-//    }
-    
     private CemiAwardLegacyNovelutionBo obtainAssociatedNovelutionData(
             final String awardProposalNumber, final Writer skippedAwardsWriter) {
-        CemiAwardLegacyNovelutionBo novelutionAttributes = 
+        List<CemiAwardLegacyNovelutionBo> novelutionAttributes = 
                 cemiAwardExtractOrmDao.getAwardNovelutionAtributesForCemiAwardExtractAsCloseableStream(awardProposalNumber);
-        if (ObjectUtils.isNull(novelutionAttributes)) {
-            writeSkippedAwardToReportFile(awardProposalNumber, "No Novelution data was found for the award " + awardProposalNumber);
+        if (ObjectUtils.isNull(novelutionAttributes) || novelutionAttributes.size() == 0) {
+            writeSkippedAwardToReportFile(awardProposalNumber, "No Novelution data was found for the award.");
             return null;
-        }
-        return novelutionAttributes;
+        } else if (novelutionAttributes.size() == 1) {
+            return novelutionAttributes.get(0);
+        } 
+        writeSkippedAwardToReportFile(awardProposalNumber, "More than one row of Novelution data was found for the award.");
+        return null;
     }
+    
+//    private CemiAwardLegacyNovelutionBo obtainAssociatedNovelutionData(
+//            final String awardProposalNumber, final Writer skippedAwardsWriter) {
+//        List<CemiAwardLegacyNovelutionBo> novelutionAttributes = 
+//                cemiAwardExtractOrmDao.getAwardNovelutionAtributesForCemiAwardExtractAsCloseableStream(awardProposalNumber);
+//        if (ObjectUtils.isNull(novelutionAttributes)) {
+//            writeSkippedAwardToReportFile(awardProposalNumber, "No Novelution data was found for the award " + awardProposalNumber);
+//            return null;
+//        }
+//        return novelutionAttributes.get(0);
+//    }
 
     private void createAndStoreAwardFileSubmitAwardTabRowBo(
             final CemiAwardHeaderDataBo headerBo, final CemiAwardLineDataBo awardLineBo,

@@ -6,15 +6,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.kuali.kfs.module.cg.businessobject.Award;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.vnd.VendorPropertyConstants;
-import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
 import edu.cornell.kfs.cemi.module.cg.CemiAwardConstants;
 import edu.cornell.kfs.cemi.module.cg.CemiAwardPropertyConstants;

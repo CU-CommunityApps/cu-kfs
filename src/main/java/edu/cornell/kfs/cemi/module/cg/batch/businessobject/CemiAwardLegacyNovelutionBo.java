@@ -16,17 +16,17 @@ public class CemiAwardLegacyNovelutionBo extends PersistableBusinessObjectBase {
     private String federalAwardIdNumber;
     private String cfdaNumber;
     
-//    public CemiAwardLegacyNovelutionBo(String spreadsheetKey, String awardSignedDate,String costShareTotalAmount,
-//            String anticipatedSponsorDirectCostAmount, String anticipatedFacilitiesAndAdministrationAmount,
-//            String federalAwardIdNumber, String cfdaNumber) {
-//        this.spreadsheetKey = spreadsheetKey;
-//        this.awardSignedDate = awardSignedDate;
-//        this.costShareTotalAmount = costShareTotalAmount;
-//        this.anticipatedSponsorDirectCostAmount = anticipatedSponsorDirectCostAmount;
-//        this.anticipatedFacilitiesAndAdministrationAmount = anticipatedFacilitiesAndAdministrationAmount;
-//        this.anticipatedFacilitiesAndAdministrationAmount = anticipatedFacilitiesAndAdministrationAmount;
-//        this.cfdaNumber = cfdaNumber;
-//    }
+    public CemiAwardLegacyNovelutionBo(String spreadsheetKey, String awardSignedDate,String costShareTotalAmount,
+            String anticipatedSponsorDirectCostAmount, String anticipatedFacilitiesAndAdministrationAmount,
+            String federalAwardIdNumber, String cfdaNumber) {
+        this.spreadsheetKey = spreadsheetKey;
+        this.awardSignedDate = awardSignedDate;
+        this.costShareTotalAmount = costShareTotalAmount;
+        this.anticipatedSponsorDirectCostAmount = anticipatedSponsorDirectCostAmount;
+        this.anticipatedFacilitiesAndAdministrationAmount = anticipatedFacilitiesAndAdministrationAmount;
+        this.anticipatedFacilitiesAndAdministrationAmount = anticipatedFacilitiesAndAdministrationAmount;
+        this.cfdaNumber = cfdaNumber;
+    }
     
     public CemiAwardLegacyNovelutionBo() {
     }
