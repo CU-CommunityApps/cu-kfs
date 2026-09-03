@@ -1,18 +1,21 @@
 package edu.cornell.kfs.cemi.module.cam.batch.service.impl;
 
-import edu.cornell.kfs.cemi.module.cam.batch.businessobject.CemiRegisterAssetFileRegisterAssetTabRowBo;
-import edu.cornell.kfs.cemi.patterntemplate.batch.businessobject.CemiEXTRACTNAMEFileTABNAMETabRowBo;
-import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
+import java.sql.Date;
+import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cam.businessobject.Asset;
-import org.kuali.kfs.module.cg.businessobject.Award;
+import org.kuali.kfs.module.cam.businessobject.AssetPayment;
 import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.cemi.module.cam.CemiRegisterAssetConstants;
+import edu.cornell.kfs.cemi.module.cam.batch.businessobject.CemiRegisterAssetFileRegisterAssetTabRowBo;
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.module.cam.businessobject.AssetExtension;
-import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
+import io.jsonwebtoken.lang.Collections;
 
 // The factory class deals with converting the legacy data values to the new data value representation.
 // Depending upon how the data needs to be placed in the data extraction file, multiple business object factories
@@ -22,16 +25,16 @@ import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
 @SuppressWarnings("deprecation")
 public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
-    
+
     private Asset asset;
     private AssetExtension assetExtendedAttribute;
     private String jobRunDateString;
     private DateTimeService dateTimeService;
-    private boolean maskSensitiveData = true;   // Initialize default processing to mask in the event 
-                                                // KFS system parameter has not been created. 
+    private boolean maskSensitiveData = true; // Initialize default processing to mask in the event
+                                              // KFS system parameter has not been created.
 
-    public CemiRegisterAssetFileRegisterAssetTabRowBoFactory (final Asset asset, 
-            final AssetExtension assetExtendedAttribute, final String jobRunDateString, 
+    public CemiRegisterAssetFileRegisterAssetTabRowBoFactory(final Asset asset,
+            final AssetExtension assetExtendedAttribute, final String jobRunDateString,
             final DateTimeService dateTimeService, final boolean maskSensitiveData) {
         this.asset = asset;
         this.assetExtendedAttribute = assetExtendedAttribute;
@@ -39,125 +42,268 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         this.dateTimeService = dateTimeService;
         this.maskSensitiveData = maskSensitiveData;
     }
-     
+
     public CemiRegisterAssetFileRegisterAssetTabRowBo createCemiRegisterAssetFileRegisterAssetTabRowBo() {
         Validate.validState(asset != null, "Asset cannot be null.");
         Validate.validState(assetExtendedAttribute != null, "AssetExtension cannot be null.");
         Validate.validState(jobRunDateString != null, "jobRunDateString cannot be null.");
         Validate.validState(dateTimeService != null, "DateTimeService cannot be null.");
 
-          final CemiRegisterAssetFileRegisterAssetTabRowBo registerAssetTabDataRow = new CemiRegisterAssetFileRegisterAssetTabRowBo();
-//        
-//        final String rowSpreadsheetKey = buildSpreadsheetKey(award.getProposalNumber());
-//        final String rowAwardScheduleReferenceId = buildAwardScheduleReferenceId(award.getProposalNumber());
-//        final String rowAwardScheduleName = determineAwardScheduleName(award.getAwardProjectTitle());
-//        final String rowAwardPeriodReferenceId = buildAwardPeriodReferenceId(award.getProposalNumber());
-//        final String rowAwardPostingIntervalId = buildAwardPostingIntervalId(award.getProposalNumber());
-//        final String rowAwardIntervalStartDate = determineFormattedDate(awardExtendedAttribute.getBudgetBeginningDate());
-//        final String rowAwardIntervalEndDate = determineFormattedDate(awardExtendedAttribute.getBudgetEndingDate());
-//        
-//        // Reference information related to business object being created that must be specified.
-//        // Both of these attributes are being set by abstract class CemiOrmDataBuilderBase when storeSheetRow is invoked.
-//        //      attribute jobRunRowIndex
-//        //      attribute jobRunDateString
-//        awardScheduleTabDataRow.setProposalNumberUsedForDataRow(award.getProposalNumber());
-//        
-//        //Format and assign data values for these attributes as defined by the Huron mapping template specification.
-//          private String businessAssetNumber;
-//          private String businessAssetID;
-//          private String company;
-//          private String businessAssetName;
-//          private String businessAssetDescription;
-//          private String spendCategory;
-//          private String accountingTreatment;
-//          private String acquisitionMethod;
-//          private String memo;
-//          private String acquisitionCost;
-//          private String residualValue;
-//          private String fairMarketValue;
-//          private String quantity;
-//          private String worktagType1;
-//          private String worktagValue1;
-//          private String worktagType2;
-//          private String worktagValue2;
-//          private String worktagType3;
-//          private String worktagValue3;
-//          private String dateAcquired;
-//          private String datePlacedInService;
-//          private String location;
-//          private String assetIdentifier;
-//          private String serialNumber;
-//          private String manufacturer;
-//          private String assetClass;
-//          private String assetType;
-//          private String coordinatingCostCenter;
-//          private String assetCoordinator;
-//          private String poNumber;
-//          private String depreciationProfileOverride;
-//          private String depreciationMethodOverride;
-//          private String depreciationPercentOverride;
-//          private String usefulLifeInPeriodsOverride;
-//          private String depreciationThresholdOverride;
-//          private String depreciationStartDate;
-//          private String remainingDepreciationPeriods;
-//          private String accumulatedDepreciation;
-          registerAssetTabDataRow.setBusinessAssetNumber(determineBusinessAssetNumber(asset.getCapitalAssetNumber()));;
-          registerAssetTabDataRow.setBusinessAssetID(determineBusinessAssetID(asset.getCapitalAssetNumber()));
-          registerAssetTabDataRow.setCompany(CemiBaseConstants.EMPTY_STRING);//TBD
-//        awardScheduleTabDataRow.setAwardScheduleReferenceId(rowAwardScheduleReferenceId);
-//        awardScheduleTabDataRow.setAwardScheduleName(rowAwardScheduleName);
-//        awardScheduleTabDataRow.setAwardPostingIntervalGroup(CemiAwardScheduleConstants.BUDGET_PERIOD);
-//        awardScheduleTabDataRow.setAwardPeriodDataRowId(CemiAwardScheduleConstants.NUMERIC_ONE);
-//        awardScheduleTabDataRow.setAwardPeriodReferenceId(rowAwardPeriodReferenceId);
-//        awardScheduleTabDataRow.setAwardPeriodName(CemiAwardScheduleConstants.CINV_PERIOD);
-//        awardScheduleTabDataRow.setAwardPeriodNumber(CemiAwardScheduleConstants.NUMERIC_ONE);
-//        awardScheduleTabDataRow.setAwardIntervalRowId(CemiAwardScheduleConstants.NUMERIC_ONE);
-//        awardScheduleTabDataRow.setAwardPostingInterval(CemiBaseConstants.EMPTY_STRING);
-//        awardScheduleTabDataRow.setAwardPostingIntervalId(rowAwardPostingIntervalId);
-//        awardScheduleTabDataRow.setAwardPostingIntervalName(CemiAwardScheduleConstants.AWARD_PERIOD);
-//        awardScheduleTabDataRow.setAwardIntervalStartDate(rowAwardIntervalStartDate);
-//        awardScheduleTabDataRow.setAwardIntervalEndDate(rowAwardIntervalEndDate);
-//        awardScheduleTabDataRow.setIsAwardContractStartDate(CemiBaseConstants.YES);
-//        awardScheduleTabDataRow.setIsAwardContractEndDate(CemiBaseConstants.YES);
-//        
+        final CemiRegisterAssetFileRegisterAssetTabRowBo registerAssetTabDataRow = new CemiRegisterAssetFileRegisterAssetTabRowBo();
+
+        registerAssetTabDataRow.setBusinessAssetNumber(determineBusinessAssetNumber(asset.getCapitalAssetNumber()));
+        registerAssetTabDataRow.setBusinessAssetID(determineBusinessAssetID(asset.getCapitalAssetNumber()));
+        registerAssetTabDataRow.setCompany(determineCompany(asset));
+        registerAssetTabDataRow.setBusinessAssetName(determineBusinessAssetName(asset));
+        registerAssetTabDataRow.setBusinessAssetDescription(determineBusinessAssetDescription(asset));
+        registerAssetTabDataRow.setSpendCategory(determineSpendCategory(asset)); // TBD
+        registerAssetTabDataRow.setAccountingTreatment(determineAccountingTreatment(asset)); // TBD
+        registerAssetTabDataRow.setAcquisitionMethod(determineAcquisitionMethod(asset));
+        registerAssetTabDataRow.setMemo(determineMemo(asset));
+        registerAssetTabDataRow.setAcquisitionCost(determineAcquisitionCost(asset));
+        registerAssetTabDataRow.setResidualValue(determineResidualValue(asset));
+        registerAssetTabDataRow.setFairMarketValue(determineFairMarketValue(asset));
+        registerAssetTabDataRow.setQuantity(determineQuantity(asset));
+        registerAssetTabDataRow.setWorktagType1(determineWorktagType1(asset));
+        registerAssetTabDataRow.setWorktagValue1(determineWorktagValue1(asset)); // TBD
+        registerAssetTabDataRow.setWorktagType2(determineWorktagType2(asset));
+        registerAssetTabDataRow.setWorktagValue2(determineWorktagValue2(asset)); // TBD
+        registerAssetTabDataRow.setWorktagType3(determineWorktagType3(asset));
+        registerAssetTabDataRow.setWorktagValue3(determineWorktagValue3(asset));
+        registerAssetTabDataRow.setDateAcquired(determineDateAcquired(asset));
+        registerAssetTabDataRow.setDatePlacedInService(determineDatePlacedInService(asset));
+        registerAssetTabDataRow.setLocation(determineLocaltion(asset));
+        registerAssetTabDataRow.setAssetIdentifier(determineAssetIdentifier(asset));
+        registerAssetTabDataRow.setSerialNumber(determineSerialNumber(asset));
+        registerAssetTabDataRow.setManufacturer(determineManufacturer(asset));
+        registerAssetTabDataRow.setAssetClass(determineAssetClass(asset)); // TBD
+        registerAssetTabDataRow.setAssetType(determineAssetType(asset)); // TBD
+        registerAssetTabDataRow.setCoordinatingCostCenter(determineCoordinatingCostCenter(asset)); // TBD
+        registerAssetTabDataRow.setAssetCoordinator(determineAssetCoordinator(asset)); // TBD
+        registerAssetTabDataRow.setPoNumber(determinePoNumber(asset));// TBD
+        registerAssetTabDataRow.setDepreciationProfileOverride(determineDepreciationProfileOverride(asset)); // TBD
+        registerAssetTabDataRow.setDepreciationMethodOverride(determineDepreciationMethodOverride(asset));
+        registerAssetTabDataRow.setDepreciationPercentOverride(determineDepreciationPercentOverride(asset));
+        registerAssetTabDataRow
+                .setUsefulLifeInPeriodsOverride(determineUsefulLifeInPeriodsOverride(registerAssetTabDataRow));// TBD
+        registerAssetTabDataRow.setDepreciationThresholdOverride(determineDepreciationThresholdOverride(asset));
+        registerAssetTabDataRow.setRemainingDepreciationPeriods(determineRemainingDepreciationPeriods(asset));
+        registerAssetTabDataRow.setAccumulatedDepreciation(determineAccumulatedDepreciation(asset));
+
         return registerAssetTabDataRow;
     }
-    
+
     private String determineBusinessAssetNumber(Long businessAssetNumber) {
-        return businessAssetNumber !=null ? businessAssetNumber.toString() : KFSConstants.EMPTY_STRING;
-    }
-    
-    private String determineBusinessAssetID(Long businessAssetNumber) {
-        return businessAssetNumber !=null ? businessAssetNumber.toString() : KFSConstants.EMPTY_STRING;
+        return businessAssetNumber != null ? businessAssetNumber.toString() : KFSConstants.EMPTY_STRING;
     }
 
+    private String determineBusinessAssetID(Long businessAssetNumber) {
+        return businessAssetNumber != null ? businessAssetNumber.toString() : KFSConstants.EMPTY_STRING;
+    }
+
+//    Account Type Code: > comes from :Organization Owner Organization Code -> Organization Plant Account Number: -> Account Type Code:
 //
-// All of these methods are examples of data value conversion routines.
-//    
-//    private static String buildSpreadsheetKey(final String awardProposalNumber) {
-//        return MessageFormat.format(CemiAwardScheduleConstants.SPREADSHEET_KEY_FORMAT, awardProposalNumber);
-//    }
-//    
-//    private static String buildAwardPeriodReferenceId(final String awardProposalNumber) {
-//        return MessageFormat.format(CemiAwardScheduleConstants.AWARD_PERIOD_REFERENCE_ID_FORMAT, awardProposalNumber);
-//    }
-//    
-//    private static String buildAwardPostingIntervalId(final String awardProposalNumber) {
-//        return MessageFormat.format(CemiAwardScheduleConstants.AWARD_POSTING_INTERVAL_ID_FORMAT, awardProposalNumber);
-//    }
-//    
-//    private String determineAwardScheduleName(String awardScheduleName) {
-//        return StringUtils.isNotBlank(awardScheduleName) ? awardScheduleName : KFSConstants.EMPTY_STRING;
-//    }
-//    
-//    private String determineFormattedDate(Date dateToFormat) {
-//        return ObjectUtils.isNotNull(dateToFormat)
-//                ? dateTimeService.toString(dateToFormat, CemiBaseConstants.DATE_FORMAT_yyyy_MM_dd)
-//                        : KFSConstants.EMPTY_STRING;
-//    }
-//    
-//    private static String buildAwardScheduleReferenceId(final String awardProposalNumber) {
-//        return MessageFormat.format(CemiAwardScheduleConstants.AWARD_SCHEDULE_REFERENCE_ID_FORMAT, awardProposalNumber);
-//    }
-    
+//        CC -> C01
+//
+//        EN
+//        TC
+//        JI 
+//        All map to EN
+//        All others C02
+    private String determineCompany(Asset asset) {
+        String accountType = asset.getOrganizationOwnerAccount().getOrganization().getCampusPlantAccount()
+                .getAccountTypeCode();
+        if (CemiRegisterAssetConstants.AccountType.CC.equalsIgnoreCase(accountType)) {
+            return CemiRegisterAssetConstants.WorkdayCompany.STATUTORY;
+        } else {
+            return CemiRegisterAssetConstants.WorkdayCompany.ENDOWED;
+        }
+
+    }
+
+    private String determineBusinessAssetName(Asset asset) {
+        return !StringUtils.isBlank(asset.getManufacturerModelNumber()) ? asset.getManufacturerModelNumber()
+                : KFSConstants.EMPTY_STRING;
+    }
+
+    private String determineBusinessAssetDescription(Asset asset) {
+        return !StringUtils.isBlank(asset.getCapitalAssetDescription()) ? asset.getCapitalAssetDescription()
+                : KFSConstants.EMPTY_STRING;
+    }
+
+    // TBD
+    private String determineSpendCategory(Asset asset) {
+        return KFSConstants.EMPTY_STRING;
+    }
+
+    // TBD
+    private String determineAccountingTreatment(Asset asset) {
+        return KFSConstants.EMPTY_STRING;
+    }
+
+//    If GIK (Gift), Transfer (Transferred from other university or federal) and GFE = Other
+//            Purchased (New) = PURCHASED
+    private String determineAcquisitionMethod(Asset asset) {
+        String assetAcquisitionType = asset.getAcquisitionTypeCode();
+        List<String> otherAcquisitionTypes = List.of("G", "T", "Y");
+        List<String> purchasedAcquisitionTypes = List.of("N");
+        if (otherAcquisitionTypes.contains(assetAcquisitionType)) {
+            return "OTHER";
+        }
+        if (purchasedAcquisitionTypes.contains(assetAcquisitionType)) {
+            return "PURCHASED";
+        }
+        return KFSConstants.EMPTY_STRING;
+    }
+
+    private String determineMemo(Asset asset) {
+        return !StringUtils.isBlank(asset.getAcquisitionTypeCode()) ? asset.getAcquisitionTypeCode()
+                : KFSConstants.EMPTY_STRING;
+    }
+
+    private String determineAcquisitionCost(Asset asset) {
+        return asset.getTotalCostAmount() != null ? String.valueOf(asset.getTotalCostAmount())
+                : KFSConstants.EMPTY_STRING;
+    }
+
+    private String determineResidualValue(Asset asset) {
+        return KFSConstants.EMPTY_STRING;
+    }
+
+    private String determineFairMarketValue(Asset asset) {
+        return KFSConstants.EMPTY_STRING;
+    }
+
+    private String determineQuantity(Asset asset) {
+        return CemiRegisterAssetConstants.NUMERIC_ONE;
+    }
+
+    private String determineWorktagType1(Asset asset) {
+        return CemiRegisterAssetConstants.COST_CENTER_ID;
+    }
+
+    // TBD
+    private String determineWorktagValue1(Asset asset) {
+        return KFSConstants.EMPTY_STRING;
+    }
+
+    private String determineWorktagType2(Asset asset) {
+        return CemiRegisterAssetConstants.FUND_ID;
+    }
+
+    // TBD
+    private String determineWorktagValue2(Asset asset) {
+        return KFSConstants.EMPTY_STRING;
+    }
+
+    private String determineWorktagType3(Asset asset) {
+        return CemiRegisterAssetConstants.PROGRAM_ID;
+    }
+
+    private String determineWorktagValue3(Asset asset) {
+        return KFSConstants.EMPTY_STRING;
+    }
+
+    private String determineDateAcquired(Asset asset) {
+        return determineFormattedDate(asset.getCreateDate());
+    }
+
+    private String determineDatePlacedInService(Asset asset) {
+        return determineFormattedDate(asset.getCapitalAssetInServiceDate());
+    }
+
+    private String determineLocaltion(Asset asset) {
+        return CemiRegisterAssetConstants.CORNELL_UNIVERSITY_ITHACA;
+    }
+
+    private String determineAssetIdentifier(Asset asset) {
+        return !StringUtils.isBlank(asset.getCampusTagNumber()) ? asset.getCampusTagNumber()
+                : KFSConstants.EMPTY_STRING;
+    }
+
+    private String determineSerialNumber(Asset asset) {
+        return !StringUtils.isBlank(asset.getSerialNumber()) ? asset.getSerialNumber() : KFSConstants.EMPTY_STRING;
+    }
+
+    private String determineManufacturer(Asset asset) {
+        return !StringUtils.isBlank(asset.getManufacturerName()) ? asset.getManufacturerName()
+                : KFSConstants.EMPTY_STRING;
+    }
+
+    // TBD
+    private String determineAssetClass(Asset asset) {
+        String assetTypeCode = asset.getCapitalAssetTypeCode();
+        return KFSConstants.EMPTY_STRING;
+    }
+
+    private String determineAssetType(Asset asset) {
+        String assetTypeCode = asset.getCapitalAssetTypeCode();
+        return KFSConstants.EMPTY_STRING;
+    }
+
+    // TBD
+    private String determineCoordinatingCostCenter(Asset asset) {
+        String assetOwnerOrganization = asset.getOrganizationOwnerAccountNumber();
+        return KFSConstants.EMPTY_STRING;
+    }
+
+    // TBD clarify if this is name or net id
+    private String determineAssetCoordinator(Asset asset) {
+        String assetRepresentativeName = asset.getAssetRepresentative().getPrincipalName();
+        return !StringUtils.isBlank(assetRepresentativeName) ? assetRepresentativeName : KFSConstants.EMPTY_STRING;
+    }
+
+    // TBD confirm which po number to use
+    private String determinePoNumber(Asset asset) {
+        List<AssetPayment> assetPayments = asset.getAssetPayments();
+        if (Collections.isEmpty(assetPayments)) {
+            return KFSConstants.EMPTY_STRING;
+        } else {
+            String poNumber = assetPayments.get(0).getPurchaseOrderNumber();
+            return !StringUtils.isBlank(poNumber) ? poNumber : KFSConstants.EMPTY_STRING;
+        }
+    }
+
+    // TBD
+    private String determineDepreciationProfileOverride(Asset asset) {
+        String assetTypeCode = asset.getCapitalAssetTypeCode();
+        return KFSConstants.EMPTY_STRING;
+    }
+
+    private String determineDepreciationMethodOverride(Asset asset) {
+        return CemiRegisterAssetConstants.STRAIGHT_LINE;
+    }
+
+    private String determineDepreciationPercentOverride(Asset asset) {
+        return KFSConstants.EMPTY_STRING;
+    }
+
+    // TBD
+    private String determineUsefulLifeInPeriodsOverride(
+            CemiRegisterAssetFileRegisterAssetTabRowBo registerAssetTabRowBo) {
+        if(StringUtils.isNotBlank(registerAssetTabRowBo.getDepreciationProfileOverride())) {
+        Integer depreciationProfileOverride = Integer.valueOf(registerAssetTabRowBo.getDepreciationProfileOverride());
+        return String.valueOf(depreciationProfileOverride * 12);
+        }
+        return KFSConstants.EMPTY_STRING;
+    }
+
+    private String determineDepreciationThresholdOverride(Asset asset) {
+        return CemiRegisterAssetConstants.DEPRECATION_START_DATE;
+    }
+
+    private String determineRemainingDepreciationPeriods(Asset asset) {
+        return CemiRegisterAssetConstants.NUMERIC_ONE;
+    }
+
+    private String determineAccumulatedDepreciation(Asset asset) {
+        return KFSConstants.EMPTY_STRING;
+    }
+
+    private String determineFormattedDate(Date dateToFormat) {
+        return ObjectUtils.isNotNull(dateToFormat)
+                ? dateTimeService.toString(dateToFormat, CemiBaseConstants.DATE_FORMAT_yyyy_MM_dd)
+                : KFSConstants.EMPTY_STRING;
+    }
+
 }
