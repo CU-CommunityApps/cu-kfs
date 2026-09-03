@@ -13,7 +13,7 @@
  -->
 <cemiOutputDefinition>
 
-    <sheet name="Register_Asset" num-header-rows="5" start-column-index="1"
+    <sheet name="Register_Asset" num-header-rows="6" start-column-index="1"
            business-object-class="edu.cornell.kfs.cemi.module.cam.batch.businessobject.CemiRegisterAssetFileRegisterAssetTabRowBo">
         <field name="Business_Asset_Number" type="STRING" key="businessAssetNumber"/>
         <field name="Business_Asset_ID" type="STRING" key="businessAssetID"/>
