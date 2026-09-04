@@ -93,16 +93,19 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
             }
 
             final Collection<PayeeACHAccount> vendorAccounts = findAllActiveAccountsForVendor(
-                    vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
+                        vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
+            final PayeeACHAccount[] activeVendorAccounts = vendorAccounts.stream()
+                        .filter(vendorAccount -> isVendorAccountActive(vendorAccount, vendor))
+                        .toArray(PayeeACHAccount[]::new);
             final String supplierId = supplierIdFormatter.format(vendorCount);
             if (vendor.isVendorParentIndicator()) {
                 parentSupplierReference = createParentSupplierReference(supplierId, vendor);
             }
 
-            createAndStoreSupplierFileSupplierTabRow(vendor, supplierId);
+            createAndStoreSupplierFileSupplierTabRow(vendor, supplierId, activeVendorAccounts.length > 0);
             createAndStoreAllSupplierAddressesFor(vendor, supplierId);
             createAndStoreAllSupplierPhonesFor(vendor, supplierId);
-            createAndStoreFlattenedBankAccountsRowIfNecessary(vendor, supplierId, vendorAccounts);
+            createAndStoreFlattenedBankAccountsRowIfNecessary(vendor, supplierId, activeVendorAccounts);
             createAndStoreSupplierChildMappingRowIfNecessary(vendor, supplierId, parentSupplierReference);
             createAndStoreFlattenedEmailsRowIfNecessary(vendor, supplierId);
         }
@@ -128,9 +131,11 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
                 PayeeACHAccount.class, criteria, PdpPropertyConstants.ACH_ACCOUNT_GENERATED_IDENTIFIER, true);
     }
 
-    private void createAndStoreSupplierFileSupplierTabRow(final VendorDetail vendor, final String supplierId) {
+        private void createAndStoreSupplierFileSupplierTabRow(final VendorDetail vendor, final String supplierId,
+            final boolean vendorHasActiveBankAccounts) {
         final CemiSupplierFileSupplierTabRowBo supplierRowBo = CemiSupplierFileSupplierTabRowBoFactory
-                .createTabRowBoFrom(vendor, supplierId, isoFipsConversionService, maskSensitiveData);
+                .createTabRowBoFrom(vendor, supplierId, isoFipsConversionService, maskSensitiveData,
+                        vendorHasActiveBankAccounts);
         storeSheetRow(supplierRowBo);
     }
 
@@ -207,12 +212,8 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
     }
 
     private void createAndStoreFlattenedBankAccountsRowIfNecessary(final VendorDetail vendor, final String supplierId,
-            final Collection<PayeeACHAccount> vendorAccounts) {
-        final PayeeACHAccount[] activeVendorAccounts = vendorAccounts.stream()
-                .filter(vendorAccount -> isVendorAccountActive(vendorAccount, vendor))
-                .toArray(PayeeACHAccount[]::new);
-
-        if (activeVendorAccounts.length == 0) {
+                    final PayeeACHAccount[] activeVendorAccounts) {
+            if (activeVendorAccounts.length == 0) {
             LOG.debug("createAndStoreFlattenedBankAccountsRowIfNecessary, No active Payee ACH Accounts exist for "
                     + "KFS Vendor {}-{}; a corresponding Supplier Bank Accounts row will NOT be written",
                     vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
