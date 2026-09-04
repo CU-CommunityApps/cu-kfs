@@ -1,0 +1,90 @@
+#!/usr/bin/env groovy
+pipeline {
+    agent any
+
+    options {
+        buildDiscarder(logRotator(daysToKeepStr: '15', numToKeepStr: '50'))
+        timestamps()
+    }
+
+    environment {
+        PROPERTIES_FILE        = '/var/lib/jenkins/secrets-config/kfs-config.properties'
+        CYNERGY_VERSION_SUFFIX = 'develop'
+    }
+
+    stages {
+        stage('Skip on QA') {
+            when {
+                expression {
+                    if (env.JENKINS_ROLE != 'qa') return false
+                    // Manual "Build Now" triggers run the full tests even on jenkins-qa.
+                    // Only suppress automatic webhook/SCM-triggered builds.
+                    def causes = currentBuild.getBuildCauses()
+                    return !causes.any { it._class ==~ /.*UserIdCause/ }
+                }
+            }
+            steps {
+                script {
+                    currentBuild.result = 'ABORTED'
+                    error('Webhook-triggered PR builds suppressed on jenkins-qa (JENKINS_ROLE=qa). Use Build Now to run tests manually.')
+                }
+            }
+        }
+
+        stage('Resolve build parameters') {
+            steps {
+                script {
+                    if (env.CHANGE_TARGET ==~ /emergency-fix-\d{4}-\d{2}-\d{2}/) {
+                        env.CYNERGY_VERSION_SUFFIX = 'emerg'
+                        echo "Target branch is emergency-fix — CYNERGY_VERSION_SUFFIX=emerg"
+                    }
+                    if (env.CHANGE_TITLE ==~ /(?i).*(update|upgrade).+version of financials.*/) {
+                        env.PROPERTIES_FILE = '/var/lib/jenkins/secrets-config/kfs-upgrade-config.properties'
+                        echo "PR title matches upgrade pattern — using kfs-upgrade-config.properties"
+                    }
+                    echo "PR #${env.CHANGE_ID} '${env.CHANGE_TITLE}' -> ${env.CHANGE_TARGET}"
+                    echo "PROPERTIES_FILE=${env.PROPERTIES_FILE}"
+                    echo "CYNERGY_VERSION_SUFFIX=${env.CYNERGY_VERSION_SUFFIX}"
+                }
+            }
+        }
+
+        stage('Purge cynergy-customizations') {
+            steps {
+                // MAVEN_OPTS carries JVM flags the original job set via <jvmOptions>:
+                //   -DmanualInclude=... tells purge-local-repository which artifact to wipe
+                //   --add-opens=...     required for Java 17 reflective access
+                withMaven(maven: 'Maven', jdk: 'jdk17') {
+                    withEnv(['MAVEN_OPTS=-DmanualInclude=edu.cornell.cynergy:cynergy-customizations --add-opens=java.rmi/sun.rmi.server=ALL-UNNAMED']) {
+                        sh 'mvn dependency:purge-local-repository -DmanualInclude=edu.cornell.cynergy:cynergy-customizations'
+                    }
+                }
+            }
+        }
+
+        stage('Unit test') {
+            steps {
+                // -Dmaven.test.failure.ignore=true lets Maven exit 0 even when tests
+                // fail/error, so the `sh` step does not hard-fail the pipeline. The
+                // withMaven JUnit publisher then marks the build UNSTABLE (not FAILURE)
+                // when there are test failures — mirroring the legacy Maven-project
+                // job's tolerant behavior for the known-broken *IntegTest classes.
+                withMaven(maven: 'Maven', jdk: 'jdk17') {
+                    sh """
+                        mvn -e -U clean test \\
+                            -Dadditional.kfs.config.locations=${env.PROPERTIES_FILE} \\
+                            -Dcynergy.version.suffix=${env.CYNERGY_VERSION_SUFFIX} \\
+                            -Dspring.profiles.active=cache-redis,attachments-local \\
+                            -DskipTests=false \\
+                            -Dmaven.test.failure.ignore=true \\
+                            '-Dtest.excludes=**/ezra*.java,**/CuDisbursementVoucherPayeeServiceImplTest.java,**/AccountGlobalSearchLookupableHelperServiceImplTest.java'
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always { cleanWs() }
+    }
+}
