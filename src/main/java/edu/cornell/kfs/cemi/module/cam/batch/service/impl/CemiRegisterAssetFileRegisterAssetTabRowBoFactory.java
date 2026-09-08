@@ -79,7 +79,7 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         registerAssetTabDataRow.setAssetClass(determineAssetClass(asset)); // TBD
         registerAssetTabDataRow.setAssetType(determineAssetType(asset)); // TBD
         registerAssetTabDataRow.setCoordinatingCostCenter(determineCoordinatingCostCenter(asset)); // TBD
-        registerAssetTabDataRow.setAssetCoordinator(determineAssetCoordinator(asset)); // TBD
+        registerAssetTabDataRow.setAssetCoordinator(determineAssetCoordinator(asset));
         registerAssetTabDataRow.setPoNumber(determinePoNumber(asset));// TBD
         registerAssetTabDataRow.setDepreciationProfileOverride(determineDepreciationProfileOverride(asset)); // TBD
         registerAssetTabDataRow.setDepreciationMethodOverride(determineDepreciationMethodOverride(asset));
