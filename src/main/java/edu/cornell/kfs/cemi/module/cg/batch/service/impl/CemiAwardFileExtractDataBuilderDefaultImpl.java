@@ -3,9 +3,8 @@ package edu.cornell.kfs.cemi.module.cg.batch.service.impl;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.io.Writer;
+import java.text.MessageFormat;
 import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Stream;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.Validate;
@@ -20,6 +19,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import edu.cornell.kfs.cemi.module.cg.batch.service.CemiAwardFileExtractDataBuilder;
 import edu.cornell.kfs.cemi.module.cg.batch.translatetable.CemiAwardTranslateTableFactory;
 import edu.cornell.kfs.cemi.module.cg.batch.translatetable.CemiAwardTranslateTableMaps;
+import edu.cornell.kfs.cemi.module.cg.CemiAwardConstants;
 import edu.cornell.kfs.cemi.module.cg.CemiAwardConstants.AwardTranslateTables;
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardAllocationDataBo;
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardBudgetDataBo;
@@ -28,8 +28,13 @@ import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardHeaderDataBo
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardLegacyNovelutionBo;
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardLineDataBo;
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardSpecialConditionDataBo;
+import edu.cornell.kfs.cemi.module.cg.batch.factory.CemiAwardAllocationDataBoFactory;
+import edu.cornell.kfs.cemi.module.cg.batch.factory.CemiAwardBudgetDataBoFactory;
 import edu.cornell.kfs.cemi.module.cg.batch.factory.CemiAwardFileSubmitAwardTabRowBoFactory;
 import edu.cornell.kfs.cemi.module.cg.batch.factory.CemiAwardHeaderDataBoFactory;
+import edu.cornell.kfs.cemi.module.cg.batch.factory.CemiAwardLegacyNovelutionBoFactory;
+import edu.cornell.kfs.cemi.module.cg.batch.factory.CemiAwardLineDataBoFactory;
+import edu.cornell.kfs.cemi.module.cg.batch.factory.CemiAwardSpecialConditionDataBoFactory;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardExtractDao;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardExtractOrmDao;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiOrmDataBuilderBase;
@@ -47,7 +52,7 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
     protected final boolean maskSensitiveData;
     
     protected CemiAwardTranslateTableMaps allAwardTranslateTableMaps;
-
+    
     public CemiAwardFileExtractDataBuilderDefaultImpl(
             final BusinessObjectService businessObjectService, final String jobRunDateString,
             final DateTimeService dateTimeService,
@@ -65,9 +70,9 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
         this.cemiAwardExtractDao = cemiAwardExtractDao;
         this.skippedAwardsWriter = skippedAwardsWriter;
         this.maskSensitiveData = maskSensitiveData;
-        
         populateAllAwardTranslateTableMaps();
     }
+    
     
     @Override
     public void writeAwardFileSubmitAwardTabExtractDataToIntermediateStorage(final Iterator<Award> awards){
@@ -83,13 +88,14 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
             
             //Gather all the data specific to the award being converted. 
             AwardExtendedAttribute awardExtendedAttribute = (AwardExtendedAttribute) award.getExtension();
-            CemiAwardLegacyNovelutionBo awardNovelutionAttributes = 
+            CemiAwardLegacyNovelutionBo awardNovelutionAttributes =
                     obtainAssociatedNovelutionData(award.getProposalNumber(), skippedAwardsWriter);
-            if (ObjectUtils.isNull(awardNovelutionAttributes)) {
-                //problem encountered retrieving Novelution data for award, skip (downstream processing will fail 
-                continue;
-            }
             
+            if (ObjectUtils.isNull(awardNovelutionAttributes)) {
+                // problem encountered retrieving Novelution data for award
+                // set to emply business object as downstream processing will fail 
+                awardNovelutionAttributes = CemiAwardLegacyNovelutionBoFactory.createEmptyCemiAwardLegacyNovelutionBo();
+            }
             //Database table storage of data extract
             totalRowsWritten += createAndStoreAwardFileSubmitAwardTabRowsFor(award, awardExtendedAttribute, 
                     awardNovelutionAttributes, jobRunDateString);
@@ -109,10 +115,10 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
                 awardExtendedAttribute, awardNovelutionAttributes, jobRunDateString, dateTimeService,
                 cemiAwardExtractDao, allAwardTranslateTableMaps, maskSensitiveData);
         
-        final CemiAwardLineDataBo awardLineBo = null;
-        final CemiAwardSpecialConditionDataBo specialConditionBo = null;
-        final CemiAwardBudgetDataBo budgetBo = null;
-        final CemiAwardAllocationDataBo allocationBo = null;
+        final CemiAwardLineDataBo awardLineBo = CemiAwardLineDataBoFactory.createEmptyCemiAwardLineDataBo();
+        final CemiAwardSpecialConditionDataBo specialConditionBo = CemiAwardSpecialConditionDataBoFactory.createEmptyCemiAwardSpecialConditionDataBo();
+        final CemiAwardBudgetDataBo budgetBo = CemiAwardBudgetDataBoFactory.createEmptyCemiAwardBudgetDataBo();
+        final CemiAwardAllocationDataBo allocationBo = CemiAwardAllocationDataBoFactory.createEmptyCemiAwardAllocationDataBo();
 
         //use factory to populate CemiAwardHeaderDataBo 
         //get the accounting lines for the award
@@ -131,29 +137,17 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
     
     private CemiAwardLegacyNovelutionBo obtainAssociatedNovelutionData(
             final String awardProposalNumber, final Writer skippedAwardsWriter) {
-        List<CemiAwardLegacyNovelutionBo> novelutionAttributes = 
-                cemiAwardExtractOrmDao.getAwardNovelutionAtributesForCemiAwardExtractAsCloseableStream(awardProposalNumber);
-        if (ObjectUtils.isNull(novelutionAttributes) || novelutionAttributes.size() == 0) {
-            writeSkippedAwardToReportFile(awardProposalNumber, "No Novelution data was found for the award.");
-            return null;
-        } else if (novelutionAttributes.size() == 1) {
-            return novelutionAttributes.get(0);
-        } 
-        writeSkippedAwardToReportFile(awardProposalNumber, "More than one row of Novelution data was found for the award.");
+        String spreadsheetKeyToSearchFor = MessageFormat.format(CemiAwardConstants.SPREADSHEET_KEY_FORMAT, awardProposalNumber);
+        if (cemiAwardExtractDao.novelutionDataContainsAwardExtractBuiltReferenceId(spreadsheetKeyToSearchFor)) {
+            CemiAwardLegacyNovelutionBo novelutionAttributes = 
+                    cemiAwardExtractOrmDao.getAwardNovelutionAtributesForCemiAwardExtractBySpreadsheetKey(spreadsheetKeyToSearchFor, skippedAwardsWriter);
+            return novelutionAttributes;
+        }
+        writeSkippedAwardToReportFile(awardProposalNumber, 
+                "More than one row or no rows of Novelution data found for spreadsheet_key: " + spreadsheetKeyToSearchFor);
         return null;
     }
     
-//    private CemiAwardLegacyNovelutionBo obtainAssociatedNovelutionData(
-//            final String awardProposalNumber, final Writer skippedAwardsWriter) {
-//        List<CemiAwardLegacyNovelutionBo> novelutionAttributes = 
-//                cemiAwardExtractOrmDao.getAwardNovelutionAtributesForCemiAwardExtractAsCloseableStream(awardProposalNumber);
-//        if (ObjectUtils.isNull(novelutionAttributes)) {
-//            writeSkippedAwardToReportFile(awardProposalNumber, "No Novelution data was found for the award " + awardProposalNumber);
-//            return null;
-//        }
-//        return novelutionAttributes.get(0);
-//    }
-
     private void createAndStoreAwardFileSubmitAwardTabRowBo(
             final CemiAwardHeaderDataBo headerBo, final CemiAwardLineDataBo awardLineBo,
             final CemiAwardSpecialConditionDataBo specialConditionBo, final CemiAwardBudgetDataBo budgetBo,

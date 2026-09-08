@@ -46,6 +46,10 @@ public class CemiAwardFileSubmitAwardTabRowBoFactory {
     public CemiAwardFileSubmitAwardTabRowBo createCemiAwardFileSubmitAwardTabRowBo() {
         
         final CemiAwardFileSubmitAwardTabRowBo submitAwardRow = new CemiAwardFileSubmitAwardTabRowBo();
+        //keys for row
+        //submitAwardRow.setJobRunRowIndex(null);
+        //submitAwardRow.setJobRunDateString(null);
+        submitAwardRow.setProposalNumberUsedForDataRow(headerBo.getProposalNumberUsedForDataRow());
         
         //header 
         submitAwardRow.setSpreadsheetKey(headerBo.getSpreadsheetKey());
@@ -70,7 +74,7 @@ public class CemiAwardFileSubmitAwardTabRowBoFactory {
         submitAwardRow.setAwardGroup(headerBo.getAwardGroup());
         submitAwardRow.setAwardCostCenter(headerBo.getAwardCostCenter());
         submitAwardRow.setAwardFund(headerBo.getAwardFund());
-        submitAwardRow .setAwardProgram(headerBo.getAwardProgram());
+        submitAwardRow.setAwardProgram(headerBo.getAwardProgram());
         submitAwardRow.setAwardContractOwner(headerBo.getAwardContractOwner());
         submitAwardRow.setAwardLifecycleStatus(headerBo.getAwardLifecycleStatus());
         submitAwardRow.setSubAward(headerBo.getSubAward());

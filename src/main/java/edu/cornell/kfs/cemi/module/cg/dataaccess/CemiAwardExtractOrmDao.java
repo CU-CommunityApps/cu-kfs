@@ -1,6 +1,6 @@
 package edu.cornell.kfs.cemi.module.cg.dataaccess;
 
-import java.util.List;
+import java.io.Writer;
 import java.util.stream.Stream;
 
 import org.kuali.kfs.module.cg.businessobject.Award;
@@ -11,7 +11,8 @@ public interface CemiAwardExtractOrmDao {
 
     Stream<Award> getAwardsForCemiAwardExtractAsCloseableStream();
     
-    List<CemiAwardLegacyNovelutionBo> getAwardNovelutionAtributesForCemiAwardExtractAsCloseableStream(String proposalNumber);
+    CemiAwardLegacyNovelutionBo getAwardNovelutionAtributesForCemiAwardExtractBySpreadsheetKey(
+            String spreadsheetKeyToSearchFor, Writer skippedAwardsWriter);
     
 //    Stream<CemiAwardRawAwardHeaderFieldsRowBo> getRawAwardForCemiAwardExtractAsCloseableStream();
 //    @Override

@@ -29,7 +29,6 @@ import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardExtractDao;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardExtractOrmDao;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiDataExtractServiceBase;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.cemi.vnd.CemiOrderFromSupplierConstants;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CemiAwardExtractServiceImpl extends CemiDataExtractServiceBase implements CemiAwardExtractService {
@@ -61,7 +60,6 @@ public class CemiAwardExtractServiceImpl extends CemiDataExtractServiceBase impl
                 + "dependent queries to system parameter CEMI_AWARD_EXTRACT_AWARD_SCHEDULE_DATETIME value {}",
                 awardScheduleJobRunDate);
         cemiAwardExtractDao.storeAwardScheduleExtractDependentQuerySettings(awardScheduleJobRunDate);
-
     }
     
     private String getAwardScheduleJobRunDate() {
@@ -79,7 +77,6 @@ public class CemiAwardExtractServiceImpl extends CemiDataExtractServiceBase impl
         LOG.info("captureInScopeBusinessObjectKeysToProcessingTable, Querying and storing the list of keys "
                 + "representing the extractable KFS business objects...");
         cemiAwardExtractDao.queryAndStoreInScopeBusinessObjectKeysForDataExtract();
-//    cemiAwardExtractDao.buildDynamicLookupTables();
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -93,6 +90,7 @@ public class CemiAwardExtractServiceImpl extends CemiDataExtractServiceBase impl
         try (
                 final Stream<Award> awards = 
                         cemiAwardExtractOrmDao.getAwardsForCemiAwardExtractAsCloseableStream();
+                
                 final FileOutputStream fileStream = new FileOutputStream(skippedAwardsFilePath);
                 final OutputStreamWriter streamWriter = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8);
                 final BufferedWriter skippedAwardsWriter = new BufferedWriter(streamWriter);

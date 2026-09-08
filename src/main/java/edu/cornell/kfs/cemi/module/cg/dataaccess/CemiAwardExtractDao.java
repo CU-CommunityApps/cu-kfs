@@ -14,6 +14,8 @@ public interface CemiAwardExtractDao {
     
     boolean awardScheduleContainsAwardExtractBuiltReferenceId(String awardExtractionBuiltAwardScheduleReferenceId);
     
+    boolean novelutionDataContainsAwardExtractBuiltReferenceId(String awardExtractionBuiltAwardScheduleReferenceId);
+    
     Map<String, String> buildTranslationForTable(AwardTranslateTables queryString);
     
     String findOrganizationCodeForInScopeAward(String inScopeAwardForPrimaryOrganizationLookup);

@@ -55,11 +55,22 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
         }
     }
     
-
+    
     @Override
     public void queryAndStoreInScopeBusinessObjectKeysForDataExtract() {
         obtainKeysForAllInScopeAwards();
         //TODO: place call to private method obtainKeysForAllInScopeAwardAccounts
+    }
+    
+    private void obtainKeysForAllInScopeAwards() {
+        final CuSqlQuery query = new CuSqlChunk()
+                .append("INSERT INTO CEMI.CU_CEMI_AWD_EXTR_AWD_T (CGPRPSL_NBR) ")
+                .append("SELECT CGPRPSL_NBR ")
+                .append("FROM CEMI.CG_CEMI_AWD_EXTR_V")
+                .toQuery();
+
+        final int numRowsInserted = executeUpdate(query);
+        LOG.info("obtainKeysForAllInScopeAwards, Found {} awards to extract", numRowsInserted);
     }
     
     
@@ -77,6 +88,24 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
         if (numRowsSelected != 1) {
             LOG.error("awardScheduleContainsAwardExtractBuiltReferenceId, Query should have found 1 previously created "
                     + "Award Schedule extract keyed row {} but found {} instead", awardExtractionBuiltAwardScheduleReferenceId, numRowsSelected);
+            return false;
+        }
+        return true;
+    }
+    
+    
+    @Override
+    public boolean novelutionDataContainsAwardExtractBuiltReferenceId(String awardExtractionBuiltAwardScheduleReferenceId) {
+        final CuSqlQuery query = new CuSqlChunk()
+                .append("SELECT COUNT (NOVL.SPREADSHEET_KEY) ")
+                .append("FROM CEMI.CU_CEMI_LGCY_NOVELUTION_AWARD_T NOVL ")
+                .append("WHERE NOVL.SPREADSHEET_KEY = ").appendAsParameter(awardExtractionBuiltAwardScheduleReferenceId)
+                .toQuery();
+
+        final int numRowsSelected = executeUpdate(query);
+        if (numRowsSelected != 1) {
+            LOG.error("novelutionDataContainsAwardExtractBuiltReferenceId, Query should have found 1 associated "
+                    + "Novelution data keyed row {} but found {} instead", awardExtractionBuiltAwardScheduleReferenceId, numRowsSelected);
             return false;
         }
         return true;
@@ -103,6 +132,7 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
         });
     }
     
+    
     //may need to do this as ojb as part of larger data object instead
     @Override
     public String findOrganizationCodeForInScopeAward(String inScopeAwardForPrimaryOrganizationLookup) {
@@ -116,19 +146,6 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
     }
     private String getFirstColumnValueFromFirstRowIfPresent(final ResultSet resultSet) throws SQLException {
         return resultSet.next() ? resultSet.getString(1) : null;
-    }
-
-
-    
-    private void obtainKeysForAllInScopeAwards() {
-        final CuSqlQuery query = new CuSqlChunk()
-                .append("INSERT INTO CEMI.CU_CEMI_AWD_EXTR_AWD_T (CGPRPSL_NBR) ")
-                .append("SELECT CGPRPSL_NBR ")
-                .append("FROM CEMI.CG_CEMI_AWD_EXTR_V")
-                .toQuery();
-
-        final int numRowsInserted = executeUpdate(query);
-        LOG.info("obtainKeysForAllInScopeAwards, Found {} awards to extract", numRowsInserted);
     }
     
 
