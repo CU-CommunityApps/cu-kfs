@@ -4,7 +4,7 @@
         <class-descriptor class="edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardLegacyNovelutionBo" schema="CEMI"
                       table="CU_CEMI_LGCY_NOVELUTION_AWARD_T">
         <field-descriptor name="spreadsheetKey" column="SPREADSHEET_KEY" jdbc-type="VARCHAR" primarykey="true" index="true"/>
-        <field-descriptor name="awardSignedDate column" column="AWARD_SIGNED_DATE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="awardSignedDate" column="AWARD_SIGNED_DATE" jdbc-type="VARCHAR"/>
         <field-descriptor name="costShareTotalAmount" column="COST_SHARE_TOTAL_AMOUNT" jdbc-type="VARCHAR"/>
         <field-descriptor name="anticipatedSponsorDirectCostAmount" column="ANTICIPATED_SPONSOR_DIRECT_COST_AMOUNT" jdbc-type="VARCHAR"/>
         <field-descriptor name="anticipatedFacilitiesAndAdministrationAmount" column="ANTICIPATED_SPONSOR_FACILITIES_AND_ADMINISTRATION_AMOUNT" jdbc-type="VARCHAR"/>

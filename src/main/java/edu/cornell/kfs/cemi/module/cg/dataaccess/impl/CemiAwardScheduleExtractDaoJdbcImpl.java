@@ -1,7 +1,5 @@
 package edu.cornell.kfs.cemi.module.cg.dataaccess.impl;
 
-import java.sql.Types;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

@@ -3,13 +3,16 @@ package edu.cornell.kfs.cemi.module.cg.dataaccess.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 
 import edu.cornell.kfs.cemi.module.cg.CemiAwardConstants.AwardTranslateTables;
 import edu.cornell.kfs.cemi.module.cg.batch.translatetable.KfsToWorkdayAwardCommonCsvTableColumns;
@@ -34,7 +37,7 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
         final CuSqlQuery orgCodeLookupClearingQuery = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_AWD_EXTR_AWD_ORG_T");
         executeUpdate(orgCodeLookupClearingQuery);
         
-        //TODO: place truncation of award lines key table here
+//TODO: place truncation of award lines key table here
         LOG.info("clearAnyExistingInScopeBusinessObjectKeysFromPreviousExecution finished truncating previous run key tables.");
     }
     
@@ -59,7 +62,7 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
     @Override
     public void queryAndStoreInScopeBusinessObjectKeysForDataExtract() {
         obtainKeysForAllInScopeAwards();
-        //TODO: place call to private method obtainKeysForAllInScopeAwardAccounts
+//TODO: place call to private method obtainKeysForAllInScopeAwardAccounts
     }
     
     private void obtainKeysForAllInScopeAwards() {
@@ -76,7 +79,7 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
     
     @Override
     public boolean awardScheduleContainsAwardExtractBuiltReferenceId(String awardExtractionBuiltAwardScheduleReferenceId) {
-        final CuSqlQuery query = new CuSqlChunk()
+        final CuSqlQuery sqlQuery = new CuSqlChunk()
                 .append("SELECT COUNT(AWD_SCHD.JOB_RUN_ROW_INDEX) ")
                 .append("FROM CEMI.CU_CEMI_EXTR_AWD_SCHD_TAB_AWD_SCHD_T AWD_SCHD, ")
                 .append("CEMI.CU_CEMI_AWD_EXTR_AWD_SCHD_QUERY_SETTINGS_T AWD_SCHD_PARM ")
@@ -84,28 +87,12 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
                 .append("AND AWD_SCHD.WKDY_SPRDSHT_KEY_ID = ").appendAsParameter(awardExtractionBuiltAwardScheduleReferenceId)
                 .toQuery();
 
-        final int numRowsSelected = executeUpdate(query);
-        if (numRowsSelected != 1) {
+        List<Integer> results = queryForValues(sqlQuery, SingleColumnRowMapper.newInstance(Integer.class));
+        int rowCount = CollectionUtils.isNotEmpty(results) ? (results.get(0)).intValue() : 0;
+        
+        if (rowCount != 1) {
             LOG.error("awardScheduleContainsAwardExtractBuiltReferenceId, Query should have found 1 previously created "
-                    + "Award Schedule extract keyed row {} but found {} instead", awardExtractionBuiltAwardScheduleReferenceId, numRowsSelected);
-            return false;
-        }
-        return true;
-    }
-    
-    
-    @Override
-    public boolean novelutionDataContainsAwardExtractBuiltReferenceId(String awardExtractionBuiltAwardScheduleReferenceId) {
-        final CuSqlQuery query = new CuSqlChunk()
-                .append("SELECT COUNT (NOVL.SPREADSHEET_KEY) ")
-                .append("FROM CEMI.CU_CEMI_LGCY_NOVELUTION_AWARD_T NOVL ")
-                .append("WHERE NOVL.SPREADSHEET_KEY = ").appendAsParameter(awardExtractionBuiltAwardScheduleReferenceId)
-                .toQuery();
-
-        final int numRowsSelected = executeUpdate(query);
-        if (numRowsSelected != 1) {
-            LOG.error("novelutionDataContainsAwardExtractBuiltReferenceId, Query should have found 1 associated "
-                    + "Novelution data keyed row {} but found {} instead", awardExtractionBuiltAwardScheduleReferenceId, numRowsSelected);
+                    + "Award Schedule extract keyed row {} but found {} instead", awardExtractionBuiltAwardScheduleReferenceId, rowCount);
             return false;
         }
         return true;
@@ -114,7 +101,6 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
     
     @Override
     public Map<String, String> buildTranslationForTable(AwardTranslateTables queryToExecute) {
-
         final CuSqlQuery query = new CuSqlChunk()
                 .append(queryToExecute.queryString)
                 .toQuery();
@@ -149,38 +135,4 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
     }
     
 
-//SELECT COUNT(JOB_RUN_ROW_INDEX) FROM CEMI.CU_CEMI_EXTR_AWD_SCHD_TAB_AWD_SCHD_T WHERE EXTR_FILE_RUNDATE = '20260521_145448' AND WKDY_SPRDSHT_KEY_ID = 'AS_ITH_163600';
-
-    
-//    private void obtainInScopeBaseAwardHeaderFieldsForAllActiveAwards() {
-//        final CuSqlQuery query = new CuSqlChunk()
-//                .append("INSERT INTO CEMI.CU_CEMI_AWD_EXTR_AWD_HDR_T (CGPRPSL_NBR, CG_GRANT_NUMBER, CGAWD_PROJ_TTL, ")
-//                .append("CGAWD_BEG_DT, CG_GRANT_DESC_CD, CGAWD_PURPOSE_CD, CGAWD_STAT_CD, CG_FEDPT_AGNCY_NBR, ")
-//                .append("CG_AGENCY_NBR, CG_LTRCR_FNDGRP_CD) ")
-//                .append("SELECT CGPRPSL_NBR, CG_GRANT_NUMBER, CGAWD_PROJ_TTL, CGAWD_BEG_DT, CG_GRANT_DESC_CD, ")
-//                .append("CGAWD_PURPOSE_CD, CGAWD_STAT_CD, CG_FEDPT_AGNCY_NBR, CG_AGENCY_NBR, CG_LTRCR_FNDGRP_CD ")
-//                .append("FROM CEMI.CU_CEMI_INTRM_AWD_HDR_AWD_BASE_FLDS_V")
-//                .toQuery();
-//
-//        final int numRowsInserted = executeUpdate(query);
-//        LOG.info("obtainInScopeBaseAwardHeaderFieldsForAllActiveAwards, Found {} in scope base business object to extract.", numRowsInserted);
-//    }
-//    
-//    private void updateInScopeBaseAwardHeaderFieldsWithAwardOrgData() {
-//        final CuSqlQuery query = new CuSqlChunk()
-//                .append("UPDATE CEMI.CU_CEMI_AWD_EXTR_AWD_HDR_T INTERIM ")
-//                .append("SET (AWD_ORG_FIN_COA_CD, AWD_ORG_ORG_CD, AWD_ORG_CGAWD_PRM_ORG_IND, AWD_ORG_ROW_ACTV_IND) = ")
-//                .append("(SELECT AWD_ORG.FIN_COA_CD, AWD_ORG.ORG_CD, AWD_ORG.CGAWD_PRM_ORG_IND, AWD_ORG.ROW_ACTV_IND ")
-//                .append("FROM KFS.CG_AWD_ORG_T AWD_ORG ")
-//                .append("WHERE INTERIM.CGPRPSL_NBR = AWD_ORG.CGPRPSL_NBR ")
-//                .append("AND AWD_ORG.CGAWD_PRM_ORG_IND = 'Y' ")
-//                .append("AND AWD_ORG.ROW_ACTV_IND = 'Y') ")
-//                .append("WHERE EXISTS (SELECT 1 FROM KFS.CG_AWD_ORG_T AWD_ORG2 ")
-//                .append("INTERIM.CGPRPSL_NBR = AWD_ORG2.CGPRPSL_NBR)")
-//                .toQuery();
-//        
-//        final int numRowsUpdated = executeUpdate(query);
-//        LOG.info("updateInScopeBaseAwardHeaderFieldsWithAwardOrgData, Updated organization data on {} in scope base business object to extract.", numRowsUpdated);
-//    }
-    
 }

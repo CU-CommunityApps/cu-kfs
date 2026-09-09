@@ -82,8 +82,7 @@ public class CemiAwardHeaderDataBoFactory {
         final String awardProjectTitle = setToEmptyStringWhenValueIsBlank(award.getAwardProjectTitle());
         final String awardEffectiveDate = determineFormattedDate(award.getAwardBeginningDate());
         
-//FIXME  final String awardSignedDate = determineAwardSignedDate(awardNovelutionAttributes.getAwardSignedDate());
-        final String awardSignedDate = CemiBaseConstants.EMPTY_STRING;
+        final String awardSignedDate = determineAwardSignedDate(awardNovelutionAttributes.getAwardSignedDate());
         
         final String awardType = determineTranslationValueFor(allAwardTranslateTableMaps.getSponsorAwardTypesMap(), award.getGrantDescriptionCode());
         final String purposeCode = determineTranslationValueFor(allAwardTranslateTableMaps.getAwardPurposeMap(), award.getAwardPurposeCode());
@@ -284,6 +283,10 @@ public class CemiAwardHeaderDataBoFactory {
     
     private String determineCostCenter(String awardOrgCode) {
         return StringUtils.isNotBlank(awardOrgCode) ? awardOrgCode : CemiBaseConstants.EMPTY_STRING;
+    }
+    
+    private String determineAwardSignedDate(String awardSignedDate) {
+        return StringUtils.isNotBlank(awardSignedDate) ? awardSignedDate : CemiBaseConstants.EMPTY_STRING;
     }
     
 }

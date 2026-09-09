@@ -140,15 +140,18 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
     
     private CemiAwardLegacyNovelutionBo obtainAssociatedNovelutionData(
             final String awardProposalNumber, final Writer skippedAwardsWriter) {
-        String spreadsheetKeyToSearchFor = MessageFormat.format(CemiAwardConstants.SPREADSHEET_KEY_FORMAT, awardProposalNumber);
-        if (cemiAwardExtractDao.novelutionDataContainsAwardExtractBuiltReferenceId(spreadsheetKeyToSearchFor)) {
-            CemiAwardLegacyNovelutionBo novelutionAttributes = 
-                    cemiAwardExtractOrmDao.getAwardNovelutionAtributesForCemiAwardExtractBySpreadsheetKey(spreadsheetKeyToSearchFor, skippedAwardsWriter);
-            return novelutionAttributes;
+        String spreadsheetKeyToSearchFor = 
+                MessageFormat.format(CemiAwardConstants.SPREADSHEET_KEY_FORMAT, awardProposalNumber);
+        
+        CemiAwardLegacyNovelutionBo novelutionDataRow = 
+                getAwardNovelutionAttributesForCemiAwardExtractBySpreadsheetKey(spreadsheetKeyToSearchFor);
+        
+        if (ObjectUtils.isNull(novelutionDataRow)) {
+            writeSkippedAwardToReportFile(awardProposalNumber, 
+                    "No rows of Novelution data found for spreadsheet_key: " + spreadsheetKeyToSearchFor);
+            return null;
         }
-        writeSkippedAwardToReportFile(awardProposalNumber, 
-                "More than one row or no rows of Novelution data found for spreadsheet_key: " + spreadsheetKeyToSearchFor);
-        return null;
+        return novelutionDataRow;
     }
     
     private void createAndStoreAwardFileSubmitAwardTabRowBo(
@@ -186,5 +189,8 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
         }
     }
 
-
+    private CemiAwardLegacyNovelutionBo getAwardNovelutionAttributesForCemiAwardExtractBySpreadsheetKey(String spreadsheetKeyToSearchFor) {
+        return businessObjectService.findBySinglePrimaryKey(CemiAwardLegacyNovelutionBo.class, spreadsheetKeyToSearchFor);
+        
+    }
 }

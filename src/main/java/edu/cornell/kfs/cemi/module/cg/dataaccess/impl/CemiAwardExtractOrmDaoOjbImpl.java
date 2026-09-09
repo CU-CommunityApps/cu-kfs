@@ -1,26 +1,20 @@
 package edu.cornell.kfs.cemi.module.cg.dataaccess.impl;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.io.Writer;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.kuali.kfs.module.cg.businessobject.Award;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.springmodules.orm.ojb.OjbOperationException;
 
-import edu.cornell.kfs.cemi.module.cg.CemiAwardPropertyConstants;
-import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardLegacyNovelutionBo;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardExtractOrmDao;
-import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.dataaccess.impl.CemiOrmDaoOjbImplBase;
 import edu.cornell.kfs.sys.util.CuOjbUtils;
 
 public class CemiAwardExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase implements CemiAwardExtractOrmDao {
+    private static final Logger LOG = LogManager.getLogger();
 
     @Override
     public Stream<Award> getAwardsForCemiAwardExtractAsCloseableStream() {
@@ -47,40 +41,6 @@ public class CemiAwardExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase impleme
         return CuOjbUtils.buildCloseableStreamForQueryResults(
                 Award.class,
                 () -> getPersistenceBrokerTemplate().getIteratorByQuery(query));
-    }
-    
-    @Override
-    public CemiAwardLegacyNovelutionBo getAwardNovelutionAtributesForCemiAwardExtractBySpreadsheetKey(
-            final String spreadsheetKeyToSearchFor, final Writer skippedAwardsWriter) {
-        
-        Validate.isTrue(CemiBaseConstants.WORD_CHARS_PATTERN.matcher(spreadsheetKeyToSearchFor).matches(),
-                "awardProposalNumber must only contain word characters (letters, digits, underscores)");
-
-        final Criteria criteria = new Criteria();
-        criteria.addEqualTo(CemiAwardPropertyConstants.SPREADSHEET_KEY, spreadsheetKeyToSearchFor);
-
-        final QueryByCriteria query = new QueryByCriteria(CemiAwardLegacyNovelutionBo.class, criteria);
-        
-        try {
-            final CemiAwardLegacyNovelutionBo results = (CemiAwardLegacyNovelutionBo) getPersistenceBrokerTemplate().getObjectByQuery(query);
-            return results;
-        } catch (OjbOperationException ooe) {
-            writeSkippedAwardToReportFile(skippedAwardsWriter, spreadsheetKeyToSearchFor, 
-                    "OjbOperationException was encountered during ORM object search by key " + spreadsheetKeyToSearchFor);
-        }
-
-        return null;
-    }
-    
-    private void writeSkippedAwardToReportFile(final Writer skippedAwardsWriter, final String spreadsheetKeyToSearchFor, final String errorMessage) {
-        try {
-            String errorToLog = String.join(
-                    KFSConstants.BLANK_SPACE, spreadsheetKeyToSearchFor, "was skipped. Processing encountered error:", errorMessage );
-            skippedAwardsWriter.write(errorToLog);
-            skippedAwardsWriter.write(KFSConstants.NEWLINE);
-        } catch (final IOException e) {
-            throw new UncheckedIOException(e);
-        }
     }
 
 }
