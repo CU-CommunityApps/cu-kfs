@@ -57,6 +57,7 @@
             <value>${staging.directory}/cemi/conversions/outbound</value>
             <value>${staging.directory}/cemi/translatetable/award</value>
             <value>${staging.directory}/cemi/translatetable/common</value>
+            <value>${staging.directory}/cemi/translatetable/registerAsset</value>
             <value>${staging.directory}/cemi/translatetable/supplier</value>
           </list>
         </property>
@@ -517,5 +518,19 @@
           p:lastUpdateTimestampInTable="true"/>
 
     <alias name="cemiWorkdayTenantedEntityContactType" alias="Supplier_KfsContactType-TranslateWorkdayTenantedContactType"/>
+    
+    <!--Register Asset Translate Tables -->
+    
+    <bean id="cemiWorkdayAssetClass" parent="cemiWorkdayAssetClass-parentBean"/>
+    <bean id="cemiWorkdayAssetClass-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/registerAsset"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_REGISTER_ASST_ASST_CLSS_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.module.cg.batch.translatetable.KfsToWorkdayAwardCommonCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdayAssetClass" alias="RegisterAsset_KfsAssetTypeCode-TranslateWorkdayAssetClass"/>
 
 </beans>
