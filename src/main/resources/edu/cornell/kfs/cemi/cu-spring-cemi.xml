@@ -527,7 +527,7 @@
           parent="cemiCsvBatchInputFileType"
           p:directoryPath="${staging.directory}/cemi/translatetable/registerAsset"
           p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_REGISTER_ASST_ASST_CLSS_T"
-          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.module.cg.batch.translatetable.KfsToWorkdayAwardCommonCsvTableColumns"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.module.cam.batch.translatetable.KfsToWorkdayRegisterAssetCommonCsvTableColumns"
           p:hasHeaderRow="true"
           p:lastUpdateTimestampInTable="true"/>
 
