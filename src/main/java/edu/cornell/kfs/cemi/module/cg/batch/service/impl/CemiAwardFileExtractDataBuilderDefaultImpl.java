@@ -88,6 +88,8 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
             
             //Gather all the data specific to the award being converted. 
             AwardExtendedAttribute awardExtendedAttribute = (AwardExtendedAttribute) award.getExtension();
+            String awardOrgCode = cemiAwardExtractDao.findOrganizationCodeForInScopeAward(award.getProposalNumber());
+            
             CemiAwardLegacyNovelutionBo awardNovelutionAttributes =
                     obtainAssociatedNovelutionData(award.getProposalNumber(), skippedAwardsWriter);
             
@@ -97,7 +99,7 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
                 awardNovelutionAttributes = CemiAwardLegacyNovelutionBoFactory.createEmptyCemiAwardLegacyNovelutionBo();
             }
             //Database table storage of data extract
-            totalRowsWritten += createAndStoreAwardFileSubmitAwardTabRowsFor(award, awardExtendedAttribute, 
+            totalRowsWritten += createAndStoreAwardFileSubmitAwardTabRowsFor(award, awardExtendedAttribute, awardOrgCode,
                     awardNovelutionAttributes, jobRunDateString);
         }
         LOG.info("writeAwardFileSubmitAwardTabExtractDataToIntermediateStorage, Finished writing "
@@ -106,13 +108,14 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
     
     protected int createAndStoreAwardFileSubmitAwardTabRowsFor(final Award award, 
             final AwardExtendedAttribute awardExtendedAttribute,
+            final String awardOrgCode,
             final CemiAwardLegacyNovelutionBo awardNovelutionAttributes,
             final String jobRunDateString) {
         
         int numAwardFileLinesGenerated = 0;
         
         final CemiAwardHeaderDataBo headerBo = CemiAwardHeaderDataBoFactory.createAwardHeaderDataBoFrom(award,
-                awardExtendedAttribute, awardNovelutionAttributes, jobRunDateString, dateTimeService,
+                awardExtendedAttribute, awardOrgCode, awardNovelutionAttributes, jobRunDateString, dateTimeService,
                 cemiAwardExtractDao, allAwardTranslateTableMaps, maskSensitiveData);
         
         final CemiAwardLineDataBo awardLineBo = CemiAwardLineDataBoFactory.createEmptyCemiAwardLineDataBo();
@@ -183,29 +186,5 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
         }
     }
 
-//
-// EXAMPLE: 
-// This is an actual example used by a data extract. The method is called by the public routine above to create
-// and store to a database table a SINGLE row of information representing a data extraction spreadsheet line.
-// Depending upon this method's logic and the data objects used, this method could generate MULTIPLE lines of
-// information; therefore you will need to name this protected method accordingly.
-//
-//    protected void createAndStoreAwardScheduleFileAwardScheduleTabRow(final CemiExampleLEGACYOBJECT legacyObject, 
-//            final AwardExtendedAttribute awardExtendedAttribute, final String jobRunDateString) {
-//
-//        CemiAwardScheduleFileAwardScheduleTabRowBoFactory factoryForBo = 
-//                new CemiAwardScheduleFileAwardScheduleTabRowBoFactory(award, awardExtendedAttribute, jobRunDateString,
-//                        dateTimeService, maskSensitiveData);
-//        
-//        CemiAwardScheduleFileAwardScheduleTabRowBo awardScheduleTabRow = factoryForBo.createCemiAwardScheduleFileAwardScheduleTabRowBo();
-//        storeSheetRow(awardScheduleTabRow);
-//        
-//        // EXAMPLE:
-//        // Record identifier associations for Award Schedule extract file based upon batch job run date in this 
-//        // separate table only if is NOT already being tracked. 
-//        recordAwardScheduleIdentifiersInLegacyAssociationTable(awardScheduleTabRow.getSpreadsheetKey(), 
-//                awardScheduleTabRow.getAwardScheduleReferenceId(), awardScheduleTabRow.getJobRunDateString());
-//    }
-//    
 
 }

@@ -14,6 +14,7 @@ public class CemiAwardLegacyNovelutionBoFactory {
     
     public static CemiAwardLegacyNovelutionBo createEmptyCemiAwardLegacyNovelutionBo() {
         CemiAwardLegacyNovelutionBo emptyBo = new CemiAwardLegacyNovelutionBo();
+        emptyBo.setProposalNumber(KFSConstants.EMPTY_STRING);
         emptyBo.setSpreadsheetKey(KFSConstants.EMPTY_STRING);
         emptyBo.setAwardSignedDate(KFSConstants.EMPTY_STRING);
         emptyBo.setCostShareTotalAmount(KFSConstants.EMPTY_STRING);

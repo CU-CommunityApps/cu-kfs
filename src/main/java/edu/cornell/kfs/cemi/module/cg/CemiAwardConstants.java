@@ -48,4 +48,7 @@ public final class CemiAwardConstants {
         }
     }
     
+    // Company value to use for Ithaca hard coding.
+    public static final String COMPANY_CORNELL_UNIVERISY_MAIN_CAMPUS = "C001";
+    
 }

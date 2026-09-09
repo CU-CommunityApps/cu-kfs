@@ -28,6 +28,7 @@ public class CemiAwardHeaderDataBoFactory {
     
     private Award award;
     private AwardExtendedAttribute awardExtendedAttribute;
+    private String awardOrgCode;
     private CemiAwardLegacyNovelutionBo awardNovelutionAttributes;
     private String jobRunDateString;
     private CemiAwardExtractDao cemiAwardExtractDao;
@@ -36,27 +37,30 @@ public class CemiAwardHeaderDataBoFactory {
     private boolean maskSensitiveData = true;
 
     public static CemiAwardHeaderDataBo createAwardHeaderDataBoFrom(final Award award, 
-            final AwardExtendedAttribute awardExtendedAttribute,
+            final AwardExtendedAttribute awardExtendedAttribute, final String awardOrgCode,
             final CemiAwardLegacyNovelutionBo awardNovelutionAttributes, final String jobRunDateString, 
             final DateTimeService dateTimeService, final CemiAwardExtractDao cemiAwardExtractDao,
             final CemiAwardTranslateTableMaps allAwardTranslateTableMaps, final boolean maskSensitiveData) {
         final CemiAwardHeaderDataBoFactory factory = new CemiAwardHeaderDataBoFactory(award, awardExtendedAttribute,
-                awardNovelutionAttributes, jobRunDateString, dateTimeService, cemiAwardExtractDao,
+                awardOrgCode, awardNovelutionAttributes, jobRunDateString, dateTimeService, cemiAwardExtractDao,
                 allAwardTranslateTableMaps, maskSensitiveData);
         return factory.createCemiAwardHeaderDataBo();
     }
     
     public CemiAwardHeaderDataBoFactory (final Award award, final AwardExtendedAttribute awardExtendedAttribute,
-            final CemiAwardLegacyNovelutionBo awardNovelutionAttributes, final String jobRunDateString,
+            final String awardOrgCode, final CemiAwardLegacyNovelutionBo awardNovelutionAttributes, 
+            final String jobRunDateString, 
             final DateTimeService dateTimeService, final CemiAwardExtractDao cemiAwardExtractDao,
             final CemiAwardTranslateTableMaps allAwardTranslateTableMaps, final boolean maskSensitiveData) {
-        Validate.notNull(award, "award cannot be null");
-        Validate.notNull(awardExtendedAttribute, "awardExtendedAttribute cannot be null");
-        Validate.notNull(awardNovelutionAttributes, "awardNovelutionAttributes cannot be null");
-        Validate.notNull(jobRunDateString, "jobRunDateString cannot be null");
-        Validate.notNull(dateTimeService, "dateTimeService cannot be null");
+        Validate.notNull(award, "award cannot be null for CemiAwardHeaderDataBoFactory");
+        Validate.notNull(awardExtendedAttribute, "awardExtendedAttribute cannot be null for CemiAwardHeaderDataBoFactory");
+        Validate.notNull(awardOrgCode, "awardOrgCode cannot be null for CemiAwardHeaderDataBoFactory");
+        Validate.notNull(awardNovelutionAttributes, "awardNovelutionAttributes cannot be null for CemiAwardHeaderDataBoFactory");
+        Validate.notNull(jobRunDateString, "jobRunDateString cannot be null for CemiAwardHeaderDataBoFactory");
+        Validate.notNull(dateTimeService, "dateTimeService cannot be null for CemiAwardHeaderDataBoFactory");
         this.award = award;
         this.awardExtendedAttribute = awardExtendedAttribute;
+        this.awardOrgCode = awardOrgCode;
         this.awardNovelutionAttributes = awardNovelutionAttributes;
         this.jobRunDateString = jobRunDateString;
         this.dateTimeService = dateTimeService;
@@ -72,13 +76,11 @@ public class CemiAwardHeaderDataBoFactory {
         final String proposalNumber = setToEmptyStringWhenValueIsBlank(award.getProposalNumber());
         final String rowSpreadsheetKey = buildSpreadsheetKey(proposalNumber);
         
-//FIXME final String company = determineCompany(); //Get all accounts on award and find control account, map account type to company
-        final String company = CemiBaseConstants.EMPTY_STRING;
+        final String company = determineCompany();
         
         final String sponsorAwardRefernceNumber = setToEmptyStringWhenValueIsBlank(award.getGrantNumber());
         final String awardProjectTitle = setToEmptyStringWhenValueIsBlank(award.getAwardProjectTitle());
         final String awardEffectiveDate = determineFormattedDate(award.getAwardBeginningDate());
-        
         
 //FIXME  final String awardSignedDate = determineAwardSignedDate(awardNovelutionAttributes.getAwardSignedDate());
         final String awardSignedDate = CemiBaseConstants.EMPTY_STRING;
@@ -88,8 +90,7 @@ public class CemiAwardHeaderDataBoFactory {
         
 //FIXME  final String awardGroup = CemiAwardTranslateTableFactory.translateToAwardGroup();  //config workbook values not mapped yet
         final String awardGroup = CemiBaseConstants.EMPTY_STRING;
-//FIXME  final String awardCostCenter = CemiAwardDynamicTranslateTableFactory.translateToAwardCostCenter(proposalNumber);  //make this into a translate CEMI.CG_CEMI_AWD_AWDORG_V 
-        final String awardCostCenter = CemiBaseConstants.EMPTY_STRING;
+        final String awardCostCenter = determineCostCenter(awardOrgCode);
 //FIXME  final String awardFund = CemiAwardTranslateTableFactory.translateToAwardFund(); //Get all accounts on award, make sure all have same sub-fund group code, then use that subfundgroupcode for very complicate/hardcoded translationtable lookup
         final String awardFund = CemiBaseConstants.EMPTY_STRING;
 //FIXME  final String awardProgram = CemiAwardTranslateTableFactory.translateToAwardProgram(); //not done yet
@@ -196,6 +197,12 @@ public class CemiAwardHeaderDataBoFactory {
         return MessageFormat.format(CemiAwardConstants.SPREADSHEET_KEY_FORMAT, awardProposalNumber);
     }
     
+    // Original mapping requirement was: Get all accounts on award, find control account, map account type to company
+    // Changed to hard coded value requirement of C001
+    private String determineCompany() {
+        return CemiAwardConstants.COMPANY_CORNELL_UNIVERISY_MAIN_CAMPUS;
+    }
+    
     private String determineSubAward(String primeSponsor) {
       return StringUtils.isNotBlank(primeSponsor) ? CemiBaseConstants.YES : CemiAwardConstants.NO;
     }
@@ -273,6 +280,10 @@ public class CemiAwardHeaderDataBoFactory {
     private String determineTranslationValueFor(Map<String, String> translationMap, String codeToUseForLookup) {
         String valueFound = translationMap.get(codeToUseForLookup);
         return StringUtils.isNotBlank(valueFound) ? valueFound : CemiBaseConstants.EMPTY_STRING;
+    }
+    
+    private String determineCostCenter(String awardOrgCode) {
+        return StringUtils.isNotBlank(awardOrgCode) ? awardOrgCode : CemiBaseConstants.EMPTY_STRING;
     }
     
 }
