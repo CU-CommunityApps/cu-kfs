@@ -532,5 +532,17 @@
           p:lastUpdateTimestampInTable="true"/>
 
     <alias name="cemiWorkdayAssetClass" alias="RegisterAsset_KfsAssetTypeCode-TranslateWorkdayAssetClass"/>
+    
+    <bean id="cemiWorkdayAssetType" parent="cemiWorkdayAssetType-parentBean"/>
+    <bean id="cemiWorkdayAssetType-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/registerAsset"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_REGISTER_ASST_ASST_TYP_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.module.cam.batch.translatetable.KfsToWorkdayRegisterAssetCommonCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdayAssetType" alias="RegisterAsset_KfsAssetTypeCode-TranslateWorkdayAssetType"/>
 
 </beans>
