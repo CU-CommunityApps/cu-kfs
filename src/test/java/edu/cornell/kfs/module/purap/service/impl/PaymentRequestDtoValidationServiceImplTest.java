@@ -39,7 +39,7 @@ public class PaymentRequestDtoValidationServiceImplTest {
     private PaymentRequestDtoValidationServiceImpl validationService;
 
     @BeforeEach
-    private void setUp() throws Exception {
+    public void setUp() throws Exception {
         Configurator.setLevel(PaymentRequestDtoValidationServiceImpl.class, Level.DEBUG);
 
         validationService = new PaymentRequestDtoValidationServiceImpl();
@@ -75,6 +75,8 @@ public class PaymentRequestDtoValidationServiceImplTest {
                 .thenReturn("The maximum size of a note is {0} characters, the note provided was {1} characters long.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_FIELD_FORMATTING))
                 .thenReturn("{0} is not formatted properly.");
+        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENT_REQUEST_ITEM_TOTAL_NOT_EQUAL_INVOICE_TOTAL))
+                .thenReturn("Error: The sum of PREQ items amount ({0}) does not equal the Invoice total ({1})");
         return service;
     }
 
