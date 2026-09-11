@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cemiOutputDefinition>
+
+    <sheet name="Submit Purchase Order" num-header-rows="5" start-column-index="1"
+           business-object-class="edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderFileSubmitPurchaseOrderTabRowBo">
+        <field name="Spreadsheet Key*" type="STRING" key="spreadsheetKey"/>
+        <field name="Add Only" type="STRING" key="addOnly"/>
+        <field name="Purchase Order" type="STRING" key="existingPurchaseOrderDocumentNumber"/>
+        <field name="Order Type Reference" type="STRING" key="orderTypeReference"/>
+        <field name="Auto Complete" type="STRING" key="autoComplete"/>
+        <field name="Comment" type="STRING" key="comment"/>
+        <field name="Worker" type="STRING" key="worker"/>
+        <field name="Purchase Order ID" type="STRING" key="purchaseOrderId"/>
+        <field name="Submit" type="STRING" key="submit"/>
+        <field name="Locked in Workday" type="STRING" key="lockedInWorkday"/>
+        <field name="Document Number" type="STRING" key="documentNumber"/>
+        <field name="Invoice Status" type="STRING" key="invoiceStatus"/>
+        <field name="Payment Status" type="STRING" key="paymentStatus"/>
+        <field name="Receiving Status" type="STRING" key="receivingStatus"/>
+        <field name="Shipping Status" type="STRING" key="shippingStatus"/>
+        <field name="Tracking Status" type="STRING" key="trackingStatus"/>
+        <field name="Company*" type="STRING" key="company"/>
+        <field name="Supplier*" type="STRING" key="supplier"/>
+        <field name="Purchase Order Type" type="STRING" key="purchaseOrderType"/>
+        <field name="External PO Number" type="STRING" key="externalPoNumber"/>
+        <field name="Order From Supplier Connection" type="STRING" key="orderFromSupplierConnection"/>
+        <field name="Document Date*" type="STRING" key="documentDate"/>
+        <field name="Tax Amount" type="STRING" key="taxAmount"/>
+        <field name="Freight Amount" type="STRING" key="freightAmount"/>
+        <field name="Other Charges" type="STRING" key="otherCharges"/>
+        <field name="Payment Terms" type="STRING" key="paymentTerms"/>
+        <field name="Override Payment Type" type="STRING" key="overridePaymentType"/>
+        <field name="Procurement Credit Card" type="STRING" key="procurementCreditCard"/>
+        <field name="Shipping Terms" type="STRING" key="shippingTerms"/>
+        <field name="Shipping Method" type="STRING" key="shippingMethod"/>
+        <field name="Shipping Instruction" type="STRING" key="shippingInstruction"/>
+        <field name="Due Date" type="STRING" key="dueDate"/>
+        <field name="Supplier Contract" type="STRING" key="supplierContract"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="externalSupplierInvoiceSource"/>
+        <field name="Currency" type="STRING" key="currency"/>
+        <field name="Acknowledgement Expected" type="STRING" key="acknowledgementExpected"/>
+        <field name="Default Tax Option" type="STRING" key="defaultTaxOption"/>
+        <field name="Default Tax Code" type="STRING" key="defaultTaxCode"/>
+        <field name="Issue Option" type="STRING" key="issueOption"/>
+        <field name="Row ID*" type="STRING" key="emailRowId"/>
+        <field name="Email" type="STRING" key="emailId"/>
+        <field name="Email Address" type="STRING" key="emailAddress"/>
+        <field name="Buyer" type="STRING" key="buyer"/>
+        <field name="Bill To Contact" type="STRING" key="billToContact"/>
+        <field name="Bill To Contact Detail" type="STRING" key="billToContactDetail"/>
+        <field name="Bill To Address" type="STRING" key="existingBillToAddressId"/>
+        <field name="ID" type="STRING" key="newBillToAddressId"/>
+        <field name="Ship To Contact" type="STRING" key="shipToContact"/>
+        <field name="Ship To Contact Detail" type="STRING" key="shipToContactDetail"/>
+        <field name="Ship To Address" type="STRING" key="existingShipToAddressId"/>
+        <field name="ID" type="STRING" key="newShipToAddressId"/>
+        <field name="Document Link" type="STRING" key="documentLink"/>
+        <field name="Memo" type="STRING" key="memoForSupplier"/>
+        <field name="Internal Memo" type="STRING" key="internalMemo"/>
+        <field name="Prepaid" type="STRING" key="prepaid"/>
+        <field name="Prepayment Release Type" type="STRING" key="prepaymentReleaseType"/>
+        <field name="Expected Release Date" type="STRING" key="expectedReleaseDate"/>
+        <field name="Frequency" type="STRING" key="frequency"/>
+        <field name="Number of Prepayment Installments" type="STRING" key="numberOfPrepaymentInstallments"/>
+        <field name="Use Invoice Date" type="STRING" key="useInvoiceDate"/>
+        <field name="Specified Date" type="STRING" key="specifiedDate"/>
+        <field name="Use Prepaid Posting Rules for Receipt Accruals" type="STRING" key="usePrepaidPostingRulesForReceiptAccruals"/>
+        <field name="Percent to Retain" type="STRING" key="percentToRetain"/>
+        <field name="Estimated Retention Release Date" type="STRING" key="estimatedRetentionReleaseDate"/>
+        <field name="XMLNAME 3rd Party Retention" type="STRING" key="xmlname3rdPartyRetention"/>
+        <field name="Retention Memo" type="STRING" key="retentionMemo"/>
+        <field name="Down Payment Amount" type="STRING" key="downPaymentAmount"/>
+        <field name="Down Payment Percentage" type="STRING" key="downPaymentPercentage"/>
+        <field name="Down Payment Memo" type="STRING" key="downPaymentMemo"/>
+        <field name="Procedure Date" type="STRING" key="procedureDate"/>
+        <field name="Procedure" type="STRING" key="procedure"/>
+        <field name="Procedure Number" type="STRING" key="procedureNumber"/>
+        <field name="Patient ID" type="STRING" key="patientId"/>
+        <field name="Medical Record Number" type="STRING" key="medicalRecordNumber"/>
+        <field name="Physician ID" type="STRING" key="physicianId"/>
+        <field name="Verified By" type="STRING" key="verifiedBy"/>
+        <field name="Supplier Representative" type="STRING" key="supplierRepresentative"/>
+        <field name="Supplier Sales Order Number" type="STRING" key="supplierSalesOrderNumber"/>
+        <field name="Additional Procedure Details" type="STRING" key="additionalProcedureDetails"/>
+        <field name="Row ID*" type="STRING" key="goodsRowId"/>
+        <field name="Item" type="STRING" key="goodsCatalogItem"/>
+        <field name="Goods Purchase Order Line ID" type="STRING" key="goodsPurchaseOrderLineId"/>
+        <field name="Line Number" type="STRING" key="goodsLineNumber"/>
+        <field name="Line Company" type="STRING" key="goodsLineCompany"/>
+        <field name="Supplier Item Identifier" type="STRING" key="goodsSupplierItemIdentifier"/>
+        <field name="Supplier Part ID" type="STRING" key="goodsSupplierPartId"/>
+        <field name="Supplier Part Auxiliary ID" type="STRING" key="goodsSupplierPartAuxiliaryId"/>
+        <field name="UNSPSC Code" type="STRING" key="goodsUnspscCode"/>
+        <field name="Item Description" type="STRING" key="goodsItemDescription"/>
+        <field name="Supplier Contract Line" type="STRING" key="goodsSupplierContractLine"/>
+        <field name="Alternate Supplier Contract" type="STRING" key="goodsAlternateSupplierContract"/>
+        <field name="Commodity Code" type="STRING" key="goodsCommodityCode"/>
+        <field name="Commodity Code Type" type="STRING" key="goodsCommodityCodeType"/>
+        <field name="Payment Status" type="STRING" key="goodsPaymentStatus"/>
+        <field name="Invoice Status" type="STRING" key="goodsInvoiceStatus"/>
+        <field name="Receiving Status" type="STRING" key="goodsReceivingStatus"/>
+        <field name="Shipping Status" type="STRING" key="goodsShippingStatus"/>
+        <field name="Tracking Status" type="STRING" key="goodsTrackingStatus"/>
+        <field name="Resource Category*" type="STRING" key="goodsResourceCategory"/>
+        <field name="Tax Applicability" type="STRING" key="goodsTaxApplicability"/>
+        <field name="Tax Code" type="STRING" key="goodsTaxCode"/>
+        <field name="Tax Rate 1" type="STRING" key="goodsTaxRate1"/>
+        <field name="Tax Recoverability 1" type="STRING" key="goodsTaxRecoverability1"/>
+        <field name="Tax Option 1" type="STRING" key="goodsTaxOption1"/>
+        <field name="Tax Rate 2+" type="STRING" key="goodsTaxRate2"/>
+        <field name="Tax Recoverability 2" type="STRING" key="goodsTaxRecoverability2"/>
+        <field name="Tax Option 2" type="STRING" key="goodsTaxOption2"/>
+        <field name="Tax Rate 3+" type="STRING" key="goodsTaxRate3"/>
+        <field name="Tax Recoverability 3" type="STRING" key="goodsTaxRecoverability3"/>
+        <field name="Tax Option 3" type="STRING" key="goodsTaxOption3"/>
+        <field name="Tax Rate 4+" type="STRING" key="goodsTaxRate4"/>
+        <field name="Tax Recoverability 4" type="STRING" key="goodsTaxRecoverability4"/>
+        <field name="Tax Option 4" type="STRING" key="goodsTaxOption4"/>
+        <field name="Tax Rate 5+" type="STRING" key="goodsTaxRate5"/>
+        <field name="Tax Recoverability 5" type="STRING" key="goodsTaxRecoverability5"/>
+        <field name="Tax Option 5" type="STRING" key="goodsTaxOption5"/>
+        <field name="Tax Rate 6+" type="STRING" key="goodsTaxRate6"/>
+        <field name="Tax Recoverability 6" type="STRING" key="goodsTaxRecoverability6"/>
+        <field name="Tax Option 6" type="STRING" key="goodsTaxOption6"/>
+        <field name="Packaging String" type="STRING" key="goodsPackagingString"/>
+        <field name="Quantity*" type="STRING" key="goodsQuantity"/>
+        <field name="Unit of Measure*" type="STRING" key="goodsUnitOfMeasure"/>
+        <field name="Unit Cost" type="STRING" key="goodsUnitCost"/>
+        <field name="Requested as No Charge" type="STRING" key="goodsRequestedAsNoCharge"/>
+        <field name="Extended Amount" type="STRING" key="goodsExtendedAmount"/>
+        <field name="Lot Serial Information" type="STRING" key="goodsLotSerialInformation"/>
+        <field name="Lot Number" type="STRING" key="goodsLotNumber"/>
+        <field name="Serial Number" type="STRING" key="goodsSerialNumber"/>
+        <field name="Due Date" type="STRING" key="goodsDueDate"/>
+        <field name="Delivery Type" type="STRING" key="goodsDeliveryType"/>
+        <field name="Prepaid" type="STRING" key="goodsPrepaid"/>
+        <field name="Down Payment" type="STRING" key="goodsDownPayment"/>
+        <field name="Retention" type="STRING" key="goodsRetention"/>
+        <field name="Requested Delivery Date" type="STRING" key="goodsRequestedDeliveryDate"/>
+        <field name="Budget Date" type="STRING" key="goodsBudgetDate"/>
+        <field name="Memo" type="STRING" key="goodsMemo"/>
+        <field name="Ship To Address" type="STRING" key="goodsShipToAddress"/>
+        <field name="Ship To Global Location Number" type="STRING" key="goodsShipToGlobalLocationNumber"/>
+        <field name="Ship To Location Identifier" type="STRING" key="goodsShipToLocationIdentifier"/>
+        <field name="Ship To Contact" type="STRING" key="goodsShipToContact"/>
+        <field name="Requester" type="STRING" key="goodsRequester"/>
+        <field name="Deliver To Location" type="STRING" key="goodsDeliverToLocation"/>
+        <field name="Deliver To Location GLN" type="STRING" key="goodsDeliverToLocationGln"/>
+        <field name="Deliver To Location Location Identifier" type="STRING" key="goodsDeliverToLocationIdentifier"/>
+        <field name="Supplier Contract" type="STRING" key="goodsSupplierContract"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="goodsExternalSupplierInvoiceSource"/>
+        <field name="Requisition Line" type="STRING" key="goodsRequisitionLine"/>
+        <field name="Storage Location" type="STRING" key="goodsStorageLocation"/>
+        <field name="Cost Center" type="STRING" key="goodsCostCenter"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="goodsCostCenterExternalSupplierInvoiceSource"/>
+        <field name="Project" type="STRING" key="goodsProject"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="goodsProjectExternalSupplierInvoiceSource"/>
+        <field name="Grant" type="STRING" key="goodsGrant"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="goodsGrantExternalSupplierInvoiceSource"/>
+        <field name="Gift" type="STRING" key="goodsGift"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="goodsGiftExternalSupplierInvoiceSource"/>
+        <field name="Fund" type="STRING" key="goodsFund"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="goodsFundExternalSupplierInvoiceSource"/>
+        <field name="Row ID*" type="STRING" key="goodsLineSplitRowId"/>
+        <field name="Business Document Line Split" type="STRING" key="goodsExistingBusinessDocumentLineSplitId"/>
+        <field name="Business Document Line Split ID" type="STRING" key="goodsNewBusinessDocumentLineSplitId"/>
+        <field name="Quantity" type="STRING" key="goodsLineSplitQuantity"/>
+        <field name="Extended Amount*" type="STRING" key="goodsLineSplitExtendedAmount"/>
+        <field name="Budget Date" type="STRING" key="goodsLineSplitBudgetDate"/>
+        <field name="Memo" type="STRING" key="goodsLineSplitMemo"/>
+        <field name="Line Split Allocation" type="STRING" key="goodsLineSplitAllocation"/>
+        <field name="Cost Center" type="STRING" key="goodsLineSplitCostCenter"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="goodsLineSplitCostCenterExternalSupplierInvoiceSource"/>
+        <field name="Project" type="STRING" key="goodsLineSplitProject"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="goodsLineSplitProjectExternalSupplierInvoiceSource"/>
+        <field name="Grant" type="STRING" key="goodsLineSplitGrant"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="goodsLineSplitGrantExternalSupplierInvoiceSource"/>
+        <field name="Gift" type="STRING" key="goodsLineSplitGift"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="goodsLineSplitGiftExternalSupplierInvoiceSource"/>
+        <field name="Fund" type="STRING" key="goodsLineSplitFund"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="goodsLineSplitFundExternalSupplierInvoiceSource"/>
+        <field name="Row ID*" type="STRING" key="goodsAlternateItemIdentifierRowId"/>
+        <field name="Item Identifier Type*" type="STRING" key="goodsAlternateItemIdentifierType"/>
+        <field name="Alternate Item Identifier Value" type="STRING" key="goodsAlternateItemIdentifierValue"/>
+        <field name="Unit of Measure" type="STRING" key="goodsAlternateItemIdentifierUnitOfMeasure"/>
+        <field name="Manufacturer" type="STRING" key="goodsAlternateItemIdentifierManufacturer"/>
+        <field name="Item Tag+" type="STRING" key="goodsItemTag"/>
+        <field name="Close Status" type="STRING" key="goodsCloseStatus"/>
+        <field name="Row ID*" type="STRING" key="goodsClosedRowId"/>
+        <field name="Closed On" type="STRING" key="goodsClosedOn"/>
+        <field name="Closed By" type="STRING" key="goodsClosedBy"/>
+        <field name="Reason Code" type="STRING" key="goodsClosedReasonCode"/>
+        <field name="Row ID*" type="STRING" key="serviceRowId"/>
+        <field name="Item" type="STRING" key="serviceCatalogItem"/>
+        <field name="Service Order Line ID" type="STRING" key="serviceOrderLineId"/>
+        <field name="Line Number" type="STRING" key="serviceLineNumber"/>
+        <field name="Line Company" type="STRING" key="serviceLineCompany"/>
+        <field name="Description" type="STRING" key="serviceDescription"/>
+        <field name="Supplier Contract Line" type="STRING" key="serviceSupplierContractLine"/>
+        <field name="Alternate Supplier Contract" type="STRING" key="serviceAlternateSupplierContract"/>
+        <field name="Commodity Code" type="STRING" key="serviceCommodityCode"/>
+        <field name="Commodity Code Type" type="STRING" key="serviceCommodityCodeType"/>
+        <field name="Payment Status" type="STRING" key="servicePaymentStatus"/>
+        <field name="Invoice Status" type="STRING" key="serviceInvoiceStatus"/>
+        <field name="Receiving Status" type="STRING" key="serviceReceivingStatus"/>
+        <field name="Resource Category*" type="STRING" key="serviceResourceCategory"/>
+        <field name="Tax Applicability" type="STRING" key="serviceTaxApplicability"/>
+        <field name="Tax Code" type="STRING" key="serviceTaxCode"/>
+        <field name="Tax Rate 1" type="STRING" key="serviceTaxRate1"/>
+        <field name="Tax Recoverability 1" type="STRING" key="serviceTaxRecoverability1"/>
+        <field name="Tax Option 1" type="STRING" key="serviceTaxOption1"/>
+        <field name="Tax Rate 2+" type="STRING" key="serviceTaxRate2"/>
+        <field name="Tax Recoverability 2" type="STRING" key="serviceTaxRecoverability2"/>
+        <field name="Tax Option 2" type="STRING" key="serviceTaxOption2"/>
+        <field name="Tax Rate 3+" type="STRING" key="serviceTaxRate3"/>
+        <field name="Tax Recoverability 3" type="STRING" key="serviceTaxRecoverability3"/>
+        <field name="Tax Option 3" type="STRING" key="serviceTaxOption3"/>
+        <field name="Tax Rate 4+" type="STRING" key="serviceTaxRate4"/>
+        <field name="Tax Recoverability 4" type="STRING" key="serviceTaxRecoverability4"/>
+        <field name="Tax Option 4" type="STRING" key="serviceTaxOption4"/>
+        <field name="Tax Rate 5+" type="STRING" key="serviceTaxRate5"/>
+        <field name="Tax Recoverability 5" type="STRING" key="serviceTaxRecoverability5"/>
+        <field name="Tax Option 5" type="STRING" key="serviceTaxOption5"/>
+        <field name="Tax Rate 6+" type="STRING" key="serviceTaxRate6"/>
+        <field name="Tax Recoverability 6" type="STRING" key="serviceTaxRecoverability6"/>
+        <field name="Tax Option 6" type="STRING" key="serviceTaxOption6"/>
+        <field name="Extended Amount" type="STRING" key="serviceExtendedAmount"/>
+        <field name="Due Date" type="STRING" key="serviceDueDate"/>
+        <field name="Start Date" type="STRING" key="serviceStartDate"/>
+        <field name="End Date" type="STRING" key="serviceEndDate"/>
+        <field name="Prepaid" type="STRING" key="servicePrepaid"/>
+        <field name="Down Payment" type="STRING" key="serviceDownPayment"/>
+        <field name="Retention" type="STRING" key="serviceRetention"/>
+        <field name="Budget Date" type="STRING" key="serviceBudgetDate"/>
+        <field name="Memo" type="STRING" key="serviceMemo"/>
+        <field name="Ship To Address" type="STRING" key="serviceShipToAddress"/>
+        <field name="Ship To Contact" type="STRING" key="serviceShipToContact"/>
+        <field name="Requester" type="STRING" key="serviceRequester"/>
+        <field name="Deliver To Location" type="STRING" key="serviceDeliverToLocation"/>
+        <field name="Requisition Line" type="STRING" key="serviceRequisitionLine"/>
+        <field name="Supplier Contract" type="STRING" key="serviceSupplierContract"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="serviceSupplierContractExternalSupplierInvoiceSource"/>
+        <field name="Storage Location" type="STRING" key="serviceStorageLocation"/>
+        <field name="Cost Center" type="STRING" key="serviceCostCenter"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="serviceCostCenterExternalSupplierInvoiceSource"/>
+        <field name="Project" type="STRING" key="serviceProject"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="serviceProjectExternalSupplierInvoiceSource"/>
+        <field name="Grant" type="STRING" key="serviceGrant"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="serviceGrantExternalSupplierInvoiceSource"/>
+        <field name="Gift" type="STRING" key="serviceGift"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="serviceGiftExternalSupplierInvoiceSource"/>
+        <field name="Fund" type="STRING" key="serviceFund"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="serviceFundExternalSupplierInvoiceSource"/>
+        <field name="Row ID*" type="STRING" key="serviceLineSplitRowId"/>
+        <field name="Business Document Line Split" type="STRING" key="serviceExistingBusinessDocumentLineSplitId"/>
+        <field name="Business Document Line Split ID" type="STRING" key="serviceNewBusinessDocumentLineSplitId"/>
+        <field name="Quantity" type="STRING" key="serviceLineSplitQuantity"/>
+        <field name="Extended Amount*" type="STRING" key="serviceLineSplitExtendedAmount"/>
+        <field name="Budget Date" type="STRING" key="serviceLineSplitBudgetDate"/>
+        <field name="Memo" type="STRING" key="serviceLineSplitMemo"/>
+        <field name="Line Split Allocation" type="STRING" key="serviceLineSplitAllocation"/>
+        <field name="Cost Center" type="STRING" key="serviceLineSplitCostCenter"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="serviceLineSplitCostCenterExternalSupplierInvoiceSource"/>
+        <field name="Project" type="STRING" key="serviceLineSplitProject"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="serviceLineSplitProjectExternalSupplierInvoiceSource"/>
+        <field name="Grant" type="STRING" key="serviceLineSplitGrant"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="serviceLineSplitGrantExternalSupplierInvoiceSource"/>
+        <field name="Gift" type="STRING" key="serviceLineSplitGift"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="serviceLineSplitGiftExternalSupplierInvoiceSource"/>
+        <field name="Fund" type="STRING" key="serviceLineSplitFund"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="serviceLineSplitFundExternalSupplierInvoiceSource"/>
+        <field name="Close Status" type="STRING" key="serviceCloseStatus"/>
+        <field name="Row ID*" type="STRING" key="serviceClosedRowId"/>
+        <field name="Closed On" type="STRING" key="serviceClosedOn"/>
+        <field name="Closed By" type="STRING" key="serviceClosedBy"/>
+        <field name="Reason Code" type="STRING" key="serviceClosedReasonCode"/>
+        <field name="Row ID*" type="STRING" key="deliverablesRowId"/>
+        <field name="Deliverables Order Line ID" type="STRING" key="deliverablesOrderLineId"/>
+        <field name="Line Number" type="STRING" key="deliverablesLineNumber"/>
+        <field name="Line Company" type="STRING" key="deliverablesLineCompany"/>
+        <field name="Project*" type="STRING" key="deliverablesProject"/>
+        <field name="Supplier Contract Line" type="STRING" key="deliverablesSupplierContractLine"/>
+        <field name="Alternate Supplier Contract" type="STRING" key="deliverablesAlternateSupplierContract"/>
+        <field name="Receiving Status" type="STRING" key="deliverablesReceivingStatus"/>
+        <field name="Payment Status" type="STRING" key="deliverablesPaymentStatus"/>
+        <field name="Invoice Status" type="STRING" key="deliverablesInvoiceStatus"/>
+        <field name="Prepaid" type="STRING" key="deliverablesPrepaid"/>
+        <field name="Down Payment" type="STRING" key="deliverablesDownPayment"/>
+        <field name="Retention" type="STRING" key="deliverablesRetention"/>
+        <field name="Budget Date" type="STRING" key="deliverablesBudgetDate"/>
+        <field name="Memo" type="STRING" key="deliverablesMemo"/>
+        <field name="Requisition Line+" type="STRING" key="deliverablesRequisitionLine"/>
+        <field name="Resource Category*" type="STRING" key="deliverablesResourceCategory"/>
+        <field name="Row ID*" type="STRING" key="deliverablesProjectPlanPhaseRowId"/>
+        <field name="Project Plan Phase*" type="STRING" key="deliverablesProjectPlanPhase"/>
+        <field name="Row ID*" type="STRING" key="deliverablesProjectPlanTaskRowId"/>
+        <field name="Project Plan Task*" type="STRING" key="deliverablesProjectPlanTask"/>
+        <field name="Row ID*" type="STRING" key="deliverablesProjectSubtaskRowId"/>
+        <field name="Description" type="STRING" key="deliverablesProjectSubtaskDescription"/>
+        <field name="Amount*" type="STRING" key="deliverablesProjectSubtaskAmount"/>
+        <field name="Extended Amount" type="STRING" key="deliverablesExtendedAmount"/>
+        <field name="Worktags+" type="STRING" key="deliverablesWorktags"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="deliverablesWorktagsExternalSupplierInvoiceSource"/>
+        <field name="Supplier Contract" type="STRING" key="deliverablesSupplierContract"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="deliverablesSupplierContractExternalSupplierInvoiceSource"/>
+        <field name="Row ID*" type="STRING" key="deliverablesLineSplitRowId"/>
+        <field name="Business Document Line Split" type="STRING" key="deliverablesExistingBusinessDocumentLineSplitId"/>
+        <field name="Business Document Line Split ID" type="STRING" key="deliverablesNewBusinessDocumentLineSplitId"/>
+        <field name="Quantity" type="STRING" key="deliverablesLineSplitQuantity"/>
+        <field name="Extended Amount*" type="STRING" key="deliverablesLineSplitExtendedAmount"/>
+        <field name="Budget Date" type="STRING" key="deliverablesLineSplitBudgetDate"/>
+        <field name="Memo" type="STRING" key="deliverablesLineSplitMemo"/>
+        <field name="Line Split Allocation" type="STRING" key="deliverablesLineSplitAllocation"/>
+        <field name="Worktag+" type="STRING" key="deliverablesLineSplitWorktag"/>
+        <field name="External Supplier Invoice Source" type="STRING" key="deliverablesLineSplitWorktagExternalSupplierInvoiceSource"/>
+        <field name="Close Status" type="STRING" key="deliverablesCloseStatus"/>
+        <field name="Row ID*" type="STRING" key="deliverablesClosedRowId"/>
+        <field name="Closed On" type="STRING" key="deliverablesClosedOn"/>
+        <field name="Closed By" type="STRING" key="deliverablesClosedBy"/>
+        <field name="Reason Code" type="STRING" key="deliverablesClosedReasonCode"/>
+        <field name="Row ID*" type="STRING" key="taxCodeRowId"/>
+        <field name="Tax Applicability" type="STRING" key="taxCodeApplicability"/>
+        <field name="Tax Code" type="STRING" key="taxCode"/>
+        <field name="Tax Amount" type="STRING" key="taxCodeAmount"/>
+        <field name="Row ID*" type="STRING" key="taxRateRowId"/>
+        <field name="Tax Rate" type="STRING" key="taxRate"/>
+        <field name="Tax Amount" type="STRING" key="taxRateAmount"/>
+        <field name="Tax Recoverability" type="STRING" key="taxRateRecoverability"/>
+        <field name="Tax Type" type="STRING" key="taxRateType"/>
+        <field name="Tax Point Date Type" type="STRING" key="taxRatePointDateType"/>
+        <field name="Tax Point Date" type="STRING" key="taxRatePointDate"/>
+        <field name="Row ID*" type="STRING" key="attachmentRowId"/>
+        <field name="Content Type" type="STRING" key="attachmentContentType"/>
+        <field name="Filename" type="STRING" key="attachmentFilename"/>
+        <field name="Encoding" type="STRING" key="attachmentEncoding"/>
+        <field name="Compressed" type="STRING" key="attachmentCompressed"/>
+        <field name="File Content" type="STRING" key="attachmentFileContent"/>
+        <field name="Comment" type="STRING" key="attachmentComment"/>
+        <field name="External" type="STRING" key="attachmentExternal"/>
+        <field name="Attachment Category" type="STRING" key="attachmentCategory"/>
+        <field name="Row ID*" type="STRING" key="amortizationRowId"/>
+        <field name="Frequency*" type="STRING" key="amortizationFrequency"/>
+        <field name="Number of Prepayment Installments*" type="STRING" key="amortizationNumberOfPrepaymentInstallments"/>
+        <field name="Use Invoice Date*" type="STRING" key="amortizationUseInvoiceDate"/>
+        <field name="Specified Date*" type="STRING" key="amortizationSpecifiedDate"/>
+        <field name="Include All Available Prepaid Lines*" type="STRING" key="amortizationIncludeAllAvailablePrepaidLines"/>
+        <field name="Purchase Order Line Number" type="STRING" key="amortizationPurchaseOrderLineNumber"/>
+    </sheet>
+
+</cemiOutputDefinition>

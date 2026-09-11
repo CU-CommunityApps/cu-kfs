@@ -42,4 +42,9 @@ public final class CemiBaseConstants {
     
     public static final String LAST_UPDT_TS = "LAST_UPDT_TS";
 
+    public static final String CURRENCY_USD = "USD";
+
+    public static final String DEFAULT_ITHACA_COMPANY = "C001";
+    public static final String DEFAULT_ITHACA_COST_CENTER = "CC000089";
+
 }
