@@ -77,7 +77,7 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         supplierRowBo.setTransactionTaxId(determineTransactionTaxId(taxIdText, taxIdType));
         supplierRowBo.setDefaultWithholdingTaxCode(CemiBaseConstants.EMPTY_STRING);
         supplierRowBo.setPrimaryTaxId(determinePrimaryTaxId(taxIdText));
-        supplierRowBo.setCountryTaxId(determineCountryTaxId(taxIdText));
+        supplierRowBo.setCountryTaxId(CemiBaseConstants.EMPTY_STRING);
         supplierRowBo.setSupplierCategory(CemiSupplierConstants.DEFAULT_SUPPLIER_CATEGORY);
         supplierRowBo.setSupplierGroup1(CemiBaseConstants.EMPTY_STRING);
         supplierRowBo.setSupplierGroup2(CemiBaseConstants.EMPTY_STRING);
@@ -119,16 +119,6 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         supplierRowBo.setAlternateNameUsageBusinessEntity2(alias2.getAliasUsage());
 
         return supplierRowBo;
-    }
-
-    private String determineCountryTaxId(String taxIdText) {
-        VendorHeader vendorHeader = vendorDetail.getVendorHeader();
-        if (StringUtils.isNotBlank(taxIdText) && StringUtils.isNotBlank(vendorHeader.getVendorCorpCitizenCode())) {
-            return isoFipsConversionService.convertFIPSCountryCodeToActiveISOCountryCode(
-                    vendorHeader.getVendorCorpCitizenCode());
-        } else {
-            return KFSConstants.EMPTY_STRING;
-        }
     }
 
     private String determineTaxIdText() {
