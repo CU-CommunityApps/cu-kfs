@@ -65,7 +65,7 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         }
 
         if (results.isValid()) {
-        validatePoandInvoiceUnique(paymentRequestDto, results);
+            validatePoandInvoiceUnique(paymentRequestDto, results);
         }
         
         if (results.isValid()) {
