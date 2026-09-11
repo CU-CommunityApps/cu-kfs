@@ -32,9 +32,11 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
     private String supplierId;
     private ISOFIPSConversionService isoFipsConversionService;
     private boolean maskSensitiveData;
+    private boolean vendorHasActiveBankAccounts;
 
     public CemiSupplierFileSupplierTabRowBoFactory(final VendorDetail vendorDetail, final String supplierId,
-            final ISOFIPSConversionService isoFipsConversionService, final boolean maskSensitiveData) {
+            final ISOFIPSConversionService isoFipsConversionService, final boolean maskSensitiveData, 
+            final boolean vendorHasActiveBankAccounts) {
         Validate.notNull(vendorDetail, "vendorDetail cannot be null");
         Validate.notBlank(supplierId, "supplierId cannot be blank");
         Validate.notNull(isoFipsConversionService, "isoFipsConversionService cannot be null");
@@ -42,13 +44,14 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         this.supplierId = supplierId;
         this.isoFipsConversionService = isoFipsConversionService;
         this.maskSensitiveData = maskSensitiveData;
+        this.vendorHasActiveBankAccounts = vendorHasActiveBankAccounts;
     }
 
     public static CemiSupplierFileSupplierTabRowBo createTabRowBoFrom(final VendorDetail vendorDetail,
             final String supplierId, final ISOFIPSConversionService isoFipsConversionService,
-            final boolean maskSensitiveData) {
+            final boolean maskSensitiveData, final boolean vendorHasActiveBankAccounts) {
         final CemiSupplierFileSupplierTabRowBoFactory factory = new CemiSupplierFileSupplierTabRowBoFactory(
-                vendorDetail, supplierId, isoFipsConversionService, maskSensitiveData);
+                vendorDetail, supplierId, isoFipsConversionService, maskSensitiveData, vendorHasActiveBankAccounts);
         return factory.createCemiSupplierFileSupplierTabRowBo();
     }
 
@@ -86,9 +89,15 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         supplierRowBo.setCustomerAccountNumber(CemiBaseConstants.EMPTY_STRING);
         supplierRowBo.setDunsNumber(vendorDetail.getVendorDunsNumber());
         supplierRowBo.setPaymentTerms(determineVendorPaymentTerms());
-        supplierRowBo.setDefaultPaymentType(CemiSupplierConstants.DEFAULT_PAYMENT_TYPE);
-        supplierRowBo.setPaymentTypesAccepted1(CemiSupplierConstants.DEFAULT_PAYMENT_TYPE);
-        supplierRowBo.setPaymentTypesAccepted2(CemiBaseConstants.EMPTY_STRING);
+        if (vendorHasActiveBankAccounts) {
+            supplierRowBo.setDefaultPaymentType(CemiSupplierConstants.PAYMENT_TYPE_EFT);
+            supplierRowBo.setPaymentTypesAccepted1(CemiSupplierConstants.PAYMENT_TYPE_EFT);
+            supplierRowBo.setPaymentTypesAccepted2(CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK);
+        } else {
+            supplierRowBo.setDefaultPaymentType(CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK);
+            supplierRowBo.setPaymentTypesAccepted1(CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK);
+            supplierRowBo.setPaymentTypesAccepted2(CemiBaseConstants.EMPTY_STRING);
+        }
         supplierRowBo.setPaymentTypesAccepted3(CemiBaseConstants.EMPTY_STRING);
         supplierRowBo.setCurrency(CemiSupplierConstants.DEFAULT_CURRENCY);
         supplierRowBo.setAcceptedCurrencies(CemiSupplierConstants.DEFAULT_CURRENCY);
