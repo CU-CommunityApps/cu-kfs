@@ -128,7 +128,7 @@ public enum PaymentRequestDtoFixture {
             buildMessageList(), buildMessageList("File Name is a required field.", "Mime Type is a required field.")),
     VALIDATION_TEST_GOOD_VENDOR_GOOD_PO_OPEN_GOOD_LINE_BAD_ATTACH(StringUtils.EMPTY, "1234-1", "98769",
             "11/25/2025", "11/26/2025",
-            "invoiceNumber", "50", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+            "invoiceNumber", "1000", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
             null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
             StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.ATTACHMENT_BAD_FILE_BAD_MIME), false,
