@@ -35,7 +35,7 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
     private boolean vendorHasActiveBankAccounts;
 
     public CemiSupplierFileSupplierTabRowBoFactory(final VendorDetail vendorDetail, final String supplierId,
-            final ISOFIPSConversionService isoFipsConversionService, final boolean maskSensitiveData, 
+            final ISOFIPSConversionService isoFipsConversionService, final boolean maskSensitiveData,
             final boolean vendorHasActiveBankAccounts) {
         Validate.notNull(vendorDetail, "vendorDetail cannot be null");
         Validate.notBlank(supplierId, "supplierId cannot be blank");
@@ -89,16 +89,11 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         supplierRowBo.setCustomerAccountNumber(CemiBaseConstants.EMPTY_STRING);
         supplierRowBo.setDunsNumber(vendorDetail.getVendorDunsNumber());
         supplierRowBo.setPaymentTerms(determineVendorPaymentTerms());
-        if (vendorHasActiveBankAccounts) {
-            supplierRowBo.setDefaultPaymentType(CemiSupplierConstants.PAYMENT_TYPE_EFT);
-            supplierRowBo.setPaymentTypesAccepted1(CemiSupplierConstants.PAYMENT_TYPE_EFT);
-            supplierRowBo.setPaymentTypesAccepted2(CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK);
-        } else {
-            supplierRowBo.setDefaultPaymentType(CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK);
-            supplierRowBo.setPaymentTypesAccepted1(CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK);
-            supplierRowBo.setPaymentTypesAccepted2(CemiBaseConstants.EMPTY_STRING);
-        }
-        supplierRowBo.setPaymentTypesAccepted3(CemiBaseConstants.EMPTY_STRING);
+        final List<String> acceptedPaymentTypes = determineAcceptedPaymentTypes();
+        supplierRowBo.setDefaultPaymentType(acceptedPaymentTypes.get(0));
+        supplierRowBo.setPaymentTypesAccepted1(acceptedPaymentTypes.get(0));
+        supplierRowBo.setPaymentTypesAccepted2(acceptedPaymentTypes.get(1));
+        supplierRowBo.setPaymentTypesAccepted3(acceptedPaymentTypes.get(2));
         supplierRowBo.setCurrency(CemiSupplierConstants.DEFAULT_CURRENCY);
         supplierRowBo.setAcceptedCurrencies(CemiSupplierConstants.DEFAULT_CURRENCY);
         supplierRowBo.setProcurementCreditCard(CemiBaseConstants.EMPTY_STRING);
@@ -128,6 +123,19 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         supplierRowBo.setAlternateNameUsageBusinessEntity2(alias2.getAliasUsage());
 
         return supplierRowBo;
+    }
+
+    private List<String> determineAcceptedPaymentTypes() {
+        if (vendorHasActiveBankAccounts) {
+            return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
+                    CemiSupplierConstants.MAX_ACCOUNT_ACCEPTED_PAYMENT_TYPES,
+                    CemiSupplierConstants.PAYMENT_TYPE_ACH_MANUAL,
+                    CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK);
+        } else {
+            return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
+                    CemiSupplierConstants.MAX_ACCOUNT_ACCEPTED_PAYMENT_TYPES,
+                    CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK);
+        }
     }
 
     private String determineCountryTaxId(String taxIdText) {

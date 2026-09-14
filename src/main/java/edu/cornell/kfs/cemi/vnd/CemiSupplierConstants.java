@@ -40,7 +40,7 @@ public final class CemiSupplierConstants {
     public static final String SUPPLIER_EXTRACT_PLAIN_FILENAME = "Supplier.xlsx";
 
     public static final String DEFAULT_SUPPLIER_CATEGORY = "Foundation_Default";
-    public static final String PAYMENT_TYPE_EFT = "EFT";
+    public static final String PAYMENT_TYPE_ACH_MANUAL = "ACH_Manual";
     public static final String PAYMENT_TYPE_OUTSOURCED_CHECK = "Outsourced_Check";
     public static final String DEFAULT_CURRENCY = "USD";
     public static final String DEFAULT_NAME_USAGE = "Reference";
