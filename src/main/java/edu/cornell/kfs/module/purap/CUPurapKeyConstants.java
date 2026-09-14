@@ -5,6 +5,7 @@ package edu.cornell.kfs.module.purap;
  */
 public class CUPurapKeyConstants {
 	public static final String ERROR_PAYMENT_REQUEST_ITEM_TOTAL_NOT_EQUAL = "error.paymentRequest.item.TotalInvoice.notEqual";
+	public static final String ERROR_PAYMENT_REQUEST_ITEM_TOTAL_NOT_EQUAL_INVOICE_TOTAL = "error.paymentRequest.item.totalNotEqualInvoiceTotal";
 	
     public static final String PURAP_ITEM_NONQTY = "error.purap.item.itemtype.nonqty";
     public static final String PURAP_ITEM_NEW_NONQTY = "error.purap.item.new.itemtype.nonqty";
