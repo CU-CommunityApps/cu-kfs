@@ -62,6 +62,8 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         final String taxIdText = determineTaxIdText();
         final String taxIdType = determineTaxIdType(taxIdText);
 
+        final List<String> acceptedPaymentTypes = determineAcceptedPaymentTypes();
+
         final List<CemiSupplierAliasBo> aliases = determineSupplierAliases();
         final CemiSupplierAliasBo alias1 = aliases.get(0);
         final CemiSupplierAliasBo alias2 = aliases.get(1);
@@ -89,7 +91,6 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         supplierRowBo.setCustomerAccountNumber(CemiBaseConstants.EMPTY_STRING);
         supplierRowBo.setDunsNumber(vendorDetail.getVendorDunsNumber());
         supplierRowBo.setPaymentTerms(determineVendorPaymentTerms());
-        final List<String> acceptedPaymentTypes = determineAcceptedPaymentTypes();
         supplierRowBo.setDefaultPaymentType(acceptedPaymentTypes.get(0));
         supplierRowBo.setPaymentTypesAccepted1(acceptedPaymentTypes.get(0));
         supplierRowBo.setPaymentTypesAccepted2(acceptedPaymentTypes.get(1));
@@ -128,12 +129,12 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
     private List<String> determineAcceptedPaymentTypes() {
         if (vendorHasActiveBankAccounts) {
             return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
-                    CemiSupplierConstants.MAX_ACCOUNT_ACCEPTED_PAYMENT_TYPES,
+                    CemiSupplierConstants.MAX_SUPPLIER_ACCEPTED_PAYMENT_TYPES,
                     CemiSupplierConstants.PAYMENT_TYPE_ACH_MANUAL,
                     CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK);
         } else {
             return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
-                    CemiSupplierConstants.MAX_ACCOUNT_ACCEPTED_PAYMENT_TYPES,
+                    CemiSupplierConstants.MAX_SUPPLIER_ACCEPTED_PAYMENT_TYPES,
                     CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK);
         }
     }
