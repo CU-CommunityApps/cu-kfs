@@ -3,11 +3,13 @@ package edu.cornell.kfs.cemi.vnd.batch.service.impl;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -140,10 +142,10 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
     }
 
     private void createAndStoreAllSupplierAddressesFor(final VendorDetail vendor, final String supplierId) {
+        final List<VendorAddress> vendorAddresses = getOrderedVendorAddresses(vendor);
         final Map<String, List<VendorAddress>> orderedAddressGroups = new LinkedHashMap<>();
-        final String vendorTypeCode = vendor.getVendorHeader().getVendorTypeCode();
         
-        for (final VendorAddress vendorAddress : vendor.getVendorAddresses()) {
+        for (final VendorAddress vendorAddress : vendorAddresses) {
             // Restricting addresses by country = US
             if (!vendorAddress.isActive() ||
                     !vendorAddress.getVendorCountryCode().equalsIgnoreCase(CemiSupplierConstants.COUNTRY_CODE_UNITED_STATES)) {
@@ -164,24 +166,27 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
             addressGroup.add(vendorAddress);
         }
 
+        final List<List<VendorAddress>> reorderedGroups = CemiVendorUtils.reorderAddressGroupsToPutPrimaryGroupFirst(
+                vendor.getVendorHeader().getVendorTypeCode(), orderedAddressGroups.values());
         int addressCount = 0;
-        for (final List<VendorAddress> addressGroup : orderedAddressGroups.values()) {
+        for (final List<VendorAddress> addressGroup : reorderedGroups) {
             addressCount++;
-            createAndStoreSupplierFileAddressesTabRow(addressGroup, supplierId, vendorTypeCode, addressCount);
+            createAndStoreSupplierFileAddressesTabRow(addressGroup, supplierId, addressCount);
         }
     }
 
     private void createAndStoreSupplierFileAddressesTabRow(final List<VendorAddress> addressGroup,
-            final String supplierId, final String vendorTypeCode, final int addressIndex) {
+            final String supplierId, final int addressIndex) {
         final CemiSupplierFileAddressesTabRowBo addressesRowBo = CemiSupplierFileAddressesTabRowBoFactory
-                .createTabRowBoFrom(addressGroup, supplierId, vendorTypeCode, addressIndex);
+                .createTabRowBoFrom(addressGroup, supplierId, addressIndex);
         storeSheetRow(addressesRowBo);
     }
 
     private void createAndStoreAllSupplierPhonesFor(final VendorDetail vendor, final String supplierId) {
+        final List<VendorPhoneNumber> vendorPhoneNumbers = getOrderedVendorPhoneNumbers(vendor);
         final Map<String, List<VendorPhoneNumber>> orderedPhoneGroups = new LinkedHashMap<>();
 
-        for (final VendorPhoneNumber vendorPhoneNumber : vendor.getVendorPhoneNumbers()) {
+        for (final VendorPhoneNumber vendorPhoneNumber : vendorPhoneNumbers) {
             // Presuming phone numbers are US and NOT restricting by country
             if (!vendorPhoneNumber.isActive()) {
                 LOG.debug("writeAllSupplierPhoneRowsFor, Vendor Phone {} for Vendor {}-{} was NOT written to conversion file.",
@@ -209,6 +214,12 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
         final CemiSupplierFilePhonesTabRowBo phoneRowBo = CemiSupplierFilePhonesTabRowBoFactory.createTabRowBoFrom(
                 phoneGroup, supplierId, phoneIndex);
         storeSheetRow(phoneRowBo);
+    }
+
+    private List<VendorPhoneNumber> getOrderedVendorPhoneNumbers(final VendorDetail vendor) {
+        return vendor.getVendorPhoneNumbers().stream()
+                .sorted(Comparator.comparing(VendorPhoneNumber::getVendorPhoneGeneratedIdentifier))
+                .collect(Collectors.toUnmodifiableList());
     }
 
     private void createAndStoreFlattenedBankAccountsRowIfNecessary(final VendorDetail vendor, final String supplierId,
@@ -328,9 +339,10 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
     }
 
     private Map<String, List<VendorAddress>> groupAndOrderVendorAddressesContainingEmails(final VendorDetail vendor) {
+        final List<VendorAddress> vendorAddresses = getOrderedVendorAddresses(vendor);
         final Map<String, List<VendorAddress>> orderedAddressGroups = new LinkedHashMap<>();
 
-        for (final VendorAddress vendorAddress : vendor.getVendorAddresses()) {
+        for (final VendorAddress vendorAddress : vendorAddresses) {
             if (StringUtils.isBlank(vendorAddress.getVendorAddressEmailAddress())) {
                 continue;
             } else if (!vendorAddress.isActive()) {
@@ -349,6 +361,12 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
         }
 
         return orderedAddressGroups;
+    }
+
+    private List<VendorAddress> getOrderedVendorAddresses(final VendorDetail vendor) {
+        return vendor.getVendorAddresses().stream()
+                .sorted(Comparator.comparing(VendorAddress::getVendorAddressGeneratedIdentifier))
+                .collect(Collectors.toUnmodifiableList());
     }
 
 }
