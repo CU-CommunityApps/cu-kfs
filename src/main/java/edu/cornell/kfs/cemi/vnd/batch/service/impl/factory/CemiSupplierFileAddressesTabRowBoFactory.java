@@ -13,7 +13,6 @@ import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
-import edu.cornell.kfs.cemi.vnd.util.CemiVendorUtils;
 
 public class CemiSupplierFileAddressesTabRowBoFactory {
 
@@ -22,26 +21,23 @@ public class CemiSupplierFileAddressesTabRowBoFactory {
     private List<VendorAddress> matchingAddresses;
     private VendorAddress firstAddress;
     private String supplierId;
-    private String vendorTypeCode;
     private int addressIndex;
 
     public CemiSupplierFileAddressesTabRowBoFactory(final List<VendorAddress> matchingAddresses,
-            final String supplierId, final String vendorTypeCode, final int addressIndex) {
+            final String supplierId, final int addressIndex) {
         Validate.isTrue(CollectionUtils.isNotEmpty(matchingAddresses), "matchingAddresses cannot be null or empty");
         Validate.notBlank(supplierId, "supplierId cannot be blank");
-        Validate.notBlank(vendorTypeCode, "vendorTypeCode cannot be blank");
         Validate.isTrue(addressIndex > 0, "addressIndex must be a positive integer");
         this.matchingAddresses = matchingAddresses;
         this.firstAddress = matchingAddresses.get(0);
         this.supplierId = supplierId;
-        this.vendorTypeCode = vendorTypeCode;
         this.addressIndex = addressIndex;
     }
 
     public static CemiSupplierFileAddressesTabRowBo createTabRowBoFrom(final List<VendorAddress> matchingAddresses,
-            final String supplierId, final String vendorTypeCode, final int addressIndex) {
+            final String supplierId, final int addressIndex) {
         final CemiSupplierFileAddressesTabRowBoFactory factory = new CemiSupplierFileAddressesTabRowBoFactory(
-                matchingAddresses, supplierId, vendorTypeCode, addressIndex);
+                matchingAddresses, supplierId, addressIndex);
         return factory.createCemiSupplierFileAddressesTabRowBo();
     }
 
@@ -59,7 +55,7 @@ public class CemiSupplierFileAddressesTabRowBoFactory {
         addressRowBo.setCity(firstAddress.getVendorCityName());
         addressRowBo.setState(firstAddress.getVendorStateCode());
         addressRowBo.setZipCode(firstAddress.getVendorZipCode());
-        addressRowBo.setAddressPrimary(determineWhetherAtLeastOneAddressIsPrimary());
+        addressRowBo.setAddressPrimary(determineWhetherAddressIsPrimary());
         addressRowBo.setAddressType(CemiSupplierConstants.DEFAULT_ADDRESS_TYPE);
         addressRowBo.setAddressUse1(addressUses.get(0));
         addressRowBo.setAddressUse2(addressUses.get(1));
@@ -81,10 +77,8 @@ public class CemiSupplierFileAddressesTabRowBoFactory {
                 Integer.toString(addressIndex));
     }
 
-    private String determineWhetherAtLeastOneAddressIsPrimary() {
-        final boolean atLeastOneAddressIsPrimary = CemiVendorUtils.containsPrimaryVendorAddress(
-                vendorTypeCode, matchingAddresses);
-        return CemiUtils.convertToBooleanValueForFileExtract(atLeastOneAddressIsPrimary);
+    private String determineWhetherAddressIsPrimary() {
+        return CemiUtils.convertToBooleanValueForFileExtract(addressIndex == 1);
     }
 
     private List<String> determineAddressUseValuesBasedOnAddressTypes() {
