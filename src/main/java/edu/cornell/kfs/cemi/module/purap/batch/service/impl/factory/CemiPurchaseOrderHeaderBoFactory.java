@@ -162,19 +162,25 @@ public class CemiPurchaseOrderHeaderBoFactory {
     }
 
     private String determineRequestorEmployeeId() {
-        return getEmployeeIdForUser(purchaseOrderDocument.getRequestorPersonName(),
+        return getEmployeeIdByNameAndEmail(purchaseOrderDocument.getRequestorPersonName(),
                 purchaseOrderDocument.getRequestorPersonEmailAddress(), CemiPurchaseOrderConstants.REQUESTOR_LABEL);
     }
 
     private String determineDeliveryRecipientEmployeeId() {
-        return getEmployeeIdForUser(purchaseOrderDocument.getDeliveryToName(),
+        return getEmployeeIdByNameAndEmail(purchaseOrderDocument.getDeliveryToName(),
                 purchaseOrderDocument.getDeliveryToEmailAddress(), CemiPurchaseOrderConstants.DELIVERY_RECIPIENT_LABEL);
     }
 
-    private String getEmployeeIdForUser(final String personName, final String emailAddress, final String label) {
-        final Predicate[] criteria = createCriteriaForPersonQuery(personName, emailAddress);
+    /*
+     * Certain people mentioned on the PO (such as the requestor) are only identified by name, phone and/or email,
+     * not by Principal ID or Principal Name. Thus, the only practical way to find the corresponding Person record
+     * is to perform a search based on name and email. (The code below currently doesn't search by phone number,
+     * due to the complexities of stripping out non-digit characters in order to perform an accurate search.)
+     */
+    private String getEmployeeIdByNameAndEmail(final String personName, final String emailAddress, final String label) {
+        final Predicate[] criteria = createCriteriaForPersonNameAndEmailQuery(personName, emailAddress);
         if (criteria.length == 0) {
-            LOG.warn("getEmployeeIdForUser, Insufficient {} information was available on PO document "
+            LOG.warn("getEmployeeIdByNameAndEmail, Insufficient {} information was available on PO document "
                     + "number {}; will return an empty employee ID", label, purchaseOrderDocument.getDocumentNumber());
             return CemiBaseConstants.EMPTY_STRING;
         }
@@ -185,11 +191,11 @@ public class CemiPurchaseOrderHeaderBoFactory {
 
         final int numResults = dataResults.size();
         if (numResults == 0) {
-            LOG.warn("getEmployeeIdForUser, Could not find a Person record for the {} on PO document "
+            LOG.warn("getEmployeeIdByNameAndEmail, Could not find a Person record for the {} on PO document "
                     + "number {}; will return an empty employee ID", label, purchaseOrderDocument.getDocumentNumber());
             return CemiBaseConstants.EMPTY_STRING;
         } else if (numResults != 1) {
-            LOG.warn("getEmployeeIdForUser, Found multiple Person records for the {} on PO document "
+            LOG.warn("getEmployeeIdByNameAndEmail, Found multiple Person records for the {} on PO document "
                     + "number {}; will return an empty employee ID", label, purchaseOrderDocument.getDocumentNumber());
             return CemiBaseConstants.EMPTY_STRING;
         } else {
@@ -198,9 +204,11 @@ public class CemiPurchaseOrderHeaderBoFactory {
         }
     }
 
-    private Predicate[] createCriteriaForPersonQuery(final String personName, final String emailAddress) {
+    private Predicate[] createCriteriaForPersonNameAndEmailQuery(final String personName, final String emailAddress) {
         final List<Pair<String, String>> personNameCriteria = getPersonNameCriteria(personName);
         if (personNameCriteria.isEmpty() || StringUtils.isBlank(emailAddress)) {
+            LOG.debug("createCriteriaForPersonNameAndEmailQuery, The PO contained insufficient name and/or email data "
+                    + "to perform an accurate query; will return an empty criteria array");
             return new Predicate[0];
         }
 
@@ -214,7 +222,7 @@ public class CemiPurchaseOrderHeaderBoFactory {
     }
 
     private List<Pair<String, String>> getPersonNameCriteria(final String personName) {
-        final List<String> personNameFields = List.of(KIMPropertyConstants.Person.FIRST_NAME,
+        final List<String> personNameFieldNames = List.of(KIMPropertyConstants.Person.FIRST_NAME,
                 CuKimPropertyConstants.MIDDLE_NAME, KIMPropertyConstants.Person.LAST_NAME);
         final List<String> personNameSegments = getPersonNameSegments(personName);
         final long numValidNameSegments = personNameSegments.stream()
@@ -224,9 +232,11 @@ public class CemiPurchaseOrderHeaderBoFactory {
         if (numValidNameSegments >= 2L) {
             return IntStream.range(0, 3)
                     .filter(index -> StringUtils.isNotBlank(personNameSegments.get(index)))
-                    .mapToObj(index -> Pair.of(personNameFields.get(index), personNameSegments.get(index)))
+                    .mapToObj(index -> Pair.of(personNameFieldNames.get(index), personNameSegments.get(index)))
                     .collect(Collectors.toUnmodifiableList());
         } else {
+            LOG.debug("getPersonNameCriteria, First Name and/or Last Name are missing; will return an empty list "
+                    + "of criteria because there's not enough name data to perform an accurate query");
             return List.of();
         }
     }
@@ -248,6 +258,8 @@ public class CemiPurchaseOrderHeaderBoFactory {
             }
             return List.of(firstName, middleName, lastName);
         } else {
+            LOG.debug("getPersonNameSegments, First Name and/or Last Name are missing; will return empty values "
+                    + "to indicate that insufficient name data was provided on the PO");
             return CemiUtils.createListOfEmptyStrings(3);
         }
     }
