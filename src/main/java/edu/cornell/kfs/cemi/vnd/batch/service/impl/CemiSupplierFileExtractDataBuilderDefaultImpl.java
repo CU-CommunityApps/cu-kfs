@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.mutable.MutableLong;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -30,6 +32,7 @@ import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiOrmDataBuilderBase;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants.SupplierExtractSheets;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBankAccountBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierEmailBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
@@ -111,6 +114,31 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
             createAndStoreSupplierChildMappingRowIfNecessary(vendor, supplierId, parentSupplierReference);
             createAndStoreFlattenedEmailsRowIfNecessary(vendor, supplierId);
         }
+
+        logStatistics(vendorCount);
+    }
+
+    private void logStatistics(final int vendorCount) {
+        final MutableLong ZERO = new MutableLong(0L);
+        final List<Pair<Class<?>, String>> labeledSheets = List.of(
+                Pair.of(CemiSupplierFileSupplierTabRowBo.class, SupplierExtractSheets.SUPPLIER),
+                Pair.of(CemiSupplierFileAddressesTabRowBo.class, SupplierExtractSheets.ADDRESSES),
+                Pair.of(CemiSupplierFilePhonesTabRowBo.class, SupplierExtractSheets.PHONES),
+                Pair.of(CemiSupplierFileBankAccountsTabRowBo.class, SupplierExtractSheets.BANK_ACCOUNTS),
+                Pair.of(CemiSupplierFileChildrenTabRowBo.class, SupplierExtractSheets.CHILDREN),
+                Pair.of(CemiSupplierFileEmailsTabRowBo.class, SupplierExtractSheets.EMAILS)
+        );
+
+        LOG.info("logStatistics, Finished processing {} Vendors to produce the following number of sheet rows:",
+                vendorCount);
+        LOG.info("logStatistics, [");
+
+        for (final Pair<Class<?>, String> labeledSheet : labeledSheets) {
+            final MutableLong rowCount = sheetRowCounts.getOrDefault(labeledSheet.getLeft(), ZERO);
+            LOG.info("logStatistics,     {} Sheet: {} rows written", labeledSheet.getRight(), rowCount);
+        }
+
+        LOG.info("logStatistics, ]");
     }
 
     private CemiSupplierParentIdentifiersReference createParentSupplierReference(
