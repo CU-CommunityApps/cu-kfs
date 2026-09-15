@@ -32,9 +32,11 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
     private String supplierId;
     private ISOFIPSConversionService isoFipsConversionService;
     private boolean maskSensitiveData;
+    private boolean vendorHasActiveBankAccounts;
 
     public CemiSupplierFileSupplierTabRowBoFactory(final VendorDetail vendorDetail, final String supplierId,
-            final ISOFIPSConversionService isoFipsConversionService, final boolean maskSensitiveData) {
+            final ISOFIPSConversionService isoFipsConversionService, final boolean maskSensitiveData,
+            final boolean vendorHasActiveBankAccounts) {
         Validate.notNull(vendorDetail, "vendorDetail cannot be null");
         Validate.notBlank(supplierId, "supplierId cannot be blank");
         Validate.notNull(isoFipsConversionService, "isoFipsConversionService cannot be null");
@@ -42,13 +44,14 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         this.supplierId = supplierId;
         this.isoFipsConversionService = isoFipsConversionService;
         this.maskSensitiveData = maskSensitiveData;
+        this.vendorHasActiveBankAccounts = vendorHasActiveBankAccounts;
     }
 
     public static CemiSupplierFileSupplierTabRowBo createTabRowBoFrom(final VendorDetail vendorDetail,
             final String supplierId, final ISOFIPSConversionService isoFipsConversionService,
-            final boolean maskSensitiveData) {
+            final boolean maskSensitiveData, final boolean vendorHasActiveBankAccounts) {
         final CemiSupplierFileSupplierTabRowBoFactory factory = new CemiSupplierFileSupplierTabRowBoFactory(
-                vendorDetail, supplierId, isoFipsConversionService, maskSensitiveData);
+                vendorDetail, supplierId, isoFipsConversionService, maskSensitiveData, vendorHasActiveBankAccounts);
         return factory.createCemiSupplierFileSupplierTabRowBo();
     }
 
@@ -58,6 +61,8 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         final String taxAuthorityFormType = determineTaxAuthorityFormType();
         final String taxIdText = determineTaxIdText();
         final String taxIdType = determineTaxIdType(taxIdText);
+
+        final List<String> acceptedPaymentTypes = determineAcceptedPaymentTypes();
 
         final List<CemiSupplierAliasBo> aliases = determineSupplierAliases();
         final CemiSupplierAliasBo alias1 = aliases.get(0);
@@ -86,10 +91,10 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         supplierRowBo.setCustomerAccountNumber(CemiBaseConstants.EMPTY_STRING);
         supplierRowBo.setDunsNumber(vendorDetail.getVendorDunsNumber());
         supplierRowBo.setPaymentTerms(determineVendorPaymentTerms());
-        supplierRowBo.setDefaultPaymentType(CemiSupplierConstants.DEFAULT_PAYMENT_TYPE);
-        supplierRowBo.setPaymentTypesAccepted1(CemiSupplierConstants.DEFAULT_PAYMENT_TYPE);
-        supplierRowBo.setPaymentTypesAccepted2(CemiBaseConstants.EMPTY_STRING);
-        supplierRowBo.setPaymentTypesAccepted3(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setDefaultPaymentType(acceptedPaymentTypes.get(0));
+        supplierRowBo.setPaymentTypesAccepted1(acceptedPaymentTypes.get(0));
+        supplierRowBo.setPaymentTypesAccepted2(acceptedPaymentTypes.get(1));
+        supplierRowBo.setPaymentTypesAccepted3(acceptedPaymentTypes.get(2));
         supplierRowBo.setCurrency(CemiSupplierConstants.DEFAULT_CURRENCY);
         supplierRowBo.setAcceptedCurrencies(CemiSupplierConstants.DEFAULT_CURRENCY);
         supplierRowBo.setProcurementCreditCard(CemiBaseConstants.EMPTY_STRING);
@@ -121,6 +126,19 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         return supplierRowBo;
     }
 
+    private List<String> determineAcceptedPaymentTypes() {
+        if (vendorHasActiveBankAccounts) {
+            return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
+                    CemiSupplierConstants.MAX_SUPPLIER_ACCEPTED_PAYMENT_TYPES,
+                    CemiSupplierConstants.PAYMENT_TYPE_ACH_MANUAL,
+                    CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK);
+        } else {
+            return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
+                    CemiSupplierConstants.MAX_SUPPLIER_ACCEPTED_PAYMENT_TYPES,
+                    CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK);
+        }
+    }
+ 
     private String determineTaxIdText() {
         final String unmaskedTaxId = determineUnmaskedTaxIdText();
         if (StringUtils.isBlank(unmaskedTaxId)) {

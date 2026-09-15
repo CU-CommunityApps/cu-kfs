@@ -32,6 +32,7 @@ public final class CemiSupplierConstants {
     public static final int MAX_EMAIL_TENANTED_USES = 4;
     public static final int MAX_ACCOUNT_ACCEPTED_PAYMENT_TYPES = 3;
     public static final int MAX_ACCOUNT_PAYMENT_TYPES = 3;
+    public static final int MAX_SUPPLIER_ACCEPTED_PAYMENT_TYPES = 3;
     public static final int MAX_SUPPLIER_ALIASES = 2;
 
     public static final String SUPPLIER_OUTPUT_DEFINITION_FILE_PATH_SUFFIX = "vnd/batch/CemiSupplierExtractFileOutputDefinition.xml";
@@ -40,7 +41,8 @@ public final class CemiSupplierConstants {
     public static final String SUPPLIER_EXTRACT_PLAIN_FILENAME = "Supplier.xlsx";
 
     public static final String DEFAULT_SUPPLIER_CATEGORY = "Foundation_Default";
-    public static final String DEFAULT_PAYMENT_TYPE = "Check";
+    public static final String PAYMENT_TYPE_ACH_MANUAL = "ACH_Manual";
+    public static final String PAYMENT_TYPE_OUTSOURCED_CHECK = "Outsourced_Check";
     public static final String DEFAULT_CURRENCY = "USD";
     public static final String DEFAULT_NAME_USAGE = "Reference";
     public static final String DEFAULT_ADDRESS_TYPE = "BUSINESS";
