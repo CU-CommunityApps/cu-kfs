@@ -582,5 +582,46 @@
           p:lastUpdateTimestampInTable="true"/>
 
     <alias name="cemiWorkdaySpendCategory" alias="RegisterAsset_KfsAssetTypeCode-TranslateWorkdaySpendCategory"/>
+    
+    
+    <!--FDM Translate Tables -->
+    
+    <bean id="cemiWorkdayCostCenter" parent="cemiWorkdayCostCenter-parentBean"/>
+    <bean id="cemiWorkdayCostCenter-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/common"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_COST_CENTER_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.sys.batch.translatetable.KfsToWorkdayFDMCommonCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdayCostCenter" alias="FDM_KfsOrgCode-TranslateWorkdayCostCenter"/>
+    
+    
+    <bean id="cemiWorkdayFund" parent="cemiWorkdayFund-parentBean"/>
+    <bean id="cemiWorkdayFund-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/common"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_FUND_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.sys.batch.translatetable.KfsToWorkdayFDMCommonCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdayFund" alias="FDM_KfsSubFundCode-TranslateWorkdayFund"/>
+    
+    
+    <bean id="cemiWorkdayFunction" parent="cemiWorkdayFunction-parentBean"/>
+    <bean id="cemiWorkdayFunction-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/common"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_FUNCTION_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.sys.batch.translatetable.KfsToWorkdayFDMCommonCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdayFunction" alias="FDM_KfsFunctionCode-TranslateWorkdayFunction"/>
 
 </beans>
