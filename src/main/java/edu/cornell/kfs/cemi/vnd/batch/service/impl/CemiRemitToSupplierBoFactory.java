@@ -17,6 +17,7 @@ public class CemiRemitToSupplierBoFactory {
 
     private CemiSupplierFileAddressesTabRowBo supplierAddress;
     private CemiSupplierFileSupplierTabRowBo supplier;
+    private String settlementBankAccountId;
     private String emailAddress;
     private int remitIndexForSupplier;
     private boolean defaultConnection;
@@ -28,6 +29,11 @@ public class CemiRemitToSupplierBoFactory {
 
     public CemiRemitToSupplierBoFactory withSupplier(final CemiSupplierFileSupplierTabRowBo supplier) {
         this.supplier = supplier;
+        return this;
+    }
+
+    public CemiRemitToSupplierBoFactory withOptionalSettlementBankAccountId(final String settlementBankAccountId) {
+        this.settlementBankAccountId = StringUtils.defaultString(settlementBankAccountId);
         return this;
     }
 
@@ -70,7 +76,7 @@ public class CemiRemitToSupplierBoFactory {
         remitToSupplier.setAcceptedPaymentType1(supplier.getPaymentTypesAccepted1());
         remitToSupplier.setAcceptedPaymentType2(supplier.getPaymentTypesAccepted2());
         remitToSupplier.setAcceptedPaymentType3(supplier.getPaymentTypesAccepted3());
-        remitToSupplier.setSettlementBankAccount(KFSConstants.EMPTY_STRING);
+        remitToSupplier.setSettlementBankAccount(settlementBankAccountId);
         remitToSupplier.setRemitToAddressId(supplierAddress.getAddressId());
         remitToSupplier.setRemitToEmailAddress(emailAddress);
         remitToSupplier.setPayeeAlternateName(KFSConstants.EMPTY_STRING);
