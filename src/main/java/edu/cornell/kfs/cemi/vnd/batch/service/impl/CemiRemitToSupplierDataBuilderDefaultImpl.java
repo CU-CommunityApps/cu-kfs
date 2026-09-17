@@ -152,10 +152,10 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
             return;
         } else if (StringUtils.equals(supplier.getDefaultPaymentType(), CemiSupplierConstants.PAYMENT_TYPE_ACH_MANUAL)
                 && StringUtils.isBlank(settlementBankAccountId)) {
-            LOG.warn("createAndStoreRemitToSupplierRows, Supplier {} does not specify any settlement bank accounts "
+            LOG.error("createAndStoreRemitToSupplierRows, Supplier {} does not specify any settlement bank accounts "
                     + "in its {} tab data, even though it specifies {} as the default payment type. The settlement "
                     + "bank account data will be left blank on the corresponding Remit To Supplier file row(s), but "
-                    + "further manual corrections may be needed.",
+                    + "further manual corrections or source data corrections may be needed.",
                     supplier.getSupplierId(), SupplierExtractSheets.BANK_ACCOUNTS, supplier.getDefaultPaymentType());
         }
 
