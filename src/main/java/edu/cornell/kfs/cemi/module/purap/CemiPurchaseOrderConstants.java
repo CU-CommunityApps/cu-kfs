@@ -31,6 +31,16 @@ public final class CemiPurchaseOrderConstants {
 
     public static final String CATALOG_NUMBER_NONE = "none";
 
+    public static final String CURRENCY_USD = "USD";
+
+    public static final String DEFAULT_ITHACA_COMPANY = "C001";
+    public static final String DEFAULT_ITHACA_COST_CENTER = "CC000089";
+    public static final String DEFAULT_ITHACA_FUND = "FD300";
+    public static final String DEFAULT_ITHACA_GIFT = "GFITH";
+    public static final String DEFAULT_ITHACA_GRANT = "GRITH";
+    public static final String DEFAULT_ITHACA_PROJECT = "PRITH";
+    public static final String DEFAULT_ITHACA_SPEND_CATEGORY = "SC9999";
+
     public static final class PurchaseOrderExtractSheets {
         public static final String SUBMIT_PURCHASE_ORDER = "Submit Purchase Order";
     }

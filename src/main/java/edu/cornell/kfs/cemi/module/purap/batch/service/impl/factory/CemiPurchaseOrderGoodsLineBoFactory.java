@@ -187,13 +187,10 @@ public class CemiPurchaseOrderGoodsLineBoFactory {
         return isEmptyFactory() ? CemiBaseConstants.EMPTY_STRING : purchaseOrderItem.get().getItemDescription();
     }
 
-    /*
-     * TODO: At a future date, implement logic for deriving the appropriate Workday Spend Category.
-     * Setting to blank for now as instructed by Huron; they should populate it with an appropriate default,
-     * given that it's a required field.
-     */
+    // TODO: At a future date, implement logic for deriving the Workday Spend Category via a mapping table or API.
     private String determineResourceCategory() {
-        return CemiBaseConstants.EMPTY_STRING;
+        return isEmptyFactory()
+                ? CemiBaseConstants.EMPTY_STRING : CemiPurchaseOrderConstants.DEFAULT_ITHACA_SPEND_CATEGORY;
     }
 
     private String determineOutstandingQuantity() {
@@ -233,27 +230,31 @@ public class CemiPurchaseOrderGoodsLineBoFactory {
     // TODO: At a future date, update this method to use a Cost Center mapping table or API.
     private String determineCostCenter() {
         return itemHasExactlyOneOutstandingAccountingLine()
-                ? CemiBaseConstants.DEFAULT_ITHACA_COST_CENTER : CemiBaseConstants.EMPTY_STRING;
+                ? CemiPurchaseOrderConstants.DEFAULT_ITHACA_COST_CENTER : CemiBaseConstants.EMPTY_STRING;
     }
 
-    // TODO: At a future date, update this method to use a Project mapping table or API, but only in single-acct cases.
+    // TODO: At a future date, update this method to use a Project mapping table or API.
     private String determineProject() {
-        return CemiBaseConstants.EMPTY_STRING;
+        return itemHasExactlyOneOutstandingAccountingLine()
+                ? CemiPurchaseOrderConstants.DEFAULT_ITHACA_PROJECT : CemiBaseConstants.EMPTY_STRING;
     }
 
-    // TODO: At a future date, update this method to use a Grant mapping table or API, but only in single-acct cases.
+    // TODO: At a future date, update this method to use a Grant mapping table or API.
     private String determineGrant() {
-        return CemiBaseConstants.EMPTY_STRING;
+        return itemHasExactlyOneOutstandingAccountingLine()
+                ? CemiPurchaseOrderConstants.DEFAULT_ITHACA_GRANT : CemiBaseConstants.EMPTY_STRING;
     }
 
-    // TODO: At a future date, update this method to use a Gift mapping table or API, but only in single-acct cases.
+    // TODO: At a future date, update this method to use a Gift mapping table or API.
     private String determineGift() {
-        return CemiBaseConstants.EMPTY_STRING;
+        return itemHasExactlyOneOutstandingAccountingLine()
+                ? CemiPurchaseOrderConstants.DEFAULT_ITHACA_GIFT : CemiBaseConstants.EMPTY_STRING;
     }
 
-    // TODO: At a future date, update this method to use a Fund mapping table or API, but only in single-acct cases.
+    // TODO: At a future date, update this method to use a Fund mapping table or API.
     private String determineFund() {
-        return CemiBaseConstants.EMPTY_STRING;
+        return itemHasExactlyOneOutstandingAccountingLine()
+                ? CemiPurchaseOrderConstants.DEFAULT_ITHACA_FUND : CemiBaseConstants.EMPTY_STRING;
     }
 
     private List<CemiPurchaseOrderLineSplitBo> determineLineSplits() {

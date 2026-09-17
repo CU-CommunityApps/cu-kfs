@@ -112,7 +112,7 @@ public class CemiPurchaseOrderHeaderBoFactory {
         headerBo.setDueDate(CemiBaseConstants.EMPTY_STRING);
         headerBo.setSupplierContract(determineSupplierContractNumber());
         headerBo.setExternalSupplierInvoiceSource(CemiBaseConstants.EMPTY_STRING);
-        headerBo.setCurrency(CemiBaseConstants.CURRENCY_USD);
+        headerBo.setCurrency(CemiPurchaseOrderConstants.CURRENCY_USD);
         headerBo.setAcknowledgementExpected(CemiBaseConstants.EMPTY_STRING);
         headerBo.setDefaultTaxOption(CemiBaseConstants.EMPTY_STRING);
         headerBo.setDefaultTaxCode(CemiBaseConstants.EMPTY_STRING);
@@ -265,7 +265,7 @@ public class CemiPurchaseOrderHeaderBoFactory {
     }
 
     private String determineCompanyId() {
-        return CemiBaseConstants.DEFAULT_ITHACA_COMPANY;
+        return CemiPurchaseOrderConstants.DEFAULT_ITHACA_COMPANY;
     }
 
     private String determineSupplierId() {

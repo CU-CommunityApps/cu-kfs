@@ -8,6 +8,7 @@ import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 
+import edu.cornell.kfs.cemi.module.purap.CemiPurchaseOrderConstants;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderLineSplitBo;
 import edu.cornell.kfs.cemi.module.purap.util.CemiPurchaseOrderUtils;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
@@ -89,27 +90,27 @@ public class CemiPurchaseOrderLineSplitBoFactory {
 
     // TODO: At a future date, update this method to use a Cost Center mapping table or API.
     private String determineCostCenter() {
-        return isEmptyFactory() ? CemiBaseConstants.EMPTY_STRING : CemiBaseConstants.DEFAULT_ITHACA_COST_CENTER;
+        return isEmptyFactory() ? CemiBaseConstants.EMPTY_STRING : CemiPurchaseOrderConstants.DEFAULT_ITHACA_COST_CENTER;
     }
 
     // TODO: At a future date, update this method to use a Project mapping table or API.
     private String determineProject() {
-        return CemiBaseConstants.EMPTY_STRING;
+        return isEmptyFactory() ? CemiBaseConstants.EMPTY_STRING : CemiPurchaseOrderConstants.DEFAULT_ITHACA_PROJECT;
     }
 
     // TODO: At a future date, update this method to use a Grant mapping table or API.
     private String determineGrant() {
-        return CemiBaseConstants.EMPTY_STRING;
+        return isEmptyFactory() ? CemiBaseConstants.EMPTY_STRING : CemiPurchaseOrderConstants.DEFAULT_ITHACA_GRANT;
     }
 
     // TODO: At a future date, update this method to use a Gift mapping table or API.
     private String determineGift() {
-        return CemiBaseConstants.EMPTY_STRING;
+        return isEmptyFactory() ? CemiBaseConstants.EMPTY_STRING : CemiPurchaseOrderConstants.DEFAULT_ITHACA_GIFT;
     }
 
     // TODO: At a future date, update this method to use a Fund mapping table or API.
     private String determineFund() {
-        return CemiBaseConstants.EMPTY_STRING;
+        return isEmptyFactory() ? CemiBaseConstants.EMPTY_STRING : CemiPurchaseOrderConstants.DEFAULT_ITHACA_FUND;
     }
 
     private boolean isEmptyFactory() {
