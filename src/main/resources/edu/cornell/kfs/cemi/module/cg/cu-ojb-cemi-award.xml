@@ -45,7 +45,7 @@
         <field-descriptor name="autoComplete" column="AUTO_CMPLT" jdbc-type="VARCHAR" />
         <field-descriptor name="awardReferenceId" column="AWD_REF_ID" jdbc-type="VARCHAR" />
         <field-descriptor name="awardNumber" column="AWD_NBR" jdbc-type="VARCHAR" />
-        <field-descriptor name="version" column="VERSION" jdbc-type="VARCHAR" />
+        <field-descriptor name="awardHeaderVersion" column="AWD_HDR_VERSION" jdbc-type="VARCHAR" />
         <field-descriptor name="company" column="COMPANY" jdbc-type="VARCHAR" />
         <field-descriptor name="sponsorAwardReferenceNumber" column="SPNSR_AWD_REF_NBR" jdbc-type="VARCHAR" />
         <field-descriptor name="awardName" column="AWD_NM" jdbc-type="VARCHAR" />

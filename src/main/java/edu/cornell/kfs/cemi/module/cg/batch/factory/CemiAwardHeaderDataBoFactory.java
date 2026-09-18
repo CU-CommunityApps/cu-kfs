@@ -150,7 +150,7 @@ public class CemiAwardHeaderDataBoFactory {
         awardHeaderBo.setAutoComplete(CemiBaseConstants.YES);
         awardHeaderBo.setAwardReferenceId(rowSpreadsheetKey);
         awardHeaderBo.setAwardNumber(rowSpreadsheetKey);
-        awardHeaderBo.setVersion(CemiBaseConstants.EMPTY_STRING);
+        awardHeaderBo.setAwardHeaderVersion(CemiBaseConstants.EMPTY_STRING);
         awardHeaderBo.setCompany(company);
         awardHeaderBo.setSponsorAwardReferenceNumber(sponsorAwardRefernceNumber);
         awardHeaderBo.setAwardName(awardProjectTitle);

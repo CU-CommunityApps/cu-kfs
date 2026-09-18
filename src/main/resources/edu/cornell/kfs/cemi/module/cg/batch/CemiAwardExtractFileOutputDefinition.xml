@@ -21,7 +21,7 @@
         <field name="Auto Complete" type="STRING" key="autoComplete"/>
         <field name="Award Reference ID" type="STRING" key="awardReferenceId"/>
         <field name="Award Number" type="STRING" key="awardNumber"/>
-        <field name="Version" type="String" key="version"/>
+        <field name="Version" type="String" key="awardHeaderVersion"/>
         <field name="Company*" type="STRING" key="company"/>
         <field name="Sponsor Award Reference Number" type="STRING" key="sponsorAwardReferenceNumber"/>
         <field name="Award Name" type="STRING" key="awardName"/>

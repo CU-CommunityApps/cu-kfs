@@ -14,7 +14,7 @@ public class CemiAwardHeaderDataBo extends TransientBusinessObjectBase {
     private String autoComplete;
     private String awardReferenceId;
     private String awardNumber;
-    private String version;
+    private String awardHeaderVersion;
     private String company;
     private String sponsorAwardReferenceNumber;
     private String awardName;
@@ -122,12 +122,12 @@ public class CemiAwardHeaderDataBo extends TransientBusinessObjectBase {
         this.awardNumber = awardNumber;
     }
 
-    public String getVersion() {
-        return version;
+    public String getAwardHeaderVersion() {
+        return awardHeaderVersion;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setAwardHeaderVersion(String awardHeaderVersion) {
+        this.awardHeaderVersion = awardHeaderVersion;
     }
 
     public String getCompany() {

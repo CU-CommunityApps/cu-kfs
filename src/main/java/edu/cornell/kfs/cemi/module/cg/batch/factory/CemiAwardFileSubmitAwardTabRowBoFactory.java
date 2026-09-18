@@ -58,7 +58,7 @@ public class CemiAwardFileSubmitAwardTabRowBoFactory {
         submitAwardRow.setAutoComplete(headerBo.getAutoComplete());
         submitAwardRow.setAwardReferenceId(headerBo.getAwardReferenceId());
         submitAwardRow.setAwardNumber(headerBo.getAwardNumber());
-        submitAwardRow.setVersion(headerBo.getVersion());
+        submitAwardRow.setAwardHeaderVersion(headerBo.getAwardHeaderVersion());
         submitAwardRow.setCompany(headerBo.getCompany());
         submitAwardRow.setSponsorAwardReferenceNumber(headerBo.getSponsorAwardReferenceNumber());
         submitAwardRow.setAwardName(headerBo.getAwardName());
