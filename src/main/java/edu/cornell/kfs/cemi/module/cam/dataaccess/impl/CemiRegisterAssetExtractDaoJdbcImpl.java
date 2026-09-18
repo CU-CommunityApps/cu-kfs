@@ -1,8 +1,15 @@
 package edu.cornell.kfs.cemi.module.cam.dataaccess.impl;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import edu.cornell.kfs.cemi.module.cam.CemiRegisterAssetConstants.RegisterAssetTranslateTables;
+import edu.cornell.kfs.cemi.module.cam.batch.translatetable.KfsToWorkdayRegisterAssetCommonCsvTableColumns;
 import edu.cornell.kfs.cemi.module.cam.dataaccess.CemiRegisterAssetExtractDao;
 import edu.cornell.kfs.sys.util.CuSqlChunk;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
@@ -32,29 +39,25 @@ public class CemiRegisterAssetExtractDaoJdbcImpl extends CuSqlQueryPlatformAware
         final int numRowsInserted = executeUpdate(query);
         LOG.info("queryAndStoreInScopeBusinessObjectKeysForDataExtract, Found {} in scope business object to extract", numRowsInserted);
     }
- 
-//    EXAMPLE: Actual example that would work for a data extraction
-//    @Override
-//    public void storeSpreadsheetRowItemKeyLegacyObjectKeyExtractRunDateMapping(final String spreadsheetKey,
-//            final String awardProposalNumber, final String jobRunDateString) {
-//
-//        final CuSqlQuery query = new CuSqlChunk()
-//                .append("INSERT INTO KFS.CU_CEMI_MAPPING_AWD_SCHDL_EXTR_FILE_T ")
-//                .append("(WKDY_SPRDSHT_KEY_ID, CGPRPSL_NBR, EXTR_FILE_RUNDATE) ")
-//                .append("VALUES (").appendAsParameter(Types.VARCHAR, spreadsheetKey)
-//                .append(", ").appendAsParameter(Types.VARCHAR, awardProposalNumber)
-//                .append(", ").appendAsParameter(Types.VARCHAR, jobRunDateString)
-//                .append(")")
-//                .toQuery();
-//
-//        final int numRowsInserted = executeUpdate(query);
-//        if (numRowsInserted != 1) {
-//            LOG.error("storeSpreadsheetKeyProposalNumberEXTRACTNAMEExtractRunDateMapping, Query should have inserted 1 row,"
-//                    + " but it inserted {} rows instead", numRowsInserted);
-//            throw new RuntimeException(String.format("Failed to insert SpreadsheeyKey-ProposaNumber-JobRunDate row for:"
-//                    + " Spreadsheet Key %s, Proposal Number %s, extraction job run datetime %s.", spreadsheetKey,
-//                    awardProposalNumber, jobRunDateString));
-//        }
-//    }
+    
+    
+    @Override
+    public Map<String, String> buildTranslationForTable(RegisterAssetTranslateTables queryToExecute) {
+        final CuSqlQuery query = new CuSqlChunk()
+                .append(queryToExecute.queryString)
+                .toQuery();
+
+        return queryForResults(query, resultSet -> {
+            final Stream.Builder<Pair<String, String>> mappingEntries = Stream.builder();
+            while (resultSet.next()) {
+                final String legacyLookupKey = resultSet.getString(
+                        KfsToWorkdayRegisterAssetCommonCsvTableColumns.LEGACY_CODE.name());
+                final String workdayReturnRefIdValue = resultSet.getString(
+                        KfsToWorkdayRegisterAssetCommonCsvTableColumns.WORKDAY_REF_ID.name());
+                mappingEntries.add(Pair.of(legacyLookupKey, workdayReturnRefIdValue));
+            }
+            return mappingEntries.build().collect(Collectors.toUnmodifiableMap(Pair::getLeft, Pair::getRight));
+        });
+    }
 
 }

@@ -18,29 +18,8 @@ import edu.cornell.kfs.cemi.module.cam.batch.CreateCemiRegisterAssetExtractStep;
 import edu.cornell.kfs.cemi.module.cam.batch.service.CemiRegisterAssetExtractService;
 import edu.cornell.kfs.cemi.module.cam.dataaccess.CemiRegisterAssetExtractDao;
 import edu.cornell.kfs.cemi.module.cam.dataaccess.CemiRegisterAssetExtractOrmDao;
-import edu.cornell.kfs.cemi.patterntemplate.CemiEXTRACTNAMEConstants;
-import edu.cornell.kfs.cemi.patterntemplate.batch.CreateCemiEXTRACTNAMEExtractStep;
-import edu.cornell.kfs.cemi.patterntemplate.batch.businessobject.CemiExampleLEGACYOBJECT;
-import edu.cornell.kfs.cemi.patterntemplate.batch.service.CemiEXTRACTNAMEExtractService;
-import edu.cornell.kfs.cemi.patterntemplate.dataaccess.CemiEXTRACTNAMEExtractDao;
-import edu.cornell.kfs.cemi.patterntemplate.dataaccess.CemiEXTRACTNAMEExtractOrmDao;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiDataExtractServiceBase;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-
-// {EXTRACTNAME} is throughout this file and needs to be replaced with the correct value for the
-// data extraction being created.
-//
-// Abstract class CemiBaseExtractServiceImpl should NOT be modified/customized when using this pattern.
-// First consult with the rest of the team and only then should you override that base classes standard implementation.
-//
-// The general terms used in this class file should be adjusted to correctly reflect the types and kind of data 
-// being processed. Meaning, if the routine being called returns a stream of awards or accounting lines or suppliers,
-// replace the generic terms legacyObjects with ones that correctly reflect the objects so that down stream code 
-// is self documenting.
-//
-// There are four base class abstract methods that must be implemented in this concrete class. There is NO default
-// implementation possible due to the returned values needing to be specific to the extract being created. Each
-// method is marked with "Required overriding method for base class CemiDataExtractServiceBase" in the examples below.
 
 public class CemiRegisterAssetExtractServiceImpl extends CemiDataExtractServiceBase
         implements CemiRegisterAssetExtractService {
