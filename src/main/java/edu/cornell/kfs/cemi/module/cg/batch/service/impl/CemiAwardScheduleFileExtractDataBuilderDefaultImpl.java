@@ -11,6 +11,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.module.cg.businessobject.Award;
 
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardScheduleFileAwardScheduleTabRowBo;
+import edu.cornell.kfs.cemi.module.cg.batch.factory.CemiAwardScheduleFileAwardScheduleTabRowBoFactory;
 import edu.cornell.kfs.cemi.module.cg.batch.service.CemiAwardScheduleFileExtractDataBuilder;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleExtractDao;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleExtractOrmDao;
