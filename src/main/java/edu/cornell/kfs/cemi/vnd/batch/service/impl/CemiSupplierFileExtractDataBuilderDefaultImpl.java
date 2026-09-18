@@ -340,6 +340,15 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
                         vendor.getVendorHeaderGeneratedIdentifier(),
                         vendor.getVendorDetailAssignedIdentifier());
                 continue;
+            } else if (CemiSupplierConstants.EMAIL_EXCLUDED_ADDRESS_TYPES.contains(
+                    vendorAddress.getVendorAddressTypeCode())) {
+                LOG.debug("groupAndOrderVendorAddressesContainingEmails, Vendor Address {} for Vendor {}-{} "
+                        + "has address type {}; its email was NOT written to conversion file.",
+                        vendorAddress.getVendorAddressGeneratedIdentifier(),
+                        vendor.getVendorHeaderGeneratedIdentifier(),
+                        vendor.getVendorDetailAssignedIdentifier(),
+                        vendorAddress.getVendorAddressTypeCode());
+                continue;
             }
             final String addressKey = CemiUtils.generateKeyForGroupingDuplicates(
                     vendorAddress.getVendorAddressEmailAddress());

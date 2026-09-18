@@ -2,6 +2,7 @@ package edu.cornell.kfs.cemi.vnd;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.VendorConstants;
@@ -71,6 +72,9 @@ public final class CemiSupplierConstants {
             Map.entry(AddressTypes.REMIT, List.of("Remit_To")),
             Map.entry(CUAddressTypes.TAX, List.of("Tax"))
     );
+
+    public static final Set<String> EMAIL_EXCLUDED_ADDRESS_TYPES = Set.of(
+            AddressTypes.QUOTE, CUAddressTypes.TAX);
 
     public static final Map<String, String> TAX_ID_TYPES = Map.ofEntries(
             Map.entry(VendorConstants.TAX_TYPE_FEIN, USA_EIN_TAX_TYPE),
