@@ -1,5 +1,7 @@
 package edu.cornell.kfs.cemi.module.purap;
 
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+
 public final class CemiPurchaseOrderConstants {
     
     public static final int MAX_PURCHASE_ORDER_PRELOAD_BATCH_SIZE = 50;
@@ -40,6 +42,11 @@ public final class CemiPurchaseOrderConstants {
     public static final String DEFAULT_ITHACA_GRANT = "GRITH";
     public static final String DEFAULT_ITHACA_PROJECT = "PRITH";
     public static final String DEFAULT_ITHACA_SPEND_CATEGORY = "SC9999";
+
+    public static final KualiDecimal ONE_CENT = new KualiDecimal("0.01");
+
+    public static final String ONE_CENT_MEMO_SUFFIX = " // NOTE: Item has only 1 cent oustanding "
+            + "but none of its legacy KFS accounts have outstanding amounts";
 
     public static final class PurchaseOrderExtractSheets {
         public static final String SUBMIT_PURCHASE_ORDER = "Submit Purchase Order";
