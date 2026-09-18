@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,8 +53,8 @@ public class CemiRegisterAssetExtractDaoJdbcImpl extends CuSqlQueryPlatformAware
             while (resultSet.next()) {
                 final String legacyLookupKey = resultSet.getString(
                         KfsToWorkdayRegisterAssetCommonCsvTableColumns.LEGACY_CODE.name());
-                final String workdayReturnRefIdValue = resultSet.getString(
-                        KfsToWorkdayRegisterAssetCommonCsvTableColumns.WORKDAY_REF_ID.name());
+                final String workdayReturnRefIdValue = StringUtils.defaultString(resultSet.getString(
+                        KfsToWorkdayRegisterAssetCommonCsvTableColumns.WORKDAY_REF_ID.name()));
                 mappingEntries.add(Pair.of(legacyLookupKey, workdayReturnRefIdValue));
             }
             return mappingEntries.build().collect(Collectors.toUnmodifiableMap(Pair::getLeft, Pair::getRight));

@@ -153,8 +153,8 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         return accountingTreatment;
     }
 
-//    If GIK (Gift), Transfer (Transferred from other university or federal) and GFE = Other
-//            Purchased (New) = PURCHASED
+    //    If GIK (Gift), Transfer (Transferred from other university or federal) and GFE = Other
+    //            Purchased (New) = PURCHASED
     private String determineAcquisitionMethod(Asset asset) {
         String assetAcquisitionType = asset.getAcquisitionTypeCode();
 
