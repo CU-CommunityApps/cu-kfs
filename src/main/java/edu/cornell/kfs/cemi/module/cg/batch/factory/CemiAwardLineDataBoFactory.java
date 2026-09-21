@@ -22,6 +22,7 @@ public class CemiAwardLineDataBoFactory {
     private Award award;
     private AwardExtendedAttribute awardExtendedAttribute;
     private CemiAwardLegacyAccountSubAccountDataBo accountSubAccountAttributes;
+    private String awardOrgCode;
     private boolean useSubAccount;
     private int awardLineDataRowId;
     private int awardLineDataLineNumber;
@@ -79,21 +80,21 @@ public class CemiAwardLineDataBoFactory {
  
     public static CemiAwardLineDataBo createCemiAwardLineDataBoFrom(final Award award, 
             final AwardExtendedAttribute awardExtendedAttribute,
-            final CemiAwardLegacyAccountSubAccountDataBo accountSubAccountAttributes, final boolean useSubAccount,
-            final int awardLineDataRowId, final int awardLineDataLineNumber, final String jobRunDateString,
-            final DateTimeService dateTimeService, final CemiAwardTranslateTableMaps allAwardTranslateTableMaps,
-            final boolean maskSensitiveData) {
+            final CemiAwardLegacyAccountSubAccountDataBo accountSubAccountAttributes, final String awardOrgCode,
+            final boolean useSubAccount, final int awardLineDataRowId, final int awardLineDataLineNumber,
+            final String jobRunDateString, final DateTimeService dateTimeService,
+            final CemiAwardTranslateTableMaps allAwardTranslateTableMaps, final boolean maskSensitiveData) {
         final CemiAwardLineDataBoFactory factory = new CemiAwardLineDataBoFactory(award, awardExtendedAttribute,
-                accountSubAccountAttributes, useSubAccount, awardLineDataRowId, awardLineDataLineNumber,
+                accountSubAccountAttributes, awardOrgCode, useSubAccount, awardLineDataRowId, awardLineDataLineNumber,
                 jobRunDateString, dateTimeService, allAwardTranslateTableMaps, maskSensitiveData);
         return factory.createCemiAwardLineDataBo();
     }
     
     public CemiAwardLineDataBoFactory(final Award award, final AwardExtendedAttribute awardExtendedAttribute,
-            final CemiAwardLegacyAccountSubAccountDataBo accountSubAccountAttributes, final boolean useSubAccount,
-            final int awardLineDataRowId, final int awardLineDataLineNumber, final String jobRunDateString,
-            final DateTimeService dateTimeService, final CemiAwardTranslateTableMaps allAwardTranslateTableMaps,
-            final boolean maskSensitiveData) {
+            final CemiAwardLegacyAccountSubAccountDataBo accountSubAccountAttributes, final String awardOrgCode,
+            final boolean useSubAccount, final int awardLineDataRowId, final int awardLineDataLineNumber,
+            final String jobRunDateString, final DateTimeService dateTimeService,
+            final CemiAwardTranslateTableMaps allAwardTranslateTableMaps, final boolean maskSensitiveData) {
         Validate.notNull(award, "award cannot be null for CemiAwardLineDataBoFactory");
         Validate.notNull(awardExtendedAttribute, "awardExtendedAttribute cannot be null for CemiAwardLineDataBoFactory");
         Validate.notNull(accountSubAccountAttributes, "accountSubAccountAttributes cannot be null for CemiAwardLineDataBoFactory");
@@ -104,6 +105,7 @@ public class CemiAwardLineDataBoFactory {
         this.award = award;
         this.awardExtendedAttribute = awardExtendedAttribute;
         this.accountSubAccountAttributes = accountSubAccountAttributes;
+        this.awardOrgCode = awardOrgCode;
         this.useSubAccount = useSubAccount;
         this.awardLineDataRowId = awardLineDataRowId;
         this.awardLineDataLineNumber = awardLineDataLineNumber;
@@ -137,8 +139,8 @@ public class CemiAwardLineDataBoFactory {
         
         final String awardLineCfdaNumberString = setToEmptyStringWhenValueIsBlank(accountSubAccountAttributes.getAccountCgCfdaNumber());
         
-//FIXME mapping prior to unit test defaults was: need primary char of acct org, cost center xlat mapping 
-        final String awardLineLineDataCostCenterString = CemiAwardConstants.DEFAULT_COST_CENTER;
+//FIXME functioal want KFS awardOrgCode for now, use value as key for look up into FDM cost center translate table when it is provided
+        final String awardLineLineDataCostCenterString = determineCostCenter(awardOrgCode);
         
 //FIXME mapping prior to unit test defauls was: need 2 xlate tables, complicated logic for specific sub-fund value
         final String awardLineDataFundString = CemiAwardConstants.DEFAULT_FUND;
@@ -270,4 +272,7 @@ public class CemiAwardLineDataBoFactory {
         return accountSubAccountAttributes.isAccountAccountClosedIndicator() ? CemiAwardConstants.CLOSED : CemiAwardConstants.OPEN;
     }
     
+    private String determineCostCenter(String awardOrgCode) {
+        return StringUtils.isNotBlank(awardOrgCode) ? awardOrgCode : CemiBaseConstants.EMPTY_STRING;
+    }
 }

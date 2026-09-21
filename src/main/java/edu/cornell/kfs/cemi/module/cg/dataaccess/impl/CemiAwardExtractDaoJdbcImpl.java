@@ -90,7 +90,8 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
                 .append("FNL_BILLED_IND, CURR_LST_BILLED_DT, PREV_LST_BILLED_DT, ACCT_SUB_FUND_GRP_CD, ")
                 .append("ACCT_CG_ACCT_RESP_ID, ACCT_ACCT_TYP_CD, ACCT_CG_CFDA_NBR, ACCT_ACCT_CLOSED_IND, ")
                 .append("PO_NBR, SUB_ACCT_NBR, SUB_ACCT_NM, SUB_ACCT_ACTV_CD ")
-                .append("FROM CEMI.CG_CEMI_AWD_ACCT_SUBACCT_V")
+                .append("FROM CEMI.CG_CEMI_AWD_ACCT_SUBACCT_V ")
+                .append("ORDER BY CGPRPSL_NBR, FIN_COA_CD, ACCOUNT_NBR, SUB_ACCT_NBR ASC")
                 .toQuery();
 
         final int numRowsInserted = executeUpdate(query);

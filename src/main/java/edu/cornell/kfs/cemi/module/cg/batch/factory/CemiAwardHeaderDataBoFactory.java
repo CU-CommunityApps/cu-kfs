@@ -96,8 +96,7 @@ public class CemiAwardHeaderDataBoFactory {
 //FIXME  final String awardGroup = CemiAwardTranslateTableFactory.translateToAwardGroup();  //config workbook values not mapped yet
         final String awardGroup = CemiBaseConstants.EMPTY_STRING;
         
-//FIXME mapping prior to unit test defaults was: final String awardCostCenter = determineCostCenter(awardOrgCode);
-        final String awardCostCenterString = CemiAwardConstants.DEFAULT_COST_CENTER;
+        final String awardCostCenterString = determineCostCenter(awardOrgCode);
         
 //FIXME mapping prior to unit test defaults was: build allAwardTranslateTableMaps.getAwardFundMap() 
 //      Get all accounts on award, make sure all have same sub-fund group code, then use that subfundgroupcode for very complicate/hardcoded translationtable lookup

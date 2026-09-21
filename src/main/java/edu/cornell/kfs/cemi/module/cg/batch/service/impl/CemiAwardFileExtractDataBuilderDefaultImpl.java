@@ -171,9 +171,9 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
                 
                 // write out account row first
                 final CemiAwardLineDataBo awardLineAccountBo = CemiAwardLineDataBoFactory.createCemiAwardLineDataBoFrom(
-                    award, awardExtendedAttribute, processingAccountSubAccount, useAccount, awardLineDataRowIdCounter,
-                    awardLineDataLineNumberCounter, jobRunDateString, dateTimeService, allAwardTranslateTableMaps,
-                    maskSensitiveData);
+                    award, awardExtendedAttribute, processingAccountSubAccount, awardOrgCode, useAccount,
+                    awardLineDataRowIdCounter, awardLineDataLineNumberCounter, jobRunDateString, dateTimeService,
+                    allAwardTranslateTableMaps, maskSensitiveData);
                     
                     
                 // FIXME TODO: Adjust these factory calls when TBD mappings are completed
@@ -206,10 +206,11 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
                 numAwardFileLinesGeneratedForThisAward++;
                 // account has a sub-account, write out sub-account row
                 // FIXME TODO: Adjust these factory calls when TBD mappings are completed
-                final CemiAwardLineDataBo subAccountAwardLineSubAccountBo = CemiAwardLineDataBoFactory.createCemiAwardLineDataBoFrom(
-                        award, awardExtendedAttribute, processingAccountSubAccount, useSubAccount, awardLineDataRowIdCounter,
-                        awardLineDataLineNumberCounter, jobRunDateString, dateTimeService, allAwardTranslateTableMaps,
-                        maskSensitiveData);
+                final CemiAwardLineDataBo subAccountAwardLineSubAccountBo =
+                        CemiAwardLineDataBoFactory.createCemiAwardLineDataBoFrom(award, awardExtendedAttribute,
+                                processingAccountSubAccount, awardOrgCode, useSubAccount, awardLineDataRowIdCounter,
+                                awardLineDataLineNumberCounter, jobRunDateString, dateTimeService,
+                                allAwardTranslateTableMaps, maskSensitiveData);
                 
                 final CemiAwardSpecialConditionDataBo subAccountSpecialConditionBo = CemiAwardSpecialConditionDataBoFactory
                         .createCemiAwardSpecialConditionDataBoFrom(award, processingAccountSubAccount,

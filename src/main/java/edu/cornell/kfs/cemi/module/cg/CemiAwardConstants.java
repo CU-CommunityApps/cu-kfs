@@ -68,7 +68,7 @@ public final class CemiAwardConstants {
     public static final String PO_NOT_ALL_ACCT_CLOSED = "PO-NOT-ALL-ACCT-CLOSED";
     
     //FDM Default Values
-    public static final String DEFAULT_COST_CENTER = "CC000089";
+    //public static final String DEFAULT_COST_CENTER = "CC000089";
     public static final String DEFAULT_FUND = "FD300";
     public static final String DEFAULT_FUNCTION = "FN0007";
     public static final String DEFAULT_GIFT = "GFITH";
