@@ -34,9 +34,11 @@ public class CemiPurchaseOrderGoodsLineBoFactory {
         this.itemAccountingLines = purchaseOrderItem.isPresent()
                 ? CemiPurchaseOrderUtils.getOutstandingEncumberedAccountingLines(purchaseOrderItem.get())
                 : List.of();
-        Validate.isTrue(purchaseOrderItem.isEmpty() || itemAccountingLines.size() > 0,
+        Validate.isTrue(purchaseOrderItem.isEmpty()
+                || CemiPurchaseOrderConstants.ONE_CENT.equals(purchaseOrderItem.get().getItemOutstandingEncumberedAmount())
+                || itemAccountingLines.size() > 0,
                 "If a non-empty purchaseOrderItem wrapper is specified, then the wrapped item must have one or more "
-                        + "accounting lines with outstanding encumbrances");
+                        + "accounting lines with outstanding encumbrances unless the item has only one cent outstanding");
     }
 
     public static CemiPurchaseOrderGoodsLineBo createGoodsLineBoFrom(CemiPurchaseOrderHeaderBo headerBo,
@@ -219,8 +221,18 @@ public class CemiPurchaseOrderGoodsLineBoFactory {
         if (isEmptyFactory()) {
             return CemiBaseConstants.EMPTY_STRING;
         }
+        final String memoSuffix = itemHasOneCentOutstandingButHasNoOutstandingAccountAmounts()
+                ? CemiPurchaseOrderConstants.ONE_CENT_MEMO_SUFFIX : CemiBaseConstants.EMPTY_STRING;
         final String totalLineAmount = CemiPurchaseOrderUtils.formatAmount(purchaseOrderItem.get().getTotalAmount());
-        return StringUtils.join(CemiPurchaseOrderConstants.ORIGINAL_PO_LINE_AMOUNT_MEMO_PREFIX, totalLineAmount);
+        return StringUtils.join(
+                CemiPurchaseOrderConstants.ORIGINAL_PO_LINE_AMOUNT_MEMO_PREFIX, totalLineAmount, memoSuffix);
+    }
+
+    private boolean itemHasOneCentOutstandingButHasNoOutstandingAccountAmounts() {
+        return !isEmptyFactory()
+                && itemAccountingLines.isEmpty()
+                && CemiPurchaseOrderConstants.ONE_CENT.equals(
+                        purchaseOrderItem.get().getItemOutstandingEncumberedAmount());
     }
 
     private String determineRequester() {
