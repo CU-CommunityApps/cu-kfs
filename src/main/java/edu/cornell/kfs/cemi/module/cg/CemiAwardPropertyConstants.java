@@ -5,5 +5,6 @@ public final class CemiAwardPropertyConstants {
     public static final String ACCOUNT_NUMBER = "accountNumber";
     public static final String PROPOSAL_NUMBER = "proposalNumber";
     public static final String SPREADSHEET_KEY = "spreadsheetKey";
+    public static final String SUB_ACCOUNT_NUMBER = "subAccountNumber";
 
 }

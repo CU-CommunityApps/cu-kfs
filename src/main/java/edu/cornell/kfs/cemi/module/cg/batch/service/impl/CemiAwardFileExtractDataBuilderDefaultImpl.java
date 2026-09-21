@@ -4,9 +4,12 @@ import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.IteratorUtils;
@@ -16,6 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.BeanPropertyComparator;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSConstants;
@@ -68,10 +72,10 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
             final Writer skippedAwardsWriter,
             final boolean maskSensitiveData) {
         super(businessObjectService, jobRunDateString, CemiAwardFileSubmitAwardTabRowBo.class);
-        Validate.notNull(dateTimeService, "dateTimeService cannot be null");
-        Validate.notNull(cemiAwardExtractOrmDao, "cemiAwardExtractOrmDao cannot be null");
-        Validate.notNull(cemiAwardExtractDao, "cemiAwardExtractDao cannot be null");
-        Validate.notNull(skippedAwardsWriter, "skippedAwardsWriter cannot be null");
+        Validate.notNull(dateTimeService, "dateTimeService cannot be null in CemiAwardFileExtractDataBuilderDefaultImpl");
+        Validate.notNull(cemiAwardExtractOrmDao, "cemiAwardExtractOrmDao cannot be null in CemiAwardFileExtractDataBuilderDefaultImpl");
+        Validate.notNull(cemiAwardExtractDao, "cemiAwardExtractDao cannot be null in CemiAwardFileExtractDataBuilderDefaultImpl");
+        Validate.notNull(skippedAwardsWriter, "skippedAwardsWriter cannot be null in CemiAwardFileExtractDataBuilderDefaultImpl");
         this.dateTimeService = dateTimeService;
         this.cemiAwardExtractOrmDao = cemiAwardExtractOrmDao;
         this.cemiAwardExtractDao = cemiAwardExtractDao;
@@ -110,7 +114,6 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
             // Account and Sub-Account data retreival for the award
             Collection<CemiAwardLegacyAccountSubAccountDataBo> awardAccountsSubAccountsCollection = obtainLegacyAccountSubAccountsFor(currentProposalNumber);
             
-            
             //Database table storage of data extract
             totalRowsWritten += createAndStoreAwardFileSubmitAwardTabRowsFor(award, awardExtendedAttribute, awardOrgCode,
                     awardAccountsSubAccountsCollection, awardNovelutionAttributes, jobRunDateString);
@@ -126,6 +129,18 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
         Collection<CemiAwardLegacyAccountSubAccountDataBo> allAccountsWithSubAccounts = 
                         businessObjectService.findMatchingOrderBy(CemiAwardLegacyAccountSubAccountDataBo.class,
                                 fieldValues, CemiAwardPropertyConstants.ACCOUNT_NUMBER, true);
+        
+        // Business object service does not allow for multiple property result set sorting. Must sort manually.
+        // Construct the sort order 
+        List<String> defaultSortOrder = new ArrayList<String>();
+        defaultSortOrder.add(0, CemiAwardPropertyConstants.PROPOSAL_NUMBER);
+        defaultSortOrder.add(1, CemiAwardPropertyConstants.ACCOUNT_NUMBER);
+        defaultSortOrder.add(2, CemiAwardPropertyConstants.SUB_ACCOUNT_NUMBER);
+        
+        allAccountsWithSubAccounts = new ArrayList<CemiAwardLegacyAccountSubAccountDataBo>(allAccountsWithSubAccounts);
+        
+        Collections.sort((List) allAccountsWithSubAccounts, new BeanPropertyComparator(defaultSortOrder, true));
+        
         return allAccountsWithSubAccounts;
     }
     
