@@ -1,8 +1,5 @@
 package edu.cornell.kfs.cemi.module.cg.batch.service.impl;
 
-import java.io.UncheckedIOException;
-import java.io.Writer;
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.IteratorUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +19,6 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.BeanPropertyComparator;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.businessobject.Award;
-import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.cemi.module.cg.batch.service.CemiAwardFileExtractDataBuilder;
 import edu.cornell.kfs.cemi.module.cg.batch.translatetable.CemiAwardTranslateTableFactory;
@@ -59,7 +55,6 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
     protected DateTimeService dateTimeService;
     protected CemiAwardExtractOrmDao cemiAwardExtractOrmDao;
     protected CemiAwardExtractDao cemiAwardExtractDao;
-    protected Writer skippedAwardsWriter;
     protected final boolean maskSensitiveData;
     
     protected CemiAwardTranslateTableMaps allAwardTranslateTableMaps;
@@ -69,24 +64,21 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
             final DateTimeService dateTimeService,
             final CemiAwardExtractOrmDao cemiAwardExtractOrmDao,
             final CemiAwardExtractDao cemiAwardExtractDao,
-            final Writer skippedAwardsWriter,
             final boolean maskSensitiveData) {
         super(businessObjectService, jobRunDateString, CemiAwardFileSubmitAwardTabRowBo.class);
         Validate.notNull(dateTimeService, "dateTimeService cannot be null in CemiAwardFileExtractDataBuilderDefaultImpl");
         Validate.notNull(cemiAwardExtractOrmDao, "cemiAwardExtractOrmDao cannot be null in CemiAwardFileExtractDataBuilderDefaultImpl");
         Validate.notNull(cemiAwardExtractDao, "cemiAwardExtractDao cannot be null in CemiAwardFileExtractDataBuilderDefaultImpl");
-        Validate.notNull(skippedAwardsWriter, "skippedAwardsWriter cannot be null in CemiAwardFileExtractDataBuilderDefaultImpl");
         this.dateTimeService = dateTimeService;
         this.cemiAwardExtractOrmDao = cemiAwardExtractOrmDao;
         this.cemiAwardExtractDao = cemiAwardExtractDao;
-        this.skippedAwardsWriter = skippedAwardsWriter;
         this.maskSensitiveData = maskSensitiveData;
         populateAllAwardTranslateTableMaps();
     }
     
     
     @Override
-    public void writeAwardFileSubmitAwardTabExtractDataToIntermediateStorage(final Iterator<Award> awards){
+    public void writeAwardFileSubmitAwardTabExtractDataToIntermediateStorage(final Iterator<Award> awards) {
         int awardCounter = 0;
         int totalRowsWritten = 0;
         
@@ -103,11 +95,10 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
             String awardOrgCode = cemiAwardExtractDao.findOrganizationCodeForInScopeAward(currentProposalNumber);
             
             // Novelution data attribute retreival for the award
-            CemiAwardLegacyNovelutionBo awardNovelutionAttributes =
-                    obtainAssociatedNovelutionData(award.getProposalNumber(), skippedAwardsWriter);
+            CemiAwardLegacyNovelutionBo awardNovelutionAttributes = obtainAssociatedNovelutionData(award.getProposalNumber());
             if (ObjectUtils.isNull(awardNovelutionAttributes)) {
                 // problem encountered retrieving Novelution data for award
-                // set to emply business object tp prevent downstream processing from failing
+                // set to empty business object to prevent downstream processing from failing
                 awardNovelutionAttributes = CemiAwardLegacyNovelutionBoFactory.createEmptyCemiAwardLegacyNovelutionBo();
             }
             
@@ -194,7 +185,7 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
                 // FIXME TODO: Adjust these factory calls when TBD mappings are completed
                 final CemiAwardSpecialConditionDataBo specialConditionBo = CemiAwardSpecialConditionDataBoFactory
                     .createCemiAwardSpecialConditionDataBoFrom(award, processingAccountSubAccount,
-                            useSubAccount, awardLineDataRowIdCounter, awardLineDataLineNumberCounter,
+                            useAccount, awardLineDataRowIdCounter, awardLineDataLineNumberCounter,
                             specialConditionDataRowIdCounter, jobRunDateString, maskSensitiveData);
             
                 // FIXME TODO: Adjust this factory call from an EMPTY BO to actual BO creation when TBD mappings are completed
@@ -227,15 +218,24 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
                                 awardLineDataLineNumberCounter, jobRunDateString, dateTimeService,
                                 allAwardTranslateTableMaps, maskSensitiveData);
                 
+             // FIXME TODO: Adjust these factory calls when TBD mappings are completed
                 final CemiAwardSpecialConditionDataBo subAccountSpecialConditionBo = CemiAwardSpecialConditionDataBoFactory
                         .createCemiAwardSpecialConditionDataBoFrom(award, processingAccountSubAccount,
                                 useSubAccount, awardLineDataRowIdCounter, awardLineDataLineNumberCounter,
                                 specialConditionDataRowIdCounter, jobRunDateString, maskSensitiveData);
                 
-                final CemiAwardBudgetDataBo subAccountBudgetBo = CemiAwardBudgetDataBoFactory.createEmptyCemiAwardBudgetDataBo();
-                
-                final CemiAwardAllocationDataBo subAccountAllocationBo = CemiAwardAllocationDataBoFactory.createEmptyCemiAwardAllocationDataBo();
-                
+                // FIXME TODO: Adjust this factory call from an EMPTY BO to actual BO creation when TBD mappings are completed
+                final CemiAwardBudgetDataBo subAccountBudgetBo = CemiAwardBudgetDataBoFactory
+                        .createCemiAwardBudgetDataBoFrom(award, processingAccountSubAccount, useSubAccount, 
+                                awardLineDataRowIdCounter, awardLineDataLineNumberCounter, specialConditionDataRowIdCounter,
+                                budgetDataRowIdCounter, jobRunDateString, maskSensitiveData);
+        
+                // FIXME TODO: Adjust this factory call from an EMPTY BO to actual BO creation when TBD mappings are completed
+                final CemiAwardAllocationDataBo subAccountAllocationBo = CemiAwardAllocationDataBoFactory
+                        .createCemiAwardAllocationDataBoFrom(award, processingAccountSubAccount, useSubAccount, 
+                                awardLineDataRowIdCounter, awardLineDataLineNumberCounter, specialConditionDataRowIdCounter,
+                                budgetDataRowIdCounter, jobRunDateString, maskSensitiveData);
+        
                 createAndStoreAwardFileSubmitAwardTabRowBo(headerBo, subAccountAwardLineSubAccountBo, 
                         subAccountSpecialConditionBo, subAccountBudgetBo, subAccountAllocationBo);
             }
@@ -244,19 +244,13 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
     }
     
     
-    private CemiAwardLegacyNovelutionBo obtainAssociatedNovelutionData(
-            final String awardProposalNumber, final Writer skippedAwardsWriter) {
+    private CemiAwardLegacyNovelutionBo obtainAssociatedNovelutionData(final String awardProposalNumber) {
         String spreadsheetKeyToSearchFor = 
                 MessageFormat.format(CemiAwardConstants.SPREADSHEET_KEY_FORMAT, awardProposalNumber);
         
         CemiAwardLegacyNovelutionBo novelutionDataRow = 
                 getAwardNovelutionAttributesForCemiAwardExtractBySpreadsheetKey(spreadsheetKeyToSearchFor);
         
-        if (ObjectUtils.isNull(novelutionDataRow)) {
-            writeSkippedAwardToReportFile(awardProposalNumber, 
-                    "No rows of Novelution data found for spreadsheet_key: " + spreadsheetKeyToSearchFor);
-            return null;
-        }
         return novelutionDataRow;
     }
     
@@ -284,17 +278,6 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
                 AwardTranslateTables.AWARD_LINE_TYPES_QUERY, cemiAwardExtractDao));
     }
     
-    private void writeSkippedAwardToReportFile(final String awardProposalNumber, final String errorMessage) {
-        try {
-            String errorToLog = String.join(
-                    KFSConstants.BLANK_SPACE, awardProposalNumber, "was skipped. Processing encountered:", errorMessage );
-            skippedAwardsWriter.write(errorToLog);
-            skippedAwardsWriter.write(KFSConstants.NEWLINE);
-        } catch (final IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
     private CemiAwardLegacyNovelutionBo getAwardNovelutionAttributesForCemiAwardExtractBySpreadsheetKey(String spreadsheetKeyToSearchFor) {
         return businessObjectService.findBySinglePrimaryKey(CemiAwardLegacyNovelutionBo.class, spreadsheetKeyToSearchFor);
         

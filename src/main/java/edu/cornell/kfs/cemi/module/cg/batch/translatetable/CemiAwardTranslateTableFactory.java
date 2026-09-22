@@ -20,7 +20,9 @@ public class CemiAwardTranslateTableFactory {
             final CemiAwardExtractDao cemiAwardExtractDao) {
         final CemiAwardTranslateTableFactory factory = 
                 new CemiAwardTranslateTableFactory(translationTableToCreate, cemiAwardExtractDao);
-        
+
+// FIXME TODO CODE REVIEW ITEM TO INVESTIGATE: 
+// Is this switch statement needed? Can the factory be updated to pass the enum constant directly to the DAO?
         switch (translationTableToCreate) {
             case SPONSOR_AWARD_TYPES_QUERY:
                 return factory.createSponsorAwardTypesMap();

@@ -97,10 +97,10 @@ public class CemiAwardLineDataBoFactory {
             final CemiAwardTranslateTableMaps allAwardTranslateTableMaps, final boolean maskSensitiveData) {
         Validate.notNull(award, "award cannot be null for CemiAwardLineDataBoFactory");
         Validate.notNull(awardExtendedAttribute, "awardExtendedAttribute cannot be null for CemiAwardLineDataBoFactory");
+        Validate.notBlank(awardOrgCode, "awardOrgCode cannot be blank for CemiAwardLineDataBoFactory");
         Validate.notNull(accountSubAccountAttributes, "accountSubAccountAttributes cannot be null for CemiAwardLineDataBoFactory");
-        Validate.notNull(awardLineDataRowId, "awardLineDataRowId cannot be null for CemiAwardLineDataBoFactory");
         Validate.notNull(allAwardTranslateTableMaps, "allAwardTranslateTableMaps cannot be null for CemiAwardLineDataBoFactory");
-        Validate.notNull(jobRunDateString, "jobRunDateString cannot be null for CemiAwardLineDataBoFactory");
+        Validate.notBlank(jobRunDateString, "jobRunDateString cannot be blank for CemiAwardLineDataBoFactory");
         Validate.notNull(dateTimeService, "dateTimeService cannot be null for CemiAwardLineDataBoFactory");
         this.award = award;
         this.awardExtendedAttribute = awardExtendedAttribute;
@@ -178,13 +178,13 @@ public class CemiAwardLineDataBoFactory {
         awardLineDataBo.setReceivableContractLine(CemiBaseConstants.EMPTY_STRING);
         awardLineDataBo.setReceivableContractLineReferenceId(receivableContractLineReferenceIdString);
         awardLineDataBo.setLineNumber(awardLineDataLineNumberString);
-        awardLineDataBo.setIntercompanyAffiliate(CemiAwardConstants.COMPANY_CORNELL_UNIVERISY_MAIN_CAMPUS);
+        awardLineDataBo.setIntercompanyAffiliate(CemiAwardConstants.COMPANY_CORNELL_UNIVERSITY_MAIN_CAMPUS);
         awardLineDataBo.setRevenueCategory(CemiBaseConstants.EMPTY_STRING);
         awardLineDataBo.setAwardLineDataAwardLifecycleStatus(awardLineDataAwardLifecycleStatusString);
         awardLineDataBo.setLineType(lineTypeString);
         awardLineDataBo.setSpendRestriction(CemiBaseConstants.EMPTY_STRING);
         awardLineDataBo.setLineItemDescriptionOverride(CemiBaseConstants.EMPTY_STRING);
-        awardLineDataBo.setDeferredRevenue(CemiAwardConstants.N);
+        awardLineDataBo.setDeferredRevenue(CemiAwardConstants.NO);
         awardLineDataBo.setLineStatus(awardLineStatusString);
         awardLineDataBo.setAwardLineDocumentStatus(CemiAwardConstants.ACTIVE);
         awardLineDataBo.setPrimaryGrant(awardLineDataPrimaryGrantString);
@@ -195,7 +195,7 @@ public class CemiAwardLineDataBoFactory {
         awardLineDataBo.setCostRateType(awardLineDataCostRateTypeString);
         awardLineDataBo.setException(CemiBaseConstants.EMPTY_STRING);
         awardLineDataBo.setRevenueAllocationProfile(awardLineDataRevenueAllocationProfileString);
-        awardLineDataBo.setDelete(CemiAwardConstants.N);
+        awardLineDataBo.setDelete(CemiAwardConstants.NO);
         awardLineDataBo.setBasisLimit(CemiBaseConstants.EMPTY_STRING);
         awardLineDataBo.setBasisLimitId(awardLineDataBasisLimitIdString);
         awardLineDataBo.setBasisLimitName(awardLineDataBasisLimitNameString);
@@ -221,7 +221,7 @@ public class CemiAwardLineDataBoFactory {
     }
     
     private String setToEmptyStringWhenValueIsBlank(String value) {
-        return StringUtils.isNotBlank(value) ? value : CemiBaseConstants.EMPTY_STRING;
+        return StringUtils.defaultIfBlank(value, CemiBaseConstants.EMPTY_STRING);
     }
     
     private String determineChartOfAccountsCode(final CemiAwardLegacyAccountSubAccountDataBo accountSubAccountAttributes,
@@ -254,8 +254,7 @@ public class CemiAwardLineDataBoFactory {
     }
     
     private String determineTranslationValueForLineType(Map<String, String> translationMap, String codeToUseForLookup) {
-        String valueFound = translationMap.get(codeToUseForLookup);
-        return StringUtils.isNotBlank(valueFound) ? valueFound : CemiAwardConstants.KFS_FIX;
+        return translationMap.getOrDefault(codeToUseForLookup, CemiAwardConstants.KFS_FIX);
     }
     
     private String determineFormattedDate(Date dateToFormat) {

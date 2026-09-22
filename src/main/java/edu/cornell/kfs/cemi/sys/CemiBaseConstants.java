@@ -1,7 +1,5 @@
 package edu.cornell.kfs.cemi.sys;
 
-import java.util.regex.Pattern;
-
 public final class CemiBaseConstants {
 
     public static final String CEMI_ENVIRONMENT_LANE_NAME = "kfs-cemi";
@@ -43,7 +41,5 @@ public final class CemiBaseConstants {
     public static final int BULK_DATA_BATCH_SIZE = 200;
     
     public static final String LAST_UPDT_TS = "LAST_UPDT_TS";
-
-    // Regular expression pattern consisting of one or more word characters (letters, digits, underscores) from start to finish.
-    public static final Pattern WORD_CHARS_PATTERN = Pattern.compile("^\\w+$");
+    
 }

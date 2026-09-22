@@ -1,5 +1,6 @@
 package edu.cornell.kfs.cemi.module.cg.batch.factory;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.MessageFormat;
 import java.util.Iterator;
@@ -58,11 +59,12 @@ public class CemiAwardHeaderDataBoFactory {
         Validate.notNull(award, "award cannot be null for CemiAwardHeaderDataBoFactory");
         Validate.notNull(awardExtendedAttribute, "awardExtendedAttribute cannot be null for CemiAwardHeaderDataBoFactory");
         Validate.notNull(allAccountsWithSubAccountsIterator, "allAccountsWithSubAccountsIterator cannot be null for CemiAwardHeaderDataBoFactory");
-        Validate.notNull(awardOrgCode, "awardOrgCode cannot be null for CemiAwardHeaderDataBoFactory");
+        Validate.notBlank(awardOrgCode, "awardOrgCode cannot be blank for CemiAwardHeaderDataBoFactory");
         Validate.notNull(awardNovelutionAttributes, "awardNovelutionAttributes cannot be null for CemiAwardHeaderDataBoFactory");
-        Validate.notNull(allAwardTranslateTableMaps, "allAwardTranslateTableMaps cannot be null for CemiAwardHeaderDataBoFactory");
-        Validate.notNull(jobRunDateString, "jobRunDateString cannot be null for CemiAwardHeaderDataBoFactory");
+        Validate.notBlank(jobRunDateString, "jobRunDateString cannot be blank for CemiAwardHeaderDataBoFactory");
         Validate.notNull(dateTimeService, "dateTimeService cannot be null for CemiAwardHeaderDataBoFactory");
+        Validate.notNull(cemiAwardExtractDao, "cemiAwardExtractDao cannot be null for CemiAwardHeaderDataBoFactory");
+        Validate.notNull(allAwardTranslateTableMaps, "allAwardTranslateTableMaps cannot be null for CemiAwardHeaderDataBoFactory");
         this.award = award;
         this.awardExtendedAttribute = awardExtendedAttribute;
         this.allAccountsWithSubAccountsIterator = allAccountsWithSubAccountsIterator;
@@ -211,7 +213,7 @@ public class CemiAwardHeaderDataBoFactory {
     // Original mapping requirement was: Get all accounts on award, find control account, map account type to company
     // Changed to hard coded value requirement of C001
     private String determineCompany() {
-        return CemiAwardConstants.COMPANY_CORNELL_UNIVERISY_MAIN_CAMPUS;
+        return CemiAwardConstants.COMPANY_CORNELL_UNIVERSITY_MAIN_CAMPUS;
     }
     
     private String determineSubAward(String primeSponsor) {
@@ -259,8 +261,8 @@ public class CemiAwardHeaderDataBoFactory {
             return required;
         } 
         String cleanedAmountString = removeFormattingFromNovelutionMoneyValueString(costShareTotalAmountString);
-        float amount = Float.parseFloat(cleanedAmountString);
-        if (amount != 0) {
+        BigDecimal amount = new BigDecimal(cleanedAmountString);
+        if (amount.compareTo(BigDecimal.ZERO) == 0) {
             required = CemiBaseConstants.YES;
         }
         return required;
@@ -279,20 +281,20 @@ public class CemiAwardHeaderDataBoFactory {
     }
     
     private String determineFederalAwardIdNumber(String novelutionFederalAwardIdNumber) {
+        
         if (StringUtils.isBlank(novelutionFederalAwardIdNumber) ||
-            novelutionFederalAwardIdNumber.equalsIgnoreCase(CemiAwardConstants.NULL)) { 
-                return  CemiBaseConstants.EMPTY_STRING;
+                novelutionFederalAwardIdNumber.equalsIgnoreCase(CemiAwardConstants.NULL)) { 
+                    return  CemiBaseConstants.EMPTY_STRING;
         }
         return novelutionFederalAwardIdNumber;
     }
     
     private String setToEmptyStringWhenValueIsBlank(String value) {
-        return StringUtils.isNotBlank(value) ? value : CemiBaseConstants.EMPTY_STRING;
+        return StringUtils.defaultIfBlank(value, CemiBaseConstants.EMPTY_STRING);
     }
 
     private String determineTranslationValueFor(Map<String, String> translationMap, String codeToUseForLookup) {
-        String valueFound = translationMap.get(codeToUseForLookup);
-        return StringUtils.isNotBlank(valueFound) ? valueFound : CemiBaseConstants.EMPTY_STRING;
+        return translationMap.getOrDefault(codeToUseForLookup, CemiBaseConstants.EMPTY_STRING);
     }
     
     private String determineTranslationValueForAwardHeaderLifeCycleStatus(Map<String, String> translationMap, String codeToUseForLookup) {

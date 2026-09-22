@@ -4,8 +4,6 @@ public final class CemiAwardConstants {
     
     /* Award */
     public static final String SPREADSHEET_KEY_FORMAT = "ITH_{0}";
-    public static final String AWARD_REFERENCE_ID_FORMAT = "ITH_{0}";
-    public static final String AWARD_NUMBER_FORMAT = "ITH_{0}";
     public static final String RECEIVABLE_CONTRACT_LINE_REFERENCE_ID_ACCOUNT_FORMAT = "{0}_{1}";
     public static final String RECEIVABLE_CONTRACT_LINE_REFERENCE_ID_SUB_ACCOUNT_FORMAT = "{0}_{1}_{2}";
 
@@ -18,7 +16,6 @@ public final class CemiAwardConstants {
     public static final String ITHACA_STANDARD_INTERIM = "Ithaca_Standard_Interim";
     public static final String AWARD = "Award";
     public static final String NO = "N";
-    public static final String N = "N";
     public static final String NULL = "NULL";
     
     public static final String KFS_FIX_BAD_DATA = "KFS_FIX_BAD_DATA";
@@ -51,7 +48,7 @@ public final class CemiAwardConstants {
     }
     
     // Company value to use for Ithaca hard coding.
-    public static final String COMPANY_CORNELL_UNIVERISY_MAIN_CAMPUS = "C001";
+    public static final String COMPANY_CORNELL_UNIVERSITY_MAIN_CAMPUS = "C001";
     
     // Award Header: Award Life Cycle Status: Many-to-many legacy codes requiring additional logic 
     //               before translate table lookup can be performed using these key values.

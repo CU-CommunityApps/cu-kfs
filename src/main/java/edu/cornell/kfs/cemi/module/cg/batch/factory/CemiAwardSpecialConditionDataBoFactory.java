@@ -67,7 +67,7 @@ public class CemiAwardSpecialConditionDataBoFactory {
         CemiAwardSpecialConditionDataBo awardSpecialConditionDataBo = new CemiAwardSpecialConditionDataBo();
         
         final String proposalNumberString = setToEmptyStringWhenValueIsBlank(award.getProposalNumber());
-        final String chartOfAccountsCodeString = determineCharOfAccountsCode(accountSubAccountAttributes, useSubAccount);
+        final String chartOfAccountsCodeString = determineChartOfAccountsCode(accountSubAccountAttributes, useSubAccount);
         final String accountNumberString = this.determineAccountNumber(accountSubAccountAttributes, useSubAccount);
         final String awardLineDataRowIdString = convertIntToString(awardLineDataRowId);
         final String awardLineDataLineNumberString = convertIntToString(awardLineDataLineNumber);
@@ -91,7 +91,7 @@ public class CemiAwardSpecialConditionDataBoFactory {
         return awardSpecialConditionDataBo;
     }
     
-    private String determineCharOfAccountsCode(CemiAwardLegacyAccountSubAccountDataBo accountSubAccountAttributes,
+    private String determineChartOfAccountsCode(CemiAwardLegacyAccountSubAccountDataBo accountSubAccountAttributes,
             boolean useSubAccount) {
         if (useSubAccount) {
             return setToEmptyStringWhenValueIsBlank(accountSubAccountAttributes.getChartOfAccountsCode());
@@ -108,7 +108,7 @@ public class CemiAwardSpecialConditionDataBoFactory {
     }
 
     private String setToEmptyStringWhenValueIsBlank(String value) {
-        return StringUtils.isNotBlank(value) ? value : CemiBaseConstants.EMPTY_STRING;
+        return StringUtils.defaultIfBlank(value, CemiBaseConstants.EMPTY_STRING);
     }
 
     private String convertIntToString(int value) {

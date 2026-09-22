@@ -54,10 +54,7 @@ public class CemiAwardAllocationDataBoFactory {
             final int specialConditionDataRowId, final int budgetDataRowId, final String jobRunDateString, final boolean maskSensitiveData) {
         Validate.notNull(award, "award cannot be null for CemiAwardAllocationDataBoFactory");
         Validate.notNull(accountSubAccountAttributes, "accountSubAccountAttributes cannot be null for CemiAwardAllocationDataBoFactory");
-        Validate.notNull(awardLineDataRowId, "awardLineDataRowId cannot be null for CemiAwardAllocationDataBoFactory");
-        Validate.notNull(specialConditionDataRowId, "specialConditionDataRowId cannot be null for CemiAwardAllocationDataBoFactory");
-        Validate.notNull(budgetDataRowId, "budgetDataRowId cannot be null for CemiAwardAllocationDataBoFactory");
-        Validate.notNull(jobRunDateString, "jobRunDateString cannot be null for CemiAwardAllocationDataBoFactory");
+        Validate.notBlank(jobRunDateString, "jobRunDateString cannot be blank for CemiAwardAllocationDataBoFactory");
         this.award = award;
         this.accountSubAccountAttributes = accountSubAccountAttributes;
         this.useSubAccount = useSubAccount;
@@ -73,8 +70,8 @@ public class CemiAwardAllocationDataBoFactory {
         CemiAwardAllocationDataBo awardAllocationDataBo = new CemiAwardAllocationDataBo();
         
         final String proposalNumberString = setToEmptyStringWhenValueIsBlank(award.getProposalNumber());
-        final String chartOfAccountsCode = determineCharOfAccountsCode(accountSubAccountAttributes, useSubAccount);
-        final String accountNumber = this.determineAccountNumber(accountSubAccountAttributes, useSubAccount);
+        final String chartOfAccountsCode = determineChartOfAccountsCode(accountSubAccountAttributes, useSubAccount);
+        final String accountNumber = determineAccountNumber(accountSubAccountAttributes, useSubAccount);
         final String awardLineDataRowIdString = convertIntToString(awardLineDataRowId);
         final String awardLineDataLineNumberString = convertIntToString(awardLineDataLineNumber);
         final String specialConditionDataRowIdString = convertIntToString(specialConditionDataRowId);
@@ -98,7 +95,7 @@ public class CemiAwardAllocationDataBoFactory {
         return awardAllocationDataBo;
     }
     
-    private String determineCharOfAccountsCode(CemiAwardLegacyAccountSubAccountDataBo accountSubAccountAttributes,
+    private String determineChartOfAccountsCode(CemiAwardLegacyAccountSubAccountDataBo accountSubAccountAttributes,
             boolean useSubAccount) {
         if (useSubAccount) {
             return setToEmptyStringWhenValueIsBlank(accountSubAccountAttributes.getChartOfAccountsCode());
@@ -115,7 +112,7 @@ public class CemiAwardAllocationDataBoFactory {
     }
     
     private String setToEmptyStringWhenValueIsBlank(String value) {
-        return StringUtils.isNotBlank(value) ? value : CemiBaseConstants.EMPTY_STRING;
+        return StringUtils.defaultIfBlank(value, CemiBaseConstants.EMPTY_STRING);
     }
     
     private String convertIntToString(int value) {

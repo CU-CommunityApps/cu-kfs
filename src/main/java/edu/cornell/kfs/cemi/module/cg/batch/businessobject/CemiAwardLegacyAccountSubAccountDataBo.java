@@ -43,6 +43,7 @@ public class CemiAwardLegacyAccountSubAccountDataBo extends PersistableBusinessO
         this.finalBilledIndicator = finalBilledIndicator;
         this.currentLastBilledDate = currentLastBilledDate;
         this.previousLastBilledDate = previousLastBilledDate;
+        this.accountSubFundGroupCode = accountSubFundGroupCode;
         this.accountCgAccountResponsibilityId = accountCgAccountResponsibilityId;
         this.accountTypeCode = accountTypeCode;
         this.accountCgCfdaNumber = accountCgCfdaNumber;
