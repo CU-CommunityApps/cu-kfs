@@ -292,10 +292,10 @@ public class CemiPurchaseOrderHeaderBoFactory {
         Validate.validState(workflowDocument.isFinal() || workflowDocument.isProcessed(),
                 "PO Document Number %s should have been in PROCESSED or FINAL status",
                 purchaseOrderDocument.getDocumentNumber());
-        final LocalDateTime dateFinalized = workflowDocument.getDateFinalized();
-        Validate.validState(dateFinalized != null, "PO Document Number %s should have had a finalization date",
+        final LocalDateTime lastApprovedDate = workflowDocument.getDateApproved();
+        Validate.validState(lastApprovedDate != null, "PO Document Number %s should have had a Last Approved Date",
                 purchaseOrderDocument.getDocumentNumber());
-        return CemiPurchaseOrderUtils.formatAsDate(dateFinalized);
+        return CemiPurchaseOrderUtils.formatAsDate(lastApprovedDate);
     }
 
     private String determineFreightAmount() {
