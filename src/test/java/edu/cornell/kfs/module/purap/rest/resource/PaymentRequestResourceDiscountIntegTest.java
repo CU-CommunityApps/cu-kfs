@@ -58,22 +58,13 @@ public class PaymentRequestResourceDiscountIntegTest extends KualiIntegTestBase 
         gson = new GsonBuilder()
                 .setDateFormat("MM/dd/yyyy")
                 .create();
+    }
 
-    /**
-     * Test discount calculation simulating the EXACT flow in PaymentRequestResource.
-     * 
-     * PaymentRequestResource flow (lines 96-100):
-     * 1. createPaymentRequestDocumentFromDto() - creates PREQ, applies DTO items
-     * 2. calculatePaymentRequest(preqDoc) - recalculates discount with updated prices
-     * 
-     * This test verifies step 2 properly recalculates discount.
-     */
     public void testPaymentRequestResourceCalculateMethodFlow() throws Exception {
         LOG.info("testPaymentRequestResourceCalculateMethodFlow: Starting test");
         
         changeCurrentUser(UserNameFixture.ccs1);
         
-        // Create PO with payment terms
         PurchaseOrderDocument po = PurchaseOrderFixture.PO_NON_B2B_OPEN
                 .createPurchaseOrderdDocument(documentService);
         po.setVendorPaymentTermsCode("00N30");
@@ -92,7 +83,6 @@ public class PaymentRequestResourceDiscountIntegTest extends KualiIntegTestBase 
         
         changeCurrentUser(UserNameFixture.mls398);
         
-        // Step 1: Create DTO (simulates JSON from REST API)
         PaymentRequestDto dto = new PaymentRequestDto();
         dto.setVendorNumber(po.getVendorNumber());
         dto.setPoNumber(po.getPurapDocumentIdentifier().toString());
@@ -101,7 +91,6 @@ public class PaymentRequestResourceDiscountIntegTest extends KualiIntegTestBase 
         dto.setInvoiceNumber("TEST-RESOURCE-" + System.currentTimeMillis());
         dto.setInvoiceAmount("1000.00");
         
-        // Add line item with different price than PO
         PaymentRequestLineItemDto itemDto = new PaymentRequestLineItemDto();
         itemDto.setLineNumber("1");
         itemDto.setItemQuantity("10");
@@ -112,7 +101,6 @@ public class PaymentRequestResourceDiscountIntegTest extends KualiIntegTestBase 
         noteDto.setNoteText("Test PaymentRequestResource flow");
         dto.getNotes().add(noteDto);
         
-        // Step 2: Call createPaymentRequestDocumentFromDto (PaymentRequestResource line 96-97)
         PaymentRequestResultsDto results = new PaymentRequestResultsDto();
         PaymentRequestDocument preqDoc = cuPaymentRequestService
                 .createPaymentRequestDocumentFromDto(dto, results);
@@ -120,7 +108,6 @@ public class PaymentRequestResourceDiscountIntegTest extends KualiIntegTestBase 
         assertNotNull("PREQ should be created", preqDoc);
         assertTrue("PREQ creation should be valid", results.isValid());
         
-        // At this point, discount exists but may be stale (based on PO prices)
         PaymentRequestItem discountItemBeforeCalc = findDiscountItem(preqDoc);
         KualiDecimal discountBeforeCalc = discountItemBeforeCalc != null ? 
                 discountItemBeforeCalc.getExtendedPrice() : KualiDecimal.ZERO;
@@ -128,13 +115,10 @@ public class PaymentRequestResourceDiscountIntegTest extends KualiIntegTestBase 
         LOG.info("testPaymentRequestResourceCalculateMethodFlow: Discount before calculatePaymentRequest={}", 
                 discountBeforeCalc);
         
-        // Step 3: Call calculatePaymentRequest (PaymentRequestResource line 100)
-        // This is the KEY method that recalculates discount!
-        // Simulates: calculatePaymentRequest(preqDoc) at line 154-172
-        preqDoc.updateExtendedPriceOnItems();  // Line 156
-        cuPaymentRequestService.calculatePaymentRequest(preqDoc, true);  // Line 162 with TRUE!
+
+        preqDoc.updateExtendedPriceOnItems();
+        cuPaymentRequestService.calculatePaymentRequest(preqDoc, true);
         
-        // Step 4: Verify discount was recalculated correctly
         PaymentRequestItem discountItem = findDiscountItem(preqDoc);
         assertNotNull("Discount item should exist after calculatePaymentRequest", discountItem);
         
@@ -151,10 +135,6 @@ public class PaymentRequestResourceDiscountIntegTest extends KualiIntegTestBase 
         LOG.info("testPaymentRequestResourceCalculateMethodFlow: SUCCESS - Discount calculated correctly!");
     }
 
-    /**
-     * Test that verifies discount recalculation when item prices change
-     * through the PaymentRequestResource.calculatePaymentRequest() method.
-     */
     public void testDiscountRecalculationAfterItemPriceUpdate() throws Exception {
         LOG.info("testDiscountRecalculationAfterItemPriceUpdate: Starting test");
         
@@ -176,7 +156,6 @@ public class PaymentRequestResourceDiscountIntegTest extends KualiIntegTestBase 
         
         changeCurrentUser(UserNameFixture.mls398);
         
-        // Create PREQ from PO
         PaymentRequestDocument preq = (PaymentRequestDocument) documentService
                 .getNewDocument(PaymentRequestDocument.class);
         preq.initiateDocument();
@@ -187,7 +166,6 @@ public class PaymentRequestResourceDiscountIntegTest extends KualiIntegTestBase 
         
         preq.populatePaymentRequestFromPurchaseOrder(po);
         
-        // Get initial totals
         KualiDecimal initialPreTax = preq.getGrandPreTaxTotalExcludingDiscount();
         PaymentRequestItem discountItem = findDiscountItem(preq);
         KualiDecimal initialDiscount = discountItem != null ? discountItem.getExtendedPrice() : KualiDecimal.ZERO;
@@ -201,7 +179,7 @@ public class PaymentRequestResourceDiscountIntegTest extends KualiIntegTestBase 
             if (item instanceof PaymentRequestItem) {
                 PaymentRequestItem preqItem = (PaymentRequestItem) item;
                 if (preqItem.getItemType() != null && 
-                        preqItem.getItemType().isItemTypeAboveTheLineIndicator() &&
+                        preqItem.getItemType().isLineItemIndicator() &&
                         preqItem.getItemQuantity() != null) {
                     KualiDecimal originalQty = preqItem.getItemQuantity();
                     preqItem.setItemQuantity(originalQty.multiply(new KualiDecimal(2)));
@@ -215,11 +193,9 @@ public class PaymentRequestResourceDiscountIntegTest extends KualiIntegTestBase 
         
         assertTrue("Should have modified at least one item", itemModified);
         
-        // Execute PaymentRequestResource.calculatePaymentRequest() logic
         preq.updateExtendedPriceOnItems();
         cuPaymentRequestService.calculatePaymentRequest(preq, true);
         
-        // Verify discount was recalculated
         KualiDecimal newPreTax = preq.getGrandPreTaxTotalExcludingDiscount();
         discountItem = findDiscountItem(preq);
         KualiDecimal newDiscount = discountItem != null ? discountItem.getExtendedPrice() : KualiDecimal.ZERO;
@@ -227,11 +203,9 @@ public class PaymentRequestResourceDiscountIntegTest extends KualiIntegTestBase 
         LOG.info("testDiscountRecalculationAfterItemPriceUpdate: New PreTax={}, Discount={}", 
                 newPreTax, newDiscount);
         
-        // Verify totals changed
         assertTrue("PreTax total should have changed", !newPreTax.equals(initialPreTax));
         assertTrue("Discount should have changed", !newDiscount.equals(initialDiscount));
         
-        // Verify discount matches new total
         KualiDecimal expectedDiscount = newPreTax.multiply(new KualiDecimal(discountPercent)).negated();
         KualiDecimal difference = newDiscount.subtract(expectedDiscount).abs();
         
@@ -241,7 +215,6 @@ public class PaymentRequestResourceDiscountIntegTest extends KualiIntegTestBase 
         LOG.info("testDiscountRecalculationAfterItemPriceUpdate: SUCCESS - Discount recalculated correctly!");
     }
 
-    // Helper method
     private PaymentRequestItem findDiscountItem(PaymentRequestDocument preq) {
         for (Object item : preq.getItems()) {
             if (item instanceof PaymentRequestItem) {
@@ -255,4 +228,3 @@ public class PaymentRequestResourceDiscountIntegTest extends KualiIntegTestBase 
         return null;
     }
 }
-
