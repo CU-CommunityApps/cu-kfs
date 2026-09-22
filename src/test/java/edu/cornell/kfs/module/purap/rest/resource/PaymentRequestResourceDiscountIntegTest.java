@@ -31,13 +31,7 @@ import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestLineItemDto;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestNoteDto;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestResultsDto;
 
-/**
- * Integration test for PaymentRequestResource REST endpoint to verify
- * discount calculation through the complete API flow.
- * 
- * Tests the PaymentRequestResource.calculatePaymentRequest() method which is called
- * at line 100 after createPaymentRequestDocumentFromDto().
- */
+ // Integration test for PaymentRequestResource REST endpoint to verify discount calculation through the complete API flow.
 @ConfigureContext(session = UserNameFixture.mls398)
 public class PaymentRequestResourceDiscountIntegTest extends KualiIntegTestBase {
 
