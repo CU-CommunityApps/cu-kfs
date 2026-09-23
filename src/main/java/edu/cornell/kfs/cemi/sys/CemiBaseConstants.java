@@ -41,5 +41,5 @@ public final class CemiBaseConstants {
     public static final int BULK_DATA_BATCH_SIZE = 200;
     
     public static final String LAST_UPDT_TS = "LAST_UPDT_TS";
-    
+
 }

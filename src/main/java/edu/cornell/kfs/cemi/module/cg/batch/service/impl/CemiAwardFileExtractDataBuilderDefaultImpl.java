@@ -153,16 +153,78 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
         // Setup iterator prior to loop for award lines associated with the current award being processed
         Iterator<CemiAwardLegacyAccountSubAccountDataBo> accountsSubAccountsBeingProcessed = awardAccountsSubAccountsCollection.iterator();
 
+        /*
+         * This large comment describes the complex for-loop logic that creates the actual lines in the extract file.
+         *
+         * The two booleans and the two strings immediately after this comment determine what is being placed on a
+         * particular Award data extract line and is driven by the account and sub-account information from business 
+         * object accountsSubAccountsBeingProcessed. 
+         * 
+         * Data in that business object is in the form of:
+         *        Iterator-LINE-1:     Award-A    Account-D    Sub-Account-X
+         *        Iterator-LINE-2:     Award-A    Account-D    Sub-Account-Y
+         *        Iterator-LINE-3:     Award-A    Account-E    blank
+         *        Iterator-LINE-4:     Award-A    Account-F    Sub-Account-X
+         *        Iterator-LINE-5:     Award-B    Account-D    Sub-Account-Z
+         *        Iterator-LINE-6:     Award-C    Account-F    blank
+         * 
+         * But, the output in the Submit_Award extract file needs to be in this format where there first needs to be 
+         * listed an account line without any sub-account (blank) for the first occurrence of that account on an award
+         * that is then followed by all sub-accounts that exist.
+         * 
+         * Using the business object data listed above the extract file output needs to look like as:
+         *        EXTRACT-LINE-1    Award-A    Account-D    blank                    (Iterator-LINE-1 data)
+         *        EXTRACT-LINE-2    Award-A    Account-D    Sub-Account-X            (Iterator-LINE-1 data)
+         *        
+         *        EXTRACT-LINE-3    Award-A    Account-D    Sub-Account-Y            (Iterator-LINE-2 data)
+         *        
+         *        EXTRACT-LINE-4    Award-A    Account-E    blank                    (Iterator-LINE-3 data)
+         *        
+         *        EXTRACT-LINE-5    Award-A    Account-F    blank                    (Iterator-LINE-4 data)
+         *        EXTRACT-LINE-6    Award-A    Account-F    Sub-Account-X            (Iterator-LINE-4 data)
+         *        
+         *        EXTRACT-LINE-7    Award-B    Account-D    blank                    (Iterator-LINE-5 data)
+         *        EXTRACT-LINE-8    Award-B    Account-D    Sub-Account-Z            (Iterator-LINE-5 data)
+         *        
+         *        EXTRACT-LINE-9    Award-C    Account-F    blank                    (Iterator-LINE-6 data)
+         *
+         * 
+         * The for-loop below iterates through each business object Interator-LINE-1 through Interator-LINE-6.
+         * 
+         * The first if-clause is entered when a NEW account number is encountered.
+         * This logic is controlled by local variables currentAccountBeingProcessed and previousAccountProcessed.
+         * All factories within that if-clause's scope are sent boolean "useAccount" so that key line data in the
+         * extract file is formatted for an account.  The first line with no sub-account present is output by 
+         * this first if-clause.
+         * 
+         * The second if-clause is entered whenever a sub-account EXISTS.
+         * All factories within the scope of the second if-clause are sent boolean "useSubAccount" to inform those 
+         * factories to format the keys representing that line data as a sub-account. All sub-account lines are output
+         * by this second if-clause.
+         * 
+         * Local variables currentAccountBeingProcessed and previousAccountProcessed keep track of when the account
+         * value changes between the Iterator-LINE-1 through Iterator-LINE-6 lines so that the first if-clause
+         * is entered correctly.
+         * 
+         * All called factories are coded using logic for the term "useSubAccount" being positive (true).
+         * 
+         * This data builder has the "useAccount" and "useSubAccount" set logically opposite from each other.
+         * "useSubAccount" is initialized as positive (true) and "useAccount" is initalized to the logical opposite
+         * of "useSubAccount". 
+         * 
+         * This was done so that the readability of the logic in this class and in the factories made sense for the 
+         * control flow.
+         */
         boolean useSubAccount = true;
         boolean useAccount = !useSubAccount;
+        String currentAccountBeingProcessed;
+        String previousAccountProcessed = CemiBaseConstants.EMPTY_STRING;
         
         int awardLineDataRowIdCounter = 0;  //start with a value of 1 and increment by 1 until the next award, then return to a value of 1 (carry all of the data down for the columns to the left when populating row id of 2, 3 etc)
         int awardLineDataLineNumberCounter = 0; //TODO FIXME QUESTION ?same as awardLineDataRowIdCounter?? : ITH: Incremental number for each additional award line data - check in legacy system for line number
         int specialConditionDataRowIdCounter = 0; //Increment by 1 starting at a value of 1 for each additional special condition by Award, return to a value of 1 for the next Award
         int budgetDataRowIdCounter = 1; // hardcoded to 1 do not increment
-        
-        String currentAccountBeingProcessed;
-        String previousAccountProcessed = CemiBaseConstants.EMPTY_STRING;
+
         
         for (final CemiAwardLegacyAccountSubAccountDataBo processingAccountSubAccount : IteratorUtils.asIterable(accountsSubAccountsBeingProcessed)) {
             
@@ -200,6 +262,7 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
                             awardLineDataRowIdCounter, awardLineDataLineNumberCounter, specialConditionDataRowIdCounter,
                             budgetDataRowIdCounter, jobRunDateString, maskSensitiveData);
             
+                // write out the first account line with NO subaccount information.
                 createAndStoreAwardFileSubmitAwardTabRowBo(headerBo, awardLineAccountBo, specialConditionBo, budgetBo, allocationBo);
                 previousAccountProcessed = currentAccountBeingProcessed;
             }

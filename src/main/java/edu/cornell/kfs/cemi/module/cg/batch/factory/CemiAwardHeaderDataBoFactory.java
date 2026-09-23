@@ -262,7 +262,7 @@ public class CemiAwardHeaderDataBoFactory {
         } 
         String cleanedAmountString = removeFormattingFromNovelutionMoneyValueString(costShareTotalAmountString);
         BigDecimal amount = new BigDecimal(cleanedAmountString);
-        if (amount.compareTo(BigDecimal.ZERO) == 0) {
+        if (amount.compareTo(BigDecimal.ZERO) != 0) {
             required = CemiBaseConstants.YES;
         }
         return required;
@@ -284,7 +284,7 @@ public class CemiAwardHeaderDataBoFactory {
         
         if (StringUtils.isBlank(novelutionFederalAwardIdNumber) ||
                 novelutionFederalAwardIdNumber.equalsIgnoreCase(CemiAwardConstants.NULL)) { 
-                    return  CemiBaseConstants.EMPTY_STRING;
+            return  CemiBaseConstants.EMPTY_STRING;
         }
         return novelutionFederalAwardIdNumber;
     }
