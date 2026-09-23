@@ -17,8 +17,8 @@ public class CemiRegisterAssetExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase
     public Stream<Asset> getAssetsForCemiRegisterAssetExtractAsCloseableStream() {
         final String assetNumberCondition;
         
-      //Local environment configuration property setting used by base class method call 
-      //to reduce processing time for local development during CEMI project work.
+        //Local environment configuration property setting used by base class method call 
+        //to reduce processing time for local development during CEMI project work.
         if (shouldUseLessDataDuringCemiDevelopment()) {
             // This conditional was added to reduce processing time for local development during CEMI project work.
             // The values were chosen for the WHERE clause to restrict the result set to roughly 1000 rows as
@@ -33,11 +33,10 @@ public class CemiRegisterAssetExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase
         }
         final Criteria criteria = new Criteria();
         criteria.addSql(assetNumberCondition);
-        //
-        //
+
         final QueryByCriteria query = new QueryByCriteria(Asset.class, criteria);
         query.addOrderByAscending(KFSPropertyConstants.CAPITAL_ASSET_NUMBER);
-        //
+
         return CuOjbUtils.buildCloseableStreamForQueryResults(
                 Asset.class,
                 () -> getPersistenceBrokerTemplate().getIteratorByQuery(query));

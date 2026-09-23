@@ -40,7 +40,7 @@
         <field-descriptor name="depreciationThresholdOverride" column="DEPR_THRLD_OVRD" jdbc-type="VARCHAR"/>
         <field-descriptor name="depreciationStartDate" column="DEPR_STRT_DT" jdbc-type="VARCHAR"/>
         <field-descriptor name="remainingDepreciationPeriods" column="RMNG_DEPR_PRDS" jdbc-type="VARCHAR"/>
-        <field-descriptor name="accumulatedDepreciation" column="ACCMLTN_DEPR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="accumulatedDepreciation" column="ACCMLTD_DEPR" jdbc-type="VARCHAR"/>
     </class-descriptor>
     
 </descriptor-repository>
