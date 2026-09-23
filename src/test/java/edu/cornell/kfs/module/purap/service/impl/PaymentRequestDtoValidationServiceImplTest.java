@@ -76,7 +76,7 @@ public class PaymentRequestDtoValidationServiceImplTest {
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_FIELD_FORMATTING))
                 .thenReturn("{0} is not formatted properly.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENT_REQUEST_ITEM_TOTAL_NOT_EQUAL_INVOICE_TOTAL))
-                .thenReturn("Error: The sum of PREQ items amount ({0}) does not equal the Invoice total ({1})");
+                .thenReturn("Error: The sum of the items amount ({0}) minus the discount amount ({1}) does not equal the invoice total ({2})");
         return service;
     }
 

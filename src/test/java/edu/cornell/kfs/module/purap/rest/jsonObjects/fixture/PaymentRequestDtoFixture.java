@@ -157,7 +157,7 @@ public enum PaymentRequestDtoFixture {
             null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
             StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), false,
-            buildMessageList(), buildMessageList("Error: The sum of PREQ items amount (1000.00) does not equal the Invoice total (500.00)")),
+            buildMessageList(), buildMessageList("Error: The sum of the items amount (1000.00) minus the discount amount (0.00) does not equal the invoice total (500.00)")),
     VALIDATION_TEST_ITEMS_PLUS_FREIGHT_EQUALS_INVOICE(StringUtils.EMPTY, "1234-1", "98769",
             "11/25/2025", "11/26/2025",
             "invoiceNumber", "1150", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
@@ -171,7 +171,7 @@ public enum PaymentRequestDtoFixture {
             "50", "Freight", "75", "Misc", "25",
             "Shipping", buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), false,
-            buildMessageList(), buildMessageList("Error: The sum of PREQ items amount (1150.00) does not equal the Invoice total (1200.00)"));
+            buildMessageList(), buildMessageList("Error: The sum of the items amount (1150.00) minus the discount amount (0.00) does not equal the invoice total (1200.00)"));
 
     public final String jsonFileName;
     public final String vendorNumber;
