@@ -26,8 +26,8 @@ public final class CemiRegisterAssetConstants {
     }
     
     public static final class WorkdayCompany{
-        public static final String STATUTORY = "C001";
-        public static final String ENDOWED = "C002";
+        public static final String CU_MAIN_CAMPUS = "C001";
+        public static final String CU_COLLEGES_HCM = "C002";
     }
     
     public static final String DEFAULT_ITHACA_COST_CENTER = "CC000089";
@@ -40,10 +40,9 @@ public final class CemiRegisterAssetConstants {
     
     public static final String COST_CENTER_ID = "Cost_Center_ID";
     public static final String FUND_ID = "Fund_ID";
-    public static final String PROGRAM_ID = "Program_ID";
     public static final String CORNELL_UNIVERSITY_ITHACA = "Cornell_University_Ithaca";
     public static final String STRAIGHT_LINE = "STRAIGHT_LINE";
-    public static final String DEPRECATION_START_DATE = "7/1/2026";
+    public static final String DEPRECIATION_START_DATE = "7/1/2026";
     
     
     public enum RegisterAssetTranslateTables {
