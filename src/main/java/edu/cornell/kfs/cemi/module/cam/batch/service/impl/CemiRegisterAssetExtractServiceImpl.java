@@ -73,7 +73,7 @@ public class CemiRegisterAssetExtractServiceImpl extends CemiDataExtractServiceB
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void generateDataConversionExtractFile(final LocalDateTime jobRunDate) {
-        LOG.info("generateRegisterAssetExtractFile, Starting creation of CEMI Extract file {}",
+        LOG.info("generateDataConversionExtractFile, Starting creation of CEMI Extract file {}",
                 CemiRegisterAssetConstants.REGISTER_ASSET_EXTRACT_PLAIN_FILENAME);
         generateFileForDataExtract(jobRunDate, CemiRegisterAssetConstants.REGISTER_ASSET_EXTRACT_PLAIN_FILENAME,
                 CemiRegisterAssetConstants.REGISTER_ASSET_EXTRACT_FILENAME_PREFIX);

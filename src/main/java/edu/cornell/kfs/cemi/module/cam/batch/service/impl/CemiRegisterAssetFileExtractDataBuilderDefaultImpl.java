@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-//import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 
 import edu.cornell.kfs.cemi.module.cam.CemiRegisterAssetConstants.RegisterAssetTranslateTables;
