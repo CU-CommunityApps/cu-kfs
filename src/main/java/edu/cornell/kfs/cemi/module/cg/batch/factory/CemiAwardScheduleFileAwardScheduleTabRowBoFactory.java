@@ -1,4 +1,4 @@
-package edu.cornell.kfs.cemi.module.cg.batch.service.impl;
+package edu.cornell.kfs.cemi.module.cg.batch.factory;
 
 import java.sql.Date;
 import java.text.MessageFormat;
