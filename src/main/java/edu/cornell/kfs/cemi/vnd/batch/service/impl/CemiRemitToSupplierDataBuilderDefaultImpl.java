@@ -1,7 +1,5 @@
 package edu.cornell.kfs.cemi.vnd.batch.service.impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -30,8 +27,8 @@ import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.CemiBasePropertyConstants;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiOrmDataBuilderBase;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
-import edu.cornell.kfs.cemi.vnd.CemiVendorPropertyConstants;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants.SupplierExtractSheets;
+import edu.cornell.kfs.cemi.vnd.CemiVendorPropertyConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileBankAccountsTabRowBo;
@@ -49,40 +46,11 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
     private final String supplierJobRunDate;
     private final boolean maskSensitiveData;
 
-    /*
-     * Using reflection to read the emails from the Supplier Emails Tab Row BO, to provide better flexibility in case
-     * the Supplier Extract adds more emails (due to such BOs storing all of a Supplier's emails in one record).
-     */
-    private final List<Method> supplierEmailAddressGetterMethods;
-
     public CemiRemitToSupplierDataBuilderDefaultImpl(final BusinessObjectService businessObjectService,
             final String jobRunDate, final String supplierJobRunDate, final boolean maskSensitiveData) {
         super(businessObjectService, jobRunDate, CemiRemitToSupplierBo.class);
         this.supplierJobRunDate = supplierJobRunDate;
         this.maskSensitiveData = maskSensitiveData;
-        this.supplierEmailAddressGetterMethods = findAllGetterMethodsForRetrievingSupplierEmailAddresses();
-        Validate.validState(!supplierEmailAddressGetterMethods.isEmpty(), "Could not find any email address "
-                + "getter methods on the Supplier Emails Tab Row BO; if they have been renamed, then please "
-                + "modify the Remit To Supplier Extract's builder class accordingly");
-    }
-
-    private List<Method> findAllGetterMethodsForRetrievingSupplierEmailAddresses() {
-        final Stream.Builder<Method> getterMethods = Stream.builder();
-        final String baseGetterName = "getEmailAddress";
-        int nextIndex = 0;
-        boolean moreEmailGetterMethodsAvailable = true;
-
-        do {
-            try {
-                nextIndex++;
-                final Method emailGetter = CemiSupplierFileEmailsTabRowBo.class.getMethod(baseGetterName + nextIndex);
-                getterMethods.add(emailGetter);
-            } catch (final NoSuchMethodException e) {
-                moreEmailGetterMethodsAvailable = false;
-            }
-        } while (moreEmailGetterMethodsAvailable);
-
-        return getterMethods.build().collect(Collectors.toUnmodifiableList());
     }
 
     /*
@@ -277,9 +245,6 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
         }
 
         final CharSequence[] supplierEmails = getSupplierEmails(supplierEmailsTab);
-        Validate.validState(supplierEmails.length > 0, "Unable to read email addresses from the Supplier "
-                + "Emails Tab Row business object; code changes might be needed if the BO's getter methods "
-                + "have been renamed");
 
         return addressGroup.stream()
                 .map(VendorAddress::getVendorAddressEmailAddress)
@@ -288,20 +253,18 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
                 .orElse(KFSConstants.EMPTY_STRING);
     }
 
+    /*
+     * NOTE: If the Supplier Extract adds more email slots to the "Emails" tab/sheet,
+     *       then this method will need to be updated accordingly.
+     */
     private CharSequence[] getSupplierEmails(final CemiSupplierFileEmailsTabRowBo supplierEmailsTab) {
-        return supplierEmailAddressGetterMethods.stream()
-                .map(emailGetterMethod -> getEmailAddress(supplierEmailsTab, emailGetterMethod))
+        return Stream.of(
+                        supplierEmailsTab.getEmailAddress1(),
+                        supplierEmailsTab.getEmailAddress2(),
+                        supplierEmailsTab.getEmailAddress3()
+                )
                 .filter(StringUtils::isNotBlank)
                 .toArray(CharSequence[]::new);
-    }
-
-    private String getEmailAddress(final CemiSupplierFileEmailsTabRowBo supplierEmailsTab,
-            final Method emailGetterMethod) {
-        try {
-            return (String) emailGetterMethod.invoke(supplierEmailsTab);
-        } catch (final IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
     }
 
 }
