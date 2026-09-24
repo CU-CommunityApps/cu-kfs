@@ -456,6 +456,20 @@
 
     <alias name="cemiIso3CharCountryCodes" alias="Country_Iso2CharCountry-TranslateIso3CharCountry"/>
 
+    <!-- FDM Project Translate Table Import -->
+
+    <bean id="cemiWorkdayCommonProject" parent="cemiWorkdayCommonProject-parentBean"/>
+    <bean id="cemiWorkdayCommonProject-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/common"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_PROJECT_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.sys.batch.translatetable.KfsToWorkdayFdmCommonCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdayCommonProject" alias="FDM_KfsAccount-TranslateWorkdayProject"/>
+
     <bean id="cemiIsoCountryService" parent="cemiIsoCountryService-parentBean"/>
     <bean id="cemiIsoCountryService-parentBean"
           abstract="true"
