@@ -1,0 +1,46 @@
+<descriptor-repository version="1.0">
+
+    <class-descriptor class="edu.cornell.kfs.cemi.module.cam.batch.businessobject.CemiRegisterAssetFileRegisterAssetTabRowBo" table="CU_CEMI_EXTR_REGISTER_ASST_TAB_REGISTER_ASST_T" schema="CEMI">
+        <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="businessAssetNumber" column="BSNSS_ASST_NMBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="businessAssetID" column="BSNSS_ASST_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="company" column="COMPANY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="businessAssetName" column="BSNSS_ASST_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="businessAssetDescription" column="BSNSS_ASST_DESC" jdbc-type="VARCHAR"/>
+        <field-descriptor name="spendCategory" column="SPEND_CTGRY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="accountingTreatment" column="ACCTNG_TRTMNT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acquisitionMethod" column="ACQSTN_MTHD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="memo" column="MEMO" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acquisitionCost" column="ACQSTN_COST" jdbc-type="VARCHAR"/>
+        <field-descriptor name="residualValue" column="RSDL_VAL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="fairMarketValue" column="FAIR_MKT_VAL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="quantity" column="QUANTITY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="worktagType1" column="WRK_TAG_TYP_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="worktagValue1" column="WRK_TAG_VAL_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="worktagType2" column="WRK_TAG_TYP_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="worktagValue2" column="WRK_TAG_VAL_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="worktagType3" column="WRK_TAG_TYP_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="worktagValue3" column="WRK_TAG_VAL_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="dateAcquired" column="DT_ACQRD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="datePlacedInService" column="DT_PLCD_IN_SRVC" jdbc-type="VARCHAR"/>
+        <field-descriptor name="location" column="LCTN" jdbc-type="VARCHAR"/>
+        <field-descriptor name="assetIdentifier" column="ASST_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="serialNumber" column="SRL_NMBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="manufacturer" column="MNFCTR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="assetClass" column="ASST_CLS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="assetType" column="ASST_TYP" jdbc-type="VARCHAR"/>
+        <field-descriptor name="coordinatingCostCenter" column="CRDNTNG_CST_CNTR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="assetCoordinator" column="ASST_CRDNTR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="poNumber" column="PO_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="depreciationProfileOverride" column="DEPR_PRFL_OVRD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="depreciationMethodOverride" column="DEPR_MTHD_OVRD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="depreciationPercentOverride" column="DEPR_PCT_OVRD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="usefulLifeInPeriodsOverride" column="USEFL_LIFE_IN_PRDS_OVRD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="depreciationThresholdOverride" column="DEPR_THRLD_OVRD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="depreciationStartDate" column="DEPR_STRT_DT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="remainingDepreciationPeriods" column="RMNG_DEPR_PRDS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="accumulatedDepreciation" column="ACCMLTD_DEPR" jdbc-type="VARCHAR"/>
+    </class-descriptor>
+    
+</descriptor-repository>
