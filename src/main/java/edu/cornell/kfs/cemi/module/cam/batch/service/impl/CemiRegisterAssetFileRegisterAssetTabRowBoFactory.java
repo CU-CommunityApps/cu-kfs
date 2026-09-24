@@ -93,6 +93,7 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         registerAssetTabDataRow.setDepreciationPercentOverride(determineDepreciationPercentOverride());
         registerAssetTabDataRow.setUsefulLifeInPeriodsOverride(determineUsefulLifeInPeriodsOverride());
         registerAssetTabDataRow.setDepreciationThresholdOverride(determineDepreciationThresholdOverride());
+        registerAssetTabDataRow.setDepreciationStartDate(determineDepreciationStartDate());
         registerAssetTabDataRow.setRemainingDepreciationPeriods(determineRemainingDepreciationPeriods());
         registerAssetTabDataRow.setAccumulatedDepreciation(determineAccumulatedDepreciation());
 
@@ -307,6 +308,10 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
     }
 
     private String determineDepreciationThresholdOverride() {
+        return KFSConstants.EMPTY_STRING;
+    }
+    
+    private String determineDepreciationStartDate() {
         return CemiRegisterAssetConstants.DEPRECIATION_START_DATE;
     }
 
