@@ -48,7 +48,7 @@ public class CemiRegisterAssetFileExtractDataBuilderDefaultImpl extends CemiOrmD
     }
 
     @Override
-    public void writeRegisterAssetFileRegisterAssetTabExtractDataToIntermediateStorage(final Iterator<Asset> legacyObjects){
+    public void writeRegisterAssetFileRegisterAssetTabExtractDataToIntermediateStorage(final Iterator<Asset> legacyObjects) {
         int registerAssetTabRowCount = 0;
         for (final Asset asset : IteratorUtils.asIterable(legacyObjects)) {
             registerAssetTabRowCount++;
@@ -83,7 +83,7 @@ public class CemiRegisterAssetFileExtractDataBuilderDefaultImpl extends CemiOrmD
         allRegisterAssetTranslateTableMaps.setAssetTypeMap(CemiRegisterAssetTranslateTableFactory.createRegisterAssetTranslateTableFor(
                 RegisterAssetTranslateTables.ASSET_TYPE_CODE_QUERY, cemiRegisterAssetExtractDao));
 
-        allRegisterAssetTranslateTableMaps.setAccountingTreatmentap(CemiRegisterAssetTranslateTableFactory.createRegisterAssetTranslateTableFor(
+        allRegisterAssetTranslateTableMaps.setAccountingTreatmentMap(CemiRegisterAssetTranslateTableFactory.createRegisterAssetTranslateTableFor(
                 RegisterAssetTranslateTables.ACCOUNTING_TREATMENT_QUERY, cemiRegisterAssetExtractDao));
 
         allRegisterAssetTranslateTableMaps.setAssetClassMap(CemiRegisterAssetTranslateTableFactory.createRegisterAssetTranslateTableFor(

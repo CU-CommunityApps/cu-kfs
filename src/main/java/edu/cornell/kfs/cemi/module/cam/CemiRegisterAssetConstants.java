@@ -25,7 +25,7 @@ public final class CemiRegisterAssetConstants {
         public static final String CC = "CC";
     }
     
-    public static final class WorkdayCompany{
+    public static final class WorkdayCompany {
         public static final String CU_MAIN_CAMPUS = "C001";
         public static final String CU_COLLEGES_HCM = "C002";
     }

@@ -79,7 +79,7 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         registerAssetTabDataRow.setWorktagValue3(determineWorktagValue3());
         registerAssetTabDataRow.setDateAcquired(determineDateAcquired());
         registerAssetTabDataRow.setDatePlacedInService(determineDatePlacedInService());
-        registerAssetTabDataRow.setLocation(determineLocaltion());
+        registerAssetTabDataRow.setLocation(determineLocation());
         registerAssetTabDataRow.setAssetIdentifier(determineAssetIdentifier());
         registerAssetTabDataRow.setSerialNumber(determineSerialNumber());
         registerAssetTabDataRow.setManufacturer(determineManufacturer());
@@ -131,7 +131,7 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         if (StringUtils.isNotBlank(assetTypeCode)) {
             String wdAssetTypeCode = allRegisterAssetTranslateTableMaps.getAssetTypeMap().get(assetTypeCode);
             if (StringUtils.isNotBlank(wdAssetTypeCode)) {
-                accountingTreatment = allRegisterAssetTranslateTableMaps.getAccountingTreatmentap()
+                accountingTreatment = allRegisterAssetTranslateTableMaps.getAccountingTreatmentMap()
                         .get(wdAssetTypeCode);
             }
         }
@@ -209,7 +209,7 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         return determineFormattedDate(asset.getCapitalAssetInServiceDate());
     }
 
-    private String determineLocaltion() {
+    private String determineLocation() {
         return CemiRegisterAssetConstants.CORNELL_UNIVERSITY_ITHACA;
     }
 
@@ -253,7 +253,7 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
     
     private String determineAssetCoordinator() {
         Person assetRepresentative = asset.getAssetRepresentative();
-        if (ObjectUtils.isNotNull(assetRepresentative)) {
+        if (ObjectUtils.isNull(assetRepresentative)) {
             return KFSConstants.EMPTY_STRING;
         }
         return StringUtils.defaultIfBlank(assetRepresentative.getPrincipalName(), KFSConstants.EMPTY_STRING);
