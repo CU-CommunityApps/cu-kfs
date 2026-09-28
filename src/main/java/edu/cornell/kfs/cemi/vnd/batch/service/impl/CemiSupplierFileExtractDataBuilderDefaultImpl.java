@@ -29,6 +29,7 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
+import edu.cornell.kfs.cemi.sys.batch.service.CemiIsoCountryService;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiOrmDataBuilderBase;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
@@ -59,6 +60,7 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
     private static final Logger LOG = LogManager.getLogger();
 
     private ISOFIPSConversionService isoFipsConversionService;
+    private CemiIsoCountryService cemiIsoCountryService;
     private boolean maskSensitiveData;
     private DecimalFormat supplierIdFormatter;
     private CemiSupplierBankAccountBo emptyBankAccountBo;
@@ -66,7 +68,8 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
 
     public CemiSupplierFileExtractDataBuilderDefaultImpl(
             final BusinessObjectService businessObjectService, final String jobRunDateString,
-            final ISOFIPSConversionService isoFipsConversionService, final boolean maskSensitiveData) {
+            final ISOFIPSConversionService isoFipsConversionService,
+            final CemiIsoCountryService cemiIsoCountryService, final boolean maskSensitiveData) {
         super(businessObjectService, jobRunDateString,
                 CemiSupplierFileSupplierTabRowBo.class,
                 CemiSupplierFileAddressesTabRowBo.class,
@@ -75,8 +78,10 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
                 CemiSupplierFileChildrenTabRowBo.class,
                 CemiSupplierFileEmailsTabRowBo.class);
         Validate.notNull(isoFipsConversionService, "isoFipsConversionService cannot be null");
+        Validate.notNull(cemiIsoCountryService, "cemiIsoCountryService cannot be null");
 
         this.isoFipsConversionService = isoFipsConversionService;
+        this.cemiIsoCountryService = cemiIsoCountryService;
         this.maskSensitiveData = maskSensitiveData;
         this.supplierIdFormatter = new DecimalFormat(CemiSupplierConstants.SUPPLIER_ID_FORMAT);
         this.emptyBankAccountBo = CemiSupplierBankAccountBoFactory.createBankAccountBoFrom(
@@ -240,7 +245,7 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
     private void createAndStoreSupplierFilePhonesTabRow(final List<VendorPhoneNumber> phoneGroup,
             final String supplierId, final int phoneIndex) {
         final CemiSupplierFilePhonesTabRowBo phoneRowBo = CemiSupplierFilePhonesTabRowBoFactory.createTabRowBoFrom(
-                phoneGroup, supplierId, phoneIndex);
+                phoneGroup, supplierId, phoneIndex, cemiIsoCountryService);
         storeSheetRow(phoneRowBo);
     }
 

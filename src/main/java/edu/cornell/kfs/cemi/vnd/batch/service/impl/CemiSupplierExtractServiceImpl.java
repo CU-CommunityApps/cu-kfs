@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
+import edu.cornell.kfs.cemi.sys.batch.service.CemiIsoCountryService;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiDataExtractServiceBase;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
@@ -37,6 +38,7 @@ public class CemiSupplierExtractServiceImpl extends CemiDataExtractServiceBase i
     private BusinessObjectService businessObjectService;
     private DateTimeService dateTimeService;
     private ISOFIPSConversionService isoFipsConversionService;
+    private CemiIsoCountryService cemiIsoCountryService;
 
     public CemiSupplierExtractServiceImpl(final Environment environment) {
         super(environment);
@@ -106,7 +108,7 @@ public class CemiSupplierExtractServiceImpl extends CemiDataExtractServiceBase i
             final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
             final CemiSupplierFileExtractDataBuilderDefaultImpl dataBuilder = new CemiSupplierFileExtractDataBuilderDefaultImpl(
                     businessObjectService, jobRunDateString, isoFipsConversionService,
-                    shouldMaskCemiSensitiveData());
+                    cemiIsoCountryService, shouldMaskCemiSensitiveData());
             final Iterator<VendorDetail> vendorsIterator = vendors.iterator();
             dataBuilder.writeSupplierFileExtractDataForAllMappedTabsToIntermediateStorage(vendorsIterator);
         }
@@ -158,6 +160,10 @@ public class CemiSupplierExtractServiceImpl extends CemiDataExtractServiceBase i
 
     public void setIsoFipsConversionService(final ISOFIPSConversionService isoFipsConversionService) {
         this.isoFipsConversionService = isoFipsConversionService;
+    }
+
+    public void setCemiIsoCountryService(final CemiIsoCountryService cemiIsoCountryService) {
+        this.cemiIsoCountryService = cemiIsoCountryService;
     }
 
 }
