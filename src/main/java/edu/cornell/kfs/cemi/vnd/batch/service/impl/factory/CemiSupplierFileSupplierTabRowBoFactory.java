@@ -11,15 +11,14 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAlias;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.vnd.businessobject.VendorHeader;
 
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.cemi.vnd.CemiForeignTaxIdType;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants.TaxAuthorityFormTypes;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAliasBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileSupplierTabRowBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierTaxIdBo;
 import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 import edu.cornell.kfs.vnd.CUVendorConstants.VendorOwnershipCodes;
 
@@ -59,8 +58,8 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         final CemiSupplierFileSupplierTabRowBo supplierRowBo = new CemiSupplierFileSupplierTabRowBo();
 
         final String taxAuthorityFormType = determineTaxAuthorityFormType();
-        final String taxIdText = determineTaxIdText();
-        final String taxIdType = determineTaxIdType(taxIdText);
+        final CemiSupplierTaxIdBo domesticTaxId = buildTaxId(false);
+        final CemiSupplierTaxIdBo foreignTaxId = buildTaxId(true);
 
         final List<String> acceptedPaymentTypes = determineAcceptedPaymentTypes();
 
@@ -77,26 +76,54 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         supplierRowBo.setTaxAuthorityFormType(taxAuthorityFormType);
         supplierRowBo.setIrs1099Supplier(determineIrs1099SupplierFlag(taxAuthorityFormType));
         supplierRowBo.setReport1099WithParent(CemiBaseConstants.EMPTY_STRING);
-        supplierRowBo.setTaxIdType(taxIdType);
-        supplierRowBo.setTaxIdText(taxIdText);
-        supplierRowBo.setTransactionTaxId(determineTransactionTaxId(taxIdText, taxIdType));
-        supplierRowBo.setDefaultWithholdingTaxCode(CemiBaseConstants.EMPTY_STRING);
-        supplierRowBo.setPrimaryTaxId(determinePrimaryTaxId(taxIdText));
-        supplierRowBo.setCountryTaxId(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setTaxIdType1(domesticTaxId.getTaxIdType());
+        supplierRowBo.setTaxIdText1(domesticTaxId.getTaxIdText());
+        supplierRowBo.setTransactionTaxId1(domesticTaxId.getTransactionTaxId());
+        supplierRowBo.setDefaultWithholdingTaxCode1(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setPrimaryTaxId1(domesticTaxId.getPrimaryTaxId());
+        supplierRowBo.setCountryTaxId1(domesticTaxId.getCountryTaxId());
+        supplierRowBo.setTaxIdType2(foreignTaxId.getTaxIdType());
+        supplierRowBo.setTaxIdText2(foreignTaxId.getTaxIdText());
+        supplierRowBo.setTransactionTaxId2(foreignTaxId.getTransactionTaxId());
+        supplierRowBo.setPrimaryTaxId2(foreignTaxId.getPrimaryTaxId());
+        supplierRowBo.setCountryTaxId2(foreignTaxId.getCountryTaxId());
         supplierRowBo.setSupplierCategory(CemiSupplierConstants.DEFAULT_SUPPLIER_CATEGORY);
         supplierRowBo.setSupplierGroup1(CemiBaseConstants.EMPTY_STRING);
         supplierRowBo.setSupplierGroup2(CemiBaseConstants.EMPTY_STRING);
         supplierRowBo.setSupplierGroup3(CemiBaseConstants.EMPTY_STRING);
         supplierRowBo.setSupplierGroup4(CemiBaseConstants.EMPTY_STRING);
-        supplierRowBo.setCustomerAccountNumber(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setTaxDocumentDate(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setCertificateOfInsuranceDate(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setPurchaseOrderIssueOption(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setEmailAddressPurchaseOrder(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setChangeOrderIssueOption(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setMultiSupplierSupplierLinkForPoIssue(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setShippingTerms(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setShippingMethod(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setEnableAsn(CemiBaseConstants.EMPTY_STRING);
         supplierRowBo.setDunsNumber(vendorDetail.getVendorDunsNumber());
         supplierRowBo.setPaymentTerms(determineVendorPaymentTerms());
+        supplierRowBo.setTermsBasedOnInvoiceReceivedDate(CemiBaseConstants.EMPTY_STRING);
         supplierRowBo.setDefaultPaymentType(acceptedPaymentTypes.get(0));
         supplierRowBo.setPaymentTypesAccepted1(acceptedPaymentTypes.get(0));
         supplierRowBo.setPaymentTypesAccepted2(acceptedPaymentTypes.get(1));
         supplierRowBo.setPaymentTypesAccepted3(acceptedPaymentTypes.get(2));
         supplierRowBo.setCurrency(CemiSupplierConstants.DEFAULT_CURRENCY);
-        supplierRowBo.setAcceptedCurrencies(CemiSupplierConstants.DEFAULT_CURRENCY);
+        supplierRowBo.setAcceptedCurrencies1(CemiSupplierConstants.DEFAULT_CURRENCY);
+        supplierRowBo.setAcceptedCurrencies2(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setAcceptedCurrencies3(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setAcceptedCurrencies4(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setAcceptedCurrencies5(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setAcceptedCurrencies6(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setAcceptedCurrencies7(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setAcceptedCurrencies8(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setAcceptedCurrencies9(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setAcceptedCurrencies10(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setAcceptedCurrencies11(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setAcceptedCurrencies12(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setAcceptedCurrencies13(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setAcceptedCurrencies14(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setAcceptedCurrencies15(CemiBaseConstants.EMPTY_STRING);
         supplierRowBo.setProcurementCreditCard(CemiBaseConstants.EMPTY_STRING);
         supplierRowBo.setAlwaysSeparatePayments(CemiBaseConstants.EMPTY_STRING);
         supplierRowBo.setTextForDefaultSupplierPaymentMemo(CemiBaseConstants.EMPTY_STRING);
@@ -122,6 +149,8 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
         supplierRowBo.setAlternateNameUsageBusinessEntity1(alias1.getAliasUsage());
         supplierRowBo.setAlternateNameBusinessEntity2(alias2.getAliasName());
         supplierRowBo.setAlternateNameUsageBusinessEntity2(alias2.getAliasUsage());
+        supplierRowBo.setWebAddress(CemiBaseConstants.EMPTY_STRING);
+        supplierRowBo.setWebAddressId(CemiBaseConstants.EMPTY_STRING);
 
         return supplierRowBo;
     }
@@ -138,43 +167,10 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
                     CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK);
         }
     }
- 
-    private String determineTaxIdText() {
-        final String unmaskedTaxId = determineUnmaskedTaxIdText();
-        if (StringUtils.isBlank(unmaskedTaxId)) {
-            return CemiBaseConstants.EMPTY_STRING;
-        } else {
-            return maskSensitiveData ? CemiSupplierConstants.DUMMY_TAX_ID : unmaskedTaxId;
-        }
-    }
 
-    private String determineUnmaskedTaxIdText() {
-        VendorHeader vendorHeader = vendorDetail.getVendorHeader();
-        if (vendorHeader.getVendorForeignIndicator()) {
-            return vendorHeader.getVendorForeignTaxId();
-        } else {
-            return vendorHeader.getVendorTaxNumber();
-        }
-    }
-
-    // default to true if tax id is present, FALSE if tax type USA_SSN
-    private String determineTransactionTaxId(final String taxIdText, final String taxIdType) {
-        if (StringUtils.isNotBlank(taxIdText)) {
-            boolean transactionTaxId = StringUtils.isNotBlank(taxIdType)
-                    && !CemiSupplierConstants.USA_SSN_TAX_TYPE.equalsIgnoreCase(taxIdType);
-            return CemiUtils.convertToBooleanValueForFileExtract(transactionTaxId);
-        } else {
-            return KFSConstants.EMPTY_STRING;
-        }
-
-    }
-
-    private String determinePrimaryTaxId(String taxIdText) {
-        if (StringUtils.isNotBlank(taxIdText)) {
-            return CemiUtils.convertToBooleanValueForFileExtract(true);
-        } else {
-            return KFSConstants.EMPTY_STRING;
-        }
+    private CemiSupplierTaxIdBo buildTaxId(final boolean foreign) {
+        return CemiSupplierTaxIdBoFactory.createTaxIdBoFrom(
+                vendorDetail.getVendorHeader(), foreign, maskSensitiveData, isoFipsConversionService);
     }
 
     private String determineSupplierReferenceId() {
@@ -191,28 +187,6 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
             return TaxAuthorityFormTypes.FORM_1099_MISC;
         } else {
             return KFSConstants.EMPTY_STRING;
-        }
-    }
-
-    private String determineTaxIdType(String taxIdText) {
-        if (StringUtils.isBlank(taxIdText)) {
-            return CemiBaseConstants.EMPTY_STRING;
-        } else {
-            if (vendorDetail.getVendorHeader().getVendorForeignIndicator()) {
-                String fipsCountry = vendorDetail.getVendorHeader().getVendorCorpCitizenCode();
-                if (StringUtils.isNotBlank(fipsCountry)) {
-                    final String isoCountryCode = isoFipsConversionService.convertFIPSCountryCodeToActiveISOCountryCode(
-                            vendorDetail.getVendorHeader().getVendorCorpCitizenCode());
-                    final String foreignTaxType = CemiForeignTaxIdType.fromIsoCode(isoCountryCode)
-                            .map(CemiForeignTaxIdType::getTaxIdType)
-                            .orElse(CemiBaseConstants.EMPTY_STRING);
-                    return foreignTaxType;
-                } else {
-                    return CemiBaseConstants.EMPTY_STRING;
-                }
-            }
-            final String kfsTaxType = StringUtils.defaultString(vendorDetail.getVendorHeader().getVendorTaxTypeCode());
-            return CemiSupplierConstants.TAX_ID_TYPES.get(kfsTaxType);
         }
     }
 

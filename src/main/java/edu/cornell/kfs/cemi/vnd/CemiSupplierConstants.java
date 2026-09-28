@@ -24,7 +24,7 @@ public final class CemiSupplierConstants {
     public static final String BANK_ACCOUNT_ID_FORMAT = "{0}_{1}_{2}";
     public static final int SUPPLIER_HEADER_ROWS_PER_SHEET = 6;
     public static final int MAX_SUPPLIER_BANK_ACCOUNT_ENTRIES = 3;
-    public static final int MAX_SUPPLIER_EMAIL_ENTRIES = 3;
+    public static final int MAX_SUPPLIER_EMAIL_ENTRIES = 7;
     public static final int MAX_ADDRESS_USES = 4;
     public static final int MAX_ADDRESS_TENANTED_USES = 4;
     public static final int MAX_PHONE_USES = 4;

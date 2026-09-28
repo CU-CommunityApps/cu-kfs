@@ -9,26 +9,54 @@
         <field name="Tax_Authority_Form_Type" type="STRING" key="taxAuthorityFormType"/>
         <field name="IRS_1099_Supplier" type="STRING" key="irs1099Supplier"/>
         <field name="Report_1099_with_Parent" type="STRING" key="report1099WithParent"/>
-        <field name="Tax_ID_Type" type="STRING" key="taxIdType"/>
-        <field name="Tax_ID_Text" type="STRING" key="taxIdText"/>
-        <field name="Transaction_Tax_ID" type="STRING" key="transactionTaxId"/>
-        <field name="Default_Withholding_Tax_Code" type="STRING" key="defaultWithholdingTaxCode"/>
-        <field name="Primary_Tax_ID" type="STRING" key="primaryTaxId"/>
-        <field name="Country_Tax_ID" type="STRING" key="countryTaxId"/>
+        <field name="Tax_ID_Type" type="STRING" key="taxIdType1"/>
+        <field name="Tax_ID_Text" type="STRING" key="taxIdText1"/>
+        <field name="Transaction_Tax_ID" type="STRING" key="transactionTaxId1"/>
+        <field name="Default_Withholding_Tax_Code" type="STRING" key="defaultWithholdingTaxCode1"/>
+        <field name="Primary_Tax_ID" type="STRING" key="primaryTaxId1"/>
+        <field name="Country_Tax_ID" type="STRING" key="countryTaxId1"/>
+        <field name="Tax_ID_Type2" type="STRING" key="taxIdType2"/>
+        <field name="Tax_ID_Text2" type="STRING" key="taxIdText2"/>
+        <field name="Transaction_Tax_ID2" type="STRING" key="transactionTaxId2"/>
+        <field name="Primary_Tax_ID2" type="STRING" key="primaryTaxId2"/>
+        <field name="Country_Tax_ID2" type="STRING" key="countryTaxId2"/>
         <field name="Supplier_Category" type="STRING" key="supplierCategory"/>
         <field name="Supplier_Group_1" type="STRING" key="supplierGroup1"/>
         <field name="Supplier_Group_2" type="STRING" key="supplierGroup2"/>
         <field name="Supplier_Group_3" type="STRING" key="supplierGroup3"/>
         <field name="Supplier_Group_4" type="STRING" key="supplierGroup4"/>
-        <field name="Customer_Account_Number" type="STRING" key="customerAccountNumber"/>
+        <field name="Tax_Document_Date" type="STRING" key="taxDocumentDate"/>
+        <field name="Certificate_Of_Insurance_Date" type="STRING" key="certificateOfInsuranceDate"/>
+        <field name="Purchase_Order_Issue_Option" type="STRING" key="purchaseOrderIssueOption"/>
+        <field name="Email_Address_Purchase_Order" type="STRING" key="emailAddressPurchaseOrder"/>
+        <field name="Change_Order_Issue_Option" type="STRING" key="changeOrderIssueOption"/>
+        <field name="Multi-Supplier_Supplier_Link_for_PO_Issue" type="STRING" key="multiSupplierSupplierLinkForPoIssue"/>
+        <field name="Shipping_Terms" type="STRING" key="shippingTerms"/>
+        <field name="Shipping_Method" type="STRING" key="shippingMethod"/>
+        <field name="Enable_ASN" type="STRING" key="enableAsn"/>
         <field name="DUNS_Number" type="STRING" key="dunsNumber"/>
         <field name="Payment_Terms" type="STRING" key="paymentTerms"/>
+        <field name="Terms_Based_on_Invoice_Received_Date" type="STRING" key="termsBasedOnInvoiceReceivedDate"/>
         <field name="Default_Payment_Type" type="STRING" key="defaultPaymentType"/>
         <field name="Payment_Types_Accepted_1" type="STRING" key="paymentTypesAccepted1"/>
         <field name="Payment_Types_Accepted_2" type="STRING" key="paymentTypesAccepted2"/>
         <field name="Payment_Types_Accepted_3" type="STRING" key="paymentTypesAccepted3"/>
         <field name="Currency" type="STRING" key="currency"/>
-        <field name="Accepted_Currencies" type="STRING" key="acceptedCurrencies"/>
+        <field name="Accepted_Currencies" type="STRING" key="acceptedCurrencies1"/>
+        <field name="Accepted_Currencies_2" type="STRING" key="acceptedCurrencies2"/>
+        <field name="Accepted_Currencies_3" type="STRING" key="acceptedCurrencies3"/>
+        <field name="Accepted_Currencies_4" type="STRING" key="acceptedCurrencies4"/>
+        <field name="Accepted_Currencies_5" type="STRING" key="acceptedCurrencies5"/>
+        <field name="Accepted_Currencies_6" type="STRING" key="acceptedCurrencies6"/>
+        <field name="Accepted_Currencies_7" type="STRING" key="acceptedCurrencies7"/>
+        <field name="Accepted_Currencies_8" type="STRING" key="acceptedCurrencies8"/>
+        <field name="Accepted_Currencies_9" type="STRING" key="acceptedCurrencies9"/>
+        <field name="Accepted_Currencies_10" type="STRING" key="acceptedCurrencies10"/>
+        <field name="Accepted_Currencies_11" type="STRING" key="acceptedCurrencies11"/>
+        <field name="Accepted_Currencies_12" type="STRING" key="acceptedCurrencies12"/>
+        <field name="Accepted_Currencies_13" type="STRING" key="acceptedCurrencies13"/>
+        <field name="Accepted_Currencies_14" type="STRING" key="acceptedCurrencies14"/>
+        <field name="Accepted_Currencies_15" type="STRING" key="acceptedCurrencies15"/>
         <field name="Procurement_Credit_Card" type="STRING" key="procurementCreditCard"/>
         <field name="Always_Separate_Payments" type="STRING" key="alwaysSeparatePayments"/>
         <field name="Text_for_Default_Supplier_Payment_Memo" type="STRING" key="textForDefaultSupplierPaymentMemo"/>
@@ -54,6 +82,8 @@
         <field name="Alternate_Name_Usage_Business_Entity_1" type="STRING" key="alternateNameUsageBusinessEntity1"/>
         <field name="Alternate_Name_Business_Entity_2" type="STRING" key="alternateNameBusinessEntity2"/>
         <field name="Alternate_Name_Usage_Business_Entity_2" type="STRING" key="alternateNameUsageBusinessEntity2"/>
+        <field name="Web_Address" type="STRING" key="webAddress"/>
+        <field name="Web_Address_ID" type="STRING" key="webAddressId"/>
     </sheet>
 
     <sheet name="Addresses" num-header-rows="6" start-column-index="1"
@@ -189,6 +219,50 @@
         <field name="Use_For_Tenanted_3_2" type="STRING" key="useForTenanted3_2"/>
         <field name="Use_For_Tenanted_3_3" type="STRING" key="useForTenanted3_3"/>
         <field name="Use_For_Tenanted_3_4" type="STRING" key="useForTenanted3_4"/>
+        <field name="Email_ID_4" type="STRING" key="emailId4"/>
+        <field name="Email_Address_4" type="STRING" key="emailAddress4"/>
+        <field name="Email_Primary_4" type="STRING" key="emailPrimary4"/>
+        <field name="Email_Use_For_4_1" type="STRING" key="emailUseFor4_1"/>
+        <field name="Email_Use_For_4_2" type="STRING" key="emailUseFor4_2"/>
+        <field name="Email_Use_For_4_3" type="STRING" key="emailUseFor4_3"/>
+        <field name="Email_Use_For_4_4" type="STRING" key="emailUseFor4_4"/>
+        <field name="Use_For_Tenanted_4_1" type="STRING" key="useForTenanted4_1"/>
+        <field name="Use_For_Tenanted_4_2" type="STRING" key="useForTenanted4_2"/>
+        <field name="Use_For_Tenanted_4_3" type="STRING" key="useForTenanted4_3"/>
+        <field name="Use_For_Tenanted_4_4" type="STRING" key="useForTenanted4_4"/>
+        <field name="Email_ID_5" type="STRING" key="emailId5"/>
+        <field name="Email_Address_5" type="STRING" key="emailAddress5"/>
+        <field name="Email_Primary_5" type="STRING" key="emailPrimary5"/>
+        <field name="Email_Use_For_5_1" type="STRING" key="emailUseFor5_1"/>
+        <field name="Email_Use_For_5_2" type="STRING" key="emailUseFor5_2"/>
+        <field name="Email_Use_For_5_3" type="STRING" key="emailUseFor5_3"/>
+        <field name="Email_Use_For_5_4" type="STRING" key="emailUseFor5_4"/>
+        <field name="Use_For_Tenanted_5_1" type="STRING" key="useForTenanted5_1"/>
+        <field name="Use_For_Tenanted_5_2" type="STRING" key="useForTenanted5_2"/>
+        <field name="Use_For_Tenanted_5_3" type="STRING" key="useForTenanted5_3"/>
+        <field name="Use_For_Tenanted_5_4" type="STRING" key="useForTenanted5_4"/>
+        <field name="Email_ID_6" type="STRING" key="emailId6"/>
+        <field name="Email_Address_6" type="STRING" key="emailAddress6"/>
+        <field name="Email_Primary_6" type="STRING" key="emailPrimary6"/>
+        <field name="Email_Use_For_6_1" type="STRING" key="emailUseFor6_1"/>
+        <field name="Email_Use_For_6_2" type="STRING" key="emailUseFor6_2"/>
+        <field name="Email_Use_For_6_3" type="STRING" key="emailUseFor6_3"/>
+        <field name="Email_Use_For_6_4" type="STRING" key="emailUseFor6_4"/>
+        <field name="Use_For_Tenanted_6_1" type="STRING" key="useForTenanted6_1"/>
+        <field name="Use_For_Tenanted_6_2" type="STRING" key="useForTenanted6_2"/>
+        <field name="Use_For_Tenanted_6_3" type="STRING" key="useForTenanted6_3"/>
+        <field name="Use_For_Tenanted_6_4" type="STRING" key="useForTenanted6_4"/>
+        <field name="Email_ID_7" type="STRING" key="emailId7"/>
+        <field name="Email_Address_7" type="STRING" key="emailAddress7"/>
+        <field name="Email_Primary_7" type="STRING" key="emailPrimary7"/>
+        <field name="Email_Use_For_7_1" type="STRING" key="emailUseFor7_1"/>
+        <field name="Email_Use_For_7_2" type="STRING" key="emailUseFor7_2"/>
+        <field name="Email_Use_For_7_3" type="STRING" key="emailUseFor7_3"/>
+        <field name="Email_Use_For_7_4" type="STRING" key="emailUseFor7_4"/>
+        <field name="Use_For_Tenanted_7_1" type="STRING" key="useForTenanted7_1"/>
+        <field name="Use_For_Tenanted_7_2" type="STRING" key="useForTenanted7_2"/>
+        <field name="Use_For_Tenanted_7_3" type="STRING" key="useForTenanted7_3"/>
+        <field name="Use_For_Tenanted_7_4" type="STRING" key="useForTenanted7_4"/>
     </sheet>
 
 </cemiOutputDefinition>
