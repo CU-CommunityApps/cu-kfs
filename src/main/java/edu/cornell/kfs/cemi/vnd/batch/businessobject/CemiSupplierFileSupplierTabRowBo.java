@@ -15,26 +15,54 @@ public class CemiSupplierFileSupplierTabRowBo extends CemiIndexedBusinessObjectB
     private String taxAuthorityFormType;
     private String irs1099Supplier;
     private String report1099WithParent;
-    private String taxIdType;
-    private String taxIdText;
-    private String transactionTaxId;
-    private String defaultWithholdingTaxCode;
-    private String primaryTaxId;
-    private String countryTaxId;
+    private String taxIdType1;
+    private String taxIdText1;
+    private String transactionTaxId1;
+    private String defaultWithholdingTaxCode1;
+    private String primaryTaxId1;
+    private String countryTaxId1;
+    private String taxIdType2;
+    private String taxIdText2;
+    private String transactionTaxId2;
+    private String primaryTaxId2;
+    private String countryTaxId2;
     private String supplierCategory;
     private String supplierGroup1;
     private String supplierGroup2;
     private String supplierGroup3;
     private String supplierGroup4;
-    private String customerAccountNumber;
+    private String taxDocumentDate;
+    private String certificateOfInsuranceDate;
+    private String purchaseOrderIssueOption;
+    private String emailAddressPurchaseOrder;
+    private String changeOrderIssueOption;
+    private String multiSupplierSupplierLinkForPoIssue;
+    private String shippingTerms;
+    private String shippingMethod;
+    private String enableAsn;
     private String dunsNumber;
     private String paymentTerms;
+    private String termsBasedOnInvoiceReceivedDate;
     private String defaultPaymentType;
     private String paymentTypesAccepted1;
     private String paymentTypesAccepted2;
     private String paymentTypesAccepted3;
     private String currency;
-    private String acceptedCurrencies;
+    private String acceptedCurrencies1;
+    private String acceptedCurrencies2;
+    private String acceptedCurrencies3;
+    private String acceptedCurrencies4;
+    private String acceptedCurrencies5;
+    private String acceptedCurrencies6;
+    private String acceptedCurrencies7;
+    private String acceptedCurrencies8;
+    private String acceptedCurrencies9;
+    private String acceptedCurrencies10;
+    private String acceptedCurrencies11;
+    private String acceptedCurrencies12;
+    private String acceptedCurrencies13;
+    private String acceptedCurrencies14;
+    private String acceptedCurrencies15;
     private String procurementCreditCard;
     private String alwaysSeparatePayments;
     private String textForDefaultSupplierPaymentMemo;
@@ -60,6 +88,8 @@ public class CemiSupplierFileSupplierTabRowBo extends CemiIndexedBusinessObjectB
     private String alternateNameUsageBusinessEntity1;
     private String alternateNameBusinessEntity2;
     private String alternateNameUsageBusinessEntity2;
+    private String webAddress;
+    private String webAddressId;
 
     public Integer getVendorHeaderGeneratedIdentifier() {
         return vendorHeaderGeneratedIdentifier;
@@ -125,52 +155,92 @@ public class CemiSupplierFileSupplierTabRowBo extends CemiIndexedBusinessObjectB
         this.report1099WithParent = report1099WithParent;
     }
 
-    public String getTaxIdType() {
-        return taxIdType;
+    public String getTaxIdType1() {
+        return taxIdType1;
     }
 
-    public void setTaxIdType(final String taxIdType) {
-        this.taxIdType = taxIdType;
+    public void setTaxIdType1(final String taxIdType1) {
+        this.taxIdType1 = taxIdType1;
     }
 
-    public String getTaxIdText() {
-        return taxIdText;
+    public String getTaxIdText1() {
+        return taxIdText1;
     }
 
-    public void setTaxIdText(final String taxIdText) {
-        this.taxIdText = taxIdText;
+    public void setTaxIdText1(final String taxIdText1) {
+        this.taxIdText1 = taxIdText1;
     }
 
-    public String getTransactionTaxId() {
-        return transactionTaxId;
+    public String getTransactionTaxId1() {
+        return transactionTaxId1;
     }
 
-    public void setTransactionTaxId(final String transactionTaxId) {
-        this.transactionTaxId = transactionTaxId;
+    public void setTransactionTaxId1(final String transactionTaxId1) {
+        this.transactionTaxId1 = transactionTaxId1;
     }
 
-    public String getDefaultWithholdingTaxCode() {
-        return defaultWithholdingTaxCode;
+    public String getDefaultWithholdingTaxCode1() {
+        return defaultWithholdingTaxCode1;
     }
 
-    public void setDefaultWithholdingTaxCode(final String defaultWithholdingTaxCode) {
-        this.defaultWithholdingTaxCode = defaultWithholdingTaxCode;
+    public void setDefaultWithholdingTaxCode1(final String defaultWithholdingTaxCode1) {
+        this.defaultWithholdingTaxCode1 = defaultWithholdingTaxCode1;
     }
 
-    public String getPrimaryTaxId() {
-        return primaryTaxId;
+    public String getPrimaryTaxId1() {
+        return primaryTaxId1;
     }
 
-    public void setPrimaryTaxId(final String primaryTaxId) {
-        this.primaryTaxId = primaryTaxId;
+    public void setPrimaryTaxId1(final String primaryTaxId1) {
+        this.primaryTaxId1 = primaryTaxId1;
     }
 
-    public String getCountryTaxId() {
-        return countryTaxId;
+    public String getCountryTaxId1() {
+        return countryTaxId1;
     }
 
-    public void setCountryTaxId(final String countryTaxId) {
-        this.countryTaxId = countryTaxId;
+    public void setCountryTaxId1(final String countryTaxId1) {
+        this.countryTaxId1 = countryTaxId1;
+    }
+
+    public String getTaxIdType2() {
+        return taxIdType2;
+    }
+
+    public void setTaxIdType2(final String taxIdType2) {
+        this.taxIdType2 = taxIdType2;
+    }
+
+    public String getTaxIdText2() {
+        return taxIdText2;
+    }
+
+    public void setTaxIdText2(final String taxIdText2) {
+        this.taxIdText2 = taxIdText2;
+    }
+
+    public String getTransactionTaxId2() {
+        return transactionTaxId2;
+    }
+
+    public void setTransactionTaxId2(final String transactionTaxId2) {
+        this.transactionTaxId2 = transactionTaxId2;
+    }
+
+    public String getPrimaryTaxId2() {
+        return primaryTaxId2;
+    }
+
+    public void setPrimaryTaxId2(final String primaryTaxId2) {
+        this.primaryTaxId2 = primaryTaxId2;
+    }
+
+    public String getCountryTaxId2() {
+        return countryTaxId2;
+    }
+
+    public void setCountryTaxId2(final String countryTaxId2) {
+        this.countryTaxId2 = countryTaxId2;
     }
 
     public String getSupplierCategory() {
@@ -213,12 +283,76 @@ public class CemiSupplierFileSupplierTabRowBo extends CemiIndexedBusinessObjectB
         this.supplierGroup4 = supplierGroup4;
     }
 
-    public String getCustomerAccountNumber() {
-        return customerAccountNumber;
+    public String getTaxDocumentDate() {
+        return taxDocumentDate;
     }
 
-    public void setCustomerAccountNumber(final String customerAccountNumber) {
-        this.customerAccountNumber = customerAccountNumber;
+    public void setTaxDocumentDate(final String taxDocumentDate) {
+        this.taxDocumentDate = taxDocumentDate;
+    }
+
+    public String getCertificateOfInsuranceDate() {
+        return certificateOfInsuranceDate;
+    }
+
+    public void setCertificateOfInsuranceDate(final String certificateOfInsuranceDate) {
+        this.certificateOfInsuranceDate = certificateOfInsuranceDate;
+    }
+
+    public String getPurchaseOrderIssueOption() {
+        return purchaseOrderIssueOption;
+    }
+
+    public void setPurchaseOrderIssueOption(final String purchaseOrderIssueOption) {
+        this.purchaseOrderIssueOption = purchaseOrderIssueOption;
+    }
+
+    public String getEmailAddressPurchaseOrder() {
+        return emailAddressPurchaseOrder;
+    }
+
+    public void setEmailAddressPurchaseOrder(final String emailAddressPurchaseOrder) {
+        this.emailAddressPurchaseOrder = emailAddressPurchaseOrder;
+    }
+
+    public String getChangeOrderIssueOption() {
+        return changeOrderIssueOption;
+    }
+
+    public void setChangeOrderIssueOption(final String changeOrderIssueOption) {
+        this.changeOrderIssueOption = changeOrderIssueOption;
+    }
+
+    public String getMultiSupplierSupplierLinkForPoIssue() {
+        return multiSupplierSupplierLinkForPoIssue;
+    }
+
+    public void setMultiSupplierSupplierLinkForPoIssue(final String multiSupplierSupplierLinkForPoIssue) {
+        this.multiSupplierSupplierLinkForPoIssue = multiSupplierSupplierLinkForPoIssue;
+    }
+
+    public String getShippingTerms() {
+        return shippingTerms;
+    }
+
+    public void setShippingTerms(final String shippingTerms) {
+        this.shippingTerms = shippingTerms;
+    }
+
+    public String getShippingMethod() {
+        return shippingMethod;
+    }
+
+    public void setShippingMethod(final String shippingMethod) {
+        this.shippingMethod = shippingMethod;
+    }
+
+    public String getEnableAsn() {
+        return enableAsn;
+    }
+
+    public void setEnableAsn(final String enableAsn) {
+        this.enableAsn = enableAsn;
     }
 
     public String getDunsNumber() {
@@ -235,6 +369,14 @@ public class CemiSupplierFileSupplierTabRowBo extends CemiIndexedBusinessObjectB
 
     public void setPaymentTerms(final String paymentTerms) {
         this.paymentTerms = paymentTerms;
+    }
+
+    public String getTermsBasedOnInvoiceReceivedDate() {
+        return termsBasedOnInvoiceReceivedDate;
+    }
+
+    public void setTermsBasedOnInvoiceReceivedDate(final String termsBasedOnInvoiceReceivedDate) {
+        this.termsBasedOnInvoiceReceivedDate = termsBasedOnInvoiceReceivedDate;
     }
 
     public String getDefaultPaymentType() {
@@ -277,12 +419,124 @@ public class CemiSupplierFileSupplierTabRowBo extends CemiIndexedBusinessObjectB
         this.currency = currency;
     }
 
-    public String getAcceptedCurrencies() {
-        return acceptedCurrencies;
+    public String getAcceptedCurrencies1() {
+        return acceptedCurrencies1;
     }
 
-    public void setAcceptedCurrencies(final String acceptedCurrencies) {
-        this.acceptedCurrencies = acceptedCurrencies;
+    public void setAcceptedCurrencies1(final String acceptedCurrencies1) {
+        this.acceptedCurrencies1 = acceptedCurrencies1;
+    }
+
+    public String getAcceptedCurrencies2() {
+        return acceptedCurrencies2;
+    }
+
+    public void setAcceptedCurrencies2(final String acceptedCurrencies2) {
+        this.acceptedCurrencies2 = acceptedCurrencies2;
+    }
+
+    public String getAcceptedCurrencies3() {
+        return acceptedCurrencies3;
+    }
+
+    public void setAcceptedCurrencies3(final String acceptedCurrencies3) {
+        this.acceptedCurrencies3 = acceptedCurrencies3;
+    }
+
+    public String getAcceptedCurrencies4() {
+        return acceptedCurrencies4;
+    }
+
+    public void setAcceptedCurrencies4(final String acceptedCurrencies4) {
+        this.acceptedCurrencies4 = acceptedCurrencies4;
+    }
+
+    public String getAcceptedCurrencies5() {
+        return acceptedCurrencies5;
+    }
+
+    public void setAcceptedCurrencies5(final String acceptedCurrencies5) {
+        this.acceptedCurrencies5 = acceptedCurrencies5;
+    }
+
+    public String getAcceptedCurrencies6() {
+        return acceptedCurrencies6;
+    }
+
+    public void setAcceptedCurrencies6(final String acceptedCurrencies6) {
+        this.acceptedCurrencies6 = acceptedCurrencies6;
+    }
+
+    public String getAcceptedCurrencies7() {
+        return acceptedCurrencies7;
+    }
+
+    public void setAcceptedCurrencies7(final String acceptedCurrencies7) {
+        this.acceptedCurrencies7 = acceptedCurrencies7;
+    }
+
+    public String getAcceptedCurrencies8() {
+        return acceptedCurrencies8;
+    }
+
+    public void setAcceptedCurrencies8(final String acceptedCurrencies8) {
+        this.acceptedCurrencies8 = acceptedCurrencies8;
+    }
+
+    public String getAcceptedCurrencies9() {
+        return acceptedCurrencies9;
+    }
+
+    public void setAcceptedCurrencies9(final String acceptedCurrencies9) {
+        this.acceptedCurrencies9 = acceptedCurrencies9;
+    }
+
+    public String getAcceptedCurrencies10() {
+        return acceptedCurrencies10;
+    }
+
+    public void setAcceptedCurrencies10(final String acceptedCurrencies10) {
+        this.acceptedCurrencies10 = acceptedCurrencies10;
+    }
+
+    public String getAcceptedCurrencies11() {
+        return acceptedCurrencies11;
+    }
+
+    public void setAcceptedCurrencies11(final String acceptedCurrencies11) {
+        this.acceptedCurrencies11 = acceptedCurrencies11;
+    }
+
+    public String getAcceptedCurrencies12() {
+        return acceptedCurrencies12;
+    }
+
+    public void setAcceptedCurrencies12(final String acceptedCurrencies12) {
+        this.acceptedCurrencies12 = acceptedCurrencies12;
+    }
+
+    public String getAcceptedCurrencies13() {
+        return acceptedCurrencies13;
+    }
+
+    public void setAcceptedCurrencies13(final String acceptedCurrencies13) {
+        this.acceptedCurrencies13 = acceptedCurrencies13;
+    }
+
+    public String getAcceptedCurrencies14() {
+        return acceptedCurrencies14;
+    }
+
+    public void setAcceptedCurrencies14(final String acceptedCurrencies14) {
+        this.acceptedCurrencies14 = acceptedCurrencies14;
+    }
+
+    public String getAcceptedCurrencies15() {
+        return acceptedCurrencies15;
+    }
+
+    public void setAcceptedCurrencies15(final String acceptedCurrencies15) {
+        this.acceptedCurrencies15 = acceptedCurrencies15;
     }
 
     public String getProcurementCreditCard() {
@@ -485,4 +739,21 @@ public class CemiSupplierFileSupplierTabRowBo extends CemiIndexedBusinessObjectB
     public void setAlternateNameUsageBusinessEntity2(final String alternateNameUsageBusinessEntity2) {
         this.alternateNameUsageBusinessEntity2 = alternateNameUsageBusinessEntity2;
     }
+
+    public String getWebAddress() {
+        return webAddress;
+    }
+
+    public void setWebAddress(final String webAddress) {
+        this.webAddress = webAddress;
+    }
+
+    public String getWebAddressId() {
+        return webAddressId;
+    }
+
+    public void setWebAddressId(final String webAddressId) {
+        this.webAddressId = webAddressId;
+    }
+
 }
