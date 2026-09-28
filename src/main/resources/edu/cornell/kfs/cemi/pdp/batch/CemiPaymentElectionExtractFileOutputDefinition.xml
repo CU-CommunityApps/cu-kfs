@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This is the main file for defining how the "Group_TWO" tab data will map to the HCM Payment Election spreadsheet/workbook.
+
+    Each "sheet" element should correspond to one of the sheets/tabs in the workbook.
+
+    There are two main types of "field" elements:
+
+    [1] POJO-derived value - Has the "STRING" type and uses the "key" attribute to specify the POJO property.
+    [2] Literal value - Has the "STATIC" type and uses the "value" attribute to specify the literal. Can be empty.
+
+    NOTE: This XML file doesn't keep track of POJO classes; it only needs to know POJO property names/paths.
+ -->
+<cemiOutputDefinition>
+
+    <sheet name="Group_TWO" num-header-rows="6" start-column-index="1">
+        <field name="Employee_ID" type="STRING" key="employeeId"/>
+        <field name="Payment_Election_Group_Rule_2" type="STRING" key="paymentElectionGroupRule_2"/>
+        <field name="Payment_Election_Rule_2_1" type="STRING" key="paymentElectionRule_2_1"/>
+        <field name="Election_Country_2_1" type="STRING" key="electionCountry_2_1"/>
+        <field name="Election_Currency_2_1" type="STRING" key="electionCurrency_2_1"/>
+        <field name="Payment_Type_2_1" type="STRING" key="paymentType_2_1"/>
+        <field name="Account_Country_2_1" type="STRING" key="accountCountry_2_1"/> 
+        <field name="Account_Currency_2_1" type="STRING" key="accountCurrency_2_1"/>
+        <field name="Bank_Account_Nickname_2_1" type="STRING" key="bankAccountNickname_2_1"/>
+        <field name="Bank_Account_Name_2_1" type="STRING" key="bankAccountName_2_1"/>
+        <field name="Account_Number_2_1" type="STRING" key="accountNumber_2_1"/> 
+        <field name="Account_Type_2_1" type="STRING" key="accountType_2_1"/>
+        <field name="Bank_Name_2_1" type="STRING" key="bankName_2_1"/>
+        <field name="Bank_Routing_Number_2_1" type="STRING" key="bankRoutingNumber_2_1"/>
+        <field name="IBAN_2_1" type="STRING" key="iban_2_1"/>
+        <field name="BIC_2_1" type="STRING" key="bic_2_1"/>
+        <field name="Branch_Name_2_1" type="STRING" key="branchName_2_1"/>
+        <field name="Branch_ID_Number_2_1" type="STRING" key="branchIdNumber_2_1"/>
+        <field name="Check_Digit_2_1" type="STRING" key="checkDigit_2_1"/>
+        <field name="Distribution_Amount_2_1" type="STRING" key="distributionAmount_2_1"/>
+        <field name="Distribution_Percentage_2_1" type="STRING" key="distributionPercentage_2_1"/>
+        <field name="Distribution_Balance_2_1" type="STRING" key="distributionBalance_2_1"/>
+    </sheet>
+
+</cemiOutputDefinition>
