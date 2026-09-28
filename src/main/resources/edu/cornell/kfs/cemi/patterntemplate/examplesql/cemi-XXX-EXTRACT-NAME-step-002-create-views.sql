@@ -1,0 +1,17 @@
+-- At a minimum this "create-views" script file needs to hold the definition that creates the view used to
+-- obtain the keys defining the scope of objects to used for the data extraction. 
+--
+-- Views should follow this example format where they always begin with "CREATE OR REPLACE" 
+-- and have an ending of "WITH READ ONLY".
+--
+-- The views should be created in the CEMI schema, but they can still reference tables from the KFS schema.
+--
+-- Example of an actual view used in a data extraction:
+--
+--      CREATE OR REPLACE VIEW CEMI.CG_CEMI_AWD_SCHDL_EXTR_V AS
+--      SELECT 
+--          AWD.CGPRPSL_NBR 
+--      FROM 
+--          KFS.CG_AWD_T AWD
+--      WHERE AWD.ROW_ACTV_IND = 'Y'
+--      WITH READ ONLY;

@@ -1,0 +1,731 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean id="cemiModuleConfiguration" parent="cemiModuleConfiguration-parentBean"/>
+    
+    <bean id="cemiModuleConfiguration-parentBean" abstract="true" parent="cemiModuleConfiguration-base-parentBean"/>
+    
+    <bean id="cemiModuleConfiguration-base-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration"
+          abstract="true" p:namespaceCode="KFS-CEMI">
+        <property name="initializeDataDictionary" value="true" />
+        <property name="packagePrefixes">
+            <list merge="true">
+                <value>edu.cornell.kfs.cemi</value>
+            </list>
+        </property>
+        <property name="databaseRepositoryFilePaths">
+            <list merge= "true">
+                <value>edu/cornell/kfs/cemi/cu-ojb-cemi.xml</value>
+                <value>edu/cornell/kfs/cemi/module/cg/cu-ojb-cemi-award.xml</value>
+                <value>edu/cornell/kfs/cemi/module/cg/cu-ojb-cemi-award-schedule.xml</value>
+                <value>edu/cornell/kfs/cemi/module/purap/cu-ojb-cemi-purchase-order.xml</value>
+                <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-vnd.xml</value>
+                <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-supplier.xml</value>
+                <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-entity-contact.xml</value>
+                <value>edu/cornell/kfs/cemi/module/cam/cu-ojb-cemi-register-asset.xml</value>
+            </list>
+        </property>
+        <property name="jobNames">
+            <list merge="true">
+                 <value>createCemiAwardExtractJob</value>
+                 <value>createCemiAwardScheduleExtractJob</value>
+                 <value>createCemiPaymentElectionExtractJob</value>
+                 <value>createCemiSupplierExtractJob</value>
+                 <value>createCemiRemitToSupplierExtractJob</value>
+                 <value>createCemiOrderFromSupplierExtractJob</value>
+                 <value>createCemiBusinessEntityContactExtractJob</value>
+                 <value>createCemiPurchaseOrderExtractJob</value>
+                 <value>createCemiRegisterAssetExtractJob</value>
+                 <value>importCemiLegacyDataJob</value>
+            </list>
+        </property>
+        <property name="batchFileDirectories">
+          <list merge="true">
+            <value>${reports.directory}/cemi</value>
+            <value>${staging.directory}/cemi</value>
+            <value>${staging.directory}/cemi/legacy</value>
+            <value>${staging.directory}/cemi/legacy/novelution/award</value>
+            <value>${staging.directory}/cemi/legacy/workday/employee</value>
+            <value>${staging.directory}/cemi/module/cg/cemiAwardScheduleExtract</value>
+            <value>${staging.directory}/cemi/module/cg/cemiAwardExtract</value>
+            <value>${staging.directory}/cemi/module/purap/cemiPurchaseOrderExtract</value>
+            <value>${staging.directory}/cemi/pdp/cemiPaymentElectionExtract</value>
+            <value>${staging.directory}/cemi/vnd/cemiSupplierExtract</value>
+            <value>${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract</value>
+            <value>${staging.directory}/cemi/vnd/cemiOrderFromSupplierExtract</value>
+            <value>${staging.directory}/cemi/vnd/cemiBusinessEntityContactExtract</value>
+            <value>${staging.directory}/cemi/module/cam/cemiRegisterAssetExtract</value>
+            <value>${staging.directory}/cemi/conversions/outbound</value>
+            <value>${staging.directory}/cemi/translatetable/award</value>
+            <value>${staging.directory}/cemi/translatetable/common</value>
+            <value>${staging.directory}/cemi/translatetable/registerAsset</value>
+            <value>${staging.directory}/cemi/translatetable/supplier</value>
+          </list>
+        </property>
+    </bean>
+
+    <!--
+        Added CEMI datasource bean that's needed by the CEMI data extract batch jobs.
+        This is a modified copy of the "dataSource" bean from base code.
+     -->
+    <bean class="org.kuali.kfs.core.framework.persistence.jdbc.datasource.XAPoolDataSource"
+          depends-on="liquibase"
+          id="cemiDataSource"
+          p:driverClassName="${kfs.datasource.driver.name}"
+          p:maxSize="${kfs.datasource.pool.maxSize}"
+          p:maxWait="${kfs.datasource.pool.maxWait}"
+          p:minSize="${kfs.datasource.pool.minSize}"
+          p:password="${cemi.datasource.password}"
+          p:transactionManager-ref="jtaTransactionManager"
+          p:url="${cemi.datasource.url}"
+          p:username="${cemi.datasource.username}"
+          p:validationQuery="${kfs.datasource.validating.query}"
+    />
+
+    <bean id="cemiFileAppenderOrmDao" parent="cemiFileAppenderOrmDao-parentBean"/>
+    <bean id="cemiFileAppenderOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.dataaccess.impl.CemiFileAppenderOrmDaoOjbImpl"
+          parent="platformAwareDao"/>
+
+    <bean id="cemiFileAppenderService" parent="cemiFileAppenderService-parentBean"/>
+    <bean id="cemiFileAppenderService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.batch.service.impl.CemiFileAppenderServiceImpl"
+          p:cemiFileAppenderOrmDao-ref="cemiFileAppenderOrmDao"/>
+
+    <bean id="cemiCsvDataImportDao" parent="cemiCsvDataImportDao-parentBean"/>
+    <bean id="cemiCsvDataImportDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.dataaccess.impl.CemiCsvDataImportDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
+
+    <bean id="cemiCsvDataImportService" parent="cemiCsvDataImportService-parentBean"/>
+    <bean id="cemiCsvDataImportService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.batch.service.impl.CemiCsvDataImportServiceImpl"
+          p:cemiCsvDataImportDao-ref="cemiCsvDataImportDao"
+          p:batchInputFileService-ref="batchInputFileService"
+          p:parameterService-ref="parameterService"/>
+
+    <bean id="cemiCsvBatchInputFileType"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.batch.CemiCsvBatchInputFileType"/>
+
+    <bean id="importCemiLegacyDataJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="importCemiLegacyDataStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="importCemiLegacyDataStep"
+          class="edu.cornell.kfs.cemi.sys.batch.ImportCemiLegacyDataStep"
+          parent="step"
+          p:cemiCsvDataImportService-ref="cemiCsvDataImportService"/>
+
+    <!-- Award Schedule -->
+
+    <bean id="createCemiAwardScheduleExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiAwardScheduleExtractStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cemiAwardScheduleExtractDao" parent="cemiAwardScheduleExtractDao-parentBean"/>
+    <bean id="cemiAwardScheduleExtractDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cg.dataaccess.impl.CemiAwardScheduleExtractDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
+
+    <bean id="cemiAwardScheduleExtractOrmDao" parent="cemiAwardScheduleExtractOrmDao-parentBean"/>
+    <bean id="cemiAwardScheduleExtractOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cg.dataaccess.impl.CemiAwardScheduleExtractOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="cemiAwardScheduleExtractService" parent="cemiAwardScheduleExtractService-parentBean"/>
+    <bean id="cemiAwardScheduleExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cg.batch.service.impl.CemiAwardScheduleExtractServiceImpl"
+          c:environment-ref="environment"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/module/cg/cemiAwardScheduleExtract"
+          p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:parameterService-ref="parameterService"
+          p:cemiAwardScheduleExtractOrmDao-ref="cemiAwardScheduleExtractOrmDao"
+          p:cemiAwardScheduleExtractDao-ref="cemiAwardScheduleExtractDao"
+          p:businessObjectService-ref="businessObjectService"
+          p:dateTimeService-ref="dateTimeService"/>
+          
+    <bean id="createCemiAwardScheduleExtractStep"
+          class="edu.cornell.kfs.cemi.module.cg.batch.CreateCemiAwardScheduleExtractStep"
+          parent="step"
+          p:cemiAwardScheduleExtractService-ref="cemiAwardScheduleExtractService"/>
+
+
+    <!-- Payment Election -->
+    <bean id="createCemiPaymentElectionExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiPaymentElectionExtractStep"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="createCemiPaymentElectionExtractStep"
+          class="edu.cornell.kfs.cemi.pdp.batch.CreateCemiPaymentElectionExtractStep"
+          parent="step"
+          p:cemiPaymentElectionExtractService-ref="cemiPaymentElectionExtractService"/>
+    
+    <bean id="cemiPaymentElectionDao" parent="cemiPaymentElectionDao-parentBean"/>
+    <bean id="cemiPaymentElectionDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.pdp.dataaccess.impl.CemiPaymentElectionDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"
+          p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="cemiPaymentElectionOrmDao" parent="cemiPaymentElectionOrmDao-parentBean"/>
+    <bean id="cemiPaymentElectionOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.pdp.dataaccess.impl.CemiPaymentElectionOrmDaoOjbImpl"
+          parent="platformAwareDao"/>
+
+    <bean id="cemiWorkdayEmployeeIdDataFileType" parent="cemiWorkdayEmployeeIdDataFileType-parentBean"/>
+    <bean id="cemiWorkdayEmployeeIdDataFileType-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/legacy/workday/employee"
+          p:legacyDataDestinationTableName="CU_CEMI_LGCY_WRKDY_PYMNT_ELCTN_EMPLIDS_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.pdp.batch.WorkdayEmployeeIdCsvTableColumns"
+          p:hasHeaderRow="true"/>
+
+    <alias name="cemiWorkdayEmployeeIdDataFileType" alias="PaymentElection-WorkdayEmployeeIdFile"/>
+
+    <bean id="cemiPaymentElectionExtractService" parent="cemiPaymentElectionExtractService-parentBean"/>
+    <bean id="cemiPaymentElectionExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.pdp.batch.service.impl.CemiPaymentElectionExtractServiceImpl"
+          c:environment-ref="environment"
+          p:paymentElectionFileCreationDirectory="${staging.directory}/cemi/pdp/cemiPaymentElectionExtract"
+          p:paymentElectionFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiPaymentElectionOrmDao-ref="cemiPaymentElectionOrmDao"
+          p:cemiPaymentElectionDao-ref="cemiPaymentElectionDao"
+          p:achBankService-ref="pdpAchBankService"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:businessObjectService-ref="businessObjectService"
+          p:parameterService-ref="parameterService"
+          p:dateTimeService-ref="dateTimeService"/>
+          
+
+
+    <!-- Suppliers -->
+
+    <bean id="cemiSupplierDao" parent="cemiSupplierDao-parentBean"/>
+    <bean id="cemiSupplierDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiSupplierDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"
+          p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="cemiSupplierOrmDao" parent="cemiSupplierOrmDao-parentBean"/>
+    <bean id="cemiSupplierOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiSupplierOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="cemiModuleService" parent="cemiModuleService-parentBean"/>
+    <bean id="cemiModuleService-parentBean" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl" abstract="true"
+          p:moduleConfiguration-ref="cemiModuleConfiguration"/>
+
+    <bean id="createCemiSupplierExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiSupplierExtractStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="createCemiSupplierExtractStep"
+          class="edu.cornell.kfs.cemi.vnd.batch.CreateCemiSupplierExtractStep"
+          parent="step"
+          p:cemiSupplierExtractService-ref="cemiSupplierExtractService"/>
+
+    <bean id="cemiSupplierExtractService" parent="cemiSupplierExtractService-parentBean"/>
+    <bean id="cemiSupplierExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.batch.service.impl.CemiSupplierExtractServiceImpl"
+          c:environment-ref="environment"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/vnd/cemiSupplierExtract"
+          p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:parameterService-ref="parameterService"
+          p:cemiSupplierOrmDao-ref="cemiSupplierOrmDao"
+          p:cemiSupplierDao-ref="cemiSupplierDao"
+          p:businessObjectService-ref="businessObjectService"
+          p:dateTimeService-ref="dateTimeService"
+          p:isoFipsConversionService-ref="isoFipsConversionService"/>
+
+    <bean id="cemiOutputDefinitionFileType" parent="cemiOutputDefinitionFileType-parentBean"/>
+    <bean id="cemiOutputDefinitionFileType-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType"
+          p:directoryPath="${staging.directory}/cemi/sys"
+          p:fileExtension="xml"
+          p:fileNamePrefix="NOT_USED_"
+          p:schemaLocation="classpath:edu/cornell/kfs/cemi/sys/batch/xml/cemiOutputDefinition.xsd"
+          p:outputClass="edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition"
+          p:dateTimeService-ref="dateTimeService"/>
+
+    <!-- Remit to Supplier -->
+
+    <bean id="createCemiRemitToSupplierExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiRemitToSupplierExtractStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="createCemiRemitToSupplierExtractStep"
+          class="edu.cornell.kfs.cemi.vnd.batch.CreateCemiRemitToSupplierExtractStep"
+          parent="step"
+          p:cemiRemitToSupplierExtractService-ref="cemiRemitToSupplierExtractService"/>
+
+    <bean id="cemiRemitToSupplierDao" parent="cemiRemitToSupplierDao-parentBean"/>
+    <bean id="cemiRemitToSupplierDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiRemitToSupplierDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
+
+    <bean id="cemiRemitToSupplierOrmDao" parent="cemiRemitToSupplierOrmDao-parentBean"/>
+    <bean id="cemiRemitToSupplierOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiRemitToSupplierOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="cemiRemitToSupplierExtractService" parent="cemiRemitToSupplierExtractService-parentBean"/>
+    <bean id="cemiRemitToSupplierExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.batch.service.impl.CemiRemitToSupplierExtractServiceImpl"
+          c:environment-ref="environment"
+          p:remitToSupplierFileCreationDirectory="${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract"
+          p:remitToSupplierFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:cemiRemitToSupplierOrmDao-ref="cemiRemitToSupplierOrmDao"
+          p:cemiRemitToSupplierDao-ref="cemiRemitToSupplierDao"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
+          p:businessObjectService-ref="businessObjectService"
+          p:parameterService-ref="parameterService"/>
+
+    <!-- Order From Supplier -->
+
+    <bean id="createCemiOrderFromSupplierExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiOrderFromSupplierExtractStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="createCemiOrderFromSupplierExtractStep"
+          class="edu.cornell.kfs.cemi.vnd.batch.CreateCemiOrderFromSupplierExtractStep"
+          parent="step"
+          p:cemiOrderFromSupplierExtractService-ref="cemiOrderFromSupplierExtractService"/>
+
+    <bean id="cemiOrderFromSupplierDao" parent="cemiOrderFromSupplierDao-parentBean"/>
+    <bean id="cemiOrderFromSupplierDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiOrderFromSupplierDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
+
+    <bean id="cemiOrderFromSupplierOrmDao" parent="cemiOrderFromSupplierOrmDao-parentBean"/>
+    <bean id="cemiOrderFromSupplierOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiOrderFromSupplierOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="cemiOrderFromSupplierExtractService" parent="cemiOrderFromSupplierExtractService-parentBean"/>
+    <bean id="cemiOrderFromSupplierExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.batch.service.impl.CemiOrderFromSupplierExtractServiceImpl"
+          c:environment-ref="environment"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/vnd/cemiOrderFromSupplierExtract"
+          p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:parameterService-ref="parameterService"
+          p:reportsDirectory="${reports.directory}/cemi/"
+          p:cemiOrderFromSupplierOrmDao-ref="cemiOrderFromSupplierOrmDao"
+          p:cemiOrderFromSupplierDao-ref="cemiOrderFromSupplierDao"
+          p:businessObjectService-ref="businessObjectService"/>
+          
+    <!--  Award Translate Tables -->
+    <bean id="cemiWorkdayAwardSponsorAwardType" parent="cemiWorkdayAwardSponsorAwardType-parentBean"/>
+    <bean id="cemiWorkdayAwardSponsorAwardType-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/award"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_AWD_SPNSR_AWD_TYP_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.module.cg.batch.translatetable.KfsToWorkdayAwardCommonCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+          
+    <alias name="cemiWorkdayAwardSponsorAwardType" alias="Award_KfsAwardType-TranslateWorkdaySponsorAwardType"/>
+
+    <bean id="cemiWorkdayAwardPurpose" parent="cemiWorkdayAwardPurpose-parentBean"/>
+    <bean id="cemiWorkdayAwardPurpose-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/award"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_AWD_AWD_PURPOSE_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.module.cg.batch.translatetable.KfsToWorkdayAwardCommonCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdayAwardPurpose" alias="Award_KfsAwardPurpose-TranslateWorkdayAwardPurpose"/>
+
+    <bean id="cemiWorkdayAwardLineType" parent="cemiWorkdayAwardLineType-parentBean"/>
+    <bean id="cemiWorkdayAwardLineType-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/award"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_AWD_AWD_LINE_TYP_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.module.cg.batch.translatetable.KfsToWorkdayAwardCommonCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdayAwardLineType" alias="Award_KfsAwardLineType-TranslateWorkdayAwardLineType"/>
+
+    <bean id="cemiWorkdayAwardLineLifecycleStatus" parent="cemiWorkdayAwardLineLifecycleStatus-parentBean"/>
+    <bean id="cemiWorkdayAwardLineLifecycleStatus-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/award"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_AWD_LN_AWD_LFCYC_STAT_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.module.cg.batch.translatetable.KfsToWorkdayAwardCommonCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdayAwardLineLifecycleStatus" alias="Award_KfsAwardLineLifecycleStatus-TranslateWorkdayAwardLifecycleStatus"/>
+    
+    <!-- Novelution Award Legacy Data Import -->
+    <bean id="cemiNovelutionAward" parent="cemiNovelutionAward-parentBean"/>
+    <bean id="cemiNovelutionAward-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/legacy/novelution/award"
+          p:legacyDataDestinationTableName="CU_CEMI_LGCY_NOVELUTION_AWARD_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.module.cg.batch.legacy.NovelutionAwardCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+          
+    <alias name="cemiNovelutionAward" alias="Award-NovelutionAward"/>
+
+    <!-- ISO 3-Character Country Code Mapping Import and related service -->
+
+    <bean id="cemiIso3CharCountryCodes" parent="cemiIso3CharCountryCodes-parentBean"/>
+    <bean id="cemiIso3CharCountryCodes-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/common"
+          p:legacyDataDestinationTableName="CU_CEMI_ISO_CNTRY_MAPPING_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.sys.batch.translatetable.Iso2CharTo3CharCountryCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiIso3CharCountryCodes" alias="Country_Iso2CharCountry-TranslateIso3CharCountry"/>
+
+    <bean id="cemiIsoCountryService" parent="cemiIsoCountryService-parentBean"/>
+    <bean id="cemiIsoCountryService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.batch.service.impl.CemiIsoCountryServiceImpl"
+          p:cemiIsoCountryDao-ref="cemiIsoCountryDao"/>
+
+    <bean id="cemiIsoCountryDao" parent="cemiIsoCountryDao-parentBean"/>
+    <bean id="cemiIsoCountryDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.sys.dataaccess.impl.CemiIsoCountryDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
+
+    <!-- Business Entity Contact (Supplier Contact) -->
+
+    <bean id="createCemiBusinessEntityContactExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiEntityContactExtractStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cemiEntityContactExtractDao" parent="cemiEntityContactExtractDao-parentBean"/>
+    <bean id="cemiEntityContactExtractDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiEntityContactExtractDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
+
+    <bean id="cemiEntityContactExtractOrmDao" parent="cemiEntityContactExtractOrmDao-parentBean"/>
+    <bean id="cemiEntityContactExtractOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiEntityContactExtractOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="cemiEntityContactExtractService" parent="cemiEntityContactExtractService-parentBean"/>
+    <bean id="cemiEntityContactExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.vnd.batch.service.impl.CemiEntityContactExtractServiceImpl"
+          c:environment-ref="environment"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/vnd/cemiBusinessEntityContactExtract"
+          p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:parameterService-ref="parameterService"
+          p:cemiEntityContactExtractOrmDao-ref="cemiEntityContactExtractOrmDao"
+          p:cemiEntityContactExtractDao-ref="cemiEntityContactExtractDao"
+          p:businessObjectService-ref="businessObjectService"
+          p:cemiIsoCountryService-ref="cemiIsoCountryService"/>
+
+    <bean id="createCemiEntityContactExtractStep"
+          class="edu.cornell.kfs.cemi.vnd.batch.CreateCemiEntityContactExtractStep"
+          parent="step"
+          p:cemiEntityContactExtractService-ref="cemiEntityContactExtractService"/>
+
+    <bean id="cemiWorkdayTenantedEntityContactType" parent="cemiWorkdayTenantedEntityContactType-parentBean"/>
+    <bean id="cemiWorkdayTenantedEntityContactType-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/supplier"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_TNTD_ENT_CNTCT_TYP_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.vnd.batch.translatetable.KfsToWorkdayTenantedEntityContactTypeCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdayTenantedEntityContactType" alias="Supplier_KfsContactType-TranslateWorkdayTenantedContactType"/>
+    
+    <!--Register Asset Translate Tables -->
+    
+    <bean id="cemiWorkdayAssetClass" parent="cemiWorkdayAssetClass-parentBean"/>
+    <bean id="cemiWorkdayAssetClass-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/registerAsset"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_REGISTER_ASST_ASST_CLSS_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.module.cam.batch.translatetable.KfsToWorkdayRegisterAssetCommonCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdayAssetClass" alias="RegisterAsset_KfsAssetTypeCode-TranslateWorkdayAssetClass"/>
+    
+    <bean id="cemiWorkdayAssetType" parent="cemiWorkdayAssetType-parentBean"/>
+    <bean id="cemiWorkdayAssetType-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/registerAsset"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_REGISTER_ASST_ASST_TYP_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.module.cam.batch.translatetable.KfsToWorkdayRegisterAssetCommonCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdayAssetType" alias="RegisterAsset_KfsAssetTypeCode-TranslateWorkdayAssetType"/>
+    
+    <bean id="cemiWorkdayDepreciationProfile" parent="cemiWorkdayDepreciationProfile-parentBean"/>
+    <bean id="cemiWorkdayDepreciationProfile-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/registerAsset"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_REGISTER_ASST_DEPR_PRFL_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.module.cam.batch.translatetable.KfsToWorkdayRegisterAssetCommonCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdayDepreciationProfile" alias="RegisterAsset_KfsAssetTypeCode-TranslateWorkdayDepreciationProfile"/>
+    
+    
+    <bean id="cemiWorkdayAccountingTreatment" parent="cemiWorkdayAccountingTreatment-parentBean"/>
+    <bean id="cemiWorkdayAccountingTreatment-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/registerAsset"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_REGISTER_ASST_ACCTNG_TRTMNT_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.module.cam.batch.translatetable.KfsToWorkdayRegisterAssetCommonCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdayAccountingTreatment" alias="RegisterAsset_KfsAssetTypeCode-TranslateWorkdayAccountingTreatment"/>
+    
+    
+    <bean id="cemiWorkdaySpendCategory" parent="cemiWorkdaySpendCategory-parentBean"/>
+    <bean id="cemiWorkdaySpendCategory-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/registerAsset"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_REGISTER_ASST_SPEND_CTGRY_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.module.cam.batch.translatetable.KfsToWorkdayRegisterAssetCommonCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdaySpendCategory" alias="RegisterAsset_KfsAssetTypeCode-TranslateWorkdaySpendCategory"/>
+
+    <!-- Purchase Order -->
+
+    <bean id="createCemiPurchaseOrderExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiPurchaseOrderExtractStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cemiPurchaseOrderExtractDao" parent="cemiPurchaseOrderExtractDao-parentBean"/>
+    <bean id="cemiPurchaseOrderExtractDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.purap.dataaccess.impl.CemiPurchaseOrderExtractDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
+
+    <bean id="cemiPurchaseOrderExtractOrmDao" parent="cemiPurchaseOrderExtractOrmDao-parentBean"/>
+    <bean id="cemiPurchaseOrderExtractOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.purap.dataaccess.impl.CemiPurchaseOrderExtractOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="cemiPurchaseOrderExtractService" parent="cemiPurchaseOrderExtractService-parentBean"/>
+    <bean id="cemiPurchaseOrderExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.purap.batch.service.impl.CemiPurchaseOrderExtractServiceImpl"
+          c:environment-ref="environment"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/module/purap/cemiPurchaseOrderExtract"
+          p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:parameterService-ref="parameterService"
+          p:cemiPurchaseOrderExtractOrmDao-ref="cemiPurchaseOrderExtractOrmDao"
+          p:cemiPurchaseOrderExtractDao-ref="cemiPurchaseOrderExtractDao"
+          p:businessObjectService-ref="businessObjectService"
+          p:documentService-ref="documentService"
+          p:dataDictionaryService-ref="dataDictionaryService"
+          p:personService-ref="personService"/>
+
+    <bean id="createCemiPurchaseOrderExtractStep"
+          class="edu.cornell.kfs.cemi.module.purap.batch.CreateCemiPurchaseOrderExtractStep"
+          parent="step"
+          p:cemiPurchaseOrderExtractService-ref="cemiPurchaseOrderExtractService"/>
+
+
+    <!-- Award -->
+   
+    <bean id="cemiAwardExtractDao" parent="cemiAwardExtractDao-parentBean"/>
+    <bean id="cemiAwardExtractDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cg.dataaccess.impl.CemiAwardExtractDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
+
+    <bean id="cemiAwardExtractOrmDao" parent="cemiAwardExtractOrmDao-parentBean"/>
+    <bean id="cemiAwardExtractOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cg.dataaccess.impl.CemiAwardExtractOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="cemiAwardExtractService" parent="cemiAwardExtractService-parentBean"/>
+    <bean id="cemiAwardExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cg.batch.service.impl.CemiAwardExtractServiceImpl"
+          c:environment-ref="environment"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/module/cg/cemiAwardExtract"
+          p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:parameterService-ref="parameterService"
+          p:cemiAwardExtractOrmDao-ref="cemiAwardExtractOrmDao"
+          p:cemiAwardExtractDao-ref="cemiAwardExtractDao"
+          p:businessObjectService-ref="businessObjectService"
+          p:dateTimeService-ref="dateTimeService"/>
+          
+    <bean id="createCemiAwardExtractStep"
+          class="edu.cornell.kfs.cemi.module.cg.batch.CreateCemiAwardExtractStep"
+          parent="step"
+          p:cemiAwardExtractService-ref="cemiAwardExtractService"/>
+          
+    <bean id="createCemiAwardExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiAwardExtractStep"/>
+            </list>
+        </property>
+    </bean>
+
+    
+    <!-- Register Asset -->
+
+    <bean id="createCemiRegisterAssetExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiRegisterAssetExtractStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cemiRegisterAssetExtractDao" parent="cemiRegisterAssetExtractDao-parentBean"/>
+    <bean id="cemiRegisterAssetExtractDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cam.dataaccess.impl.CemiRegisterAssetExtractDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
+
+    <bean id="cemiRegisterAssetExtractOrmDao" parent="cemiRegisterAssetExtractOrmDao-parentBean"/>
+    <bean id="cemiRegisterAssetExtractOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cam.dataaccess.impl.CemiRegisterAssetExtractOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="cemiRegisterAssetExtractService" parent="cemiRegisterAssetExtractService-parentBean"/>
+    <bean id="cemiRegisterAssetExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cam.batch.service.impl.CemiRegisterAssetExtractServiceImpl"
+          c:environment-ref="environment"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/module/cam/cemiRegisterAssetExtract"
+          p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:parameterService-ref="parameterService"
+          p:cemiRegisterAssetExtractOrmDao-ref="cemiRegisterAssetExtractOrmDao"
+          p:cemiRegisterAssetExtractDao-ref="cemiRegisterAssetExtractDao"
+          p:businessObjectService-ref="businessObjectService"
+          p:dateTimeService-ref="dateTimeService"/>
+          
+    <bean id="createCemiRegisterAssetExtractStep"
+          class="edu.cornell.kfs.cemi.module.cam.batch.CreateCemiRegisterAssetExtractStep"
+          parent="step"
+          p:cemiRegisterAssetExtractService-ref="cemiRegisterAssetExtractService"/>
+          
+</beans>
