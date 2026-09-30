@@ -29,6 +29,9 @@ public class CemiPurchaseOrderExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase
 
         final QueryByCriteria query = new QueryByCriteria(CemiPurchaseOrderIdBo.class, criteria);
         query.addOrderByAscending(KFSPropertyConstants.DOCUMENT_NUMBER);
+        if (shouldUseLessDataDuringCemiDevelopment()) {
+            query.setEndAtIndex(100);
+        }
 
         return CuOjbUtils.buildCloseableStreamForQueryResults(
                 CemiPurchaseOrderIdBo.class,
