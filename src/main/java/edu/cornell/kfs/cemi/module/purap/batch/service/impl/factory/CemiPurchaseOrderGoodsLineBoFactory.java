@@ -237,7 +237,12 @@ public class CemiPurchaseOrderGoodsLineBoFactory {
     private boolean itemHasOutstandingAmountButHasNoOutstandingAccountAmounts() {
         return !isEmptyFactory()
                 && itemAccountingLines.isEmpty()
-                && purchaseOrderItem.get().getItemOutstandingEncumberedAmount().compareTo(KualiDecimal.ZERO) > 0;
+                && getNullSafeItemOutstandingEncumberedAmount().compareTo(KualiDecimal.ZERO) > 0;
+    }
+
+    private KualiDecimal getNullSafeItemOutstandingEncumberedAmount() {
+        return purchaseOrderItem.map(PurchaseOrderItem::getItemOutstandingEncumberedAmount)
+                .orElse(KualiDecimal.ZERO);
     }
 
     private String determineRequester() {
