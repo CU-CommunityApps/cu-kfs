@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber;
+import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -166,6 +167,54 @@ public final class CemiVendorUtils {
         final PhoneNumber parsedPhoneNumber = getPhoneNumberUtil().parseAndKeepRawInput(
                 rawPhoneNumber, tentativeExplicitRegion);
         return parsedPhoneNumber;
+    }
+
+    public static Optional<PhoneNumber> parsePhoneNumberIfPossible(final VendorPhoneNumber vendorPhone) {
+        try {
+            final PhoneNumber parsedPhoneNumber = parsePhoneNumber(vendorPhone);
+            return Optional.of(parsedPhoneNumber);
+        } catch (final NumberParseException | RuntimeException e) {
+            LOG.error("parsePhoneNumberIfPossible, Could not parse phone number from Phone BO {} for Vendor {}-{}; "
+                    + "this phone number will be skipped",
+                    vendorPhone.getVendorPhoneGeneratedIdentifier(),
+                    vendorPhone.getVendorHeaderGeneratedIdentifier(),
+                    vendorPhone.getVendorDetailAssignedIdentifier(), e);
+            return Optional.empty();
+        }
+    }
+
+    public static PhoneNumber parsePhoneNumber(final VendorPhoneNumber vendorPhone)
+            throws NumberParseException {
+        final String rawPhoneNumber = vendorPhone.getVendorPhoneNumber();
+        Validate.validState(StringUtils.isNotBlank(rawPhoneNumber),
+                "Phone BO %s for Vendor %s-%s has a blank phone number; this should NEVER happen",
+                vendorPhone.getVendorPhoneGeneratedIdentifier(),
+                vendorPhone.getVendorHeaderGeneratedIdentifier(),
+                vendorPhone.getVendorDetailAssignedIdentifier());
+        final String tentativeExplicitRegion = isPhoneNumberUsingInternationalFormat(rawPhoneNumber)
+                ? null : CemiSupplierConstants.COUNTRY_CODE_UNITED_STATES;
+        final PhoneNumber parsedPhoneNumber = getPhoneNumberUtil().parseAndKeepRawInput(
+                rawPhoneNumber, tentativeExplicitRegion);
+        if (getPhoneNumberUtil().isValidNumber(parsedPhoneNumber)) {
+            return parsedPhoneNumber;
+        }
+        return reparseAsForeignNumberIfPossible(rawPhoneNumber, parsedPhoneNumber);
+    }
+
+    private static PhoneNumber reparseAsForeignNumberIfPossible(final String rawPhoneNumber,
+            final PhoneNumber initialParseResult) {
+        final String digitsOnly = rawPhoneNumber.replaceAll("\\D", StringUtils.EMPTY);
+        if (digitsOnly.length() < CemiSupplierConstants.MIN_DIGIT_COUNT_FOR_ASSUMED_FOREIGN_PHONE) {
+            return initialParseResult;
+        }
+        try {
+            final PhoneNumber reparsedPhoneNumber = getPhoneNumberUtil().parseAndKeepRawInput(
+                    CUKFSConstants.PLUS_SIGN + digitsOnly, null);
+            return getPhoneNumberUtil().isValidNumber(reparsedPhoneNumber)
+                    ? reparsedPhoneNumber : initialParseResult;
+        } catch (final NumberParseException e) {
+            return initialParseResult;
+        }
     }
 
     public static boolean isPhoneNumberUsingInternationalFormat(final String rawPhoneNumber) {
