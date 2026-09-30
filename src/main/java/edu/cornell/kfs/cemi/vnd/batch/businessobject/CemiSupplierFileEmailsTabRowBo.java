@@ -2,6 +2,11 @@ package edu.cornell.kfs.cemi.vnd.batch.businessobject;
 
 import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBase;
 
+/*
+ * NOTE: Whenever this class gets updated to add or remove more email addresses, make sure
+ *       the email-related processing of the Remit To Supplier extract also gets updated.
+ *       See the related comments in the CemiRemitToSupplierDataBuilderDefaultImpl class.
+ */
 public class CemiSupplierFileEmailsTabRowBo extends CemiIndexedBusinessObjectBase {
 
     private static final long serialVersionUID = -1311681792505926049L;
