@@ -35,6 +35,7 @@ public final class CemiSupplierConstants {
     public static final int MAX_ACCOUNT_PAYMENT_TYPES = 3;
     public static final int MAX_SUPPLIER_ACCEPTED_PAYMENT_TYPES = 3;
     public static final int MAX_SUPPLIER_ALIASES = 2;
+    public static final int MIN_DIGIT_COUNT_FOR_ASSUMED_FOREIGN_PHONE = 11;
 
     public static final String SUPPLIER_OUTPUT_DEFINITION_FILE_PATH_SUFFIX = "vnd/batch/CemiSupplierExtractFileOutputDefinition.xml";
     public static final String SUPPLIER_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX = "vnd/batch/Supplier.xlsx";

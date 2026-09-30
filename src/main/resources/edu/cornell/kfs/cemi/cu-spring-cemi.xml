@@ -283,7 +283,8 @@
           p:cemiSupplierDao-ref="cemiSupplierDao"
           p:businessObjectService-ref="businessObjectService"
           p:dateTimeService-ref="dateTimeService"
-          p:isoFipsConversionService-ref="isoFipsConversionService"/>
+          p:isoFipsConversionService-ref="isoFipsConversionService"
+          p:cemiIsoCountryService-ref="cemiIsoCountryService"/>
 
     <bean id="cemiOutputDefinitionFileType" parent="cemiOutputDefinitionFileType-parentBean"/>
     <bean id="cemiOutputDefinitionFileType-parentBean"
