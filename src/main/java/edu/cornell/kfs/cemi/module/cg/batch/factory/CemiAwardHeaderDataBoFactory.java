@@ -126,8 +126,8 @@ public class CemiAwardHeaderDataBoFactory {
         final String paymentType = determinePaymentType(letterOfCredit);
         final String letterOfCreditDocumentId = setToEmptyStringWhenValueIsBlank(awardExtendedAttribute.getLocAccountId());
         
-        final KualiDecimal sponsorDirectCostAmount = award.getAwardDirectCostAmount();
-        final KualiDecimal sponsorFacilitiesAndAdministrationAmount = award.getAwardIndirectCostAmount();
+        final KualiDecimal sponsorDirectCostAmount = KualiDecimal.ZERO;
+        final KualiDecimal sponsorFacilitiesAndAdministrationAmount = KualiDecimal.ZERO;
         final String sponsorDirectCostAmountString = convertKualiDecimalToString(sponsorDirectCostAmount);
         final String sponsorFacilitiesAndAdministrationAmountString = convertKualiDecimalToString(sponsorFacilitiesAndAdministrationAmount);
         final String zeroAmountAward = determineZeroAmountAward(sponsorDirectCostAmount, sponsorFacilitiesAndAdministrationAmount);
@@ -135,8 +135,11 @@ public class CemiAwardHeaderDataBoFactory {
         final String cleanedCostShareTotalAmountString = removeFormattingFromNovelutionMoneyValueString(awardNovelutionAttributes.getCostShareTotalAmount());
         final String costShareRequiredBySponsor = determineCostShareRequiredBySponsor(cleanedCostShareTotalAmountString);
         final String authorizedAmountString = convertKualiDecimalToString(awardExtendedAttribute.getBudgetTotalAmount());
-        final String cleanedAnticipatedSponsorDirectCostAmountString = removeFormattingFromNovelutionMoneyValueString(awardNovelutionAttributes.getAnticipatedSponsorDirectCostAmount());
-        final String cleanedAnticipatedFacilitiesAndAdministrationAmountString = removeFormattingFromNovelutionMoneyValueString(awardNovelutionAttributes.getAnticipatedFacilitiesAndAdministrationAmount());
+        
+        final KualiDecimal anticipatedSponsorDirectCostAmount = award.getAwardDirectCostAmount();
+        final KualiDecimal anticipatedFacilitiesAndAdministrationAmount = award.getAwardIndirectCostAmount();
+        final String anticipatedSponsorDirectCostAmountString = convertKualiDecimalToString(anticipatedSponsorDirectCostAmount);
+        final String anticipatedFacilitiesAndAdministrationAmountString = convertKualiDecimalToString(anticipatedFacilitiesAndAdministrationAmount);
         final String awardSchedule = determineAwardScheduleReferenceId(proposalNumber);
         final String federalAwardIdNumberString = determineFederalAwardIdNumber(awardNovelutionAttributes.getFederalAwardIdNumber());
 
@@ -190,8 +193,8 @@ public class CemiAwardHeaderDataBoFactory {
         awardHeaderBo.setAuthorizedAmount(authorizedAmountString);
         awardHeaderBo.setBillingLimitOverride(CemiBaseConstants.EMPTY_STRING);
         awardHeaderBo.setCostShareRequiredBySponsor(costShareRequiredBySponsor);
-        awardHeaderBo.setAnticipatedSponsorDirectCostAmount(cleanedAnticipatedSponsorDirectCostAmountString);
-        awardHeaderBo.setAnticipatedFacilitiesAndAdministrationAmount(cleanedAnticipatedFacilitiesAndAdministrationAmountString);
+        awardHeaderBo.setAnticipatedSponsorDirectCostAmount(anticipatedSponsorDirectCostAmountString);
+        awardHeaderBo.setAnticipatedFacilitiesAndAdministrationAmount(anticipatedFacilitiesAndAdministrationAmountString);
         awardHeaderBo.setAwardSchedule(awardSchedule);
         awardHeaderBo.setFederalAwardIdNumber(federalAwardIdNumberString);
         awardHeaderBo.setCfdaNumber(cfdaNumberString);
