@@ -7,6 +7,9 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
@@ -21,6 +24,8 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CemiPurchaseOrderServiceLineBoFactory {
 
+    private static final Logger LOG = LogManager.getLogger();
+
     private CemiPurchaseOrderHeaderBo headerBo;
     private Optional<PurchaseOrderItem> purchaseOrderItem;
     private List<PurchaseOrderAccount> itemAccountingLines;
@@ -34,11 +39,6 @@ public class CemiPurchaseOrderServiceLineBoFactory {
         this.itemAccountingLines = purchaseOrderItem.isPresent()
                 ? CemiPurchaseOrderUtils.getOutstandingEncumberedAccountingLines(purchaseOrderItem.get())
                 : List.of();
-        Validate.isTrue(purchaseOrderItem.isEmpty()
-                || CemiPurchaseOrderConstants.ONE_CENT.equals(purchaseOrderItem.get().getItemOutstandingEncumberedAmount())
-                || itemAccountingLines.size() > 0,
-                "If a non-empty purchaseOrderItem wrapper is specified, then the wrapped item must have one or more "
-                        + "accounting lines with outstanding encumbrances unless the item has only one cent outstanding");
     }
 
     public static CemiPurchaseOrderServiceLineBo createServiceLineBoFrom(CemiPurchaseOrderHeaderBo headerBo,
@@ -158,18 +158,28 @@ public class CemiPurchaseOrderServiceLineBoFactory {
         if (isEmptyFactory()) {
             return CemiBaseConstants.EMPTY_STRING;
         }
-        final String memoSuffix = itemHasOneCentOutstandingButHasNoOutstandingAccountAmounts()
-                ? CemiPurchaseOrderConstants.ONE_CENT_MEMO_SUFFIX : CemiBaseConstants.EMPTY_STRING;
+        String memoSuffix = CemiBaseConstants.EMPTY_STRING;
+        if (itemHasOutstandingAmountButHasNoOutstandingAccountAmounts()) {
+            LOG.warn("determineMemo, Item {} on PO Document Number {} has a non-zero remaining encumbered amount, even "
+                    + "though its accounting lines have no remaining encumbered amounts. Its worktag fields will "
+                    + "be left blank for now, but manual corrections might be necessary.",
+                    purchaseOrderItem.get().getItemIdentifier(), purchaseOrderItem.get().getDocumentNumber());
+            memoSuffix = CemiPurchaseOrderConstants.NO_ACCOUNT_AMOUNTS_MEMO_SUFFIX;
+        }
         final String totalLineAmount = CemiPurchaseOrderUtils.formatAmount(purchaseOrderItem.get().getTotalAmount());
         return StringUtils.join(
                 CemiPurchaseOrderConstants.ORIGINAL_PO_LINE_AMOUNT_MEMO_PREFIX, totalLineAmount, memoSuffix);
     }
 
-    private boolean itemHasOneCentOutstandingButHasNoOutstandingAccountAmounts() {
+    private boolean itemHasOutstandingAmountButHasNoOutstandingAccountAmounts() {
         return !isEmptyFactory()
                 && itemAccountingLines.isEmpty()
-                && CemiPurchaseOrderConstants.ONE_CENT.equals(
-                        purchaseOrderItem.get().getItemOutstandingEncumberedAmount());
+                && getNullSafeItemOutstandingEncumberedAmount().compareTo(KualiDecimal.ZERO) > 0;
+    }
+
+    private KualiDecimal getNullSafeItemOutstandingEncumberedAmount() {
+        return purchaseOrderItem.map(PurchaseOrderItem::getItemOutstandingEncumberedAmount)
+                .orElse(KualiDecimal.ZERO);
     }
 
     private String determineRequester() {
