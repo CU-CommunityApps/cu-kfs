@@ -6,6 +6,10 @@ public interface CemiSupplierExtractService {
 
     void resetState();
 
+    void captureInScopeParameterBasedKeysToProcessingTable();
+
+    void captureInScopePrerequisiteBusinessObjectKeysToProcessingTable();
+
     void captureInScopeBusinessObjectKeysToProcessingTable();
 
     void generateIntermediateExtractData(final LocalDateTime jobRunDate);

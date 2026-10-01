@@ -54,9 +54,19 @@ public class CemiSupplierExtractServiceImpl extends CemiDataExtractServiceBase i
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public void captureInScopeBusinessObjectKeysToProcessingTable() {
+    public void captureInScopeParameterBasedKeysToProcessingTable() {
         initializeVendorActivityDateRangeSettings();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public void captureInScopePrerequisiteBusinessObjectKeysToProcessingTable() {
         populateListOfBaseVendorData();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public void captureInScopeBusinessObjectKeysToProcessingTable() {
         populateListOfInScopeVendors();
     }
     

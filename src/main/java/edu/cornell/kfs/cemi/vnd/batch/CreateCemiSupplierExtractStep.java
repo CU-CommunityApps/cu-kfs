@@ -14,6 +14,8 @@ public class CreateCemiSupplierExtractStep extends AbstractStep {
     public boolean execute(final String jobName, final LocalDateTime jobRunDate) throws InterruptedException {
         //Phase1: Obtain the dataset
         cemiSupplierExtractService.resetState();
+        cemiSupplierExtractService.captureInScopeParameterBasedKeysToProcessingTable();
+        cemiSupplierExtractService.captureInScopePrerequisiteBusinessObjectKeysToProcessingTable();
         cemiSupplierExtractService.captureInScopeBusinessObjectKeysToProcessingTable();
         //Phase 2: Loop through result set to generate the tab/sheet data and save it in database tables.
         cemiSupplierExtractService.generateIntermediateExtractData(jobRunDate);
