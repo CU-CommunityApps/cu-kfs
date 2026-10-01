@@ -111,8 +111,7 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
             final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
             final String supplierJobRunDate = getSupplierJobRunDate();
             final CemiRemitToSupplierDataBuilderDefaultImpl dataBuilder = new CemiRemitToSupplierDataBuilderDefaultImpl(
-                    businessObjectService, jobRunDateString, cemiRemitToSupplierOrmDao, supplierJobRunDate,
-                    shouldMaskCemiSensitiveData());
+                    businessObjectService, jobRunDateString, supplierJobRunDate, shouldMaskCemiSensitiveData());
             final Iterator<CemiSupplierFileAddressesTabRowBo> addressesIterator = addresses.iterator();
             dataBuilder.writeRemitToSupplierDataToIntermediateStorage(addressesIterator);
         }
