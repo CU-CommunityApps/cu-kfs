@@ -261,7 +261,11 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
         return Stream.of(
                         supplierEmailsTab.getEmailAddress1(),
                         supplierEmailsTab.getEmailAddress2(),
-                        supplierEmailsTab.getEmailAddress3()
+                        supplierEmailsTab.getEmailAddress3(),
+                        supplierEmailsTab.getEmailAddress4(),
+                        supplierEmailsTab.getEmailAddress5(),
+                        supplierEmailsTab.getEmailAddress6(),
+                        supplierEmailsTab.getEmailAddress7()
                 )
                 .filter(StringUtils::isNotBlank)
                 .toArray(CharSequence[]::new);
