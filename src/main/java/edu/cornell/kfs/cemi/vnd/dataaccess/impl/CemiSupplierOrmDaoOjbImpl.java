@@ -20,11 +20,12 @@ public class CemiSupplierOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase implements 
 
         if (shouldUseLessDataDuringCemiDevelopment()) {
             // This conditional was added to reduce processing time for local development during CEMI project work.
-            // The values were chosen for the WHERE clause to restrict the result set to roughly 1000 rows as
+            // The values were chosen for the WHERE clause to restrict the result set to less than 1000 rows as
             // well as provide both old and new vendors that had a variety of attributes for local verification. 
             vendorIdCondition = "(A0.VNDR_HDR_GNRTD_ID, A0.VNDR_DTL_ASND_ID) IN ("
                     + "SELECT VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID FROM CEMI.CU_CEMI_SPLR_EXTR_VNDR_T"
-                    + " WHERE VNDR_HDR_GNRTD_ID <= 5000 OR VNDR_HDR_GNRTD_ID >= 160000)";
+                    + " WHERE VNDR_HDR_GNRTD_ID <= 5000 OR VNDR_HDR_GNRTD_ID >= 160000"
+                    + " FETCH FIRST 750 ROWS ONLY)";
         } else {
             vendorIdCondition = "(A0.VNDR_HDR_GNRTD_ID, A0.VNDR_DTL_ASND_ID) IN ("
                     + "SELECT VNDR_HDR_GNRTD_ID, VNDR_DTL_ASND_ID FROM CEMI.CU_CEMI_SPLR_EXTR_VNDR_T)";

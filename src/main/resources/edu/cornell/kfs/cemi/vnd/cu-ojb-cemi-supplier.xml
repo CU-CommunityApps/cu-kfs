@@ -12,26 +12,54 @@
         <field-descriptor name="taxAuthorityFormType" column="TAX_AUTHORITY_FORM_TYPE" jdbc-type="VARCHAR"/>
         <field-descriptor name="irs1099Supplier" column="IRS_1099_SUPPLIER" jdbc-type="VARCHAR"/>
         <field-descriptor name="report1099WithParent" column="REPORT_1099_WITH_PARENT" jdbc-type="VARCHAR"/>
-        <field-descriptor name="taxIdType" column="TAX_ID_TYPE" jdbc-type="VARCHAR"/>
-        <field-descriptor name="taxIdText" column="TAX_ID_TEXT" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
-        <field-descriptor name="transactionTaxId" column="TRANSACTION_TAX_ID" jdbc-type="VARCHAR"/>
-        <field-descriptor name="defaultWithholdingTaxCode" column="DEFAULT_WITHHOLDING_TAX_CODE" jdbc-type="VARCHAR"/>
-        <field-descriptor name="primaryTaxId" column="PRIMARY_TAX_ID" jdbc-type="VARCHAR"/>
-        <field-descriptor name="countryTaxId" column="COUNTRY_TAX_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="taxIdType1" column="TAX_ID_TYPE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="taxIdText1" column="TAX_ID_TEXT_1" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+        <field-descriptor name="transactionTaxId1" column="TRANSACTION_TAX_ID_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="defaultWithholdingTaxCode1" column="DEFAULT_WITHHOLDING_TAX_CODE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="primaryTaxId1" column="PRIMARY_TAX_ID_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="countryTaxId1" column="COUNTRY_TAX_ID_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="taxIdType2" column="TAX_ID_TYPE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="taxIdText2" column="TAX_ID_TEXT_2" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+        <field-descriptor name="transactionTaxId2" column="TRANSACTION_TAX_ID_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="primaryTaxId2" column="PRIMARY_TAX_ID_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="countryTaxId2" column="COUNTRY_TAX_ID_2" jdbc-type="VARCHAR"/>
         <field-descriptor name="supplierCategory" column="SUPPLIER_CATEGORY" jdbc-type="VARCHAR"/>
         <field-descriptor name="supplierGroup1" column="SUPPLIER_GROUP_1" jdbc-type="VARCHAR"/>
         <field-descriptor name="supplierGroup2" column="SUPPLIER_GROUP_2" jdbc-type="VARCHAR"/>
         <field-descriptor name="supplierGroup3" column="SUPPLIER_GROUP_3" jdbc-type="VARCHAR"/>
         <field-descriptor name="supplierGroup4" column="SUPPLIER_GROUP_4" jdbc-type="VARCHAR"/>
-        <field-descriptor name="customerAccountNumber" column="CUSTOMER_ACCOUNT_NUMBER" jdbc-type="VARCHAR"/>
+        <field-descriptor name="taxDocumentDate" column="TAX_DOC_DT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="certificateOfInsuranceDate" column="CERT_OF_INS_DT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="purchaseOrderIssueOption" column="PO_ISSUE_OPTN" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddressPurchaseOrder" column="EMAIL_ADDR_PO" jdbc-type="VARCHAR"/>
+        <field-descriptor name="changeOrderIssueOption" column="CHG_ORD_ISSUE_OPTN" jdbc-type="VARCHAR"/>
+        <field-descriptor name="multiSupplierSupplierLinkForPoIssue" column="MULT_SUPP_SUPP_LNK_FOR_PO_ISSUE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="shippingTerms" column="SHIP_TERMS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="shippingMethod" column="SHIP_METHOD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="enableAsn" column="ENABLE_ASN" jdbc-type="VARCHAR"/>
         <field-descriptor name="dunsNumber" column="DUNS_NUMBER" jdbc-type="VARCHAR"/>
         <field-descriptor name="paymentTerms" column="PAYMENT_TERMS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="termsBasedOnInvoiceReceivedDate" column="TERMS_BASED_ON_INV_RCVD_DT" jdbc-type="VARCHAR"/>
         <field-descriptor name="defaultPaymentType" column="DEFAULT_PAYMENT_TYPE" jdbc-type="VARCHAR"/>
         <field-descriptor name="paymentTypesAccepted1" column="PAYMENT_TYPES_ACCEPTED_1" jdbc-type="VARCHAR"/>
         <field-descriptor name="paymentTypesAccepted2" column="PAYMENT_TYPES_ACCEPTED_2" jdbc-type="VARCHAR"/>
         <field-descriptor name="paymentTypesAccepted3" column="PAYMENT_TYPES_ACCEPTED_3" jdbc-type="VARCHAR"/>
         <field-descriptor name="currency" column="CURRENCY" jdbc-type="VARCHAR"/>
-        <field-descriptor name="acceptedCurrencies" column="ACCEPTED_CURRENCIES" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedCurrencies1" column="ACCEPTED_CURRENCIES_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedCurrencies2" column="ACCEPTED_CURRENCIES_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedCurrencies3" column="ACCEPTED_CURRENCIES_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedCurrencies4" column="ACCEPTED_CURRENCIES_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedCurrencies5" column="ACCEPTED_CURRENCIES_5" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedCurrencies6" column="ACCEPTED_CURRENCIES_6" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedCurrencies7" column="ACCEPTED_CURRENCIES_7" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedCurrencies8" column="ACCEPTED_CURRENCIES_8" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedCurrencies9" column="ACCEPTED_CURRENCIES_9" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedCurrencies10" column="ACCEPTED_CURRENCIES_10" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedCurrencies11" column="ACCEPTED_CURRENCIES_11" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedCurrencies12" column="ACCEPTED_CURRENCIES_12" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedCurrencies13" column="ACCEPTED_CURRENCIES_13" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedCurrencies14" column="ACCEPTED_CURRENCIES_14" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedCurrencies15" column="ACCEPTED_CURRENCIES_15" jdbc-type="VARCHAR"/>
         <field-descriptor name="procurementCreditCard" column="PROCUREMENT_CREDIT_CARD" jdbc-type="VARCHAR"/>
         <field-descriptor name="alwaysSeparatePayments" column="ALWAYS_SEPARATE_PAYMENTS" jdbc-type="VARCHAR"/>
         <field-descriptor name="textForDefaultSupplierPaymentMemo" column="TEXT_FOR_DEFAULT_SUPPLIER_PAYMENT_MEMO" jdbc-type="VARCHAR"/>
@@ -57,6 +85,8 @@
         <field-descriptor name="alternateNameUsageBusinessEntity1" column="ALTERNATE_NAME_USAGE_BUSINESS_ENTITY_1" jdbc-type="VARCHAR"/>
         <field-descriptor name="alternateNameBusinessEntity2" column="ALTERNATE_NAME_BUSINESS_ENTITY_2" jdbc-type="VARCHAR"/>
         <field-descriptor name="alternateNameUsageBusinessEntity2" column="ALTERNATE_NAME_USAGE_BUSINESS_ENTITY_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="webAddress" column="WEB_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="webAddressId" column="WEB_ADDR_ID" jdbc-type="VARCHAR"/>
     </class-descriptor>
 
     <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo" schema="CEMI"
@@ -205,6 +235,50 @@
         <field-descriptor name="useForTenanted3_2" column="USE_FOR_TENANTED_3_2" jdbc-type="VARCHAR"/>
         <field-descriptor name="useForTenanted3_3" column="USE_FOR_TENANTED_3_3" jdbc-type="VARCHAR"/>
         <field-descriptor name="useForTenanted3_4" column="USE_FOR_TENANTED_3_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailId4" column="EMAIL_ID_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddress4" column="EMAIL_ADDRESS_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailPrimary4" column="EMAIL_PRIMARY_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor4_1" column="EMAIL_USE_FOR_4_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor4_2" column="EMAIL_USE_FOR_4_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor4_3" column="EMAIL_USE_FOR_4_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor4_4" column="EMAIL_USE_FOR_4_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted4_1" column="USE_FOR_TENANTED_4_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted4_2" column="USE_FOR_TENANTED_4_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted4_3" column="USE_FOR_TENANTED_4_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted4_4" column="USE_FOR_TENANTED_4_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailId5" column="EMAIL_ID_5" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddress5" column="EMAIL_ADDRESS_5" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailPrimary5" column="EMAIL_PRIMARY_5" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor5_1" column="EMAIL_USE_FOR_5_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor5_2" column="EMAIL_USE_FOR_5_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor5_3" column="EMAIL_USE_FOR_5_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor5_4" column="EMAIL_USE_FOR_5_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted5_1" column="USE_FOR_TENANTED_5_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted5_2" column="USE_FOR_TENANTED_5_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted5_3" column="USE_FOR_TENANTED_5_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted5_4" column="USE_FOR_TENANTED_5_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailId6" column="EMAIL_ID_6" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddress6" column="EMAIL_ADDRESS_6" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailPrimary6" column="EMAIL_PRIMARY_6" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor6_1" column="EMAIL_USE_FOR_6_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor6_2" column="EMAIL_USE_FOR_6_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor6_3" column="EMAIL_USE_FOR_6_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor6_4" column="EMAIL_USE_FOR_6_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted6_1" column="USE_FOR_TENANTED_6_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted6_2" column="USE_FOR_TENANTED_6_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted6_3" column="USE_FOR_TENANTED_6_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted6_4" column="USE_FOR_TENANTED_6_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailId7" column="EMAIL_ID_7" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddress7" column="EMAIL_ADDRESS_7" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailPrimary7" column="EMAIL_PRIMARY_7" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor7_1" column="EMAIL_USE_FOR_7_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor7_2" column="EMAIL_USE_FOR_7_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor7_3" column="EMAIL_USE_FOR_7_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailUseFor7_4" column="EMAIL_USE_FOR_7_4" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted7_1" column="USE_FOR_TENANTED_7_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted7_2" column="USE_FOR_TENANTED_7_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted7_3" column="USE_FOR_TENANTED_7_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted7_4" column="USE_FOR_TENANTED_7_4" jdbc-type="VARCHAR"/>
     </class-descriptor>
 
 </descriptor-repository>
