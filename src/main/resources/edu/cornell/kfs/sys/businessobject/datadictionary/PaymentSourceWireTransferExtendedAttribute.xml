@@ -18,6 +18,8 @@
                 <ref bean="PaymentSourceWireTransferExtendedAttribute-sortOrTransitCode"/>
                 <ref bean="PaymentSourceWireTransferExtendedAttribute-correspondentBankName"/>
                 <ref bean="PaymentSourceWireTransferExtendedAttribute-correspondentBankAddress"/>
+                <ref bean="PaymentSourceWireTransferExtendedAttribute-correspondentBankCityName"/>
+                <ref bean="PaymentSourceWireTransferExtendedAttribute-correspondentBankCountryCode"/>
                 <ref bean="PaymentSourceWireTransferExtendedAttribute-correspondentBankRoutingNumber"/>
                 <ref bean="PaymentSourceWireTransferExtendedAttribute-correspondentBankAccountNumber"/>
                 <ref bean="PaymentSourceWireTransferExtendedAttribute-correspondentBankSwiftCode"/>
@@ -153,6 +155,38 @@
           p:required="false">
         <property name="control">
             <bean parent="TextControlDefinition" p:size="40"/>
+        </property>
+    </bean>
+
+    <bean id="PaymentSourceWireTransferExtendedAttribute-correspondentBankCityName" 
+          parent="PaymentSourceWireTransferExtendedAttribute-correspondentBankCityName-parentBean"/>
+    <bean id="PaymentSourceWireTransferExtendedAttribute-correspondentBankCityName-parentBean"
+          abstract="true" parent="AttributeDefinition"
+          p:name="correspondentBankCityName"
+          p:forceUppercase="false"
+          p:label="Correspondent Bank City"
+          p:shortLabel="Corresp Bnk Cty"
+          p:maxLength="37"
+          p:required="false">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="37"/>
+        </property>
+    </bean>
+
+    <bean id="PaymentSourceWireTransferExtendedAttribute-correspondentBankCountryCode" 
+          parent="PaymentSourceWireTransferExtendedAttribute-correspondentBankCountryCode-parentBean"/>
+    <bean id="PaymentSourceWireTransferExtendedAttribute-correspondentBankCountryCode-parentBean"
+          abstract="true" parent="AttributeDefinition"
+          p:name="correspondentBankCountryCode"
+          p:forceUppercase="false"
+          p:label="Correspondent Bank Country"
+          p:shortLabel="Corresp Bnk Cntry"
+          p:maxLength="2"
+          p:required="false">
+        <property name="control">
+            <bean parent="SelectControlDefinition"
+                  p:valuesFinder-ref="countryValuesFinder"
+                  p:includeKeyInLabel="false"/>
         </property>
     </bean>
 
