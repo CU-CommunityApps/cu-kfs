@@ -6,6 +6,6 @@ import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 
 public interface CemiPaymentElectionOrmDao {
 
-    Stream<PayeeACHAccount> getPayeeAchAccountIdsForCemiPaymentElectionExtractAsCloseableStream();
+    Stream<PayeeACHAccount> getPayeeAchAccountsForCemiPaymentElectionExtractAsCloseableStream();
 
 }

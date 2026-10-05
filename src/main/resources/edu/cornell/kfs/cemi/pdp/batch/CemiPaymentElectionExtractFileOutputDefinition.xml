@@ -13,7 +13,8 @@
  -->
 <cemiOutputDefinition>
 
-    <sheet name="Group_TWO" num-header-rows="6" start-column-index="1">
+    <sheet name="Group_TWO" num-header-rows="6" start-column-index="1"
+           business-object-class="edu.cornell.kfs.cemi.pdp.batch.businessobject.CemiPaymentElectionFileGroupTwoTabRowBo">
         <field name="Employee_ID" type="STRING" key="employeeId"/>
         <field name="Payment_Election_Group_Rule_2" type="STRING" key="paymentElectionGroupRule_2"/>
         <field name="Payment_Election_Rule_2_1" type="STRING" key="paymentElectionRule_2_1"/>

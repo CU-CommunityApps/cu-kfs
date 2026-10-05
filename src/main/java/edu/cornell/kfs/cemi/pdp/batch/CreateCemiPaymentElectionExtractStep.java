@@ -7,18 +7,18 @@ import org.kuali.kfs.sys.batch.AbstractStep;
 import edu.cornell.kfs.cemi.pdp.batch.service.CemiPaymentElectionExtractService;
 
 public class CreateCemiPaymentElectionExtractStep extends AbstractStep {
-    
+
     private CemiPaymentElectionExtractService cemiPaymentElectionExtractService;
 
     @Override
     public boolean execute(final String jobName, final LocalDateTime jobRunDate) throws InterruptedException {
         //Phase1: Obtain the dataset
         cemiPaymentElectionExtractService.resetState();
-        cemiPaymentElectionExtractService.populateListOfInScopeEmployeePaymentElections();
-        //Phase 2: Loop through result set to create all the csv files
-        cemiPaymentElectionExtractService.generateIntermediatePaymentElectionExtractData(jobRunDate);
+        cemiPaymentElectionExtractService.captureInScopeBusinessObjectKeysToProcessingTable();
+        //Phase 2: Loop through result set to create data rows that are saved to database table
+        cemiPaymentElectionExtractService.generateIntermediateExtractData(jobRunDate);
         //Phase 3: Create single multi-tabbed file.
-        cemiPaymentElectionExtractService.generatePaymentElectionExtractFile(jobRunDate);
+        cemiPaymentElectionExtractService.generateDataConversionExtractFile(jobRunDate);
         return true;
     }
 
