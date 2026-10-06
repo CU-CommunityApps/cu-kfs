@@ -17,6 +17,8 @@
                 <ref bean="PaymentSourceWireTransfer-extension-correspondentBankName"/>
                 <ref bean="PaymentSourceWireTransfer-extension-correspondentBankAddress"/>
                 <ref bean="PaymentSourceWireTransfer-extension-correspondentBankCityName"/>
+                <ref bean="PaymentSourceWireTransfer-extension-correspondentBankStateCode"/>
+                <ref bean="PaymentSourceWireTransfer-extension-correspondentBankProvince"/>
                 <ref bean="PaymentSourceWireTransfer-extension-correspondentBankCountryCode"/>
                 <ref bean="PaymentSourceWireTransfer-extension-correspondentBankRoutingNumber"/>
                 <ref bean="PaymentSourceWireTransfer-extension-correspondentBankAccountNumber"/>
@@ -62,6 +64,14 @@
     <bean id="PaymentSourceWireTransfer-extension-correspondentBankCityName" parent="PaymentSourceWireTransfer-extension-correspondentBankCityName-parentBean"/>
     <bean id="PaymentSourceWireTransfer-extension-correspondentBankCityName-parentBean" abstract="true" parent="PaymentSourceWireTransferExtendedAttribute-correspondentBankCityName"
         p:name="extension.correspondentBankCityName"/>
+
+    <bean id="PaymentSourceWireTransfer-extension-correspondentBankStateCode" parent="PaymentSourceWireTransfer-extension-correspondentBankStateCode-parentBean"/>
+    <bean id="PaymentSourceWireTransfer-extension-correspondentBankStateCode-parentBean" abstract="true" parent="PaymentSourceWireTransferExtendedAttribute-correspondentBankStateCode"
+        p:name="extension.correspondentBankStateCode"/>
+
+    <bean id="PaymentSourceWireTransfer-extension-correspondentBankProvince" parent="PaymentSourceWireTransfer-extension-correspondentBankProvince-parentBean"/>
+    <bean id="PaymentSourceWireTransfer-extension-correspondentBankProvince-parentBean" abstract="true" parent="PaymentSourceWireTransferExtendedAttribute-correspondentBankProvince"
+        p:name="extension.correspondentBankProvince"/>
 
     <bean id="PaymentSourceWireTransfer-extension-correspondentBankCountryCode" parent="PaymentSourceWireTransfer-extension-correspondentBankCountryCode-parentBean"/>
     <bean id="PaymentSourceWireTransfer-extension-correspondentBankCountryCode-parentBean" abstract="true" parent="PaymentSourceWireTransferExtendedAttribute-correspondentBankCountryCode"

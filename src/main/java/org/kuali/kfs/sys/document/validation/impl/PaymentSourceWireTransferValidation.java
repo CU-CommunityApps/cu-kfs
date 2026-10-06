@@ -42,6 +42,7 @@ import edu.cornell.kfs.sys.businessobject.PaymentSourceWireTransferExtendedAttri
 /*
  * CU Customization: Added required-field handling for Correspondent Bank fields.
  */
+@SuppressWarnings("deprecation")
 public class PaymentSourceWireTransferValidation extends GenericValidation {
 
     private static final Logger LOG = LogManager.getLogger();
@@ -94,8 +95,8 @@ public class PaymentSourceWireTransferValidation extends GenericValidation {
                         CUKFSPropertyConstants.CORRESPONDENT_BANK_CITY_NAME);
                 isValid &= validateRequiredForCorrespondentBank(wireTransferExtension.getCorrespondentBankCountryCode(),
                         CUKFSPropertyConstants.CORRESPONDENT_BANK_COUNTRY_CODE);
-                isValid &= validateRequiredForCorrespondentBank(wireTransferExtension.getCorrespondentBankAccountNumber(),
-                        CUKFSPropertyConstants.CORRESPONDENT_BANK_ACCOUNT_NUMBER);
+                isValid &= validateRequiredForCorrespondentBank(wireTransferExtension.getCorrespondentBankSwiftCode(),
+                        CUKFSPropertyConstants.CORRESPONDENT_BANK_SWIFT_CODE);
 
                 errors.removeFromErrorPath(KFSPropertyConstants.EXTENSION);
             }
@@ -161,6 +162,8 @@ public class PaymentSourceWireTransferValidation extends GenericValidation {
                 wireTransferExtension.getCorrespondentBankName(),
                 wireTransferExtension.getCorrespondentBankAddress(),
                 wireTransferExtension.getCorrespondentBankCityName(),
+                wireTransferExtension.getCorrespondentBankStateCode(),
+                wireTransferExtension.getCorrespondentBankProvince(),
                 wireTransferExtension.getCorrespondentBankCountryCode(),
                 wireTransferExtension.getCorrespondentBankRoutingNumber(),
                 wireTransferExtension.getCorrespondentBankAccountNumber(),
