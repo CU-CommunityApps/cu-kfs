@@ -323,10 +323,24 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
     }
 
     private void validateItemsTotalEqualsInvoiceTotal(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results) {
+        PurchaseOrderDocument po = purchaseOrderService.getCurrentPurchaseOrder(paymentRequestDto.getPoNumberAsInteger());
+        if (po == null) {
+            LOG.warn("validateItemsTotalEqualsInvoiceTotal, PO not found for PO number: {}", paymentRequestDto.getPoNumber());
+            return;
+        }
+        
         KualiDecimal itemsTotal = KualiDecimal.ZERO;
         for (PaymentRequestLineItemDto item : paymentRequestDto.getItems()) {
-            if (item.getItemQuantityAsKualiDecimal() != null && item.getItemPriceAsKualiDecimal() != null) {
-                KualiDecimal lineTotal = item.getItemQuantityAsKualiDecimal().multiply(item.getItemPriceAsKualiDecimal());
+            if (item.getItemPriceAsKualiDecimal() != null) {
+                PurApItem poItem = po.getItemByLineNumber(item.getLineNumberAsInteger());
+                KualiDecimal lineTotal = KualiDecimal.ZERO;
+                
+                if (poItem != null && PurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE == poItem.getItemTypeCode()) {
+                    lineTotal = item.getItemPriceAsKualiDecimal();
+                } else if (item.getItemQuantityAsKualiDecimal() != null) {
+                    lineTotal = item.getItemQuantityAsKualiDecimal().multiply(item.getItemPriceAsKualiDecimal());
+                }
+                
                 itemsTotal = itemsTotal.add(lineTotal);
             }
         }
