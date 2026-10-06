@@ -45,6 +45,9 @@ public final class CemiSupplierConstants {
     public static final String DEFAULT_SUPPLIER_CATEGORY = "Foundation_Default";
     public static final String PAYMENT_TYPE_ACH_MANUAL = "ACH_Manual";
     public static final String PAYMENT_TYPE_OUTSOURCED_CHECK = "Outsourced_Check";
+    public static final String PAYMENT_TYPE_CHECK = "Check";
+    public static final String PAYMENT_TYPE_FX_PAYMENTS = "FX_Payments";
+    public static final String PAYMENT_TYPE_WIRE_MANUAL = "Wire_Manual";
     public static final String DEFAULT_CURRENCY = "USD";
     public static final String DEFAULT_NAME_USAGE = "Reference";
     public static final String DEFAULT_ADDRESS_TYPE = "BUSINESS";
