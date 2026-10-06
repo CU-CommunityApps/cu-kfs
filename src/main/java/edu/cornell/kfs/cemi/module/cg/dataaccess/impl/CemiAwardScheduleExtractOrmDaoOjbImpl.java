@@ -25,7 +25,15 @@ public class CemiAwardScheduleExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase
             // well as provide both old and new awards that had a variety of attributes for local verification. 
             proposalNumberCondition = "(A0.CGPRPSL_NBR) IN ("
                     + "SELECT CGPRPSL_NBR FROM CEMI.CU_CEMI_AWD_SCHDL_EXTR_AWD_T"
-                    + " WHERE CGPRPSL_NBR <= 139300 OR CGPRPSL_NBR >= 193300)";
+                    // Range of proposal numbers for medium sized data set
+//                    + " WHERE CGPRPSL_NBR <= 139300 OR CGPRPSL_NBR >= 193300)";
+                    // Single value for specific data item troubleshooting
+                    + " WHERE CGPRPSL_NBR IN ('136110', '136135', '138545'))";
+                    // Smaller specific set of proposal numbers for targeted local troubleshooting
+//                  + " WHERE CGPRPSL_NBR IN ('15366', '193325', '193412', '193472', '37608', '39769', '40108',"
+//                  + " '40914', '42734', '43224', '44647', '45865', '45971', '47057', '47824', '48719', '49294',"
+//                  + " '49403', '52390', '53234', '53400', '53731', '54482', '55306', '57220', '60403', '61882',"
+//                  + " '62119', '62293'))";
         } else {
             proposalNumberCondition = "(A0.CGPRPSL_NBR) IN ("
                     + "SELECT CGPRPSL_NBR FROM CEMI.CU_CEMI_AWD_SCHDL_EXTR_AWD_T)";

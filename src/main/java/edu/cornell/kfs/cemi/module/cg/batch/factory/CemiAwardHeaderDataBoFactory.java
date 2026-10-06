@@ -18,6 +18,7 @@ import edu.cornell.kfs.cemi.module.cg.CemiAwardConstants;
 import edu.cornell.kfs.cemi.module.cg.CemiAwardScheduleConstants;
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardHeaderDataBo;
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardLegacyAccountSubAccountDataBo;
+import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardLegacyCostingSummariesForSingleProposalNumberBo;
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardLegacyNovelutionBo;
 import edu.cornell.kfs.cemi.module.cg.batch.translatetable.CemiAwardTranslateTableMaps;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardExtractDao;
@@ -32,6 +33,7 @@ public class CemiAwardHeaderDataBoFactory {
     private Iterator<CemiAwardLegacyAccountSubAccountDataBo> allAccountsWithSubAccountsIterator;
     private String awardOrgCode;
     private CemiAwardLegacyNovelutionBo awardNovelutionAttributes;
+    private CemiAwardLegacyCostingSummariesForSingleProposalNumberBo awardHeaderSponsorCostingSummaries;
     private String jobRunDateString;
     private CemiAwardExtractDao cemiAwardExtractDao;
     private DateTimeService dateTimeService;
@@ -42,18 +44,21 @@ public class CemiAwardHeaderDataBoFactory {
             final AwardExtendedAttribute awardExtendedAttribute,
             final Iterator<CemiAwardLegacyAccountSubAccountDataBo> allAccountsWithSubAccountsIterator,
             final String awardOrgCode, final CemiAwardLegacyNovelutionBo awardNovelutionAttributes,
+            final CemiAwardLegacyCostingSummariesForSingleProposalNumberBo awardHeaderSponsorCostingSummaries,
             final String jobRunDateString, final DateTimeService dateTimeService,
             final CemiAwardExtractDao cemiAwardExtractDao, final CemiAwardTranslateTableMaps allAwardTranslateTableMaps,
             final boolean maskSensitiveData) {
         final CemiAwardHeaderDataBoFactory factory = new CemiAwardHeaderDataBoFactory(award, awardExtendedAttribute,
-                allAccountsWithSubAccountsIterator, awardOrgCode, awardNovelutionAttributes, jobRunDateString,
-                dateTimeService, cemiAwardExtractDao, allAwardTranslateTableMaps, maskSensitiveData);
+                allAccountsWithSubAccountsIterator, awardOrgCode, awardNovelutionAttributes, 
+                awardHeaderSponsorCostingSummaries, jobRunDateString, dateTimeService, cemiAwardExtractDao,
+                allAwardTranslateTableMaps, maskSensitiveData);
         return factory.createCemiAwardHeaderDataBo();
     }
     
     public CemiAwardHeaderDataBoFactory (final Award award, final AwardExtendedAttribute awardExtendedAttribute,
             final Iterator<CemiAwardLegacyAccountSubAccountDataBo> allAccountsWithSubAccountsIterator,
-            final String awardOrgCode, final CemiAwardLegacyNovelutionBo awardNovelutionAttributes, 
+            final String awardOrgCode, final CemiAwardLegacyNovelutionBo awardNovelutionAttributes,
+            final CemiAwardLegacyCostingSummariesForSingleProposalNumberBo awardHeaderSponsorCostingSummaries,
             final String jobRunDateString, final DateTimeService dateTimeService, final CemiAwardExtractDao cemiAwardExtractDao,
             final CemiAwardTranslateTableMaps allAwardTranslateTableMaps, final boolean maskSensitiveData) {
         Validate.notNull(award, "award cannot be null for CemiAwardHeaderDataBoFactory");
@@ -61,6 +66,7 @@ public class CemiAwardHeaderDataBoFactory {
         Validate.notNull(allAccountsWithSubAccountsIterator, "allAccountsWithSubAccountsIterator cannot be null for CemiAwardHeaderDataBoFactory");
         Validate.notBlank(awardOrgCode, "awardOrgCode cannot be blank for CemiAwardHeaderDataBoFactory");
         Validate.notNull(awardNovelutionAttributes, "awardNovelutionAttributes cannot be null for CemiAwardHeaderDataBoFactory");
+        Validate.notNull(awardHeaderSponsorCostingSummaries, "awardHeaderSponsorCostingSummaries cannot be null for CemiAwardHeaderDataBoFactory");
         Validate.notBlank(jobRunDateString, "jobRunDateString cannot be blank for CemiAwardHeaderDataBoFactory");
         Validate.notNull(dateTimeService, "dateTimeService cannot be null for CemiAwardHeaderDataBoFactory");
         Validate.notNull(cemiAwardExtractDao, "cemiAwardExtractDao cannot be null for CemiAwardHeaderDataBoFactory");
@@ -70,6 +76,7 @@ public class CemiAwardHeaderDataBoFactory {
         this.allAccountsWithSubAccountsIterator = allAccountsWithSubAccountsIterator;
         this.awardOrgCode = awardOrgCode;
         this.awardNovelutionAttributes = awardNovelutionAttributes;
+        this.awardHeaderSponsorCostingSummaries = awardHeaderSponsorCostingSummaries;
         this.jobRunDateString = jobRunDateString;
         this.dateTimeService = dateTimeService;
         this.cemiAwardExtractDao = cemiAwardExtractDao;
@@ -126,7 +133,7 @@ public class CemiAwardHeaderDataBoFactory {
         final String paymentType = determinePaymentType(letterOfCredit);
         final String letterOfCreditDocumentId = setToEmptyStringWhenValueIsBlank(awardExtendedAttribute.getLocAccountId());
         
-        final KualiDecimal sponsorDirectCostAmount = KualiDecimal.ZERO;
+        final KualiDecimal sponsorDirectCostAmount = awardHeaderSponsorCostingSummaries.getSponsorDirectCostAmount();
         final KualiDecimal sponsorFacilitiesAndAdministrationAmount = KualiDecimal.ZERO;
         final String sponsorDirectCostAmountString = convertKualiDecimalToString(sponsorDirectCostAmount);
         final String sponsorFacilitiesAndAdministrationAmountString = convertKualiDecimalToString(sponsorFacilitiesAndAdministrationAmount);

@@ -52,6 +52,12 @@ public class CemiAwardExtractServiceImpl extends CemiDataExtractServiceBase impl
                 + "dependent queries to system parameter CEMI_AWARD_EXTRACT_AWARD_SCHEDULE_DATETIME value {}",
                 awardScheduleJobRunDate);
         cemiAwardExtractDao.storeAwardScheduleExtractDependentQuerySettings(awardScheduleJobRunDate);
+        
+        final String fiscalYearToUse = getFiscalYearForExtracton();
+        LOG.info("initializeExtractDateSettings, Setting Fiscal Year used by any Award Extract "
+                + "dependent queries to system parameter CEMI_AWARD_EXTRACT_FISCAL_YEAR value {}",
+                fiscalYearToUse);
+        cemiAwardExtractDao.storeFiscalYearDependentQuerySetting(fiscalYearToUse);
     }
     
     private String getAwardScheduleJobRunDate() {
@@ -66,9 +72,18 @@ public class CemiAwardExtractServiceImpl extends CemiDataExtractServiceBase impl
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void captureInScopeBusinessObjectKeysToProcessingTable() {
-        LOG.info("captureInScopeBusinessObjectKeysToProcessingTable, Querying and storing the list of keys "
-                + "representing the extractable KFS business objects...");
+        LOG.info("captureInScopeBusinessObjectKeysToProcessingTable, Querying and storing the list of various business "
+                + "object keys representing the extractable KFS data.");
         cemiAwardExtractDao.queryAndStoreInScopeBusinessObjectKeysForDataExtract();
+    }
+    
+    private String getFiscalYearForExtracton() {
+        final String fiscalYearForExtraction = parameterService.getParameterValueAsString(
+                CreateCemiAwardExtractStep.class,
+                CemiAwardParameterConstants.CEMI_AWARD_EXTRACT_FISCAL_YEAR);
+        Validate.validState(StringUtils.isNotBlank(fiscalYearForExtraction), "Parameter %s should not have been blank",
+                CemiAwardParameterConstants.CEMI_AWARD_EXTRACT_FISCAL_YEAR);
+        return fiscalYearForExtraction;
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)

@@ -21,6 +21,9 @@ public final class CemiAwardConstants {
     public static final String KFS_FIX_BAD_DATA = "KFS_FIX_BAD_DATA";
     public static final String KFS_FIX = "KFS_FIX";
     
+    public static final String DIRECT_COST_NO_SUB_ACCOUNT_GL_ENTRIES_VIEW = "CEMI.CU_CEMI_AWD_EXTR_DIR_CST_NO_SUBACCT_GL_ENTRY_V";
+    public static final String DIRECT_COST_SUB_ACCOUNT_GL_ENTRIES_VIEW = "CEMI.CU_CEMI_AWD_EXTR_DIR_CST_WITH_SUBACCT_GL_ENTRY_V";
+    
     public static final String AWARD_OUTPUT_DEFINITION_PATH_SUFFIX = "module/cg/batch/CemiAwardExtractFileOutputDefinition.xml";
     
     public static final String AWARD_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX = "module/cg/batch/Submit_Award.xlsx";

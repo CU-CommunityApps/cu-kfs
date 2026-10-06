@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 
+import edu.cornell.kfs.cemi.module.cg.CemiAwardConstants;
 import edu.cornell.kfs.cemi.module.cg.CemiAwardConstants.AwardTranslateTables;
 import edu.cornell.kfs.cemi.module.cg.batch.translatetable.KfsToWorkdayAwardCommonCsvTableColumns;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardExtractDao;
@@ -40,6 +41,12 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
         final CuSqlQuery accountSubAccountClearingQuery = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_AWD_EXTR_AWD_ACCT_SUBACCT_T");
         executeUpdate(accountSubAccountClearingQuery);
         
+        final CuSqlQuery fiscalYearClearingQuery = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_AWD_EXTR_UNIV_FISCAL_YR_T");
+        executeUpdate(fiscalYearClearingQuery);
+        
+        final CuSqlQuery accountSubAccountDirectCostClearingQuery = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_AWD_EXTR_DIR_CST_GL_ENTRY_T");
+        executeUpdate(accountSubAccountDirectCostClearingQuery);
+        
         LOG.info("clearAnyExistingInScopeBusinessObjectKeysFromPreviousExecution finished truncating previous run key tables.");
     }
     
@@ -60,14 +67,36 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
         }
     }
     
+    @Override
+    public void storeFiscalYearDependentQuerySetting(String fiscalYearToUseForDataExtraction) {
+        final CuSqlQuery query = new CuSqlChunk()
+                .append("INSERT INTO CEMI.CU_CEMI_AWD_EXTR_UNIV_FISCAL_YR_T ")
+                .append("VALUES (").appendAsParameter(Types.INTEGER, Integer.valueOf(fiscalYearToUseForDataExtraction))
+                .append(")")
+                .toQuery();
+
+        final int numRowsInserted = executeUpdate(query);
+        if (numRowsInserted != 1) {
+            LOG.error("storeFiscalYearDependentQuerySetting, Query should have inserted 1 row, "
+                    + "but it inserted {} rows instead", numRowsInserted);
+            throw new RuntimeException("Failed to insert fiscal year query setting that award extract requires.");
+        }
+    }
+    
     
     @Override
     public void queryAndStoreInScopeBusinessObjectKeysForDataExtract() {
         obtainKeysForAllInScopeAwards();
         obtainAssociatedAccountSubAccountsForAllInScopeAwards();
+        obtainGeneralLedgerEntriesForDirectCostAmount(CemiAwardConstants.DIRECT_COST_NO_SUB_ACCOUNT_GL_ENTRIES_VIEW);
+        obtainGeneralLedgerEntriesForDirectCostAmount(CemiAwardConstants.DIRECT_COST_SUB_ACCOUNT_GL_ENTRIES_VIEW);
+        obtainCalculatedAwardHeaderDirectCostAmount();
+//        obtainGeneralLedgerEntriesForIndirectCostAmount();
+//        obtainGeneralLedgerEntriesForAuthorizedAmount();
     }
     
     private void obtainKeysForAllInScopeAwards() {
+        LOG.info("obtainKeysForAllInScopeAwards was called.");
         final CuSqlQuery query = new CuSqlChunk()
                 .append("INSERT INTO CEMI.CU_CEMI_AWD_EXTR_AWD_T (CGPRPSL_NBR) ")
                 .append("SELECT CGPRPSL_NBR ")
@@ -80,6 +109,7 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
     
     
     private void obtainAssociatedAccountSubAccountsForAllInScopeAwards() {
+        LOG.info("obtainAssociatedAccountSubAccountsForAllInScopeAwards was called.");
         final CuSqlQuery query = new CuSqlChunk()
                 .append("INSERT INTO CEMI.CU_CEMI_AWD_EXTR_AWD_ACCT_SUBACCT_T ")
                 .append("(OBJ_ID, CGPRPSL_NBR, FIN_COA_CD, ACCOUNT_NBR, PERSON_UNVL_ID, AWD_ACCT_ROW_ACTV_IND, ")
@@ -96,6 +126,60 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
 
         final int numRowsInserted = executeUpdate(query);
         LOG.info("obtainAssociatedAccountSubAccountsForAllInScopeAwards, Found {} accounts with associated sub-accounts to configure for export", numRowsInserted);
+    }
+    
+    
+    private void obtainGeneralLedgerEntriesForDirectCostAmount(String directCostViewToQuery) {
+        LOG.info("obtainGeneralLedgerEntriesForDirectCostAmount was called for {}", directCostViewToQuery);
+        final CuSqlQuery query = new CuSqlChunk()
+                .append("INSERT INTO CEMI.CU_CEMI_AWD_EXTR_DIR_CST_GL_ENTRY_T ")
+                .append("(OBJ_ID, CGPRPSL_NBR, UNIV_FISCAL_YR, FIN_COA_CD, ACCOUNT_NBR, SUB_ACCT_NBR, FIN_OBJECT_CD, ")
+                .append("FIN_SUB_OBJ_CD, FIN_BALANCE_TYP_CD, FIN_OBJ_TYP_CD, TRN_LDGR_ENTR_AMT) ")
+                .append("SELECT SYS_GUID(), CGPRPSL_NBR, UNIV_FISCAL_YR, FIN_COA_CD, ACCOUNT_NBR, SUB_ACCT_NBR, ")
+                .append("FIN_OBJECT_CD, FIN_SUB_OBJ_CD, FIN_BALANCE_TYP_CD, FIN_OBJ_TYP_CD, TRN_LDGR_ENTR_AMT ")
+                .append("FROM ").append(directCostViewToQuery).append(" ")
+                .append("ORDER BY FIN_COA_CD, ACCOUNT_NBR, SUB_ACCT_NBR ASC")
+                .toQuery();
+
+        final int numRowsInserted = executeUpdate(query);
+        LOG.info("obtainGeneralLedgerEntriesForDirectCostAmount, Found {} {} rows.", numRowsInserted, directCostViewToQuery);
+    }
+    
+    private void obtainCalculatedAwardHeaderDirectCostAmount() {
+        LOG.info("obtainCalculatedAwardHeaderDirectCostAmount was called.");
+        
+        // Obtain list of awards to calculate award header sponsor direct cost
+        final CuSqlQuery sqlQuery = new CuSqlChunk()
+                .append("SELECT CGPRPSL_NBR ")
+                .append("FROM CEMI.CU_CEMI_AWD_EXTR_AWD_T ")
+                .append("ORDER BY CGPRPSL_NBR")
+                .toQuery();
+        List<String> cgprpslNbrList = queryForValues(sqlQuery, SingleColumnRowMapper.newInstance(String.class));
+        int rowsShouldBeUpdated = 0;
+        int rowsActuallyUpdated = 0;
+        
+        if (CollectionUtils.isNotEmpty(cgprpslNbrList)) {
+            // For every proposal number in the list, calculate the award header sponsor direct cost amount
+            rowsShouldBeUpdated = cgprpslNbrList.size(); 
+            for (String cgprpslNbr : cgprpslNbrList) {
+                final CuSqlQuery updateQuery = new CuSqlChunk()
+                        .append("UPDATE CEMI.CU_CEMI_AWD_EXTR_AWD_T AWD ")
+                        .append("SET AWD.SPNSR_DIR_CST_AMT = (SELECT V.DIR_CST_AMT FROM CEMI.CU_CEMI_AWD_EXTR_DIR_CST_V V WHERE V.GLE_CGPRPSL_NBR = ").appendAsParameter(cgprpslNbr).append(")")
+                        .append("WHERE AWD.CGPRPSL_NBR = ").appendAsParameter(cgprpslNbr)
+                        .toQuery();
+                final int numRowsUpdated = executeUpdate(updateQuery);
+                if (numRowsUpdated == 0) {
+                    LOG.warn("obtainCalculatedAwardHeaderDirectCostAmount, No Direct Cost data rows updated for CG Proposal Number {}", cgprpslNbr);
+                } else {
+                    rowsActuallyUpdated++;
+                }
+            }
+        } else {
+            LOG.warn("obtainCalculatedAwardHeaderDirectCostAmount, No data rows returned for table "
+                    + "CEMI.CU_CEMI_AWD_EXTR_AWD_T, this is NOT EXPECTED processing.");
+        }
+        LOG.info("obtainCalculatedAwardHeaderDirectCostAmount, {} rows should have been updated. "
+                + "{} rows were updated.", rowsShouldBeUpdated, rowsActuallyUpdated);
     }
     
     
