@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -27,6 +29,7 @@ import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
 @SuppressWarnings("deprecation")
 public class CemiAwardHeaderDataBoFactory {
+    private static final Logger LOG = LogManager.getLogger();
     
     private Award award;
     private AwardExtendedAttribute awardExtendedAttribute;
@@ -134,11 +137,13 @@ public class CemiAwardHeaderDataBoFactory {
         final String letterOfCreditDocumentId = setToEmptyStringWhenValueIsBlank(awardExtendedAttribute.getLocAccountId());
         
         final KualiDecimal sponsorDirectCostAmount = awardHeaderSponsorCostingSummaries.getSponsorDirectCostAmount();
-        final KualiDecimal sponsorFacilitiesAndAdministrationAmount = KualiDecimal.ZERO;
+        final KualiDecimal sponsorFacilitiesAndAdministrationAmount = awardHeaderSponsorCostingSummaries.getSponsorIndirectCostAmount();
         final String sponsorDirectCostAmountString = convertKualiDecimalToString(sponsorDirectCostAmount);
         final String sponsorFacilitiesAndAdministrationAmountString = convertKualiDecimalToString(sponsorFacilitiesAndAdministrationAmount);
         final String zeroAmountAward = determineZeroAmountAward(sponsorDirectCostAmount, sponsorFacilitiesAndAdministrationAmount);
-        
+LOG.info("CemiAwardHeaderDataBo: proposalNumber={}=   sponsorDirectCostAmountString={}=    sponsorFacilitiesAndAdministrationAmountString={}=", proposalNumber, sponsorDirectCostAmountString, sponsorFacilitiesAndAdministrationAmountString);
+LOG.info("CemiAwardHeaderDataBo: proposalNumber={}=     award.getAwardDirectCostAmount()={}=    award.getAwardIndirectCostAmount()={}=", proposalNumber, award.getAwardDirectCostAmount(), award.getAwardIndirectCostAmount());
+
         final String cleanedCostShareTotalAmountString = removeFormattingFromNovelutionMoneyValueString(awardNovelutionAttributes.getCostShareTotalAmount());
         final String costShareRequiredBySponsor = determineCostShareRequiredBySponsor(cleanedCostShareTotalAmountString);
         final String authorizedAmountString = convertKualiDecimalToString(awardExtendedAttribute.getBudgetTotalAmount());

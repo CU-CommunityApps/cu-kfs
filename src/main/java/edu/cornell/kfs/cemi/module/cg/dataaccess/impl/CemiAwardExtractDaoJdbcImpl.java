@@ -47,7 +47,10 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
         final CuSqlQuery accountSubAccountDirectCostClearingQuery = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_AWD_EXTR_DIR_CST_GL_ENTRY_T");
         executeUpdate(accountSubAccountDirectCostClearingQuery);
         
-        LOG.info("clearAnyExistingInScopeBusinessObjectKeysFromPreviousExecution finished truncating previous run key tables.");
+        final CuSqlQuery accountSubAccountIndirectCostClearingQuery = CuSqlQuery.of("TRUNCATE TABLE CEMI.CU_CEMI_AWD_EXTR_INDIR_CST_GL_ENTRY_T");
+        executeUpdate(accountSubAccountIndirectCostClearingQuery);
+        
+        LOG.info("clearAnyExistingInScopeBusinessObjectKeysFromPreviousExecution finished truncating tables containing key data from previous runs.");
     }
     
     
@@ -88,10 +91,18 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
     public void queryAndStoreInScopeBusinessObjectKeysForDataExtract() {
         obtainKeysForAllInScopeAwards();
         obtainAssociatedAccountSubAccountsForAllInScopeAwards();
+        
+        // These three methods obtain the data from the Gl entry table and sum it at the database level
+        // to obtain the value representing the sponsor direct cost amount
         obtainGeneralLedgerEntriesForDirectCostAmount(CemiAwardConstants.DIRECT_COST_NO_SUB_ACCOUNT_GL_ENTRIES_VIEW);
         obtainGeneralLedgerEntriesForDirectCostAmount(CemiAwardConstants.DIRECT_COST_SUB_ACCOUNT_GL_ENTRIES_VIEW);
-        obtainCalculatedAwardHeaderDirectCostAmount();
-//        obtainGeneralLedgerEntriesForIndirectCostAmount();
+        obtainCalculatedAwardHeaderDirectCostAmounts();
+        
+        // These three methods obtain the data from the Gl entry table and sum it at the database level
+        // to obtain the value representing the sponsor facilities and administration amount
+        obtainGeneralLedgerEntriesForIndirectCostAmount(CemiAwardConstants.INDIRECT_COST_NO_SUB_ACCOUNT_GL_ENTRIES_VIEW);
+        obtainGeneralLedgerEntriesForIndirectCostAmount(CemiAwardConstants.INDIRECT_COST_SUB_ACCOUNT_GL_ENTRIES_VIEW);
+        obtainCalculatedAwardHeaderIndirectCostAmounts();
 //        obtainGeneralLedgerEntriesForAuthorizedAmount();
     }
     
@@ -145,9 +156,9 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
         LOG.info("obtainGeneralLedgerEntriesForDirectCostAmount, Found {} {} rows.", numRowsInserted, directCostViewToQuery);
     }
     
-    private void obtainCalculatedAwardHeaderDirectCostAmount() {
-        LOG.info("obtainCalculatedAwardHeaderDirectCostAmount was called.");
-        
+    
+    private void obtainCalculatedAwardHeaderDirectCostAmounts() {
+        LOG.info("obtainCalculatedAwardHeaderDirectCostAmounts was called.");
         // Obtain list of awards to calculate award header sponsor direct cost
         final CuSqlQuery sqlQuery = new CuSqlChunk()
                 .append("SELECT CGPRPSL_NBR ")
@@ -157,7 +168,6 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
         List<String> cgprpslNbrList = queryForValues(sqlQuery, SingleColumnRowMapper.newInstance(String.class));
         int rowsShouldBeUpdated = 0;
         int rowsActuallyUpdated = 0;
-        
         if (CollectionUtils.isNotEmpty(cgprpslNbrList)) {
             // For every proposal number in the list, calculate the award header sponsor direct cost amount
             rowsShouldBeUpdated = cgprpslNbrList.size(); 
@@ -169,16 +179,69 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
                         .toQuery();
                 final int numRowsUpdated = executeUpdate(updateQuery);
                 if (numRowsUpdated == 0) {
-                    LOG.warn("obtainCalculatedAwardHeaderDirectCostAmount, No Direct Cost data rows updated for CG Proposal Number {}", cgprpslNbr);
+                    LOG.warn("obtainCalculatedAwardHeaderDirectCostAmounts, No Direct Cost data rows updated for CG Proposal Number {}", cgprpslNbr);
                 } else {
                     rowsActuallyUpdated++;
                 }
             }
         } else {
-            LOG.warn("obtainCalculatedAwardHeaderDirectCostAmount, No data rows returned for table "
+            LOG.warn("obtainCalculatedAwardHeaderDirectCostAmounts, No data rows returned for table "
                     + "CEMI.CU_CEMI_AWD_EXTR_AWD_T, this is NOT EXPECTED processing.");
         }
-        LOG.info("obtainCalculatedAwardHeaderDirectCostAmount, {} rows should have been updated. "
+        LOG.info("obtainCalculatedAwardHeaderDirectCostAmounts, {} rows should have been updated. "
+                + "{} rows were updated.", rowsShouldBeUpdated, rowsActuallyUpdated);
+    }
+    
+    
+    private void obtainGeneralLedgerEntriesForIndirectCostAmount(String indirectCostViewToQuery) {
+        LOG.info("obtainGeneralLedgerEntriesForIndirectCostAmount was called for {}", indirectCostViewToQuery);
+        final CuSqlQuery query = new CuSqlChunk()
+                .append("INSERT INTO CEMI.CU_CEMI_AWD_EXTR_INDIR_CST_GL_ENTRY_T ")
+                .append("(OBJ_ID, CGPRPSL_NBR, UNIV_FISCAL_YR, FIN_COA_CD, ACCOUNT_NBR, SUB_ACCT_NBR, FIN_OBJECT_CD, ")
+                .append("FIN_SUB_OBJ_CD, FIN_BALANCE_TYP_CD, FIN_OBJ_TYP_CD, TRN_LDGR_ENTR_AMT) ")
+                .append("SELECT SYS_GUID(), CGPRPSL_NBR, UNIV_FISCAL_YR, FIN_COA_CD, ACCOUNT_NBR, SUB_ACCT_NBR, ")
+                .append("FIN_OBJECT_CD, FIN_SUB_OBJ_CD, FIN_BALANCE_TYP_CD, FIN_OBJ_TYP_CD, TRN_LDGR_ENTR_AMT ")
+                .append("FROM ").append(indirectCostViewToQuery).append(" ")
+                .append("ORDER BY FIN_COA_CD, ACCOUNT_NBR, SUB_ACCT_NBR ASC")
+                .toQuery();
+
+        final int numRowsInserted = executeUpdate(query);
+        LOG.info("obtainGeneralLedgerEntriesForIndirectCostAmount, Found {} {} rows.", numRowsInserted, indirectCostViewToQuery);
+    }
+    
+    
+    private void obtainCalculatedAwardHeaderIndirectCostAmounts() {
+        LOG.info("obtainCalculatedAwardHeaderIndirectCostAmounts was called.");
+        // Obtain list of awards to calculate award header sponsor facilities and administration amount
+        final CuSqlQuery sqlQuery = new CuSqlChunk()
+                .append("SELECT CGPRPSL_NBR ")
+                .append("FROM CEMI.CU_CEMI_AWD_EXTR_AWD_T ")
+                .append("ORDER BY CGPRPSL_NBR")
+                .toQuery();
+        List<String> cgprpslNbrList = queryForValues(sqlQuery, SingleColumnRowMapper.newInstance(String.class));
+        int rowsShouldBeUpdated = 0;
+        int rowsActuallyUpdated = 0;
+        if (CollectionUtils.isNotEmpty(cgprpslNbrList)) {
+            // For every proposal number in the list, calculate the award header sponsor direct cost amount
+            rowsShouldBeUpdated = cgprpslNbrList.size(); 
+            for (String cgprpslNbr : cgprpslNbrList) {
+                final CuSqlQuery updateQuery = new CuSqlChunk()
+                        .append("UPDATE CEMI.CU_CEMI_AWD_EXTR_AWD_T AWD ")
+                        .append("SET AWD.SPNSR_INDIR_CST_AMT = (SELECT V.INDIR_CST_AMT FROM CEMI.CU_CEMI_AWD_EXTR_INDIR_CST_V V WHERE V.GLE_CGPRPSL_NBR = ").appendAsParameter(cgprpslNbr).append(")")
+                        .append("WHERE AWD.CGPRPSL_NBR = ").appendAsParameter(cgprpslNbr)
+                        .toQuery();
+                final int numRowsUpdated = executeUpdate(updateQuery);
+                if (numRowsUpdated == 0) {
+                    LOG.warn("obtainCalculatedAwardHeaderIndirectCostAmounts, No Indirect Cost data rows updated for CG Proposal Number {}", cgprpslNbr);
+                } else {
+                    rowsActuallyUpdated++;
+                }
+            }
+        } else {
+            LOG.warn("obtainCalculatedAwardHeaderIndirectCostAmounts, No data rows returned for table "
+                    + "CEMI.CU_CEMI_AWD_EXTR_AWD_T, this is NOT EXPECTED processing.");
+        }
+        LOG.info("obtainCalculatedAwardHeaderIndirectCostAmounts, {} rows should have been updated. "
                 + "{} rows were updated.", rowsShouldBeUpdated, rowsActuallyUpdated);
     }
     
