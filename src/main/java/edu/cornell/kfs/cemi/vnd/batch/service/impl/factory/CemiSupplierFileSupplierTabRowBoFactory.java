@@ -19,6 +19,7 @@ import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants.TaxAuthorityFormTypes;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAliasBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileSupplierTabRowBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierTaxIdBo;
+import edu.cornell.kfs.cemi.vnd.util.CemiVendorUtils;
 import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 import edu.cornell.kfs.vnd.CUVendorConstants.VendorOwnershipCodes;
 
@@ -156,16 +157,8 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
     }
 
     private List<String> determineAcceptedPaymentTypes() {
-        if (vendorHasActiveBankAccounts) {
-            return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
-                    CemiSupplierConstants.MAX_SUPPLIER_ACCEPTED_PAYMENT_TYPES,
-                    CemiSupplierConstants.PAYMENT_TYPE_ACH_MANUAL,
-                    CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK);
-        } else {
-            return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
-                    CemiSupplierConstants.MAX_SUPPLIER_ACCEPTED_PAYMENT_TYPES,
-                    CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK);
-        }
+        return CemiVendorUtils.determinePaymentTypes(
+                vendorDetail.getDefaultPaymentMethodCode(), vendorHasActiveBankAccounts);
     }
 
     private CemiSupplierTaxIdBo buildTaxId(final boolean foreign) {
