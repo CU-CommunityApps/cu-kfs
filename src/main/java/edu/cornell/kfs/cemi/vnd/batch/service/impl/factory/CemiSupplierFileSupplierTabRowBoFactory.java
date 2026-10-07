@@ -1,7 +1,6 @@
 package edu.cornell.kfs.cemi.vnd.batch.service.impl.factory;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +19,7 @@ import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants.TaxAuthorityFormTypes;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierAliasBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileSupplierTabRowBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierTaxIdBo;
+import edu.cornell.kfs.cemi.vnd.util.CemiVendorUtils;
 import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 import edu.cornell.kfs.vnd.CUVendorConstants.VendorOwnershipCodes;
 
@@ -157,44 +157,8 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
     }
 
     private List<String> determineAcceptedPaymentTypes() {
-        return determinePaymentTypes(vendorDetail.getDefaultPaymentMethodCode(), vendorHasActiveBankAccounts);
-    }
-
-    /*
-     * KFSPTS-38411: The default payment type (derived from the vendor's KFS default payment method)
-     * is always the first list entry, followed by the always-accepted payment types, without duplicates.
-     */
-    static List<String> determinePaymentTypes(final String defaultPaymentMethodCode,
-            final boolean vendorHasActiveBankAccounts) {
-        final String defaultPaymentType = determineDefaultPaymentType(
-                defaultPaymentMethodCode, vendorHasActiveBankAccounts);
-        final List<String> paymentTypes = new ArrayList<>();
-        paymentTypes.add(defaultPaymentType);
-        if (!StringUtils.equals(defaultPaymentType, CemiSupplierConstants.PAYMENT_TYPE_CHECK)) {
-            paymentTypes.add(CemiSupplierConstants.PAYMENT_TYPE_CHECK);
-        }
-        if (!StringUtils.equals(defaultPaymentType, CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK)) {
-            paymentTypes.add(CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK);
-        }
-        return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
-                CemiSupplierConstants.MAX_SUPPLIER_ACCEPTED_PAYMENT_TYPES,
-                paymentTypes.toArray(String[]::new));
-    }
-
-    static String determineDefaultPaymentType(final String defaultPaymentMethodCode,
-            final boolean vendorHasActiveBankAccounts) {
-        if (StringUtils.equals(defaultPaymentMethodCode,
-                KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT)) {
-            return CemiSupplierConstants.PAYMENT_TYPE_FX_PAYMENTS;
-        } else if (StringUtils.equals(defaultPaymentMethodCode,
-                KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE)) {
-            return CemiSupplierConstants.PAYMENT_TYPE_WIRE_MANUAL;
-        } else if (StringUtils.equals(defaultPaymentMethodCode,
-                KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK) && vendorHasActiveBankAccounts) {
-            return CemiSupplierConstants.PAYMENT_TYPE_ACH_MANUAL;
-        } else {
-            return CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK;
-        }
+        return CemiVendorUtils.determinePaymentTypes(
+                vendorDetail.getDefaultPaymentMethodCode(), vendorHasActiveBankAccounts);
     }
 
     private CemiSupplierTaxIdBo buildTaxId(final boolean foreign) {

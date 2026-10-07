@@ -1,4 +1,4 @@
-package edu.cornell.kfs.cemi.vnd.batch.service.impl.factory;
+package edu.cornell.kfs.cemi.vnd.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 
 /**
  * KFSPTS-38411: Verifies the Default/Accepted Payment Type derivation rules.
@@ -18,9 +20,7 @@ import org.junit.jupiter.params.provider.CsvSource;
  *   anything else           -> Default Outsourced_Check (fallback per Huron "Else" rule)
  * Accepted = Default + Check + Outsourced_Check, de-duplicated, padded to 3 entries.
  */
-public class CemiSupplierFileSupplierTabRowBoFactoryTest {
-
-    private static final String EMPTY = "";
+public class CemiVendorUtilsTest {
 
     @ParameterizedTest
     @CsvSource(nullValues = "NULL", value = {
@@ -37,7 +37,7 @@ public class CemiSupplierFileSupplierTabRowBoFactoryTest {
     })
     void testDefaultPaymentType(final String paymentMethodCode, final boolean hasActiveBankAccounts,
             final String expectedDefaultPaymentType) {
-        final String actual = CemiSupplierFileSupplierTabRowBoFactory.determineDefaultPaymentType(
+        final String actual = CemiVendorUtils.determineDefaultPaymentType(
                 paymentMethodCode, hasActiveBankAccounts);
         assertEquals(expectedDefaultPaymentType, actual);
     }
@@ -53,7 +53,7 @@ public class CemiSupplierFileSupplierTabRowBoFactoryTest {
     })
     void testAcceptedPaymentTypes(final String paymentMethodCode, final boolean hasActiveBankAccounts,
             final String expectedFirst, final String expectedSecond, final String expectedThird) {
-        final List<String> actual = CemiSupplierFileSupplierTabRowBoFactory.determinePaymentTypes(
+        final List<String> actual = CemiVendorUtils.determinePaymentTypes(
                 paymentMethodCode, hasActiveBankAccounts);
         assertEquals(3, actual.size());
         assertEquals(expectedFirst, actual.get(0));
@@ -62,7 +62,7 @@ public class CemiSupplierFileSupplierTabRowBoFactoryTest {
     }
 
     private static String convertEmptyPlaceholder(final String value) {
-        return "EMPTY".equals(value) ? EMPTY : value;
+        return "EMPTY".equals(value) ? CemiBaseConstants.EMPTY_STRING : value;
     }
 
 }

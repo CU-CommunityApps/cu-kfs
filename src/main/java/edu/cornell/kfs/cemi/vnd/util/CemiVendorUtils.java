@@ -17,6 +17,7 @@ import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber;
@@ -228,6 +229,43 @@ public final class CemiVendorUtils {
     public static PhoneNumberUtil getPhoneNumberUtil() {
         // The method call below should always return the same singleton instance.
         return PhoneNumberUtil.getInstance();
+    }
+
+    /*
+     * KFSPTS-38411: The default payment type (derived from the vendor's KFS default payment method)
+     * is always the first list entry, followed by the always-accepted payment types, without duplicates.
+     */
+    public static List<String> determinePaymentTypes(final String defaultPaymentMethodCode,
+            final boolean vendorHasActiveBankAccounts) {
+        final String defaultPaymentType = determineDefaultPaymentType(
+                defaultPaymentMethodCode, vendorHasActiveBankAccounts);
+        final List<String> paymentTypes = new ArrayList<>();
+        paymentTypes.add(defaultPaymentType);
+        if (!StringUtils.equals(defaultPaymentType, CemiSupplierConstants.PAYMENT_TYPE_CHECK)) {
+            paymentTypes.add(CemiSupplierConstants.PAYMENT_TYPE_CHECK);
+        }
+        if (!StringUtils.equals(defaultPaymentType, CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK)) {
+            paymentTypes.add(CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK);
+        }
+        return CemiUtils.createListPaddedToMinimumSizeIfNecessary(
+                CemiSupplierConstants.MAX_SUPPLIER_ACCEPTED_PAYMENT_TYPES,
+                paymentTypes.toArray(String[]::new));
+    }
+
+    public static String determineDefaultPaymentType(final String defaultPaymentMethodCode,
+            final boolean vendorHasActiveBankAccounts) {
+        if (StringUtils.equals(defaultPaymentMethodCode,
+                KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT)) {
+            return CemiSupplierConstants.PAYMENT_TYPE_FX_PAYMENTS;
+        } else if (StringUtils.equals(defaultPaymentMethodCode,
+                KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE)) {
+            return CemiSupplierConstants.PAYMENT_TYPE_WIRE_MANUAL;
+        } else if (StringUtils.equals(defaultPaymentMethodCode,
+                KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK) && vendorHasActiveBankAccounts) {
+            return CemiSupplierConstants.PAYMENT_TYPE_ACH_MANUAL;
+        } else {
+            return CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK;
+        }
     }
 
 }
