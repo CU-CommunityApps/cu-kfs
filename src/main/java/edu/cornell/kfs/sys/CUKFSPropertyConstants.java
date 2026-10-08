@@ -133,4 +133,14 @@ public class CUKFSPropertyConstants {
     public static final String AGENCY_TYPE = "agencyType";
     public static final String CHECK_NUMBER = "checkNumber";
 
+    public static final String CORRESPONDENT_BANK_NAME = "correspondentBankName";
+    public static final String CORRESPONDENT_BANK_ADDRESS = "correspondentBankAddress";
+    public static final String CORRESPONDENT_BANK_CITY_NAME = "correspondentBankCityName";
+    public static final String CORRESPONDENT_BANK_STATE_CODE = "correspondentBankStateCode";
+    public static final String CORRESPONDENT_BANK_PROVINCE = "correspondentBankProvince";
+    public static final String CORRESPONDENT_BANK_COUNTRY_CODE = "correspondentBankCountryCode";
+    public static final String CORRESPONDENT_BANK_ROUTING_NUMBER = "correspondentBankRoutingNumber";
+    public static final String CORRESPONDENT_BANK_ACCOUNT_NUMBER = "correspondentBankAccountNumber";
+    public static final String CORRESPONDENT_BANK_SWIFT_CODE = "correspondentBankSwiftCode";
+
 }

@@ -21,6 +21,10 @@ public class CuPaymentSourcePreRulesServiceImpl extends PaymentSourcePreRulesSer
         hasValues |= StringUtils.isNotBlank(wireExtension.getSortOrTransitCode());
         hasValues |= StringUtils.isNotBlank(wireExtension.getCorrespondentBankName());
         hasValues |= StringUtils.isNotBlank(wireExtension.getCorrespondentBankAddress());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getCorrespondentBankCityName());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getCorrespondentBankStateCode());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getCorrespondentBankProvince());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getCorrespondentBankCountryCode());
         hasValues |= StringUtils.isNotBlank(wireExtension.getCorrespondentBankRoutingNumber());
         hasValues |= StringUtils.isNotBlank(wireExtension.getCorrespondentBankAccountNumber());
         hasValues |= StringUtils.isNotBlank(wireExtension.getCorrespondentBankSwiftCode());
@@ -39,6 +43,10 @@ public class CuPaymentSourcePreRulesServiceImpl extends PaymentSourcePreRulesSer
         wireExtension.setSortOrTransitCode(null);
         wireExtension.setCorrespondentBankName(null);
         wireExtension.setCorrespondentBankAddress(null);
+        wireExtension.setCorrespondentBankCityName(null);
+        wireExtension.setCorrespondentBankStateCode(null);
+        wireExtension.setCorrespondentBankProvince(null);
+        wireExtension.setCorrespondentBankCountryCode(null);
         wireExtension.setCorrespondentBankRoutingNumber(null);
         wireExtension.setCorrespondentBankAccountNumber(null);
         wireExtension.setCorrespondentBankSwiftCode(null);

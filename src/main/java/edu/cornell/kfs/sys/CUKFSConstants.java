@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Set;
 
+import org.kuali.kfs.sys.KFSConstants;
+
 public class CUKFSConstants {
         
     public static final String COMMODITY_CODE_FILE_TYPE_INDENTIFIER = "commodityCodeInputFileType";
@@ -90,6 +92,10 @@ public class CUKFSConstants {
     public static final String I_WANT_DOC_VENDOR_TAB_ERRORS = "document.vendor*";
     public static final String I_WANT_DOC_ORDER_COMPLETED_TAB_ERRORS = "document.completeOption";
     public static final String I_WANT_DOC_MISC_ERRORS = "document.servicePerformedOnCampus*,document.commentsAndSpecialInstructions*";
+    
+    // Wire Transfer constants
+    public static final String CU_WIRETRANSFER_TAB_ERRORS =
+            KFSConstants.WIRETRANSFER_TAB_ERRORS + ",document.wireTransfer.extension*";
     
     //KFSPTS-1460
     public static final String SEMICOLON = ";";
