@@ -108,7 +108,7 @@ public class CemiAwardExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJ
         obtainCalculatedAwardHeaderIndirectCostAmounts();
         
         // These three methods obtain the data from the Gl entry table and sum it at the database level
-        // to obtain the value representing the authorized amount amount (aka budgeted total amount)
+        // to obtain the value representing the authorized amount (aka budgeted total amount)
         obtainGeneralLedgerEntriesForAuthorizedAmount(CemiAwardConstants.BUDGETED_TOTAL_NO_SUB_ACCOUNT_GL_ENTRIES_VIEW);
         obtainGeneralLedgerEntriesForAuthorizedAmount(CemiAwardConstants.BUDGETED_TOTAL_SUB_ACCOUNT_GL_ENTRIES_VIEW);
         obtainCalculatedAwardHeaderAuthorizedAmounts();

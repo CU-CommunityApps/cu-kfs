@@ -53,7 +53,7 @@ public class CemiAwardExtractServiceImpl extends CemiDataExtractServiceBase impl
                 awardScheduleJobRunDate);
         cemiAwardExtractDao.storeAwardScheduleExtractDependentQuerySettings(awardScheduleJobRunDate);
         
-        final String fiscalYearToUse = getFiscalYearForExtracton();
+        final String fiscalYearToUse = getFiscalYearForExtraction();
         LOG.info("initializeExtractDateSettings, Setting Fiscal Year used by any Award Extract "
                 + "dependent queries to system parameter CEMI_AWARD_EXTRACT_FISCAL_YEAR value {}",
                 fiscalYearToUse);
@@ -77,7 +77,7 @@ public class CemiAwardExtractServiceImpl extends CemiDataExtractServiceBase impl
         cemiAwardExtractDao.queryAndStoreInScopeBusinessObjectKeysForDataExtract();
     }
     
-    private String getFiscalYearForExtracton() {
+    private String getFiscalYearForExtraction() {
         final String fiscalYearForExtraction = parameterService.getParameterValueAsString(
                 CreateCemiAwardExtractStep.class,
                 CemiAwardParameterConstants.CEMI_AWARD_EXTRACT_FISCAL_YEAR);
