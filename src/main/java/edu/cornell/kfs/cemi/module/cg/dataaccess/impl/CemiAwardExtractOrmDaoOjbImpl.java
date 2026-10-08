@@ -19,8 +19,8 @@ public class CemiAwardExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase impleme
     // ************ WARNING FOR RUNNING LOCALLY AND TROUBLESHOOTING *******************
     // CemiAwardScheduleExtractOrmDaoOjbImpl.getAwardsForCemiAwardScheduleExtractAsCloseableStream 
     // obtains the Award data set that is used by this downstream extraction.
-    // The data conditional setup in this method MUST match the data conditonal setup in that upstream extraction
-    // otherwise you WILL not have awards in the data set that you are expecting to be acting upon.
+    // The data conditional setup in this method MUST match the data conditional setup in that upstream extraction
+    // otherwise you WILL NOT have awards in the data set that you are expecting to be acting upon.
     // ************ WARNING FOR RUNNING LOCALLY AND TROUBLESHOOTING  *******************
     @Override
     public Stream<Award> getAwardsForCemiAwardExtractAsCloseableStream() {
@@ -37,7 +37,7 @@ public class CemiAwardExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase impleme
                         // Range of proposal numbers for medium sized data set
 //                        + " WHERE CGPRPSL_NBR <= 139300 OR CGPRPSL_NBR >= 193300)";
                         // Single value for specific data item troubleshooting
-                          + " WHERE CGPRPSL_NBR IN ('136110', '136135', '138545'))";
+                          + " WHERE CGPRPSL_NBR IN ('136110', '136135', '138545', '178160', '179424'))";
                         // Smaller specific set of proposal numbers for targeted local troubleshooting
 //                        + " WHERE CGPRPSL_NBR IN ('15366', '193325', '193412', '193472', '37608', '39769', '40108',"
 //                        + " '40914', '42734', '43224', '44647', '45865', '45971', '47057', '47824', '48719', '49294',"

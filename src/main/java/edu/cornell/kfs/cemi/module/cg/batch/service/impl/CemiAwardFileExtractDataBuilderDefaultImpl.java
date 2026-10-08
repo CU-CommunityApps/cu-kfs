@@ -106,12 +106,12 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
             // Account and Sub-Account data retrieval for the award
             Collection<CemiAwardLegacyAccountSubAccountDataBo> awardAccountsSubAccountsCollection = obtainLegacyAccountSubAccountsFor(currentProposalNumber);
             
-            // Direct Cost, Indirect Cost, and Authorized Amount for the award
-            CemiAwardLegacyCostingSummariesForSingleProposalNumberBo costingSummaryForProppsalNumber = obtainLegacyCostingSummariesFor(currentProposalNumber);
+            // Direct Cost, Indirect Cost, and Authorized Amount (aka Budgeted Total Amount) for the award
+            CemiAwardLegacyCostingSummariesForSingleProposalNumberBo costingSummaryForPropsalNumber = obtainLegacyCostingSummariesFor(currentProposalNumber);
             
             //Database table storage of data extract
             totalRowsWritten += createAndStoreAwardFileSubmitAwardTabRowsFor(award, awardExtendedAttribute, awardOrgCode,
-                    awardAccountsSubAccountsCollection, costingSummaryForProppsalNumber, awardNovelutionAttributes, jobRunDateString);
+                    awardAccountsSubAccountsCollection, costingSummaryForPropsalNumber, awardNovelutionAttributes, jobRunDateString);
         }
         LOG.info("writeAwardFileSubmitAwardTabExtractDataToIntermediateStorage, Finished writing "
                 + "{} Submit Award data rows for {} Awards.", totalRowsWritten, awardCounter);
