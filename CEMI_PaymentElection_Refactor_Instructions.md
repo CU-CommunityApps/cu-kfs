@@ -125,7 +125,7 @@ These changes only add things, so the current code keeps working.
    - Primary key is `(JOB_RUN_ROW_INDEX NUMBER(14,0) NOT NULL, EXTR_FILE_RUNDATE VARCHAR2(20) NOT NULL)`.
    - Drop `EXTR_TBL_ROW_ID`. A sequence is no longer needed.
    - Keep `ACH_ACCT_GNRTD_ID`, `EMPL_ID`, and all the `..._2` / `..._2_1` columns.
-   - Rename `BNK_RTNG_NBR` to `BNK_RTNG_NBR_2_1` and `DISTRIB_BAL_2_1` to `DISTRB_BAL_2_1` so they match the naming of the other columns. *(Confirm with your lead; if they'd rather keep the old names, just use the old names in the OJB file in Step 3.)*
+   - Rename `BNK_RTNG_NBR` to `BNK_RTNG_NBR_2_1` and `DISTRIB_BAL_2_1` to `DISTRB_BAL_2_1` so they match the naming of the other columns.
 2. **Add the shared parameter** `COPY_CEMI_FILE_TO_OUTBOUND_FOLDER` for `KFS-CEMI` / `CreateCemiPaymentElectionExtractStep`. Use the same value as the existing `COPY_CEMI_PAYMENT_ELECTION_FILE_TO_OUTBOUND_FOLDER`. Follow `patterntemplate/examplesql/cemi-XXX-EXTRACT-NAME-step-003-create-parameters.sql`. **This parameter must exist before Step 5.** The base class unboxes it to a `boolean`, so the job fails if it's missing.
 3. `ACCT_NBR_2_1` is encrypted. Per README step 5, add scrub SQL for the new table's `ACCT_NBR_2_1` to `manual/kfs/KFSPTS-38305-cemiManualScrub.sql`.
 4. Per README step 9, add cleanup statements for the new table to `manual/kfs/KFSPTS-38161-deleteCemiTestRunData.sql`.
