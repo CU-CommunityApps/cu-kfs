@@ -409,6 +409,10 @@
         <field-descriptor name="sortOrTransitCode" column="BNK_SORT_TRNS_CD" jdbc-type="VARCHAR"/>
         <field-descriptor name="correspondentBankName" column="CRSPNDT_BNK_NM" jdbc-type="VARCHAR"/>
         <field-descriptor name="correspondentBankAddress" column="CRSPNDT_BNK_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="correspondentBankCityName" column="CRSPNDT_BNK_CTY_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="correspondentBankStateCode" column="CRSPNDT_BNK_ST_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="correspondentBankProvince" column="CRSPNDT_BNK_PRVNC" jdbc-type="VARCHAR"/>
+        <field-descriptor name="correspondentBankCountryCode" column="CRSPNDT_BNK_CNTRY_CD" jdbc-type="VARCHAR"/>
         <field-descriptor name="correspondentBankRoutingNumber" column="CRSPNDT_BNK_RTNG_NBR" jdbc-type="VARCHAR"/>
         <field-descriptor name="correspondentBankAccountNumber" column="CRSPNDT_BNK_ACCT_NBR" jdbc-type="VARCHAR"
                           conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>

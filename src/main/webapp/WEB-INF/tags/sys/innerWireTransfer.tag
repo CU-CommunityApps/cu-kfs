@@ -206,6 +206,34 @@
             <td class="datacell">
                 <kul:htmlControlAttribute accessibilityHint="${sortOrTransitCodeHint}" attributeEntry="${wireTransExtendedAttributes.sortOrTransitCode}" property="document.wireTransfer.extension.sortOrTransitCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
             </td>
+            <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransExtendedAttributes.correspondentBankCityName}"/></div></th>
+            <td class="datacell">
+                <kul:htmlControlAttribute attributeEntry="${wireTransExtendedAttributes.correspondentBankCityName}" property="document.wireTransfer.extension.correspondentBankCityName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+            </td>
+        </tr>
+        <tr>
+            <th scope=row class="bord-l-b" colspan="2"><div align="right">&nbsp;</div></th>
+            <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransExtendedAttributes.correspondentBankStateCode}"/></div></th>
+            <td class="datacell">
+                <kul:htmlControlAttribute attributeEntry="${wireTransExtendedAttributes.correspondentBankStateCode}" property="document.wireTransfer.extension.correspondentBankStateCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+            </td>
+        </tr>
+        <tr>
+            <th scope=row class="bord-l-b" colspan="2"><div align="right">&nbsp;</div></th>
+            <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransExtendedAttributes.correspondentBankProvince}"/></div></th>
+            <td class="datacell">
+                <kul:htmlControlAttribute attributeEntry="${wireTransExtendedAttributes.correspondentBankProvince}" property="document.wireTransfer.extension.correspondentBankProvince" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+            </td>
+        </tr>
+        <tr>
+            <th scope=row class="bord-l-b" colspan="2"><div align="right">&nbsp;</div></th>
+            <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransExtendedAttributes.correspondentBankCountryCode}"/></div></th>
+            <td class="datacell">
+                <kul:htmlControlAttribute attributeEntry="${wireTransExtendedAttributes.correspondentBankCountryCode}" property="document.wireTransfer.extension.correspondentBankCountryCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+            </td>
+        </tr>
+        <tr>
+            <th scope=row class="bord-l-b" colspan="2"><div align="right">&nbsp;</div></th>
             <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransExtendedAttributes.correspondentBankSwiftCode}"/></div></th>
             <td class="datacell">
                 <kul:htmlControlAttribute attributeEntry="${wireTransExtendedAttributes.correspondentBankSwiftCode}" property="document.wireTransfer.extension.correspondentBankSwiftCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
