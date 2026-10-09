@@ -24,6 +24,7 @@ import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
 import edu.cornell.kfs.cemi.sys.batch.service.CemiFileAppenderService;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
+import edu.cornell.kfs.cemi.sys.util.CemiParameterUtils;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierParameterConstants;
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
@@ -59,7 +60,7 @@ public abstract class CemiDataExtractServiceBase {
     }
 
     protected boolean isCemiSensitiveDataSetToUnmask() {
-        String maskingParameterValue = parameterService.getParameterValueAsString(
+        String maskingParameterValue = CemiParameterUtils.getSensitiveDataMaskingSetting(parameterService,
                 getComponentClassForDataMaskingParameter(),
                 CemiSupplierParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
         return Strings.CI.equals(maskingParameterValue, CemiBaseConstants.UNMASK);

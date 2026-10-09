@@ -88,7 +88,7 @@ public class CemiPaymentElectionExtractServiceImpl extends CemiDataExtractServic
     protected String getOutputDefinitionFilePathSuffix() {
         return CemiPaymentElectionConstants.PAYMENT_ELECTION_OUTPUT_DEFINITION_PATH_SUFFIX;
     }
-
+    
     @Override
     protected String getTemplateWorkbookFilePathSuffix() {
         return CemiPaymentElectionConstants.PAYMENT_ELECTION_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX;
