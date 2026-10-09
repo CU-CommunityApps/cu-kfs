@@ -38,6 +38,7 @@ import edu.cornell.kfs.cemi.sys.CemiBaseConstants.FileExtensions;
 import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
+import edu.cornell.kfs.cemi.sys.util.CemiParameterUtils;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -169,12 +170,12 @@ public class CemiPaymentElectionExtractServiceImpl implements CemiPaymentElectio
     }
 
     private boolean shouldCopyPaymentElectionExtractFileToOutboundDirectory() {
-        return parameterService.getParameterValueAsBoolean(
+        return CemiParameterUtils.shouldCopyFileToOutboundFolder(parameterService,
                 CreateCemiPaymentElectionExtractStep.class, CemiPaymentElectionParameterConstants.COPY_CEMI_PAYMENT_ELECTION_FILE_TO_OUTBOUND_FOLDER);
     }
 
     private boolean isCemiSensitiveDataSetToUnmask() {
-        String maskingParameterValue =  parameterService.getParameterValueAsString(
+        String maskingParameterValue = CemiParameterUtils.getSensitiveDataMaskingSetting(parameterService,
                 CreateCemiPaymentElectionExtractStep.class, CemiBaseParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
         return StringUtils.equalsIgnoreCase(maskingParameterValue, CemiBaseConstants.UNMASK);
     }

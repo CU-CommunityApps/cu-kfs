@@ -29,6 +29,7 @@ import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
 import edu.cornell.kfs.cemi.sys.batch.service.CemiFileAppenderService;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiExcelWriter;
 import edu.cornell.kfs.cemi.sys.batch.xml.CemiOutputDefinition;
+import edu.cornell.kfs.cemi.sys.util.CemiParameterUtils;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiRemitToSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiRemitToSupplierParameterConstants;
@@ -183,13 +184,13 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
     }
 
     private boolean shouldCopyRemitToSupplierExtractFileToOutboundDirectory() {
-        return parameterService.getParameterValueAsBoolean(
+        return CemiParameterUtils.shouldCopyFileToOutboundFolder(parameterService,
                 CreateCemiRemitToSupplierExtractStep.class,
                 CemiRemitToSupplierParameterConstants.COPY_CEMI_REMIT_TO_SUPPLIER_FILE_TO_OUTBOUND_FOLDER);
     }
 
     private boolean isCemiSensitiveDataSetToUnmask() {
-        String maskingParameterValue =  parameterService.getParameterValueAsString(
+        String maskingParameterValue = CemiParameterUtils.getSensitiveDataMaskingSetting(parameterService,
                 CreateCemiRemitToSupplierExtractStep.class,
                 CemiSupplierParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING);
         return Strings.CI.equals(maskingParameterValue, CemiBaseConstants.UNMASK);
