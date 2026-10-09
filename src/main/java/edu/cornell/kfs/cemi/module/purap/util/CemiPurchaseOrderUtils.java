@@ -4,14 +4,9 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
-import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 
 import edu.cornell.kfs.cemi.module.purap.CemiPurchaseOrderConstants;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
@@ -64,20 +59,6 @@ public final class CemiPurchaseOrderUtils {
     public static String formatQuantity(final KualiDecimal value) {
         return (value != null)
                 ? QUANTITY_FORMATTERS.get().format(value.bigDecimalValue()) : CemiBaseConstants.EMPTY_STRING;
-    }
-
-    public static List<PurchaseOrderAccount> getOutstandingEncumberedAccountingLines(
-            final PurchaseOrderItem purchaseOrderItem) {
-        return purchaseOrderItem.getSourceAccountingLines().stream()
-                .map(PurchaseOrderAccount.class::cast)
-                .filter(CemiPurchaseOrderUtils::accountingLineHasOutstandingEncumbrances)
-                .sorted(Comparator.comparing(PurchaseOrderAccount::getAccountIdentifier))
-                .collect(Collectors.toUnmodifiableList());
-    }
-
-    public static boolean accountingLineHasOutstandingEncumbrances(final PurchaseOrderAccount purchaseOrderAccount) {
-        final KualiDecimal amount = purchaseOrderAccount.getItemAccountOutstandingEncumbranceAmount();
-        return amount != null && amount.isGreaterThan(KualiDecimal.ZERO);
     }
 
 }

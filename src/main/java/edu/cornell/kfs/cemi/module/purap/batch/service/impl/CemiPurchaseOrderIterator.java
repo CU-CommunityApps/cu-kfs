@@ -1,106 +1,72 @@
 package edu.cornell.kfs.cemi.module.purap.batch.service.impl;
 
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Objects;
 
-import org.apache.commons.collections4.IteratorUtils;
+import org.apache.commons.collections4.iterators.PeekingIterator;
 import org.apache.commons.lang3.Validate;
-import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
-import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 
-import edu.cornell.kfs.cemi.module.purap.CemiPurchaseOrderConstants;
-import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderIdBo;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiLegacyPurchaseOrder;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiLegacyPurchaseOrderItem;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderExtractRow;
 
-public class CemiPurchaseOrderIterator implements Iterator<PurchaseOrderDocument> {
+public class CemiPurchaseOrderIterator implements Iterator<CemiLegacyPurchaseOrder> {
 
-    private final Iterator<CemiPurchaseOrderIdBo> purchaseOrderIdsIterator;
-    private final DocumentService documentService;
-    private final DataDictionaryService dataDictionaryService;
-
-    private Iterator<Document> documentSubIterator;
+    private final PeekingIterator<CemiPurchaseOrderExtractRow> extractRowsIterator;
 
     /*
-     * NOTE: It is assumed that the provided iterator will return results in ascending order by document number.
-     *       This class's PO retrieval logic will preserve the same ordering.
+     * NOTE: It is assumed that the provided iterator will return results in ascending order by document number,
+     *       then by item line number and item identifier, then by account identifier. This class groups
+     *       consecutive rows having the same document number into a single Purchase Order.
      */
-    public CemiPurchaseOrderIterator(final Iterator<CemiPurchaseOrderIdBo> purchaseOrderIdsIterator,
-            final DocumentService documentService, final DataDictionaryService dataDictionaryService) {
-        Validate.notNull(purchaseOrderIdsIterator, "purchaseOrderIdsIterator cannot be null");
-        Validate.notNull(documentService, "documentService cannot be null");
-        Validate.notNull(dataDictionaryService, "dataDictionaryService cannot be null");
-        this.purchaseOrderIdsIterator = purchaseOrderIdsIterator;
-        this.documentService = documentService;
-        this.dataDictionaryService = dataDictionaryService;
-        this.documentSubIterator = IteratorUtils.emptyIterator();
+    public CemiPurchaseOrderIterator(final Iterator<CemiPurchaseOrderExtractRow> extractRowsIterator) {
+        Validate.notNull(extractRowsIterator, "extractRowsIterator cannot be null");
+        this.extractRowsIterator = PeekingIterator.peekingIterator(extractRowsIterator);
     }
 
     @Override
     public boolean hasNext() {
-        return documentSubIterator.hasNext() || purchaseOrderIdsIterator.hasNext();
+        return extractRowsIterator.hasNext();
     }
 
     @Override
-    public PurchaseOrderDocument next() {
+    public CemiLegacyPurchaseOrder next() {
         Validate.validState(hasNext(), "There are no more Purchase Orders left in this Iterator");
-        if (!documentSubIterator.hasNext()) {
-            documentSubIterator = createNewDocumentSubIterator();
+        final CemiPurchaseOrderExtractRow firstRow = extractRowsIterator.next();
+        final CemiLegacyPurchaseOrder purchaseOrder = firstRow.getPurchaseOrder();
+        final String documentNumber = purchaseOrder.getDocumentNumber();
+        final List<CemiLegacyPurchaseOrderItem> openItems = new ArrayList<>();
+
+        addItemDataFromRow(openItems, firstRow);
+        while (extractRowsIterator.hasNext() && Objects.equals(documentNumber,
+                extractRowsIterator.peek().getPurchaseOrder().getDocumentNumber())) {
+            addItemDataFromRow(openItems, extractRowsIterator.next());
         }
-        return (PurchaseOrderDocument) documentSubIterator.next();
+
+        purchaseOrder.setOpenItems(Collections.unmodifiableList(openItems));
+        return purchaseOrder;
     }
 
-    private Iterator<Document> createNewDocumentSubIterator() {
-        final CemiPurchaseOrderIdBo[] nextIds = getNextBatchOfIds();
-        Validate.validState(nextIds.length > 0, "There should have been at least one more Purchase Order to load");
-
-        final Map<String, List<String>> docIdsGroupedByDocType = Arrays.stream(nextIds)
-                .collect(Collectors.groupingBy(CemiPurchaseOrderIdBo::getDocumentTypeName, 
-                        Collectors.mapping(CemiPurchaseOrderIdBo::getDocumentNumber, Collectors.toUnmodifiableList())));
-
-        final List<Document> nextDocuments = docIdsGroupedByDocType.entrySet().stream()
-                .map(entry -> getPurchaseOrderDocuments(entry.getKey(), entry.getValue()))
-                .flatMap(List::stream)
-                .sorted(Comparator.comparing(Document::getDocumentNumber))
-                .collect(Collectors.toUnmodifiableList());
-
-        return nextDocuments.iterator();
-    }
-
-    private CemiPurchaseOrderIdBo[] getNextBatchOfIds() {
-        final Stream.Builder<CemiPurchaseOrderIdBo> nextIds = Stream.builder();
-        int idCount = 0;
-        while (purchaseOrderIdsIterator.hasNext()
-                && idCount < CemiPurchaseOrderConstants.MAX_PURCHASE_ORDER_PRELOAD_BATCH_SIZE) {
-            nextIds.add(purchaseOrderIdsIterator.next());
-            idCount++;
+    private void addItemDataFromRow(final List<CemiLegacyPurchaseOrderItem> openItems,
+            final CemiPurchaseOrderExtractRow row) {
+        if (row.getItem().isEmpty()) {
+            return;
         }
-        return nextIds.build().toArray(CemiPurchaseOrderIdBo[]::new);
-    }
 
-    private List<Document> getPurchaseOrderDocuments(final String documentTypeName, final List<String> documentIds) {
-        final Class<? extends Document> documentClass = dataDictionaryService.getDocumentClassByTypeName(documentTypeName);
-        Validate.validState(documentClass != null, "Could not find document class for doc type: %s", documentTypeName);
+        final CemiLegacyPurchaseOrderItem rowItem = row.getItem().get();
+        final CemiLegacyPurchaseOrderItem lastItem = openItems.isEmpty() ? null : openItems.get(openItems.size() - 1);
+        final CemiLegacyPurchaseOrderItem currentItem;
+        if (lastItem != null && Objects.equals(lastItem.getItemIdentifier(), rowItem.getItemIdentifier())) {
+            currentItem = lastItem;
+        } else {
+            openItems.add(rowItem);
+            currentItem = rowItem;
+        }
 
-        final List<Document> results = documentService.getDocumentsByListOfDocumentHeaderIds(documentClass, documentIds);
-        final Set<String> foundDocumentIds = results.stream()
-                .map(Document::getDocumentNumber)
-                .collect(Collectors.toUnmodifiableSet());
-        Validate.validState(documentIds.size() == foundDocumentIds.size(),
-                "Search should have returned %s documents, but it actually returned %s documents instead",
-                documentIds.size(), foundDocumentIds.size());
-
-        final boolean documentIdsMatch = documentIds.stream().allMatch(foundDocumentIds::contains);
-        Validate.validState(documentIdsMatch, "Found mismatched document results; expected: %s, actual: %s",
-                documentIds, foundDocumentIds);
-
-        return results;
+        row.getAccountingLine().ifPresent(currentItem.getAccountingLines()::add);
     }
 
 }

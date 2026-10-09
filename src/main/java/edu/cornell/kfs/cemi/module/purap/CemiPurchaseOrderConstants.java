@@ -1,8 +1,6 @@
 package edu.cornell.kfs.cemi.module.purap;
 
 public final class CemiPurchaseOrderConstants {
-    
-    public static final int MAX_PURCHASE_ORDER_PRELOAD_BATCH_SIZE = 50;
 
     public static final String PURCHASE_ORDER_AMOUNT_FORMAT = "#########################0.00####";
     public static final String PURCHASE_ORDER_SPLIT_AMOUNT_FORMAT = "#################0.00#";

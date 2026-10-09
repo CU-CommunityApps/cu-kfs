@@ -9,22 +9,19 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.Environment;
-import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.cemi.module.purap.CemiPurchaseOrderConstants;
 import edu.cornell.kfs.cemi.module.purap.CemiPurchaseOrderParameterConstants;
 import edu.cornell.kfs.cemi.module.purap.batch.CreateCemiPurchaseOrderExtractStep;
-import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderIdBo;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiLegacyPurchaseOrder;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderExtractRow;
 import edu.cornell.kfs.cemi.module.purap.batch.service.CemiPurchaseOrderExtractService;
 import edu.cornell.kfs.cemi.module.purap.batch.service.CemiPurchaseOrderFileExtractDataBuilder;
 import edu.cornell.kfs.cemi.module.purap.dataaccess.CemiPurchaseOrderExtractDao;
-import edu.cornell.kfs.cemi.module.purap.dataaccess.CemiPurchaseOrderExtractOrmDao;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiDataExtractServiceBase;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 
@@ -33,11 +30,8 @@ public class CemiPurchaseOrderExtractServiceImpl extends CemiDataExtractServiceB
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private CemiPurchaseOrderExtractOrmDao cemiPurchaseOrderExtractOrmDao;
     private CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao;
     private BusinessObjectService businessObjectService;
-    private DocumentService documentService;
-    private DataDictionaryService dataDictionaryService;
     private PersonService personService;
 
     public CemiPurchaseOrderExtractServiceImpl(final Environment environment) {
@@ -66,18 +60,18 @@ public class CemiPurchaseOrderExtractServiceImpl extends CemiDataExtractServiceB
         LOG.info("generateIntermediateExtractData, Generating data rows for {} spreadsheet and placing in "
                 + "intermediate storage...", CemiPurchaseOrderConstants.PURCHASE_ORDER_EXTRACT_PLAIN_FILENAME);
 
+        final String supplierJobRunDateString = getSupplierJobRunDateString();
         try (
-                final Stream<CemiPurchaseOrderIdBo> purchaseOrderDocIds =
-                        cemiPurchaseOrderExtractOrmDao.getIdsOfPurchaseOrdersToExtractAsCloseableStream();
+                final Stream<CemiPurchaseOrderExtractRow> purchaseOrderExtractRows =
+                        cemiPurchaseOrderExtractDao.getPurchaseOrderExtractRowsAsCloseableStream(
+                                supplierJobRunDateString);
         ) {
             final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
-            final String supplierJobRunDateString = getSupplierJobRunDateString();
             final CemiPurchaseOrderFileExtractDataBuilder dataBuilder = new CemiPurchaseOrderFileExtractDataBuilderDefaultImpl(
                     businessObjectService, jobRunDateString, personService, parameterService,
-                    cemiPurchaseOrderExtractDao, supplierJobRunDateString, shouldMaskCemiSensitiveData());
-            final Iterator<CemiPurchaseOrderIdBo> purchaseOrderDocIdsIterator = purchaseOrderDocIds.iterator();
-            final Iterator<PurchaseOrderDocument> purchaseOrdersIterator = new CemiPurchaseOrderIterator(
-                    purchaseOrderDocIdsIterator, documentService, dataDictionaryService);
+                    supplierJobRunDateString, shouldMaskCemiSensitiveData());
+            final Iterator<CemiLegacyPurchaseOrder> purchaseOrdersIterator = new CemiPurchaseOrderIterator(
+                    purchaseOrderExtractRows.iterator());
             dataBuilder.writePurchaseOrderFileSubmitPurchaseOrderTabExtractDataToIntermediateStorage(purchaseOrdersIterator);
         }
     }
@@ -115,24 +109,12 @@ public class CemiPurchaseOrderExtractServiceImpl extends CemiDataExtractServiceB
         return CemiPurchaseOrderConstants.PURCHASE_ORDER_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX;
     }
 
-    public void setCemiPurchaseOrderExtractOrmDao(final CemiPurchaseOrderExtractOrmDao cemiPurchaseOrderExtractOrmDao) {
-        this.cemiPurchaseOrderExtractOrmDao = cemiPurchaseOrderExtractOrmDao;
-    }
-
     public void setCemiPurchaseOrderExtractDao(final CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao) {
         this.cemiPurchaseOrderExtractDao = cemiPurchaseOrderExtractDao;
     }
 
     public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
-    }
-
-    public void setDocumentService(final DocumentService documentService) {
-        this.documentService = documentService;
-    }
-
-    public void setDataDictionaryService(final DataDictionaryService dataDictionaryService) {
-        this.dataDictionaryService = dataDictionaryService;
     }
 
     public void setPersonService(final PersonService personService) {

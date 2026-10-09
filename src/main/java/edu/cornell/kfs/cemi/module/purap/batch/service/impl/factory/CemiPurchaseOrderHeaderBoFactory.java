@@ -1,70 +1,46 @@
 package edu.cornell.kfs.cemi.module.purap.batch.service.impl.factory;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.core.api.criteria.GenericQueryResults;
-import org.kuali.kfs.core.api.criteria.Predicate;
-import org.kuali.kfs.core.api.criteria.PredicateFactory;
-import org.kuali.kfs.core.api.criteria.QueryByCriteria;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.WorkflowDocument;
-import org.kuali.kfs.kim.api.identity.PersonService;
-import org.kuali.kfs.kim.impl.KIMPropertyConstants;
-import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.krad.util.KRADPropertyConstants;
-import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
-import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
-import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
+import org.kuali.kfs.kew.api.document.DocumentStatus;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.cemi.module.purap.CemiPurchaseOrderConstants;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiLegacyPurchaseOrder;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderHeaderBo;
-import edu.cornell.kfs.cemi.module.purap.dataaccess.CemiPurchaseOrderExtractDao;
+import edu.cornell.kfs.cemi.module.purap.batch.service.impl.CemiPurchaseOrderEmployeeIdLookup;
 import edu.cornell.kfs.cemi.module.purap.util.CemiPurchaseOrderUtils;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
-import edu.cornell.kfs.cemi.sys.util.CemiUtils;
-import edu.cornell.kfs.kim.CuKimPropertyConstants;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CemiPurchaseOrderHeaderBoFactory {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private PurchaseOrderDocument purchaseOrderDocument;
-    private PersonService personService;
-    private CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao;
+    private CemiLegacyPurchaseOrder purchaseOrderDocument;
+    private CemiPurchaseOrderEmployeeIdLookup employeeIdLookup;
     private String supplierJobRunDateString;
 
-    public CemiPurchaseOrderHeaderBoFactory(final PurchaseOrderDocument purchaseOrderDocument,
-            final PersonService personService, final CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao,
-            final String supplierJobRunDateString) {
+    public CemiPurchaseOrderHeaderBoFactory(final CemiLegacyPurchaseOrder purchaseOrderDocument,
+            final CemiPurchaseOrderEmployeeIdLookup employeeIdLookup, final String supplierJobRunDateString) {
         Validate.notNull(purchaseOrderDocument, "purchaseOrderDocument cannot be null");
-        Validate.notNull(personService, "personService cannot be null");
-        Validate.notNull(cemiPurchaseOrderExtractDao, "cemiPurchaseOrderExtractDao cannot be null");
+        Validate.notNull(employeeIdLookup, "employeeIdLookup cannot be null");
         Validate.notBlank(supplierJobRunDateString, "supplierJobRunDateString cannot be blank");
         this.purchaseOrderDocument = purchaseOrderDocument;
-        this.personService = personService;
-        this.cemiPurchaseOrderExtractDao = cemiPurchaseOrderExtractDao;
+        this.employeeIdLookup = employeeIdLookup;
         this.supplierJobRunDateString = supplierJobRunDateString;
     }
 
-    public static CemiPurchaseOrderHeaderBo createHeaderBoFrom(final PurchaseOrderDocument purchaseOrderDocument,
-            final PersonService personService, final CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao,
-            final String supplierJobRunDateString) {
+    public static CemiPurchaseOrderHeaderBo createHeaderBoFrom(final CemiLegacyPurchaseOrder purchaseOrderDocument,
+            final CemiPurchaseOrderEmployeeIdLookup employeeIdLookup, final String supplierJobRunDateString) {
         final CemiPurchaseOrderHeaderBoFactory factory = new CemiPurchaseOrderHeaderBoFactory(
-                purchaseOrderDocument, personService, cemiPurchaseOrderExtractDao, supplierJobRunDateString);
+                purchaseOrderDocument, employeeIdLookup, supplierJobRunDateString);
         return factory.createCemiPurchaseOrderHeaderBo();
     }
 
@@ -162,106 +138,15 @@ public class CemiPurchaseOrderHeaderBoFactory {
     }
 
     private String determineRequestorEmployeeId() {
-        return getEmployeeIdByNameAndEmail(purchaseOrderDocument.getRequestorPersonName(),
-                purchaseOrderDocument.getRequestorPersonEmailAddress(), CemiPurchaseOrderConstants.REQUESTOR_LABEL);
+        return employeeIdLookup.getEmployeeIdByNameAndEmail(purchaseOrderDocument.getRequestorPersonName(),
+                purchaseOrderDocument.getRequestorPersonEmailAddress(), CemiPurchaseOrderConstants.REQUESTOR_LABEL,
+                purchaseOrderDocument.getDocumentNumber());
     }
 
     private String determineDeliveryRecipientEmployeeId() {
-        return getEmployeeIdByNameAndEmail(purchaseOrderDocument.getDeliveryToName(),
-                purchaseOrderDocument.getDeliveryToEmailAddress(), CemiPurchaseOrderConstants.DELIVERY_RECIPIENT_LABEL);
-    }
-
-    /*
-     * Certain people mentioned on the PO (such as the requestor) are only identified by name, phone and/or email,
-     * not by Principal ID or Principal Name. Thus, the only practical way to find the corresponding Person record
-     * is to perform a search based on name and email. (The code below currently doesn't search by phone number,
-     * due to the complexities of stripping out non-digit characters in order to perform an accurate search.)
-     */
-    private String getEmployeeIdByNameAndEmail(final String personName, final String emailAddress, final String label) {
-        final Predicate[] criteria = createCriteriaForPersonNameAndEmailQuery(personName, emailAddress);
-        if (criteria.length == 0) {
-            LOG.warn("getEmployeeIdByNameAndEmail, Insufficient {} information was available on PO document "
-                    + "number {}; will return an empty employee ID", label, purchaseOrderDocument.getDocumentNumber());
-            return CemiBaseConstants.EMPTY_STRING;
-        }
-
-        final QueryByCriteria query = QueryByCriteria.Builder.fromPredicates(criteria);
-        final GenericQueryResults<Person> results = personService.findPeople(query);
-        final List<Person> dataResults = results.getResults();
-
-        final int numResults = dataResults.size();
-        if (numResults == 0) {
-            LOG.warn("getEmployeeIdByNameAndEmail, Could not find a Person record for the {} on PO document "
-                    + "number {}; will return an empty employee ID", label, purchaseOrderDocument.getDocumentNumber());
-            return CemiBaseConstants.EMPTY_STRING;
-        } else if (numResults != 1) {
-            LOG.warn("getEmployeeIdByNameAndEmail, Found multiple Person records for the {} on PO document "
-                    + "number {}; will return an empty employee ID", label, purchaseOrderDocument.getDocumentNumber());
-            return CemiBaseConstants.EMPTY_STRING;
-        } else {
-            final Person matchingPerson = dataResults.get(0);
-            return StringUtils.defaultIfBlank(matchingPerson.getEmployeeId(), CemiBaseConstants.EMPTY_STRING);
-        }
-    }
-
-    private Predicate[] createCriteriaForPersonNameAndEmailQuery(final String personName, final String emailAddress) {
-        final List<Pair<String, String>> personNameCriteria = getPersonNameCriteria(personName);
-        if (personNameCriteria.isEmpty() || StringUtils.isBlank(emailAddress)) {
-            LOG.debug("createCriteriaForPersonNameAndEmailQuery, The PO contained insufficient name and/or email data "
-                    + "to perform an accurate query; will return an empty criteria array");
-            return new Predicate[0];
-        }
-
-        final List<Pair<String, String>> emailCriteria = List.of(
-                Pair.of(KRADPropertyConstants.EMAIL_ADDRESS, emailAddress));
-
-        return Stream.of(personNameCriteria, emailCriteria)
-                .flatMap(List::stream)
-                .map(criterion -> PredicateFactory.equalIgnoreCase(criterion.getLeft(), criterion.getRight()))
-                .toArray(Predicate[]::new);
-    }
-
-    private List<Pair<String, String>> getPersonNameCriteria(final String personName) {
-        final List<String> personNameFieldNames = List.of(KIMPropertyConstants.Person.FIRST_NAME,
-                CuKimPropertyConstants.MIDDLE_NAME, KIMPropertyConstants.Person.LAST_NAME);
-        final List<String> personNameSegments = getPersonNameSegments(personName);
-        final long numValidNameSegments = personNameSegments.stream()
-                .filter(StringUtils::isNotBlank)
-                .count();
-
-        if (numValidNameSegments >= 2L) {
-            return IntStream.range(0, 3)
-                    .filter(index -> StringUtils.isNotBlank(personNameSegments.get(index)))
-                    .mapToObj(index -> Pair.of(personNameFieldNames.get(index), personNameSegments.get(index)))
-                    .collect(Collectors.toUnmodifiableList());
-        } else {
-            LOG.debug("getPersonNameCriteria, First Name and/or Last Name are missing; will return an empty list "
-                    + "of criteria because there's not enough name data to perform an accurate query");
-            return List.of();
-        }
-    }
-
-    private List<String> getPersonNameSegments(final String personName) {
-        final String[] splitName = StringUtils.split(personName, KFSConstants.BLANK_SPACE);
-        if (splitName.length == 2 || splitName.length == 3) {
-            final String firstName;
-            final String middleName;
-            final String lastName;
-            if (splitName[0].endsWith(KFSConstants.COMMA)) {
-                lastName = StringUtils.substringBeforeLast(splitName[0], KFSConstants.COMMA);
-                firstName = splitName[1];
-                middleName = (splitName.length == 3) ? splitName[2] : CemiBaseConstants.EMPTY_STRING;
-            } else {
-                firstName = splitName[0];
-                lastName = splitName[splitName.length - 1];
-                middleName = (splitName.length == 3) ? splitName[1] : CemiBaseConstants.EMPTY_STRING;
-            }
-            return List.of(firstName, middleName, lastName);
-        } else {
-            LOG.debug("getPersonNameSegments, First Name and/or Last Name are missing; will return empty values "
-                    + "to indicate that insufficient name data was provided on the PO");
-            return CemiUtils.createListOfEmptyStrings(3);
-        }
+        return employeeIdLookup.getEmployeeIdByNameAndEmail(purchaseOrderDocument.getDeliveryToName(),
+                purchaseOrderDocument.getDeliveryToEmailAddress(), CemiPurchaseOrderConstants.DELIVERY_RECIPIENT_LABEL,
+                purchaseOrderDocument.getDocumentNumber());
     }
 
     private String determineCompanyId() {
@@ -269,9 +154,7 @@ public class CemiPurchaseOrderHeaderBoFactory {
     }
 
     private String determineSupplierId() {
-        final String supplierId = cemiPurchaseOrderExtractDao.getSupplierIdForVendor(
-                purchaseOrderDocument.getVendorHeaderGeneratedIdentifier(),
-                purchaseOrderDocument.getVendorDetailAssignedIdentifier(), supplierJobRunDateString);
+        final String supplierId = StringUtils.defaultString(purchaseOrderDocument.getSupplierId());
         if (StringUtils.isBlank(supplierId)) {
             LOG.error("determineSupplierId, Could not find a Supplier ID for Vendor {}-{} and run date \"{}\"; "
                     + "either the wrong run date was used or the wrong Supplier scope was processed upstream. "
@@ -288,43 +171,27 @@ public class CemiPurchaseOrderHeaderBoFactory {
     }
 
     private String determineDocumentDate() {
-        final WorkflowDocument workflowDocument = purchaseOrderDocument.getDocumentHeader().getWorkflowDocument();
-        Validate.validState(workflowDocument.isFinal() || workflowDocument.isProcessed(),
+        final String documentStatusCode = purchaseOrderDocument.getDocumentStatusCode();
+        Validate.validState(StringUtils.equalsAny(documentStatusCode,
+                        DocumentStatus.FINAL.getCode(), DocumentStatus.PROCESSED.getCode()),
                 "PO Document Number %s should have been in PROCESSED or FINAL status",
                 purchaseOrderDocument.getDocumentNumber());
-        final LocalDateTime lastApprovedDate = workflowDocument.getDateApproved();
-        Validate.validState(lastApprovedDate != null, "PO Document Number %s should have had a Last Approved Date",
+        Validate.validState(purchaseOrderDocument.getApprovedDate() != null,
+                "PO Document Number %s should have had a Last Approved Date",
                 purchaseOrderDocument.getDocumentNumber());
-        return CemiPurchaseOrderUtils.formatAsDate(lastApprovedDate);
+        return CemiPurchaseOrderUtils.formatAsDate(purchaseOrderDocument.getApprovedDate());
     }
 
     private String determineFreightAmount() {
-        final Optional<PurchaseOrderItem> freightItem = getFreightItemIfPresent();
-        if (freightItem.isPresent()) {
-            final KualiDecimal remainingFreightAmount = freightItem.get().getItemOutstandingEncumberedAmount();
-            return (remainingFreightAmount != null && remainingFreightAmount.isGreaterThan(KualiDecimal.ZERO))
-                    ? CemiPurchaseOrderUtils.formatAmount(remainingFreightAmount) : CemiBaseConstants.EMPTY_STRING;
-        } else {
-            return CemiBaseConstants.EMPTY_STRING;
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    private Optional<PurchaseOrderItem> getFreightItemIfPresent() {
-        final List<?> items = purchaseOrderDocument.getItems();
-        return items.stream()
-                .map(PurchaseOrderItem.class::cast)
-                .filter(item -> StringUtils.equals(item.getItemTypeCode(), ItemTypeCodes.ITEM_TYPE_FREIGHT_CODE))
-                .filter(PurchaseOrderItem::isItemActiveIndicator)
-                .findFirst();
+        final KualiDecimal remainingFreightAmount = purchaseOrderDocument.getFreightOutstandingEncumberedAmount();
+        return (remainingFreightAmount != null && remainingFreightAmount.isGreaterThan(KualiDecimal.ZERO))
+                ? CemiPurchaseOrderUtils.formatAmount(remainingFreightAmount) : CemiBaseConstants.EMPTY_STRING;
     }
 
     // Copied and modified the related logic from the Supplier extract.
     private String determinePaymentTerms() {
-        purchaseOrderDocument.refreshReferenceObject("vendorPaymentTerms");
-        if (ObjectUtils.isNotNull(purchaseOrderDocument.getVendorPaymentTerms())) {
-            String paymentTermsDescription = purchaseOrderDocument.getVendorPaymentTerms()
-                    .getVendorPaymentTermsDescription();
+        if (StringUtils.isNotBlank(purchaseOrderDocument.getPaymentTermsTypeCode())) {
+            String paymentTermsDescription = purchaseOrderDocument.getPaymentTermsDescription();
             if (StringUtils.isBlank(paymentTermsDescription)) {
                 return paymentTermsDescription;
             }
@@ -355,16 +222,7 @@ public class CemiPurchaseOrderHeaderBoFactory {
         if (StringUtils.isNotBlank(requestorEmployeeId)) {
             return requestorEmployeeId;
         } else {
-            final Person defaultBuyer = personService.getPersonByPrincipalName(
-                    CemiPurchaseOrderConstants.DEFAULT_BUYER_PRINCIPAL_NAME);
-            if (ObjectUtils.isNotNull(defaultBuyer) && StringUtils.isNotBlank(defaultBuyer.getEmployeeId())) {
-                return defaultBuyer.getEmployeeId();
-            } else {
-                LOG.warn("determineBuyerEmployeeId, Default buyer {} does not exist or has no employee ID; "
-                        + "defaulting to a blank buyer employee ID",
-                        CemiPurchaseOrderConstants.DEFAULT_BUYER_PRINCIPAL_NAME);
-                return CemiBaseConstants.EMPTY_STRING;
-            }
+            return employeeIdLookup.getDefaultBuyerEmployeeId();
         }
     }
 

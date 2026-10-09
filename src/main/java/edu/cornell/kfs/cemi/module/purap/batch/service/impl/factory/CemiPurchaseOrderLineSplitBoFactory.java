@@ -4,11 +4,10 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
-import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
-import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 
 import edu.cornell.kfs.cemi.module.purap.CemiPurchaseOrderConstants;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiLegacyPurchaseOrderAccount;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiLegacyPurchaseOrderItem;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderLineSplitBo;
 import edu.cornell.kfs.cemi.module.purap.util.CemiPurchaseOrderUtils;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
@@ -16,12 +15,12 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CemiPurchaseOrderLineSplitBoFactory {
 
-    private Optional<PurchaseOrderItem> purchaseOrderItem;
-    private Optional<PurchaseOrderAccount> purchaseOrderAccountingLine;
+    private Optional<CemiLegacyPurchaseOrderItem> purchaseOrderItem;
+    private Optional<CemiLegacyPurchaseOrderAccount> purchaseOrderAccountingLine;
     private int lineSplitIndex;
 
-    public CemiPurchaseOrderLineSplitBoFactory(final Optional<PurchaseOrderItem> purchaseOrderItem,
-            final Optional<PurchaseOrderAccount> purchaseOrderAccountingLine, final int lineSplitIndex) {
+    public CemiPurchaseOrderLineSplitBoFactory(final Optional<CemiLegacyPurchaseOrderItem> purchaseOrderItem,
+            final Optional<CemiLegacyPurchaseOrderAccount> purchaseOrderAccountingLine, final int lineSplitIndex) {
         Validate.notNull(purchaseOrderItem, "purchaseOrderItem wrapper object cannot be null");
         Validate.notNull(purchaseOrderAccountingLine, "purchaseOrderAccountingLine wrapper object cannot be null");
         Validate.isTrue(purchaseOrderItem.isPresent() == (lineSplitIndex > 0),
@@ -34,8 +33,8 @@ public class CemiPurchaseOrderLineSplitBoFactory {
         this.lineSplitIndex = lineSplitIndex;
     }
 
-    public static CemiPurchaseOrderLineSplitBo createLineSplitBoFrom(final Optional<PurchaseOrderItem> purchaseOrderItem,
-            final Optional<PurchaseOrderAccount> purchaseOrderAccountingLine, final int lineSplitIndex) {
+    public static CemiPurchaseOrderLineSplitBo createLineSplitBoFrom(final Optional<CemiLegacyPurchaseOrderItem> purchaseOrderItem,
+            final Optional<CemiLegacyPurchaseOrderAccount> purchaseOrderAccountingLine, final int lineSplitIndex) {
         final CemiPurchaseOrderLineSplitBoFactory factory = new CemiPurchaseOrderLineSplitBoFactory(
                 purchaseOrderItem, purchaseOrderAccountingLine, lineSplitIndex);
         return factory.createCemiPurchaseOrderLineSplitBo();
@@ -74,9 +73,8 @@ public class CemiPurchaseOrderLineSplitBoFactory {
         if (isEmptyFactory()) {
             return CemiBaseConstants.EMPTY_STRING;
         }
-        final PurchaseOrderDocument document = (PurchaseOrderDocument) purchaseOrderItem.get().getPurapDocument();
         return StringUtils.joinWith(CUKFSConstants.UNDERSCORE,
-                document.getPurapDocumentIdentifier().toString(),
+                purchaseOrderItem.get().getPurchaseOrderId().toString(),
                 purchaseOrderItem.get().getItemLineNumber().toString(), Integer.toString(lineSplitIndex));
     }
 

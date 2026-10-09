@@ -351,11 +351,4 @@
         <field-descriptor name="amortizationPurchaseOrderLineNumber" column="AMRTZTN_PRCHS_ORD_LN_NBR" jdbc-type="VARCHAR"/>
     </class-descriptor>
 
-    <class-descriptor class="edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderIdBo"
-                      table="CU_CEMI_EXTR_PURCHASE_ORDER_IN_SCOPE_PO_DOCS_T"
-                      schema="CEMI">
-        <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
-        <field-descriptor name="documentTypeName" column="DOC_TYP_NM" jdbc-type="VARCHAR"/>
-    </class-descriptor>
-
 </descriptor-repository>

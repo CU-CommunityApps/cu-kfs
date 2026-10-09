@@ -622,13 +622,7 @@
           abstract="true"
           class="edu.cornell.kfs.cemi.module.purap.dataaccess.impl.CemiPurchaseOrderExtractDaoJdbcImpl"
           parent="platformAwareDaoJdbc"
-          p:dataSource-ref="cemiDataSource"/>
-
-    <bean id="cemiPurchaseOrderExtractOrmDao" parent="cemiPurchaseOrderExtractOrmDao-parentBean"/>
-    <bean id="cemiPurchaseOrderExtractOrmDao-parentBean"
-          abstract="true"
-          class="edu.cornell.kfs.cemi.module.purap.dataaccess.impl.CemiPurchaseOrderExtractOrmDaoOjbImpl"
-          parent="platformAwareDao"
+          p:dataSource-ref="cemiDataSource"
           p:configurationService-ref="configurationService"/>
 
     <bean id="cemiPurchaseOrderExtractService" parent="cemiPurchaseOrderExtractService-parentBean"/>
@@ -641,11 +635,8 @@
           p:cemiFileAppenderService-ref="cemiFileAppenderService"
           p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
           p:parameterService-ref="parameterService"
-          p:cemiPurchaseOrderExtractOrmDao-ref="cemiPurchaseOrderExtractOrmDao"
           p:cemiPurchaseOrderExtractDao-ref="cemiPurchaseOrderExtractDao"
           p:businessObjectService-ref="businessObjectService"
-          p:documentService-ref="documentService"
-          p:dataDictionaryService-ref="dataDictionaryService"
           p:personService-ref="personService"/>
 
     <bean id="createCemiPurchaseOrderExtractStep"

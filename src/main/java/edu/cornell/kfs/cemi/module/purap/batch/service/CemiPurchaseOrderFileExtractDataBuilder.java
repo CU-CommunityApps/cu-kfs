@@ -2,11 +2,11 @@ package edu.cornell.kfs.cemi.module.purap.batch.service;
 
 import java.util.Iterator;
 
-import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiLegacyPurchaseOrder;
 
 public interface CemiPurchaseOrderFileExtractDataBuilder {
 
     void writePurchaseOrderFileSubmitPurchaseOrderTabExtractDataToIntermediateStorage(
-            final Iterator<PurchaseOrderDocument> legacyPurchaseOrders);
+            final Iterator<CemiLegacyPurchaseOrder> legacyPurchaseOrders);
 
 }
