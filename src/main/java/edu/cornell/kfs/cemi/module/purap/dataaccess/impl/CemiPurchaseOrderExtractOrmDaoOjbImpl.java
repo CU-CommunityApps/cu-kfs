@@ -6,7 +6,7 @@ import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
-import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderIdBo;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderDocumentLite;
 import edu.cornell.kfs.cemi.module.purap.dataaccess.CemiPurchaseOrderExtractOrmDao;
 import edu.cornell.kfs.cemi.sys.dataaccess.impl.CemiOrmDaoOjbImplBase;
 import edu.cornell.kfs.sys.util.CuOjbUtils;
@@ -15,7 +15,7 @@ import edu.cornell.kfs.sys.util.CuOjbUtils;
 public class CemiPurchaseOrderExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase implements CemiPurchaseOrderExtractOrmDao {
 
     @Override
-    public Stream<CemiPurchaseOrderIdBo> getIdsOfPurchaseOrdersToExtractAsCloseableStream() {
+    public Stream<CemiPurchaseOrderDocumentLite> getPurchaseOrdersToExtractAsCloseableStream() {
         final Criteria criteria = new Criteria();
         if (shouldUseLessDataDuringCemiDevelopment()) {
             final Criteria lowValuesCondition = new Criteria();
@@ -27,14 +27,14 @@ public class CemiPurchaseOrderExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase
             criteria.addOrCriteria(highValuesCondition);
         }
 
-        final QueryByCriteria query = new QueryByCriteria(CemiPurchaseOrderIdBo.class, criteria);
+        final QueryByCriteria query = new QueryByCriteria(CemiPurchaseOrderDocumentLite.class, criteria);
         query.addOrderByAscending(KFSPropertyConstants.DOCUMENT_NUMBER);
         if (shouldUseLessDataDuringCemiDevelopment()) {
             query.setEndAtIndex(100);
         }
 
         return CuOjbUtils.buildCloseableStreamForQueryResults(
-                CemiPurchaseOrderIdBo.class,
+                CemiPurchaseOrderDocumentLite.class,
                 () -> getPersistenceBrokerTemplate().getIteratorByQuery(query));
     }
 

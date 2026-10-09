@@ -356,6 +356,210 @@
                       schema="CEMI">
         <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="documentTypeName" column="DOC_TYP_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="docRouteStatus" column="DOC_HDR_STAT_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="approvedDate" column="APRV_DT" jdbc-type="TIMESTAMP"/>
+    </class-descriptor>
+
+    <!-- NOTE: This BO retrieves data from the main PO table in KFS, not a CEMI-specific table. -->
+    <class-descriptor class="edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderDocumentLite"
+                      table="PUR_PO_T">
+        <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="purapDocumentIdentifier" column="PO_ID" jdbc-type="INTEGER" index="true"/>
+        <field-descriptor name="requisitionIdentifier" column="REQS_ID" jdbc-type="INTEGER"/>
+        <field-descriptor name="requisitionSourceCode" column="REQS_SRC_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="purchaseOrderVendorChoiceCode" column="PO_VNDR_CHC_CD" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="vendorHeaderGeneratedIdentifier" column="VNDR_HDR_GNRTD_ID" jdbc-type="INTEGER"/>
+        <field-descriptor name="vendorDetailAssignedIdentifier" column="VNDR_DTL_ASND_ID" jdbc-type="INTEGER"/>
+        <field-descriptor name="vendorName" column="VNDR_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="vendorLine1Address" column="VNDR_LN1_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="vendorLine2Address" column="VNDR_LN2_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="vendorCityName" column="VNDR_CTY_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="vendorStateCode" column="VNDR_ST_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="vendorPostalCode" column="VNDR_PSTL_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="vendorCountryCode" column="VNDR_CNTRY_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="vendorRestrictedIndicator" column="VNDR_RSTRC_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="vendorPaymentTermsCode" column="VNDR_PMT_TERM_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="vendorShippingTitleCode" column="VNDR_SHP_TTL_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="vendorPhoneNumber" column="VNDR_PHN_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="vendorFaxNumber" column="VNDR_FAX_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="vendorEmailAddress" column="VNDR_EMAIL_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="vendorCustomerNumber" column="VNDR_CUST_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="vendorContractGeneratedIdentifier" column="VNDR_CONTR_GNRTD_ID" jdbc-type="INTEGER"/>
+        <field-descriptor name="vendorNoteText" column="VNDR_NTE_TXT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="vendorShippingPaymentTermsCode" column="VNDR_SHP_PMT_TERM_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="documentFundingSourceCode" column="FND_SRC_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="requestorPersonName" column="RQSTR_PRSN_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="requestorPersonEmailAddress" column="RQSTR_PRSN_EMAIL_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="requestorPersonPhoneNumber" column="RQSTR_PRSN_PHN_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="nonInstitutionFundOrgChartOfAccountsCode" column="NON_INST_FND_ORG_COA_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="nonInstitutionFundOrganizationCode" column="NON_INST_FND_ORG_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="nonInstitutionFundChartOfAccountsCode" column="NON_INST_FND_COA_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="nonInstitutionFundAccountNumber" column="NON_INST_FND_ACCT_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="deliveryCampusCode" column="DLVY_CMP_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="deliveryBuildingCode" column="DLVY_BLDG_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="deliveryBuildingName" column="DLVY_BLDG_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="deliveryBuildingRoomNumber" column="DLVY_BLDG_RM_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="deliveryBuildingLine1Address" column="DLVY_BLDG_LN1_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="deliveryBuildingLine2Address" column="DLVY_BLDG_LN2_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="deliveryCityName" column="DLVY_CTY_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="deliveryStateCode" column="DLVY_ST_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="deliveryPostalCode" column="DLVY_PSTL_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="deliveryCountryCode" column="DLVY_CNTRY_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="deliveryToName" column="DLVY_TO_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="deliveryToEmailAddress" column="DLVY_TO_EMAIL_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="deliveryToPhoneNumber" column="DLVY_TO_PHN_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="deliveryRequiredDate" column="DLVY_REQ_DT" jdbc-type="DATE"/>
+        <field-descriptor name="deliveryInstructionText" column="DLVY_INSTRC_TXT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="deliveryRequiredDateReasonCode" column="DLVY_REQ_DT_REAS_CD" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="deliveryBuildingOtherIndicator" column="DLVY_BLDG_OTHR_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="organizationCode" column="ORG_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="purchaseOrderCreateTimestamp" column="PO_CRTE_DT" jdbc-type="TIMESTAMP"/>
+        <field-descriptor name="postingYear" column="PO_ENCUM_FSCL_YR" jdbc-type="INTEGER"/>
+        <field-descriptor name="purchaseOrderCostSourceCode" column="PO_CST_SRC_CD" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="purchaseOrderTransmissionMethodCode" column="PO_TRNS_MTHD_CD" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="purchaseOrderTotalLimit" column="PO_TOT_LMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="purchaseOrderBeginDate" column="PO_BEG_DT" jdbc-type="DATE"/>
+        <field-descriptor name="purchaseOrderEndDate" column="PO_END_DT" jdbc-type="DATE"/>
+        <field-descriptor name="recurringPaymentFrequencyCode" column="RECUR_PMT_FREQ_CD" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="recurringPaymentAmount" column="RECUR_PMT_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="recurringPaymentTypeCode" column="RECUR_PMT_TYP_CD" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="recurringPaymentDate" column="RECUR_PMT_DT" jdbc-type="DATE"/>
+        <field-descriptor name="institutionContactName" column="INST_CNTCT_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="institutionContactPhoneNumber" column="INST_CNTCT_PHN_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="institutionContactEmailAddress" column="INST_CNTCT_EMAIL_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingName" column="BILL_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingLine1Address" column="BILL_LN1_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingLine2Address" column="BILL_LN2_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingCityName" column="BILL_CTY_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingStateCode" column="BILL_ST_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingPostalCode" column="BILL_PSTL_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingCountryCode" column="BILL_CNTRY_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingPhoneNumber" column="BILL_PHN_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="initialPaymentAmount" column="INIT_PMT_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="initialPaymentDate" column="INIT_PMT_DT" jdbc-type="DATE"/>
+        <field-descriptor name="finalPaymentAmount" column="FNL_PMT_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="finalPaymentDate" column="FNL_PMT_DT" jdbc-type="DATE"/>
+        <field-descriptor name="externalOrganizationB2bSupplierIdentifier" column="EXT_ORG_B2B_SUPP_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="contractManagerCode" column="CONTR_MGR_CD" jdbc-type="INTEGER"/>
+        <field-descriptor name="purchaseOrderAutomaticIndicator" column="PO_AUTO_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="purchaseOrderInitialOpenTimestamp" column="PO_INIT_OPEN_DT" jdbc-type="TIMESTAMP" index="true"/>
+        <field-descriptor name="purchaseOrderLastTransmitTimestamp" column="PO_LST_TRNS_DT" jdbc-type="TIMESTAMP"/>
+        <field-descriptor name="purchaseOrderQuoteDueDate" column="PO_QT_DUE_DT" jdbc-type="DATE"/>
+        <field-descriptor name="purchaseOrderQuoteTypeCode" column="PO_QT_TYP_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="purchaseOrderQuoteVendorNoteText" column="PO_QT_VNDR_NTE_TXT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="purchaseOrderConfirmedIndicator" column="PO_CNFRMD_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="purchaseOrderCommodityDescription" column="PO_COMM_DESC" jdbc-type="VARCHAR"/>
+        <field-descriptor name="purchaseOrderPreviousIdentifier" column="PO_PREV_ID" jdbc-type="INTEGER"/>
+        <field-descriptor name="alternateVendorHeaderGeneratedIdentifier" column="ALTRNT_VNDR_HDR_GNRTD_ID" jdbc-type="INTEGER"/>
+        <field-descriptor name="alternateVendorDetailAssignedIdentifier" column="ALTRNT_VNDR_DTL_ASND_ID" jdbc-type="INTEGER"/>
+        <field-descriptor name="alternateVendorName" column="ALTRNT_VNDR_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="purchaseOrderCurrentIndicator" column="PO_CUR_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="pendingActionIndicator" column="PEND_ACTN_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="purchaseOrderFirstTransmissionTimestamp" column="PO_1ST_TRNS_DT" jdbc-type="TIMESTAMP"/>      
+        <field-descriptor name="accountsPayablePurchasingDocumentLinkIdentifier" column="AP_PUR_DOC_LNK_ID" jdbc-type="INTEGER"/>
+        <field-descriptor name="vendorAddressInternationalProvinceName" column="VNDR_ADDR_INTL_PROV_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="receivingDocumentRequiredIndicator" column="RCVNG_DOC_REQ_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="paymentRequestPositiveApprovalIndicator" column="PMT_RQST_PSTV_APRVL_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="purchaseOrderQuoteInitializationDate" column="PO_QT_INITLZTN_DT" jdbc-type="DATE"/>
+        <field-descriptor name="purchaseOrderQuoteAwardedDate" column="PO_QT_AWDED_DT" jdbc-type="DATE"/>
+        <field-descriptor name="capitalAssetSystemTypeCode" column="CPTL_AST_SYS_TYP_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="capitalAssetSystemStateCode" column="CPTL_AST_SYS_ST_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="receivingName" column="PUR_RCVNG_NM" jdbc-type="VARCHAR"/> 
+        <field-descriptor name="receivingLine1Address" column="PUR_RCVNG_LN1_ADDR" jdbc-type="VARCHAR"/> 
+        <field-descriptor name="receivingLine2Address" column="PUR_RCVNG_LN2_ADDR" jdbc-type="VARCHAR"/> 
+        <field-descriptor name="receivingCityName" column="PUR_RCVNG_CTY_NM" jdbc-type="VARCHAR"/> 
+        <field-descriptor name="receivingStateCode" column="PUR_RCVNG_ST_CD" jdbc-type="VARCHAR"/> 
+        <field-descriptor name="receivingPostalCode" column="PUR_RCVNG_PSTL_CD" jdbc-type="VARCHAR"/> 
+        <field-descriptor name="receivingCountryCode" column="PUR_RCVNG_CNTRY_CD" jdbc-type="VARCHAR"/> 
+        <field-descriptor name="addressToVendorIndicator" column="PUR_RCVNG_ADDR_TO_VNDR_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/> 
+        <field-descriptor name="useTaxIndicator" column="USE_TAX_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+        <field-descriptor name="vendorAttentionName" column="VNDR_ATTN_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="assignedUserPrincipalId" column="PO_ASND_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="accountDistributionMethod" column="ACCT_DISTR_MTD_IND" jdbc-type="VARCHAR"/>
+
+        <reference-descriptor name="purchaseOrderIdBo" class-ref="edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderIdBo" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="false">
+            <foreignkey field-ref="documentNumber"/>
+        </reference-descriptor>
+        <!-- TODO: Remove this "vendorPaymentTerms" reference once KFSPTS-39407 has been implemented. -->
+        <reference-descriptor name="vendorPaymentTerms" class-ref="org.kuali.kfs.vnd.businessobject.PaymentTermType" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="vendorPaymentTermsCode" />
+        </reference-descriptor>
+
+        <collection-descriptor name="items" proxy="true" element-class-ref="edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderItemLite" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="none" auto-delete="none">
+            <inverse-foreignkey field-ref="documentNumber"/>
+        </collection-descriptor>
+        <collection-descriptor name="itemAccounts" proxy="true" element-class-ref="edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderAccountLite" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="none" auto-delete="none">
+            <inverse-foreignkey field-ref="documentNumber"/>
+        </collection-descriptor>
+
+    </class-descriptor>
+
+    <!-- NOTE: This BO retrieves data from the main PO Item table in KFS, not a CEMI-specific table. -->
+    <class-descriptor class="edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderItemLite"
+                      table="PUR_PO_ITM_T">
+        <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="itemIdentifier" column="PO_ITM_ID" jdbc-type="INTEGER" primarykey="true" index="true"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="itemLineNumber" column="ITM_LN_NBR" jdbc-type="INTEGER" index="true"/>
+        <field-descriptor name="itemTypeCode" column="ITM_TYP_CD" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="itemUnitOfMeasureCode" column="ITM_UOM_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="itemQuantity" column="ITM_ORD_QTY" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="itemInvoicedTotalQuantity" column="ITM_INV_TOT_QTY" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="itemInvoicedTotalAmount" column="ITM_INV_TOT_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="itemCatalogNumber" column="ITM_CATLG_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="itemReceivedTotalQuantity" column="ITM_RCVD_TOT_QTY" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="itemDescription" column="ITM_DESC" jdbc-type="VARCHAR"/>
+        <field-descriptor name="itemUnitPrice" column="ITM_UNIT_PRC" jdbc-type="DECIMAL"/>
+        <field-descriptor name="itemOutstandingEncumberedQuantity" column="ITM_OSTND_ENC_QTY" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="itemOutstandingEncumberedAmount" column="ITM_OSTND_ENC_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="itemAuxiliaryPartIdentifier" column="ITM_AUX_PART_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="itemActiveIndicator" column="ITM_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="purchasingCommodityCode" column="PUR_COMM_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="externalOrganizationB2bProductReferenceNumber" column="EXT_ORG_B2B_PROD_REF_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="externalOrganizationB2bProductTypeName" column="EXT_ORG_B2B_PROD_TYP_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="itemAssignedToTradeInIndicator" column="ITM_ASND_TO_TRADE_IN_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="itemDamagedTotalQuantity" column="ITM_DMGED_TOT_QTY" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+	    <field-descriptor name="itemSalesTaxAmount" column="ITM_TAX_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="controlled" column="CONTROLLED_FLAG" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="green" column="GREEN_FLAG" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="hazardous" column="HAZARDOUS_FLAG" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="radioactive" column="RADIOACTIVE_FLAG" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="radioactiveMinor" column="RADIOACTIVE_MINOR_FLAG" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="selectAgent" column="SELECT_AGENT_FLAG" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="toxin" column="TOXIN_FLAG" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="recycled" column="RECYCLED_FLAG" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="energyStar" column="ENERGY_STAR_FLAG" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+
+        <collection-descriptor name="useTaxItems" proxy="true" element-class-ref="org.kuali.kfs.module.purap.businessobject.PurchaseOrderItemUseTax" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="none" auto-delete="none">
+    	    <inverse-foreignkey field-ref="documentNumber" />
+            <inverse-foreignkey field-ref="itemIdentifier" />
+        </collection-descriptor>
+    </class-descriptor>
+
+    <!-- NOTE: This BO retrieves data from the main PO Account table in KFS, not a CEMI-specific table. -->
+    <class-descriptor class="edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderAccountLite"
+                      table="PUR_PO_ACCT_T">
+        <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="accountIdentifier" column="PO_ACCT_ID" jdbc-type="INTEGER" primarykey="true" index="true"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="itemIdentifier" column="PO_ITM_ID" jdbc-type="INTEGER" index="true"/>
+        <field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="accountNumber" column="ACCOUNT_NBR" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="subAccountNumber" column="SUB_ACCT_NBR" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="financialObjectCode" column="FIN_OBJECT_CD" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="financialSubObjectCode" column="FIN_SUB_OBJ_CD" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="projectCode" column="PROJECT_CD" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="organizationReferenceId" column="ORG_REFERENCE_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="accountLinePercent" column="ACLN_PCT" jdbc-type="DECIMAL"/>
+        <field-descriptor name="itemAccountOutstandingEncumbranceAmount" column="ITM_ACCT_OSTND_ENCUM_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="amount" column="ACLN_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="sequenceNumber" column="FDOC_LINE_NBR" jdbc-type="INTEGER"/>
+        <field-descriptor name="overrideCode" column="FDOC_OVERRIDE_CD" jdbc-type="VARCHAR"/>
     </class-descriptor>
 
 </descriptor-repository>
