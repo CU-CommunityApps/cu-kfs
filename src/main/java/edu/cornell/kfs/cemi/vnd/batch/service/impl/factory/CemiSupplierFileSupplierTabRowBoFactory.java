@@ -2,6 +2,7 @@ package edu.cornell.kfs.cemi.vnd.batch.service.impl.factory;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -32,25 +33,30 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
     private ISOFIPSConversionService isoFipsConversionService;
     private boolean maskSensitiveData;
     private boolean vendorHasActiveBankAccounts;
+    private Map<String, String> paymentTermsMappings;
 
     public CemiSupplierFileSupplierTabRowBoFactory(final VendorDetail vendorDetail, final String supplierId,
             final ISOFIPSConversionService isoFipsConversionService, final boolean maskSensitiveData,
-            final boolean vendorHasActiveBankAccounts) {
+            final boolean vendorHasActiveBankAccounts, final Map<String, String> paymentTermsMappings) {
         Validate.notNull(vendorDetail, "vendorDetail cannot be null");
         Validate.notBlank(supplierId, "supplierId cannot be blank");
         Validate.notNull(isoFipsConversionService, "isoFipsConversionService cannot be null");
+        Validate.notNull(paymentTermsMappings, "paymentTermsMappings cannot be null");
         this.vendorDetail = vendorDetail;
         this.supplierId = supplierId;
         this.isoFipsConversionService = isoFipsConversionService;
         this.maskSensitiveData = maskSensitiveData;
         this.vendorHasActiveBankAccounts = vendorHasActiveBankAccounts;
+        this.paymentTermsMappings = paymentTermsMappings;
     }
 
     public static CemiSupplierFileSupplierTabRowBo createTabRowBoFrom(final VendorDetail vendorDetail,
             final String supplierId, final ISOFIPSConversionService isoFipsConversionService,
-            final boolean maskSensitiveData, final boolean vendorHasActiveBankAccounts) {
+            final boolean maskSensitiveData, final boolean vendorHasActiveBankAccounts,
+            final Map<String, String> paymentTermsMappings) {
         final CemiSupplierFileSupplierTabRowBoFactory factory = new CemiSupplierFileSupplierTabRowBoFactory(
-                vendorDetail, supplierId, isoFipsConversionService, maskSensitiveData, vendorHasActiveBankAccounts);
+                vendorDetail, supplierId, isoFipsConversionService, maskSensitiveData, vendorHasActiveBankAccounts,
+                paymentTermsMappings);
         return factory.createCemiSupplierFileSupplierTabRowBo();
     }
 
@@ -193,16 +199,16 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
     private String determineVendorPaymentTerms() {
         vendorDetail.refreshReferenceObject("vendorPaymentTerms");
         if (ObjectUtils.isNotNull(vendorDetail.getVendorPaymentTerms())) {
-            String paymentTermsDescription = vendorDetail.getVendorPaymentTerms().getVendorPaymentTermsDescription();
-            if (paymentTermsDescription == null || paymentTermsDescription.isEmpty()) {
-                return paymentTermsDescription;
+            final String paymentTermsDescription = vendorDetail.getVendorPaymentTerms()
+                    .getVendorPaymentTermsDescription();
+            if (StringUtils.isBlank(paymentTermsDescription)) {
+                return CemiBaseConstants.EMPTY_STRING;
             }
-            return paymentTermsDescription
-                    .trim()
-                    .replaceAll("[^a-zA-Z0-9]+", "_") // replace spans of special chars/spaces with _
-                    .replaceAll("^_|_$", ""); // strip leading/trailing underscores
+            // KFSPTS-38411: translate the KFS payment terms description to the Workday payment terms code.
+            return paymentTermsMappings.getOrDefault(
+                    paymentTermsDescription.trim(), CemiSupplierConstants.PAYMENT_TERMS_UNKNOWN);
         }
-        return "";
+        return CemiBaseConstants.EMPTY_STRING;
     }
 
     private String determineIrs1099SupplierFlag(final String taxAuthorityFormType) {
