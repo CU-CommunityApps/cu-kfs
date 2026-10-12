@@ -134,7 +134,6 @@ public class CemiPurchaseOrderDocumentLite extends PersistableBusinessObjectBase
 
     private CemiPurchaseOrderIdBo purchaseOrderIdBo;
     private List<CemiPurchaseOrderItemLite> items;
-    private List<CemiPurchaseOrderAccountLite> itemAccounts;
 
     // TODO: Remove this reference (and its getter/setter methods) once KFSPTS-39407 has been implemented.
     private PaymentTermType vendorPaymentTerms;
@@ -1069,17 +1068,6 @@ public class CemiPurchaseOrderDocumentLite extends PersistableBusinessObjectBase
 
     public void setItems(final List<CemiPurchaseOrderItemLite> items) {
         this.items = items;
-    }
-
-    public List<CemiPurchaseOrderAccountLite> getItemAccounts() {
-        if (itemAccounts == null) {
-            itemAccounts = new ArrayList<>();
-        }
-        return itemAccounts;
-    }
-
-    public void setItemAccounts(final List<CemiPurchaseOrderAccountLite> itemAccounts) {
-        this.itemAccounts = itemAccounts;
     }
 
     public PaymentTermType getVendorPaymentTerms() {

@@ -14,10 +14,9 @@ import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.businessobject.PurApItemUseTax;
-import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
-import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 
 import edu.cornell.kfs.cemi.module.purap.CemiPurchaseOrderConstants;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderAccountLite;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderDocumentLite;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderItemLite;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
@@ -72,16 +71,16 @@ public final class CemiPurchaseOrderUtils {
                 ? QUANTITY_FORMATTERS.get().format(value.bigDecimalValue()) : CemiBaseConstants.EMPTY_STRING;
     }
 
-    public static List<PurchaseOrderAccount> getOutstandingEncumberedAccountingLines(
-            final PurchaseOrderItem purchaseOrderItem) {
+    public static List<CemiPurchaseOrderAccountLite> getOutstandingEncumberedAccountingLines(
+            final CemiPurchaseOrderItemLite purchaseOrderItem) {
         return purchaseOrderItem.getSourceAccountingLines().stream()
-                .map(PurchaseOrderAccount.class::cast)
                 .filter(CemiPurchaseOrderUtils::accountingLineHasOutstandingEncumbrances)
-                .sorted(Comparator.comparing(PurchaseOrderAccount::getAccountIdentifier))
+                .sorted(Comparator.comparing(CemiPurchaseOrderAccountLite::getAccountIdentifier))
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    public static boolean accountingLineHasOutstandingEncumbrances(final PurchaseOrderAccount purchaseOrderAccount) {
+    public static boolean accountingLineHasOutstandingEncumbrances(
+            final CemiPurchaseOrderAccountLite purchaseOrderAccount) {
         final KualiDecimal amount = purchaseOrderAccount.getItemAccountOutstandingEncumbranceAmount();
         return amount != null && amount.isGreaterThan(KualiDecimal.ZERO);
     }

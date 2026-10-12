@@ -360,9 +360,10 @@
         <field-descriptor name="approvedDate" column="APRV_DT" jdbc-type="TIMESTAMP"/>
     </class-descriptor>
 
-    <!-- NOTE: This BO retrieves data from the main PO table in KFS, not a CEMI-specific table. -->
+    <!-- NOTE: This BO retrieves data from a view that represents a read-only version of KFS's main PO table. -->
     <class-descriptor class="edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderDocumentLite"
-                      table="PUR_PO_T">
+                      table="CU_CEMI_PUR_PO_V"
+                      schema="CEMI">
         <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
         <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
@@ -491,15 +492,12 @@
         <collection-descriptor name="items" proxy="true" element-class-ref="edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderItemLite" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="none" auto-delete="none">
             <inverse-foreignkey field-ref="documentNumber"/>
         </collection-descriptor>
-        <collection-descriptor name="itemAccounts" proxy="true" element-class-ref="edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderAccountLite" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="none" auto-delete="none">
-            <inverse-foreignkey field-ref="documentNumber"/>
-        </collection-descriptor>
-
     </class-descriptor>
 
-    <!-- NOTE: This BO retrieves data from the main PO Item table in KFS, not a CEMI-specific table. -->
+    <!-- NOTE: This BO retrieves data from a view that represents a read-only version of KFS's PO Item table. -->
     <class-descriptor class="edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderItemLite"
-                      table="PUR_PO_ITM_T">
+                      table="CU_CEMI_PUR_PO_ITM_V"
+                      schema="CEMI">
         <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="itemIdentifier" column="PO_ITM_ID" jdbc-type="INTEGER" primarykey="true" index="true"/>
         <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
@@ -534,15 +532,22 @@
         <field-descriptor name="recycled" column="RECYCLED_FLAG" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
         <field-descriptor name="energyStar" column="ENERGY_STAR_FLAG" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
 
+        <collection-descriptor name="sourceAccountingLines" proxy="true" element-class-ref="edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderAccountLite" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="none" auto-delete="none">
+            <orderby name="accountNumber" sort="ASC" />
+            <orderby name="financialObjectCode" sort="ASC" />
+            <inverse-foreignkey field-ref="documentNumber" />
+            <inverse-foreignkey field-ref="itemIdentifier" />
+        </collection-descriptor>
         <collection-descriptor name="useTaxItems" proxy="true" element-class-ref="org.kuali.kfs.module.purap.businessobject.PurchaseOrderItemUseTax" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="none" auto-delete="none">
     	    <inverse-foreignkey field-ref="documentNumber" />
             <inverse-foreignkey field-ref="itemIdentifier" />
         </collection-descriptor>
     </class-descriptor>
 
-    <!-- NOTE: This BO retrieves data from the main PO Account table in KFS, not a CEMI-specific table. -->
+    <!-- NOTE: This BO retrieves data from a view that represents a read-only version of KFS's PO Account table. -->
     <class-descriptor class="edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderAccountLite"
-                      table="PUR_PO_ACCT_T">
+                      table="CU_CEMI_PUR_PO_ACCT_V"
+                      schema="CEMI">
         <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="accountIdentifier" column="PO_ACCT_ID" jdbc-type="INTEGER" primarykey="true" index="true"/>
         <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>

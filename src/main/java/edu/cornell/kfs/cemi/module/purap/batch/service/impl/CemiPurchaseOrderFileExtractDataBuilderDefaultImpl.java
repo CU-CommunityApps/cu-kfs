@@ -12,18 +12,20 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
-import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
-import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
+import org.kuali.kfs.sys.service.LocationService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderDocumentLite;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderFileSubmitPurchaseOrderTabRowBo;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderGoodsLineBo;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderHeaderBo;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderItemLite;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderLineSplitBo;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderServiceLineBo;
 import edu.cornell.kfs.cemi.module.purap.batch.service.CemiPurchaseOrderFileExtractDataBuilder;
@@ -42,6 +44,8 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
     private PersonService personService;
     private ParameterService parameterService;
     private CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao;
+    private DateTimeService dateTimeService;
+    private LocationService locationService;
     private String supplierJobRunDateString;
     @SuppressWarnings("unused")
     private boolean maskSensitiveData;
@@ -53,15 +57,20 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
             final BusinessObjectService businessObjectService, final String jobRunDateString,
             final PersonService personService, final ParameterService parameterService,
             final CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao,
+            final DateTimeService dateTimeService, final LocationService locationService,
             final String supplierJobRunDateString, final boolean maskSensitiveData) {
         super(businessObjectService, jobRunDateString, CemiPurchaseOrderFileSubmitPurchaseOrderTabRowBo.class);
         Validate.notNull(personService, "personService cannot be null");
         Validate.notNull(parameterService, "parameterService cannot be null");
         Validate.notNull(cemiPurchaseOrderExtractDao, "cemiPurchaseOrderExtractDao cannot be null");
+        Validate.notNull(dateTimeService, "dateTimeService cannot be null");
+        Validate.notNull(locationService, "locationService cannot be null");
         Validate.notBlank(supplierJobRunDateString, "supplierJobRunDateString cannot be blank");
         this.personService = personService;
         this.parameterService = parameterService;
         this.cemiPurchaseOrderExtractDao = cemiPurchaseOrderExtractDao;
+        this.dateTimeService = dateTimeService;
+        this.locationService = locationService;
         this.supplierJobRunDateString = supplierJobRunDateString;
         this.maskSensitiveData = maskSensitiveData;
 
@@ -77,10 +86,10 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
 
     @Override
     public void writePurchaseOrderFileSubmitPurchaseOrderTabExtractDataToIntermediateStorage(
-            final Iterator<PurchaseOrderDocument> legacyPurchaseOrders) {
+            final Iterator<CemiPurchaseOrderDocumentLite> legacyPurchaseOrders) {
         int purchaseOrderCount = 0;
         int tabRowCount = 0;
-        for (final PurchaseOrderDocument purchaseOrderDocument : IteratorUtils.asIterable(legacyPurchaseOrders)) {
+        for (final CemiPurchaseOrderDocumentLite purchaseOrderDocument : IteratorUtils.asIterable(legacyPurchaseOrders)) {
             purchaseOrderCount++;
             if (purchaseOrderCount % 1000 == 0) {
                 LOG.info("writePurchaseOrderFileSubmitPurchaseOrderTabExtractDataToIntermediateStorage, Processing {} "
@@ -93,9 +102,9 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
                 + "data lines from {} Purchase Orders ", tabRowCount, purchaseOrderCount);
     }
 
-    private int writePurchaseOrderDataToIntermediateStorage(final PurchaseOrderDocument purchaseOrderDocument) {
-        final List<PurchaseOrderItem> openQuantityItemLines = getOpenQuantityItemLines(purchaseOrderDocument);
-        final List<PurchaseOrderItem> openNonQuantityItemLines = getOpenNonQuantityItemLines(purchaseOrderDocument);
+    private int writePurchaseOrderDataToIntermediateStorage(final CemiPurchaseOrderDocumentLite purchaseOrderDocument) {
+        final List<CemiPurchaseOrderItemLite> openQuantityItemLines = getOpenQuantityItemLines(purchaseOrderDocument);
+        final List<CemiPurchaseOrderItemLite> openNonQuantityItemLines = getOpenNonQuantityItemLines(purchaseOrderDocument);
         if (openQuantityItemLines.isEmpty() && openNonQuantityItemLines.isEmpty()) {
             LOG.warn("writePurchaseOrderDataToIntermediateStorage, Purchase Order Document {} has no open "
                     + "above-the-line items despite the document itself being open; will exclude this document "
@@ -106,29 +115,32 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
         int numLinesWritten = 0;
 
         final CemiPurchaseOrderHeaderBo headerBo = CemiPurchaseOrderHeaderBoFactory.createHeaderBoFrom(
-                purchaseOrderDocument, personService, cemiPurchaseOrderExtractDao, supplierJobRunDateString);
-        numLinesWritten += writePurchaseOrderQuantityLinesToIntermediateStorage(headerBo, openQuantityItemLines);
-        numLinesWritten += writePurchaseOrderNonQuantityLinesToIntermediateStorage(headerBo, openNonQuantityItemLines);
+                purchaseOrderDocument, personService, cemiPurchaseOrderExtractDao, dateTimeService,
+                locationService, supplierJobRunDateString);
+        numLinesWritten += writePurchaseOrderQuantityLinesToIntermediateStorage(
+                headerBo, purchaseOrderDocument, openQuantityItemLines);
+        numLinesWritten += writePurchaseOrderNonQuantityLinesToIntermediateStorage(
+                headerBo, purchaseOrderDocument, openNonQuantityItemLines);
         return numLinesWritten;
     }
 
     private int writePurchaseOrderQuantityLinesToIntermediateStorage(final CemiPurchaseOrderHeaderBo headerBo,
-            final List<PurchaseOrderItem> openQuantityItemLines) {
+            final CemiPurchaseOrderDocumentLite poDocument, final List<CemiPurchaseOrderItemLite> openQuantityItemLines) {
         if (openQuantityItemLines.isEmpty()) {
             return 0;
         }
 
         final CemiPurchaseOrderServiceLineBo emptyServiceLine = CemiPurchaseOrderServiceLineBoFactory
-                .createServiceLineBoFrom(headerBo, Optional.empty());
+                .createServiceLineBoFrom(headerBo, poDocument, Optional.empty());
         Validate.validState(!emptyServiceLine.getLineSplits().isEmpty(),
                 "Empty service line should have had an empty line split BO present");
         final Pair<CemiPurchaseOrderServiceLineBo, CemiPurchaseOrderLineSplitBo> emptyServiceLineData
                 = Pair.of(emptyServiceLine, emptyServiceLine.getLineSplits().get(0));
         int numLinesWritten = 0;
 
-        for (final PurchaseOrderItem quantityItemLine : openQuantityItemLines) {
+        for (final CemiPurchaseOrderItemLite quantityItemLine : openQuantityItemLines) {
             final CemiPurchaseOrderGoodsLineBo goodsLine = CemiPurchaseOrderGoodsLineBoFactory
-                    .createGoodsLineBoFrom(headerBo, Optional.of(quantityItemLine));
+                    .createGoodsLineBoFrom(headerBo, poDocument, Optional.of(quantityItemLine));
             Validate.isTrue(!goodsLine.getLineSplits().isEmpty(),
                     "Goods line should have had either several line splits or an empty line split BO");
             for (final CemiPurchaseOrderLineSplitBo goodsLineSplit : goodsLine.getLineSplits()) {
@@ -146,22 +158,23 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
     }
 
     private int writePurchaseOrderNonQuantityLinesToIntermediateStorage(final CemiPurchaseOrderHeaderBo headerBo,
-            final List<PurchaseOrderItem> openNonQuantityItemLines) {
+            final CemiPurchaseOrderDocumentLite poDocument,
+            final List<CemiPurchaseOrderItemLite> openNonQuantityItemLines) {
         if (openNonQuantityItemLines.isEmpty()) {
             return 0;
         }
 
         final CemiPurchaseOrderGoodsLineBo emptyGoodsLine = CemiPurchaseOrderGoodsLineBoFactory
-                .createGoodsLineBoFrom(headerBo, Optional.empty());
+                .createGoodsLineBoFrom(headerBo, poDocument, Optional.empty());
         Validate.validState(!emptyGoodsLine.getLineSplits().isEmpty(),
                 "Empty goods line should have had an empty line split BO present");
         final Pair<CemiPurchaseOrderGoodsLineBo, CemiPurchaseOrderLineSplitBo> emptyGoodsLineData
                 = Pair.of(emptyGoodsLine, emptyGoodsLine.getLineSplits().get(0));
         int numLinesWritten = 0;
 
-        for (final PurchaseOrderItem nonQuantityItemLine : openNonQuantityItemLines) {
+        for (final CemiPurchaseOrderItemLite nonQuantityItemLine : openNonQuantityItemLines) {
             final CemiPurchaseOrderServiceLineBo serviceLine = CemiPurchaseOrderServiceLineBoFactory
-                    .createServiceLineBoFrom(headerBo, Optional.of(nonQuantityItemLine));
+                    .createServiceLineBoFrom(headerBo, poDocument, Optional.of(nonQuantityItemLine));
             Validate.isTrue(!serviceLine.getLineSplits().isEmpty(),
                     "Service line should have had either several line splits or an empty line split BO");
             for (final CemiPurchaseOrderLineSplitBo serviceLineSplit : serviceLine.getLineSplits()) {
@@ -178,28 +191,28 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
         return numLinesWritten;
     }
 
-    private List<PurchaseOrderItem> getOpenQuantityItemLines(final PurchaseOrderDocument purchaseOrderDocument) {
+    private List<CemiPurchaseOrderItemLite> getOpenQuantityItemLines(
+            final CemiPurchaseOrderDocumentLite purchaseOrderDocument) {
         return getOpenItemLines(purchaseOrderDocument, defaultQuantityItemType);
     }
 
-    private List<PurchaseOrderItem> getOpenNonQuantityItemLines(final PurchaseOrderDocument purchaseOrderDocument) {
+    private List<CemiPurchaseOrderItemLite> getOpenNonQuantityItemLines(
+            final CemiPurchaseOrderDocumentLite purchaseOrderDocument) {
         return getOpenItemLines(purchaseOrderDocument, defaultNonQuantityItemType);
     }
 
     @SuppressWarnings("deprecation")
-    private List<PurchaseOrderItem> getOpenItemLines(final PurchaseOrderDocument purchaseOrderDocument,
+    private List<CemiPurchaseOrderItemLite> getOpenItemLines(final CemiPurchaseOrderDocumentLite purchaseOrderDocument,
             final String itemTypeCode) {
-        final List<?> items = purchaseOrderDocument.getItems();
-        return items.stream()
-                .map(PurchaseOrderItem.class::cast)
+        return purchaseOrderDocument.getItems().stream()
                 .filter(item -> StringUtils.equals(item.getItemTypeCode(), itemTypeCode))
-                .filter(PurchaseOrderItem::isItemActiveIndicator)
+                .filter(CemiPurchaseOrderItemLite::isItemActiveIndicator)
                 .filter(this::isOpenItem)
-                .sorted(Comparator.comparing(PurchaseOrderItem::getItemLineNumber))
+                .sorted(Comparator.comparing(CemiPurchaseOrderItemLite::getItemLineNumber))
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    private boolean isOpenItem(final PurchaseOrderItem purchaseOrderItem) {
+    private boolean isOpenItem(final CemiPurchaseOrderItemLite purchaseOrderItem) {
         final KualiDecimal outstandingEncumberedAmount = purchaseOrderItem.getItemOutstandingEncumberedAmount();
         return outstandingEncumberedAmount != null && outstandingEncumberedAmount.isGreaterThan(KualiDecimal.ZERO);
     }

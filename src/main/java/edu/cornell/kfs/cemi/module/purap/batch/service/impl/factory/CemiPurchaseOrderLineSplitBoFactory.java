@@ -4,11 +4,11 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
-import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
-import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 
 import edu.cornell.kfs.cemi.module.purap.CemiPurchaseOrderConstants;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderAccountLite;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderDocumentLite;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderItemLite;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderLineSplitBo;
 import edu.cornell.kfs.cemi.module.purap.util.CemiPurchaseOrderUtils;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
@@ -16,12 +16,15 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CemiPurchaseOrderLineSplitBoFactory {
 
-    private Optional<PurchaseOrderItem> purchaseOrderItem;
-    private Optional<PurchaseOrderAccount> purchaseOrderAccountingLine;
+    private CemiPurchaseOrderDocumentLite poDocument;
+    private Optional<CemiPurchaseOrderItemLite> purchaseOrderItem;
+    private Optional<CemiPurchaseOrderAccountLite> purchaseOrderAccountingLine;
     private int lineSplitIndex;
 
-    public CemiPurchaseOrderLineSplitBoFactory(final Optional<PurchaseOrderItem> purchaseOrderItem,
-            final Optional<PurchaseOrderAccount> purchaseOrderAccountingLine, final int lineSplitIndex) {
+    public CemiPurchaseOrderLineSplitBoFactory(final CemiPurchaseOrderDocumentLite poDocument,
+            final Optional<CemiPurchaseOrderItemLite> purchaseOrderItem,
+            final Optional<CemiPurchaseOrderAccountLite> purchaseOrderAccountingLine, final int lineSplitIndex) {
+        Validate.notNull(poDocument, "poDocument cannot be null");
         Validate.notNull(purchaseOrderItem, "purchaseOrderItem wrapper object cannot be null");
         Validate.notNull(purchaseOrderAccountingLine, "purchaseOrderAccountingLine wrapper object cannot be null");
         Validate.isTrue(purchaseOrderItem.isPresent() == (lineSplitIndex > 0),
@@ -29,15 +32,17 @@ public class CemiPurchaseOrderLineSplitBoFactory {
         Validate.isTrue(purchaseOrderAccountingLine.isPresent() == (lineSplitIndex > 0),
                 "lineSplitIndex must be a positive integer if, and only if, the purchaseOrderAccountingLine wrapper "
                         + "is non-empty");
+        this.poDocument = poDocument;
         this.purchaseOrderItem = purchaseOrderItem;
         this.purchaseOrderAccountingLine = purchaseOrderAccountingLine;
         this.lineSplitIndex = lineSplitIndex;
     }
 
-    public static CemiPurchaseOrderLineSplitBo createLineSplitBoFrom(final Optional<PurchaseOrderItem> purchaseOrderItem,
-            final Optional<PurchaseOrderAccount> purchaseOrderAccountingLine, final int lineSplitIndex) {
+    public static CemiPurchaseOrderLineSplitBo createLineSplitBoFrom(final CemiPurchaseOrderDocumentLite poDocument,
+            final Optional<CemiPurchaseOrderItemLite> purchaseOrderItem,
+            final Optional<CemiPurchaseOrderAccountLite> purchaseOrderAccountingLine, final int lineSplitIndex) {
         final CemiPurchaseOrderLineSplitBoFactory factory = new CemiPurchaseOrderLineSplitBoFactory(
-                purchaseOrderItem, purchaseOrderAccountingLine, lineSplitIndex);
+                poDocument, purchaseOrderItem, purchaseOrderAccountingLine, lineSplitIndex);
         return factory.createCemiPurchaseOrderLineSplitBo();
     }
 
@@ -74,9 +79,8 @@ public class CemiPurchaseOrderLineSplitBoFactory {
         if (isEmptyFactory()) {
             return CemiBaseConstants.EMPTY_STRING;
         }
-        final PurchaseOrderDocument document = (PurchaseOrderDocument) purchaseOrderItem.get().getPurapDocument();
         return StringUtils.joinWith(CUKFSConstants.UNDERSCORE,
-                document.getPurapDocumentIdentifier().toString(),
+                poDocument.getPurapDocumentIdentifier().toString(),
                 purchaseOrderItem.get().getItemLineNumber().toString(), Integer.toString(lineSplitIndex));
     }
 

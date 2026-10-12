@@ -27,7 +27,6 @@ import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
-import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Country;
 import org.kuali.kfs.sys.service.LocationService;
@@ -36,6 +35,7 @@ import edu.cornell.kfs.cemi.module.purap.CemiPurchaseOrderConstants;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderDocumentLite;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderHeaderBo;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderIdBo;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderItemLite;
 import edu.cornell.kfs.cemi.module.purap.dataaccess.CemiPurchaseOrderExtractDao;
 import edu.cornell.kfs.cemi.module.purap.util.CemiPurchaseOrderUtils;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
@@ -320,7 +320,7 @@ public class CemiPurchaseOrderHeaderBoFactory {
     }
 
     private String determineFreightAmount() {
-        final Optional<PurchaseOrderItem> freightItem = getFreightItemIfPresent();
+        final Optional<CemiPurchaseOrderItemLite> freightItem = getFreightItemIfPresent();
         if (freightItem.isPresent()) {
             final KualiDecimal remainingFreightAmount = freightItem.get().getItemOutstandingEncumberedAmount();
             return (remainingFreightAmount != null && remainingFreightAmount.isGreaterThan(KualiDecimal.ZERO))
@@ -331,12 +331,10 @@ public class CemiPurchaseOrderHeaderBoFactory {
     }
 
     @SuppressWarnings("deprecation")
-    private Optional<PurchaseOrderItem> getFreightItemIfPresent() {
-        final List<?> items = purchaseOrderDocument.getItems();
-        return items.stream()
-                .map(PurchaseOrderItem.class::cast)
+    private Optional<CemiPurchaseOrderItemLite> getFreightItemIfPresent() {
+        return purchaseOrderDocument.getItems().stream()
                 .filter(item -> StringUtils.equals(item.getItemTypeCode(), ItemTypeCodes.ITEM_TYPE_FREIGHT_CODE))
-                .filter(PurchaseOrderItem::isItemActiveIndicator)
+                .filter(CemiPurchaseOrderItemLite::isItemActiveIndicator)
                 .findFirst();
     }
 
@@ -438,6 +436,7 @@ public class CemiPurchaseOrderHeaderBoFactory {
     }
 
     // This is a modified copy of the code from PurchasingDocumentBase.getDeliveryCountryName()
+    // TODO: When implementing KFSPTS-39551, determine if this logic needs reword; may need to use ISO country code/name.
     private String getDeliveryCountryName() {
         if (StringUtils.isNotBlank(purchaseOrderDocument.getDeliveryCountryCode())) {
             final Country country = locationService.getCountry(purchaseOrderDocument.getDeliveryCountryCode());

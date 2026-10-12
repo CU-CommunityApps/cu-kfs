@@ -48,6 +48,7 @@ public class CemiPurchaseOrderItemLite extends PersistableBusinessObjectBase {
     private boolean recycled;
     private boolean energyStar;
 
+    private List<CemiPurchaseOrderAccountLite> sourceAccountingLines;
     private List<PurchaseOrderItemUseTax> useTaxItems;
 
     public String getDocumentNumber() {
@@ -296,6 +297,17 @@ public class CemiPurchaseOrderItemLite extends PersistableBusinessObjectBase {
 
     public void setEnergyStar(final boolean energyStar) {
         this.energyStar = energyStar;
+    }
+
+    public List<CemiPurchaseOrderAccountLite> getSourceAccountingLines() {
+        if (sourceAccountingLines == null) {
+            sourceAccountingLines = new ArrayList<>();
+        }
+        return sourceAccountingLines;
+    }
+
+    public void setSourceAccountingLines(final List<CemiPurchaseOrderAccountLite> sourceAccountingLines) {
+        this.sourceAccountingLines = sourceAccountingLines;
     }
 
     public List<PurchaseOrderItemUseTax> getUseTaxItems() {

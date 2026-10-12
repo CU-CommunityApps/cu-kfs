@@ -9,18 +9,17 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.Environment;
-import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
+import org.kuali.kfs.sys.service.LocationService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.cemi.module.purap.CemiPurchaseOrderConstants;
 import edu.cornell.kfs.cemi.module.purap.CemiPurchaseOrderParameterConstants;
 import edu.cornell.kfs.cemi.module.purap.batch.CreateCemiPurchaseOrderExtractStep;
-import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderIdBo;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderDocumentLite;
 import edu.cornell.kfs.cemi.module.purap.batch.service.CemiPurchaseOrderExtractService;
 import edu.cornell.kfs.cemi.module.purap.batch.service.CemiPurchaseOrderFileExtractDataBuilder;
 import edu.cornell.kfs.cemi.module.purap.dataaccess.CemiPurchaseOrderExtractDao;
@@ -36,8 +35,8 @@ public class CemiPurchaseOrderExtractServiceImpl extends CemiDataExtractServiceB
     private CemiPurchaseOrderExtractOrmDao cemiPurchaseOrderExtractOrmDao;
     private CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao;
     private BusinessObjectService businessObjectService;
-    private DocumentService documentService;
-    private DataDictionaryService dataDictionaryService;
+    private DateTimeService dateTimeService;
+    private LocationService locationService;
     private PersonService personService;
 
     public CemiPurchaseOrderExtractServiceImpl(final Environment environment) {
@@ -67,17 +66,16 @@ public class CemiPurchaseOrderExtractServiceImpl extends CemiDataExtractServiceB
                 + "intermediate storage...", CemiPurchaseOrderConstants.PURCHASE_ORDER_EXTRACT_PLAIN_FILENAME);
 
         try (
-                final Stream<CemiPurchaseOrderIdBo> purchaseOrderDocIds =
-                        cemiPurchaseOrderExtractOrmDao.getIdsOfPurchaseOrdersToExtractAsCloseableStream();
+                final Stream<CemiPurchaseOrderDocumentLite> purchaseOrderDocuments =
+                        cemiPurchaseOrderExtractOrmDao.getPurchaseOrdersToExtractAsCloseableStream();
         ) {
             final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
             final String supplierJobRunDateString = getSupplierJobRunDateString();
             final CemiPurchaseOrderFileExtractDataBuilder dataBuilder = new CemiPurchaseOrderFileExtractDataBuilderDefaultImpl(
                     businessObjectService, jobRunDateString, personService, parameterService,
-                    cemiPurchaseOrderExtractDao, supplierJobRunDateString, shouldMaskCemiSensitiveData());
-            final Iterator<CemiPurchaseOrderIdBo> purchaseOrderDocIdsIterator = purchaseOrderDocIds.iterator();
-            final Iterator<PurchaseOrderDocument> purchaseOrdersIterator = new CemiPurchaseOrderIterator(
-                    purchaseOrderDocIdsIterator, documentService, dataDictionaryService);
+                    cemiPurchaseOrderExtractDao, dateTimeService, locationService,
+                    supplierJobRunDateString, shouldMaskCemiSensitiveData());
+            final Iterator<CemiPurchaseOrderDocumentLite> purchaseOrdersIterator = purchaseOrderDocuments.iterator();
             dataBuilder.writePurchaseOrderFileSubmitPurchaseOrderTabExtractDataToIntermediateStorage(purchaseOrdersIterator);
         }
     }
@@ -127,12 +125,12 @@ public class CemiPurchaseOrderExtractServiceImpl extends CemiDataExtractServiceB
         this.businessObjectService = businessObjectService;
     }
 
-    public void setDocumentService(final DocumentService documentService) {
-        this.documentService = documentService;
+    public void setDateTimeService(final DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
     }
 
-    public void setDataDictionaryService(final DataDictionaryService dataDictionaryService) {
-        this.dataDictionaryService = dataDictionaryService;
+    public void setLocationService(final LocationService locationService) {
+        this.locationService = locationService;
     }
 
     public void setPersonService(final PersonService personService) {

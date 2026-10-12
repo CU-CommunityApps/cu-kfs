@@ -10,12 +10,12 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
-import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
-import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 
 import edu.cornell.kfs.cemi.module.purap.CemiPurchaseOrderConstants;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderAccountLite;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderDocumentLite;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderHeaderBo;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderItemLite;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderLineSplitBo;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderServiceLineBo;
 import edu.cornell.kfs.cemi.module.purap.util.CemiPurchaseOrderUtils;
@@ -27,14 +27,17 @@ public class CemiPurchaseOrderServiceLineBoFactory {
     private static final Logger LOG = LogManager.getLogger();
 
     private CemiPurchaseOrderHeaderBo headerBo;
-    private Optional<PurchaseOrderItem> purchaseOrderItem;
-    private List<PurchaseOrderAccount> itemAccountingLines;
+    private CemiPurchaseOrderDocumentLite poDocument;
+    private Optional<CemiPurchaseOrderItemLite> purchaseOrderItem;
+    private List<CemiPurchaseOrderAccountLite> itemAccountingLines;
 
     public CemiPurchaseOrderServiceLineBoFactory(final CemiPurchaseOrderHeaderBo headerBo,
-            final Optional<PurchaseOrderItem> purchaseOrderItem) {
+            final CemiPurchaseOrderDocumentLite poDocument, final Optional<CemiPurchaseOrderItemLite> purchaseOrderItem) {
         Validate.notNull(headerBo, "headerBo cannot be null");
+        Validate.notNull(poDocument, "poDocument cannot be null");
         Validate.notNull(purchaseOrderItem, "purchaseOrderItem wrapper object cannot be null");
         this.headerBo = headerBo;
+        this.poDocument = poDocument;
         this.purchaseOrderItem = purchaseOrderItem;
         this.itemAccountingLines = purchaseOrderItem.isPresent()
                 ? CemiPurchaseOrderUtils.getOutstandingEncumberedAccountingLines(purchaseOrderItem.get())
@@ -42,9 +45,9 @@ public class CemiPurchaseOrderServiceLineBoFactory {
     }
 
     public static CemiPurchaseOrderServiceLineBo createServiceLineBoFrom(CemiPurchaseOrderHeaderBo headerBo,
-            final Optional<PurchaseOrderItem> purchaseOrderItem) {
+            final CemiPurchaseOrderDocumentLite poDocument, final Optional<CemiPurchaseOrderItemLite> purchaseOrderItem) {
         final CemiPurchaseOrderServiceLineBoFactory factory = new CemiPurchaseOrderServiceLineBoFactory(
-                headerBo, purchaseOrderItem);
+                headerBo, poDocument, purchaseOrderItem);
         return factory.createCemiPurchaseOrderServiceLineBo();
     }
 
@@ -133,9 +136,8 @@ public class CemiPurchaseOrderServiceLineBoFactory {
         if (isEmptyFactory()) {
             return CemiBaseConstants.EMPTY_STRING;
         }
-        final PurchaseOrderDocument document = (PurchaseOrderDocument) purchaseOrderItem.get().getPurapDocument();
         return StringUtils.joinWith(CUKFSConstants.UNDERSCORE,
-                document.getPurapDocumentIdentifier().toString(), lineNumber);
+                poDocument.getPurapDocumentIdentifier().toString(), lineNumber);
     }
 
     private String determineItemDescription() {
@@ -166,9 +168,11 @@ public class CemiPurchaseOrderServiceLineBoFactory {
                     purchaseOrderItem.get().getItemIdentifier(), purchaseOrderItem.get().getDocumentNumber());
             memoSuffix = CemiPurchaseOrderConstants.NO_ACCOUNT_AMOUNTS_MEMO_SUFFIX;
         }
-        final String totalLineAmount = CemiPurchaseOrderUtils.formatAmount(purchaseOrderItem.get().getTotalAmount());
+        final KualiDecimal totalLineAmount = CemiPurchaseOrderUtils.getTotalItemAmount(
+                poDocument, purchaseOrderItem.get());
+        final String totalLineAmountString = CemiPurchaseOrderUtils.formatAmount(totalLineAmount);
         return StringUtils.join(
-                CemiPurchaseOrderConstants.ORIGINAL_PO_LINE_AMOUNT_MEMO_PREFIX, totalLineAmount, memoSuffix);
+                CemiPurchaseOrderConstants.ORIGINAL_PO_LINE_AMOUNT_MEMO_PREFIX, totalLineAmountString, memoSuffix);
     }
 
     private boolean itemHasOutstandingAmountButHasNoOutstandingAccountAmounts() {
@@ -178,7 +182,7 @@ public class CemiPurchaseOrderServiceLineBoFactory {
     }
 
     private KualiDecimal getNullSafeItemOutstandingEncumberedAmount() {
-        return purchaseOrderItem.map(PurchaseOrderItem::getItemOutstandingEncumberedAmount)
+        return purchaseOrderItem.map(CemiPurchaseOrderItemLite::getItemOutstandingEncumberedAmount)
                 .orElse(KualiDecimal.ZERO);
     }
 
@@ -220,17 +224,17 @@ public class CemiPurchaseOrderServiceLineBoFactory {
         if (itemAccountingLines.size() > 1) {
             final Stream.Builder<CemiPurchaseOrderLineSplitBo> lineSplits = Stream.builder();
             int accountIndex = 0;
-            for (final PurchaseOrderAccount itemAccountingLine : itemAccountingLines) {
+            for (final CemiPurchaseOrderAccountLite itemAccountingLine : itemAccountingLines) {
                 accountIndex++;
                 final CemiPurchaseOrderLineSplitBo lineSplit = CemiPurchaseOrderLineSplitBoFactory
-                        .createLineSplitBoFrom(purchaseOrderItem, Optional.of(itemAccountingLine),
+                        .createLineSplitBoFrom(poDocument, purchaseOrderItem, Optional.of(itemAccountingLine),
                                 accountIndex);
                 lineSplits.add(lineSplit);
             }
             return lineSplits.build().collect(Collectors.toUnmodifiableList());
         } else {
             final CemiPurchaseOrderLineSplitBo emptyLineSplit = CemiPurchaseOrderLineSplitBoFactory
-                    .createLineSplitBoFrom(Optional.empty(), Optional.empty(), -1);
+                    .createLineSplitBoFrom(poDocument, Optional.empty(), Optional.empty(), -1);
             return List.of(emptyLineSplit);
         }
     }
