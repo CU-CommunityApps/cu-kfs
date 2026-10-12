@@ -385,13 +385,13 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
             
             java.math.BigDecimal discountPercent = po.getVendorPaymentTerms().getVendorPaymentTermsPercent();
             if (discountPercent == null || discountPercent.compareTo(java.math.BigDecimal.ZERO) == 0) {
-                LOG.debug("calculateExpectedDiscount, payment terms percent is null or zero");
                 return KualiDecimal.ZERO;
             }
             
-            KualiDecimal discount = preTaxTotal.multiply(new KualiDecimal(discountPercent));
-            LOG.info("calculateExpectedDiscount, preTaxTotal: {}, discountPercent: {}, discount: {}",
-                    preTaxTotal, discountPercent, discount);
+            java.math.BigDecimal discountPercentAsDecimal = discountPercent.divide(new java.math.BigDecimal(100));
+            KualiDecimal discount = preTaxTotal.multiply(new KualiDecimal(discountPercentAsDecimal));
+            LOG.info("calculateExpectedDiscount, preTaxTotal: {}, discountPercent: {}%, discountAsDecimal: {}, discount: {}",
+                    preTaxTotal, discountPercent, discountPercentAsDecimal, discount);
             
             return discount;
         } catch (Exception e) {
