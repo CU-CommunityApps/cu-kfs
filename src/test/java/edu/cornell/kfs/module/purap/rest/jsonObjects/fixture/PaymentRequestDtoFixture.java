@@ -171,7 +171,28 @@ public enum PaymentRequestDtoFixture {
             "50", "Freight", "75", "Misc", "25",
             "Shipping", buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
             buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), false,
-            buildMessageList(), buildMessageList("Error: The sum of the items amount (1150.00) minus the discount amount (0.00) does not equal the invoice total (1200.00)"));
+            buildMessageList(), buildMessageList("Error: The sum of the items amount (1150.00) minus the discount amount (0.00) does not equal the invoice total (1200.00)")),
+    VALIDATION_TEST_INVOICE_NUMBER_AT_MAX_LENGTH(StringUtils.EMPTY, "1234-1", "98769",
+            "11/25/2025", "11/26/2025",
+            "12345678901234567890", "1000", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+            null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
+            StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
+            buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), true,
+            buildMessageList(), buildMessageList()),
+    VALIDATION_TEST_INVOICE_NUMBER_EXCEEDS_MAX_LENGTH(StringUtils.EMPTY, "1234-1", "98769",
+            "11/25/2025", "11/26/2025",
+            "123456789012345678901", "1000", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+            null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
+            StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
+            buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), false,
+            buildMessageList(), buildMessageList("Invoice Number 123456789012345678901 exceeds the maximum length of 20 characters.")),
+    VALIDATION_TEST_INVOICE_NUMBER_WAY_TOO_LONG(StringUtils.EMPTY, "1234-1", "98769",
+            "11/25/2025", "11/26/2025",
+            "1234567890123456789012345678901234567890", "1000", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+            null, StringUtils.EMPTY, null, StringUtils.EMPTY, null,
+            StringUtils.EMPTY, buildItems(PaymentRequestLineItemDtoFixture.ITEM_1_10_100),
+            buildNotes(PaymentRequestNoteDtoFixture.NOTE_VALID), false,
+            buildMessageList(), buildMessageList("Invoice Number 1234567890123456789012345678901234567890 exceeds the maximum length of 20 characters."));
 
     public final String jsonFileName;
     public final String vendorNumber;

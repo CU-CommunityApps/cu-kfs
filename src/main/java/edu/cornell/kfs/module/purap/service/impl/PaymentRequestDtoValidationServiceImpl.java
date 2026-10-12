@@ -55,10 +55,15 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
     public PaymentRequestResultsDto validatePaymentRequestDto(PaymentRequestDto paymentRequestDto) {
         PaymentRequestResultsDto results = new PaymentRequestResultsDto();
         results.setValid(true);
+
         validateRequiredFields(paymentRequestDto, results);
         validateAdditionalFields(paymentRequestDto, results);
+
         if (results.isValid()) {
             validateVendorNumber(paymentRequestDto, results);
+        }
+        if (results.isValid()) {
+            validateInvoiceNumber(paymentRequestDto, results);
         }
         if (results.isValid()) {
             validatePO(paymentRequestDto, results);
@@ -268,6 +273,16 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         }
     }
 
+    private void validateInvoiceNumber(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results) {
+        String invoiceNumber = paymentRequestDto.getInvoiceNumber();
+        if (StringUtils.length(invoiceNumber) > CUPurapConstants.Payflow.MAX_INVOICE_NUMBER_LENGTH) {
+            results.setValid(false);
+            String messageBase = configurationService
+                    .getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_INVALID_INVOICE_NUMBER);
+            results.getErrorMessages().add(MessageFormat.format(messageBase, invoiceNumber));
+        }
+    }
+
     private void validatePO(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results) {
         PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(paymentRequestDto.getPoNumberAsInteger());
         if (poDoc == null) {
@@ -335,7 +350,7 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
                 PurApItem poItem = po.getItemByLineNumber(item.getLineNumberAsInteger());
                 KualiDecimal lineTotal = KualiDecimal.ZERO;
                 
-                if (poItem != null && PurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE == poItem.getItemTypeCode()) {
+                if (poItem != null && PurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE.equals(poItem.getItemTypeCode())) {
                     lineTotal = item.getItemPriceAsKualiDecimal();
                 } else if (item.getItemQuantityAsKualiDecimal() != null) {
                     lineTotal = item.getItemQuantityAsKualiDecimal().multiply(item.getItemPriceAsKualiDecimal());
