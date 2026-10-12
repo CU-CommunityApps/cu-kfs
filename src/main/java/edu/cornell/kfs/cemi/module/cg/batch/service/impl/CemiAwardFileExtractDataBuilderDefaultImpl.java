@@ -31,6 +31,7 @@ import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardBudgetDataBo
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardFileSubmitAwardTabRowBo;
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardHeaderDataBo;
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardLegacyAccountSubAccountDataBo;
+import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardLegacyCostingSummariesForSingleProposalNumberBo;
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardLegacyNovelutionBo;
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardLineDataBo;
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardSpecialConditionDataBo;
@@ -102,12 +103,15 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
                 awardNovelutionAttributes = CemiAwardLegacyNovelutionBoFactory.createEmptyCemiAwardLegacyNovelutionBo();
             }
             
-            // Account and Sub-Account data retreival for the award
+            // Account and Sub-Account data retrieval for the award
             Collection<CemiAwardLegacyAccountSubAccountDataBo> awardAccountsSubAccountsCollection = obtainLegacyAccountSubAccountsFor(currentProposalNumber);
+            
+            // Direct Cost, Indirect Cost, and Authorized Amount (aka Budgeted Total Amount) for the award
+            CemiAwardLegacyCostingSummariesForSingleProposalNumberBo costingSummaryForProposalNumber = obtainLegacyCostingSummariesFor(currentProposalNumber);
             
             //Database table storage of data extract
             totalRowsWritten += createAndStoreAwardFileSubmitAwardTabRowsFor(award, awardExtendedAttribute, awardOrgCode,
-                    awardAccountsSubAccountsCollection, awardNovelutionAttributes, jobRunDateString);
+                    awardAccountsSubAccountsCollection, costingSummaryForProposalNumber, awardNovelutionAttributes, jobRunDateString);
         }
         LOG.info("writeAwardFileSubmitAwardTabExtractDataToIntermediateStorage, Finished writing "
                 + "{} Submit Award data rows for {} Awards.", totalRowsWritten, awardCounter);
@@ -136,9 +140,22 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
     }
     
     
+    protected CemiAwardLegacyCostingSummariesForSingleProposalNumberBo obtainLegacyCostingSummariesFor(String proposalNumber) {
+        Map<String, Object> fieldValues = new HashMap<>();
+        fieldValues.put(CemiAwardPropertyConstants.PROPOSAL_NUMBER, proposalNumber);
+        Collection<CemiAwardLegacyCostingSummariesForSingleProposalNumberBo> allSummaries = 
+                        businessObjectService.findMatching(
+                                CemiAwardLegacyCostingSummariesForSingleProposalNumberBo.class, fieldValues);
+        
+        Validate.validState(!allSummaries.isEmpty(), "Could not find costing summaries for proposal numebr: %s", proposalNumber);
+        return allSummaries.iterator().next();
+    }
+    
+    
     protected int createAndStoreAwardFileSubmitAwardTabRowsFor(final Award award, 
             final AwardExtendedAttribute awardExtendedAttribute, final String awardOrgCode,
             final Collection<CemiAwardLegacyAccountSubAccountDataBo> awardAccountsSubAccountsCollection,
+            final CemiAwardLegacyCostingSummariesForSingleProposalNumberBo awardHeaderSponsorCostingSummaries,
             final CemiAwardLegacyNovelutionBo awardNovelutionAttributes, final String jobRunDateString) {
         
         int numAwardFileLinesGeneratedForThisAward = 0;
@@ -147,8 +164,8 @@ public class CemiAwardFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuild
         // into headerBo factory, collection used in routine input parameter so multiple iterators can be created
         final CemiAwardHeaderDataBo headerBo = CemiAwardHeaderDataBoFactory.createAwardHeaderDataBoFrom(award,
                 awardExtendedAttribute, awardAccountsSubAccountsCollection.iterator(), awardOrgCode,
-                awardNovelutionAttributes, jobRunDateString, dateTimeService, cemiAwardExtractDao,
-                allAwardTranslateTableMaps, maskSensitiveData);
+                awardNovelutionAttributes, awardHeaderSponsorCostingSummaries, jobRunDateString, dateTimeService,
+                cemiAwardExtractDao, allAwardTranslateTableMaps, maskSensitiveData);
         
         // Setup iterator prior to loop for award lines associated with the current award being processed
         Iterator<CemiAwardLegacyAccountSubAccountDataBo> accountsSubAccountsBeingProcessed = awardAccountsSubAccountsCollection.iterator();

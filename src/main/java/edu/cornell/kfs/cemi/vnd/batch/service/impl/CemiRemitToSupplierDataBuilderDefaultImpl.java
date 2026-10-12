@@ -118,6 +118,12 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
             final List<CemiSupplierFileAddressesTabRowBo> supplierAddresses, final String settlementBankAccountId) {
         if (supplierAddresses.isEmpty()) {
             return;
+        } else if (StringUtils.equals(supplier.getDefaultPaymentType(), CemiSupplierConstants.PAYMENT_TYPE_WIRE_MANUAL)) {
+            LOG.info("createAndStoreRemitToSupplierRows, Supplier {} has a default payment type of {}, which is not "
+                    + "a valid payment type for Remit To Supplier data. Will not generate any Remit To Supplier rows "
+                    + "for this Supplier.",
+                    supplier.getSupplierId(), CemiSupplierConstants.PAYMENT_TYPE_WIRE_MANUAL);
+            return;
         } else if (StringUtils.equals(supplier.getDefaultPaymentType(), CemiSupplierConstants.PAYMENT_TYPE_ACH_MANUAL)
                 && StringUtils.isBlank(settlementBankAccountId)) {
             LOG.error("createAndStoreRemitToSupplierRows, Supplier {} does not specify any settlement bank accounts "

@@ -18,9 +18,6 @@ public class CreateCemiAwardExtractStep extends AbstractStep {
         cemiAwardExtractService.initializeExtractDateSettings();
         cemiAwardExtractService.captureInScopeBusinessObjectKeysToProcessingTable();
         
-//        /* Phase N: Gather all the raw data elements into tables that will be used to create the data extract. */
-//        cemiAwardExtractService.gatherAndPopulateRawDataTables(jobRunDate);
-        
         // Phase 2: Loop through in scope dataset transforming the attribute values and saving to database tables.
         cemiAwardExtractService.generateIntermediateExtractData(jobRunDate);
         

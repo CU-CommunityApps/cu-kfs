@@ -17,5 +17,7 @@ public interface CemiAwardExtractDao {
     Map<String, String> buildTranslationForTable(AwardTranslateTables queryString);
     
     String findOrganizationCodeForInScopeAward(String inScopeAwardForPrimaryOrganizationLookup);
+    
+    void storeFiscalYearDependentQuerySetting(String fiscalYearToUseForDataExtraction);
 
 }

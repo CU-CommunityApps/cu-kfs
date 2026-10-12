@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -18,6 +20,7 @@ import edu.cornell.kfs.cemi.module.cg.CemiAwardConstants;
 import edu.cornell.kfs.cemi.module.cg.CemiAwardScheduleConstants;
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardHeaderDataBo;
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardLegacyAccountSubAccountDataBo;
+import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardLegacyCostingSummariesForSingleProposalNumberBo;
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardLegacyNovelutionBo;
 import edu.cornell.kfs.cemi.module.cg.batch.translatetable.CemiAwardTranslateTableMaps;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardExtractDao;
@@ -26,12 +29,14 @@ import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
 @SuppressWarnings("deprecation")
 public class CemiAwardHeaderDataBoFactory {
+    private static final Logger LOG = LogManager.getLogger();
     
     private Award award;
     private AwardExtendedAttribute awardExtendedAttribute;
     private Iterator<CemiAwardLegacyAccountSubAccountDataBo> allAccountsWithSubAccountsIterator;
     private String awardOrgCode;
     private CemiAwardLegacyNovelutionBo awardNovelutionAttributes;
+    private CemiAwardLegacyCostingSummariesForSingleProposalNumberBo awardHeaderSponsorCostingSummaries;
     private String jobRunDateString;
     private CemiAwardExtractDao cemiAwardExtractDao;
     private DateTimeService dateTimeService;
@@ -42,18 +47,21 @@ public class CemiAwardHeaderDataBoFactory {
             final AwardExtendedAttribute awardExtendedAttribute,
             final Iterator<CemiAwardLegacyAccountSubAccountDataBo> allAccountsWithSubAccountsIterator,
             final String awardOrgCode, final CemiAwardLegacyNovelutionBo awardNovelutionAttributes,
+            final CemiAwardLegacyCostingSummariesForSingleProposalNumberBo awardHeaderSponsorCostingSummaries,
             final String jobRunDateString, final DateTimeService dateTimeService,
             final CemiAwardExtractDao cemiAwardExtractDao, final CemiAwardTranslateTableMaps allAwardTranslateTableMaps,
             final boolean maskSensitiveData) {
         final CemiAwardHeaderDataBoFactory factory = new CemiAwardHeaderDataBoFactory(award, awardExtendedAttribute,
-                allAccountsWithSubAccountsIterator, awardOrgCode, awardNovelutionAttributes, jobRunDateString,
-                dateTimeService, cemiAwardExtractDao, allAwardTranslateTableMaps, maskSensitiveData);
+                allAccountsWithSubAccountsIterator, awardOrgCode, awardNovelutionAttributes, 
+                awardHeaderSponsorCostingSummaries, jobRunDateString, dateTimeService, cemiAwardExtractDao,
+                allAwardTranslateTableMaps, maskSensitiveData);
         return factory.createCemiAwardHeaderDataBo();
     }
     
     public CemiAwardHeaderDataBoFactory (final Award award, final AwardExtendedAttribute awardExtendedAttribute,
             final Iterator<CemiAwardLegacyAccountSubAccountDataBo> allAccountsWithSubAccountsIterator,
-            final String awardOrgCode, final CemiAwardLegacyNovelutionBo awardNovelutionAttributes, 
+            final String awardOrgCode, final CemiAwardLegacyNovelutionBo awardNovelutionAttributes,
+            final CemiAwardLegacyCostingSummariesForSingleProposalNumberBo awardHeaderSponsorCostingSummaries,
             final String jobRunDateString, final DateTimeService dateTimeService, final CemiAwardExtractDao cemiAwardExtractDao,
             final CemiAwardTranslateTableMaps allAwardTranslateTableMaps, final boolean maskSensitiveData) {
         Validate.notNull(award, "award cannot be null for CemiAwardHeaderDataBoFactory");
@@ -61,6 +69,7 @@ public class CemiAwardHeaderDataBoFactory {
         Validate.notNull(allAccountsWithSubAccountsIterator, "allAccountsWithSubAccountsIterator cannot be null for CemiAwardHeaderDataBoFactory");
         Validate.notBlank(awardOrgCode, "awardOrgCode cannot be blank for CemiAwardHeaderDataBoFactory");
         Validate.notNull(awardNovelutionAttributes, "awardNovelutionAttributes cannot be null for CemiAwardHeaderDataBoFactory");
+        Validate.notNull(awardHeaderSponsorCostingSummaries, "awardHeaderSponsorCostingSummaries cannot be null for CemiAwardHeaderDataBoFactory");
         Validate.notBlank(jobRunDateString, "jobRunDateString cannot be blank for CemiAwardHeaderDataBoFactory");
         Validate.notNull(dateTimeService, "dateTimeService cannot be null for CemiAwardHeaderDataBoFactory");
         Validate.notNull(cemiAwardExtractDao, "cemiAwardExtractDao cannot be null for CemiAwardHeaderDataBoFactory");
@@ -70,6 +79,7 @@ public class CemiAwardHeaderDataBoFactory {
         this.allAccountsWithSubAccountsIterator = allAccountsWithSubAccountsIterator;
         this.awardOrgCode = awardOrgCode;
         this.awardNovelutionAttributes = awardNovelutionAttributes;
+        this.awardHeaderSponsorCostingSummaries = awardHeaderSponsorCostingSummaries;
         this.jobRunDateString = jobRunDateString;
         this.dateTimeService = dateTimeService;
         this.cemiAwardExtractDao = cemiAwardExtractDao;
@@ -126,15 +136,22 @@ public class CemiAwardHeaderDataBoFactory {
         final String paymentType = determinePaymentType(letterOfCredit);
         final String letterOfCreditDocumentId = setToEmptyStringWhenValueIsBlank(awardExtendedAttribute.getLocAccountId());
         
-        final KualiDecimal sponsorDirectCostAmount = KualiDecimal.ZERO;
-        final KualiDecimal sponsorFacilitiesAndAdministrationAmount = KualiDecimal.ZERO;
+        final KualiDecimal sponsorDirectCostAmount = convertNullToZero(awardHeaderSponsorCostingSummaries.getSponsorDirectCostAmount());
+        final KualiDecimal sponsorFacilitiesAndAdministrationAmount = convertNullToZero(awardHeaderSponsorCostingSummaries.getSponsorIndirectCostAmount());
+        final KualiDecimal glCalculatedAuthorizedAmount = convertNullToZero(awardHeaderSponsorCostingSummaries.getAuthorizedAmount());
+        final KualiDecimal awardExtendedAttributeAuthorizedAmount = convertNullToZero(awardExtendedAttribute.getBudgetTotalAmount());
         final String sponsorDirectCostAmountString = convertKualiDecimalToString(sponsorDirectCostAmount);
         final String sponsorFacilitiesAndAdministrationAmountString = convertKualiDecimalToString(sponsorFacilitiesAndAdministrationAmount);
+        final String glCalculatedAuthorizedAmountString = convertKualiDecimalToString(glCalculatedAuthorizedAmount);
+        final String awardExtendedAttributeAuthorizedAmountString = convertKualiDecimalToString(awardExtendedAttributeAuthorizedAmount);
+        final String authorizedAmountString = awardExtendedAttributeAuthorizedAmountString;
+        crossCheckCalculatedIndirectDirectAuthorizedAmountsToExtendedAttribute(proposalNumber, sponsorDirectCostAmount,
+                sponsorFacilitiesAndAdministrationAmount, glCalculatedAuthorizedAmount, awardExtendedAttributeAuthorizedAmount,
+                glCalculatedAuthorizedAmountString, awardExtendedAttributeAuthorizedAmountString);
         final String zeroAmountAward = determineZeroAmountAward(sponsorDirectCostAmount, sponsorFacilitiesAndAdministrationAmount);
-        
+
         final String cleanedCostShareTotalAmountString = removeFormattingFromNovelutionMoneyValueString(awardNovelutionAttributes.getCostShareTotalAmount());
         final String costShareRequiredBySponsor = determineCostShareRequiredBySponsor(cleanedCostShareTotalAmountString);
-        final String authorizedAmountString = convertKualiDecimalToString(awardExtendedAttribute.getBudgetTotalAmount());
         
         final KualiDecimal anticipatedSponsorDirectCostAmount = award.getAwardDirectCostAmount();
         final KualiDecimal anticipatedFacilitiesAndAdministrationAmount = award.getAwardIndirectCostAmount();
@@ -238,10 +255,8 @@ public class CemiAwardHeaderDataBoFactory {
     }
     
     private String determineZeroAmountAward(KualiDecimal sponsorDirectCostAmount, KualiDecimal sponsorFacilitiesAndAdministrationAmount) {
-        KualiDecimal directAmount = ObjectUtils.isNotNull(sponsorDirectCostAmount) 
-                ? sponsorDirectCostAmount : KualiDecimal.ZERO;
-        KualiDecimal indirectAmount = ObjectUtils.isNotNull(sponsorFacilitiesAndAdministrationAmount) 
-                ? sponsorFacilitiesAndAdministrationAmount : KualiDecimal.ZERO;
+        KualiDecimal directAmount = convertNullToZero(sponsorDirectCostAmount); 
+        KualiDecimal indirectAmount = convertNullToZero(sponsorFacilitiesAndAdministrationAmount); 
         KualiDecimal result = directAmount.add(indirectAmount);
         return result.isGreaterThan(KualiDecimal.ZERO) ? CemiAwardConstants.NO : CemiBaseConstants.YES;
     }
@@ -329,6 +344,36 @@ public class CemiAwardHeaderDataBoFactory {
     
     private String determineSponsorIdForPassThroughAgency(String passThroughAgencyNumber) {
         return StringUtils.isNotBlank(passThroughAgencyNumber) ? passThroughAgencyNumber : CemiBaseConstants.EMPTY_STRING;
+    }
+    
+    private void crossCheckCalculatedIndirectDirectAuthorizedAmountsToExtendedAttribute(String proposalNumber,
+            KualiDecimal sponsorDirectCostAmount, KualiDecimal sponsorFacilitiesAndAdministrationAmount,
+            KualiDecimal glCalculatedAuthorizedAmount, KualiDecimal awardExtendedAttributeAuthorizedAmount,
+            String glCalculatedAuthorizedAmountString, String awardExtendedAttributeAuthorizedAmountString) {
+        
+        KualiDecimal sumOfDirectIndirectAmounts = convertNullToZero(sponsorDirectCostAmount)
+                .add(convertNullToZero(sponsorFacilitiesAndAdministrationAmount));
+        final String sumOfDirectIndirectAmountsString = convertKualiDecimalToString(sumOfDirectIndirectAmounts);
+        
+        // looking for GL Entry issue or bug in extraction logic when calculating values from GL entries
+        int sumEqualsGlCalculated = sumOfDirectIndirectAmounts.compareTo(glCalculatedAuthorizedAmount);
+        
+        // looking for GL indirect/direct sum not matching RASS value
+        int sumEqualsAwardExtended = sumOfDirectIndirectAmounts.compareTo(awardExtendedAttributeAuthorizedAmount);
+        
+        // looking for GL entry issue or bug in extraction logic with total calculation
+        int glCalculatedAuthorizedEqualsAwardExtended = glCalculatedAuthorizedAmount.compareTo(awardExtendedAttributeAuthorizedAmount);
+        
+        if (sumEqualsGlCalculated != 0 || sumEqualsAwardExtended != 0 || glCalculatedAuthorizedEqualsAwardExtended != 0) {
+            LOG.info("Issue AO+AP=AR cross check: proposal {}  sumOfDirectIndirectAmounts {}   "
+                    + "awardExtendedAttributeAuthorizedAmount {}   glCalculatedAuthorizedAmount {}", proposalNumber,
+                    sumOfDirectIndirectAmountsString, awardExtendedAttributeAuthorizedAmountString,
+                    glCalculatedAuthorizedAmountString);
+        }
+    }
+    
+    private KualiDecimal convertNullToZero (KualiDecimal valueToConvert) {
+        return ObjectUtils.isNotNull(valueToConvert) ? valueToConvert : KualiDecimal.ZERO;
     }
     
 }
