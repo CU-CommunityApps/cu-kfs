@@ -120,10 +120,13 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         return StringUtils.defaultIfBlank(asset.getCapitalAssetDescription(), KFSConstants.EMPTY_STRING);
     }
 
-    // TODO: This is currently using a provided default value. At a future date,
-    // update this method to use a Spend Category mapping table or API.
     private String determineSpendCategory() {
-        return CemiRegisterAssetConstants.DEFAULT_ITHACA_SPEND_CATEGORY;
+        String spendCategory = KFSConstants.EMPTY_STRING;
+        String assetTypeCode = asset.getCapitalAssetTypeCode();
+        if (StringUtils.isNotBlank(assetTypeCode)) {
+            spendCategory = allRegisterAssetTranslateTableMaps.getSpendCategoryMap().get(assetTypeCode);
+        }
+        return spendCategory;
     }
 
     private String determineAccountingTreatment() {

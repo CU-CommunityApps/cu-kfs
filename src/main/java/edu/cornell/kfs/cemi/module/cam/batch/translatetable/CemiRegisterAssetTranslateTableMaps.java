@@ -8,12 +8,14 @@ public class CemiRegisterAssetTranslateTableMaps {
     private Map<String, String> accountingTreatmentMap;
     private Map<String, String> assetClassMap;
     private Map<String, String> depreciationProfileMap;
+    private Map<String, String> spendCategoryMap;
 
     public CemiRegisterAssetTranslateTableMaps() {
         this.assetTypeMap = null;
         this.accountingTreatmentMap = null;
         this.assetClassMap = null;
         this.depreciationProfileMap = null;
+        this.spendCategoryMap = null;
     }
 
     public Map<String, String> getAssetTypeMap() {
@@ -46,6 +48,14 @@ public class CemiRegisterAssetTranslateTableMaps {
 
     public void setDepreciationProfileMap(Map<String, String> depreciationProfileMap) {
         this.depreciationProfileMap = depreciationProfileMap;
+    }
+
+    public Map<String, String> getSpendCategoryMap() {
+        return spendCategoryMap;
+    }
+
+    public void setSpendCategoryMap(Map<String, String> spendCategoryMap) {
+        this.spendCategoryMap = spendCategoryMap;
     }
 
 }
