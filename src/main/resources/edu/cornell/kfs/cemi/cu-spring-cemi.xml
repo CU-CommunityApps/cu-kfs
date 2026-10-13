@@ -644,8 +644,8 @@
           p:cemiPurchaseOrderExtractOrmDao-ref="cemiPurchaseOrderExtractOrmDao"
           p:cemiPurchaseOrderExtractDao-ref="cemiPurchaseOrderExtractDao"
           p:businessObjectService-ref="businessObjectService"
-          p:documentService-ref="documentService"
-          p:dataDictionaryService-ref="dataDictionaryService"
+          p:dateTimeService-ref="dateTimeService"
+          p:locationService-ref="locationService-fin"
           p:personService-ref="personService"/>
 
     <bean id="createCemiPurchaseOrderExtractStep"

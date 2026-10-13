@@ -1,5 +1,6 @@
 package edu.cornell.kfs.cemi.module.purap.batch.service.impl.factory;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -17,20 +18,24 @@ import org.kuali.kfs.core.api.criteria.GenericQueryResults;
 import org.kuali.kfs.core.api.criteria.Predicate;
 import org.kuali.kfs.core.api.criteria.PredicateFactory;
 import org.kuali.kfs.core.api.criteria.QueryByCriteria;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.KIMPropertyConstants;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
-import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
-import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.Country;
+import org.kuali.kfs.sys.service.LocationService;
 
 import edu.cornell.kfs.cemi.module.purap.CemiPurchaseOrderConstants;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderDocumentLite;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderHeaderBo;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderIdBo;
+import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderItemLite;
 import edu.cornell.kfs.cemi.module.purap.dataaccess.CemiPurchaseOrderExtractDao;
 import edu.cornell.kfs.cemi.module.purap.util.CemiPurchaseOrderUtils;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
@@ -42,29 +47,38 @@ public class CemiPurchaseOrderHeaderBoFactory {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private PurchaseOrderDocument purchaseOrderDocument;
+    private CemiPurchaseOrderDocumentLite purchaseOrderDocument;
     private PersonService personService;
     private CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao;
+    private DateTimeService dateTimeService;
+    private LocationService locationService;
     private String supplierJobRunDateString;
 
-    public CemiPurchaseOrderHeaderBoFactory(final PurchaseOrderDocument purchaseOrderDocument,
+    public CemiPurchaseOrderHeaderBoFactory(final CemiPurchaseOrderDocumentLite purchaseOrderDocument,
             final PersonService personService, final CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao,
+            final DateTimeService dateTimeService, final LocationService locationService,
             final String supplierJobRunDateString) {
         Validate.notNull(purchaseOrderDocument, "purchaseOrderDocument cannot be null");
         Validate.notNull(personService, "personService cannot be null");
         Validate.notNull(cemiPurchaseOrderExtractDao, "cemiPurchaseOrderExtractDao cannot be null");
+        Validate.notNull(dateTimeService, "dateTimeService cannot be null");
+        Validate.notNull(locationService, "locationService cannot be null");
         Validate.notBlank(supplierJobRunDateString, "supplierJobRunDateString cannot be blank");
         this.purchaseOrderDocument = purchaseOrderDocument;
         this.personService = personService;
         this.cemiPurchaseOrderExtractDao = cemiPurchaseOrderExtractDao;
+        this.dateTimeService = dateTimeService;
+        this.locationService = locationService;
         this.supplierJobRunDateString = supplierJobRunDateString;
     }
 
-    public static CemiPurchaseOrderHeaderBo createHeaderBoFrom(final PurchaseOrderDocument purchaseOrderDocument,
+    public static CemiPurchaseOrderHeaderBo createHeaderBoFrom(final CemiPurchaseOrderDocumentLite purchaseOrderDocument,
             final PersonService personService, final CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao,
+            final DateTimeService dateTimeService, final LocationService locationService,
             final String supplierJobRunDateString) {
         final CemiPurchaseOrderHeaderBoFactory factory = new CemiPurchaseOrderHeaderBoFactory(
-                purchaseOrderDocument, personService, cemiPurchaseOrderExtractDao, supplierJobRunDateString);
+                purchaseOrderDocument, personService, cemiPurchaseOrderExtractDao,
+                dateTimeService, locationService, supplierJobRunDateString);
         return factory.createCemiPurchaseOrderHeaderBo();
     }
 
@@ -287,19 +301,26 @@ public class CemiPurchaseOrderHeaderBoFactory {
         return CemiBaseConstants.EMPTY_STRING;
     }
 
+    @SuppressWarnings("deprecation")
     private String determineDocumentDate() {
-        final WorkflowDocument workflowDocument = purchaseOrderDocument.getDocumentHeader().getWorkflowDocument();
-        Validate.validState(workflowDocument.isFinal() || workflowDocument.isProcessed(),
+        final CemiPurchaseOrderIdBo purchaseOrderIdBo = purchaseOrderDocument.getPurchaseOrderIdBo();
+        Validate.validState(ObjectUtils.isNotNull(purchaseOrderIdBo),
+                "Purchase Order ID helper object for PO Document Number %s should not have been null",
+                purchaseOrderDocument.getDocumentNumber());
+        Validate.validState(
+                StringUtils.equalsAny(purchaseOrderIdBo.getDocRouteStatus(),
+                        KewApiConstants.ROUTE_HEADER_PROCESSED_CD, KewApiConstants.ROUTE_HEADER_FINAL_CD),
                 "PO Document Number %s should have been in PROCESSED or FINAL status",
                 purchaseOrderDocument.getDocumentNumber());
-        final LocalDateTime lastApprovedDate = workflowDocument.getDateApproved();
+        final Timestamp lastApprovedDate = purchaseOrderIdBo.getApprovedDate();
         Validate.validState(lastApprovedDate != null, "PO Document Number %s should have had a Last Approved Date",
                 purchaseOrderDocument.getDocumentNumber());
-        return CemiPurchaseOrderUtils.formatAsDate(lastApprovedDate);
+        final LocalDateTime lastApprovedDateTime = dateTimeService.getLocalDateTime(lastApprovedDate);
+        return CemiPurchaseOrderUtils.formatAsDate(lastApprovedDateTime);
     }
 
     private String determineFreightAmount() {
-        final Optional<PurchaseOrderItem> freightItem = getFreightItemIfPresent();
+        final Optional<CemiPurchaseOrderItemLite> freightItem = getFreightItemIfPresent();
         if (freightItem.isPresent()) {
             final KualiDecimal remainingFreightAmount = freightItem.get().getItemOutstandingEncumberedAmount();
             return (remainingFreightAmount != null && remainingFreightAmount.isGreaterThan(KualiDecimal.ZERO))
@@ -310,12 +331,10 @@ public class CemiPurchaseOrderHeaderBoFactory {
     }
 
     @SuppressWarnings("deprecation")
-    private Optional<PurchaseOrderItem> getFreightItemIfPresent() {
-        final List<?> items = purchaseOrderDocument.getItems();
-        return items.stream()
-                .map(PurchaseOrderItem.class::cast)
+    private Optional<CemiPurchaseOrderItemLite> getFreightItemIfPresent() {
+        return purchaseOrderDocument.getItems().stream()
                 .filter(item -> StringUtils.equals(item.getItemTypeCode(), ItemTypeCodes.ITEM_TYPE_FREIGHT_CODE))
-                .filter(PurchaseOrderItem::isItemActiveIndicator)
+                .filter(CemiPurchaseOrderItemLite::isItemActiveIndicator)
                 .findFirst();
     }
 
@@ -385,7 +404,7 @@ public class CemiPurchaseOrderHeaderBoFactory {
             getDeliveryLine1Address(),
             purchaseOrderDocument.getDeliveryBuildingLine2Address(),
             getDeliveryCityStatePostalCodeLine(),
-            purchaseOrderDocument.getDeliveryCountryName()
+            getDeliveryCountryName()
         };
 
         return Arrays.stream(deliveryAddressLines)
@@ -416,9 +435,22 @@ public class CemiPurchaseOrderHeaderBoFactory {
                 purchaseOrderDocument.getDeliveryPostalCode());
     }
 
+    // This is a modified copy of the code from PurchasingDocumentBase.getDeliveryCountryName()
+    // TODO: When implementing KFSPTS-39551, determine if this logic needs reword; may need to use ISO country code/name.
+    private String getDeliveryCountryName() {
+        if (StringUtils.isNotBlank(purchaseOrderDocument.getDeliveryCountryCode())) {
+            final Country country = locationService.getCountry(purchaseOrderDocument.getDeliveryCountryCode());
+            if (ObjectUtils.isNotNull(country)) {
+                return country.getName();
+            }
+        }
+        return null;
+    }
+
     private String determineMemoForSupplier() {
-        final String originalPurchaseOrderTotalAmount = CemiPurchaseOrderUtils.formatAmount(
-                purchaseOrderDocument.getTotalDollarAmount());
+        final KualiDecimal totalDollarAmount = CemiPurchaseOrderUtils
+                .getTotalPurchaseOrderDollarAmount(purchaseOrderDocument);
+        final String originalPurchaseOrderTotalAmount = CemiPurchaseOrderUtils.formatAmount(totalDollarAmount);
         return StringUtils.join(
                 CemiPurchaseOrderConstants.ORIGINAL_PO_AMOUNT_MEMO_PREFIX, originalPurchaseOrderTotalAmount);
     }
