@@ -231,7 +231,7 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
                     && encounteredEmails.add(StringUtils.lowerCase(kfsEmailAddress, Locale.US))) {
                 if (Strings.CI.equalsAny(kfsEmailAddress, emailRow.getEmailAddress1(), emailRow.getEmailAddress2(),
                         emailRow.getEmailAddress3(), emailRow.getEmailAddress4(), emailRow.getEmailAddress5(),
-                    emailRow.getEmailAddress6(), emailRow.getEmailAddress7())) {
+                        emailRow.getEmailAddress6(), emailRow.getEmailAddress7())) {
                     addressesWithEmails.add(Pair.of(kfsEmailAddress, supplierAddress));
                 } else {
                     LOG.warn("getUniqueEmailsForAddresses, Supplier Address {} is associated with email {} that is not "
