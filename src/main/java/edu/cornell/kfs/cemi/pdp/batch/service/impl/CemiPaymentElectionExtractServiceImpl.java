@@ -72,7 +72,7 @@ public class CemiPaymentElectionExtractServiceImpl implements CemiPaymentElectio
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public void populateListOfInScopeEmployeePaymentElections() {
+    public void captureInScopeBusinessObjectKeysToProcessingTable() {
         LOG.info("populateListOfInScopeEmployeePaymentElections, Querying and storing the list of extractable "
                 + "PayeeACHAcount generated identifiers for Payment Election...");
         getCemiPaymentElectionDao().queryAndStorePayeeAchAccountGeneratedIdsForPaymentElectionExtract();
@@ -80,7 +80,7 @@ public class CemiPaymentElectionExtractServiceImpl implements CemiPaymentElectio
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public void generateIntermediatePaymentElectionExtractData(final LocalDateTime jobRunDate) {
+    public void generateIntermediateExtractData(final LocalDateTime jobRunDate) {
         LOG.info("generateIntermediatePaymentElectionExtractData, Generating data rows for Payment Election spreadsheet "
                 + "and placing in intermediate storage...");
         try {
@@ -109,7 +109,7 @@ public class CemiPaymentElectionExtractServiceImpl implements CemiPaymentElectio
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public void generatePaymentElectionExtractFile(final LocalDateTime jobRunDate) {
+    public void generateDataConversionExtractFile(final LocalDateTime jobRunDate) {
         try {
             LOG.info("generatePaymentElectionExtractFile, Starting creation of CEMI Payment Election Extract file...");
             final String newFileName = CemiUtils.generateFileNameContainingDateTime(
