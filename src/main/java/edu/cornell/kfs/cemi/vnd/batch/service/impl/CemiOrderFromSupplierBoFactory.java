@@ -123,6 +123,10 @@ public class CemiOrderFromSupplierBoFactory {
         return orderFromSupplier;
     }
 
+    /*
+     * NOTE: This method's logic MUST be updated whenever additional email address placeholders are added
+     * to the Supplier file's "Emails" tab.
+     */
     private void initializeEmailData() {
         if (isPunchoutConnection) {
             emailRowId = KFSConstants.EMPTY_STRING;
@@ -140,6 +144,22 @@ public class CemiOrderFromSupplierBoFactory {
             emailRowId = Integer.toString(1);
             emailId = supplierEmailRow.getEmailId3();
             emailAddress = supplierEmailRow.getEmailAddress3();
+        } else if (Strings.CI.equals(emailFromKfsVendorAddress, supplierEmailRow.getEmailAddress4())) {
+            emailRowId = Integer.toString(1);
+            emailId = supplierEmailRow.getEmailId4();
+            emailAddress = supplierEmailRow.getEmailAddress4();
+        } else if (Strings.CI.equals(emailFromKfsVendorAddress, supplierEmailRow.getEmailAddress5())) {
+            emailRowId = Integer.toString(1);
+            emailId = supplierEmailRow.getEmailId5();
+            emailAddress = supplierEmailRow.getEmailAddress5();
+        } else if (Strings.CI.equals(emailFromKfsVendorAddress, supplierEmailRow.getEmailAddress6())) {
+            emailRowId = Integer.toString(1);
+            emailId = supplierEmailRow.getEmailId6();
+            emailAddress = supplierEmailRow.getEmailAddress6();
+        } else if (Strings.CI.equals(emailFromKfsVendorAddress, supplierEmailRow.getEmailAddress7())) {
+            emailRowId = Integer.toString(1);
+            emailId = supplierEmailRow.getEmailId7();
+            emailAddress = supplierEmailRow.getEmailAddress7();
         } else {
             throw new IllegalStateException("Email not found for supplier: " + emailFromKfsVendorAddress);
         }
