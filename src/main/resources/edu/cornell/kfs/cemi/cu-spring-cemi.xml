@@ -31,6 +31,7 @@
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-supplier.xml</value>
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-entity-contact.xml</value>
                 <value>edu/cornell/kfs/cemi/module/cam/cu-ojb-cemi-register-asset.xml</value>
+                <value>edu/cornell/kfs/cemi/pdp/cu-ojb-cemi-payment-election.xml</value>
             </list>
         </property>
         <property name="jobNames">
