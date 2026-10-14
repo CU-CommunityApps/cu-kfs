@@ -91,6 +91,9 @@ public class CemiRegisterAssetFileExtractDataBuilderDefaultImpl extends CemiOrmD
 
         allRegisterAssetTranslateTableMaps.setDepreciationProfileMap(CemiRegisterAssetTranslateTableFactory.createRegisterAssetTranslateTableFor(
                 RegisterAssetTranslateTables.DEPRECIATION_PROFILE_QUERY, cemiRegisterAssetExtractDao));
+        
+        allRegisterAssetTranslateTableMaps.setSpendCategoryMap(CemiRegisterAssetTranslateTableFactory.createRegisterAssetTranslateTableFor(
+                RegisterAssetTranslateTables.SPEND_CATEGORY_QUERY, cemiRegisterAssetExtractDao));
     }
 
 
