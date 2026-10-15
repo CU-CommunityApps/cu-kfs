@@ -33,6 +33,8 @@ public final class CemiPurchaseOrderConstants {
 
     public static final String CURRENCY_USD = "USD";
 
+    public static final String UNSPSC_COMMODITY_CODE_TYPE = "UNSPSC";
+
     public static final String DEFAULT_ITHACA_COMPANY = "C001";
     public static final String DEFAULT_ITHACA_COST_CENTER = "CC000089";
     public static final String DEFAULT_ITHACA_FUND = "FD300";

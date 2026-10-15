@@ -55,6 +55,7 @@ public class CemiPurchaseOrderServiceLineBoFactory {
         final CemiPurchaseOrderServiceLineBo serviceLine = new CemiPurchaseOrderServiceLineBo();
 
         final String lineNumber = determineLineNumber();
+        final String commodityCode = determineCommodityCode();
 
         serviceLine.setServiceRowId(lineNumber);
         serviceLine.setServiceCatalogItem(CemiBaseConstants.EMPTY_STRING);
@@ -64,8 +65,8 @@ public class CemiPurchaseOrderServiceLineBoFactory {
         serviceLine.setServiceDescription(determineItemDescription());
         serviceLine.setServiceSupplierContractLine(CemiBaseConstants.EMPTY_STRING);
         serviceLine.setServiceAlternateSupplierContract(CemiBaseConstants.EMPTY_STRING);
-        serviceLine.setServiceCommodityCode(CemiBaseConstants.EMPTY_STRING);
-        serviceLine.setServiceCommodityCodeType(CemiBaseConstants.EMPTY_STRING);
+        serviceLine.setServiceCommodityCode(commodityCode);
+        serviceLine.setServiceCommodityCodeType(determineCommodityCodeType(commodityCode));
         serviceLine.setServicePaymentStatus(CemiBaseConstants.EMPTY_STRING);
         serviceLine.setServiceInvoiceStatus(CemiBaseConstants.EMPTY_STRING);
         serviceLine.setServiceReceivingStatus(CemiBaseConstants.EMPTY_STRING);
@@ -142,6 +143,15 @@ public class CemiPurchaseOrderServiceLineBoFactory {
 
     private String determineItemDescription() {
         return isEmptyFactory() ? CemiBaseConstants.EMPTY_STRING : purchaseOrderItem.get().getItemDescription();
+    }
+
+    private String determineCommodityCode() {
+        return isEmptyFactory() ? CemiBaseConstants.EMPTY_STRING : purchaseOrderItem.get().getPurchasingCommodityCode();
+    }
+
+    private String determineCommodityCodeType(final String commodityCode) {
+        return StringUtils.isNotBlank(commodityCode)
+                ? CemiPurchaseOrderConstants.UNSPSC_COMMODITY_CODE_TYPE : CemiBaseConstants.EMPTY_STRING;
     }
 
     // TODO: At a future date, implement logic for deriving the Workday Spend Category via a mapping table or API.
