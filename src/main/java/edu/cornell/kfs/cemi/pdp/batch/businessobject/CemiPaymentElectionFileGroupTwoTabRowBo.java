@@ -1,12 +1,14 @@
 package edu.cornell.kfs.cemi.pdp.batch.businessobject;
 
+import org.kuali.kfs.core.api.util.type.KualiInteger;
+
 import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBase;
 
 public class CemiPaymentElectionFileGroupTwoTabRowBo extends CemiIndexedBusinessObjectBase {
 
     private static final long serialVersionUID = -3812094756310270853L;
 
-    private Long achAccountGeneratedId;
+    private KualiInteger achAccountGeneratedId;
 
     private String employeeId;
     private String paymentElectionGroupRule_2;
@@ -31,11 +33,11 @@ public class CemiPaymentElectionFileGroupTwoTabRowBo extends CemiIndexedBusiness
     private String distributionPercentage_2_1;
     private String distributionBalance_2_1;
 
-    public Long getAchAccountGeneratedId() {
+    public KualiInteger getAchAccountGeneratedId() {
         return achAccountGeneratedId;
     }
 
-    public void setAchAccountGeneratedId(Long achAccountGeneratedId) {
+    public void setAchAccountGeneratedId(KualiInteger achAccountGeneratedId) {
         this.achAccountGeneratedId = achAccountGeneratedId;
     }
 

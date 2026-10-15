@@ -4,7 +4,7 @@
     <class-descriptor class="edu.cornell.kfs.cemi.pdp.batch.businessobject.CemiPaymentElectionFileGroupTwoTabRowBo" table="CU_CEMI_EXTR_PYMNT_ELCTN_TAB_GRP_TWO_T" schema="CEMI">
         <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
         <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
-        <field-descriptor name="achAccountGeneratedId" column="ACH_ACCT_GNRTD_ID" jdbc-type="BIGINT" />
+        <field-descriptor name="achAccountGeneratedId" column="ACH_ACCT_GNRTD_ID" jdbc-type="BIGINT" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiIntegerFieldConversion"/>
         <field-descriptor name="employeeId" column="EMPL_ID" jdbc-type="VARCHAR" />
         <field-descriptor name="paymentElectionGroupRule_2" column="PYMNT_ELCTN_GRP_RULE_2" jdbc-type="VARCHAR" />
         <field-descriptor name="paymentElectionRule_2_1" column="PYMNT_ELCTN_RULE_2_1" jdbc-type="VARCHAR" />
