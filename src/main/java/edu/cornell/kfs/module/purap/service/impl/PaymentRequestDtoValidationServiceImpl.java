@@ -55,17 +55,26 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
     public PaymentRequestResultsDto validatePaymentRequestDto(PaymentRequestDto paymentRequestDto) {
         PaymentRequestResultsDto results = new PaymentRequestResultsDto();
         results.setValid(true);
+
         validateRequiredFields(paymentRequestDto, results);
         validateAdditionalFields(paymentRequestDto, results);
+
         if (results.isValid()) {
             validateVendorNumber(paymentRequestDto, results);
+        }
+        if (results.isValid()) {
+            validateInvoiceNumber(paymentRequestDto, results);
         }
         if (results.isValid()) {
             validatePO(paymentRequestDto, results);
         }
 
         if (results.isValid()) {
-        validatePoandInvoiceUnique(paymentRequestDto, results);
+            validatePoandInvoiceUnique(paymentRequestDto, results);
+        }
+        
+        if (results.isValid()) {
+            validateItemsTotalEqualsInvoiceTotal(paymentRequestDto, results);
         }
 
         LOG.debug("validatePaymentRequestDto, validation results: {}", results);
@@ -264,6 +273,16 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
         }
     }
 
+    private void validateInvoiceNumber(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results) {
+        String invoiceNumber = paymentRequestDto.getInvoiceNumber();
+        if (StringUtils.length(invoiceNumber) > CUPurapConstants.Payflow.MAX_INVOICE_NUMBER_LENGTH) {
+            results.setValid(false);
+            String messageBase = configurationService
+                    .getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_INVALID_INVOICE_NUMBER);
+            results.getErrorMessages().add(MessageFormat.format(messageBase, invoiceNumber));
+        }
+    }
+
     private void validatePO(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results) {
         PurchaseOrderDocument poDoc = purchaseOrderService.getCurrentPurchaseOrder(paymentRequestDto.getPoNumberAsInteger());
         if (poDoc == null) {
@@ -315,6 +334,84 @@ public class PaymentRequestDtoValidationServiceImpl implements PaymentRequestDto
             LOG.info("validatePoandInvoiceUnique, formattedMessage: {}", formattedMessage);
 
             results.getErrorMessages().add(formattedMessage);
+        }
+    }
+
+    private void validateItemsTotalEqualsInvoiceTotal(PaymentRequestDto paymentRequestDto, PaymentRequestResultsDto results) {
+        PurchaseOrderDocument po = purchaseOrderService.getCurrentPurchaseOrder(paymentRequestDto.getPoNumberAsInteger());
+        if (po == null) {
+            LOG.warn("validateItemsTotalEqualsInvoiceTotal, PO not found for PO number: {}", paymentRequestDto.getPoNumber());
+            return;
+        }
+        
+        KualiDecimal itemsTotal = KualiDecimal.ZERO;
+        for (PaymentRequestLineItemDto item : paymentRequestDto.getItems()) {
+            if (item.getItemPriceAsKualiDecimal() != null) {
+                PurApItem poItem = po.getItemByLineNumber(item.getLineNumberAsInteger());
+                KualiDecimal lineTotal = KualiDecimal.ZERO;
+                
+                if (poItem != null && PurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE.equals(poItem.getItemTypeCode())) {
+                    lineTotal = item.getItemPriceAsKualiDecimal();
+                } else if (item.getItemQuantityAsKualiDecimal() != null) {
+                    lineTotal = item.getItemQuantityAsKualiDecimal().multiply(item.getItemPriceAsKualiDecimal());
+                }
+                
+                itemsTotal = itemsTotal.add(lineTotal);
+            }
+        }
+        
+        if (paymentRequestDto.getFreightPriceAsKualiDecimal() != null) {
+            itemsTotal = itemsTotal.add(paymentRequestDto.getFreightPriceAsKualiDecimal());
+        }
+        
+        if (paymentRequestDto.getShippingPriceAsKualiDecimal() != null) {
+            itemsTotal = itemsTotal.add(paymentRequestDto.getShippingPriceAsKualiDecimal());
+        }
+        
+        if (paymentRequestDto.getMiscellaneousPriceAsKualiDecimal() != null) {
+            itemsTotal = itemsTotal.add(paymentRequestDto.getMiscellaneousPriceAsKualiDecimal());
+        }
+        
+        KualiDecimal discountAmount = calculateExpectedDiscount(paymentRequestDto, itemsTotal);
+        
+        KualiDecimal expectedTotal = itemsTotal.subtract(discountAmount);
+        
+        KualiDecimal invoiceTotal = paymentRequestDto.getInvoiceAmountAsKualiDecimal();
+        LOG.debug("validateItemsTotalEqualsInvoiceTotal, items total: {}, discount: {}, expected total: {}, invoice total: {}", 
+                itemsTotal, discountAmount, expectedTotal, invoiceTotal);
+        
+        if (expectedTotal.compareTo(invoiceTotal) != 0) {
+            results.setValid(false);
+            String messageBase = configurationService.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENT_REQUEST_ITEM_TOTAL_NOT_EQUAL_INVOICE_TOTAL);
+            String formattedMessage = MessageFormat.format(messageBase, itemsTotal.toString(), discountAmount.toString(), invoiceTotal.toString());
+            LOG.error("validateItemsTotalEqualsInvoiceTotal, validation failed: {}", formattedMessage);
+            results.getErrorMessages().add(formattedMessage);
+        }
+    }
+
+    private KualiDecimal calculateExpectedDiscount(PaymentRequestDto paymentRequestDto, KualiDecimal preTaxTotal) {
+        try {
+            PurchaseOrderDocument po = purchaseOrderService.getCurrentPurchaseOrder(paymentRequestDto.getPoNumberAsInteger());
+            
+            if (po == null || po.getVendorPaymentTerms() == null) {
+                LOG.debug("calculateExpectedDiscount, no PO or payment terms found");
+                return KualiDecimal.ZERO;
+            }
+            
+            java.math.BigDecimal discountPercent = po.getVendorPaymentTerms().getVendorPaymentTermsPercent();
+            if (discountPercent == null || discountPercent.compareTo(java.math.BigDecimal.ZERO) == 0) {
+                return KualiDecimal.ZERO;
+            }
+            
+            java.math.BigDecimal discountPercentAsDecimal = discountPercent.divide(new java.math.BigDecimal(100));
+            KualiDecimal discount = preTaxTotal.multiply(new KualiDecimal(discountPercentAsDecimal));
+            LOG.info("calculateExpectedDiscount, preTaxTotal: {}, discountPercent: {}%, discountAsDecimal: {}, discount: {}",
+                    preTaxTotal, discountPercent, discountPercentAsDecimal, discount);
+            
+            return discount;
+        } catch (Exception e) {
+            LOG.warn("calculateExpectedDiscount, error calculating discount: {}", e.getMessage());
+            return KualiDecimal.ZERO;
         }
     }
 

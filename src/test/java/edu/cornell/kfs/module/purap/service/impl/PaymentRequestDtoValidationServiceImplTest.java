@@ -39,7 +39,7 @@ public class PaymentRequestDtoValidationServiceImplTest {
     private PaymentRequestDtoValidationServiceImpl validationService;
 
     @BeforeEach
-    private void setUp() throws Exception {
+    public void setUp() throws Exception {
         Configurator.setLevel(PaymentRequestDtoValidationServiceImpl.class, Level.DEBUG);
 
         validationService = new PaymentRequestDtoValidationServiceImpl();
@@ -59,6 +59,8 @@ public class PaymentRequestDtoValidationServiceImplTest {
                 .thenReturn("At least one {0} must be entered.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_INVALID_VENDOR_NUMBER))
                 .thenReturn("Vendor Number {0} is not valid.");
+        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_INVALID_INVOICE_NUMBER))
+                .thenReturn("Invoice Number {0} exceeds the maximum length of 20 characters.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_NOT_MATCH_VENDOR))
                 .thenReturn("PO Number {0} has a vendor number {1} but the vendor number supplied was {2}.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_PO_NOT_OPEN))
@@ -75,6 +77,8 @@ public class PaymentRequestDtoValidationServiceImplTest {
                 .thenReturn("The maximum size of a note is {0} characters, the note provided was {1} characters long.");
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENTREQUEST_FIELD_FORMATTING))
                 .thenReturn("{0} is not formatted properly.");
+        Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.ERROR_PAYMENT_REQUEST_ITEM_TOTAL_NOT_EQUAL_INVOICE_TOTAL))
+                .thenReturn("Error: The sum of the items amount ({0}) minus the discount amount ({1}) does not equal the invoice total ({2})");
         return service;
     }
 
