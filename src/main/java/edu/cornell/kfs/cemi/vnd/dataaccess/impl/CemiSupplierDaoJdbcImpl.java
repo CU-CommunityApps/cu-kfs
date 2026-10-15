@@ -108,18 +108,18 @@ public class CemiSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc 
     @Override
     public Map<String, String> getPaymentTermsMappings() {
         final CuSqlQuery query = new CuSqlChunk()
-                .append("SELECT VNDR_PMT_TERM_DESC, WRKDY_PMT_TERM_REF_ID ")
+                .append("SELECT VNDR_PMT_TERM_CD, WRKDY_PMT_TERM_REF_ID ")
                 .append("FROM CEMI.CU_CEMI_TRANS_KFS_WRKDY_PMT_TERM_T")
                 .toQuery();
 
         return queryForResults(query, resultSet -> {
             final Stream.Builder<Pair<String, String>> mappingEntries = Stream.builder();
             while (resultSet.next()) {
-                final String paymentTermsDescription = resultSet.getString(
-                        KfsToWorkdayPaymentTermsCsvTableColumns.VNDR_PMT_TERM_DESC.name());
+                final String paymentTermsCode = resultSet.getString(
+                        KfsToWorkdayPaymentTermsCsvTableColumns.VNDR_PMT_TERM_CD.name());
                 final String workdayPaymentTerms = resultSet.getString(
                         KfsToWorkdayPaymentTermsCsvTableColumns.WRKDY_PMT_TERM_REF_ID.name());
-                mappingEntries.add(Pair.of(paymentTermsDescription, workdayPaymentTerms));
+                mappingEntries.add(Pair.of(paymentTermsCode, workdayPaymentTerms));
             }
             return mappingEntries.build().collect(Collectors.toUnmodifiableMap(Pair::getLeft, Pair::getRight));
         });

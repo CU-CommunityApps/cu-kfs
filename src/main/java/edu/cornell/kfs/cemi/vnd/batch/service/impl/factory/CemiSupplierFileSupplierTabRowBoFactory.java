@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAlias;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
@@ -190,18 +189,12 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
     }
 
     private String determineVendorPaymentTerms() {
-        vendorDetail.refreshReferenceObject("vendorPaymentTerms");
-        if (ObjectUtils.isNotNull(vendorDetail.getVendorPaymentTerms())) {
-            final String paymentTermsDescription = vendorDetail.getVendorPaymentTerms()
-                    .getVendorPaymentTermsDescription();
-            if (StringUtils.isBlank(paymentTermsDescription)) {
-                return CemiBaseConstants.EMPTY_STRING;
-            }
-            // KFSPTS-38411: translate the KFS payment terms description to the Workday payment terms code.
-            return paymentTermsMappings.getOrDefault(
-                    paymentTermsDescription.trim(), CemiSupplierConstants.PAYMENT_TERMS_UNKNOWN);
+        final String paymentTermsCode = vendorDetail.getVendorPaymentTermsCode();
+        if (StringUtils.isBlank(paymentTermsCode)) {
+            return CemiBaseConstants.EMPTY_STRING;
         }
-        return CemiBaseConstants.EMPTY_STRING;
+        // KFSPTS-38411: translate the KFS payment terms code to the Workday payment terms code.
+        return paymentTermsMappings.getOrDefault(paymentTermsCode, CemiSupplierConstants.PAYMENT_TERMS_UNKNOWN);
     }
 
     private String determineIrs1099SupplierFlag(final String taxAuthorityFormType) {
