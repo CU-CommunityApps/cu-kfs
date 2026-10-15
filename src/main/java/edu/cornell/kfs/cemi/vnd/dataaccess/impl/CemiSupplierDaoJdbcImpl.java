@@ -5,12 +5,17 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants.CemiQuerySettingsIds;
+import edu.cornell.kfs.cemi.vnd.batch.translatetable.KfsToWorkdayPaymentTermsCsvTableColumns;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiSupplierDao;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.util.CuSqlChunk;
@@ -98,6 +103,26 @@ public class CemiSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc 
 
     public void setDateTimeService(final DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
+    }
+
+    @Override
+    public Map<String, String> getPaymentTermsMappings() {
+        final CuSqlQuery query = new CuSqlChunk()
+                .append("SELECT VNDR_PMT_TERM_CD, WRKDY_PMT_TERM_REF_ID ")
+                .append("FROM CEMI.CU_CEMI_TRANS_KFS_WRKDY_PMT_TERM_T")
+                .toQuery();
+
+        return queryForResults(query, resultSet -> {
+            final Stream.Builder<Pair<String, String>> mappingEntries = Stream.builder();
+            while (resultSet.next()) {
+                final String paymentTermsCode = resultSet.getString(
+                        KfsToWorkdayPaymentTermsCsvTableColumns.VNDR_PMT_TERM_CD.name());
+                final String workdayPaymentTerms = resultSet.getString(
+                        KfsToWorkdayPaymentTermsCsvTableColumns.WRKDY_PMT_TERM_REF_ID.name());
+                mappingEntries.add(Pair.of(paymentTermsCode, workdayPaymentTerms));
+            }
+            return mappingEntries.build().collect(Collectors.toUnmodifiableMap(Pair::getLeft, Pair::getRight));
+        });
     }
 
 }

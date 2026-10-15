@@ -108,7 +108,7 @@ public class CemiSupplierExtractServiceImpl extends CemiDataExtractServiceBase i
             final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
             final CemiSupplierFileExtractDataBuilderDefaultImpl dataBuilder = new CemiSupplierFileExtractDataBuilderDefaultImpl(
                     businessObjectService, jobRunDateString, isoFipsConversionService,
-                    cemiIsoCountryService, shouldMaskCemiSensitiveData());
+                    cemiIsoCountryService, cemiSupplierDao, shouldMaskCemiSensitiveData());
             final Iterator<VendorDetail> vendorsIterator = vendors.iterator();
             dataBuilder.writeSupplierFileExtractDataForAllMappedTabsToIntermediateStorage(vendorsIterator);
         }

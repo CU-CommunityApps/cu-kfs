@@ -286,6 +286,18 @@
           p:isoFipsConversionService-ref="isoFipsConversionService"
           p:cemiIsoCountryService-ref="cemiIsoCountryService"/>
 
+    <bean id="cemiWorkdayPaymentTerms" parent="cemiWorkdayPaymentTerms-parentBean"/>
+    <bean id="cemiWorkdayPaymentTerms-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/supplier"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_WRKDY_PMT_TERM_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.vnd.batch.translatetable.KfsToWorkdayPaymentTermsCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="cemiWorkdayPaymentTerms" alias="Supplier_KfsPaymentTerms-TranslateWorkdayPaymentTerms"/>
+
     <bean id="cemiOutputDefinitionFileType" parent="cemiOutputDefinitionFileType-parentBean"/>
     <bean id="cemiOutputDefinitionFileType-parentBean"
           abstract="true"
@@ -542,7 +554,7 @@
           p:lastUpdateTimestampInTable="true"/>
 
     <alias name="cemiWorkdayTenantedEntityContactType" alias="Supplier_KfsContactType-TranslateWorkdayTenantedContactType"/>
-    
+
     <!--Register Asset Translate Tables -->
     
     <bean id="cemiWorkdayAssetClass" parent="cemiWorkdayAssetClass-parentBean"/>

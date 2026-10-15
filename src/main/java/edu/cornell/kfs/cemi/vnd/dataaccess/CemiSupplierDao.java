@@ -1,6 +1,7 @@
 package edu.cornell.kfs.cemi.vnd.dataaccess;
     
 import java.time.LocalDate;
+import java.util.Map;
 
 public interface CemiSupplierDao {
 
@@ -13,5 +14,7 @@ public interface CemiSupplierDao {
     void prepareBaseVendorDataNeededForMainVendorIdQuery();
     
     void queryAndStoreVendorIdsForSupplierExtract();
+
+    Map<String, String> getPaymentTermsMappings();
 
 }

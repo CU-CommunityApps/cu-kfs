@@ -2,12 +2,12 @@ package edu.cornell.kfs.cemi.vnd.batch.service.impl.factory;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAlias;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
@@ -33,25 +33,30 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
     private ISOFIPSConversionService isoFipsConversionService;
     private boolean maskSensitiveData;
     private boolean vendorHasActiveBankAccounts;
+    private Map<String, String> paymentTermsMappings;
 
     public CemiSupplierFileSupplierTabRowBoFactory(final VendorDetail vendorDetail, final String supplierId,
             final ISOFIPSConversionService isoFipsConversionService, final boolean maskSensitiveData,
-            final boolean vendorHasActiveBankAccounts) {
+            final boolean vendorHasActiveBankAccounts, final Map<String, String> paymentTermsMappings) {
         Validate.notNull(vendorDetail, "vendorDetail cannot be null");
         Validate.notBlank(supplierId, "supplierId cannot be blank");
         Validate.notNull(isoFipsConversionService, "isoFipsConversionService cannot be null");
+        Validate.notNull(paymentTermsMappings, "paymentTermsMappings cannot be null");
         this.vendorDetail = vendorDetail;
         this.supplierId = supplierId;
         this.isoFipsConversionService = isoFipsConversionService;
         this.maskSensitiveData = maskSensitiveData;
         this.vendorHasActiveBankAccounts = vendorHasActiveBankAccounts;
+        this.paymentTermsMappings = paymentTermsMappings;
     }
 
     public static CemiSupplierFileSupplierTabRowBo createTabRowBoFrom(final VendorDetail vendorDetail,
             final String supplierId, final ISOFIPSConversionService isoFipsConversionService,
-            final boolean maskSensitiveData, final boolean vendorHasActiveBankAccounts) {
+            final boolean maskSensitiveData, final boolean vendorHasActiveBankAccounts,
+            final Map<String, String> paymentTermsMappings) {
         final CemiSupplierFileSupplierTabRowBoFactory factory = new CemiSupplierFileSupplierTabRowBoFactory(
-                vendorDetail, supplierId, isoFipsConversionService, maskSensitiveData, vendorHasActiveBankAccounts);
+                vendorDetail, supplierId, isoFipsConversionService, maskSensitiveData, vendorHasActiveBankAccounts,
+                paymentTermsMappings);
         return factory.createCemiSupplierFileSupplierTabRowBo();
     }
 
@@ -184,18 +189,12 @@ public class CemiSupplierFileSupplierTabRowBoFactory {
     }
 
     private String determineVendorPaymentTerms() {
-        vendorDetail.refreshReferenceObject("vendorPaymentTerms");
-        if (ObjectUtils.isNotNull(vendorDetail.getVendorPaymentTerms())) {
-            String paymentTermsDescription = vendorDetail.getVendorPaymentTerms().getVendorPaymentTermsDescription();
-            if (paymentTermsDescription == null || paymentTermsDescription.isEmpty()) {
-                return paymentTermsDescription;
-            }
-            return paymentTermsDescription
-                    .trim()
-                    .replaceAll("[^a-zA-Z0-9]+", "_") // replace spans of special chars/spaces with _
-                    .replaceAll("^_|_$", ""); // strip leading/trailing underscores
+        final String paymentTermsCode = vendorDetail.getVendorPaymentTermsCode();
+        if (StringUtils.isBlank(paymentTermsCode)) {
+            return CemiBaseConstants.EMPTY_STRING;
         }
-        return "";
+        // KFSPTS-38411: translate the KFS payment terms code to the Workday payment terms code.
+        return paymentTermsMappings.getOrDefault(paymentTermsCode, CemiSupplierConstants.PAYMENT_TERMS_UNKNOWN);
     }
 
     private String determineIrs1099SupplierFlag(final String taxAuthorityFormType) {
