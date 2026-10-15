@@ -6,6 +6,8 @@ import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBa
  * NOTE: Whenever this class gets updated to add or remove more email addresses, make sure
  *       the email-related processing of the Remit To Supplier extract also gets updated.
  *       See the related comments in the CemiRemitToSupplierDataBuilderDefaultImpl class.
+ *       Similar updates are also needed to the CemiOrderFromSupplierBoFactory and
+ *       CemiOrderFromSupplierDataBuilderDefaultImpl classes in the Order From Supplier extract.
  */
 public class CemiSupplierFileEmailsTabRowBo extends CemiIndexedBusinessObjectBase {
 

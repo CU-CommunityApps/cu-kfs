@@ -214,6 +214,10 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
         }
     }
 
+    /*
+     * NOTE: This method's logic MUST be updated whenever additional email address placeholders are added
+     * to the Supplier file's "Emails" tab.
+     */
     private List<Pair<String, CemiSupplierFileAddressesTabRowBo>> getUniqueEmailsForAddresses(
             final List<CemiSupplierFileAddressesTabRowBo> supplierAddresses,
             final Map<String, List<VendorAddress>> kfsVendorAddresses,
@@ -226,7 +230,8 @@ public class CemiOrderFromSupplierDataBuilderDefaultImpl extends CemiOrmDataBuil
             if (StringUtils.isNotBlank(kfsEmailAddress)
                     && encounteredEmails.add(StringUtils.lowerCase(kfsEmailAddress, Locale.US))) {
                 if (Strings.CI.equalsAny(kfsEmailAddress, emailRow.getEmailAddress1(), emailRow.getEmailAddress2(),
-                        emailRow.getEmailAddress3())) {
+                        emailRow.getEmailAddress3(), emailRow.getEmailAddress4(), emailRow.getEmailAddress5(),
+                        emailRow.getEmailAddress6(), emailRow.getEmailAddress7())) {
                     addressesWithEmails.add(Pair.of(kfsEmailAddress, supplierAddress));
                 } else {
                     LOG.warn("getUniqueEmailsForAddresses, Supplier Address {} is associated with email {} that is not "
