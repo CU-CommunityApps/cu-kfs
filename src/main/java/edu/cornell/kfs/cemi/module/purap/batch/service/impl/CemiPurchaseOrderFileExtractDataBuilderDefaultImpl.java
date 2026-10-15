@@ -3,6 +3,7 @@ package edu.cornell.kfs.cemi.module.purap.batch.service.impl;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,6 +47,7 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
     private CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao;
     private DateTimeService dateTimeService;
     private LocationService locationService;
+    private Map<Integer, String> contractManagerEmplIdMappings;
     private String supplierJobRunDateString;
     @SuppressWarnings("unused")
     private boolean maskSensitiveData;
@@ -71,6 +73,7 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
         this.cemiPurchaseOrderExtractDao = cemiPurchaseOrderExtractDao;
         this.dateTimeService = dateTimeService;
         this.locationService = locationService;
+        this.contractManagerEmplIdMappings = cemiPurchaseOrderExtractDao.getContractManagerEmployeeIdMappings();
         this.supplierJobRunDateString = supplierJobRunDateString;
         this.maskSensitiveData = maskSensitiveData;
 
@@ -82,6 +85,8 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
                 "Quantity Item Type parameter should not have been blank");
         Validate.validState(StringUtils.isNotBlank(defaultNonQuantityItemType),
                 "Non-Quantity Item Type parameter should not have been blank");
+        Validate.validState(!contractManagerEmplIdMappings.isEmpty(),
+                "No Contract Manager Employee ID mappings were found; please verify if they have been imported");
     }
 
     @Override
@@ -116,7 +121,7 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
 
         final CemiPurchaseOrderHeaderBo headerBo = CemiPurchaseOrderHeaderBoFactory.createHeaderBoFrom(
                 purchaseOrderDocument, personService, cemiPurchaseOrderExtractDao, dateTimeService,
-                locationService, supplierJobRunDateString);
+                locationService, contractManagerEmplIdMappings, supplierJobRunDateString);
         numLinesWritten += writePurchaseOrderQuantityLinesToIntermediateStorage(
                 headerBo, purchaseOrderDocument, openQuantityItemLines);
         numLinesWritten += writePurchaseOrderNonQuantityLinesToIntermediateStorage(

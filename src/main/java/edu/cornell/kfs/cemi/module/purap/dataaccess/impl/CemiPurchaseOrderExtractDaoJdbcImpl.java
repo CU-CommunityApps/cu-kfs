@@ -1,10 +1,15 @@
 package edu.cornell.kfs.cemi.module.purap.dataaccess.impl;
 
 import java.sql.Types;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import edu.cornell.kfs.cemi.module.purap.batch.translatetable.KfsContractManagerCodeToEmplIdCsvTableColumns;
 import edu.cornell.kfs.cemi.module.purap.dataaccess.CemiPurchaseOrderExtractDao;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.sys.util.CuSqlChunk;
@@ -48,6 +53,25 @@ public class CemiPurchaseOrderExtractDaoJdbcImpl extends CuSqlQueryPlatformAware
                 .toQuery();
         return queryForResults(query,
                 resultSet -> resultSet.next() ? resultSet.getString(1) : CemiBaseConstants.EMPTY_STRING);
+    }
+
+    @Override
+    public Map<Integer, String> getContractManagerEmployeeIdMappings() {
+        final CuSqlQuery query = new CuSqlChunk()
+                .append("SELECT CONTR_MGR_CD, EMPL_ID FROM CEMI.CU_CEMI_TRANS_KFS_CONTR_MGR_EMPL_ID_T")
+                .toQuery();
+        
+        return queryForResults(query, resultSet -> {
+            final Stream.Builder<Pair<Integer, String>> mappings = Stream.builder();
+            while (resultSet.next()) {
+                final Integer contractManagerCode = Integer.valueOf(
+                        resultSet.getString(KfsContractManagerCodeToEmplIdCsvTableColumns.CONTR_MGR_CD.name()));
+                final String employeeId = resultSet.getString(
+                        KfsContractManagerCodeToEmplIdCsvTableColumns.EMPL_ID.name());
+                mappings.add(Pair.of(contractManagerCode, employeeId));
+            }
+            return mappings.build().collect(Collectors.toUnmodifiableMap(Pair::getLeft, Pair::getRight));
+        });
     }
 
 }

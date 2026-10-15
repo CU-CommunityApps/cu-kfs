@@ -66,6 +66,7 @@
             <value>${staging.directory}/cemi/conversions/outbound</value>
             <value>${staging.directory}/cemi/translatetable/award</value>
             <value>${staging.directory}/cemi/translatetable/common</value>
+            <value>${staging.directory}/cemi/translatetable/purchaseOrder</value>
             <value>${staging.directory}/cemi/translatetable/registerAsset</value>
             <value>${staging.directory}/cemi/translatetable/supplier</value>
           </list>
@@ -665,6 +666,17 @@
           parent="step"
           p:cemiPurchaseOrderExtractService-ref="cemiPurchaseOrderExtractService"/>
 
+    <bean id="kfsContractManagerEmplIds" parent="kfsContractManagerEmplIds-parentBean"/>
+    <bean id="kfsContractManagerEmplIds-parentBean"
+          abstract="true"
+          parent="cemiCsvBatchInputFileType"
+          p:directoryPath="${staging.directory}/cemi/translatetable/purchaseOrder"
+          p:legacyDataDestinationTableName="CU_CEMI_TRANS_KFS_CONTR_MGR_EMPL_ID_T"
+          p:legacyDataDestinationTableColumnsEnum="edu.cornell.kfs.cemi.module.purap.batch.translatetable.KfsContractManagerCodeToEmplIdCsvTableColumns"
+          p:hasHeaderRow="true"
+          p:lastUpdateTimestampInTable="true"/>
+
+    <alias name="kfsContractManagerEmplIds" alias="PurchaseOrder_KfsContractManager-TranslateEmplId"/>
 
     <!-- Award -->
    
