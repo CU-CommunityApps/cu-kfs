@@ -5,6 +5,7 @@ package edu.cornell.kfs.module.purap;
  */
 public class CUPurapKeyConstants {
 	public static final String ERROR_PAYMENT_REQUEST_ITEM_TOTAL_NOT_EQUAL = "error.paymentRequest.item.TotalInvoice.notEqual";
+	public static final String ERROR_PAYMENT_REQUEST_ITEM_TOTAL_NOT_EQUAL_INVOICE_TOTAL = "error.paymentRequest.item.totalNotEqualInvoiceTotal";
 	
     public static final String PURAP_ITEM_NONQTY = "error.purap.item.itemtype.nonqty";
     public static final String PURAP_ITEM_NEW_NONQTY = "error.purap.item.new.itemtype.nonqty";
@@ -67,6 +68,7 @@ public class CUPurapKeyConstants {
 
     public static final String ERROR_PAYMENTREQUEST_AT_LEAST_ONE_MUST_BE_ENTERED = "error.paymentrequest.at.least.one.must.be.entered";
     public static final String ERROR_PAYMENTREQUEST_INVALID_VENDOR_NUMBER = "error.paymentrequest.vendor.invalid";
+    public static final String ERROR_PAYMENTREQUEST_INVALID_INVOICE_NUMBER = "error.paymentrequest.invoice.number.invalid";
     public static final String ERROR_PAYMENTREQUEST_PO_NOT_MATCH_VENDOR = "error.paymentrequest.po.not_match_vendor";
     public static final String ERROR_PAYMENTREQUEST_PO_NOT_OPEN = "error.paymentrequest.po.not.open";
     public static final String ERROR_PAYMENTREQUEST_PO_INVALID_LINE = "error.paymentrequest.po.invalid.line.number";

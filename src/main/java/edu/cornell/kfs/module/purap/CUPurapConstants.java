@@ -583,6 +583,7 @@ public class CUPurapConstants {
 
     public static final class Payflow {
         public static final String PAYFLOW = "Payflow";
+        public static final int MAX_INVOICE_NUMBER_LENGTH = 20;
     }
 
 }
