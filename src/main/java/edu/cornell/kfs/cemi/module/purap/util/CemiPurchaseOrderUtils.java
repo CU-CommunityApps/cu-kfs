@@ -7,6 +7,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +37,9 @@ public final class CemiPurchaseOrderUtils {
 
     private static final ThreadLocal<DecimalFormat> QUANTITY_FORMATTERS = ThreadLocal.withInitial(
             CemiPurchaseOrderUtils::createQuantityFormatter);
+
+    private static final Pattern NETID_EMAIL_PATTERN = Pattern.compile(
+            "^([a-zA-Z]+[0-9]+)@cornell\\.edu$", Pattern.CASE_INSENSITIVE);
 
     private static final DecimalFormat createAmountFormatter() {
         return new DecimalFormat(CemiPurchaseOrderConstants.PURCHASE_ORDER_AMOUNT_FORMAT);
@@ -69,6 +74,19 @@ public final class CemiPurchaseOrderUtils {
     public static String formatQuantity(final KualiDecimal value) {
         return (value != null)
                 ? QUANTITY_FORMATTERS.get().format(value.bigDecimalValue()) : CemiBaseConstants.EMPTY_STRING;
+    }
+
+    public static String getNetIdFromEmailAddressIfPresent(final String emailAddress) {
+        if (StringUtils.isBlank(emailAddress)) {
+            return CemiBaseConstants.EMPTY_STRING;
+        }
+        final Matcher emailMatcher = NETID_EMAIL_PATTERN.matcher(emailAddress);
+        if (emailMatcher.matches()) {
+            final String netId = emailMatcher.group(1);
+            return StringUtils.lowerCase(netId, Locale.US);
+        } else {
+            return CemiBaseConstants.EMPTY_STRING;
+        }
     }
 
     public static List<CemiPurchaseOrderAccountLite> getOutstandingEncumberedAccountingLines(
