@@ -13,6 +13,7 @@ public class CreateCemiRegisterAssetExtractStep extends AbstractStep {
     @Override
     public boolean execute(String jobName, LocalDateTime jobRunDate) throws InterruptedException {
         //Phase1: Obtain the dataset
+        cemiRegisterAssetExtractService.logSystemParameterValues();
         cemiRegisterAssetExtractService.resetState();
         cemiRegisterAssetExtractService.captureInScopeBusinessObjectKeysToProcessingTable();
         //Phase 2: Loop through result set to create all data in the extract tables

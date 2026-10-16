@@ -12,6 +12,7 @@ public class CreateCemiPurchaseOrderExtractStep extends AbstractStep {
 
     @Override
     public boolean execute(final String jobName, final LocalDateTime jobRunDate) throws InterruptedException {
+        cemiPurchaseOrderExtractService.logSystemParameterValues();
         cemiPurchaseOrderExtractService.resetState();
         cemiPurchaseOrderExtractService.captureInScopeBusinessObjectKeysToProcessingTable(); 
         cemiPurchaseOrderExtractService.generateIntermediateExtractData(jobRunDate);

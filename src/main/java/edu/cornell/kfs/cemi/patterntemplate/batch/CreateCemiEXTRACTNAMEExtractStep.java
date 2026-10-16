@@ -26,8 +26,15 @@ public class CreateCemiEXTRACTNAMEExtractStep extends AbstractStep {
     public boolean execute(final String jobName, final LocalDateTime jobRunDate) throws InterruptedException {
         
         /* Phase1: Obtain the dataset */
-        
-        // Method required for every extraction. 
+
+        // Method required for every extraction.
+        // Logs the values of the system parameters affecting this run (outbound folder copy, sensitive data masking,
+        // and any extract specific parameters such as date ranges). The default implementation is provided by
+        // abstract base class CemiDataExtractServiceBase. Override getExtractSpecificParameterNamesToLog in the
+        // service implementation to include any additional parameters used by the data extraction.
+        cemiEXTRACTNAMEExtractService.logSystemParameterValues();
+
+        // Method required for every extraction.
         // Intended to perform any action to ensure job runs successfully and produces the data extract file.
         //      At a minimum, on every execution of the batch job after the first one, this method should clear the
         //      table populated by routine captureInScopeBusinessObjectKeysToProcessingTable (called below) from the

@@ -8,7 +8,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.Validate;
@@ -43,6 +45,21 @@ public abstract class CemiDataExtractServiceBase {
     protected CemiDataExtractServiceBase(final Environment environment) {
         Validate.notNull(environment, "environment cannot be null");
         this.environment = environment;
+    }
+
+    public void logSystemParameterValues() {
+        LOG.info("logSystemParameterValues, Environment lane is '{}', sensitive data will be {}",
+                environment.getLane(), shouldMaskCemiSensitiveData() ? "masked" : "unmasked");
+        final List<String> parameterNames = ListUtils.union(
+                List.of(CemiBaseParameterConstants.COPY_CEMI_FILE_TO_OUTBOUND_FOLDER,
+                        CemiBaseParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING),
+                getExtractSpecificParameterNamesToLog());
+        CemiUtils.logParameterValues(parameterService, getComponentClassForDataExtractParameter(), parameterNames);
+    }
+
+    // Override to log any additional parameters (such as data range settings) used by a specific data extraction.
+    protected List<String> getExtractSpecificParameterNamesToLog() {
+        return List.of();
     }
 
     protected boolean isCemiEnvironment() {

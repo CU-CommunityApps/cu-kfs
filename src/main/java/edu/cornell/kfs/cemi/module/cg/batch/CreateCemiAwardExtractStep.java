@@ -14,6 +14,7 @@ public class CreateCemiAwardExtractStep extends AbstractStep {
     public boolean execute(final String jobName, final LocalDateTime jobRunDate) throws InterruptedException {
         
         // Phase 1: Obtain the dataset
+        cemiAwardExtractService.logSystemParameterValues();
         cemiAwardExtractService.resetState();
         cemiAwardExtractService.initializeExtractDateSettings();
         cemiAwardExtractService.captureInScopeBusinessObjectKeysToProcessingTable();

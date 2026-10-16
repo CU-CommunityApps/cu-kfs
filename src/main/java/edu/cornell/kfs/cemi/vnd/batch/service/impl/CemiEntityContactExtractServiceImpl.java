@@ -2,6 +2,7 @@ package  edu.cornell.kfs.cemi.vnd.batch.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -112,6 +113,11 @@ public class CemiEntityContactExtractServiceImpl extends CemiDataExtractServiceB
     @Override
     protected String getTemplateWorkbookFilePathSuffix() {
         return CemiEntityContactConstants.ENTITY_CONTACT_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX;
+    }
+
+    @Override
+    protected List<String> getExtractSpecificParameterNamesToLog() {
+        return List.of(CemiEntityContactParameterConstants.CEMI_ENTITY_CONTACT_EXTRACT_SUPPLIER_DATETIME);
     }
 
     public void setCemiEntityContactExtractOrmDao(final CemiEntityContactExtractOrmDao cemiEntityContactExtractOrmDao) {

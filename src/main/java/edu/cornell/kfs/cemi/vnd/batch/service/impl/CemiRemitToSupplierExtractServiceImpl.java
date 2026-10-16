@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +58,16 @@ public class CemiRemitToSupplierExtractServiceImpl implements CemiRemitToSupplie
 
     public CemiRemitToSupplierExtractServiceImpl(final Environment environment) {
         this.environment = environment;
+    }
+
+    @Override
+    public void logSystemParameterValues() {
+        LOG.info("logSystemParameterValues, Environment lane is '{}', sensitive data will be {}",
+                environment.getLane(), shouldMaskCemiSensitiveData() ? "masked" : "unmasked");
+        CemiUtils.logParameterValues(parameterService, CreateCemiRemitToSupplierExtractStep.class, List.of(
+                CemiRemitToSupplierParameterConstants.COPY_CEMI_REMIT_TO_SUPPLIER_FILE_TO_OUTBOUND_FOLDER,
+                CemiSupplierParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING,
+                CemiRemitToSupplierParameterConstants.CEMI_REMIT_TO_SUPPLIER_EXTRACT_SUPPLIER_DATETIME));
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
