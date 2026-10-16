@@ -36,6 +36,7 @@ import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderI
 import edu.cornell.kfs.cemi.module.purap.dataaccess.CemiPurchaseOrderExtractDao;
 import edu.cornell.kfs.cemi.module.purap.util.CemiPurchaseOrderUtils;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CemiPurchaseOrderHeaderBoFactory {
@@ -48,12 +49,13 @@ public class CemiPurchaseOrderHeaderBoFactory {
     private DateTimeService dateTimeService;
     private LocationService locationService;
     private Map<Integer, String> contractManagerEmplIdMappings;
+    private Map<String, String> paymentTermsMappings;
     private String supplierJobRunDateString;
 
     public CemiPurchaseOrderHeaderBoFactory(final CemiPurchaseOrderDocumentLite purchaseOrderDocument,
             final PersonService personService, final CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao,
             final DateTimeService dateTimeService, final LocationService locationService,
-            final Map<Integer, String> contractManagerEmplIdMappings,
+            final Map<Integer, String> contractManagerEmplIdMappings, final Map<String, String> paymentTermsMappings,
             final String supplierJobRunDateString) {
         Validate.notNull(purchaseOrderDocument, "purchaseOrderDocument cannot be null");
         Validate.notNull(personService, "personService cannot be null");
@@ -61,6 +63,7 @@ public class CemiPurchaseOrderHeaderBoFactory {
         Validate.notNull(dateTimeService, "dateTimeService cannot be null");
         Validate.notNull(locationService, "locationService cannot be null");
         Validate.notNull(contractManagerEmplIdMappings, "contractManagerEmplIdMappings cannot be null");
+        Validate.notNull(paymentTermsMappings, "paymentTermsMappings cannot be null");
         Validate.notBlank(supplierJobRunDateString, "supplierJobRunDateString cannot be blank");
         this.purchaseOrderDocument = purchaseOrderDocument;
         this.personService = personService;
@@ -68,17 +71,19 @@ public class CemiPurchaseOrderHeaderBoFactory {
         this.dateTimeService = dateTimeService;
         this.locationService = locationService;
         this.contractManagerEmplIdMappings = contractManagerEmplIdMappings;
+        this.paymentTermsMappings = paymentTermsMappings;
         this.supplierJobRunDateString = supplierJobRunDateString;
     }
 
     public static CemiPurchaseOrderHeaderBo createHeaderBoFrom(final CemiPurchaseOrderDocumentLite purchaseOrderDocument,
             final PersonService personService, final CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao,
             final DateTimeService dateTimeService, final LocationService locationService,
-            final Map<Integer, String> contractManagerEmplIdMappings,
+            final Map<Integer, String> contractManagerEmplIdMappings, final Map<String, String> paymentTermsMappings,
             final String supplierJobRunDateString) {
         final CemiPurchaseOrderHeaderBoFactory factory = new CemiPurchaseOrderHeaderBoFactory(
                 purchaseOrderDocument, personService, cemiPurchaseOrderExtractDao,
-                dateTimeService, locationService, contractManagerEmplIdMappings, supplierJobRunDateString);
+                dateTimeService, locationService, contractManagerEmplIdMappings,
+                paymentTermsMappings, supplierJobRunDateString);
         return factory.createCemiPurchaseOrderHeaderBo();
     }
 
@@ -284,21 +289,12 @@ public class CemiPurchaseOrderHeaderBoFactory {
                 .findFirst();
     }
 
-    // Copied and modified the related logic from the Supplier extract.
     private String determinePaymentTerms() {
-        purchaseOrderDocument.refreshReferenceObject("vendorPaymentTerms");
-        if (ObjectUtils.isNotNull(purchaseOrderDocument.getVendorPaymentTerms())) {
-            String paymentTermsDescription = purchaseOrderDocument.getVendorPaymentTerms()
-                    .getVendorPaymentTermsDescription();
-            if (StringUtils.isBlank(paymentTermsDescription)) {
-                return paymentTermsDescription;
-            }
-            return paymentTermsDescription
-                    .trim()
-                    .replaceAll("[^a-zA-Z0-9]+", "_") // replace spans of special chars/spaces with _
-                    .replaceAll("^_|_$", ""); // strip leading/trailing underscores
+        final String paymentTermsCode = purchaseOrderDocument.getVendorPaymentTermsCode();
+        if (StringUtils.isBlank(paymentTermsCode)) {
+            return CemiBaseConstants.EMPTY_STRING;
         }
-        return CemiBaseConstants.EMPTY_STRING;
+        return paymentTermsMappings.getOrDefault(paymentTermsCode, CemiSupplierConstants.PAYMENT_TERMS_UNKNOWN);
     }
 
     // TODO: At a future date, implement shipping term derivation logic.
