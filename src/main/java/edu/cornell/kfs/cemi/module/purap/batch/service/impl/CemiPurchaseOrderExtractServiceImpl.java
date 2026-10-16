@@ -2,6 +2,7 @@ package  edu.cornell.kfs.cemi.module.purap.batch.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +27,7 @@ import edu.cornell.kfs.cemi.module.purap.dataaccess.CemiPurchaseOrderExtractDao;
 import edu.cornell.kfs.cemi.module.purap.dataaccess.CemiPurchaseOrderExtractOrmDao;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiDataExtractServiceBase;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiSupplierDao;
 
 public class CemiPurchaseOrderExtractServiceImpl extends CemiDataExtractServiceBase
         implements CemiPurchaseOrderExtractService {
@@ -34,6 +36,7 @@ public class CemiPurchaseOrderExtractServiceImpl extends CemiDataExtractServiceB
 
     private CemiPurchaseOrderExtractOrmDao cemiPurchaseOrderExtractOrmDao;
     private CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao;
+    private CemiSupplierDao cemiSupplierDao;
     private BusinessObjectService businessObjectService;
     private DateTimeService dateTimeService;
     private LocationService locationService;
@@ -71,9 +74,10 @@ public class CemiPurchaseOrderExtractServiceImpl extends CemiDataExtractServiceB
         ) {
             final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
             final String supplierJobRunDateString = getSupplierJobRunDateString();
+            final Map<String, String> paymentTermsMappings = getPaymentTermsMappings();
             final CemiPurchaseOrderFileExtractDataBuilder dataBuilder = new CemiPurchaseOrderFileExtractDataBuilderDefaultImpl(
                     businessObjectService, jobRunDateString, personService, parameterService,
-                    cemiPurchaseOrderExtractDao, dateTimeService, locationService,
+                    cemiPurchaseOrderExtractDao, dateTimeService, locationService, paymentTermsMappings,
                     supplierJobRunDateString, shouldMaskCemiSensitiveData());
             final Iterator<CemiPurchaseOrderDocumentLite> purchaseOrdersIterator = purchaseOrderDocuments.iterator();
             dataBuilder.writePurchaseOrderFileSubmitPurchaseOrderTabExtractDataToIntermediateStorage(purchaseOrdersIterator);
@@ -87,6 +91,13 @@ public class CemiPurchaseOrderExtractServiceImpl extends CemiDataExtractServiceB
         Validate.validState(StringUtils.isNotBlank(supplierJobRunDateString), "Parameter %s should not have been blank",
                 CemiPurchaseOrderParameterConstants.CEMI_PURCHASE_ORDER_EXTRACT_SUPPLIER_DATETIME);
         return supplierJobRunDateString;
+    }
+
+    private Map<String, String> getPaymentTermsMappings() {
+        final Map<String, String> paymentTermsMappings = cemiSupplierDao.getPaymentTermsMappings();
+        Validate.validState(!paymentTermsMappings.isEmpty(),
+                "Vendor/Supplier Payment Terms Mappings should not have been empty; please verify import of mappings");
+        return paymentTermsMappings;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -119,6 +130,10 @@ public class CemiPurchaseOrderExtractServiceImpl extends CemiDataExtractServiceB
 
     public void setCemiPurchaseOrderExtractDao(final CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao) {
         this.cemiPurchaseOrderExtractDao = cemiPurchaseOrderExtractDao;
+    }
+
+    public void setCemiSupplierDao(final CemiSupplierDao cemiSupplierDao) {
+        this.cemiSupplierDao = cemiSupplierDao;
     }
 
     public void setBusinessObjectService(final BusinessObjectService businessObjectService) {

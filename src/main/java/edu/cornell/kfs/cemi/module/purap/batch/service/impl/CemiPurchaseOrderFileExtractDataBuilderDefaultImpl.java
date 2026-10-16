@@ -3,6 +3,7 @@ package edu.cornell.kfs.cemi.module.purap.batch.service.impl;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,6 +47,8 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
     private CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao;
     private DateTimeService dateTimeService;
     private LocationService locationService;
+    private Map<Integer, String> contractManagerEmplIdMappings;
+    private Map<String, String> paymentTermsMappings;
     private String supplierJobRunDateString;
     @SuppressWarnings("unused")
     private boolean maskSensitiveData;
@@ -58,6 +61,7 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
             final PersonService personService, final ParameterService parameterService,
             final CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao,
             final DateTimeService dateTimeService, final LocationService locationService,
+            final Map<String, String> paymentTermsMappings,
             final String supplierJobRunDateString, final boolean maskSensitiveData) {
         super(businessObjectService, jobRunDateString, CemiPurchaseOrderFileSubmitPurchaseOrderTabRowBo.class);
         Validate.notNull(personService, "personService cannot be null");
@@ -65,12 +69,15 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
         Validate.notNull(cemiPurchaseOrderExtractDao, "cemiPurchaseOrderExtractDao cannot be null");
         Validate.notNull(dateTimeService, "dateTimeService cannot be null");
         Validate.notNull(locationService, "locationService cannot be null");
+        Validate.notNull(paymentTermsMappings, "paymentTermsMappings cannot be null");
         Validate.notBlank(supplierJobRunDateString, "supplierJobRunDateString cannot be blank");
         this.personService = personService;
         this.parameterService = parameterService;
         this.cemiPurchaseOrderExtractDao = cemiPurchaseOrderExtractDao;
         this.dateTimeService = dateTimeService;
         this.locationService = locationService;
+        this.contractManagerEmplIdMappings = cemiPurchaseOrderExtractDao.getContractManagerEmployeeIdMappings();
+        this.paymentTermsMappings = paymentTermsMappings;
         this.supplierJobRunDateString = supplierJobRunDateString;
         this.maskSensitiveData = maskSensitiveData;
 
@@ -82,6 +89,8 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
                 "Quantity Item Type parameter should not have been blank");
         Validate.validState(StringUtils.isNotBlank(defaultNonQuantityItemType),
                 "Non-Quantity Item Type parameter should not have been blank");
+        Validate.validState(!contractManagerEmplIdMappings.isEmpty(),
+                "No Contract Manager Employee ID mappings were found; please verify if they have been imported");
     }
 
     @Override
@@ -116,7 +125,7 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
 
         final CemiPurchaseOrderHeaderBo headerBo = CemiPurchaseOrderHeaderBoFactory.createHeaderBoFrom(
                 purchaseOrderDocument, personService, cemiPurchaseOrderExtractDao, dateTimeService,
-                locationService, supplierJobRunDateString);
+                locationService, contractManagerEmplIdMappings, paymentTermsMappings, supplierJobRunDateString);
         numLinesWritten += writePurchaseOrderQuantityLinesToIntermediateStorage(
                 headerBo, purchaseOrderDocument, openQuantityItemLines);
         numLinesWritten += writePurchaseOrderNonQuantityLinesToIntermediateStorage(

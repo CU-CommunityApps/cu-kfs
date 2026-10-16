@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,7 @@ import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderI
 import edu.cornell.kfs.cemi.module.purap.dataaccess.CemiPurchaseOrderExtractDao;
 import edu.cornell.kfs.cemi.module.purap.util.CemiPurchaseOrderUtils;
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CemiPurchaseOrderHeaderBoFactory {
@@ -46,33 +48,42 @@ public class CemiPurchaseOrderHeaderBoFactory {
     private CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao;
     private DateTimeService dateTimeService;
     private LocationService locationService;
+    private Map<Integer, String> contractManagerEmplIdMappings;
+    private Map<String, String> paymentTermsMappings;
     private String supplierJobRunDateString;
 
     public CemiPurchaseOrderHeaderBoFactory(final CemiPurchaseOrderDocumentLite purchaseOrderDocument,
             final PersonService personService, final CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao,
             final DateTimeService dateTimeService, final LocationService locationService,
+            final Map<Integer, String> contractManagerEmplIdMappings, final Map<String, String> paymentTermsMappings,
             final String supplierJobRunDateString) {
         Validate.notNull(purchaseOrderDocument, "purchaseOrderDocument cannot be null");
         Validate.notNull(personService, "personService cannot be null");
         Validate.notNull(cemiPurchaseOrderExtractDao, "cemiPurchaseOrderExtractDao cannot be null");
         Validate.notNull(dateTimeService, "dateTimeService cannot be null");
         Validate.notNull(locationService, "locationService cannot be null");
+        Validate.notNull(contractManagerEmplIdMappings, "contractManagerEmplIdMappings cannot be null");
+        Validate.notNull(paymentTermsMappings, "paymentTermsMappings cannot be null");
         Validate.notBlank(supplierJobRunDateString, "supplierJobRunDateString cannot be blank");
         this.purchaseOrderDocument = purchaseOrderDocument;
         this.personService = personService;
         this.cemiPurchaseOrderExtractDao = cemiPurchaseOrderExtractDao;
         this.dateTimeService = dateTimeService;
         this.locationService = locationService;
+        this.contractManagerEmplIdMappings = contractManagerEmplIdMappings;
+        this.paymentTermsMappings = paymentTermsMappings;
         this.supplierJobRunDateString = supplierJobRunDateString;
     }
 
     public static CemiPurchaseOrderHeaderBo createHeaderBoFrom(final CemiPurchaseOrderDocumentLite purchaseOrderDocument,
             final PersonService personService, final CemiPurchaseOrderExtractDao cemiPurchaseOrderExtractDao,
             final DateTimeService dateTimeService, final LocationService locationService,
+            final Map<Integer, String> contractManagerEmplIdMappings, final Map<String, String> paymentTermsMappings,
             final String supplierJobRunDateString) {
         final CemiPurchaseOrderHeaderBoFactory factory = new CemiPurchaseOrderHeaderBoFactory(
                 purchaseOrderDocument, personService, cemiPurchaseOrderExtractDao,
-                dateTimeService, locationService, supplierJobRunDateString);
+                dateTimeService, locationService, contractManagerEmplIdMappings,
+                paymentTermsMappings, supplierJobRunDateString);
         return factory.createCemiPurchaseOrderHeaderBo();
     }
 
@@ -128,7 +139,7 @@ public class CemiPurchaseOrderHeaderBoFactory {
         headerBo.setEmailRowId(CemiBaseConstants.EMPTY_STRING);
         headerBo.setEmailId(CemiBaseConstants.EMPTY_STRING);
         headerBo.setEmailAddress(CemiBaseConstants.EMPTY_STRING);
-        headerBo.setBuyer(determineBuyerEmployeeId(requestorEmployeeId));
+        headerBo.setBuyer(determineBuyerEmployeeId());
         headerBo.setBillToContact(CemiBaseConstants.EMPTY_STRING);
         headerBo.setBillToContactDetail(CemiBaseConstants.EMPTY_STRING);
         headerBo.setExistingBillToAddressId(CemiBaseConstants.EMPTY_STRING);
@@ -278,21 +289,12 @@ public class CemiPurchaseOrderHeaderBoFactory {
                 .findFirst();
     }
 
-    // Copied and modified the related logic from the Supplier extract.
     private String determinePaymentTerms() {
-        purchaseOrderDocument.refreshReferenceObject("vendorPaymentTerms");
-        if (ObjectUtils.isNotNull(purchaseOrderDocument.getVendorPaymentTerms())) {
-            String paymentTermsDescription = purchaseOrderDocument.getVendorPaymentTerms()
-                    .getVendorPaymentTermsDescription();
-            if (StringUtils.isBlank(paymentTermsDescription)) {
-                return paymentTermsDescription;
-            }
-            return paymentTermsDescription
-                    .trim()
-                    .replaceAll("[^a-zA-Z0-9]+", "_") // replace spans of special chars/spaces with _
-                    .replaceAll("^_|_$", ""); // strip leading/trailing underscores
+        final String paymentTermsCode = purchaseOrderDocument.getVendorPaymentTermsCode();
+        if (StringUtils.isBlank(paymentTermsCode)) {
+            return CemiBaseConstants.EMPTY_STRING;
         }
-        return CemiBaseConstants.EMPTY_STRING;
+        return paymentTermsMappings.getOrDefault(paymentTermsCode, CemiSupplierConstants.PAYMENT_TERMS_UNKNOWN);
     }
 
     // TODO: At a future date, implement shipping term derivation logic.
@@ -310,21 +312,12 @@ public class CemiPurchaseOrderHeaderBoFactory {
         return (vendorContractId != null) ? vendorContractId.toString() : CemiBaseConstants.EMPTY_STRING;
     }
 
-    private String determineBuyerEmployeeId(final String requestorEmployeeId) {
-        if (StringUtils.isNotBlank(requestorEmployeeId)) {
-            return requestorEmployeeId;
-        } else {
-            final Person defaultBuyer = personService.getPersonByPrincipalName(
-                    CemiPurchaseOrderConstants.DEFAULT_BUYER_PRINCIPAL_NAME);
-            if (ObjectUtils.isNotNull(defaultBuyer) && StringUtils.isNotBlank(defaultBuyer.getEmployeeId())) {
-                return defaultBuyer.getEmployeeId();
-            } else {
-                LOG.warn("determineBuyerEmployeeId, Default buyer {} does not exist or has no employee ID; "
-                        + "defaulting to a blank buyer employee ID",
-                        CemiPurchaseOrderConstants.DEFAULT_BUYER_PRINCIPAL_NAME);
-                return CemiBaseConstants.EMPTY_STRING;
-            }
+    private String determineBuyerEmployeeId() {
+        final Integer contractManagerCode = purchaseOrderDocument.getContractManagerCode();
+        if (contractManagerCode == null) {
+            return CemiBaseConstants.EMPTY_STRING;
         }
+        return contractManagerEmplIdMappings.getOrDefault(contractManagerCode, CemiBaseConstants.EMPTY_STRING);
     }
 
     private String determineShipToContactEmployeeId(final String deliveryRecipientEmployeeId,
