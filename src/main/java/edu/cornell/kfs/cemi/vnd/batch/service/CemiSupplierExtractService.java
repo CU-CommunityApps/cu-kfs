@@ -12,4 +12,6 @@ public interface CemiSupplierExtractService {
 
     void generateDataConversionExtractFile(final LocalDateTime jobRunDate);
 
+    void updateDependentExtractJobRunDateParameters(final LocalDateTime jobRunDate);
+
 }

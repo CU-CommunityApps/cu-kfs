@@ -19,6 +19,8 @@ public class CreateCemiSupplierExtractStep extends AbstractStep {
         cemiSupplierExtractService.generateIntermediateExtractData(jobRunDate);
         //Phase 3: Create single multi-tabbed file.
         cemiSupplierExtractService.generateDataConversionExtractFile(jobRunDate);
+        //Phase 4: Point the Supplier-dependent extracts at this run's data.
+        cemiSupplierExtractService.updateDependentExtractJobRunDateParameters(jobRunDate);
         return true;
     }
 

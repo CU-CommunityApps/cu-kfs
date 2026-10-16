@@ -11,5 +11,7 @@ public interface CemiAwardScheduleExtractService {
     void generateIntermediateExtractData(final LocalDateTime jobRunDate);
     
     void generateDataConversionExtractFile(final LocalDateTime jobRunDate);
+
+    void updateDependentExtractJobRunDateParameters(final LocalDateTime jobRunDate);
     
 }

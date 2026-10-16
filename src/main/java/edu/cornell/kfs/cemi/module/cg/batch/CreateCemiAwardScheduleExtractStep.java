@@ -19,6 +19,8 @@ public class CreateCemiAwardScheduleExtractStep extends AbstractStep {
         cemiAwardScheduleExtractService.generateIntermediateExtractData(jobRunDate);
         //Phase 3: Create single multi-tabbed file.
         cemiAwardScheduleExtractService.generateDataConversionExtractFile(jobRunDate);
+        //Phase 4: Point the Award extract at this run's data.
+        cemiAwardScheduleExtractService.updateDependentExtractJobRunDateParameters(jobRunDate);
         return true;
     }
 

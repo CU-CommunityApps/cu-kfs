@@ -13,12 +13,15 @@ import org.kuali.kfs.module.cg.businessobject.Award;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.cornell.kfs.cemi.module.cg.CemiAwardParameterConstants;
 import edu.cornell.kfs.cemi.module.cg.CemiAwardScheduleConstants;
+import edu.cornell.kfs.cemi.module.cg.batch.CreateCemiAwardExtractStep;
 import edu.cornell.kfs.cemi.module.cg.batch.CreateCemiAwardScheduleExtractStep;
 import edu.cornell.kfs.cemi.module.cg.batch.service.CemiAwardScheduleExtractService;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleExtractDao;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleExtractOrmDao;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiDataExtractServiceBase;
+import edu.cornell.kfs.cemi.sys.util.CemiParameterUtils;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 
 public class CemiAwardScheduleExtractServiceImpl extends CemiDataExtractServiceBase
@@ -75,6 +78,18 @@ public class CemiAwardScheduleExtractServiceImpl extends CemiDataExtractServiceB
         LOG.info("generateDataConversionExtractFile, Starting creation of CEMI AwardSchedule Extract file...");
         generateFileForDataExtract(jobRunDate, CemiAwardScheduleConstants.AWARD_SCHEDULE_EXTRACT_PLAIN_FILENAME,
                 CemiAwardScheduleConstants.AWARD_SCHEDULE_EXTRACT_FILENAME_PREFIX);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public void updateDependentExtractJobRunDateParameters(final LocalDateTime jobRunDate) {
+        final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
+        LOG.info("updateDependentExtractJobRunDateParameters, Updating Award extract parameter to {}",
+                jobRunDateString);
+        CemiParameterUtils.updateDependentJobRunDateParameter(parameterService,
+                CreateCemiAwardExtractStep.class,
+                CemiAwardParameterConstants.CEMI_AWARD_EXTRACT_AWARD_SCHEDULE_DATETIME,
+                jobRunDateString);
     }
     
     // Required overriding method for base class CemiDataExtractServiceBase

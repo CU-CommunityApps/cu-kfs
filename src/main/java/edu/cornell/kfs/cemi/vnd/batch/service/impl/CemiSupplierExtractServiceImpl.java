@@ -17,12 +17,21 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.cornell.kfs.cemi.module.purap.CemiPurchaseOrderParameterConstants;
+import edu.cornell.kfs.cemi.module.purap.batch.CreateCemiPurchaseOrderExtractStep;
 import edu.cornell.kfs.cemi.sys.batch.CemiOutputDefinitionFileType;
 import edu.cornell.kfs.cemi.sys.batch.service.CemiIsoCountryService;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiDataExtractServiceBase;
+import edu.cornell.kfs.cemi.sys.util.CemiParameterUtils;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
+import edu.cornell.kfs.cemi.vnd.CemiEntityContactParameterConstants;
+import edu.cornell.kfs.cemi.vnd.CemiOrderFromSupplierParameterConstants;
+import edu.cornell.kfs.cemi.vnd.CemiRemitToSupplierParameterConstants;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierParameterConstants;
+import edu.cornell.kfs.cemi.vnd.batch.CreateCemiEntityContactExtractStep;
+import edu.cornell.kfs.cemi.vnd.batch.CreateCemiOrderFromSupplierExtractStep;
+import edu.cornell.kfs.cemi.vnd.batch.CreateCemiRemitToSupplierExtractStep;
 import edu.cornell.kfs.cemi.vnd.batch.CreateCemiSupplierExtractStep;
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiSupplierExtractService;
 import edu.cornell.kfs.cemi.vnd.dataaccess.CemiSupplierOrmDao;
@@ -121,6 +130,30 @@ public class CemiSupplierExtractServiceImpl extends CemiDataExtractServiceBase i
                 CemiSupplierConstants.SUPPLIER_EXTRACT_PLAIN_FILENAME);
         generateFileForDataExtract(jobRunDate, CemiSupplierConstants.SUPPLIER_EXTRACT_PLAIN_FILENAME,
                 CemiSupplierConstants.SUPPLIER_EXTRACT_FILENAME_PREFIX);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public void updateDependentExtractJobRunDateParameters(final LocalDateTime jobRunDate) {
+        final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
+        LOG.info("updateDependentExtractJobRunDateParameters, Updating Supplier-dependent extract parameters to {}",
+                jobRunDateString);
+        CemiParameterUtils.updateDependentJobRunDateParameter(parameterService,
+                CreateCemiRemitToSupplierExtractStep.class,
+                CemiRemitToSupplierParameterConstants.CEMI_REMIT_TO_SUPPLIER_EXTRACT_SUPPLIER_DATETIME,
+                jobRunDateString);
+        CemiParameterUtils.updateDependentJobRunDateParameter(parameterService,
+                CreateCemiOrderFromSupplierExtractStep.class,
+                CemiOrderFromSupplierParameterConstants.CEMI_ORDER_FROM_SUPPLIER_EXTRACT_SUPPLIER_DATETIME,
+                jobRunDateString);
+        CemiParameterUtils.updateDependentJobRunDateParameter(parameterService,
+                CreateCemiEntityContactExtractStep.class,
+                CemiEntityContactParameterConstants.CEMI_ENTITY_CONTACT_EXTRACT_SUPPLIER_DATETIME,
+                jobRunDateString);
+        CemiParameterUtils.updateDependentJobRunDateParameter(parameterService,
+                CreateCemiPurchaseOrderExtractStep.class,
+                CemiPurchaseOrderParameterConstants.CEMI_PURCHASE_ORDER_EXTRACT_SUPPLIER_DATETIME,
+                jobRunDateString);
     }
 
     @Override
