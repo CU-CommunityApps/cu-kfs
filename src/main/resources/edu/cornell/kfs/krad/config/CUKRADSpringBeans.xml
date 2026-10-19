@@ -35,24 +35,6 @@
           p:port="${cu.antivirus.clamav.port}"
           p:timeout="${cu.antivirus.clamav.timeout}"/>
 
-    <bean id="attachmentService" class="edu.cornell.kfs.krad.service.impl.CuAttachmentServiceImpl">
-        <property name="kualiConfigurationService">
-            <ref bean="configurationService" />
-        </property>
-        <property name="attachmentDao">
-            <ref bean="cuAttachmentDaoOjb"/>
-        </property>
-        <property name="antiVirusService">
-            <ref bean="${cu.antivirus.service}" />
-        </property>
-        <property name="noteService">
-            <ref bean="noteService" />
-        </property>
-        <property name="blackListAttachmentService">
-            <ref bean="blackListAttachmentService"/>
-        </property>
-    </bean>
-
     <bean id="maintainableXMLConversionService" class="edu.cornell.kfs.krad.service.impl.NoOpMaintainableXMLConversionServiceImpl" />
 
     <bean id="cuMaintainableXMLConversionService" parent="cuMaintainableXMLConversionService-parentBean"/>
@@ -89,5 +71,35 @@
           p:maintenanceDocumentDao-ref="maintenanceDocumentDao"
           p:personService-ref="personService"
     />
+
+    <beans profile="attachments-local">
+        <bean id="attachmentService" class="edu.cornell.kfs.krad.service.impl.CuAttachmentServiceImpl">
+            <property name="kualiConfigurationService">
+                <ref bean="configurationService" />
+            </property>
+            <property name="attachmentDao">
+                <ref bean="cuAttachmentDaoOjb"/>
+            </property>
+            <property name="antiVirusService">
+                <ref bean="${cu.antivirus.service}" />
+            </property>
+            <property name="noteService">
+                <ref bean="noteService" />
+            </property>
+            <property name="blackListAttachmentService">
+                <ref bean="blackListAttachmentService"/>
+            </property>
+        </bean>
+    </beans>
+
+    <beans profile="!attachments-local">
+        <bean class="edu.cornell.kfs.krad.service.impl.CuAmazonS3AttachmentServiceImpl"
+              id="attachmentService"
+              c:bucketName="${kfs.attachments.s3.bucketName}"
+              c:businessObjectService-ref="businessObjectService"
+              c:antiVirusService-ref="${cu.antivirus.service}"
+              c:blackListAttachmentService-ref="blackListAttachmentService"
+        />
+    </beans>
 
 </beans>
