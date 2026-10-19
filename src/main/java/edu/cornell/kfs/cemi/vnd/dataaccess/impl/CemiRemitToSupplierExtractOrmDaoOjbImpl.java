@@ -11,10 +11,11 @@ import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.CemiBasePropertyConstants;
 import edu.cornell.kfs.cemi.vnd.CemiVendorPropertyConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
-import edu.cornell.kfs.cemi.vnd.dataaccess.CemiRemitToSupplierOrmDao;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiRemitToSupplierExtractOrmDao;
 import edu.cornell.kfs.sys.util.CuOjbUtils;
 
-public class CemiRemitToSupplierOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb implements CemiRemitToSupplierOrmDao {
+public class CemiRemitToSupplierExtractOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb
+        implements CemiRemitToSupplierExtractOrmDao {
 
     private ConfigurationService configurationService;
 

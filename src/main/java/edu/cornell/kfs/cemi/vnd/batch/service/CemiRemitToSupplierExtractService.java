@@ -8,12 +8,10 @@ public interface CemiRemitToSupplierExtractService {
 
     void resetState();
 
-    void initializeExtractDateSettings();
+    void captureInScopeBusinessObjectKeysToProcessingTable();
 
-    void populateListOfInScopeAddresses();
+    void generateIntermediateExtractData(final LocalDateTime jobRunDate);
 
-    void generateIntermediateRemitToSupplierExtractData(final LocalDateTime jobRunDate);
-
-    void generateRemitToSupplierExtractFile(final LocalDateTime jobRunDate);
+    void generateDataConversionExtractFile(final LocalDateTime jobRunDate);
 
 }

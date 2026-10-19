@@ -30,6 +30,7 @@
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-vnd.xml</value>
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-supplier.xml</value>
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-entity-contact.xml</value>
+                <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-remit-to-supplier.xml</value>
                 <value>edu/cornell/kfs/cemi/module/cam/cu-ojb-cemi-register-asset.xml</value>
                 <value>edu/cornell/kfs/cemi/pdp/cu-ojb-cemi-payment-election.xml</value>
             </list>
@@ -326,17 +327,17 @@
           parent="step"
           p:cemiRemitToSupplierExtractService-ref="cemiRemitToSupplierExtractService"/>
 
-    <bean id="cemiRemitToSupplierDao" parent="cemiRemitToSupplierDao-parentBean"/>
-    <bean id="cemiRemitToSupplierDao-parentBean"
+    <bean id="cemiRemitToSupplierExtractDao" parent="cemiRemitToSupplierExtractDao-parentBean"/>
+    <bean id="cemiRemitToSupplierExtractDao-parentBean"
           abstract="true"
-          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiRemitToSupplierDaoJdbcImpl"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiRemitToSupplierExtractDaoJdbcImpl"
           parent="platformAwareDaoJdbc"
           p:dataSource-ref="cemiDataSource"/>
 
-    <bean id="cemiRemitToSupplierOrmDao" parent="cemiRemitToSupplierOrmDao-parentBean"/>
-    <bean id="cemiRemitToSupplierOrmDao-parentBean"
+    <bean id="cemiRemitToSupplierExtractOrmDao" parent="cemiRemitToSupplierExtractOrmDao-parentBean"/>
+    <bean id="cemiRemitToSupplierExtractOrmDao-parentBean"
           abstract="true"
-          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiRemitToSupplierOrmDaoOjbImpl"
+          class="edu.cornell.kfs.cemi.vnd.dataaccess.impl.CemiRemitToSupplierExtractOrmDaoOjbImpl"
           parent="platformAwareDao"
           p:configurationService-ref="configurationService"/>
 
@@ -345,14 +346,14 @@
           abstract="true"
           class="edu.cornell.kfs.cemi.vnd.batch.service.impl.CemiRemitToSupplierExtractServiceImpl"
           c:environment-ref="environment"
-          p:remitToSupplierFileCreationDirectory="${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract"
-          p:remitToSupplierFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
-          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
-          p:cemiRemitToSupplierOrmDao-ref="cemiRemitToSupplierOrmDao"
-          p:cemiRemitToSupplierDao-ref="cemiRemitToSupplierDao"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/vnd/cemiRemitToSupplierExtract"
+          p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
           p:cemiFileAppenderService-ref="cemiFileAppenderService"
-          p:businessObjectService-ref="businessObjectService"
-          p:parameterService-ref="parameterService"/>
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:parameterService-ref="parameterService"
+          p:cemiRemitToSupplierExtractOrmDao-ref="cemiRemitToSupplierExtractOrmDao"
+          p:cemiRemitToSupplierExtractDao-ref="cemiRemitToSupplierExtractDao"
+          p:businessObjectService-ref="businessObjectService"/>
 
     <!-- Order From Supplier -->
 
