@@ -225,15 +225,15 @@
           abstract="true"
           class="edu.cornell.kfs.cemi.pdp.batch.service.impl.CemiPaymentElectionExtractServiceImpl"
           c:environment-ref="environment"
-          p:paymentElectionFileCreationDirectory="${staging.directory}/cemi/pdp/cemiPaymentElectionExtract"
-          p:paymentElectionFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/pdp/cemiPaymentElectionExtract"
+          p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:parameterService-ref="parameterService"
           p:cemiPaymentElectionOrmDao-ref="cemiPaymentElectionOrmDao"
           p:cemiPaymentElectionDao-ref="cemiPaymentElectionDao"
           p:achBankService-ref="pdpAchBankService"
-          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
-          p:businessObjectService-ref="businessObjectService"
-          p:parameterService-ref="parameterService"
-          p:dateTimeService-ref="dateTimeService"/>
+          p:businessObjectService-ref="businessObjectService"/>
           
 
 
