@@ -260,7 +260,7 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         if (ObjectUtils.isNull(assetRepresentative)) {
             return KFSConstants.EMPTY_STRING;
         }
-        return StringUtils.defaultIfBlank(assetRepresentative.getPrincipalName(), KFSConstants.EMPTY_STRING);
+        return StringUtils.defaultIfBlank(assetRepresentative.getEmployeeId(), KFSConstants.EMPTY_STRING);
     }
     
     private String determinePoNumber() {
