@@ -40,6 +40,7 @@ public final class CemiRegisterAssetConstants {
     
     public static final String COST_CENTER_ID = "Cost_Center_ID";
     public static final String FUND_ID = "Fund_ID";
+    public static final String FUNCTION_ID = "Function_ID";
     public static final String CORNELL_UNIVERSITY_ITHACA = "Cornell_University_Ithaca";
     public static final String STRAIGHT_LINE = "STRAIGHT_LINE";
     public static final String DEPRECIATION_START_DATE = "2026-07-01";
