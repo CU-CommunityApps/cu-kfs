@@ -12,6 +12,7 @@ public class CemiPurchaseOrderIdBo extends PersistableBusinessObjectBase {
     private String documentTypeName;
     private String docRouteStatus;
     private Timestamp approvedDate;
+    private String explanation;
 
     public String getDocumentNumber() {
         return documentNumber;
@@ -43,6 +44,14 @@ public class CemiPurchaseOrderIdBo extends PersistableBusinessObjectBase {
 
     public void setApprovedDate(final Timestamp approvedDate) {
         this.approvedDate = approvedDate;
+    }
+
+    public String getExplanation() {
+        return explanation;
+    }
+
+    public void setExplanation(final String explanation) {
+        this.explanation = explanation;
     }
 
 }

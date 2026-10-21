@@ -358,6 +358,7 @@
         <field-descriptor name="documentTypeName" column="DOC_TYP_NM" jdbc-type="VARCHAR"/>
         <field-descriptor name="docRouteStatus" column="DOC_HDR_STAT_CD" jdbc-type="VARCHAR"/>
         <field-descriptor name="approvedDate" column="APRV_DT" jdbc-type="TIMESTAMP"/>
+        <field-descriptor name="explanation" column="EXPLANATION" jdbc-type="VARCHAR"/>
     </class-descriptor>
 
     <!-- NOTE: This BO retrieves data from a view that represents a read-only version of KFS's main PO table. -->

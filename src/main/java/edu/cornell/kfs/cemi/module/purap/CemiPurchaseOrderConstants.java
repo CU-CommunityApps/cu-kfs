@@ -25,6 +25,7 @@ public final class CemiPurchaseOrderConstants {
 
     public static final String ROOM_NUMBER_SEGMENT_PREFIX = "Room #";
     public static final String ORIGINAL_PO_AMOUNT_MEMO_PREFIX = "Original PO Amount: ";
+    public static final String BUSINESS_PURPOSE_MEMO_PREFIX = "Business Purpose: ";
     public static final String ORIGINAL_PO_LINE_AMOUNT_MEMO_PREFIX = "Original PO Line Amount: ";
 
     public static final String LEGACY_PO_CONVERSION_LABEL = "Legacy PO Conversion";

@@ -22,7 +22,7 @@ public class CemiPurchaseOrderExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase
         String optionalDocumentNumberRangeCondition = CemiBaseConstants.EMPTY_STRING;
         if (shouldUseLessDataDuringCemiDevelopment()) {
             optionalDocumentNumberRangeCondition = " WHERE FDOC_NBR  <= '20000000' OR FDOC_NBR >= '64471000'"
-                    + " FETCH FIRST 400 ROWS ONLY";
+                    + " ORDER BY FDOC_NBR FETCH FIRST 400 ROWS ONLY";
         }
 
         final String documentNumberCondition = "A0.FDOC_NBR IN ("
