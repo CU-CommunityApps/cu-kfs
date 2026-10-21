@@ -198,11 +198,13 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
     }
 
     private String determineWorktagType3() {
-        return KFSConstants.EMPTY_STRING;
+        return CemiRegisterAssetConstants.FUNCTION_ID;
     }
 
+    // TODO: This is currently using a provided default value. At a future date,
+    // update this method to use a Fund mapping table or API.
     private String determineWorktagValue3() {
-        return KFSConstants.EMPTY_STRING;
+        return CemiRegisterAssetConstants.DEFAULT_ITHACA_FUNCTION;
     }
 
     private String determineDateAcquired() {
