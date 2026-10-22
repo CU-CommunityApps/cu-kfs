@@ -39,13 +39,8 @@ public class CemiRemitToSupplierExtractServiceImpl extends CemiDataExtractServic
     }
 
     @Override
-    public void logSystemParameterValues() {
-        LOG.info("logSystemParameterValues, Environment lane is '{}', sensitive data will be {}",
-                environment.getLane(), shouldMaskCemiSensitiveData() ? "masked" : "unmasked");
-        CemiUtils.logParameterValues(parameterService, CreateCemiRemitToSupplierExtractStep.class, List.of(
-                CemiRemitToSupplierParameterConstants.COPY_CEMI_REMIT_TO_SUPPLIER_FILE_TO_OUTBOUND_FOLDER,
-                CemiSupplierParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING,
-                CemiRemitToSupplierParameterConstants.CEMI_REMIT_TO_SUPPLIER_EXTRACT_SUPPLIER_DATETIME));
+    protected List<String> getExtractSpecificParameterNamesToLog() {
+        return List.of(CemiRemitToSupplierParameterConstants.CEMI_REMIT_TO_SUPPLIER_EXTRACT_SUPPLIER_DATETIME);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
