@@ -59,7 +59,7 @@ public class CemiPaymentElectionFileExtractDataBuilderDefaultImpl extends CemiOr
 
         final CemiPaymentElectionFileGroupTwoTabRowBoFactory factoryForBo =
                 new CemiPaymentElectionFileGroupTwoTabRowBoFactory(payeeAchAccount, employeeId, achBankName,
-                        jobRunDateString, maskSensitiveData);
+                        maskSensitiveData);
 
         final CemiPaymentElectionFileGroupTwoTabRowBo groupTwoTabRow =
                 factoryForBo.createCemiPaymentElectionFileGroupTwoTabRowBo();
