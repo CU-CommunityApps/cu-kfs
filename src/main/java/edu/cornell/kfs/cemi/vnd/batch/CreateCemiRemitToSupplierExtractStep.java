@@ -25,6 +25,7 @@ public class CreateCemiRemitToSupplierExtractStep extends AbstractStep {
         LOG.info("execute, Starting CEMI Remit To Supplier Extract Step");
 
         try {
+            cemiRemitToSupplierExtractService.logSystemParameterValues();
             cemiRemitToSupplierExtractService.resetState();
             cemiRemitToSupplierExtractService.initializeExtractDateSettings();
             cemiRemitToSupplierExtractService.populateListOfInScopeAddresses();

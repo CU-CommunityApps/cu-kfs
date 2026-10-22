@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
@@ -136,6 +137,11 @@ public class CemiSupplierExtractServiceImpl extends CemiDataExtractServiceBase i
     @Override
     protected String getTemplateWorkbookFilePathSuffix() {
         return CemiSupplierConstants.SUPPLIER_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX;
+    }
+
+    @Override
+    protected List<String> getExtractSpecificParameterNamesToLog() {
+        return List.of(CemiSupplierParameterConstants.CEMI_SUPPLIER_EXTRACT_DATE_RANGE);
     }
 
     public void setCemiOutputDefinitionFileType(final CemiOutputDefinitionFileType cemiOutputDefinitionFileType) {

@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -19,6 +20,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.impl.parameter.Parameter;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 
@@ -30,6 +35,8 @@ import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public final class CemiUtils {
+
+    private static final Logger LOG = LogManager.getLogger();
 
     private static final DateTimeFormatter FILE_DATE_TIME_FORMATTER = DateTimeFormatter
                 .ofPattern(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmss, Locale.US)
@@ -150,6 +157,22 @@ public final class CemiUtils {
 
     public static boolean valueOnlyContainsWordCharacters(final String value) {
         return StringUtils.isNotBlank(value) && WORD_CHARS_PATTERN.matcher(value).matches();
+    }
+
+    public static void logParameterValues(final ParameterService parameterService, final Class<?> componentClass,
+            final Collection<String> parameterNames) {
+        Validate.notNull(parameterService, "parameterService cannot be null");
+        Validate.notNull(componentClass, "componentClass cannot be null");
+        for (final String parameterName : parameterNames) {
+            if (Boolean.TRUE.equals(parameterService.parameterExists(componentClass, parameterName))) {
+                final Parameter parameter = parameterService.getParameter(componentClass, parameterName);
+                LOG.info("logParameterValues, {} parameter {} has value '{}'",
+                        componentClass.getSimpleName(), parameterName, parameter.getValue());
+            } else {
+                LOG.warn("logParameterValues, {} parameter {} is not defined",
+                        componentClass.getSimpleName(), parameterName);
+            }
+        }
     }
 
     public static String formatAsValueContainingOnlyWordChars(final String value) {

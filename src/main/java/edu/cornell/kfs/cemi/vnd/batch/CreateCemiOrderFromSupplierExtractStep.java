@@ -25,6 +25,7 @@ public class CreateCemiOrderFromSupplierExtractStep extends AbstractStep {
         LOG.info("execute, Starting CEMI Order From Supplier Extract Step");
 
         try {
+            cemiOrderFromSupplierExtractService.logSystemParameterValues();
             cemiOrderFromSupplierExtractService.resetState();
             cemiOrderFromSupplierExtractService.initializeExtractDateSettings();
             cemiOrderFromSupplierExtractService.populateListOfKfsVendorAddressMappings();

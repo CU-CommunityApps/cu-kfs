@@ -8,6 +8,7 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +26,7 @@ import edu.cornell.kfs.cemi.sys.batch.service.CemiFileAppenderService;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiOrderFromSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiOrderFromSupplierParameterConstants;
+import edu.cornell.kfs.cemi.vnd.CemiSupplierParameterConstants;
 import edu.cornell.kfs.cemi.vnd.batch.CreateCemiOrderFromSupplierExtractStep;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
 import edu.cornell.kfs.cemi.vnd.batch.service.CemiOrderFromSupplierExtractService;
@@ -44,6 +46,16 @@ public class CemiOrderFromSupplierExtractServiceImpl extends CemiDataExtractServ
 
     public CemiOrderFromSupplierExtractServiceImpl(final Environment environment) {
         super(environment);
+    }
+
+    @Override
+    public void logSystemParameterValues() {
+        LOG.info("logSystemParameterValues, Environment lane is '{}', sensitive data will be {}",
+                environment.getLane(), shouldMaskCemiSensitiveData() ? "masked" : "unmasked");
+        CemiUtils.logParameterValues(parameterService, CreateCemiOrderFromSupplierExtractStep.class, List.of(
+                CemiOrderFromSupplierParameterConstants.COPY_CEMI_ORDER_FROM_SUPPLIER_FILE_TO_OUTBOUND_FOLDER,
+                CemiSupplierParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING,
+                CemiOrderFromSupplierParameterConstants.CEMI_ORDER_FROM_SUPPLIER_EXTRACT_SUPPLIER_DATETIME));
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)

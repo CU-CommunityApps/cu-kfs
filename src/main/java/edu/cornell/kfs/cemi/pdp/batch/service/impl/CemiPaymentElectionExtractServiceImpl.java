@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
@@ -62,6 +63,15 @@ public class CemiPaymentElectionExtractServiceImpl implements CemiPaymentElectio
         this.environment = environment;
     }
     
+    @Override
+    public void logSystemParameterValues() {
+        LOG.info("logSystemParameterValues, Environment lane is '{}', sensitive data will be {}",
+                environment.getLane(), shouldMaskCemiSensitiveData() ? "masked" : "unmasked");
+        CemiUtils.logParameterValues(parameterService, CreateCemiPaymentElectionExtractStep.class, List.of(
+                CemiPaymentElectionParameterConstants.COPY_CEMI_PAYMENT_ELECTION_FILE_TO_OUTBOUND_FOLDER,
+                CemiBaseParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING));
+    }
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void resetState() {

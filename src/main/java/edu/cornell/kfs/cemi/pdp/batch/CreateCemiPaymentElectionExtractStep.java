@@ -13,6 +13,7 @@ public class CreateCemiPaymentElectionExtractStep extends AbstractStep {
     @Override
     public boolean execute(final String jobName, final LocalDateTime jobRunDate) throws InterruptedException {
         //Phase1: Obtain the dataset
+        cemiPaymentElectionExtractService.logSystemParameterValues();
         cemiPaymentElectionExtractService.resetState();
         cemiPaymentElectionExtractService.captureInScopeBusinessObjectKeysToProcessingTable();
         //Phase 2: Loop through result set to create all the csv files

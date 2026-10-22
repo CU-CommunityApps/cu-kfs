@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 public interface CemiRegisterAssetExtractService {
     
+    void logSystemParameterValues();
+
     void resetState();
     
     void captureInScopeBusinessObjectKeysToProcessingTable();

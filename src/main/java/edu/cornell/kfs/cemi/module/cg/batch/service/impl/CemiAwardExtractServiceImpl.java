@@ -2,6 +2,7 @@ package  edu.cornell.kfs.cemi.module.cg.batch.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -133,6 +134,12 @@ public class CemiAwardExtractServiceImpl extends CemiDataExtractServiceBase impl
     @Override
     protected String getTemplateWorkbookFilePathSuffix() {
         return CemiAwardConstants.AWARD_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX;
+    }
+
+    @Override
+    protected List<String> getExtractSpecificParameterNamesToLog() {
+        return List.of(CemiAwardParameterConstants.CEMI_AWARD_EXTRACT_AWARD_SCHEDULE_DATETIME,
+                CemiAwardParameterConstants.CEMI_AWARD_EXTRACT_FISCAL_YEAR);
     }
 
     public void setCemiAwardExtractOrmDao(CemiAwardExtractOrmDao cemiAwardExtractOrmDao) {

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 public interface CemiPaymentElectionExtractService {
     
+    void logSystemParameterValues();
+
     void resetState();
     
     void captureInScopeBusinessObjectKeysToProcessingTable();

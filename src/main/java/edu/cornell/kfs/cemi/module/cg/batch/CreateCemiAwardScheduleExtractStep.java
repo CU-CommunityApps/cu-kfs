@@ -13,6 +13,7 @@ public class CreateCemiAwardScheduleExtractStep extends AbstractStep {
     @Override
     public boolean execute(final String jobName, final LocalDateTime jobRunDate) throws InterruptedException {
         //Phase1: Obtain the dataset
+        cemiAwardScheduleExtractService.logSystemParameterValues();
         cemiAwardScheduleExtractService.resetState();
         cemiAwardScheduleExtractService.captureInScopeBusinessObjectKeysToProcessingTable();
         //Phase 2: Loop through result set to create all the csv files

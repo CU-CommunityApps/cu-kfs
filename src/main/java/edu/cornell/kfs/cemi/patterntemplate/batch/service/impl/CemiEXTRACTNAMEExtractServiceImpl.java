@@ -112,6 +112,18 @@ public class CemiEXTRACTNAMEExtractServiceImpl extends CemiDataExtractServiceBas
         return CemiEXTRACTNAMEConstants.EXTRACTNAME_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX;
     }
 
+    // Optional overriding method for base class CemiDataExtractServiceBase
+    // When the data extraction uses its own system parameters (such as a date range or a dependent extract's
+    // run date), override this method so those parameter values are logged when the batch job runs.
+    // The COPY_CEMI_FILE_TO_OUTBOUND_FOLDER and CEMI_SENSITIVE_DATA_MASKING_SETTING parameters are always logged
+    // by the base class and should NOT be included here.
+    //
+    //      Example:
+    //          @Override
+    //          protected List<String> getExtractSpecificParameterNamesToLog() {
+    //              return List.of(CemiEXTRACTNAMEParameterConstants.CEMI_EXTRACTNAME_EXTRACT_DATE_RANGE);
+    //          }
+
     public void setCemiEXTRACTNAMEExtractOrmDao(CemiEXTRACTNAMEExtractOrmDao cemiEXTRACTNAMEExtractOrmDao) {
         this.cemiEXTRACTNAMEExtractOrmDao = cemiEXTRACTNAMEExtractOrmDao;
     }

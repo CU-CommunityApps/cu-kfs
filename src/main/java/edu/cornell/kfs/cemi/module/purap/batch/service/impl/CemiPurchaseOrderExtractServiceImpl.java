@@ -2,6 +2,7 @@ package  edu.cornell.kfs.cemi.module.purap.batch.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -122,6 +123,11 @@ public class CemiPurchaseOrderExtractServiceImpl extends CemiDataExtractServiceB
     @Override
     protected String getTemplateWorkbookFilePathSuffix() {
         return CemiPurchaseOrderConstants.PURCHASE_ORDER_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX;
+    }
+
+    @Override
+    protected List<String> getExtractSpecificParameterNamesToLog() {
+        return List.of(CemiPurchaseOrderParameterConstants.CEMI_PURCHASE_ORDER_EXTRACT_SUPPLIER_DATETIME);
     }
 
     public void setCemiPurchaseOrderExtractOrmDao(final CemiPurchaseOrderExtractOrmDao cemiPurchaseOrderExtractOrmDao) {

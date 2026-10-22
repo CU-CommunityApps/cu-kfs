@@ -8,7 +8,10 @@ package  edu.cornell.kfs.cemi.patterntemplate.batch.service;
 import java.time.LocalDateTime;
 
 public interface CemiEXTRACTNAMEExtractService {
-    
+
+    // Default implementation is provided by abstract base class CemiDataExtractServiceBase.
+    void logSystemParameterValues();
+
     void resetState();
     
     void captureInScopeBusinessObjectKeysToProcessingTable();

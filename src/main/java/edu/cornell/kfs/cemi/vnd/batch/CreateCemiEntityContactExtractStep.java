@@ -12,6 +12,7 @@ public class CreateCemiEntityContactExtractStep extends AbstractStep {
 
     @Override
     public boolean execute(final String jobName, final LocalDateTime jobRunDate) throws InterruptedException {
+        cemiEntityContactExtractService.logSystemParameterValues();
         cemiEntityContactExtractService.resetState();
         cemiEntityContactExtractService.captureInScopeBusinessObjectKeysToProcessingTable(); 
         cemiEntityContactExtractService.generateIntermediateExtractData(jobRunDate);

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 public interface CemiAwardExtractService {
     
+    void logSystemParameterValues();
+
     void resetState();
     
     void initializeExtractDateSettings();
