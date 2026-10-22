@@ -371,11 +371,25 @@ public class CemiPurchaseOrderHeaderBoFactory {
     }
 
     private String determineMemoForSupplier() {
+        final CemiPurchaseOrderIdBo purchaseOrderIdBo = purchaseOrderDocument.getPurchaseOrderIdBo();
+        Validate.validState(ObjectUtils.isNotNull(purchaseOrderIdBo),
+                "Purchase Order ID helper object for PO Document Number %s should not have been null",
+                purchaseOrderDocument.getDocumentNumber());
+
         final KualiDecimal totalDollarAmount = CemiPurchaseOrderUtils
                 .getTotalPurchaseOrderDollarAmount(purchaseOrderDocument);
         final String originalPurchaseOrderTotalAmount = CemiPurchaseOrderUtils.formatAmount(totalDollarAmount);
-        return StringUtils.join(
-                CemiPurchaseOrderConstants.ORIGINAL_PO_AMOUNT_MEMO_PREFIX, originalPurchaseOrderTotalAmount);
+
+        final StringBuilder memo = new StringBuilder(100);
+        memo.append(CemiPurchaseOrderConstants.ORIGINAL_PO_AMOUNT_MEMO_PREFIX)
+                .append(originalPurchaseOrderTotalAmount);
+        if (StringUtils.isNotBlank(purchaseOrderIdBo.getExplanation())) {
+            memo.append(KFSConstants.NEWLINE)
+                    .append(CemiPurchaseOrderConstants.BUSINESS_PURPOSE_MEMO_PREFIX)
+                    .append(purchaseOrderIdBo.getExplanation());
+        }
+
+        return memo.toString();
     }
 
 }

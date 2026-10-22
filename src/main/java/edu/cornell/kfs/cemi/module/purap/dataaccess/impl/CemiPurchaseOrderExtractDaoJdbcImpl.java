@@ -33,8 +33,8 @@ public class CemiPurchaseOrderExtractDaoJdbcImpl extends CuSqlQueryPlatformAware
     public void queryAndStoreInScopeBusinessObjectKeysForDataExtract() {
         final CuSqlQuery query = new CuSqlChunk()
                 .append("INSERT INTO CEMI.CU_CEMI_EXTR_PURCHASE_ORDER_IN_SCOPE_PO_DOCS_T ")
-                .append("(FDOC_NBR, DOC_TYP_NM, DOC_HDR_STAT_CD, APRV_DT) ")
-                .append("SELECT FDOC_NBR, DOC_TYP_NM, DOC_HDR_STAT_CD, APRV_DT ")
+                .append("(FDOC_NBR, DOC_TYP_NM, DOC_HDR_STAT_CD, APRV_DT, EXPLANATION) ")
+                .append("SELECT FDOC_NBR, DOC_TYP_NM, DOC_HDR_STAT_CD, APRV_DT, EXPLANATION ")
                 .append("FROM CEMI.CU_CEMI_EXTR_PURCHASE_ORDER_OPEN_PO_DOCS_V")
                 .toQuery();
 
