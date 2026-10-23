@@ -208,7 +208,14 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
     }
 
     private String determineDateAcquired() {
-        return determineFormattedDate(asset.getCreateDate());
+        Date createDate = asset.getCreateDate();
+        Date inServiceDate = asset.getCapitalAssetInServiceDate();
+        if (ObjectUtils.isNotNull(createDate) && ObjectUtils.isNotNull(inServiceDate)) {
+            if (createDate.after(inServiceDate)) {
+                return determineFormattedDate(inServiceDate);
+            }
+        }
+        return determineFormattedDate(createDate);
     }
 
     private String determineDatePlacedInService() {
