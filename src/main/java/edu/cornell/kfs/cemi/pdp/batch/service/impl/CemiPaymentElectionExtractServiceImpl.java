@@ -2,7 +2,6 @@ package  edu.cornell.kfs.cemi.pdp.batch.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
-import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
@@ -15,13 +14,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.cemi.pdp.CemiPaymentElectionConstants;
-import edu.cornell.kfs.cemi.pdp.CemiPaymentElectionParameterConstants;
 import edu.cornell.kfs.cemi.pdp.batch.CreateCemiPaymentElectionExtractStep;
 import edu.cornell.kfs.cemi.pdp.batch.service.CemiPaymentElectionExtractService;
 import edu.cornell.kfs.cemi.pdp.batch.service.CemiPaymentElectionFileExtractDataBuilder;
 import edu.cornell.kfs.cemi.pdp.dataaccess.CemiPaymentElectionDao;
 import edu.cornell.kfs.cemi.pdp.dataaccess.CemiPaymentElectionOrmDao;
-import edu.cornell.kfs.cemi.sys.CemiBaseParameterConstants;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiDataExtractServiceBase;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 
@@ -37,15 +34,6 @@ public class CemiPaymentElectionExtractServiceImpl extends CemiDataExtractServic
 
     public CemiPaymentElectionExtractServiceImpl(final Environment environment) {
         super(environment);
-    }
-
-    @Override
-    public void logSystemParameterValues() {
-        LOG.info("logSystemParameterValues, Environment lane is '{}', sensitive data will be {}",
-                environment.getLane(), shouldMaskCemiSensitiveData() ? "masked" : "unmasked");
-        CemiUtils.logParameterValues(parameterService, CreateCemiPaymentElectionExtractStep.class, List.of(
-                CemiPaymentElectionParameterConstants.COPY_CEMI_PAYMENT_ELECTION_FILE_TO_OUTBOUND_FOLDER,
-                CemiBaseParameterConstants.CEMI_SENSITIVE_DATA_MASKING_SETTING));
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
