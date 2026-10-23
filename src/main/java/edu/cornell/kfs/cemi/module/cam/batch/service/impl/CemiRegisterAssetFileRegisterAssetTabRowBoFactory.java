@@ -317,6 +317,9 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
     }
     
     private String determineDepreciationStartDate() {
+        if(ObjectUtils.isNull(asset.getCapitalAssetInServiceDate())) {
+            return KFSConstants.EMPTY_STRING; 
+        }
         return CemiRegisterAssetConstants.DEPRECIATION_START_DATE;
     }
 
