@@ -53,7 +53,7 @@ public final class CemiSupplierConstants {
     public static final String DEFAULT_NAME_USAGE = "Reference";
     public static final String DEFAULT_ADDRESS_TYPE = "BUSINESS";
     public static final String DEFAULT_INTERNATIONAL_PHONE_TYPE = "1";
-    public static final String DEFAULT_PHONE_DEVICE_TYPE = "Landline";
+    public static final String DEFAULT_PHONE_DEVICE_TYPE = "Telephone";
 
     public static final String USA_EIN_TAX_TYPE = "USA-EIN";
     public static final String USA_SSN_TAX_TYPE = "USA-SSN";
@@ -69,13 +69,13 @@ public final class CemiSupplierConstants {
     public static final Map<String, List<String>> ADDRESS_USES = Map.ofEntries(
             Map.entry(AddressTypes.PURCHASE_ORDER, List.of("PROCUREMENT", "SHIPPING")),
             Map.entry(AddressTypes.REMIT, List.of("REMIT")),
-            Map.entry(CUAddressTypes.TAX, List.of("TAX"))
+            Map.entry(CUAddressTypes.TAX, List.of("TAX_REPORTING"))
     );
 
     public static final Map<String, List<String>> ADDRESS_TENANTED_USES = Map.ofEntries(
             Map.entry(AddressTypes.PURCHASE_ORDER, List.of("Procurement", "Shipping")),
             Map.entry(AddressTypes.REMIT, List.of("Remit_To")),
-            Map.entry(CUAddressTypes.TAX, List.of("Tax"))
+            Map.entry(CUAddressTypes.TAX, List.of("Tax_Reporting"))
     );
 
     public static final Set<String> EMAIL_EXCLUDED_ADDRESS_TYPES = Set.of(

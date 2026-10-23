@@ -85,12 +85,16 @@ public class CemiSupplierTaxIdBoFactory {
         }
     }
 
-    // default to true if tax id is present, FALSE if tax type USA_SSN
+    /*
+     * OLD logic for reference (in case we need to go back to it):
+     * Default to TRUE if tax id is present, FALSE if tax type USA_SSN, blank if no tax ID.
+     *
+     * NEW logic:
+     * Default to FALSE if tax id is present, blank if no tax ID.
+     */
     private String determineTransactionTaxId(final String taxIdText, final String taxIdType) {
         if (StringUtils.isNotBlank(taxIdText)) {
-            boolean transactionTaxId = StringUtils.isNotBlank(taxIdType)
-                    && !CemiSupplierConstants.USA_SSN_TAX_TYPE.equalsIgnoreCase(taxIdType);
-            return CemiUtils.convertToBooleanValueForFileExtract(transactionTaxId);
+            return CemiUtils.convertToBooleanValueForFileExtract(false);
         } else {
             return CemiBaseConstants.EMPTY_STRING;
         }
