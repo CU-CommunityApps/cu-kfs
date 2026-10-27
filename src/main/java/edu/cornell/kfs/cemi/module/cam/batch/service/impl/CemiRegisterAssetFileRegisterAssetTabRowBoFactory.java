@@ -93,8 +93,8 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         registerAssetTabDataRow.setDepreciationPercentOverride(determineDepreciationPercentOverride());
         registerAssetTabDataRow.setUsefulLifeInPeriodsOverride(determineUsefulLifeInPeriodsOverride());
         registerAssetTabDataRow.setDepreciationThresholdOverride(determineDepreciationThresholdOverride());
-        registerAssetTabDataRow.setDepreciationStartDate(determineDepreciationStartDate());
-        registerAssetTabDataRow.setRemainingDepreciationPeriods(determineRemainingDepreciationPeriods());
+        registerAssetTabDataRow.setDepreciationStartDate(determineDepreciationStartDate(registerAssetTabDataRow.getAssetClass()));
+        registerAssetTabDataRow.setRemainingDepreciationPeriods(determineRemainingDepreciationPeriods(registerAssetTabDataRow.getAssetClass()));
         registerAssetTabDataRow.setAccumulatedDepreciation(determineAccumulatedDepreciation());
 
         return registerAssetTabDataRow;
@@ -219,7 +219,11 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
     }
 
     private String determineDatePlacedInService() {
-        return determineFormattedDate(asset.getCapitalAssetInServiceDate());
+        Date placedInServiceDate = asset.getCapitalAssetInServiceDate();
+        if(ObjectUtils.isNull(placedInServiceDate)) {
+            return determineFormattedDate(asset.getCreateDate());
+        }
+        return determineFormattedDate(placedInServiceDate);
     }
 
     private String determineLocation() {
@@ -323,11 +327,17 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         return KFSConstants.EMPTY_STRING;
     }
     
-    private String determineDepreciationStartDate() {
-        return CemiRegisterAssetConstants.DEPRECIATION_START_DATE;
+    private String determineDepreciationStartDate(String assetClass) {
+        if(CemiRegisterAssetConstants.NON_DEPRECIATION_ASSET_CLASS_ID.equalsIgnoreCase(assetClass)) {
+            return KFSConstants.EMPTY_STRING; 
+        }
+        return determineFormattedDate(asset.getCapitalAssetInServiceDate());
     }
 
-    private String determineRemainingDepreciationPeriods() {
+    private String determineRemainingDepreciationPeriods(String assetClass) {
+        if(CemiRegisterAssetConstants.NON_DEPRECIATION_ASSET_CLASS_ID.equalsIgnoreCase(assetClass)) {
+            return CemiRegisterAssetConstants.NUMERIC_ZERO;
+        }
         return CemiRegisterAssetConstants.NUMERIC_ONE;
     }
 
