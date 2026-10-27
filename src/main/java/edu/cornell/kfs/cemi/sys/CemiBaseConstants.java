@@ -33,6 +33,11 @@ public final class CemiBaseConstants {
 
     public static final String YES = "Y";
     
+    public static final String CLOVERDX_TRUE = "TRUE";    
+    public static final String CLOVERDX_FALSE = "FALSE";
+    public static final String EIB_YES = "Y";
+    public static final String EIB_NO = "N";
+
     public static final String EMPTY_STRING = "";
     
     // Date Formats

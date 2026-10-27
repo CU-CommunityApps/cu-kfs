@@ -16,8 +16,8 @@ public final class CemiSupplierConstants {
 
     public static final String EMPTY_STRING = KFSConstants.EMPTY_STRING;
     
-    public static final String SUPPLIER_ID_FORMAT = "'SUPP'000000";
-    public static final String SUPPLIER_REFERENCE_ID_FORMAT = "SUPU_{0}-{1}";
+    public static final String SUPPLIER_ID_FORMAT = "'SUP'000000";
+    public static final String SUPPLIER_REFERENCE_ID_FORMAT = "SUP_{0}-{1}";
     public static final String ADDRESS_ID_FORMAT = "{0}_{1}_{2}";
     public static final String EMAIL_ID_FORMAT = "{0}_{1}_{2}";
     public static final String PHONE_ID_FORMAT = "{0}_{1}_{2}";
@@ -35,6 +35,7 @@ public final class CemiSupplierConstants {
     public static final int MAX_ACCOUNT_PAYMENT_TYPES = 3;
     public static final int MAX_SUPPLIER_ACCEPTED_PAYMENT_TYPES = 3;
     public static final int MAX_SUPPLIER_ALIASES = 2;
+    public static final int MAX_SUPPLIER_CLASSIFICATIONS = 2;
     public static final int MIN_DIGIT_COUNT_FOR_ASSUMED_FOREIGN_PHONE = 11;
 
     public static final String SUPPLIER_OUTPUT_DEFINITION_FILE_PATH_SUFFIX = "vnd/batch/CemiSupplierExtractFileOutputDefinition.xml";
@@ -68,7 +69,7 @@ public final class CemiSupplierConstants {
 
     public static final Map<String, List<String>> ADDRESS_USES = Map.ofEntries(
             Map.entry(AddressTypes.PURCHASE_ORDER, List.of("PROCUREMENT", "SHIPPING")),
-            Map.entry(AddressTypes.REMIT, List.of("REMIT")),
+            Map.entry(AddressTypes.REMIT, List.of("REMIT_TO")),
             Map.entry(CUAddressTypes.TAX, List.of("TAX_REPORTING"))
     );
 
@@ -118,6 +119,11 @@ public final class CemiSupplierConstants {
         public static final String FORM_1042S = "1042-S";
     }
 
+    public static final class PurchaseOrderIssueOptions {
+        public static final String XML_AUTO = "XML Auto";
+        public static final String EMAIL = "Email";
+        public static final String PRINT = "Print";
+    }
     
     // Phone Types can be created by the functional users in the transactional system.
     // There are no constants class in base code nor Cornell's overlay that lists all phone types.

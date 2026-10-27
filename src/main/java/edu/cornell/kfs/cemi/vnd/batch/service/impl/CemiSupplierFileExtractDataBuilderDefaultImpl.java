@@ -34,7 +34,9 @@ import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiOrmDataBuilderBase;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants.SupplierExtractSheets;
+import edu.cornell.kfs.cemi.vnd.batch.CemiSupplierClassification;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierBankAccountBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierClassificationMappingBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierEmailBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileBankAccountsTabRowBo;
@@ -62,11 +64,13 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
 
     private ISOFIPSConversionService isoFipsConversionService;
     private CemiIsoCountryService cemiIsoCountryService;
+    private CemiSupplierDao cemiSupplierDao;
     private boolean maskSensitiveData;
     private DecimalFormat supplierIdFormatter;
     private CemiSupplierBankAccountBo emptyBankAccountBo;
     private CemiSupplierEmailBo emptyEmailBo;
     private Map<String, String> paymentTermsMappings;
+    private List<CemiSupplierClassificationMappingBo> supplierClassificationMappings;
 
     public CemiSupplierFileExtractDataBuilderDefaultImpl(
             final BusinessObjectService businessObjectService, final String jobRunDateString,
@@ -86,6 +90,7 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
 
         this.isoFipsConversionService = isoFipsConversionService;
         this.cemiIsoCountryService = cemiIsoCountryService;
+        this.cemiSupplierDao = cemiSupplierDao;
         this.maskSensitiveData = maskSensitiveData;
         this.supplierIdFormatter = new DecimalFormat(CemiSupplierConstants.SUPPLIER_ID_FORMAT);
         this.emptyBankAccountBo = CemiSupplierBankAccountBoFactory.createBankAccountBoFrom(
@@ -93,6 +98,7 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
         this.emptyEmailBo = CemiSupplierEmailBoFactory.createEmailBoFrom(
                 List.of(), CemiBaseConstants.EMPTY_STRING, false, 0);
         this.paymentTermsMappings = cemiSupplierDao.getPaymentTermsMappings();
+        this.supplierClassificationMappings = CemiSupplierClassification.getClassificationMappingsList();
     }
 
     @Override
@@ -174,8 +180,8 @@ public class CemiSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBu
     private void createAndStoreSupplierFileSupplierTabRow(final VendorDetail vendor, final String supplierId,
             final boolean vendorHasActiveBankAccounts) {
         final CemiSupplierFileSupplierTabRowBo supplierRowBo = CemiSupplierFileSupplierTabRowBoFactory
-                .createTabRowBoFrom(vendor, supplierId, isoFipsConversionService, maskSensitiveData,
-                        vendorHasActiveBankAccounts, paymentTermsMappings);
+                .createTabRowBoFrom(vendor, supplierId, isoFipsConversionService, cemiSupplierDao, maskSensitiveData,
+                        vendorHasActiveBankAccounts, paymentTermsMappings, supplierClassificationMappings);
         storeSheetRow(supplierRowBo);
     }
 

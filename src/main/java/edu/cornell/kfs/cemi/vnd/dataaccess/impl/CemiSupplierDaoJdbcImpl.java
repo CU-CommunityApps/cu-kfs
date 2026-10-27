@@ -125,4 +125,18 @@ public class CemiSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc 
         });
     }
 
+    // TODO: Potentially look into renaming the source table, now that the Supplier extract is using it.
+    @Override
+    public boolean isB2BVendor(final Integer vendorHeaderGeneratedIdentifier,
+            final Integer vendorDetailAssignedIdentifier) {
+        final CuSqlQuery query = new CuSqlChunk()
+                .append("SELECT COUNT(1) FROM CEMI.CU_CEMI_EXTR_ORD_FRM_SUPP_B2B_VNDR_T ")
+                .append("WHERE VNDR_HDR_GNRTD_ID = ").appendAsParameter(Types.INTEGER, vendorHeaderGeneratedIdentifier)
+                .append(" AND VNDR_DTL_ASND_ID = ").appendAsParameter(Types.INTEGER, vendorDetailAssignedIdentifier)
+                .toQuery();
+
+        final int count = queryForResults(query, resultSet -> resultSet.next() ? resultSet.getInt(1) : 0);
+        return count == 1;
+    }
+
 }

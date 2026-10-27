@@ -1,11 +1,14 @@
 package edu.cornell.kfs.cemi.vnd.util;
 
+import java.sql.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -27,6 +30,7 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
+import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
@@ -36,6 +40,9 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 public final class CemiVendorUtils {
 
     private static final Logger LOG = LogManager.getLogger();
+
+    private static final DateTimeFormatter DATETIME_FORMATTER_YYYY_MM_DD = DateTimeFormatter.ofPattern(
+            CUKFSConstants.DATE_FORMAT_yyyy_MM_dd, Locale.US);
 
     public static List<List<VendorAddress>> reorderAddressGroupsToPutPrimaryGroupFirst(
             final String vendorTypeCode, final Collection<List<VendorAddress>> addressGroups) {
@@ -77,7 +84,7 @@ public final class CemiVendorUtils {
         }
     }
 
-    private static boolean isPurchaseOrderVendor(final String vendorTypeCode) {
+    public static boolean isPurchaseOrderVendor(final String vendorTypeCode) {
         return StringUtils.equals(vendorTypeCode, VendorConstants.VendorTypes.PURCHASE_ORDER);
     }
 
@@ -266,6 +273,10 @@ public final class CemiVendorUtils {
         } else {
             return CemiSupplierConstants.PAYMENT_TYPE_OUTSOURCED_CHECK;
         }
+    }
+
+    public static String formatDate(final Date date) {
+        return (date != null) ? DATETIME_FORMATTER_YYYY_MM_DD.format(date.toLocalDate()) : CemiBaseConstants.EMPTY_STRING;
     }
 
 }

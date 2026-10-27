@@ -17,4 +17,6 @@ public interface CemiSupplierDao {
 
     Map<String, String> getPaymentTermsMappings();
 
+    boolean isB2BVendor(final Integer vendorHeaderGeneratedIdentifier, final Integer vendorDetailAssignedIdentifier);
+
 }
