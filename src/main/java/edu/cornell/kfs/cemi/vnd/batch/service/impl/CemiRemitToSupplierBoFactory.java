@@ -9,6 +9,7 @@ import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiRemitToSupplierConstants;
+import edu.cornell.kfs.cemi.vnd.batch.CemiSupplierAlwaysSeparatePayments;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileSupplierTabRowBo;
@@ -67,7 +68,7 @@ public class CemiRemitToSupplierBoFactory {
         final String connectionName = generateConnectionName();
         final String connectionId = generateConnectionId(connectionName);
         final String isDefault = CemiUtils.convertToBooleanValueForFileExtract(defaultConnection);
-        final String alwaysSeparatePayments = CemiUtils.convertToBooleanValueForFileExtract(false);
+        final String alwaysSeparatePayments = determineAlwaysSeparatePayments();
 
         remitToSupplier.setSupplierId(supplier.getSupplierId());
         remitToSupplier.setSupplierConnectionId(connectionId);
@@ -97,6 +98,12 @@ public class CemiRemitToSupplierBoFactory {
     private String generateConnectionId(final String connectionName) {
         return MessageFormat.format(CemiRemitToSupplierConstants.SUPPLIER_REMIT_TO_CONNECTION_ID_FORMAT,
                 supplier.getSupplierId(), connectionName, remitIndexForSupplier);
+    }
+
+    private String determineAlwaysSeparatePayments() {
+        final boolean alwaysSeparatePayments = CemiSupplierAlwaysSeparatePayments.shouldAlwaysSeparatePaymentsForVendor(
+                supplier.getVendorHeaderGeneratedIdentifier(), supplier.getVendorDetailAssignedIdentifier());
+        return CemiUtils.convertToBooleanValueForFileExtract(alwaysSeparatePayments);
     }
 
 }
