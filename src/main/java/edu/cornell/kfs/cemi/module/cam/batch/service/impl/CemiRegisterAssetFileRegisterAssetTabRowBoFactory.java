@@ -93,7 +93,7 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         registerAssetTabDataRow.setDepreciationPercentOverride(determineDepreciationPercentOverride());
         registerAssetTabDataRow.setUsefulLifeInPeriodsOverride(determineUsefulLifeInPeriodsOverride());
         registerAssetTabDataRow.setDepreciationThresholdOverride(determineDepreciationThresholdOverride());
-        registerAssetTabDataRow.setDepreciationStartDate(determineDepreciationStartDate(registerAssetTabDataRow.getAssetClass()));
+        registerAssetTabDataRow.setDepreciationStartDate(determineDepreciationStartDate(registerAssetTabDataRow.getAssetClass(), registerAssetTabDataRow.getDatePlacedInService()));
         registerAssetTabDataRow.setRemainingDepreciationPeriods(determineRemainingDepreciationPeriods(registerAssetTabDataRow.getAssetClass()));
         registerAssetTabDataRow.setAccumulatedDepreciation(determineAccumulatedDepreciation());
 
@@ -327,11 +327,11 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         return KFSConstants.EMPTY_STRING;
     }
     
-    private String determineDepreciationStartDate(String assetClass) {
+    private String determineDepreciationStartDate(String assetClass, String placedInServiceDate) {
         if(CemiRegisterAssetConstants.NON_DEPRECIATION_ASSET_CLASS_ID.equalsIgnoreCase(assetClass)) {
             return KFSConstants.EMPTY_STRING; 
         }
-        return determineFormattedDate(asset.getCapitalAssetInServiceDate());
+        return placedInServiceDate;
     }
 
     private String determineRemainingDepreciationPeriods(String assetClass) {
