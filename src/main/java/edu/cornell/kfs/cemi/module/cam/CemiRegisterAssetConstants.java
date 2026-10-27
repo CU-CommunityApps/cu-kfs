@@ -37,6 +37,7 @@ public final class CemiRegisterAssetConstants {
     public static final String DEFAULT_ITHACA_SPEND_CATEGORY = "SC9999";
     
     public static final String NUMERIC_ONE = "1";
+    public static final String NUMERIC_ZERO = "0";
     
     public static final String COST_CENTER_ID = "Cost_Center_Reference_ID";
     public static final String FUND_ID = "Fund_ID";
@@ -64,5 +65,7 @@ public final class CemiRegisterAssetConstants {
 
     public static final Set<String> OTHER_ACQUISITION_TYPE_CODES = Set.of("G", "T", "Y");
     public static final Set<String> PURCHASED_ACQUISITION_TYPE_CODES = Set.of("N");
+    
+    public static final String NON_DEPRECIATION_ASSET_CLASS_ID = "Non_depreciable";
 
 }
