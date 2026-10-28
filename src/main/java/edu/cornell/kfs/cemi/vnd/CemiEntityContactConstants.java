@@ -19,7 +19,7 @@ public final class CemiEntityContactConstants {
     }
 
     public static final class PhoneDeviceTypes {
-        public static final String LANDLINE = "Landline";
+        public static final String TELEPHONE = "Telephone";
         public static final String MOBILE = "Mobile";
     }
 

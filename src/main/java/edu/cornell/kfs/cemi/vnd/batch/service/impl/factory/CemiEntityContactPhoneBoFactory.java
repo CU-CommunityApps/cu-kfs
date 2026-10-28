@@ -188,7 +188,7 @@ public class CemiEntityContactPhoneBoFactory {
     }
 
     private String determinePhoneDeviceType() {
-        return firstPhoneNumber.isPresent() ? PhoneDeviceTypes.LANDLINE : CemiBaseConstants.EMPTY_STRING;
+        return firstPhoneNumber.isPresent() ? PhoneDeviceTypes.TELEPHONE : CemiBaseConstants.EMPTY_STRING;
     }
 
 }
