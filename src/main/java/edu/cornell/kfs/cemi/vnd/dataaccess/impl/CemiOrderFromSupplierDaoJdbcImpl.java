@@ -26,7 +26,7 @@ public class CemiOrderFromSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDao
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private static final Pattern SUPPLIER_ADDRESS_ID_PATTERN = Pattern.compile("^SUPP\\d+_(\\d+)_\\d+$");
+    private static final Pattern SUPPLIER_ADDRESS_ID_PATTERN = Pattern.compile("^SUP\\d+_(\\d+)_\\d+$");
     private static final int ADDRESS_BATCH_SIZE = 200;
 
     @Override
