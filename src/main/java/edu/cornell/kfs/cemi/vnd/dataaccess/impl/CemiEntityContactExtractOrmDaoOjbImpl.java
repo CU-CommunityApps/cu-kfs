@@ -22,7 +22,8 @@ public class CemiEntityContactExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase
             // This conditional was added to reduce processing time for local development during CEMI project work.
             vendorContactIdCondition = "(A0.VNDR_CNTCT_GNRTD_ID) IN ("
                     + "SELECT VNDR_CNTCT_GNRTD_ID FROM CEMI.CU_CEMI_EXTR_ENT_CNTCT_VNDR_CNTCT_T"
-                    + " WHERE VNDR_CNTCT_GNRTD_ID <= 5000 OR VNDR_CNTCT_GNRTD_ID >= 127800)";
+                    + " WHERE VNDR_CNTCT_GNRTD_ID <= 5000 OR VNDR_CNTCT_GNRTD_ID >= 127800"
+                    + " ORDER BY VNDR_CNTCT_GNRTD_ID FETCH FIRST 1050 ROWS ONLY)";
         } else {
             vendorContactIdCondition = "(A0.VNDR_CNTCT_GNRTD_ID) IN ("
                     + "SELECT VNDR_CNTCT_GNRTD_ID FROM CEMI.CU_CEMI_EXTR_ENT_CNTCT_VNDR_CNTCT_T)";
