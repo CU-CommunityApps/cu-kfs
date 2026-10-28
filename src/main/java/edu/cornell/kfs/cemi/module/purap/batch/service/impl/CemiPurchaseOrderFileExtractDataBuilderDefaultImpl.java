@@ -22,6 +22,7 @@ import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.sys.service.LocationService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 
+import edu.cornell.kfs.cemi.module.purap.batch.CemiUnitOfMeasure;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderDocumentLite;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderFileSubmitPurchaseOrderTabRowBo;
 import edu.cornell.kfs.cemi.module.purap.batch.businessobject.CemiPurchaseOrderGoodsLineBo;
@@ -48,6 +49,7 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
     private DateTimeService dateTimeService;
     private LocationService locationService;
     private Map<Integer, String> contractManagerEmplIdMappings;
+    private Map<String, String> unitOfMeasureMappings;
     private Map<String, String> paymentTermsMappings;
     private String supplierJobRunDateString;
     @SuppressWarnings("unused")
@@ -77,6 +79,7 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
         this.dateTimeService = dateTimeService;
         this.locationService = locationService;
         this.contractManagerEmplIdMappings = cemiPurchaseOrderExtractDao.getContractManagerEmployeeIdMappings();
+        this.unitOfMeasureMappings = CemiUnitOfMeasure.toUnitOfMeasureMappings();
         this.paymentTermsMappings = paymentTermsMappings;
         this.supplierJobRunDateString = supplierJobRunDateString;
         this.maskSensitiveData = maskSensitiveData;
@@ -91,6 +94,8 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
                 "Non-Quantity Item Type parameter should not have been blank");
         Validate.validState(!contractManagerEmplIdMappings.isEmpty(),
                 "No Contract Manager Employee ID mappings were found; please verify if they have been imported");
+        Validate.validState(!unitOfMeasureMappings.isEmpty(),
+                "No Unit of Measure mappings were found; please verify if they have been imported");
     }
 
     @Override
@@ -149,7 +154,7 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
 
         for (final CemiPurchaseOrderItemLite quantityItemLine : openQuantityItemLines) {
             final CemiPurchaseOrderGoodsLineBo goodsLine = CemiPurchaseOrderGoodsLineBoFactory
-                    .createGoodsLineBoFrom(headerBo, poDocument, Optional.of(quantityItemLine));
+                    .createGoodsLineBoFrom(headerBo, poDocument, Optional.of(quantityItemLine), unitOfMeasureMappings);
             Validate.isTrue(!goodsLine.getLineSplits().isEmpty(),
                     "Goods line should have had either several line splits or an empty line split BO");
             for (final CemiPurchaseOrderLineSplitBo goodsLineSplit : goodsLine.getLineSplits()) {
@@ -174,7 +179,7 @@ public class CemiPurchaseOrderFileExtractDataBuilderDefaultImpl extends CemiOrmD
         }
 
         final CemiPurchaseOrderGoodsLineBo emptyGoodsLine = CemiPurchaseOrderGoodsLineBoFactory
-                .createGoodsLineBoFrom(headerBo, poDocument, Optional.empty());
+                .createGoodsLineBoFrom(headerBo, poDocument, Optional.empty(), unitOfMeasureMappings);
         Validate.validState(!emptyGoodsLine.getLineSplits().isEmpty(),
                 "Empty goods line should have had an empty line split BO present");
         final Pair<CemiPurchaseOrderGoodsLineBo, CemiPurchaseOrderLineSplitBo> emptyGoodsLineData

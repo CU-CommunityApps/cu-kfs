@@ -47,6 +47,8 @@ public final class CemiPurchaseOrderConstants {
     public static final String NO_ACCOUNT_AMOUNTS_MEMO_SUFFIX = " // NOTE: Item has an outstanding amount "
             + "but none of its legacy KFS accounts have outstanding amounts";
 
+    public static final String UNKNOWN_UOM_CODE = "UNKNOWN";
+
     public static final class PurchaseOrderExtractSheets {
         public static final String SUBMIT_PURCHASE_ORDER = "Submit Purchase Order";
     }

@@ -1,6 +1,7 @@
 package edu.cornell.kfs.cemi.module.purap.batch.service.impl.factory;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,26 +30,31 @@ public class CemiPurchaseOrderGoodsLineBoFactory {
     private CemiPurchaseOrderHeaderBo headerBo;
     private CemiPurchaseOrderDocumentLite poDocument;
     private Optional<CemiPurchaseOrderItemLite> purchaseOrderItem;
+    private Map<String, String> unitOfMeasureMappings;
     private List<CemiPurchaseOrderAccountLite> itemAccountingLines;
 
     public CemiPurchaseOrderGoodsLineBoFactory(final CemiPurchaseOrderHeaderBo headerBo,
             final CemiPurchaseOrderDocumentLite poDocument,
-            final Optional<CemiPurchaseOrderItemLite> purchaseOrderItem) {
+            final Optional<CemiPurchaseOrderItemLite> purchaseOrderItem,
+            final Map<String, String> unitOfMeasureMappings) {
         Validate.notNull(headerBo, "headerBo cannot be null");
         Validate.notNull(poDocument, "poDocument cannot be null");
         Validate.notNull(purchaseOrderItem, "purchaseOrderItem wrapper object cannot be null");
+        Validate.notNull(unitOfMeasureMappings, "unitOfMeasureMappings cannot be null");
         this.headerBo = headerBo;
         this.poDocument = poDocument;
         this.purchaseOrderItem = purchaseOrderItem;
+        this.unitOfMeasureMappings = unitOfMeasureMappings;
         this.itemAccountingLines = purchaseOrderItem.isPresent()
                 ? CemiPurchaseOrderUtils.getOutstandingEncumberedAccountingLines(purchaseOrderItem.get())
                 : List.of();
     }
 
     public static CemiPurchaseOrderGoodsLineBo createGoodsLineBoFrom(final CemiPurchaseOrderHeaderBo headerBo,
-            final CemiPurchaseOrderDocumentLite poDocument, final Optional<CemiPurchaseOrderItemLite> purchaseOrderItem) {
+            final CemiPurchaseOrderDocumentLite poDocument, final Optional<CemiPurchaseOrderItemLite> purchaseOrderItem,
+            final Map<String, String> unitOfMeasureMappings) {
         final CemiPurchaseOrderGoodsLineBoFactory factory = new CemiPurchaseOrderGoodsLineBoFactory(
-                headerBo, poDocument, purchaseOrderItem);
+                headerBo, poDocument, purchaseOrderItem, unitOfMeasureMappings);
         return factory.createCemiPurchaseOrderGoodsLineBo();
     }
 
@@ -205,7 +211,11 @@ public class CemiPurchaseOrderGoodsLineBoFactory {
     }
 
     private String determineUnitOfMeasure() {
-        return isEmptyFactory() ? CemiBaseConstants.EMPTY_STRING : purchaseOrderItem.get().getItemUnitOfMeasureCode();
+        if (isEmptyFactory()) {
+            return CemiBaseConstants.EMPTY_STRING;
+        }
+        final String kfsUnitOfMeasureCode = StringUtils.defaultString(purchaseOrderItem.get().getItemUnitOfMeasureCode());
+        return unitOfMeasureMappings.getOrDefault(kfsUnitOfMeasureCode, CemiPurchaseOrderConstants.UNKNOWN_UOM_CODE);
     }
 
     private String determineUnitCost() {

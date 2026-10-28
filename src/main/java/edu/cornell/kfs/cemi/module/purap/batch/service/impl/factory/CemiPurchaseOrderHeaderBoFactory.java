@@ -129,7 +129,7 @@ public class CemiPurchaseOrderHeaderBoFactory {
         headerBo.setShippingMethod(determineShippingMethod());
         headerBo.setShippingInstruction(CemiBaseConstants.EMPTY_STRING);
         headerBo.setDueDate(CemiBaseConstants.EMPTY_STRING);
-        headerBo.setSupplierContract(determineSupplierContractNumber());
+        headerBo.setSupplierContract(CemiBaseConstants.EMPTY_STRING);
         headerBo.setExternalSupplierInvoiceSource(CemiBaseConstants.EMPTY_STRING);
         headerBo.setCurrency(CemiPurchaseOrderConstants.CURRENCY_USD);
         headerBo.setAcknowledgementExpected(CemiBaseConstants.EMPTY_STRING);
@@ -305,11 +305,6 @@ public class CemiPurchaseOrderHeaderBoFactory {
     // TODO: At a future date, implement shipping method derivation logic.
     private String determineShippingMethod() {
         return CemiBaseConstants.EMPTY_STRING;
-    }
-
-    private String determineSupplierContractNumber() {
-        final Integer vendorContractId = purchaseOrderDocument.getVendorContractGeneratedIdentifier();
-        return (vendorContractId != null) ? vendorContractId.toString() : CemiBaseConstants.EMPTY_STRING;
     }
 
     private String determineBuyerEmployeeId() {
