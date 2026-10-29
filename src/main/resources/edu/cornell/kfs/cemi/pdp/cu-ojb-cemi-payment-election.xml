@@ -15,7 +15,7 @@
         <field-descriptor name="accountCurrency_2_1" column="ACCT_CURNCY_2_1" jdbc-type="VARCHAR" />
         <field-descriptor name="bankAccountNickname_2_1" column="BNK_ACCT_NCK_NM_2_1" jdbc-type="VARCHAR" />
         <field-descriptor name="bankAccountName_2_1" column="BNK_ACCT_NM_2_1" jdbc-type="VARCHAR" />
-        <field-descriptor name="accountNumber_2_1" column="ACCT_NBR_2_1" jdbc-type="VARCHAR" />
+        <field-descriptor name="accountNumber_2_1" column="ACCT_NBR_2_1" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
         <field-descriptor name="accountType_2_1" column="ACCT_TYP_2_1" jdbc-type="VARCHAR" />
         <field-descriptor name="bankName_2_1" column="BNK_NM_2_1" jdbc-type="VARCHAR" />
         <field-descriptor name="bankRoutingNumber_2_1" column="BNK_RTNG_NBR_2_1" jdbc-type="VARCHAR" />
