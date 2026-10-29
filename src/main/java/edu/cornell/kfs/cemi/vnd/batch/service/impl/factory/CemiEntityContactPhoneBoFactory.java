@@ -15,6 +15,7 @@ import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.batch.service.CemiIsoCountryService;
+import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiEntityContactConstants;
 import edu.cornell.kfs.cemi.vnd.CemiEntityContactConstants.CommunicationUsageTypes;
 import edu.cornell.kfs.cemi.vnd.CemiEntityContactConstants.PhoneDeviceTypes;
@@ -72,10 +73,12 @@ public class CemiEntityContactPhoneBoFactory {
         }
 
         final Pair<String, String> areaCodeRelatedSegments = determineAreaCodeRelatedPhoneSegments();
+        final boolean isPrimaryPhone = (phoneIndex == 1);
 
         final CemiEntityContactGenericUsageBo phoneUsage = firstPhoneNumber.isPresent()
                 ? CemiEntityContactGenericUsageBoFactory.createUsageBoFrom(
-                        CemiEntityContactConstants.ROW_ID_1, CommunicationUsageTypes.WORK, CemiBaseConstants.EMPTY_STRING)
+                        CemiEntityContactConstants.ROW_ID_1, CommunicationUsageTypes.WORK, CemiBaseConstants.EMPTY_STRING,
+                        CemiUtils.convertToBooleanValueForEIBFileExtract(isPrimaryPhone))
                 : CemiEntityContactGenericUsageBoFactory.createEmptyUsageBo();
 
         phoneBo.setPhoneRowId(determinePhoneRowId());

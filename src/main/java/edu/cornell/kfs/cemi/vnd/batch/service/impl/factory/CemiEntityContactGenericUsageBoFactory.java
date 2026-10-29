@@ -11,34 +11,36 @@ public class CemiEntityContactGenericUsageBoFactory {
     private String usageRowId;
     private String usageType;
     private String usageComments;
+    private String primary;
 
     public CemiEntityContactGenericUsageBoFactory(final String usageRowId, final String usageType,
-            final String usageComments) {
+            final String usageComments, final String primary) {
         this.usageRowId = StringUtils.defaultString(usageRowId);
         this.usageType = StringUtils.defaultString(usageType);
         this.usageComments = StringUtils.defaultString(usageComments);
+        this.primary = StringUtils.defaultString(primary);
     }
 
     public static CemiEntityContactGenericUsageBo createEmptyUsageBo() {
         return createUsageBoFrom(CemiBaseConstants.EMPTY_STRING, CemiBaseConstants.EMPTY_STRING,
-                CemiBaseConstants.EMPTY_STRING);
+                CemiBaseConstants.EMPTY_STRING, CemiBaseConstants.EMPTY_STRING);
     }
 
     public static CemiEntityContactGenericUsageBo createUsageBoFrom(final String usageRowId, final String usageType,
-            final String usageComments) {
+            final String usageComments, final String primary) {
         final CemiEntityContactGenericUsageBoFactory factory = new CemiEntityContactGenericUsageBoFactory(
-                usageRowId, usageType, usageComments);
+                usageRowId, usageType, usageComments, primary);
         return factory.createCemiEntityContactGenericUsageBo();
     }
 
     public CemiEntityContactGenericUsageBo createCemiEntityContactGenericUsageBo() {
         final CemiEntityContactGenericUsageBo usageBo = new CemiEntityContactGenericUsageBo();
-        final boolean createEmptyBo = StringUtils.isAllBlank(usageRowId, usageType, usageComments);
+        final boolean createEmptyBo = StringUtils.isAllBlank(usageRowId, usageType, usageComments, primary);
 
         usageBo.setUsageRowId(usageRowId);
         usageBo.setUsagePublic(createEmptyBo ? CemiBaseConstants.EMPTY_STRING : CemiBaseConstants.YES);
         usageBo.setUsageTypeRowId(createEmptyBo ? CemiBaseConstants.EMPTY_STRING : CemiEntityContactConstants.ROW_ID_1);
-        usageBo.setUsageTypePrimary(createEmptyBo ? CemiBaseConstants.EMPTY_STRING : CemiBaseConstants.YES);
+        usageBo.setUsageTypePrimary(primary);
         usageBo.setUsageType(usageType);
         usageBo.setUseFor(CemiBaseConstants.EMPTY_STRING);
         usageBo.setUseForTenanted(CemiBaseConstants.EMPTY_STRING);

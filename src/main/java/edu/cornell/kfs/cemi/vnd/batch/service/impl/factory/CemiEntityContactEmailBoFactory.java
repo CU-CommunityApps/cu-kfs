@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
 
 import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
+import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 import edu.cornell.kfs.cemi.vnd.CemiEntityContactConstants;
 import edu.cornell.kfs.cemi.vnd.CemiEntityContactConstants.CommunicationUsageTypes;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiEntityContactEmailBo;
@@ -38,9 +39,11 @@ public class CemiEntityContactEmailBoFactory {
     public CemiEntityContactEmailBo createCemiEntityContactEmailBo() {
         final CemiEntityContactEmailBo emailBo = new CemiEntityContactEmailBo();
         final boolean writeEmailData = !mergedEmailContacts.isEmpty();
+        final boolean isPrimaryEmail = (emailIndex == 1);
         final CemiEntityContactGenericUsageBo emailUsage = writeEmailData
                 ? CemiEntityContactGenericUsageBoFactory.createUsageBoFrom(
-                        CemiEntityContactConstants.ROW_ID_1, CommunicationUsageTypes.WORK, CemiBaseConstants.EMPTY_STRING)
+                        CemiEntityContactConstants.ROW_ID_1, CommunicationUsageTypes.WORK, CemiBaseConstants.EMPTY_STRING,
+                        CemiUtils.convertToBooleanValueForEIBFileExtract(isPrimaryEmail))
                 : CemiEntityContactGenericUsageBoFactory.createEmptyUsageBo();
         final String emailRowId = writeEmailData ? Integer.toString(emailIndex) : CemiBaseConstants.EMPTY_STRING;
         final String emailAddress = writeEmailData
