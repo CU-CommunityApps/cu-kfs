@@ -89,11 +89,11 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         registerAssetTabDataRow.setAssetCoordinator(determineAssetCoordinator());
         registerAssetTabDataRow.setPoNumber(determinePoNumber());
         registerAssetTabDataRow.setDepreciationProfileOverride(determineDepreciationProfileOverride());
-        registerAssetTabDataRow.setDepreciationMethodOverride(determineDepreciationMethodOverride());
+        registerAssetTabDataRow.setDepreciationMethodOverride(determineDepreciationMethodOverride(registerAssetTabDataRow.getAssetClass()));
         registerAssetTabDataRow.setDepreciationPercentOverride(determineDepreciationPercentOverride());
         registerAssetTabDataRow.setUsefulLifeInPeriodsOverride(determineUsefulLifeInPeriodsOverride());
         registerAssetTabDataRow.setDepreciationThresholdOverride(determineDepreciationThresholdOverride());
-        registerAssetTabDataRow.setDepreciationStartDate(determineDepreciationStartDate(registerAssetTabDataRow.getAssetClass(), registerAssetTabDataRow.getDatePlacedInService()));
+        registerAssetTabDataRow.setDepreciationStartDate(determineDepreciationStartDate(registerAssetTabDataRow.getAssetClass()));
         registerAssetTabDataRow.setRemainingDepreciationPeriods(determineRemainingDepreciationPeriods(registerAssetTabDataRow.getAssetClass()));
         registerAssetTabDataRow.setAccumulatedDepreciation(determineAccumulatedDepreciation());
 
@@ -142,8 +142,6 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         return accountingTreatment;
     }
 
-    //    If GIK (Gift), Transfer (Transferred from other university or federal) and GFE = Other
-    //            Purchased (New) = PURCHASED
     private String determineAcquisitionMethod() {
         String assetAcquisitionType = asset.getAcquisitionTypeCode();
 
@@ -152,6 +150,12 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         }
         if (CemiRegisterAssetConstants.PURCHASED_ACQUISITION_TYPE_CODES.contains(assetAcquisitionType)) {
             return CemiRegisterAssetConstants.ACQUISITION_METHOD_PURCHASED;
+        }
+        if (CemiRegisterAssetConstants.COMPOSED_ACQUISITION_TYPE_CODES.contains(assetAcquisitionType)) {
+            return CemiRegisterAssetConstants.ACQUISITION_METHOD_COMPOSED;
+        }
+        if (CemiRegisterAssetConstants.LEASED_ACQUISITION_TYPE_CODES.contains(assetAcquisitionType)) {
+            return CemiRegisterAssetConstants.ACQUISITION_METHOD_LEASED;
         }
         return KFSConstants.EMPTY_STRING;
     }
@@ -273,9 +277,19 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         if (ObjectUtils.isNull(assetRepresentative)) {
             return KFSConstants.EMPTY_STRING;
         }
-        return StringUtils.defaultIfBlank(assetRepresentative.getEmployeeId(), KFSConstants.EMPTY_STRING);
+
+        String emplID = assetRepresentative.getEmployeeId();
+        if (StringUtils.isBlank(emplID) || isInvalidEmplID(emplID)) {
+            return KFSConstants.EMPTY_STRING;
+        }
+        return emplID;
     }
-    
+
+    public static boolean isInvalidEmplID(String employeeId) {
+        return StringUtils.isNotBlank(employeeId)
+                && CemiRegisterAssetConstants.INVALID_EMPL_IDS.contains(employeeId.trim());
+    }
+
     private String determinePoNumber() {
         List<AssetPayment> assetPayments = asset.getAssetPayments();
         if (CollectionUtils.isEmpty(assetPayments)) {
@@ -304,7 +318,10 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         return depreciationProfile;
     }
 
-    private String determineDepreciationMethodOverride() {
+    private String determineDepreciationMethodOverride(String assetClass) {
+        if(CemiRegisterAssetConstants.NON_DEPRECIATION_ASSET_CLASS_ID.equalsIgnoreCase(assetClass)) {
+            return KFSConstants.EMPTY_STRING; 
+        }
         return CemiRegisterAssetConstants.STRAIGHT_LINE;
     }
 
@@ -327,11 +344,11 @@ public class CemiRegisterAssetFileRegisterAssetTabRowBoFactory {
         return KFSConstants.EMPTY_STRING;
     }
     
-    private String determineDepreciationStartDate(String assetClass, String placedInServiceDate) {
+    private String determineDepreciationStartDate(String assetClass) {
         if(CemiRegisterAssetConstants.NON_DEPRECIATION_ASSET_CLASS_ID.equalsIgnoreCase(assetClass)) {
             return KFSConstants.EMPTY_STRING; 
         }
-        return placedInServiceDate;
+        return CemiRegisterAssetConstants.DEPRECIATION_START_DATE;
     }
 
     private String determineRemainingDepreciationPeriods(String assetClass) {
