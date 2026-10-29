@@ -62,10 +62,36 @@ public final class CemiRegisterAssetConstants {
     
     public static final String ACQUISITION_METHOD_OTHER = "OTHER";
     public static final String ACQUISITION_METHOD_PURCHASED = "PURCHASED";
+    public static final String ACQUISITION_METHOD_COMPOSED = "COMPOSED";
+    public static final String ACQUISITION_METHOD_LEASED = "LEASED";
 
-    public static final Set<String> OTHER_ACQUISITION_TYPE_CODES = Set.of("G", "T", "Y");
+    public static final Set<String> OTHER_ACQUISITION_TYPE_CODES = Set.of("G", "T", "Y", "A", "F", "P");
     public static final Set<String> PURCHASED_ACQUISITION_TYPE_CODES = Set.of("N");
+    public static final Set<String> COMPOSED_ACQUISITION_TYPE_CODES = Set.of("C");
+    public static final Set<String> LEASED_ACQUISITION_TYPE_CODES = Set.of("L", "O");
+    
     
     public static final String NON_DEPRECIATION_ASSET_CLASS_ID = "Non_depreciable";
+    
+    public static final Set<String> INVALID_EMPL_IDS = Set.of(
+            "1000492", "1000993", "1001445", "1001851", "1002444", "1003548",
+            "1004023", "1004591", "1005319", "1005419", "1005506", "1005732",
+            "1005765", "1005905", "1006204", "1006425", "1007073", "1007135",
+            "1007631", "1007645", "1008485", "1008721", "1008901", "1008919",
+            "1010676", "1010708", "1011037", "1011536", "1011960", "1012050",
+            "1014067", "1015862", "1016026", "1016219", "1016390", "1016642",
+            "1018038", "1021369", "1021480", "1084701", "1126866", "1272682",
+            "1276989", "1278024", "1278040", "1286712", "1288501", "1288734",
+            "1297073", "1297877", "1299486", "1300410", "1300544", "1309149",
+            "1310657", "1314631", "1319145", "1495522", "1774427", "1776376",
+            "1826946", "1836725", "1839756", "1842238", "1852664", "1856784",
+            "1859346", "1862138", "2108976", "2241997", "2285066", "2318408",
+            "2340276", "2478626", "2483322", "2626769", "2676609", "2803398",
+            "3129315", "3543133", "3962714", "4026246", "4046834", "4165093",
+            "4181928", "4284311", "4388262", "4446047", "4890676", "4912915",
+            "4926202", "5013270", "5085472", "5156834", "5165219", "5199047",
+            "5346024", "5348774", "5444365", "5474603", "5482399", "5595896",
+            "5598071", "5599559"
+        );
 
 }
