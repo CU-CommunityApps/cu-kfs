@@ -4,7 +4,7 @@ import java.util.Map;
 
 import edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder.BankAccountTypes;
 
-public class CemiPaymentElectionConstants {
+public final class CemiPaymentElectionConstants {
     
     public static final String TRUE = "TRUE";
     public static final String EXPENSE_PAYMENTS = "Expense_Payments";
@@ -24,8 +24,8 @@ public class CemiPaymentElectionConstants {
 
     public static final String DUMMY_ACCOUNT_NUMBER = "XXXXXXXXX";
 
-    public static final String PAYMENT_ELECTION_OUTPUT_DEFINITION_FILE_PATH = "classpath:edu/cornell/kfs/cemi/pdp/batch/CemiPaymentElectionExtractFileOutputDefinition.xml";
-    public static final String PAYMENT_ELECTION_TEMPLATE_FILE_PATH = "classpath:edu/cornell/kfs/cemi/pdp/batch/Payment_Election.xlsx";
+    public static final String PAYMENT_ELECTION_OUTPUT_DEFINITION_PATH_SUFFIX = "pdp/batch/CemiPaymentElectionExtractFileOutputDefinition.xml";
+    public static final String PAYMENT_ELECTION_TEMPLATE_WORKBOOK_FILE_PATH_SUFFIX = "pdp/batch/Payment_Election.xlsx";
     public static final String PAYMENT_ELECTION_EXTRACT_FILENAME_PREFIX = "Payment_Election_ITH_";
     public static final String PAYMENT_ELECTION_EXTRACT_PLAIN_FILENAME = "Payment_Election.xlsx";
     
@@ -33,6 +33,5 @@ public class CemiPaymentElectionConstants {
         public static final String GROUP_TWO = "Group_TWO";
     }
     
-    public static final String CU_CEMI_EXTR_GRP_TWO_TAB_PYMNT_ELCTN_SEQ = "KFS.CU_CEMI_EXTR_GRP_TWO_TAB_PYMNT_ELCTN_SEQ";
-    
+
 }
