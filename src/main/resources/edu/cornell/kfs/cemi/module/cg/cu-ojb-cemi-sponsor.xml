@@ -1,0 +1,187 @@
+<descriptor-repository version="1.0">
+
+    <!-- The OJB database table defined by this file will contain all of the attribute data for the business object class described.
+         
+         A table should exist for every Cemi{EXTRACTNAME}File{TABNAME}TabRowBo required by the data extraction spreadsheet file.
+         Meaning: 
+            Award Schedule data extract file would need one table for its business object:
+                CemiAwardScheduleFileAwardScheduleTabRowBo
+            while the Supplier data extract file would require six tables for its business objects (not in the template format yet)
+                CemiSupplierFileSupplierRowBo:
+                CemiSupplierFileAddressesRowBo
+                CemiSupplierFileEmailsRowBo
+                CemiSupplierFilePhonesRowBo
+                CemiSupplierFileBankAccountsRowBo
+                CemiSupplierFileChildrenRowBo
+         
+         Table names should be in the format of CU_CEMI_EXTR_XXX_XXX_TAB_YYY_YYY_T where 
+            XXX_XXX represents the data extract name
+            YYY_YYY represents a tab name in the mapping template spreadsheet of the extract file
+         
+         Class descriptor items should set the "schema" attribute to "CEMI" so that OJB knows to access the table
+         on the CEMI schema side.
+
+         Table field descriptor items should follow this pattern:
+            First two descriptors should represent the standard CemiIndexedBusinessObjectBase attributes defined as the table's composite primary key:
+                EXTR_FILE_RUNDATE VARCHAR2(20) NOT NULL from the SQL script would have values
+                    name="jobRunDateString"
+                    column="EXTR_FILE_RUNDATE"
+                    jdbc-type="VARCHAR"
+                    primarykey="true"
+                    index="true"
+                JOB_RUN_ROW_INDEX NUMBER(14,0) NOT NULL from the SQL script would have values:
+                    name="jobRunRowIndex"
+                    column="JOB_RUN_ROW_INDEX"
+                    jdbc-type="BIGINT"
+                    primarykey="true"
+                    index="true
+                    
+            The remaining field-descriptors should exist for each legacy object key attribute as well as 
+            mapping template spreadsheet field attribute defined in Cemi{EXTRACTNAME}File{TABNAME}TabRowBo where:
+                name = attibute name
+                column = define column name as either a standard KFS column name (for reference data) or have column name reflect attribute name
+                jdbc-type = VARCHAR
+                
+            !!!!!VERY IMPORTANT!!!!!
+                (a) For any data value that should be encrypted, ensure that the following IS present in that item's field-descriptor
+                        conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"
+                (b) Add scrubbing SQL to nonprod-sql script in manual/kfs to scrub that particular field.
+                    
+
+         Create SQL script to build the physical database table CU_CEMI_EXTR_XXX_XXX_TAB_XXX_XXX_T
+            (1) That SQL script should be created in folder kfs of repository nonprod-sql.
+            (2) That SQL script should follow the file naming convention of
+                cemi-AAA-EXTRACT-NAME-step-001-create-tables.sql
+                where AAA is a numeric value representing that SQL extract in the overall SQL run order.
+                Example:
+                    cemi-001-suppliers-step-001-create-tables.sql
+                    cemi-002-award-schedule-step-001-create-tables.sql
+                            ...
+                    cemi-005-order-from-step-001-create-tables.sql
+    -->
+    <class-descriptor class="edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiSponsorFileSponsorTabRowBo"
+                schema="CEMI" table="CU_CEMI_EXTR_SPNSR_TAB_SPNSR_T">
+        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="spreadsheetKey" column="WKDY_SPRDSHT_KEY_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addOnly" column="ADD_ONLY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="sponsor" column="SPNSR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="sponsorId" column="SPNSR_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="sponsorReferenceId" column="SPNSR_REF_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="sponsorName" column="SPNSR_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="sponsorType" column="SPNSR_TYP" jdbc-type="VARCHAR"/>
+        <field-descriptor name="paymentTerms" column="PAYMNT_TERM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="defaultPaymentType" column="DFLT_PYMNT_TYP" jdbc-type="VARCHAR"/>
+        <field-descriptor name="businessEntityRowId" column="BUS_ENT_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="businessEntityName" column="BUS_ENT_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="businessEntityPhoneticName" column="BUS_ENT_PHNTC_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="businessEntityTaxId" column="BUS_ENT_TAX_ID" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+        <field-descriptor name="externalEntityId" column="EXTRNL_ENT_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressDataRowId" column="ADDR_DATA_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressLineDataRowId" column="ADDR_LN_DATA_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressLineDataDescriptor" column="ADDR_LN_DATA_DSCRPTR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressLineDataType" column="ADDR_LN_DATA_TYP" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressLineData" column="ADDR_LN_DATA" jdbc-type="VARCHAR"/>
+        <field-descriptor name="municipality" column="MNCPLTY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="countryCity" column="CNTRY_CTY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="iso31661Alpha2Code" column="ISO_3166_1_ALPHA_2_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="submunicipalityDataRowId" column="SUB_MNCPLTY_DATA_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressComponentName" column="ADDR_CMPNT_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="submunicipalityDataType" column="SUB_MNCPLTY_DATA_TYP" jdbc-type="VARCHAR"/>
+        <field-descriptor name="submunicipalityData" column="SUB_MNCPLTY_DATA" jdbc-type="VARCHAR"/>
+        <field-descriptor name="countryRegion" column="CNTRY_REGION" jdbc-type="VARCHAR"/>
+        <field-descriptor name="countryRegionDescriptor" column="CNTRY_REGION_DSCRPTR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="subRegionDataRowId" column="SUB_REGION_DATA_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="subRegionDataDescriptor" column="SUB_REGION_DATA_DSCRPTR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="subregionDataType" column="SUB_REGION_DATA_TYP" jdbc-type="VARCHAR"/>
+        <field-descriptor name="subregionData" column="SUB_REGION_DATA" jdbc-type="VARCHAR"/>
+        <field-descriptor name="postalCode" column="POSTAL_CODE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressDataUsageDataRowId" column="ADDR_DATA_USAGE_DATA_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressDataUsageDataPublic" column="ADDR_DATA_USAGE_DATA_" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressDataTypeDataRowId" column="ADDR_DATA_TYPE_DATA_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressDataTypeDataPrimary" column="ADDR_DATA_TYPE_DATA_PRIMARY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressDataTypeDataType" column="ADDR_DATA_TYPE_DATA_TYP" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useFor1" column="USE_FOR_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useFor2" column="USE_FOR_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useFor3" column="USE_FOR_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted1" column="USE_FOR_TENANTED_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted2" column="USE_FOR_TENANTED_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="useForTenanted3" column="USE_FOR_TENANTED_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressDataUsageDataComments" column="ADDR_DATA_USAGE_DATA_COMMENTS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="numberOfDays" column="NUM_OF_DAYS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="municipalityLocal" column="MNCPLTY_LCL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="address" column="ADDRESS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressId" column="ADDRESS_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataRowId" column="PHONE_DATA_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="areaCode" column="AREA_CODE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="tenantFormattedPhone" column="TENANT_FORMATTED_PHONE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="internationalFormattedPhone" column="INTRNATIONAL_FORMATTED_PHONE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneNumberWithoutAreaCode" column="PHONE_NUM_WITHOUT_AREA_CODE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="nationalFormattedPhone" column="NATIONAL_FORMATTED_PHONE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="e164FormattedPhone" column="E164_FORMATTED_PHONE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="workdayTraditionalFormattedPhone" column="WRKDY_TRDTNL_FORMATTED_PHONE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataDelete" column="PHONE_DATA_DELETE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataDoNotReplaceAll" column="PHONE_DATA_DO_NOT_REPLACE_ALL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="countryIsoCode" column="COUNTRY_ISO_CODE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="internationalPhoneCode" column="INTERNATIONAL_PHONE_CODE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneNumber" column="PHONE_NUMBER" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneExtension" column="PHONE_EXTENSION" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDeviceType" column="PHONE_DEVICE_TYPE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataUsageDataRowId" column="PHONE_DATA_USAGE_DATA_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataUsageDataPublic" column="PHONE_DATA_USAGE_DATA_PUBLIC" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataTypeDataRowId" column="PHONE_DATA_TYPE_DATA_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataTypeDataPrimary" column="PHONE_DATA_TYPE_DATA_PRIMARY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataTypeDataType" column="PHONE_DATA_TYPE_DATA_TYP" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataUsageDataUseFor" column="PHONE_DATA_USAGE_DATA_USE_FOR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataUsageDataUseForTenanted" column="PHONE_DATA_USAGE_DATA_USE_FOR_TENANTED" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataUsageDataComments" column="PHONE_DATA_USAGE_DATA_COMMENTS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phone" column="PHONE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataId" column="PHONE_DATA_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddressDataRowId" column="EMAIL_ADDR_DATA_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddressDataDelete" column="EMAIL_ADDR_DATA_DELETE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddressDataDoNotReplaceAll" column="EMAIL_ADDR_DATA_DO_NOT_REPLACE_ALL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddress" column="EMAIL_ADDRESS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailComment" column="EMAIL_COMMENT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddressDataUsageDataRowId" column="EMAIL_ADDR_DATA_USAGE_DATA_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddressDataUsageDataPublic" column="EMAIL_ADDR_DATA_USAGE_DATA_PUBLIC" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddressDataTypeDataRowId" column="EMAIL_ADDR_DATA_TYPE_DATA_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddressDataTypeDataPrimary" column="EMAIL_ADDR_DATA_TYPE_DATA_PRIMARY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddressDataTypeDataType" column="EMAIL_ADDR_DATA_TYPE_DATA_TYPE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddressDataUsageDataUseFor" column="EMAIL_ADDR_DATA_USAGE_DATA_USE_FOR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddressDataUsageDataUseForTenanted" column="EMAIL_ADDR_DATA_USAGE_DATA_USE_FOR_TENANTED" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddressDataUsageDataComments" column="EMAIL_ADDR_DATA_USAGE_DATA_COMMENTS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="email" column="EMAIL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddressDataId" column="EMAIL_ADDR_DATA_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="webAddressDataRowId" column="WEB_ADDR_DATA_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="webAddressDataDelete" column="WEB_ADDR_DATA_DELETE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="webAddressDataDoNotReplaceAll" column="WEB_ADDR_DATA_DO_NOT_REPLACE_ALL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="webAddressDataWebAddress" column="WEB_ADDR_DATA_WEB_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="webAddressComment" column="WEB_ADDR_COMMENT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="webAddressDataUsageDataRowId" column="WEB_ADDR_DATA_USAGE_DATA_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="webAddressDataUsageDataPublic" column="WEB_ADDR_DATA_USAGE_DATA_PUBLIC" jdbc-type="VARCHAR"/>
+        <field-descriptor name="webAddressTypeDataRowId" column="WEB_ADDR_TYPE_DATA_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="webAddressTypeDataPrimary" column="WEB_ADDR_TYPE_DATA_PRIMARY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="webAddressTypeDataType" column="WEB_ADDR_TYPE_DATA_TYPE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="webAddressDataUsageDataUseFor" column="WEB_ADDR_DATA_USAGE_DATA_USE_FOR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="webAddressDataUsageDataUseForTenanted" column="WEB_ADDR_DATA_USAGE_DATA_USE_FOR_TENANTED" jdbc-type="VARCHAR"/>
+        <field-descriptor name="webAddressDataUsageDataComments" column="WEB_ADDR_DATA_USAGE_DATA_COMMENTS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="webAddressDataUsageDataWebAddress" column="WEB_ADDR_DATA_USAGE_DATA_WEB_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="webAddressDataUsageDataId" column="WEB_ADDR_DATA_USAGE_DATA_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="fileName" column="FILENAME" jdbc-type="VARCHAR"/>
+        <field-descriptor name="image" column="IMAGE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="remitFromSponsor" column="REMIT_FROM_SPONSOR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="currency" column="CURRENCY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedCurrencies" column="ACCEPTED_CURRENCIES" jdbc-type="VARCHAR"/>
+        <field-descriptor name="sponsorPreferredLocale" column="SPONSOR_PREFERRED_LOCALE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="invoiceDeliveryType" column="INVOICE_DELIVERY_TYPE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="invoiceNotificationEmailRecipients" column="INV_NOTFCTN_EMAIL_RECIPIENTS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="statementDeliveryType" column="STATEMENT_DELIVERY_TYPE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="statementNotificationEmailRecipients" column="STATEMENT_NOTFCTN_EMAIL_RECIPIENTS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="includedChildren" column="INCLUDE_CHILDREN" jdbc-type="VARCHAR"/>
+        <field-descriptor name="alternateNameDataRowId" column="ALTERNATE_NAME_DATA_ROW_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="alternateName" column="ALTERNATE_NAME" jdbc-type="VARCHAR"/>
+        <field-descriptor name="alternateNameUsage" column="ALTERNATE_NAME_USAGE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="replaceAll" column="REPLACE_ALL" jdbc-type="VARCHAR"/>
+    </class-descriptor>
+    
+</descriptor-repository>

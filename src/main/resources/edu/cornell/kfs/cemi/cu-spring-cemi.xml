@@ -26,6 +26,7 @@
                 <value>edu/cornell/kfs/cemi/cu-ojb-cemi.xml</value>
                 <value>edu/cornell/kfs/cemi/module/cg/cu-ojb-cemi-award.xml</value>
                 <value>edu/cornell/kfs/cemi/module/cg/cu-ojb-cemi-award-schedule.xml</value>
+                <value>edu/cornell/kfs/cemi/module/cg/cu-ojb-cemi-sponsor.xml</value>
                 <value>edu/cornell/kfs/cemi/module/purap/cu-ojb-cemi-purchase-order.xml</value>
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-vnd.xml</value>
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-supplier.xml</value>
@@ -45,6 +46,7 @@
                  <value>createCemiBusinessEntityContactExtractJob</value>
                  <value>createCemiPurchaseOrderExtractJob</value>
                  <value>createCemiRegisterAssetExtractJob</value>
+                 <value>createCemiSponsorExtractJob</value>
                  <value>importCemiLegacyDataJob</value>
             </list>
         </property>
@@ -57,6 +59,7 @@
             <value>${staging.directory}/cemi/legacy/workday/employee</value>
             <value>${staging.directory}/cemi/module/cg/cemiAwardScheduleExtract</value>
             <value>${staging.directory}/cemi/module/cg/cemiAwardExtract</value>
+            <value>${staging.directory}/cemi/module/cg/cemiSponsorExtract</value>
             <value>${staging.directory}/cemi/module/purap/cemiPurchaseOrderExtract</value>
             <value>${staging.directory}/cemi/pdp/cemiPaymentElectionExtract</value>
             <value>${staging.directory}/cemi/vnd/cemiSupplierExtract</value>
@@ -768,5 +771,50 @@
           class="edu.cornell.kfs.cemi.module.cam.batch.CreateCemiRegisterAssetExtractStep"
           parent="step"
           p:cemiRegisterAssetExtractService-ref="cemiRegisterAssetExtractService"/>
+
+    
+    <!-- Sponsor -->
+   
+    <bean id="cemiSponsorExtractDao" parent="cemiSponsorExtractDao-parentBean"/>
+    <bean id="cemiSponsorExtractDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cg.dataaccess.impl.CemiSponsorExtractDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
+
+    <bean id="cemiSponsorExtractOrmDao" parent="cemiSponsorExtractOrmDao-parentBean"/>
+    <bean id="cemiSponsorExtractOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cg.dataaccess.impl.CemiSponsorExtractOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="cemiSponsorExtractService" parent="cemiSponsorExtractService-parentBean"/>
+    <bean id="cemiSponsorExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cg.batch.service.impl.CemiSponsorExtractServiceImpl"
+          c:environment-ref="environment"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/module/cg/cemiSponsorExtract"
+          p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:parameterService-ref="parameterService"
+          p:cemiSponsorExtractOrmDao-ref="cemiSponsorExtractOrmDao"
+          p:cemiSponsorExtractDao-ref="cemiSponsorExtractDao"
+          p:businessObjectService-ref="businessObjectService"
+          p:dateTimeService-ref="dateTimeService"/>
           
+    <bean id="createCemiSponsorExtractStep"
+          class="edu.cornell.kfs.cemi.module.cg.batch.CreateCemiSponsorExtractStep"
+          parent="step"
+          p:cemiSponsorExtractService-ref="cemiSponsorExtractService"/>
+          
+    <bean id="createCemiSponsorExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiSponsorExtractStep"/>
+            </list>
+        </property>
+    </bean>
+
 </beans>
