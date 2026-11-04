@@ -14,7 +14,7 @@ public class CemiSponsorFileSponsorTabRowBoFactory {
     private DateTimeService dateTimeService;
     private boolean maskSensitiveData = true;
 
-    public CemiSponsorFileSponsorTabRowBoFactory (final String jobRunDateString, 
+    public CemiSponsorFileSponsorTabRowBoFactory (final String jobRunDateString,
             final DateTimeService dateTimeService, final boolean maskSensitiveData) {
         Validate.validState(jobRunDateString != null, "jobRunDateString cannot be null for CemiSponsorFileSponsorTabRowBoFactory.");
         Validate.validState(dateTimeService != null, "dateTimeService cannot be null for CemiSponsorFileSponsorTabRowBoFactory.");
@@ -23,7 +23,7 @@ public class CemiSponsorFileSponsorTabRowBoFactory {
         this.maskSensitiveData = maskSensitiveData;
     }
      
-    public CemiSponsorFileSponsorTabRowBo createCemiSponsorFileSponsoreTabRowBo() {
+    public CemiSponsorFileSponsorTabRowBo createCemiSponsorFileSponsorTabRowBo() {
         final CemiSponsorFileSponsorTabRowBo sponsorTabDataRow = new CemiSponsorFileSponsorTabRowBo();
         
 //TODO FIXME add all the local variables to build out hte spreadsheet keys
@@ -79,33 +79,33 @@ public class CemiSponsorFileSponsorTabRowBoFactory {
         sponsorTabDataRow.setAddressDataTypeDataRowId("Usage loop counter per address for address line");   // template field name duplicated as rowId
         sponsorTabDataRow.setAddressDataTypeDataPrimary("AR_CUST_ADDR_T CUST_ADDR_TYP_CD=P Make Y Else N"); // template field name duplicated as primary
         sponsorTabDataRow.setAddressDataTypeDataType("work-business-home-lockbox-academic_contact-institutional:: communicationUsageTypeID common crosswalk");  // template field name duplicated as type
-        sponsorTabDataRow.setUseFor1(CemiSponsorConstants.USE_FOR_SHIPPING);
-        sponsorTabDataRow.setUseFor2(CemiSponsorConstants.USE_FOR_BILLING);
-        sponsorTabDataRow.setUseFor3(CemiSponsorConstants.USE_FOR_REMIT);
-        sponsorTabDataRow.setUseForTenanted1(CemiSponsorConstants.USE_FOR_TENANTED_SHIPPING);
-        sponsorTabDataRow.setUseForTenanted2(CemiSponsorConstants.USE_FOR_TENANTED_BILLING);
-        sponsorTabDataRow.setUseForTenanted3(CemiSponsorConstants.USE_FOR_TENANTED_REMIT);
+        sponsorTabDataRow.setAddressDataUseFor1(CemiSponsorConstants.USE_FOR_SHIPPING);
+        sponsorTabDataRow.setAddressDataUseFor2(CemiSponsorConstants.USE_FOR_BILLING);
+        sponsorTabDataRow.setAddressDataUseFor3(CemiSponsorConstants.USE_FOR_REMIT);
+        sponsorTabDataRow.setAddressDataUseForTenanted1(CemiSponsorConstants.USE_FOR_TENANTED_SHIPPING);
+        sponsorTabDataRow.setAddressDataUseForTenanted2(CemiSponsorConstants.USE_FOR_TENANTED_BILLING);
+        sponsorTabDataRow.setAddressDataUseForTenanted3(CemiSponsorConstants.USE_FOR_TENANTED_REMIT);
         sponsorTabDataRow.setAddressDataUsageDataComments(CemiBaseConstants.EMPTY_STRING);          // template field name duplicated as comments
-        sponsorTabDataRow.setNumberOfDays(CemiBaseConstants.EMPTY_STRING);
-        sponsorTabDataRow.setMunicipalityLocal(CemiBaseConstants.EMPTY_STRING);
-        sponsorTabDataRow.setAddress(CemiBaseConstants.EMPTY_STRING);
-        sponsorTabDataRow.setAddressId("ITH_{CustomerNumber}_{CustomerAddressId}");
+        sponsorTabDataRow.setAddressDataNumberOfDays(CemiBaseConstants.EMPTY_STRING);
+        sponsorTabDataRow.setAddressDataMunicipalityLocal(CemiBaseConstants.EMPTY_STRING);
+        sponsorTabDataRow.setExistingAddressId(CemiBaseConstants.EMPTY_STRING);
+        sponsorTabDataRow.setNewAddressId("ITH_{CustomerNumber}_{CustomerAddressId}");
 
         sponsorTabDataRow.setPhoneDataRowId("1-sequentialForEachPhoneNumberPerSponsor");            // template field name duplicated as rowId
-        sponsorTabDataRow.setAreaCode(CemiBaseConstants.EMPTY_STRING);
-        sponsorTabDataRow.setTenantFormattedPhone(CemiBaseConstants.EMPTY_STRING);
-        sponsorTabDataRow.setInternationalFormattedPhone(CemiBaseConstants.EMPTY_STRING);
-        sponsorTabDataRow.setPhoneNumberWithoutAreaCode(CemiBaseConstants.EMPTY_STRING);
-        sponsorTabDataRow.setNationalFormattedPhone(CemiBaseConstants.EMPTY_STRING);
-        sponsorTabDataRow.setE164FormattedPhone(CemiBaseConstants.EMPTY_STRING);
-        sponsorTabDataRow.setWorkdayTraditionalFormattedPhone(CemiBaseConstants.EMPTY_STRING);
+        sponsorTabDataRow.setPhoneDataAreaCode(CemiBaseConstants.EMPTY_STRING);
+        sponsorTabDataRow.setPhoneDataTenantFormattedPhone(CemiBaseConstants.EMPTY_STRING);
+        sponsorTabDataRow.setPhoneDataInternationalFormattedPhone(CemiBaseConstants.EMPTY_STRING);
+        sponsorTabDataRow.setPhoneDataPhoneNumberWithoutAreaCode(CemiBaseConstants.EMPTY_STRING);
+        sponsorTabDataRow.setPhoneDataInternationalFormattedPhone(CemiBaseConstants.EMPTY_STRING);
+        sponsorTabDataRow.setPhoneDataE164FormattedPhone(CemiBaseConstants.EMPTY_STRING);
+        sponsorTabDataRow.setPhoneDataWorkdayTraditionalFormattedPhone(CemiBaseConstants.EMPTY_STRING);
         sponsorTabDataRow.setPhoneDataDelete(CemiBaseConstants.EMPTY_STRING);                       // template field name duplicated as delete
         sponsorTabDataRow.setPhoneDataDoNotReplaceAll(CemiBaseConstants.EMPTY_STRING);              // template field name duplicated as doNotReplaceAll
-        sponsorTabDataRow.setCountryIsoCode("Use common Country translate table");
-        sponsorTabDataRow.setInternationalPhoneCode("Need common InternationalPhoneCode translate table created");
-        sponsorTabDataRow.setPhoneNumber("sponsor profile - phone");
-        sponsorTabDataRow.setPhoneExtension("extract if available");
-        sponsorTabDataRow.setPhoneDeviceType("ID value for:: lindline-mobile-fax-PHONE_DEVICE_TYPE-6-21");
+        sponsorTabDataRow.setPhoneDataCountryIsoCode("Use common Country translate table");
+        sponsorTabDataRow.setPhoneDataInternationalPhoneCode("Need common InternationalPhoneCode translate table created");
+        sponsorTabDataRow.setPhoneDataPhoneNumber("sponsor profile - phone");
+        sponsorTabDataRow.setPhoneDataPhoneExtension("extract if available");
+        sponsorTabDataRow.setPhoneDataPhoneDeviceType("ID value for:: lindline-mobile-fax-PHONE_DEVICE_TYPE-6-21");
 
         sponsorTabDataRow.setPhoneDataUsageDataRowId(CemiSponsorConstants.NUMERIC_ONE);             // template field name duplicated as rowId
         sponsorTabDataRow.setPhoneDataUsageDataPublic(CemiBaseConstants.YES);                       // template field name duplicated as public
@@ -115,14 +115,14 @@ public class CemiSponsorFileSponsorTabRowBoFactory {
         sponsorTabDataRow.setPhoneDataUsageDataUseFor(CemiBaseConstants.EMPTY_STRING);              // template field name duplicated as useFor
         sponsorTabDataRow.setPhoneDataUsageDataUseForTenanted(CemiBaseConstants.EMPTY_STRING);      // template field name duplicated as useForTenanted
         sponsorTabDataRow.setPhoneDataUsageDataComments(CemiBaseConstants.EMPTY_STRING);            // template field name duplicated as comments
-        sponsorTabDataRow.setPhone(CemiBaseConstants.EMPTY_STRING);
-        sponsorTabDataRow.setPhoneDataId("{SponsorId}_Phone");                                      // template field name duplicated as id
+        sponsorTabDataRow.setExistingPhoneId(CemiBaseConstants.EMPTY_STRING);
+        sponsorTabDataRow.setNewPhoneId("{SponsorId}_Phone");                                      // template field name duplicated as id
 
         sponsorTabDataRow.setEmailAddressDataRowId(CemiSponsorConstants.NUMERIC_ONE);               // template field name duplicated as rowId
         sponsorTabDataRow.setEmailAddressDataDelete(CemiBaseConstants.EMPTY_STRING);                // template field name duplicated as delete
         sponsorTabDataRow.setEmailAddressDataDoNotReplaceAll(CemiBaseConstants.EMPTY_STRING);       // template field name duplicated as doNotReplaceAll
-        sponsorTabDataRow.setEmailAddress("general email address");
-        sponsorTabDataRow.setEmailComment(CemiBaseConstants.EMPTY_STRING);
+        sponsorTabDataRow.setEmailAddressDataEmailAddress("general email address");
+        sponsorTabDataRow.setEmailAddressDataEmailComment(CemiBaseConstants.EMPTY_STRING);
 
         sponsorTabDataRow.setEmailAddressDataUsageDataRowId(CemiSponsorConstants.NUMERIC_ONE);      // template field name duplicated as rowId
         sponsorTabDataRow.setEmailAddressDataUsageDataPublic(CemiBaseConstants.YES);                // template field name duplicated as public
@@ -132,8 +132,8 @@ public class CemiSponsorFileSponsorTabRowBoFactory {
         sponsorTabDataRow.setEmailAddressDataUsageDataUseFor(CemiBaseConstants.EMPTY_STRING);       // template field name duplicated as useFor
         sponsorTabDataRow.setEmailAddressDataUsageDataUseForTenanted(CemiBaseConstants.EMPTY_STRING); // template field name duplicated as useForTenanted
         sponsorTabDataRow.setEmailAddressDataUsageDataComments(CemiBaseConstants.EMPTY_STRING);     // template field name duplicated as comments
-        sponsorTabDataRow.setEmail(CemiBaseConstants.EMPTY_STRING);
-        sponsorTabDataRow.setEmailAddressDataId("{SponsorId}_Email");                               // template field name duplicated as id
+        sponsorTabDataRow.setExistingEmailId(CemiBaseConstants.EMPTY_STRING);
+        sponsorTabDataRow.setNewEmailId("{SponsorId}_Email");                               // template field name duplicated as id
 
         sponsorTabDataRow.setWebAddressDataRowId(CemiBaseConstants.EMPTY_STRING);                   // template field name duplicated as rowId
         sponsorTabDataRow.setWebAddressDataDelete(CemiBaseConstants.EMPTY_STRING);                  // template field name duplicated as delete
@@ -149,8 +149,8 @@ public class CemiSponsorFileSponsorTabRowBoFactory {
         sponsorTabDataRow.setWebAddressDataUsageDataUseFor(CemiBaseConstants.EMPTY_STRING);         // template field name duplicated as useFor
         sponsorTabDataRow.setWebAddressDataUsageDataUseForTenanted(CemiBaseConstants.EMPTY_STRING); // template field name duplicated as useForTenanted
         sponsorTabDataRow.setWebAddressDataUsageDataComments(CemiBaseConstants.EMPTY_STRING);       // template field name duplicated as comments
-        sponsorTabDataRow.setWebAddressDataUsageDataWebAddress(CemiBaseConstants.EMPTY_STRING);     // template field name duplicated as webAddress
-        sponsorTabDataRow.setWebAddressDataUsageDataId(CemiBaseConstants.EMPTY_STRING);             // template field name duplicated as id
+        sponsorTabDataRow.setExistingWebAddressId(CemiBaseConstants.EMPTY_STRING);     // template field name duplicated as webAddress
+        sponsorTabDataRow.setNewWebAddressId(CemiBaseConstants.EMPTY_STRING);             // template field name duplicated as id
         sponsorTabDataRow.setFileName(CemiBaseConstants.EMPTY_STRING);
         sponsorTabDataRow.setImage(CemiBaseConstants.EMPTY_STRING);
         sponsorTabDataRow.setRemitFromSponsor(CemiBaseConstants.EMPTY_STRING);

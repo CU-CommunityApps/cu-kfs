@@ -37,111 +37,111 @@ public class CemiSponsorFileSponsorTabRowBo extends CemiIndexedBusinessObjectBas
     private String paymentTerms;
     private String defaultPaymentType;
 
-    private String businessEntityRowId;                         // template field name duplicated as rowId
+    private String businessEntityRowId;                     // template field name duplicated as rowId
     private String businessEntityName;
     private String businessEntityPhoneticName;
     private String businessEntityTaxId;
     private String externalEntityId;
 
-    private String addressDataRowId;                            // template field name duplicated as rowId
-    private String addressLineDataRowId;                        // template field name duplicated as rowId
-    private String addressLineDataDescriptor;                   // template field name duplicated as descriptor
-    private String addressLineDataType;                         // template field name duplicated as type
+    private String addressDataRowId;                        // template field name duplicated as rowId
+    private String addressLineDataRowId;                    // template field name duplicated as rowId
+    private String addressLineDataDescriptor;               // template field name duplicated as descriptor
+    private String addressLineDataType;                     // template field name duplicated as type
     private String addressLineData;
     private String municipality;
     private String countryCity;
     private String iso31661Alpha2Code;
 
-    private String submunicipalityDataRowId;                    // template field name duplicated as rowId
+    private String submunicipalityDataRowId;                // template field name duplicated as rowId
     private String addressComponentName;
-    private String submunicipalityDataType;                     // template field name duplicated as type
+    private String submunicipalityDataType;                 // template field name duplicated as type
     private String submunicipalityData;
     private String countryRegion;
     private String countryRegionDescriptor;
 
-    private String subRegionDataRowId;                          // template field name duplicated as rowId
-    private String subRegionDataDescriptor;                     // template field name duplicated as descriptor
-    private String subregionDataType;                           // template field name duplicated as type
+    private String subRegionDataRowId;                      // template field name duplicated as rowId
+    private String subRegionDataDescriptor;                 // template field name duplicated as descriptor
+    private String subregionDataType;                       // template field name duplicated as type
     private String subregionData;
     private String postalCode;
 
-    private String addressDataUsageDataRowId;                   // template field name duplicated as rowId
-    private String addressDataUsageDataPublic;                  // template field name duplicated as public
-    private String addressDataTypeDataRowId;                    // template field name duplicated as rowId
-    private String addressDataTypeDataPrimary;                  // template field name duplicated as primary
-    private String addressDataTypeDataType;                     // template field name duplicated as type
-    private String useFor1;
-    private String useFor2;
-    private String useFor3;
-    private String useForTenanted1;
-    private String useForTenanted2;
-    private String useForTenanted3;
-    private String addressDataUsageDataComments;                // template field name duplicated as comments
-    private String numberOfDays;
-    private String municipalityLocal;
-    private String address;
-    private String addressId;
+    private String addressDataUsageDataRowId;               // template field name duplicated as rowId
+    private String addressDataUsageDataPublic;              // template field name duplicated as public
+    private String addressDataTypeDataRowId;                // template field name duplicated as rowId
+    private String addressDataTypeDataPrimary;              // template field name duplicated as primary
+    private String addressDataTypeDataType;                 // template field name duplicated as type
+    private String addressDataUseFor1;
+    private String addressDataUseFor2;
+    private String addressDataUseFor3;
+    private String addressDataUseForTenanted1;
+    private String addressDataUseForTenanted2;
+    private String addressDataUseForTenanted3;
+    private String addressDataUsageDataComments;            // template field name duplicated as comments
+    private String addressDataNumberOfDays;
+    private String addressDataMunicipalityLocal;
+    private String existingAddressId;
+    private String newAddressId;
 
-    private String phoneDataRowId;                              // template field name duplicated as rowId
-    private String areaCode;
-    private String tenantFormattedPhone;
-    private String internationalFormattedPhone;
-    private String phoneNumberWithoutAreaCode;
-    private String nationalFormattedPhone;
-    private String e164FormattedPhone;
-    private String workdayTraditionalFormattedPhone;
-    private String phoneDataDelete;                             // template field name duplicated as delete
-    private String phoneDataDoNotReplaceAll;                    // template field name duplicated as doNotReplaceAll
-    private String countryIsoCode;
-    private String internationalPhoneCode;
-    private String phoneNumber;
-    private String phoneExtension;
-    private String phoneDeviceType;
+    private String phoneDataRowId;                          // template field name duplicated as rowId
+    private String phoneDataAreaCode;
+    private String phoneDataTenantFormattedPhone;
+    private String phoneDataInternationalFormattedPhone;
+    private String phoneDataPhoneNumberWithoutAreaCode;
+    private String phoneDataNationalFormattedPhone;
+    private String phoneDataE164FormattedPhone;
+    private String phoneDataWorkdayTraditionalFormattedPhone;
+    private String phoneDataDelete;                         // template field name duplicated as delete
+    private String phoneDataDoNotReplaceAll;                // template field name duplicated as doNotReplaceAll
+    private String phoneDataCountryIsoCode;
+    private String phoneDataInternationalPhoneCode;
+    private String phoneDataPhoneNumber;
+    private String phoneDataPhoneExtension;
+    private String phoneDataPhoneDeviceType;
 
-    private String phoneDataUsageDataRowId;                     // template field name duplicated as rowId
-    private String phoneDataUsageDataPublic;                    // template field name duplicated as public
-    private String phoneDataTypeDataRowId;                      // template field name duplicated as rowId
-    private String phoneDataTypeDataPrimary;                    // template field name duplicated as primary
-    private String phoneDataTypeDataType;                       // template field name duplicated as type
-    private String phoneDataUsageDataUseFor;                    // template field name duplicated as useFor
-    private String phoneDataUsageDataUseForTenanted;            // template field name duplicated as useForTenanted
-    private String phoneDataUsageDataComments;                  // template field name duplicated as comments
-    private String phone;
-    private String phoneDataId;                                 // template field name duplicated as id
+    private String phoneDataUsageDataRowId;                 // template field name duplicated as rowId
+    private String phoneDataUsageDataPublic;                // template field name duplicated as public
+    private String phoneDataTypeDataRowId;                  // template field name duplicated as rowId
+    private String phoneDataTypeDataPrimary;                // template field name duplicated as primary
+    private String phoneDataTypeDataType;                   // template field name duplicated as type
+    private String phoneDataUsageDataUseFor;                // template field name duplicated as useFor
+    private String phoneDataUsageDataUseForTenanted;        // template field name duplicated as useForTenanted
+    private String phoneDataUsageDataComments;              // template field name duplicated as comments
+    private String existingPhoneId;
+    private String newPhoneId;                              // template field name duplicated as id
 
-    private String emailAddressDataRowId;                       // template field name duplicated as rowId
-    private String emailAddressDataDelete;                      // template field name duplicated as delete
-    private String emailAddressDataDoNotReplaceAll;             // template field name duplicated as doNotReplaceAll
-    private String emailAddress;
-    private String emailComment;
+    private String emailAddressDataRowId;                   // template field name duplicated as rowId
+    private String emailAddressDataDelete;                  // template field name duplicated as delete
+    private String emailAddressDataDoNotReplaceAll;         // template field name duplicated as doNotReplaceAll
+    private String emailAddressDataEmailAddress;
+    private String emailAddressDataEmailComment;
 
-    private String emailAddressDataUsageDataRowId;              // template field name duplicated as rowId
-    private String emailAddressDataUsageDataPublic;             // template field name duplicated as public
-    private String emailAddressDataTypeDataRowId;               // template field name duplicated as rowId
-    private String emailAddressDataTypeDataPrimary;             // template field name duplicated as primary
-    private String emailAddressDataTypeDataType;                // template field name duplicated as type
-    private String emailAddressDataUsageDataUseFor;             // template field name duplicated as useFor
-    private String emailAddressDataUsageDataUseForTenanted;     // template field name duplicated as useForTenanted
-    private String emailAddressDataUsageDataComments;           // template field name duplicated as comments
-    private String email;
-    private String emailAddressDataId;                          // template field name duplicated as id
+    private String emailAddressDataUsageDataRowId;          // template field name duplicated as rowId
+    private String emailAddressDataUsageDataPublic;         // template field name duplicated as public
+    private String emailAddressDataTypeDataRowId;           // template field name duplicated as rowId
+    private String emailAddressDataTypeDataPrimary;         // template field name duplicated as primary
+    private String emailAddressDataTypeDataType;            // template field name duplicated as type
+    private String emailAddressDataUsageDataUseFor;         // template field name duplicated as useFor
+    private String emailAddressDataUsageDataUseForTenanted; // template field name duplicated as useForTenanted
+    private String emailAddressDataUsageDataComments;       // template field name duplicated as comments
+    private String existingEmailId;
+    private String newEmailId;                              // template field name duplicated as id
 
-    private String webAddressDataRowId;                         // template field name duplicated as rowId
-    private String webAddressDataDelete;                        // template field name duplicated as delete
-    private String webAddressDataDoNotReplaceAll;               // template field name duplicated as doNotReplaceAll
-    private String webAddressDataWebAddress;                    // template field name duplicated as webAddress
+    private String webAddressDataRowId;                     // template field name duplicated as rowId
+    private String webAddressDataDelete;                    // template field name duplicated as delete
+    private String webAddressDataDoNotReplaceAll;           // template field name duplicated as doNotReplaceAll
+    private String webAddressDataWebAddress;                // template field name duplicated as webAddress
     private String webAddressComment;
 
-    private String webAddressDataUsageDataRowId;                // template field name duplicated as rowId
-    private String webAddressDataUsageDataPublic;               // template field name duplicated as public
-    private String webAddressTypeDataRowId;                     // template field name duplicated as rowId
-    private String webAddressTypeDataPrimary;                   // template field name duplicated as primary
-    private String webAddressTypeDataType;                      // template field name duplicated as type
-    private String webAddressDataUsageDataUseFor;               // template field name duplicated as useFor
-    private String webAddressDataUsageDataUseForTenanted;       // template field name duplicated as useForTenanted
-    private String webAddressDataUsageDataComments;             // template field name duplicated as comments
-    private String webAddressDataUsageDataWebAddress;           // template field name duplicated as webAddress
-    private String webAddressDataUsageDataId;                   // template field name duplicated as id
+    private String webAddressDataUsageDataRowId;            // template field name duplicated as rowId
+    private String webAddressDataUsageDataPublic;           // template field name duplicated as public
+    private String webAddressTypeDataRowId;                 // template field name duplicated as rowId
+    private String webAddressTypeDataPrimary;               // template field name duplicated as primary
+    private String webAddressTypeDataType;                  // template field name duplicated as type
+    private String webAddressDataUsageDataUseFor;           // template field name duplicated as useFor
+    private String webAddressDataUsageDataUseForTenanted;   // template field name duplicated as useForTenanted
+    private String webAddressDataUsageDataComments;         // template field name duplicated as comments
+    private String existingWebAddressId;                    // template field name duplicated as webAddress
+    private String newWebAddressId;                         // template field name duplicated as id
     private String fileName;
     private String image;
     private String remitFromSponsor;
@@ -154,7 +154,7 @@ public class CemiSponsorFileSponsorTabRowBo extends CemiIndexedBusinessObjectBas
     private String statementNotificationEmailRecipients;
     private String includedChildren;
 
-    private String alternateNameDataRowId;                      // template field name duplicated as rowId
+    private String alternateNameDataRowId;                  // template field name duplicated as rowId
     private String alternateName;
     private String alternateNameUsage;
     private String replaceAll;
@@ -463,52 +463,52 @@ public class CemiSponsorFileSponsorTabRowBo extends CemiIndexedBusinessObjectBas
         this.addressDataTypeDataType = addressDataTypeDataType;
     }
 
-    public String getUseFor1() {
-        return useFor1;
+    public String getAddressDataUseFor1() {
+        return addressDataUseFor1;
     }
 
-    public void setUseFor1(String useFor1) {
-        this.useFor1 = useFor1;
+    public void setAddressDataUseFor1(String addressDataUseFor1) {
+        this.addressDataUseFor1 = addressDataUseFor1;
     }
 
-    public String getUseFor2() {
-        return useFor2;
+    public String getAddressDataUseFor2() {
+        return addressDataUseFor2;
     }
 
-    public void setUseFor2(String useFor2) {
-        this.useFor2 = useFor2;
+    public void setAddressDataUseFor2(String addressDataUseFor2) {
+        this.addressDataUseFor2 = addressDataUseFor2;
     }
 
-    public String getUseFor3() {
-        return useFor3;
+    public String getAddressDataUseFor3() {
+        return addressDataUseFor3;
     }
 
-    public void setUseFor3(String useFor3) {
-        this.useFor3 = useFor3;
+    public void setAddressDataUseFor3(String addressDataUseFor3) {
+        this.addressDataUseFor3 = addressDataUseFor3;
     }
 
-    public String getUseForTenanted1() {
-        return useForTenanted1;
+    public String getAddressDataUseForTenanted1() {
+        return addressDataUseForTenanted1;
     }
 
-    public void setUseForTenanted1(String useForTenanted1) {
-        this.useForTenanted1 = useForTenanted1;
+    public void setAddressDataUseForTenanted1(String addressDataUseForTenanted1) {
+        this.addressDataUseForTenanted1 = addressDataUseForTenanted1;
     }
 
-    public String getUseForTenanted2() {
-        return useForTenanted2;
+    public String getAddressDataUseForTenanted2() {
+        return addressDataUseForTenanted2;
     }
 
-    public void setUseForTenanted2(String useForTenanted2) {
-        this.useForTenanted2 = useForTenanted2;
+    public void setAddressDataUseForTenanted2(String addressDataUseForTenanted2) {
+        this.addressDataUseForTenanted2 = addressDataUseForTenanted2;
     }
 
-    public String getUseForTenanted3() {
-        return useForTenanted3;
+    public String getAddressDataUseForTenanted3() {
+        return addressDataUseForTenanted3;
     }
 
-    public void setUseForTenanted3(String useForTenanted3) {
-        this.useForTenanted3 = useForTenanted3;
+    public void setAddressDataUseForTenanted3(String addressDataUseForTenanted3) {
+        this.addressDataUseForTenanted3 = addressDataUseForTenanted3;
     }
 
     public String getAddressDataUsageDataComments() {
@@ -519,36 +519,36 @@ public class CemiSponsorFileSponsorTabRowBo extends CemiIndexedBusinessObjectBas
         this.addressDataUsageDataComments = addressDataUsageDataComments;
     }
 
-    public String getNumberOfDays() {
-        return numberOfDays;
+    public String getAddressDataNumberOfDays() {
+        return addressDataNumberOfDays;
     }
 
-    public void setNumberOfDays(String numberOfDays) {
-        this.numberOfDays = numberOfDays;
+    public void setAddressDataNumberOfDays(String addressDataNumberOfDays) {
+        this.addressDataNumberOfDays = addressDataNumberOfDays;
     }
 
-    public String getMunicipalityLocal() {
-        return municipalityLocal;
+    public String getAddressDataMunicipalityLocal() {
+        return addressDataMunicipalityLocal;
     }
 
-    public void setMunicipalityLocal(String municipalityLocal) {
-        this.municipalityLocal = municipalityLocal;
+    public void setAddressDataMunicipalityLocal(String addressDataMunicipalityLocal) {
+        this.addressDataMunicipalityLocal = addressDataMunicipalityLocal;
     }
 
-    public String getAddress() {
-        return address;
+    public String getExistingAddressId() {
+        return existingAddressId;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setExistingAddressId(String existingAddressId) {
+        this.existingAddressId = existingAddressId;
     }
 
-    public String getAddressId() {
-        return addressId;
+    public String getNewAddressId() {
+        return newAddressId;
     }
 
-    public void setAddressId(String addressId) {
-        this.addressId = addressId;
+    public void setNewAddressId(String newAddressId) {
+        this.newAddressId = newAddressId;
     }
 
     public String getPhoneDataRowId() {
@@ -559,60 +559,60 @@ public class CemiSponsorFileSponsorTabRowBo extends CemiIndexedBusinessObjectBas
         this.phoneDataRowId = phoneDataRowId;
     }
 
-    public String getAreaCode() {
-        return areaCode;
+    public String getPhoneDataAreaCode() {
+        return phoneDataAreaCode;
     }
 
-    public void setAreaCode(String areaCode) {
-        this.areaCode = areaCode;
+    public void setPhoneDataAreaCode(String phoneDataAreaCode) {
+        this.phoneDataAreaCode = phoneDataAreaCode;
     }
 
-    public String getTenantFormattedPhone() {
-        return tenantFormattedPhone;
+    public String getPhoneDataTenantFormattedPhone() {
+        return phoneDataTenantFormattedPhone;
     }
 
-    public void setTenantFormattedPhone(String tenantFormattedPhone) {
-        this.tenantFormattedPhone = tenantFormattedPhone;
+    public void setPhoneDataTenantFormattedPhone(String phoneDataTenantFormattedPhone) {
+        this.phoneDataTenantFormattedPhone = phoneDataTenantFormattedPhone;
     }
 
-    public String getInternationalFormattedPhone() {
-        return internationalFormattedPhone;
+    public String getPhoneDataInternationalFormattedPhone() {
+        return phoneDataInternationalFormattedPhone;
     }
 
-    public void setInternationalFormattedPhone(String internationalFormattedPhone) {
-        this.internationalFormattedPhone = internationalFormattedPhone;
+    public void setPhoneDataInternationalFormattedPhone(String phoneDataInternationalFormattedPhone) {
+        this.phoneDataInternationalFormattedPhone = phoneDataInternationalFormattedPhone;
     }
 
-    public String getPhoneNumberWithoutAreaCode() {
-        return phoneNumberWithoutAreaCode;
+    public String getPhoneDataPhoneNumberWithoutAreaCode() {
+        return phoneDataPhoneNumberWithoutAreaCode;
     }
 
-    public void setPhoneNumberWithoutAreaCode(String phoneNumberWithoutAreaCode) {
-        this.phoneNumberWithoutAreaCode = phoneNumberWithoutAreaCode;
+    public void setPhoneDataPhoneNumberWithoutAreaCode(String phoneDataPhoneNumberWithoutAreaCode) {
+        this.phoneDataPhoneNumberWithoutAreaCode = phoneDataPhoneNumberWithoutAreaCode;
     }
 
-    public String getNationalFormattedPhone() {
-        return nationalFormattedPhone;
+    public String getPhoneDataNationalFormattedPhone() {
+        return phoneDataNationalFormattedPhone;
     }
 
-    public void setNationalFormattedPhone(String nationalFormattedPhone) {
-        this.nationalFormattedPhone = nationalFormattedPhone;
+    public void setPhoneDataNationalFormattedPhone(String phoneDataNationalFormattedPhone) {
+        this.phoneDataNationalFormattedPhone = phoneDataNationalFormattedPhone;
     }
 
-    public String getE164FormattedPhone() {
-        return e164FormattedPhone;
+    public String getPhoneDataE164FormattedPhone() {
+        return phoneDataE164FormattedPhone;
     }
 
-    public void setE164FormattedPhone(String e164FormattedPhone) {
-        this.e164FormattedPhone = e164FormattedPhone;
+    public void setPhoneDataE164FormattedPhone(String phoneDataE164FormattedPhone) {
+        this.phoneDataE164FormattedPhone = phoneDataE164FormattedPhone;
     }
 
-    public String getWorkdayTraditionalFormattedPhone() {
-        return workdayTraditionalFormattedPhone;
+    public String getPhoneDataWorkdayTraditionalFormattedPhone() {
+        return phoneDataWorkdayTraditionalFormattedPhone;
     }
 
-    public void setWorkdayTraditionalFormattedPhone(String workdayTraditionalFormattedPhone) {
-        this.workdayTraditionalFormattedPhone = workdayTraditionalFormattedPhone;
+    public void setPhoneDataWorkdayTraditionalFormattedPhone(String phoneDataWorkdayTraditionalFormattedPhone) {
+        this.phoneDataWorkdayTraditionalFormattedPhone = phoneDataWorkdayTraditionalFormattedPhone;
     }
 
     public String getPhoneDataDelete() {
@@ -631,44 +631,44 @@ public class CemiSponsorFileSponsorTabRowBo extends CemiIndexedBusinessObjectBas
         this.phoneDataDoNotReplaceAll = phoneDataDoNotReplaceAll;
     }
 
-    public String getCountryIsoCode() {
-        return countryIsoCode;
+    public String getPhoneDataCountryIsoCode() {
+        return phoneDataCountryIsoCode;
     }
 
-    public void setCountryIsoCode(String countryIsoCode) {
-        this.countryIsoCode = countryIsoCode;
+    public void setPhoneDataCountryIsoCode(String phoneDataCountryIsoCode) {
+        this.phoneDataCountryIsoCode = phoneDataCountryIsoCode;
     }
 
-    public String getInternationalPhoneCode() {
-        return internationalPhoneCode;
+    public String getPhoneDataInternationalPhoneCode() {
+        return phoneDataInternationalPhoneCode;
     }
 
-    public void setInternationalPhoneCode(String internationalPhoneCode) {
-        this.internationalPhoneCode = internationalPhoneCode;
+    public void setPhoneDataInternationalPhoneCode(String phoneDataInternationalPhoneCode) {
+        this.phoneDataInternationalPhoneCode = phoneDataInternationalPhoneCode;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhoneDataPhoneNumber() {
+        return phoneDataPhoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhoneDataPhoneNumber(String phoneDataPhoneNumber) {
+        this.phoneDataPhoneNumber = phoneDataPhoneNumber;
     }
 
-    public String getPhoneExtension() {
-        return phoneExtension;
+    public String getPhoneDataPhoneExtension() {
+        return phoneDataPhoneExtension;
     }
 
-    public void setPhoneExtension(String phoneExtension) {
-        this.phoneExtension = phoneExtension;
+    public void setPhoneDataPhoneExtension(String phoneDataPhoneExtension) {
+        this.phoneDataPhoneExtension = phoneDataPhoneExtension;
     }
 
-    public String getPhoneDeviceType() {
-        return phoneDeviceType;
+    public String getPhoneDataPhoneDeviceType() {
+        return phoneDataPhoneDeviceType;
     }
 
-    public void setPhoneDeviceType(String phoneDeviceType) {
-        this.phoneDeviceType = phoneDeviceType;
+    public void setPhoneDataPhoneDeviceType(String phoneDataPhoneDeviceType) {
+        this.phoneDataPhoneDeviceType = phoneDataPhoneDeviceType;
     }
 
     public String getPhoneDataUsageDataRowId() {
@@ -735,20 +735,20 @@ public class CemiSponsorFileSponsorTabRowBo extends CemiIndexedBusinessObjectBas
         this.phoneDataUsageDataComments = phoneDataUsageDataComments;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getExistingPhoneId() {
+        return existingPhoneId;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setExistingPhoneId(String existingPhoneId) {
+        this.existingPhoneId = existingPhoneId;
     }
 
-    public String getPhoneDataId() {
-        return phoneDataId;
+    public String getNewPhoneId() {
+        return newPhoneId;
     }
 
-    public void setPhoneDataId(String phoneDataId) {
-        this.phoneDataId = phoneDataId;
+    public void setNewPhoneId(String newPhoneId) {
+        this.newPhoneId = newPhoneId;
     }
 
     public String getEmailAddressDataRowId() {
@@ -775,20 +775,20 @@ public class CemiSponsorFileSponsorTabRowBo extends CemiIndexedBusinessObjectBas
         this.emailAddressDataDoNotReplaceAll = emailAddressDataDoNotReplaceAll;
     }
 
-    public String getEmailAddress() {
-        return emailAddress;
+    public String getEmailAddressDataEmailAddress() {
+        return emailAddressDataEmailAddress;
     }
 
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
+    public void setEmailAddressDataEmailAddress(String emailAddressDataEmailAddress) {
+        this.emailAddressDataEmailAddress = emailAddressDataEmailAddress;
     }
 
-    public String getEmailComment() {
-        return emailComment;
+    public String getEmailAddressDataEmailComment() {
+        return emailAddressDataEmailComment;
     }
 
-    public void setEmailComment(String emailComment) {
-        this.emailComment = emailComment;
+    public void setEmailAddressDataEmailComment(String emailAddressDataEmailComment) {
+        this.emailAddressDataEmailComment = emailAddressDataEmailComment;
     }
 
     public String getEmailAddressDataUsageDataRowId() {
@@ -855,20 +855,20 @@ public class CemiSponsorFileSponsorTabRowBo extends CemiIndexedBusinessObjectBas
         this.emailAddressDataUsageDataComments = emailAddressDataUsageDataComments;
     }
 
-    public String getEmail() {
-        return email;
+    public String getExistingEmailId() {
+        return existingEmailId;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setExistingEmailId(String existingEmailId) {
+        this.existingEmailId = existingEmailId;
     }
 
-    public String getEmailAddressDataId() {
-        return emailAddressDataId;
+    public String getNewEmailId() {
+        return newEmailId;
     }
 
-    public void setEmailAddressDataId(String emailAddressDataId) {
-        this.emailAddressDataId = emailAddressDataId;
+    public void setNewEmailId(String newEmailId) {
+        this.newEmailId = newEmailId;
     }
 
     public String getWebAddressDataRowId() {
@@ -975,20 +975,20 @@ public class CemiSponsorFileSponsorTabRowBo extends CemiIndexedBusinessObjectBas
         this.webAddressDataUsageDataComments = webAddressDataUsageDataComments;
     }
 
-    public String getWebAddressDataUsageDataWebAddress() {
-        return webAddressDataUsageDataWebAddress;
+    public String getExistingWebAddressId() {
+        return existingWebAddressId;
     }
 
-    public void setWebAddressDataUsageDataWebAddress(String webAddressDataUsageDataWebAddress) {
-        this.webAddressDataUsageDataWebAddress = webAddressDataUsageDataWebAddress;
+    public void setExistingWebAddressId(String existingWebAddressId) {
+        this.existingWebAddressId = existingWebAddressId;
     }
 
-    public String getWebAddressDataUsageDataId() {
-        return webAddressDataUsageDataId;
+    public String getNewWebAddressId() {
+        return newWebAddressId;
     }
 
-    public void setWebAddressDataUsageDataId(String webAddressDataUsageDataId) {
-        this.webAddressDataUsageDataId = webAddressDataUsageDataId;
+    public void setNewWebAddressId(String newWebAddressId) {
+        this.newWebAddressId = newWebAddressId;
     }
 
     public String getFileName() {
@@ -1110,5 +1110,5 @@ public class CemiSponsorFileSponsorTabRowBo extends CemiIndexedBusinessObjectBas
     public void setReplaceAll(String replaceAll) {
         this.replaceAll = replaceAll;
     }
-    
+
 }

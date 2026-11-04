@@ -17,7 +17,6 @@ import edu.cornell.kfs.cemi.module.cg.batch.service.CemiSponsorFileExtractDataBu
 //import edu.cornell.kfs.cemi.module.cg.batch.service.CemiAwardScheduleFileExtractDataBuilder;
 //import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleExtractDao;
 //import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiAwardScheduleExtractOrmDao;
-import edu.cornell.kfs.cemi.module.cg.batch.service.CemiSponsorFileExtractDataBuilder;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiSponsorExtractDao;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiSponsorExtractOrmDao;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiOrmDataBuilderBase;
@@ -61,7 +60,7 @@ public class CemiSponsorFileExtractDataBuilderDefaultImpl extends CemiOrmDataBui
     }
 
     @Override
-    public void writeSponsorFileSponsorTabExtractDataToIntermediateStorage(final Iterator<Agency> agencies){
+    public void writeSponsorFileSponsorTabExtractDataToIntermediateStorage(final Iterator<Agency> agencies) {
         createAndStoreSponsorFileSponsorTabRowFor(jobRunDateString);
         LOG.info("writeSponsorFileSponsorTabExtractDataToIntermediateStorage, Finished writing shell constant row to table.");
 
@@ -85,7 +84,7 @@ public class CemiSponsorFileExtractDataBuilderDefaultImpl extends CemiOrmDataBui
         CemiSponsorFileSponsorTabRowBoFactory factoryForShellConstantBo = 
                 new CemiSponsorFileSponsorTabRowBoFactory(jobRunDateString, dateTimeService, maskSensitiveData);
         
-        final CemiSponsorFileSponsorTabRowBo shellConstantLine = factoryForShellConstantBo.createCemiSponsorFileSponsoreTabRowBo();
+        final CemiSponsorFileSponsorTabRowBo shellConstantLine = factoryForShellConstantBo.createCemiSponsorFileSponsorTabRowBo();
         storeSheetRow(shellConstantLine);
     }
 

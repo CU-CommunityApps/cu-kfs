@@ -97,36 +97,36 @@
         <field-descriptor name="subregionData" column="SUB_REGION_DATA" jdbc-type="VARCHAR"/>
         <field-descriptor name="postalCode" column="POSTAL_CODE" jdbc-type="VARCHAR"/>
         <field-descriptor name="addressDataUsageDataRowId" column="ADDR_DATA_USAGE_DATA_ROW_ID" jdbc-type="VARCHAR"/>
-        <field-descriptor name="addressDataUsageDataPublic" column="ADDR_DATA_USAGE_DATA_" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressDataUsageDataPublic" column="ADDR_DATA_USAGE_DATA_PUBLIC" jdbc-type="VARCHAR"/>
         <field-descriptor name="addressDataTypeDataRowId" column="ADDR_DATA_TYPE_DATA_ROW_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="addressDataTypeDataPrimary" column="ADDR_DATA_TYPE_DATA_PRIMARY" jdbc-type="VARCHAR"/>
         <field-descriptor name="addressDataTypeDataType" column="ADDR_DATA_TYPE_DATA_TYP" jdbc-type="VARCHAR"/>
-        <field-descriptor name="useFor1" column="USE_FOR_1" jdbc-type="VARCHAR"/>
-        <field-descriptor name="useFor2" column="USE_FOR_2" jdbc-type="VARCHAR"/>
-        <field-descriptor name="useFor3" column="USE_FOR_3" jdbc-type="VARCHAR"/>
-        <field-descriptor name="useForTenanted1" column="USE_FOR_TENANTED_1" jdbc-type="VARCHAR"/>
-        <field-descriptor name="useForTenanted2" column="USE_FOR_TENANTED_2" jdbc-type="VARCHAR"/>
-        <field-descriptor name="useForTenanted3" column="USE_FOR_TENANTED_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressDataUseFor1" column="ADDR_DATA_USE_FOR_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressDataUseFor2" column="ADDR_DATA_USE_FOR_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressDataUseFor3" column="ADDR_DATA_USE_FOR_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressDataUseForTenanted1" column="ADDR_DATA_USE_FOR_TENANTED_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressDataUseForTenanted2" column="ADDR_DATA_USE_FOR_TENANTED_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressDataUseForTenanted3" column="ADDR_DATA_USE_FOR_TENANTED_3" jdbc-type="VARCHAR"/>
         <field-descriptor name="addressDataUsageDataComments" column="ADDR_DATA_USAGE_DATA_COMMENTS" jdbc-type="VARCHAR"/>
-        <field-descriptor name="numberOfDays" column="NUM_OF_DAYS" jdbc-type="VARCHAR"/>
-        <field-descriptor name="municipalityLocal" column="MNCPLTY_LCL" jdbc-type="VARCHAR"/>
-        <field-descriptor name="address" column="ADDRESS" jdbc-type="VARCHAR"/>
-        <field-descriptor name="addressId" column="ADDRESS_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressDataNumberOfDays" column="ADDR_DATA_NUM_OF_DAYS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressDataMunicipalityLocal" column="ADDR_DATA_MNCPLTY_LCL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="existingAddressId" column="EXSTNG_ADDR_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="newAddressId" column="NEW_ADDR_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="phoneDataRowId" column="PHONE_DATA_ROW_ID" jdbc-type="VARCHAR"/>
-        <field-descriptor name="areaCode" column="AREA_CODE" jdbc-type="VARCHAR"/>
-        <field-descriptor name="tenantFormattedPhone" column="TENANT_FORMATTED_PHONE" jdbc-type="VARCHAR"/>
-        <field-descriptor name="internationalFormattedPhone" column="INTRNATIONAL_FORMATTED_PHONE" jdbc-type="VARCHAR"/>
-        <field-descriptor name="phoneNumberWithoutAreaCode" column="PHONE_NUM_WITHOUT_AREA_CODE" jdbc-type="VARCHAR"/>
-        <field-descriptor name="nationalFormattedPhone" column="NATIONAL_FORMATTED_PHONE" jdbc-type="VARCHAR"/>
-        <field-descriptor name="e164FormattedPhone" column="E164_FORMATTED_PHONE" jdbc-type="VARCHAR"/>
-        <field-descriptor name="workdayTraditionalFormattedPhone" column="WRKDY_TRDTNL_FORMATTED_PHONE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataAreaCode" column="PHONE_DATA_AREA_CODE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataTenantFormattedPhone" column="PHONE_DATA_TENANT_FORMATTED_PHONE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataInternationalFormattedPhone" column="PHONE_DATA_INTRNATIONAL_FORMATTED_PHONE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataPhoneNumberWithoutAreaCode" column="PHONE_DATA_PHONE_NUM_WITHOUT_AREA_CODE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataNationalFormattedPhone" column="PHONE_DATA_NATIONAL_FORMATTED_PHONE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataE164FormattedPhone" column="PHONE_DATA_E164_FORMATTED_PHONE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataWorkdayTraditionalFormattedPhone" column="PHONE_DATA_WRKDY_TRDTNL_FORMATTED_PHONE" jdbc-type="VARCHAR"/>
         <field-descriptor name="phoneDataDelete" column="PHONE_DATA_DELETE" jdbc-type="VARCHAR"/>
         <field-descriptor name="phoneDataDoNotReplaceAll" column="PHONE_DATA_DO_NOT_REPLACE_ALL" jdbc-type="VARCHAR"/>
-        <field-descriptor name="countryIsoCode" column="COUNTRY_ISO_CODE" jdbc-type="VARCHAR"/>
-        <field-descriptor name="internationalPhoneCode" column="INTERNATIONAL_PHONE_CODE" jdbc-type="VARCHAR"/>
-        <field-descriptor name="phoneNumber" column="PHONE_NUMBER" jdbc-type="VARCHAR"/>
-        <field-descriptor name="phoneExtension" column="PHONE_EXTENSION" jdbc-type="VARCHAR"/>
-        <field-descriptor name="phoneDeviceType" column="PHONE_DEVICE_TYPE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataCountryIsoCode" column="PHONE_DATA_COUNTRY_ISO_CODE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataInternationalPhoneCode" column="PHONE_DATA_INTERNATIONAL_PHONE_CODE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataPhoneNumber" column="PHONE_DATA_PHONE_NUMBER" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataPhoneExtension" column="PHONE_DATA_PHONE_EXTENSION" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneDataPhoneDeviceType" column="PHONE_DATA_PHONE_DEVICE_TYPE" jdbc-type="VARCHAR"/>
         <field-descriptor name="phoneDataUsageDataRowId" column="PHONE_DATA_USAGE_DATA_ROW_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="phoneDataUsageDataPublic" column="PHONE_DATA_USAGE_DATA_PUBLIC" jdbc-type="VARCHAR"/>
         <field-descriptor name="phoneDataTypeDataRowId" column="PHONE_DATA_TYPE_DATA_ROW_ID" jdbc-type="VARCHAR"/>
@@ -135,13 +135,13 @@
         <field-descriptor name="phoneDataUsageDataUseFor" column="PHONE_DATA_USAGE_DATA_USE_FOR" jdbc-type="VARCHAR"/>
         <field-descriptor name="phoneDataUsageDataUseForTenanted" column="PHONE_DATA_USAGE_DATA_USE_FOR_TENANTED" jdbc-type="VARCHAR"/>
         <field-descriptor name="phoneDataUsageDataComments" column="PHONE_DATA_USAGE_DATA_COMMENTS" jdbc-type="VARCHAR"/>
-        <field-descriptor name="phone" column="PHONE" jdbc-type="VARCHAR"/>
-        <field-descriptor name="phoneDataId" column="PHONE_DATA_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="existingPhoneId" column="EXSTNG_PHONE_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="newPhoneId" column="NEW_PHONE_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="emailAddressDataRowId" column="EMAIL_ADDR_DATA_ROW_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="emailAddressDataDelete" column="EMAIL_ADDR_DATA_DELETE" jdbc-type="VARCHAR"/>
         <field-descriptor name="emailAddressDataDoNotReplaceAll" column="EMAIL_ADDR_DATA_DO_NOT_REPLACE_ALL" jdbc-type="VARCHAR"/>
-        <field-descriptor name="emailAddress" column="EMAIL_ADDRESS" jdbc-type="VARCHAR"/>
-        <field-descriptor name="emailComment" column="EMAIL_COMMENT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddressDataEmailAddress" column="EMAIL_ADDR_DATA_EMAIL_ADDRESS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddressDataEmailComment" column="EMAIL_ADDR_DATA_EMAIL_COMMENT" jdbc-type="VARCHAR"/>
         <field-descriptor name="emailAddressDataUsageDataRowId" column="EMAIL_ADDR_DATA_USAGE_DATA_ROW_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="emailAddressDataUsageDataPublic" column="EMAIL_ADDR_DATA_USAGE_DATA_PUBLIC" jdbc-type="VARCHAR"/>
         <field-descriptor name="emailAddressDataTypeDataRowId" column="EMAIL_ADDR_DATA_TYPE_DATA_ROW_ID" jdbc-type="VARCHAR"/>
@@ -150,8 +150,8 @@
         <field-descriptor name="emailAddressDataUsageDataUseFor" column="EMAIL_ADDR_DATA_USAGE_DATA_USE_FOR" jdbc-type="VARCHAR"/>
         <field-descriptor name="emailAddressDataUsageDataUseForTenanted" column="EMAIL_ADDR_DATA_USAGE_DATA_USE_FOR_TENANTED" jdbc-type="VARCHAR"/>
         <field-descriptor name="emailAddressDataUsageDataComments" column="EMAIL_ADDR_DATA_USAGE_DATA_COMMENTS" jdbc-type="VARCHAR"/>
-        <field-descriptor name="email" column="EMAIL" jdbc-type="VARCHAR"/>
-        <field-descriptor name="emailAddressDataId" column="EMAIL_ADDR_DATA_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="existingEmailId" column="EXSTNG_EMAIL_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="newEmailId" column="NEW_EMAIL_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="webAddressDataRowId" column="WEB_ADDR_DATA_ROW_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="webAddressDataDelete" column="WEB_ADDR_DATA_DELETE" jdbc-type="VARCHAR"/>
         <field-descriptor name="webAddressDataDoNotReplaceAll" column="WEB_ADDR_DATA_DO_NOT_REPLACE_ALL" jdbc-type="VARCHAR"/>
@@ -165,8 +165,8 @@
         <field-descriptor name="webAddressDataUsageDataUseFor" column="WEB_ADDR_DATA_USAGE_DATA_USE_FOR" jdbc-type="VARCHAR"/>
         <field-descriptor name="webAddressDataUsageDataUseForTenanted" column="WEB_ADDR_DATA_USAGE_DATA_USE_FOR_TENANTED" jdbc-type="VARCHAR"/>
         <field-descriptor name="webAddressDataUsageDataComments" column="WEB_ADDR_DATA_USAGE_DATA_COMMENTS" jdbc-type="VARCHAR"/>
-        <field-descriptor name="webAddressDataUsageDataWebAddress" column="WEB_ADDR_DATA_USAGE_DATA_WEB_ADDR" jdbc-type="VARCHAR"/>
-        <field-descriptor name="webAddressDataUsageDataId" column="WEB_ADDR_DATA_USAGE_DATA_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="existingWebAddressId" column="EXSTNG_WEB_ADDR_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="newWebAddressId" column="NEW_WEB_ADDR_ID" jdbc-type="VARCHAR"/>
         <field-descriptor name="fileName" column="FILENAME" jdbc-type="VARCHAR"/>
         <field-descriptor name="image" column="IMAGE" jdbc-type="VARCHAR"/>
         <field-descriptor name="remitFromSponsor" column="REMIT_FROM_SPONSOR" jdbc-type="VARCHAR"/>
