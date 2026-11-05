@@ -1,5 +1,7 @@
 package edu.cornell.kfs.tax.batch.dto;
 
+import java.sql.Date;
+
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
@@ -25,6 +27,9 @@ public class VendorDetailLite {
     private boolean vendorForeignIndicator;
     private String vendorGIIN;
     private String vendorChapter4StatusCode;
+    private String vendorCorpCitizenCode;
+    private String vendorForeignTaxId;
+    private Date vendorDOB;
 
     public Integer getVendorHeaderGeneratedIdentifier() {
         return vendorHeaderGeneratedIdentifier;
@@ -131,6 +136,30 @@ public class VendorDetailLite {
         this.vendorChapter4StatusCode = vendorChapter4StatusCode;
     }
 
+    public String getVendorCorpCitizenCode() {
+        return vendorCorpCitizenCode;
+    }
+
+    public void setVendorCorpCitizenCode(final String vendorCorpCitizenCode) {
+        this.vendorCorpCitizenCode = vendorCorpCitizenCode;
+    }
+
+    public String getVendorForeignTaxId() {
+        return vendorForeignTaxId;
+    }
+
+    public void setVendorForeignTaxId(final String vendorForeignTaxId) {
+        this.vendorForeignTaxId = vendorForeignTaxId;
+    }
+
+    public Date getVendorDOB() {
+        return vendorDOB;
+    }
+
+    public void setVendorDOB(final Date vendorDOB) {
+        this.vendorDOB = vendorDOB;
+    }
+
 
 
     public enum VendorField implements TaxDtoFieldEnum {
@@ -147,7 +176,10 @@ public class VendorDetailLite {
         vendorOwnershipCategoryCode(VendorHeader.class),
         vendorForeignIndicator(VendorHeader.class),
         vendorGIIN(VendorHeader.class),
-        vendorChapter4StatusCode(VendorHeader.class);
+        vendorChapter4StatusCode(VendorHeader.class),
+        vendorCorpCitizenCode(VendorHeader.class),
+        vendorForeignTaxId(VendorHeader.class),
+        vendorDOB(VendorHeader.class);
 
         private final Class<? extends BusinessObject> mappedClass;
         private final String fieldName;
@@ -173,7 +205,7 @@ public class VendorDetailLite {
 
         @Override
         public boolean needsEncryptedStorage() {
-            return this == vendorTaxNumber;
+            return this == vendorTaxNumber || this == vendorForeignTaxId;
         }
     }
 

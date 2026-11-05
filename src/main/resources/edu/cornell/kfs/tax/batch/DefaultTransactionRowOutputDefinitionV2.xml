@@ -60,5 +60,9 @@
         <field name="Payment_Status_Code" length="19" type="STRING" key="paymentStatusCode"/>
         <field name="Disbursement_Type_Code" length="22" type="STRING" key="disbursementTypeCode"/>
         <field name="Ledger_Document_Type_Code" length="25" type="STRING" key="ledgerDocumentTypeCode"/>
+        <field name="Vendor_Corp_Citizen_Country" length="2" type="STRING" key="vendorCorpCitizenCode"/>
+        <field name="Vendor_Foreign_Tax_ID" length="255" type="SENSITIVE_STRING" key="vendorForeignTaxId"
+               mask="XXXXXXXXX"/>
+        <field name="Vendor_DOB" length="12" type="DATE" key="vendorDOB"/>
     </section>
 </taxOutputDefinition>
