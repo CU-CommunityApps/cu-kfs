@@ -84,7 +84,10 @@ public final class TestTaxSqlUtils {
                         "DISB_NBR NUMBER(9, 0), ",
                         "PMT_STAT_CD VARCHAR2(4 BYTE), ",
                         "DISB_TYP_CD VARCHAR2(4 BYTE), ",
-                        "LEDGER_DOC_TYP_CD VARCHAR2(4 BYTE)",
+                        "LEDGER_DOC_TYP_CD VARCHAR2(4 BYTE), ",
+                        "VNDR_CORP_CTZN_CNTRY_CD VARCHAR2(2 BYTE), ",
+                        "VNDR_FOREIGN_TAX_ID VARCHAR2(255 BYTE), ",
+                        "VNDR_DOB_DT DATE",
                 ")"
         );
 
@@ -105,7 +108,10 @@ public final class TestTaxSqlUtils {
                         "VNDR_OWNR_CTGRY_CD VARCHAR2(4 BYTE), ",
                         "VNDR_FRGN_IND VARCHAR2(1 BYTE), ",
                         "VNDR_GIIN VARCHAR2(19 BYTE), ",
-                        "VNDR_CHAP_4_STAT_CD VARCHAR2(2 BYTE)",
+                        "VNDR_CHAP_4_STAT_CD VARCHAR2(2 BYTE), ",
+                        "VNDR_CORP_CTZN_CNTRY_CD VARCHAR2(2 BYTE), ",
+                        "VNDR_FOREIGN_TAX_ID VARCHAR2(255 BYTE), ",
+                        "VNDR_DOB_DT DATE",
                 ")"
         );
 
