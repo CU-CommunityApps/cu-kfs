@@ -93,6 +93,9 @@ public class CemiPurchaseOrderHeaderBoFactory {
         final String purchaseOrderId = purchaseOrderDocument.getPurapDocumentIdentifier().toString();
         final String requestorEmployeeId = determineRequestorEmployeeId();
         final String deliveryRecipientEmployeeId = determineDeliveryRecipientEmployeeId();
+        final String buyerEmployeeId = determineBuyerEmployeeId();
+        final String shipToContactEmployeeId = determineShipToContactEmployeeId(
+                deliveryRecipientEmployeeId, requestorEmployeeId);
 
         headerBo.setKfsDocumentNumber(purchaseOrderDocument.getDocumentNumber());
         headerBo.setKfsPurchaseOrderId(purchaseOrderDocument.getPurapDocumentIdentifier());
@@ -103,7 +106,7 @@ public class CemiPurchaseOrderHeaderBoFactory {
         headerBo.setOrderTypeReference(CemiBaseConstants.EMPTY_STRING);
         headerBo.setAutoComplete(CemiBaseConstants.YES);
         headerBo.setComment(CemiBaseConstants.EMPTY_STRING);
-        headerBo.setWorker(requestorEmployeeId);
+        headerBo.setWorker(overrideEmployeeIdWithDefault(requestorEmployeeId));
         headerBo.setPurchaseOrderId(purchaseOrderId);
         headerBo.setSubmit(CemiBaseConstants.YES);
         headerBo.setLockedInWorkday(CemiBaseConstants.EMPTY_STRING);
@@ -139,12 +142,12 @@ public class CemiPurchaseOrderHeaderBoFactory {
         headerBo.setEmailRowId(CemiBaseConstants.EMPTY_STRING);
         headerBo.setEmailId(CemiBaseConstants.EMPTY_STRING);
         headerBo.setEmailAddress(CemiBaseConstants.EMPTY_STRING);
-        headerBo.setBuyer(determineBuyerEmployeeId());
+        headerBo.setBuyer(overrideEmployeeIdWithDefault(buyerEmployeeId));
         headerBo.setBillToContact(CemiBaseConstants.EMPTY_STRING);
         headerBo.setBillToContactDetail(CemiBaseConstants.EMPTY_STRING);
         headerBo.setExistingBillToAddressId(CemiBaseConstants.EMPTY_STRING);
         headerBo.setNewBillToAddressId(CemiBaseConstants.EMPTY_STRING);
-        headerBo.setShipToContact(determineShipToContactEmployeeId(deliveryRecipientEmployeeId, requestorEmployeeId));
+        headerBo.setShipToContact(overrideEmployeeIdWithDefault(shipToContactEmployeeId));
         headerBo.setShipToContactDetail(determineShipToContactDetail());
         headerBo.setExistingShipToAddressId(CemiBaseConstants.EMPTY_STRING);
         headerBo.setNewShipToAddressId(CemiBaseConstants.EMPTY_STRING);
@@ -324,6 +327,18 @@ public class CemiPurchaseOrderHeaderBoFactory {
         } else {
             return CemiBaseConstants.EMPTY_STRING;
         }
+    }
+
+    // TODO: Remove this method once we implement a better strategy for mapping the employee ID data to Workday.
+    private String overrideEmployeeIdWithDefault(final String employeeId) {
+        if (StringUtils.isNotBlank(employeeId)) {
+            LOG.debug("overrideEmployeeIdWithDefault, Overriding Employee ID {} with {}",
+                    employeeId, CemiPurchaseOrderConstants.DEFAULT_EMPLOYEE_ID);
+        } else {
+            LOG.debug("overrideEmployeeIdWithDefault, Overriding blank Employee ID with {}",
+                    CemiPurchaseOrderConstants.DEFAULT_EMPLOYEE_ID);
+        }
+        return CemiPurchaseOrderConstants.DEFAULT_EMPLOYEE_ID;
     }
 
     private String determineShipToContactDetail() {
