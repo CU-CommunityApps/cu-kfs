@@ -15,7 +15,9 @@ import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.KualiRuleService;
+import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.validation.event.AttributedCalculateAccountsPayableEvent;
@@ -33,9 +35,11 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.ApiAuthenticationService;
 import edu.cornell.kfs.sys.typeadapters.KualiDecimalTypeAdapter;
 import edu.cornell.kfs.sys.typeadapters.LocalDateTypeAdapter;
+import org.springframework.util.AutoPopulatingList;
 
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Scanner;
 
 import javax.servlet.http.HttpServletRequest;
@@ -173,11 +177,30 @@ public class PaymentRequestResource {
 
     private void routePreq(final UserSession userSession, PaymentRequestDocument preqDoc, PaymentRequestResultsDto results ) throws Exception {
         try {
-            GlobalVariables.doInNewGlobalVariables(userSession,
-                            () -> getDocumentService().routeDocument(preqDoc, ROUTE_PREQ_ANNOTATION_MESSAGE, null));
+            getDocumentService().routeDocument(preqDoc, ROUTE_PREQ_ANNOTATION_MESSAGE, null);
+
         } catch (ValidationException ve) {
             results.setValid(false);
-            results.getErrorMessages().add(ve.getMessage());
+            results.setDocumentNumber(preqDoc.getDocumentNumber());
+
+            if (ve.getMessage().equals("business rule evaluation failed")) {
+                MessageMap messageMap = GlobalVariables.getMessageMap();
+                if (messageMap != null && messageMap.hasErrors()) {
+                    results.getErrorMessages().add("The following business rule(s) failed while routing PREQ Document #" + preqDoc.getDocumentNumber());
+
+                    for (Map.Entry<String, AutoPopulatingList<ErrorMessage>> entry : messageMap.getErrorMessages().entrySet()) {
+                        String errorMessage = entry.getKey();
+                        if (entry.getValue() != null && entry.getValue().size() > 0) {
+                            errorMessage += ": " + entry.getValue().get(0).toString();
+                        }
+                        results.getErrorMessages().add(errorMessage);
+                    }
+                }
+
+            } else {
+                results.getErrorMessages().add(ve.getMessage());
+            }
+
             cancelPreq(userSession, preqDoc);
         }
     }
