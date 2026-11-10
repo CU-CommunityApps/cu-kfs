@@ -15,9 +15,7 @@ import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.KualiRuleService;
-import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.validation.event.AttributedCalculateAccountsPayableEvent;
@@ -35,11 +33,9 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.ApiAuthenticationService;
 import edu.cornell.kfs.sys.typeadapters.KualiDecimalTypeAdapter;
 import edu.cornell.kfs.sys.typeadapters.LocalDateTypeAdapter;
-import org.springframework.util.AutoPopulatingList;
 
 import java.io.InputStream;
 import java.time.LocalDate;
-import java.util.Map;
 import java.util.Scanner;
 
 import javax.servlet.http.HttpServletRequest;
@@ -95,30 +91,30 @@ public class PaymentRequestResource {
             PaymentRequestResultsDto results = getPaymentRequestDtoValidationService()
                     .validatePaymentRequestDto(paymentRequestDto);
             if (results.isValid()) {
-                UserSession userSession = createUserSessionForAiPaymentRequestUser(loggedInPrincipalName);
+                    UserSession userSession = createUserSessionForAiPaymentRequestUser(loggedInPrincipalName);
 
-                PaymentRequestDocument preqDoc = GlobalVariables.doInNewGlobalVariables(userSession,
-                        () -> getCuPaymentRequestService().createPaymentRequestDocumentFromDto(paymentRequestDto, results));
+                    PaymentRequestDocument preqDoc = GlobalVariables.doInNewGlobalVariables(userSession,
+                            () -> getCuPaymentRequestService().createPaymentRequestDocumentFromDto(paymentRequestDto, results));
 
-                if (preqDoc != null && results.isValid()) {
-                    calculatePaymentRequest(preqDoc);
-                    routePreq(userSession, preqDoc, results);
-
-                    if (results.isValid()) {
-                        LOG.info("createPaymentRequestDocument, PREQ Document #{} Created", preqDoc.getDocumentNumber());
-                        results.getSuccessMessages().add(String.format("Created PREQ Document %s", preqDoc.getDocumentNumber()));
-                        results.setDocumentNumber(preqDoc.getDocumentNumber());
-                        return Response.ok(gson.toJson(results)).build();
+                    if (preqDoc != null && results.isValid()) {
+                        calculatePaymentRequest(preqDoc);
+                        routePreq(userSession, preqDoc, results);
+                        
+                        if (results.isValid()) {
+                            LOG.info("createPaymentRequestDocument, PREQ Document #{} Created", preqDoc.getDocumentNumber());
+                            results.getSuccessMessages().add(String.format("Created PREQ Document %s", preqDoc.getDocumentNumber()));
+                            results.setDocumentNumber(preqDoc.getDocumentNumber());
+                            return Response.ok(gson.toJson(results)).build();
+                        } else {
+                            LOG.info("createPaymentRequestDocument, unable to route PREQ, return false {}", results);
+                        }
                     } else {
-                        LOG.info("createPaymentRequestDocument, unable to route PREQ, return false {}", results);
+                        LOG.info("createPaymentRequestDocument, unable to save PREQ, return false {}", results);
                     }
-                } else {
-                    LOG.info("createPaymentRequestDocument, unable to save PREQ, return false {}", results);
-                }
             } else {
                 LOG.info("createPaymentRequestDocument, there were validation errors, return false {}", results);
             }
-            return Response.status(results.getErrorStatus()).entity(gson.toJson(results)).build();
+            return Response.status(results.getErrorStatus()).entity(gson.toJson(results)).build(); 
 
         } catch (Exception e) {
             LOG.error("createPaymentRequestDocument, an error occurred", e);
@@ -145,7 +141,7 @@ public class PaymentRequestResource {
         if (preqDoc != null) {
             try {
                 GlobalVariables.doInNewGlobalVariables(userSession,
-                        () -> getDocumentService().cancelDocument(preqDoc, CANCEL_PREQ_ANNOTATION_MESSAGE));
+                                () -> getDocumentService().cancelDocument(preqDoc, CANCEL_PREQ_ANNOTATION_MESSAGE));
             } catch (ValidationException e) {
                 LOG.error("cancelPreq, unable to cancel PREQ", e);
             }
@@ -177,30 +173,11 @@ public class PaymentRequestResource {
 
     private void routePreq(final UserSession userSession, PaymentRequestDocument preqDoc, PaymentRequestResultsDto results ) throws Exception {
         try {
-            getDocumentService().routeDocument(preqDoc, ROUTE_PREQ_ANNOTATION_MESSAGE, null);
-
+            GlobalVariables.doInNewGlobalVariables(userSession,
+                            () -> getDocumentService().routeDocument(preqDoc, ROUTE_PREQ_ANNOTATION_MESSAGE, null));
         } catch (ValidationException ve) {
             results.setValid(false);
-            results.setDocumentNumber(preqDoc.getDocumentNumber());
-
-            if (ve.getMessage().equals("business rule evaluation failed")) {
-                MessageMap messageMap = GlobalVariables.getMessageMap();
-                if (messageMap != null && messageMap.hasErrors()) {
-                    results.getErrorMessages().add("The following business rule(s) failed while routing PREQ Document #" + preqDoc.getDocumentNumber());
-
-                    for (Map.Entry<String, AutoPopulatingList<ErrorMessage>> entry : messageMap.getErrorMessages().entrySet()) {
-                        String errorMessage = entry.getKey();
-                        if (entry.getValue() != null && entry.getValue().size() > 0) {
-                            errorMessage += ": " + entry.getValue().get(0).toString();
-                        }
-                        results.getErrorMessages().add(errorMessage);
-                    }
-                }
-
-            } else {
-                results.getErrorMessages().add(ve.getMessage());
-            }
-
+            results.getErrorMessages().add(ve.getMessage());
             cancelPreq(userSession, preqDoc);
         }
     }
