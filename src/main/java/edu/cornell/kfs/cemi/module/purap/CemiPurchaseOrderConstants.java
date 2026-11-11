@@ -21,7 +21,7 @@ public final class CemiPurchaseOrderConstants {
     public static final String REQUESTOR_LABEL = "Requestor";
     public static final String DELIVERY_RECIPIENT_LABEL = "Delivery Recipient";
 
-    public static final String DEFAULT_BUYER_PRINCIPAL_NAME = "mls398";
+    public static final String DEFAULT_EMPLOYEE_ID = "2109356";
 
     public static final String ROOM_NUMBER_SEGMENT_PREFIX = "Room #";
     public static final String ORIGINAL_PO_AMOUNT_MEMO_PREFIX = "Original PO Amount: ";
