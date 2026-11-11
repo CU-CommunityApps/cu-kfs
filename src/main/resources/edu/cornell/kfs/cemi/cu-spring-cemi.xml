@@ -202,8 +202,7 @@
           abstract="true"
           class="edu.cornell.kfs.cemi.pdp.dataaccess.impl.CemiPaymentElectionDaoJdbcImpl"
           parent="platformAwareDaoJdbc"
-          p:dataSource-ref="cemiDataSource"
-          p:dateTimeService-ref="dateTimeService"/>
+          p:dataSource-ref="cemiDataSource"/>
 
     <bean id="cemiPaymentElectionOrmDao" parent="cemiPaymentElectionOrmDao-parentBean"/>
     <bean id="cemiPaymentElectionOrmDao-parentBean"
