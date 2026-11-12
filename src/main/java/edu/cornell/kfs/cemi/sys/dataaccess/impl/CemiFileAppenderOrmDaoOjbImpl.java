@@ -2,6 +2,8 @@ package edu.cornell.kfs.cemi.sys.dataaccess.impl;
 
 import java.sql.Types;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -25,19 +27,23 @@ public class CemiFileAppenderOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb imple
     public void getSheetDataAndWriteToFile(final CemiExcelWriter writer, final CemiSheetDefinition sheetDefinition,
             final String jobRunDate) {
         final Class<? extends CemiIndexedBusinessObjectBase> sheetBoClass = getSheetBoClass(sheetDefinition);
+        final String[] attributesToQuery = getStringFieldKeys(sheetDefinition);
+        if (attributesToQuery.length == 0) {
+            return;
+        }
 
         final Criteria criteria = new Criteria();
         criteria.addEqualTo(CemiBasePropertyConstants.JOB_RUN_DATE_STRING, jobRunDate);
 
         final ReportQueryByCriteria query = new ReportQueryByCriteria(sheetBoClass, criteria);
-        query.setAttributes(getFieldNamesToQuery(sheetDefinition));
-        query.setJdbcTypes(getAllVarcharJdbcTypes(sheetDefinition));
+        query.setAttributes(attributesToQuery);
+        query.setJdbcTypes(getAllVarcharJdbcTypes(attributesToQuery.length));
         query.addOrderByAscending(CemiBasePropertyConstants.JOB_RUN_ROW_INDEX);
 
         try (
             final Stream<String[]> sheetDataRows = CuOjbUtils.buildCloseableStreamForReportQueryResults(
                     () -> getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(query),
-                    this::convertToSheetDataRow);
+                    queryRow -> buildFullRowData(sheetDefinition, queryRow));
         ) {
             final String sheetName = sheetDefinition.getName();
             sheetDataRows.forEach(sheetDataRow -> writer.writeRow(sheetName, sheetDataRow));
@@ -55,20 +61,33 @@ public class CemiFileAppenderOrmDaoOjbImpl extends PlatformAwareDaoBaseOjb imple
         }
     }
 
-    private String[] getFieldNamesToQuery(final CemiSheetDefinition sheetDefinition) {
+    private String[] getStringFieldKeys(final CemiSheetDefinition sheetDefinition) {
         return sheetDefinition.getFields().stream()
                 .map(CemiFieldDefinition::getKey)
+                .filter(Objects::nonNull)
                 .toArray(String[]::new);
     }
 
-    private int[] getAllVarcharJdbcTypes(final CemiSheetDefinition sheetDefinition) {
-        final int[] jdbcTypes = new int[sheetDefinition.getFields().size()];
-        Arrays.fill(jdbcTypes, Types.VARCHAR);
-        return jdbcTypes;
+    private String[] buildFullRowData(final CemiSheetDefinition sheetDefinition, final Object[] queryRow) {
+        final List<CemiFieldDefinition> allFields = sheetDefinition.getFields();
+        final String[] rowData = new String[allFields.size()];
+        int queryIndex = 0;
+        for (int i = 0; i < allFields.size(); i++) {
+            final CemiFieldDefinition field = allFields.get(i);
+            if (field.getKey() != null) {
+                rowData[i] = queryRow[queryIndex] != null ? queryRow[queryIndex].toString() : StringUtils.EMPTY;
+                queryIndex++;
+            } else {
+                rowData[i] = StringUtils.defaultString(field.getValue());
+            }
+        }
+        return rowData;
     }
 
-    private String[] convertToSheetDataRow(final Object[] reportRowData) {
-        return Arrays.copyOf(reportRowData, reportRowData.length, String[].class);
+    private int[] getAllVarcharJdbcTypes(final int count) {
+        final int[] jdbcTypes = new int[count];
+        Arrays.fill(jdbcTypes, Types.VARCHAR);
+        return jdbcTypes;
     }
 
 }
