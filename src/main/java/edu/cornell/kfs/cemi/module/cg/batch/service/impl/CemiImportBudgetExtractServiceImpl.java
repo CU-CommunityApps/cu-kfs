@@ -59,6 +59,8 @@ public class CemiImportBudgetExtractServiceImpl extends CemiDataExtractServiceBa
     public void generateDataConversionExtractFile(final LocalDateTime jobRunDate) {
         LOG.info("generateDataConversionExtractFile, Starting creation of CEMI Import Budget Extract file {}",
                 CemiImportBudgetConstants.IMPORT_BUDGET_EXTRACT_PLAIN_FILENAME);
+        generateFileForDataExtract(jobRunDate, CemiImportBudgetConstants.IMPORT_BUDGET_EXTRACT_PLAIN_FILENAME,
+                CemiImportBudgetConstants.IMPORT_BUDGET_EXTRACT_FILENAME_PREFIX);
     }
 
     @Override

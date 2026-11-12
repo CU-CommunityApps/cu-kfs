@@ -13,14 +13,43 @@
  -->
 <cemiOutputDefinition>
 
-    <sheet name="Import Budget High Volume" num-header-rows="1" start-column-index="1"
+    <!-- Fields use type="STATIC" value="" as placeholders; will be changed to type="STRING" with BO property keys in KFSPTS-39764 -->
+    <sheet name="Import Budget High Volume" num-header-rows="5" start-column-index="1"
            business-object-class="edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiImportBudgetFileImportBudgetHighVolumeTabRowBo">
-        <!-- Fields to be added once the Import Budget High Volume tab field list is confirmed -->
+        <field name="Header Key*" type="STATIC" value=""/>
+        <field name="Budget" type="STATIC" value=""/>
+        <field name="Import Mode" type="STATIC" value=""/>
+        <field name="Auto Complete" type="STATIC" value=""/>
+        <field name="Comment" type="STATIC" value=""/>
+        <field name="Worker" type="STATIC" value=""/>
+        <field name="Submit" type="STATIC" value=""/>
+        <field name="Budget Structure*" type="STATIC" value=""/>
+        <field name="Budget Name*" type="STATIC" value=""/>
+        <field name="Budget Memo" type="STATIC" value=""/>
+        <field name="Budget Period" type="STATIC" value=""/>
     </sheet>
 
-    <sheet name="Budget Lines Data" num-header-rows="1" start-column-index="1"
+    <!-- Fields use type="STATIC" value="" as placeholders; will be changed to type="STRING" with BO property keys in KFSPTS-39764 -->
+    <sheet name="Budget Lines Data" num-header-rows="5" start-column-index="1"
            business-object-class="edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiImportBudgetFileBudgetLinesDataTabRowBo">
-        <!-- Fields to be added once the Budget Lines Data tab field list is confirmed -->
+        <field name="Header Key" type="STATIC" value=""/>
+        <field name="Line Key" type="STATIC" value=""/>
+        <field name="Line Order" type="STATIC" value=""/>
+        <field name="Company*" type="STATIC" value=""/>
+        <field name="Year" type="STATIC" value=""/>
+        <field name="Fiscal Time Interval" type="STATIC" value=""/>
+        <field name="Ledger Account or Ledger Account Summary" type="STATIC" value=""/>
+        <field name="Account Set" type="STATIC" value=""/>
+        <field name="Book Code" type="STATIC" value=""/>
+        <field name="Budget Currency" type="STATIC" value=""/>
+        <field name="Budget Debit Amount" type="STATIC" value=""/>
+        <field name="Budget Credit Amount" type="STATIC" value=""/>
+        <field name="Quantity" type="STATIC" value=""/>
+        <field name="Unit of Time" type="STATIC" value=""/>
+        <field name="Memo" type="STATIC" value=""/>
+        <field name="Grant_ID" type="STATIC" value=""/>
+        <field name="Object_Class_ID" type="STATIC" value=""/>
+        <field name="External Supplier Invoice Source" type="STATIC" value=""/>
     </sheet>
 
 </cemiOutputDefinition>
