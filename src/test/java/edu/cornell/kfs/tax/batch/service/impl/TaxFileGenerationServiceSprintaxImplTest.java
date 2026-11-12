@@ -390,6 +390,10 @@ public class TaxFileGenerationServiceSprintaxImplTest {
         for (final TransactionDetail transactionDetail : transactionDetails) {
             final String decryptedTaxNumber = testDataHelperDao.decrypt(transactionDetail.getVendorTaxNumber());
             transactionDetail.setVendorTaxNumber(decryptedTaxNumber);
+            if (StringUtils.isNotBlank(transactionDetail.getVendorForeignTaxId())) {
+                final String decryptedForeignTaxId = testDataHelperDao.decrypt(transactionDetail.getVendorForeignTaxId());
+                transactionDetail.setVendorForeignTaxId(decryptedForeignTaxId);
+            }
         }
     }
 
