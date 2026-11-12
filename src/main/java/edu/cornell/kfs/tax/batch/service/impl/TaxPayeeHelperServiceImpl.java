@@ -94,9 +94,11 @@ public class TaxPayeeHelperServiceImpl implements TaxPayeeHelperService {
             payee.setVendorOwnershipCode(vendorToProcess.getVendorOwnershipCode());
             payee.setVendorGIIN(vendorToProcess.getVendorGIIN());
             payee.setVendorChapter4StatusCode(vendorToProcess.getVendorChapter4StatusCode());
+            initializeMiscHeaderLevelData(payee, vendorToProcess);
             initializeVendorName(payee, vendorToProcess, statistics);
             initializeVendorAddressData(payee, vendorToProcess, statistics);
         } else if (ObjectUtils.isNotNull(matchingVendor)) {
+            initializeMiscHeaderLevelData(payee, matchingVendor);
             initializeVendorAddressData(payee, matchingVendor, statistics);
         }
     }
@@ -113,6 +115,12 @@ public class TaxPayeeHelperServiceImpl implements TaxPayeeHelperService {
         if (StringUtils.equals(vendorDetail.getVendorOwnershipCode(), soleProprietorOwnershipCode)) {
             payee.setParentVendorName(vendorDetail.getVendorName());
         }
+    }
+
+    private void initializeMiscHeaderLevelData(final TaxPayeeBase payee, final VendorDetailLite vendorDetail) {
+        payee.setVendorCorpCitizenCode(vendorDetail.getVendorCorpCitizenCode());
+        payee.setVendorForeignTaxId(vendorDetail.getVendorForeignTaxId());
+        payee.setVendorDOB(vendorDetail.getVendorDOB());
     }
 
     private void initializeVendorName(final TaxPayeeBase payee,

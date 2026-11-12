@@ -152,6 +152,10 @@ public class TransactionDetailProcessorDaoJdbcImpl extends TransactionDetailDaoJ
                 FieldUpdate.of(TransactionDetailField.vendorForeignZipCode, TransactionDetail::getVendorForeignZipCode),
                 FieldUpdate.of(TransactionDetailField.vendorForeignProvinceName, TransactionDetail::getVendorForeignProvinceName),
                 FieldUpdate.of(TransactionDetailField.vendorForeignCountryCode, TransactionDetail::getVendorForeignCountryCode),
+                FieldUpdate.of(TransactionDetailField.vendorCorpCitizenCode, TransactionDetail::getVendorCorpCitizenCode),
+                FieldUpdate.ofEncryptedField(TransactionDetailField.vendorForeignTaxId, encryptionService,
+                        TransactionDetail::getVendorForeignTaxId),
+                FieldUpdate.of(TransactionDetailField.vendorDOB, Types.DATE, TransactionDetail::getVendorDOB),
                 FieldUpdate.of(TransactionDetailField.form1042SBox, TransactionDetail::getForm1042SBox),
                 FieldUpdate.of(TransactionDetailField.form1042SOverriddenBox, TransactionDetail::getForm1042SOverriddenBox)
         };

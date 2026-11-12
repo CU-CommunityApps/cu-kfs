@@ -80,6 +80,9 @@ public class TransactionDetail extends TransientBusinessObjectBase {
     private String paymentStatusCode;
     private String disbursementTypeCode;
     private String ledgerDocumentTypeCode;
+    private String vendorCorpCitizenCode;
+    private String vendorForeignTaxId;
+    private java.sql.Date vendorDOB;
 
     private transient String paymentMethodCode;
 
@@ -547,6 +550,30 @@ public class TransactionDetail extends TransientBusinessObjectBase {
         this.paymentMethodCode = paymentMethodCode;
     }
 
+    public String getVendorCorpCitizenCode() {
+        return vendorCorpCitizenCode;
+    }
+
+    public void setVendorCorpCitizenCode(String vendorCorpCitizenCode) {
+        this.vendorCorpCitizenCode = vendorCorpCitizenCode;
+    }
+
+    public String getVendorForeignTaxId() {
+        return vendorForeignTaxId;
+    }
+
+    public void setVendorForeignTaxId(String vendorForeignTaxId) {
+        this.vendorForeignTaxId = vendorForeignTaxId;
+    }
+
+    public java.sql.Date getVendorDOB() {
+        return vendorDOB;
+    }
+
+    public void setVendorDOB(java.sql.Date vendorDOB) {
+        this.vendorDOB = vendorDOB;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
@@ -620,7 +647,10 @@ public class TransactionDetail extends TransientBusinessObjectBase {
         disbursementNbr,
         paymentStatusCode,
         disbursementTypeCode,
-        ledgerDocumentTypeCode;
+        ledgerDocumentTypeCode,
+        vendorCorpCitizenCode,
+        vendorForeignTaxId,
+        vendorDOB;
 
         @Override
         public Class<? extends BusinessObject> getMappedBusinessObjectClass() {
@@ -629,7 +659,7 @@ public class TransactionDetail extends TransientBusinessObjectBase {
 
         @Override
         public boolean needsEncryptedStorage() {
-            return this == vendorTaxNumber;
+            return this == vendorTaxNumber || this == vendorForeignTaxId;
         }
     }
 
