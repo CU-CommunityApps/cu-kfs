@@ -25,7 +25,9 @@ public class CemiFileAppenderServiceImpl implements CemiFileAppenderService {
         LOG.info("populateFileFromOrmDataStorage, Writing file data for {} sheets", outputDefinition.getSheets().size());
         for (final CemiSheetDefinition sheetDefinition : outputDefinition.getSheets()) {
             LOG.info("populateFileFromOrmDataStorage, Writing file data for sheet: {}", sheetDefinition.getName());
-            cemiFileAppenderOrmDao.getSheetDataAndWriteToFile(writer, sheetDefinition, jobRunDate);
+            if (sheetDefinition.getFields().stream().anyMatch(field -> field.getKey() != null)) {
+                cemiFileAppenderOrmDao.getSheetDataAndWriteToFile(writer, sheetDefinition, jobRunDate);
+            }
         }
         LOG.info("populateFileFromOrmDataStorage, Finished writing file data for sheets");
     }
