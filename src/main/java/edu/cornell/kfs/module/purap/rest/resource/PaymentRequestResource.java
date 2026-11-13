@@ -10,6 +10,7 @@ import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.exception.ValidationException;
@@ -28,6 +29,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestDto;
 import edu.cornell.kfs.module.purap.rest.jsonObjects.PaymentRequestResultsDto;
 import edu.cornell.kfs.module.purap.service.PaymentRequestDtoValidationService;
@@ -38,6 +40,7 @@ import edu.cornell.kfs.sys.typeadapters.LocalDateTypeAdapter;
 import org.springframework.util.AutoPopulatingList;
 
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Scanner;
@@ -73,6 +76,7 @@ public class PaymentRequestResource {
     private CuPaymentRequestService cuPaymentRequestService;
     private DocumentService documentService;
     private KualiRuleService kualiRuleService;
+    private ConfigurationService configurationService;
 
     @GET
     public Response describePaymentRequestResource() {
@@ -183,20 +187,31 @@ public class PaymentRequestResource {
             results.setValid(false);
             results.setDocumentNumber(preqDoc.getDocumentNumber());
 
-            if (ve.getMessage().equals("business rule evaluation failed")) {
-                MessageMap messageMap = GlobalVariables.getMessageMap();
-                if (messageMap != null && messageMap.hasErrors()) {
-                    results.getErrorMessages().add("The following business rule(s) failed while routing PREQ Document #" + preqDoc.getDocumentNumber());
+            MessageMap messageMap = GlobalVariables.getMessageMap();
+            if (messageMap != null && messageMap.hasErrors()) {
+                String messageTemplate = getConfigurationService().getPropertyValueAsString(
+                        CUPurapKeyConstants.MESSAGE_PAYMENTREQUEST_BUSINESS_RULES_FAILED);
+                String formattedMessage = MessageFormat.format(messageTemplate, preqDoc.getDocumentNumber());
+                results.getErrorMessages().add(formattedMessage);
 
-                    for (Map.Entry<String, AutoPopulatingList<ErrorMessage>> entry : messageMap.getErrorMessages().entrySet()) {
-                        String errorMessage = entry.getKey();
-                        if (entry.getValue() != null && entry.getValue().size() > 0) {
-                            errorMessage += ": " + entry.getValue().get(0).toString();
+                for (Map.Entry<String, AutoPopulatingList<ErrorMessage>> entry : messageMap.getErrorMessages().entrySet()) {
+                    String errorProperty = entry.getKey();
+                    if (entry.getValue() != null && entry.getValue().size() > 0) {
+                        for (ErrorMessage errorMessage : entry.getValue()) {
+                            String errorMsg = getConfigurationService().getPropertyValueAsString(errorMessage.getErrorKey());
+                            if (errorMsg == null) {
+                                LOG.error("routePreq: Cannot find message for error key: " + errorMessage.getErrorKey());
+                                errorMsg = errorMessage.getErrorKey();
+                            } else {
+                                Object[] arguments = (Object[]) errorMessage.getMessageParameters();
+                                if (arguments != null && arguments.length != 0) {
+                                    errorMsg = MessageFormat.format(errorMsg, arguments);
+                                }
+                            }
+                            results.getErrorMessages().add(errorProperty + ": " + errorMsg);
                         }
-                        results.getErrorMessages().add(errorMessage);
                     }
                 }
-
             } else {
                 results.getErrorMessages().add(ve.getMessage());
             }
@@ -238,6 +253,13 @@ public class PaymentRequestResource {
             kualiRuleService = SpringContext.getBean(KualiRuleService.class);
         }
         return kualiRuleService;
+    }
+
+    public ConfigurationService getConfigurationService() {
+        if (configurationService == null) {
+            configurationService = SpringContext.getBean(ConfigurationService.class);
+        }
+        return configurationService;
     }
 
 }
