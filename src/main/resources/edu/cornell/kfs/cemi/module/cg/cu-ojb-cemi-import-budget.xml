@@ -2,13 +2,42 @@
 
     <!-- Import Budget Extract -->
     <class-descriptor class="edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiImportBudgetFileImportBudgetHighVolumeTabRowBo" table="CU_CEMI_EXTR_IMPORT_BUDGET_TAB_IMPORT_BUDGET_HIGH_VOL_T" schema="CEMI">
-        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
-        <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunRowIndex"  column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT"   primarykey="true" index="true"/>
+        <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR"  primarykey="true" index="true"/>
+        <field-descriptor name="headerKey"        column="HDR_KEY"           jdbc-type="VARCHAR"/>
+        <field-descriptor name="budget"           column="BUDGET"            jdbc-type="VARCHAR"/>
+        <field-descriptor name="importMode"       column="IMPORT_MODE"       jdbc-type="VARCHAR"/>
+        <field-descriptor name="autoComplete"     column="AUTO_COMPLETE"     jdbc-type="VARCHAR"/>
+        <field-descriptor name="comment"          column="CMMNT"             jdbc-type="VARCHAR"/>
+        <field-descriptor name="worker"           column="WRKR"              jdbc-type="VARCHAR"/>
+        <field-descriptor name="submit"           column="SUBMIT"            jdbc-type="VARCHAR"/>
+        <field-descriptor name="budgetStructure"  column="BUDGT_STRC"        jdbc-type="VARCHAR"/>
+        <field-descriptor name="budgetName"       column="BUDGT_NM"          jdbc-type="VARCHAR"/>
+        <field-descriptor name="budgetMemo"       column="BUDGT_MEMO"        jdbc-type="VARCHAR"/>
+        <field-descriptor name="budgetPeriod"     column="BUDGT_PRD"         jdbc-type="VARCHAR"/>
     </class-descriptor>
 
     <class-descriptor class="edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiImportBudgetFileBudgetLinesDataTabRowBo" table="CU_CEMI_EXTR_IMPORT_BUDGET_TAB_BUDGET_LINES_DATA_T" schema="CEMI">
-        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
-        <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunRowIndex"                      column="JOB_RUN_ROW_INDEX"      jdbc-type="BIGINT"   primarykey="true" index="true"/>
+        <field-descriptor name="jobRunDateString"                    column="EXTR_FILE_RUNDATE"       jdbc-type="VARCHAR"  primarykey="true" index="true"/>
+        <field-descriptor name="headerKey"                           column="HDR_KEY"                 jdbc-type="VARCHAR"/>
+        <field-descriptor name="lineKey"                             column="LINE_KEY"                jdbc-type="VARCHAR"/>
+        <field-descriptor name="lineOrder"                           column="LINE_ORDR"               jdbc-type="VARCHAR"/>
+        <field-descriptor name="company"                             column="CMPNY"                   jdbc-type="VARCHAR"/>
+        <field-descriptor name="year"                                column="YR"                      jdbc-type="VARCHAR"/>
+        <field-descriptor name="fiscalTimeInterval"                  column="FISC_TM_ITRV"            jdbc-type="VARCHAR"/>
+        <field-descriptor name="ledgerAccountOrLedgerAccountSummary" column="LDG_ACCT_OR_ACCT_SUM"   jdbc-type="VARCHAR"/>
+        <field-descriptor name="accountSet"                          column="ACCT_SET"                jdbc-type="VARCHAR"/>
+        <field-descriptor name="bookCode"                            column="BK_CD"                   jdbc-type="VARCHAR"/>
+        <field-descriptor name="budgetCurrency"                      column="BUDGT_CRNCY"             jdbc-type="VARCHAR"/>
+        <field-descriptor name="budgetDebitAmount"                   column="BUDGT_DBT_AMT"           jdbc-type="VARCHAR"/>
+        <field-descriptor name="budgetCreditAmount"                  column="BUDGT_CRDT_AMT"          jdbc-type="VARCHAR"/>
+        <field-descriptor name="quantity"                            column="QNTY"                    jdbc-type="VARCHAR"/>
+        <field-descriptor name="unitOfTime"                          column="UNIT_OF_TM"              jdbc-type="VARCHAR"/>
+        <field-descriptor name="memo"                                column="MEMO"                    jdbc-type="VARCHAR"/>
+        <field-descriptor name="grantId"                             column="GRNT_ID"                 jdbc-type="VARCHAR"/>
+        <field-descriptor name="objectClassId"                       column="OBJ_CLS_ID"              jdbc-type="VARCHAR"/>
+        <field-descriptor name="externalSupplierInvoiceSource"       column="EXTRNL_SPLR_INV_SRC"     jdbc-type="VARCHAR"/>
     </class-descriptor>
 
 </descriptor-repository>
