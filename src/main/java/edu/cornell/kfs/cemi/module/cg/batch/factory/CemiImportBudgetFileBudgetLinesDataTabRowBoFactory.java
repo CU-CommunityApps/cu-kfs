@@ -9,10 +9,6 @@ public class CemiImportBudgetFileBudgetLinesDataTabRowBoFactory {
         final CemiImportBudgetFileBudgetLinesDataTabRowBo row =
                 new CemiImportBudgetFileBudgetLinesDataTabRowBo();
 
-        // Both of these attributes are set by CemiOrmDataBuilderBase when storeSheetRow is invoked:
-        //      attribute jobRunRowIndex
-        //      attribute jobRunDateString
-
         row.setHeaderKey("budget-lines-header-key");
         row.setLineKey(CemiBaseConstants.EMPTY_STRING);
         row.setLineOrder(CemiBaseConstants.EMPTY_STRING);

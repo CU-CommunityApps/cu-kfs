@@ -9,10 +9,6 @@ public class CemiImportBudgetFileImportBudgetHighVolumeTabRowBoFactory {
         final CemiImportBudgetFileImportBudgetHighVolumeTabRowBo row =
                 new CemiImportBudgetFileImportBudgetHighVolumeTabRowBo();
 
-        // Both of these attributes are set by CemiOrmDataBuilderBase when storeSheetRow is invoked:
-        //      attribute jobRunRowIndex
-        //      attribute jobRunDateString
-
         row.setHeaderKey("budget-header-key");
         row.setBudget(CemiBaseConstants.EMPTY_STRING);
         row.setImportMode(CemiBaseConstants.EMPTY_STRING);
