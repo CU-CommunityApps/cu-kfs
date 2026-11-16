@@ -190,7 +190,6 @@ public class PaymentRequestResource {
                 handleUnexpectedException(preqDoc, results, e);
                 cancelPreqSafely(userSession, preqDoc, results);
             }
-            return null;
         });
     }
 
