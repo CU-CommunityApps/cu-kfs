@@ -77,4 +77,7 @@ public class CUPurapKeyConstants {
     public static final String ERROR_PAYMENTREQUEST_NOTE_TOO_LONG = "error.paymentrequest.note.too.long";
     public static final String ERROR_PAYMENTREQUEST_FIELD_FORMATTING = "error.paymentrequest.formatting.error";
     public static final String MESSAGE_PAYMENTREQUEST_BUSINESS_RULES_FAILED = "message.paymentrequest.business.rules.failed";
+    public static final String MESSAGE_PAYMENTREQUEST_VALIDATION_FAILED_NO_ERRORS = "message.paymentrequest.validation.failed.no.errors";
+    public static final String MESSAGE_PAYMENTREQUEST_UNEXPECTED_ERROR = "message.paymentrequest.unexpected.error";
+    public static final String MESSAGE_PAYMENTREQUEST_CANCEL_FAILED = "message.paymentrequest.cancel.failed";
 }

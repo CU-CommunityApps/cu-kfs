@@ -179,44 +179,91 @@ public class PaymentRequestResource {
         }
     }
 
-    private void routePreq(final UserSession userSession, PaymentRequestDocument preqDoc, PaymentRequestResultsDto results ) throws Exception {
-        try {
-            getDocumentService().routeDocument(preqDoc, ROUTE_PREQ_ANNOTATION_MESSAGE, null);
-
-        } catch (ValidationException ve) {
-            results.setValid(false);
-            results.setDocumentNumber(preqDoc.getDocumentNumber());
-
-            MessageMap messageMap = GlobalVariables.getMessageMap();
-            if (messageMap != null && messageMap.hasErrors()) {
-                String messageTemplate = getConfigurationService().getPropertyValueAsString(
-                        CUPurapKeyConstants.MESSAGE_PAYMENTREQUEST_BUSINESS_RULES_FAILED);
-                String formattedMessage = MessageFormat.format(messageTemplate, preqDoc.getDocumentNumber());
-                results.getErrorMessages().add(formattedMessage);
-
-                for (Map.Entry<String, AutoPopulatingList<ErrorMessage>> entry : messageMap.getErrorMessages().entrySet()) {
-                    String errorProperty = entry.getKey();
-                    if (entry.getValue() != null && entry.getValue().size() > 0) {
-                        for (ErrorMessage errorMessage : entry.getValue()) {
-                            String errorMsg = getConfigurationService().getPropertyValueAsString(errorMessage.getErrorKey());
-                            if (errorMsg == null) {
-                                LOG.error("routePreq: Cannot find message for error key: " + errorMessage.getErrorKey());
-                                errorMsg = errorMessage.getErrorKey();
-                            } else {
-                                Object[] arguments = (Object[]) errorMessage.getMessageParameters();
-                                if (arguments != null && arguments.length != 0) {
-                                    errorMsg = MessageFormat.format(errorMsg, arguments);
-                                }
-                            }
-                            results.getErrorMessages().add(errorProperty + ": " + errorMsg);
-                        }
-                    }
-                }
-            } else {
-                results.getErrorMessages().add(ve.getMessage());
+    private void routePreq(final UserSession userSession, PaymentRequestDocument preqDoc, PaymentRequestResultsDto results) throws Exception {
+        GlobalVariables.doInNewGlobalVariables(userSession, () -> {
+            try {
+                getDocumentService().routeDocument(preqDoc, ROUTE_PREQ_ANNOTATION_MESSAGE, null);
+            } catch (ValidationException ve) {
+                handleRouteDocValidationException(preqDoc, results);
+                cancelPreqSafely(userSession, preqDoc, results);
+            } catch (Exception e) {
+                handleUnexpectedException(preqDoc, results, e);
+                cancelPreqSafely(userSession, preqDoc, results);
             }
+            return null;
+        });
+    }
 
+    private void handleRouteDocValidationException(PaymentRequestDocument preqDoc, PaymentRequestResultsDto results) {
+        results.setValid(false);
+        results.setDocumentNumber(preqDoc.getDocumentNumber());
+
+        MessageMap messageMap = GlobalVariables.getMessageMap();
+        if (messageMap != null && messageMap.hasErrors()) {
+            addFormattedBusinessRuleErrors(preqDoc, messageMap, results);
+        } else {
+            String message = getConfigurationService().getPropertyValueAsString(
+                    CUPurapKeyConstants.MESSAGE_PAYMENTREQUEST_VALIDATION_FAILED_NO_ERRORS);
+            results.getErrorMessages().add(message);
+        }
+    }
+
+    private void addFormattedBusinessRuleErrors(PaymentRequestDocument preqDoc, MessageMap messageMap, PaymentRequestResultsDto results) {
+        String messageTemplate = getConfigurationService().getPropertyValueAsString(
+                CUPurapKeyConstants.MESSAGE_PAYMENTREQUEST_BUSINESS_RULES_FAILED);
+        String formattedMessage = MessageFormat.format(messageTemplate, preqDoc.getDocumentNumber());
+        results.getErrorMessages().add(formattedMessage);
+
+        for (Map.Entry<String, AutoPopulatingList<ErrorMessage>> entry : messageMap.getErrorMessages().entrySet()) {
+            String errorProperty = entry.getKey();
+            AutoPopulatingList<ErrorMessage> errorMessages = entry.getValue();
+            
+            if (errorMessages != null && !errorMessages.isEmpty()) {
+                for (ErrorMessage errorMessage : errorMessages) {
+                    String formattedErrorMsg = formatErrorMessage(errorMessage);
+                    results.getErrorMessages().add(errorProperty + ": " + formattedErrorMsg);
+                }
+            }
+        }
+    }
+
+    private String formatErrorMessage(ErrorMessage errorMessage) {
+        String errorMsg = getConfigurationService().getPropertyValueAsString(errorMessage.getErrorKey());
+        
+        if (errorMsg == null) {
+            LOG.warn("routePreq: Cannot find message for error key: {}", errorMessage.getErrorKey());
+            return errorMessage.getErrorKey();
+        }
+
+        Object[] arguments = errorMessage.getMessageParameters();
+        if (arguments != null && arguments.length > 0) {
+            errorMsg = MessageFormat.format(errorMsg, arguments);
+        }
+        
+        return errorMsg;
+    }
+
+    private void handleUnexpectedException(PaymentRequestDocument preqDoc, PaymentRequestResultsDto results, Exception e) {
+        LOG.error("routePreq: Unexpected error during document routing", e);
+        results.setValid(false);
+        results.setDocumentNumber(preqDoc.getDocumentNumber());
+        
+        String messageTemplate = getConfigurationService().getPropertyValueAsString(
+                CUPurapKeyConstants.MESSAGE_PAYMENTREQUEST_UNEXPECTED_ERROR);
+        String formattedMessage = MessageFormat.format(messageTemplate, e.getMessage());
+        results.getErrorMessages().add(formattedMessage);
+    }
+
+    private void cancelPreqSafely(UserSession userSession, PaymentRequestDocument preqDoc, PaymentRequestResultsDto results) {
+        try {
             cancelPreq(userSession, preqDoc);
+        } catch (Exception e) {
+            LOG.error("routePreq: Error canceling PREQ document after routing failure", e);
+            
+            String messageTemplate = getConfigurationService().getPropertyValueAsString(
+                    CUPurapKeyConstants.MESSAGE_PAYMENTREQUEST_CANCEL_FAILED);
+            String formattedMessage = MessageFormat.format(messageTemplate, e.getMessage());
+            results.getErrorMessages().add(formattedMessage);
         }
     }
 
