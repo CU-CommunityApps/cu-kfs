@@ -2,7 +2,6 @@ package edu.cornell.kfs.cemi.module.cg.batch.service.impl;
 
 import java.util.Iterator;
 
-import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +11,8 @@ import org.kuali.kfs.module.cg.businessobject.Award;
 
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiImportBudgetFileBudgetLinesDataTabRowBo;
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiImportBudgetFileImportBudgetHighVolumeTabRowBo;
+import edu.cornell.kfs.cemi.module.cg.batch.factory.CemiImportBudgetFileBudgetLinesDataTabRowBoFactory;
+import edu.cornell.kfs.cemi.module.cg.batch.factory.CemiImportBudgetFileImportBudgetHighVolumeTabRowBoFactory;
 import edu.cornell.kfs.cemi.module.cg.batch.service.CemiImportBudgetFileExtractDataBuilder;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiImportBudgetExtractDao;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiImportBudgetExtractOrmDao;
@@ -47,31 +48,33 @@ public class CemiImportBudgetFileExtractDataBuilderDefaultImpl extends CemiOrmDa
     @Override
     public void writeImportBudgetFileImportBudgetHighVolumeTabExtractDataToIntermediateStorage(
             final Iterator<Award> legacyObjects) {
-        int rowCount = 0;
-        for (final Award legacyObject : IteratorUtils.asIterable(legacyObjects)) {
-            rowCount++;
-            if (rowCount % 1000 == 0) {
-                LOG.info("writeImportBudgetFileImportBudgetHighVolumeTabExtractDataToIntermediateStorage,"
-                        + " Processed {} items and counting...", rowCount);
-            }
-        }
+        createAndStoreImportBudgetFileImportBudgetHighVolumeTabShellRow();
         LOG.info("writeImportBudgetFileImportBudgetHighVolumeTabExtractDataToIntermediateStorage,"
-                + " Finished writing {} items", rowCount);
+                + " Finished writing shell constant row to table.");
+    }
+
+    protected void createAndStoreImportBudgetFileImportBudgetHighVolumeTabShellRow() {
+        final CemiImportBudgetFileImportBudgetHighVolumeTabRowBoFactory factory =
+                new CemiImportBudgetFileImportBudgetHighVolumeTabRowBoFactory();
+        final CemiImportBudgetFileImportBudgetHighVolumeTabRowBo row =
+                factory.createCemiImportBudgetFileImportBudgetHighVolumeTabRowBo();
+        storeSheetRow(row);
     }
 
     @Override
     public void writeImportBudgetFileBudgetLinesDataTabExtractDataToIntermediateStorage(
             final Iterator<Award> legacyObjects) {
-        int rowCount = 0;
-        for (final Award legacyObject : IteratorUtils.asIterable(legacyObjects)) {
-            rowCount++;
-            if (rowCount % 1000 == 0) {
-                LOG.info("writeImportBudgetFileBudgetLinesDataTabExtractDataToIntermediateStorage,"
-                        + " Processed {} items and counting...", rowCount);
-            }
-        }
+        createAndStoreImportBudgetFileBudgetLinesDataTabShellRow();
         LOG.info("writeImportBudgetFileBudgetLinesDataTabExtractDataToIntermediateStorage,"
-                + " Finished writing {} items", rowCount);
+                + " Finished writing shell constant row to table.");
+    }
+
+    protected void createAndStoreImportBudgetFileBudgetLinesDataTabShellRow() {
+        final CemiImportBudgetFileBudgetLinesDataTabRowBoFactory factory =
+                new CemiImportBudgetFileBudgetLinesDataTabRowBoFactory();
+        final CemiImportBudgetFileBudgetLinesDataTabRowBo row =
+                factory.createCemiImportBudgetFileBudgetLinesDataTabRowBo();
+        storeSheetRow(row);
     }
 
 }

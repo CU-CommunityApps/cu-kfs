@@ -10,12 +10,15 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+
 import edu.cornell.kfs.cemi.module.cg.CemiImportBudgetConstants;
 import edu.cornell.kfs.cemi.module.cg.batch.CreateCemiImportBudgetExtractStep;
 import edu.cornell.kfs.cemi.module.cg.batch.service.CemiImportBudgetExtractService;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiImportBudgetExtractDao;
 import edu.cornell.kfs.cemi.module.cg.dataaccess.CemiImportBudgetExtractOrmDao;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiDataExtractServiceBase;
+import edu.cornell.kfs.cemi.sys.util.CemiUtils;
 
 public class CemiImportBudgetExtractServiceImpl extends CemiDataExtractServiceBase
         implements CemiImportBudgetExtractService {
@@ -52,6 +55,15 @@ public class CemiImportBudgetExtractServiceImpl extends CemiDataExtractServiceBa
     public void generateIntermediateExtractData(final LocalDateTime jobRunDate) {
         LOG.info("generateIntermediateExtractData, Generating data rows for {} spreadsheet and placing in "
                 + "intermediate storage...", CemiImportBudgetConstants.IMPORT_BUDGET_EXTRACT_PLAIN_FILENAME);
+        final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
+        final CemiImportBudgetFileExtractDataBuilderDefaultImpl dataBuilder =
+                new CemiImportBudgetFileExtractDataBuilderDefaultImpl(businessObjectService, jobRunDateString,
+                        dateTimeService, cemiImportBudgetExtractOrmDao, cemiImportBudgetExtractDao,
+                        shouldMaskCemiSensitiveData());
+        dataBuilder.writeImportBudgetFileImportBudgetHighVolumeTabExtractDataToIntermediateStorage(
+                Collections.emptyIterator());
+        dataBuilder.writeImportBudgetFileBudgetLinesDataTabExtractDataToIntermediateStorage(
+                Collections.emptyIterator());
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
