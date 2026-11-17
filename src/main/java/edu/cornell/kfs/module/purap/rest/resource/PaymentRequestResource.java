@@ -221,7 +221,7 @@ public class PaymentRequestResource {
             if (errorMessages != null && !errorMessages.isEmpty()) {
                 for (ErrorMessage errorMessage : errorMessages) {
                     String formattedErrorMsg = formatErrorMessage(errorMessage);
-                    results.getErrorMessages().add(errorProperty + ": " + formattedErrorMsg);
+                    results.getErrorMessages().add(formattedErrorMsg);
                 }
             }
         }
@@ -231,7 +231,7 @@ public class PaymentRequestResource {
         String errorMsg = getConfigurationService().getPropertyValueAsString(errorMessage.getErrorKey());
         
         if (errorMsg == null) {
-            LOG.warn("routePreq: Cannot find message for error key: {}", errorMessage.getErrorKey());
+            LOG.warn("formatErrorMessage: Cannot find message for error key: {}", errorMessage.getErrorKey());
             return errorMessage.getErrorKey();
         }
 
@@ -244,7 +244,7 @@ public class PaymentRequestResource {
     }
 
     private void handleUnexpectedException(PaymentRequestDocument preqDoc, PaymentRequestResultsDto results, Exception e) {
-        LOG.error("routePreq: Unexpected error during document routing", e);
+        LOG.error("handleUnexpectedException: Unexpected error during document routing", e);
         results.setValid(false);
         results.setDocumentNumber(preqDoc.getDocumentNumber());
         
@@ -258,7 +258,7 @@ public class PaymentRequestResource {
         try {
             cancelPreq(userSession, preqDoc);
         } catch (Exception e) {
-            LOG.error("routePreq: Error canceling PREQ document after routing failure", e);
+            LOG.error("cancelPreqSafely: Error canceling PREQ document after routing failure", e);
             
             String messageTemplate = getConfigurationService().getPropertyValueAsString(
                     CUPurapKeyConstants.MESSAGE_PAYMENTREQUEST_CANCEL_FAILED);
