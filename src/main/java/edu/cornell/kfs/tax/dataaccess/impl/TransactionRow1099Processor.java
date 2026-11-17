@@ -27,8 +27,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.core.api.CoreApiServiceLocator;
-import org.kuali.kfs.core.api.encryption.EncryptionService;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -36,12 +34,12 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Country;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.LocationService;
-import org.kuali.kfs.vnd.VendorConstants;
+import org.kuali.kfs.core.api.CoreApiServiceLocator;
+import org.kuali.kfs.core.api.encryption.EncryptionService;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.Tax1099FilerAddressField;
-import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.Tax1099RecipientIdTypes;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxFieldSource;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.DerivedValuesRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
@@ -74,21 +72,12 @@ import edu.cornell.kfs.tax.service.PaymentReason1099BoxService;
  * <p>The following DERIVED-type fields will be populated by this implementation:</p>
  * 
  * <ul>
- *   <li>vendorLastName</li>
- *   <li>vendorFirstName</li>
- *   <li>vendorMiddleName</li>
- *   <li>vendorSuffix</li>
- *   <li>vendorBusinessName1</li>
- *   <li>vendorBusinessName2</li>
  *   <li>vendorEmailAddress</li>
  *   <li>vendorAnyAddressLine1</li>
- *   <li>vendorAnyAddressLine2</li>
- *   <li>vendorApartmentNumber</li>
  *   <li>vendorZipCodeNumOnly</li>
  *   <li>vendorForeignCountryName</li>
  *   <li>vendorForeignCountryIndicator</li>
- *   <li>taxIdType1099</li>
- *   <li>taxId1099</li>
+ *   <li>ssn</li>
  *   <li>tabSiteId</li>
  *   <li>miscRents</li>
  *   <li>miscRoyalties</li>
@@ -101,12 +90,12 @@ import edu.cornell.kfs.tax.service.PaymentReason1099BoxService;
  *   <li>miscCropInsuranceProceeds</li>
  *   <li>miscGrossProceedsAttorney</li>
  *   <li>miscSection409ADeferral</li>
+ *   <li>miscGoldenParachute</li>
  *   <li>miscNonqualifiedDeferredCompensation</li>
  *   <li>miscStateTaxWithheld</li>
  *   <li>miscPayerStateNumber</li>
  *   <li>miscStateIncome</li>
  *   <li>necNonemployeeCompensation</li>
- *   <li>necGoldenParachute</li>
  *   <li>necFedIncomeTaxWithheld</li>
  *   <li>necStateTaxWithheld</li>
  *   <li>necPayerStateNumber</li>
@@ -133,7 +122,7 @@ import edu.cornell.kfs.tax.service.PaymentReason1099BoxService;
  * <p>When running in "scrubbed" mode, the following fields will be forcibly masked in the output:</p>
  * 
  * <ul>
- *   <li>taxId1099 (DERIVED field)</li>
+ *   <li>ssn (DERIVED field)</li>
  *   <li>ein (DERIVED field)</li>
  * </ul>
  */
@@ -203,18 +192,9 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
 
     // Variables pertaining to derived fields not related to a tax box.
     private RecordPiece1099String tabSiteIdP;
-    private RecordPiece1099String outputTaxIdTypeP;
     private RecordPiece1099String outputTaxIdP;
-    private RecordPiece1099String vendorLastNameP;
-    private RecordPiece1099String vendorFirstNameP;
-    private RecordPiece1099String vendorMiddleNameP;
-    private RecordPiece1099String vendorSuffixP;
-    private RecordPiece1099String vendorBusinessName1P;
-    private RecordPiece1099String vendorBusinessName2P;
     private RecordPiece1099String vendorEmailAddressP;
     private RecordPiece1099String vendorAddressLine1P;
-    private RecordPiece1099String vendorAddressLine2P;
-    private RecordPiece1099String vendorApartmentNumberP;
     private RecordPiece1099String vendorNumbersOnlyZipCodeP;
     private RecordPiece1099String vendorForeignCountryNameP;
     private RecordPiece1099String vendorForeignCountryIndicatorP;
@@ -242,12 +222,12 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
     private RecordPiece1099BigDecimal miscCropInsuranceProceedsP;
     private RecordPiece1099BigDecimal miscGrossProceedsAttorneyP;
     private RecordPiece1099BigDecimal miscSection409ADeferralP;
+    private RecordPiece1099BigDecimal miscGoldenParachuteP;
     private RecordPiece1099BigDecimal miscNonqualifiedDeferredCompensationP;
     private RecordPiece1099BigDecimal miscStateTaxWithheldP;
     private RecordPiece1099String miscPayerStateNumberP;
     private RecordPiece1099BigDecimal miscStateIncomeP;
     private RecordPiece1099BigDecimal necNonemployeeCompensationP;
-    private RecordPiece1099BigDecimal necGoldenParachuteP;
     private RecordPiece1099BigDecimal necFedIncomeTaxWithheldP;
     private RecordPiece1099BigDecimal necStateTaxWithheldP;
     private RecordPiece1099String necPayerStateNumberP;
@@ -287,11 +267,10 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
     // Variables pertaining to vendor-specific data.
     private VendorRow vendorRow;
     private VendorAddressRow vendorAddressRow;
-    private String vendorFullName;
-    private String parentVendorFullName;
-    private String vendorLastNameSection;
-    private String vendorFirstNameSection;
-    private ParsedVendorAddress parsedVendorAddress = ParsedVendorAddress.EMPTY;
+    private String vendorNameForOutput;
+    private String parentVendorNameForOutput;
+    private String vendorLastName;
+    private String vendorFirstName;
     private int vendorHeaderId;
     private int vendorDetailId;
     private int currentVendorDetailId;
@@ -477,21 +456,12 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
             
             case DERIVED :
                 minFields.addAll(Arrays.asList(
-                        derivedValues.vendorLastName,
-                        derivedValues.vendorFirstName,
-                        derivedValues.vendorMiddleName,
-                        derivedValues.vendorSuffix,
-                        derivedValues.vendorBusinessName1,
-                        derivedValues.vendorBusinessName2,
                         derivedValues.vendorEmailAddress,
                         derivedValues.vendorAnyAddressLine1,
-                        derivedValues.vendorAnyAddressLine2,
-                        derivedValues.vendorApartmentNumber,
                         derivedValues.vendorZipCodeNumOnly,
                         derivedValues.vendorForeignCountryName,
                         derivedValues.vendorForeignCountryIndicator,
-                        derivedValues.taxIdType1099,
-                        derivedValues.taxId1099,
+                        derivedValues.ssn,
                         derivedValues.tabSiteId,
                         derivedValues.miscRents,
                         derivedValues.miscRoyalties,
@@ -504,12 +474,12 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                         derivedValues.miscCropInsuranceProceeds,
                         derivedValues.miscGrossProceedsAttorney,
                         derivedValues.miscSection409ADeferral,
+                        derivedValues.miscGoldenParachute,
                         derivedValues.miscNonqualifiedDeferredCompensation,
                         derivedValues.miscStateTaxWithheld,
                         derivedValues.miscPayerStateNumber,
                         derivedValues.miscStateIncome,
                         derivedValues.necNonemployeeCompensation,
-                        derivedValues.necGoldenParachute,
                         derivedValues.necFedIncomeTaxWithheld,
                         derivedValues.necStateTaxWithheld,
                         derivedValues.necPayerStateNumber,
@@ -608,21 +578,12 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         paymentReasonCodeP = stringPieceFinder.apply(detailRow.paymentReasonCode);
         
         // Retrieve the various derived "pieces" that will be needed for the processing.
-        vendorLastNameP = stringPieceFinder.apply(derivedValues.vendorLastName);
-        vendorFirstNameP = stringPieceFinder.apply(derivedValues.vendorFirstName);
-        vendorMiddleNameP = stringPieceFinder.apply(derivedValues.vendorMiddleName);
-        vendorSuffixP = stringPieceFinder.apply(derivedValues.vendorSuffix);
-        vendorBusinessName1P = stringPieceFinder.apply(derivedValues.vendorBusinessName1);
-        vendorBusinessName2P = stringPieceFinder.apply(derivedValues.vendorBusinessName2);
         vendorEmailAddressP = stringPieceFinder.apply(derivedValues.vendorEmailAddress);
         vendorAddressLine1P = stringPieceFinder.apply(derivedValues.vendorAnyAddressLine1);
-        vendorAddressLine2P = stringPieceFinder.apply(derivedValues.vendorAnyAddressLine2);
-        vendorApartmentNumberP = stringPieceFinder.apply(derivedValues.vendorApartmentNumber);
         vendorNumbersOnlyZipCodeP = stringPieceFinder.apply(derivedValues.vendorZipCodeNumOnly);
         vendorForeignCountryNameP = stringPieceFinder.apply(derivedValues.vendorForeignCountryName);
         vendorForeignCountryIndicatorP = stringPieceFinder.apply(derivedValues.vendorForeignCountryIndicator);
-        outputTaxIdTypeP = stringPieceFinder.apply(derivedValues.taxIdType1099);
-        outputTaxIdP = stringPieceFinder.apply(derivedValues.taxId1099);
+        outputTaxIdP = stringPieceFinder.apply(derivedValues.ssn);
         tabSiteIdP = stringPieceFinder.apply(derivedValues.tabSiteId);
         taxYearP = stringPieceFinder.apply(derivedValues.taxYear);
         taxEINValueP = stringPieceFinder.apply(derivedValues.ein);
@@ -645,13 +606,13 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         miscCropInsuranceProceedsP = bigDecimalPieceFinder.apply(derivedValues.miscCropInsuranceProceeds);
         miscGrossProceedsAttorneyP = bigDecimalPieceFinder.apply(derivedValues.miscGrossProceedsAttorney);
         miscSection409ADeferralP = bigDecimalPieceFinder.apply(derivedValues.miscSection409ADeferral);
+        miscGoldenParachuteP = bigDecimalPieceFinder.apply(derivedValues.miscGoldenParachute);
         miscNonqualifiedDeferredCompensationP = bigDecimalPieceFinder.apply(
                 derivedValues.miscNonqualifiedDeferredCompensation);
         miscStateTaxWithheldP = bigDecimalPieceFinder.apply(derivedValues.miscStateTaxWithheld);
         miscPayerStateNumberP = stringPieceFinder.apply(derivedValues.miscPayerStateNumber);
         miscStateIncomeP = bigDecimalPieceFinder.apply(derivedValues.miscStateIncome);
         necNonemployeeCompensationP = bigDecimalPieceFinder.apply(derivedValues.necNonemployeeCompensation);
-        necGoldenParachuteP = bigDecimalPieceFinder.apply(derivedValues.necGoldenParachute);
         necFedIncomeTaxWithheldP = bigDecimalPieceFinder.apply(derivedValues.necFedIncomeTaxWithheld);
         necStateTaxWithheldP = bigDecimalPieceFinder.apply(derivedValues.necStateTaxWithheld);
         necPayerStateNumberP = stringPieceFinder.apply(derivedValues.necPayerStateNumber);
@@ -669,11 +630,11 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         boxAmountsMap.put(miscCropInsuranceProceedsP.tableField, miscCropInsuranceProceedsP);
         boxAmountsMap.put(miscGrossProceedsAttorneyP.tableField, miscGrossProceedsAttorneyP);
         boxAmountsMap.put(miscSection409ADeferralP.tableField, miscSection409ADeferralP);
+        boxAmountsMap.put(miscGoldenParachuteP.tableField, miscGoldenParachuteP);
         boxAmountsMap.put(miscNonqualifiedDeferredCompensationP.tableField, miscNonqualifiedDeferredCompensationP);
         boxAmountsMap.put(miscStateTaxWithheldP.tableField, miscStateTaxWithheldP);
         boxAmountsMap.put(miscStateIncomeP.tableField, miscStateIncomeP);
         boxAmountsMap.put(necNonemployeeCompensationP.tableField, necNonemployeeCompensationP);
-        boxAmountsMap.put(necGoldenParachuteP.tableField, necGoldenParachuteP);
         boxAmountsMap.put(necFedIncomeTaxWithheldP.tableField, necFedIncomeTaxWithheldP);
         boxAmountsMap.put(necStateTaxWithheldP.tableField, necStateTaxWithheldP);
         boxAmountsMap.put(necStateIncomeP.tableField, necStateIncomeP);
@@ -845,16 +806,14 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
             // Determine final inclusion/exclusion state, and update tax boxes accordingly.
             processExclusionsAndAmounts(rs, detailRow, summary);
             
-            final boolean hasParsedAddress = (parsedVendorAddress != ParsedVendorAddress.EMPTY);
-            
             // Update current row's vendor-related data.
-            rs.updateString(detailRow.vendorName.index, vendorFullName);
-            rs.updateString(detailRow.parentVendorName.index, parentVendorFullName);
+            rs.updateString(detailRow.vendorName.index, vendorNameForOutput);
+            rs.updateString(detailRow.parentVendorName.index, parentVendorNameForOutput);
             rs.updateString(detailRow.vendorEmailAddress.index, vendorEmailAddressP.value);
             rs.updateString(detailRow.vendorChapter4StatusCode.index, rsVendor.getString(vendorRow.vendorChapter4StatusCode.index));
             rs.updateString(detailRow.vendorGIIN.index, rsVendor.getString(vendorRow.vendorGIIN.index));
-            rs.updateString(detailRow.vendorLine1Address.index, hasParsedAddress ? parsedVendorAddress.getRawLine1Address() : vendorAddressLine1P.value);
-            rs.updateString(detailRow.vendorLine2Address.index, hasParsedAddress ? parsedVendorAddress.getRawLine2Address() : null);
+            rs.updateString(detailRow.vendorLine1Address.index, vendorAddressLine1P.value);
+            rs.updateString(detailRow.vendorLine2Address.index, rsVendorAnyAddress.getString(vendorAddressRow.vendorLine2Address.index));
             rs.updateString(detailRow.vendorCityName.index, rsVendorAnyAddress.getString(vendorAddressRow.vendorCityName.index));
             rs.updateString(detailRow.vendorStateCode.index, rsVendorAnyAddress.getString(vendorAddressRow.vendorStateCode.index));
             rs.updateString(detailRow.vendorZipCode.index, rsVendorAnyAddress.getString(vendorAddressRow.vendorZipCode.index));
@@ -923,12 +882,12 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         miscCropInsuranceProceedsP.value = summary.zeroAmount;
         miscGrossProceedsAttorneyP.value = summary.zeroAmount;
         miscSection409ADeferralP.value = summary.zeroAmount;
+        miscGoldenParachuteP.value = summary.zeroAmount;
         miscNonqualifiedDeferredCompensationP.value = summary.zeroAmount;
         miscStateTaxWithheldP.value = summary.zeroAmount;
         miscPayerStateNumberP.value = KFSConstants.EMPTY_STRING;
         miscStateIncomeP.value = summary.zeroAmount;
         necNonemployeeCompensationP.value = summary.zeroAmount;
-        necGoldenParachuteP.value = summary.zeroAmount;
         necFedIncomeTaxWithheldP.value = summary.zeroAmount;
         necStateTaxWithheldP.value = summary.zeroAmount;
         necPayerStateNumberP.value = KFSConstants.EMPTY_STRING;
@@ -966,12 +925,10 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
      */
     private void loadVendorData(ResultSet rs, Transaction1099Summary summary) throws SQLException {
         foundParentVendor = false;
-        vendorLastNameSection = null;
-        vendorFirstNameSection = null;
-        vendorFullName = null;
-        parentVendorFullName = null;
-
-        ParsedVendorName parsedVendorName = ParsedVendorName.EMPTY;
+        vendorLastName = null;
+        vendorFirstName = null;
+        vendorNameForOutput = null;
+        parentVendorNameForOutput = null;
         
         // Load vendor detail plus relevant header info.
         rsVendor = configureAndRunQuery(CUTaxConstants.VENDOR_DETAIL_INDEX, CUTaxConstants.VENDOR_DETAIL_INDEX,
@@ -985,9 +942,9 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
             if (!KRADConstants.YES_INDICATOR_VALUE.equals(rsVendor.getString(vendorRow.vendorParentIndicator.index))) {
                 // Update parent name variable accordingly if the vendor owner is a sole proprietor owner.
                 if (StringUtils.equals(summary.soleProprietorOwnerCode, rsVendor.getString(vendorRow.vendorOwnershipCode.index))) {
-                    parentVendorFullName = rsVendor.getString(vendorRow.vendorName.index);
+                    parentVendorNameForOutput = rsVendor.getString(vendorRow.vendorName.index);
                 } else {
-                    parentVendorFullName = null;
+                    parentVendorNameForOutput = null;
                 }
                 
                 // Check for parent, which should be the next row in the result set (if there is one).
@@ -995,31 +952,32 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                     foundParentVendor = false;
                 }
             } else {
-                parentVendorFullName = null;
+                parentVendorNameForOutput = null;
             }
             
             // Handle the results of the vendor parent search accordingly. 
             if (foundParentVendor) {
                 currentVendorDetailId = rsVendor.getInt(vendorRow.vendorDetailAssignedIdentifier.index);
-                vendorFullName = rsVendor.getString(vendorRow.vendorName.index);
-                if (StringUtils.isNotBlank(vendorFullName)) {
+                vendorNameForOutput = rsVendor.getString(vendorRow.vendorName.index);
+                if (StringUtils.isNotBlank(vendorNameForOutput)) {
                     // Parse vendor last name and first name.
                     if (KRADConstants.YES_INDICATOR_VALUE.equals(rsVendor.getString(vendorRow.vendorFirstLastNameIndicator.index))
-                            && vendorFullName.indexOf(',') != -1) {
-                        vendorLastNameSection = vendorFullName.substring(0, vendorFullName.indexOf(',')).trim();
-                        vendorFirstNameSection = vendorFullName.substring(vendorFullName.indexOf(',') + 1).trim();
-                        vendorFullName = vendorFirstNameSection + KRADConstants.BLANK_SPACE + vendorLastNameSection;
-                        parsedVendorName = ParsedVendorName.of(vendorFirstNameSection, vendorLastNameSection);
+                            && vendorNameForOutput.indexOf(',') != -1) {
+                        vendorLastName = vendorNameForOutput.substring(0, vendorNameForOutput.indexOf(',')).trim();
+                        vendorFirstName = vendorNameForOutput.substring(vendorNameForOutput.indexOf(',') + 1).trim();
+                        vendorNameForOutput = vendorFirstName + KRADConstants.BLANK_SPACE + vendorLastName;
+                    } else {
+                        vendorLastName = vendorNameForOutput.trim();
                     }
                     numVendorNamesParsed++;
                 } else {
-                    vendorFullName = new StringBuilder(SMALL_BUILDER_SIZE)
+                    vendorNameForOutput = new StringBuilder(SMALL_BUILDER_SIZE)
                             .append("No Vendor Name(").append(vendorHeaderId).append(')').append('!').toString();
                     numVendorNamesNotParsed++;
                 }
             } else {
                 currentVendorDetailId = vendorDetailId;
-                vendorFullName = new StringBuilder(SMALL_BUILDER_SIZE)
+                vendorNameForOutput = new StringBuilder(SMALL_BUILDER_SIZE)
                         .append("No Parent Vendor (").append(vendorHeaderId).append(')').append('!').toString();
                 numNoParentVendor++;
                 /*
@@ -1032,9 +990,9 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         } else {
             // No matching vendor detail was found.
             currentVendorDetailId = vendorDetailId;
-            vendorFullName = new StringBuilder(SMALL_BUILDER_SIZE)
+            vendorNameForOutput = new StringBuilder(SMALL_BUILDER_SIZE)
                     .append("No Vendor (").append(vendorHeaderId).append('-').append(vendorDetailId).append(')').append('!').toString();
-            parentVendorFullName = null;
+            parentVendorNameForOutput = null;
             numNoVendor++;
             /*
              * Update the ResultSet to the "dummy" one. The superclass will still
@@ -1044,16 +1002,6 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
             rsVendor = rsDummy;
         }
         
-        final boolean isBusinessVendor = (parsedVendorName == ParsedVendorName.EMPTY);
-        vendorLastNameP.value = parsedVendorName.getLastName();
-        vendorFirstNameP.value = parsedVendorName.getFirstName();
-        vendorMiddleNameP.value = parsedVendorName.getMiddleName();
-        vendorSuffixP.value = parsedVendorName.getSuffix();
-        vendorBusinessName1P.value = isBusinessVendor ? vendorFullName : null;
-        vendorBusinessName2P.value = isBusinessVendor ? parentVendorFullName : null;
-
-        outputTaxIdTypeP.value = getRecipientIdTypeFromVendorIfPresent();
-        
         
         
         // Load vendor address.
@@ -1062,6 +1010,7 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         
         if (rsVendorAnyAddress.next()) {
             String vendorCountryCode = rsVendorAnyAddress.getString(vendorAddressRow.vendorCountryCode.index);
+            vendorAddressLine1P.value = rsVendorAnyAddress.getString(vendorAddressRow.vendorLine1Address.index);
             if (isForeignCountry(vendorCountryCode)) {
                 vendorForeignCountryNameP.value = getCountryName(vendorCountryCode);
                 vendorForeignCountryIndicatorP.value = CUKFSConstants.CAPITAL_X;
@@ -1069,17 +1018,8 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                 vendorForeignCountryNameP.value = null;
                 vendorForeignCountryIndicatorP.value = null;
             }
-            final String line1Address = rsVendorAnyAddress.getString(vendorAddressRow.vendorLine1Address.index);
-            final String line2Address = rsVendorAnyAddress.getString(vendorAddressRow.vendorLine2Address.index);
-            parsedVendorAddress = ParsedVendorAddress.of(line1Address, line2Address);
-            vendorAddressLine1P.value = parsedVendorAddress.getLine1Address();
-            vendorAddressLine2P.value = parsedVendorAddress.getLine2Address();
-            vendorApartmentNumberP.value = parsedVendorAddress.getApartmentNumber();
         } else {
-            parsedVendorAddress = ParsedVendorAddress.EMPTY;
             vendorAddressLine1P.value = CUTaxConstants.NO_ANY_VENDOR_ADDRESS;
-            vendorAddressLine2P.value = null;
-            vendorApartmentNumberP.value = null;
             vendorForeignCountryNameP.value = null;
             vendorForeignCountryIndicatorP.value = null;
             numNoVendorAddress++;
@@ -1100,17 +1040,6 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
             unencryptedTaxId = encryptionService.decrypt(taxIdP.value);
         } catch (GeneralSecurityException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private String getRecipientIdTypeFromVendorIfPresent() throws SQLException {
-        final String taxTypeCode = rsVendor.getString(vendorRow.vendorTaxTypeCode.index);
-        if (StringUtils.equals(taxTypeCode, VendorConstants.TAX_TYPE_FEIN)) {
-            return Tax1099RecipientIdTypes.EIN;
-        } else if (StringUtils.equals(taxTypeCode, VendorConstants.TAX_TYPE_SSN)) {
-            return Tax1099RecipientIdTypes.SSN_ITIN_ATIN;
-        } else {
-            return Tax1099RecipientIdTypes.UNKNOWN;
         }
     }
 
@@ -1146,10 +1075,10 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
             taxBox = summary.getBoxNumberConstant(docType1099Box);
         } else if (getPaymentReason1099BoxService().isPaymentReasonMappedTo1099Box(paymentReasonCodeP.value)) {
         	String mappedBox = getPaymentReason1099BoxService().getPaymentReason1099Box(paymentReasonCodeP.value);
-			LOG.debug("Overriding to tax box " + mappedBox + "  because of payment reason " + paymentReasonCodeP.value + " for vendor " + vendorFullName);
+			LOG.debug("Overriding to tax box " + mappedBox + "  because of payment reason " + paymentReasonCodeP.value + " for vendor " + vendorNameForOutput);
 			taxBox = summary.getBoxNumberConstant(mappedBox);
         } else if (getPaymentReason1099BoxService().isPaymentReasonMappedToNo1099Box(paymentReasonCodeP.value)) {
-        	LOG.debug("Overriding to NO tax box because of payment reason " + paymentReasonCodeP.value + " for vendor " + vendorFullName);
+        	LOG.debug("Overriding to NO tax box because of payment reason " + paymentReasonCodeP.value + " for vendor " + vendorNameForOutput);
         	taxBox = null;
         } else {
 	        taxBox = summary.objectCodeBucketMappings.get(new StringBuilder().append(objectCodeP.value)
@@ -1299,7 +1228,7 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
             // If Nonemployee Compensation, check for inclusions/exclusions based on vendor name or document title.
             
             // Check for vendor name inclusions/exclusions.
-            nonEmployeeCompVendorNameInclusionInd = determineClusionWithPatterns(vendorFullName,
+            nonEmployeeCompVendorNameInclusionInd = determineClusionWithPatterns(vendorNameForOutput,
                     summary.nonEmployeeCompIncludedObjectCodeVendorName.get(objectCodeP.value), summary.nonEmployeeCompObjCodeVendorNameIsWhitelist);
             if (nonEmployeeCompVendorNameInclusionInd == null) {
                 // No vendor name inclusions/exclusions exist for the given object code.
@@ -1313,8 +1242,8 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
             }
             
             // Check for parent vendor name inclusions/exclusions.
-            if (StringUtils.isNotBlank(parentVendorFullName)) {
-                nonEmployeeCompParentVendorNameInclusionInd = determineClusionWithPatterns(parentVendorFullName,
+            if (StringUtils.isNotBlank(parentVendorNameForOutput)) {
+                nonEmployeeCompParentVendorNameInclusionInd = determineClusionWithPatterns(parentVendorNameForOutput,
                         summary.nonEmployeeCompIncludedObjectCodeParentVendorName.get(objectCodeP.value),
                         summary.nonEmployeeCompObjCodeParentVendorNameIsWhitelist);
                 if (nonEmployeeCompParentVendorNameInclusionInd == null) {
@@ -1470,8 +1399,8 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         }
         
         // Setup tax names. (Even though these are detail fields, they have been updated in the transaction table as part of the 1099 processing.)
-        vendorNameP.value = vendorFullName;
-        parentVendorNameP.value = parentVendorFullName;
+        vendorNameP.value = vendorNameForOutput;
+        parentVendorNameP.value = parentVendorNameForOutput;
         
         // Setup zip code without hyphens.
         vendorNumbersOnlyZipCodeP.value = StringUtils.remove(rsVendorAnyAddress.getString(vendorAddressRow.vendorZipCode.index), '-');
@@ -1502,19 +1431,17 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         writeTabRecord = false;
     }
 
-
-
     private boolean shouldWrite1099MiscTabLine(Transaction1099Summary summary) {
         return Stream
                 .of(miscRentsP, miscRoyaltiesP, miscOtherIncomeP, miscFedIncomeTaxWithheldP, miscFishingBoatProceedsP,
                         miscMedicalHealthcarePaymentsP, miscSubstitutePaymentsP, miscCropInsuranceProceedsP,
-                        miscGrossProceedsAttorneyP, miscSection409ADeferralP,
+                        miscGrossProceedsAttorneyP, miscSection409ADeferralP, miscGoldenParachuteP,
                         miscNonqualifiedDeferredCompensationP, miscStateTaxWithheldP)
                 .anyMatch(taxBoxPiece -> taxBoxAmountIsLargeEnoughToBeReported(taxBoxPiece, summary));
     }
 
     private boolean shouldWrite1099NecTabLine(Transaction1099Summary summary) {
-        return Stream.of(necNonemployeeCompensationP, necGoldenParachuteP, necFedIncomeTaxWithheldP, necStateTaxWithheldP)
+        return Stream.of(necNonemployeeCompensationP, necFedIncomeTaxWithheldP, necStateTaxWithheldP)
                 .anyMatch(taxBoxPiece -> taxBoxAmountIsLargeEnoughToBeReported(taxBoxPiece, summary));
     }
 
@@ -1618,11 +1545,11 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                 derivedValues.miscCropInsuranceProceeds,
                 derivedValues.miscGrossProceedsAttorney,
                 derivedValues.miscSection409ADeferral,
+                derivedValues.miscGoldenParachute,
                 derivedValues.miscNonqualifiedDeferredCompensation,
                 derivedValues.miscStateTaxWithheld,
                 derivedValues.miscStateIncome,
                 derivedValues.necNonemployeeCompensation,
-                derivedValues.necGoldenParachute,
                 derivedValues.necFedIncomeTaxWithheld,
                 derivedValues.necStateTaxWithheld,
                 derivedValues.necStateIncome
@@ -1678,18 +1605,9 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         paymentAmountP = null;
         paymentDateP = null;
         tabSiteIdP = null;
-        outputTaxIdTypeP = null;
         outputTaxIdP = null;
-        vendorLastNameP = null;
-        vendorFirstNameP = null;
-        vendorMiddleNameP = null;
-        vendorSuffixP = null;
-        vendorBusinessName1P = null;
-        vendorBusinessName2P = null;
         vendorEmailAddressP = null;
         vendorAddressLine1P = null;
-        vendorAddressLine2P = null;
-        vendorApartmentNumberP = null;
         vendorNumbersOnlyZipCodeP = null;
         vendorForeignCountryNameP = null;
         vendorForeignCountryIndicatorP = null;
@@ -1714,12 +1632,12 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         miscCropInsuranceProceedsP = null;
         miscGrossProceedsAttorneyP = null;
         miscSection409ADeferralP = null;
+        miscGoldenParachuteP = null;
         miscNonqualifiedDeferredCompensationP = null;
         miscStateTaxWithheldP = null;
         miscPayerStateNumberP = null;
         miscStateIncomeP = null;
         necNonemployeeCompensationP = null;
-        necGoldenParachuteP = null;
         necFedIncomeTaxWithheldP = null;
         necStateTaxWithheldP = null;
         necPayerStateNumberP = null;

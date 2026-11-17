@@ -107,12 +107,12 @@ class Transaction1099Summary extends TransactionDetailSummary {
         dvCheckStubTextParamNames.put(derivedValues.miscCropInsuranceProceeds, Tax1099ParameterNames.CROP_INSURANCE_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.miscGrossProceedsAttorney, Tax1099ParameterNames.ATTORNEY_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.miscSection409ADeferral, Tax1099ParameterNames.SECTION_409A_DEFERRALS_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        dvCheckStubTextParamNames.put(derivedValues.miscGoldenParachute, Tax1099ParameterNames.GOLDEN_PARACHUTE_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.miscNonqualifiedDeferredCompensation,
                 Tax1099ParameterNames.NONQUALIFIED_DEFERRED_COMPENSATION_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.miscStateTaxWithheld, Tax1099ParameterNames.STATE_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.miscStateIncome, Tax1099ParameterNames.STATE_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.necNonemployeeCompensation, Tax1099ParameterNames.NONEMPLOYEE_COMPENSATION_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        dvCheckStubTextParamNames.put(derivedValues.necGoldenParachute, Tax1099ParameterNames.GOLDEN_PARACHUTE_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.necFedIncomeTaxWithheld, Tax1099ParameterNames.FED_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.necStateTaxWithheld, Tax1099ParameterNames.STATE_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.necStateIncome, Tax1099ParameterNames.STATE_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);

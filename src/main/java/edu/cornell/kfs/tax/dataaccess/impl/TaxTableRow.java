@@ -392,7 +392,6 @@ abstract class TaxTableRow {
         // Fields from PUR_VNDR_HDR_T (VendorHeader)
         final TaxTableField vendorHeaderGeneratedIdentifier;
         final TaxTableField vendorTaxNumber;
-        final TaxTableField vendorTaxTypeCode;
         final TaxTableField vendorTypeCode;
         final TaxTableField vendorOwnershipCode;
         final TaxTableField vendorOwnershipCategoryCode;
@@ -411,7 +410,6 @@ abstract class TaxTableRow {
             
             this.vendorHeaderGeneratedIdentifier = getAliasedField(CommonVendorFieldNames.VENDOR_HEADER_GENERATED_ID);
             this.vendorTaxNumber = getAliasedField(CommonVendorFieldNames.VENDOR_TAX_NUMBER);
-            this.vendorTaxTypeCode = getAliasedField(CommonVendorFieldNames.VENDOR_TAX_TYPE_CODE);
             this.vendorTypeCode = getAliasedField(CommonVendorFieldNames.VENDOR_TYPE_CODE);
             this.vendorOwnershipCode = getAliasedField(CommonVendorFieldNames.VENDOR_OWNERSHIP_CODE);
             this.vendorOwnershipCategoryCode = getAliasedField(CommonVendorFieldNames.VENDOR_OWNERSHIP_CATEGORY_CODE);
@@ -756,10 +754,6 @@ abstract class TaxTableRow {
         // These fields are derived from other object fields or from parameters. A few refer to DB-backed fields that have been modified in some way.
         final TaxTableField vendorLastName;
         final TaxTableField vendorFirstName;
-        final TaxTableField vendorMiddleName;
-        final TaxTableField vendorSuffix;
-        final TaxTableField vendorBusinessName1;
-        final TaxTableField vendorBusinessName2;
         final TaxTableField vendorEmailAddress;
         final TaxTableField vendorUSAddressLine1;
         final TaxTableField vendorForeignAddressLine1;
@@ -771,13 +765,9 @@ abstract class TaxTableRow {
         final TaxTableField vendorForeignCountryName;
         final TaxTableField vendorForeignCountryIndicator;
         final TaxTableField vendorAnyAddressLine1;
-        final TaxTableField vendorAnyAddressLine2;
-        final TaxTableField vendorApartmentNumber;
         final TaxTableField vendorZipCodeNumOnly;
         final TaxTableField ssn;
         final TaxTableField itin;
-        final TaxTableField taxIdType1099;
-        final TaxTableField taxId1099;
         final TaxTableField chapter3StatusCode;
         final TaxTableField chapter3ExemptionCode;
         final TaxTableField chapter4ExemptionCode;
@@ -801,12 +791,12 @@ abstract class TaxTableRow {
         final TaxTableField miscCropInsuranceProceeds;
         final TaxTableField miscGrossProceedsAttorney;
         final TaxTableField miscSection409ADeferral;
+        final TaxTableField miscGoldenParachute;
         final TaxTableField miscNonqualifiedDeferredCompensation;
         final TaxTableField miscStateTaxWithheld;
         final TaxTableField miscPayerStateNumber;
         final TaxTableField miscStateIncome;
         final TaxTableField necNonemployeeCompensation;
-        final TaxTableField necGoldenParachute;
         final TaxTableField necFedIncomeTaxWithheld;
         final TaxTableField necStateTaxWithheld;
         final TaxTableField necPayerStateNumber;
@@ -830,10 +820,6 @@ abstract class TaxTableRow {
             
             this.vendorLastName = getAliasedField(DerivedFieldNames.VENDOR_LAST_NAME);
             this.vendorFirstName = getAliasedField(DerivedFieldNames.VENDOR_FIRST_NAME);
-            this.vendorMiddleName = getAliasedField(DerivedFieldNames.VENDOR_MIDDLE_NAME);
-            this.vendorSuffix = getAliasedField(DerivedFieldNames.VENDOR_SUFFIX);
-            this.vendorBusinessName1 = getAliasedField(DerivedFieldNames.VENDOR_BUSINESS_NAME_1);
-            this.vendorBusinessName2 = getAliasedField(DerivedFieldNames.VENDOR_BUSINESS_NAME_2);
             this.vendorEmailAddress = getAliasedField(DerivedFieldNames.VENDOR_EMAIL_ADDRESS);
             this.vendorUSAddressLine1 = getAliasedField(DerivedFieldNames.VENDOR_US_ADDRESS_LINE_1);
             this.vendorForeignAddressLine1 = getAliasedField(DerivedFieldNames.VENDOR_FOREIGN_ADDRESS_LINE_1);
@@ -845,13 +831,9 @@ abstract class TaxTableRow {
             this.vendorForeignCountryName = getAliasedField(DerivedFieldNames.VENDOR_FOREIGN_COUNTRY_NAME);
             this.vendorForeignCountryIndicator = getAliasedField(DerivedFieldNames.VENDOR_FOREIGN_COUNTRY_INDICATOR);
             this.vendorAnyAddressLine1 = getAliasedField(DerivedFieldNames.VENDOR_ANY_ADDRESS_LINE_1);
-            this.vendorAnyAddressLine2 = getAliasedField(DerivedFieldNames.VENDOR_ANY_ADDRESS_LINE_2);
-            this.vendorApartmentNumber = getAliasedField(DerivedFieldNames.VENDOR_APARTMENT_NUMBER);
             this.vendorZipCodeNumOnly = getAliasedField(DerivedFieldNames.VENDOR_ZIP_CODE_NUM_ONLY);
             this.ssn = getAliasedField(DerivedFieldNames.SSN);
             this.itin = getAliasedField(DerivedFieldNames.ITIN);
-            this.taxIdType1099 = getAliasedField(DerivedFieldNames.TAX_ID_TYPE_1099);
-            this.taxId1099 = getAliasedField(DerivedFieldNames.TAX_ID_1099);
             this.chapter3StatusCode = getAliasedField(DerivedFieldNames.CHAPTER3_STATUS_CODE);
             this.chapter3ExemptionCode = getAliasedField(DerivedFieldNames.CHAPTER3_EXEMPTION_CODE);
             this.chapter4ExemptionCode = getAliasedField(DerivedFieldNames.CHAPTER4_EXEMPTION_CODE);
@@ -875,13 +857,13 @@ abstract class TaxTableRow {
             this.miscCropInsuranceProceeds = getAliasedField(DerivedFieldNames.MISC_CROP_INSURANCE_PROCEEDS);
             this.miscGrossProceedsAttorney = getAliasedField(DerivedFieldNames.MISC_GROSS_PROCEEDS_ATTORNEY);
             this.miscSection409ADeferral = getAliasedField(DerivedFieldNames.MISC_SECTION_409A_DEFERRAL);
+            this.miscGoldenParachute = getAliasedField(DerivedFieldNames.MISC_GOLDEN_PARACHUTE);
             this.miscNonqualifiedDeferredCompensation = getAliasedField(
                     DerivedFieldNames.MISC_NONQUALIFIED_DEFERRED_COMPENSATION);
             this.miscStateTaxWithheld = getAliasedField(DerivedFieldNames.MISC_STATE_TAX_WITHHELD);
             this.miscPayerStateNumber = getAliasedField(DerivedFieldNames.MISC_PAYER_STATE_NUMBER);
             this.miscStateIncome = getAliasedField(DerivedFieldNames.MISC_STATE_INCOME);
             this.necNonemployeeCompensation = getAliasedField(DerivedFieldNames.NEC_NONEMPLOYEE_COMPENSATION);
-            this.necGoldenParachute = getAliasedField(DerivedFieldNames.NEC_GOLDEN_PARACHUTE);
             this.necFedIncomeTaxWithheld = getAliasedField(DerivedFieldNames.NEC_FED_INCOME_TAX_WITHHELD);
             this.necStateTaxWithheld = getAliasedField(DerivedFieldNames.NEC_STATE_TAX_WITHHELD);
             this.necPayerStateNumber = getAliasedField(DerivedFieldNames.NEC_PAYER_STATE_NUMBER);

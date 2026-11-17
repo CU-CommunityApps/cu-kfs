@@ -196,7 +196,6 @@
         <!-- ==== Fields from PUR_VNDR_HDR_T ==== -->
         <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorHeaderGeneratedIdentifier" alias="vendorHeaderGeneratedIdentifier" />
         <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorTaxNumber" alias="vendorTaxNumber" />
-        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorTaxTypeCode" alias="vendorTaxTypeCode" />
         <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorTypeCode" alias="vendorTypeCode" />
         <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorOwnershipCode" alias="vendorOwnershipCode" />
         <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorOwnershipCategoryCode" alias="vendorOwnershipCategoryCode" />
@@ -326,10 +325,6 @@
         <!-- ==== These fields are not directly tied to the database, but are instead derived by the 1099/1042S processing. ==== -->
         <field name="vendorLastName" type="VARCHAR" />
         <field name="vendorFirstName" type="VARCHAR" />
-        <field name="vendorMiddleName" type="VARCHAR" />
-        <field name="vendorSuffix" type="VARCHAR" />
-        <field name="vendorBusinessName1" type="VARCHAR" />
-        <field name="vendorBusinessName2" type="VARCHAR" />
         <field name="vendorEmailAddress" type="VARCHAR" />
         <field name="vendorUSAddressLine1" type="VARCHAR" />
         <field name="vendorForeignAddressLine1" type="VARCHAR" />
@@ -341,12 +336,9 @@
         <field name="vendorForeignCountryName" type="VARCHAR" />
         <field name="vendorForeignCountryIndicator" type="VARCHAR" />
         <field name="vendorAnyAddressLine1" type="VARCHAR" />
-        <field name="vendorApartmentNumber" type="VARCHAR" />
         <field name="vendorZipCodeNumOnly" type="VARCHAR" />
         <field name="ssn" type="VARCHAR" />
         <field name="itin" type="VARCHAR" />
-        <field name="taxIdType1099" type="VARCHAR" />
-        <field name="taxId1099" type="VARCHAR" />
         <field name="chapter3StatusCode" type="VARCHAR" />
         <field name="chapter3ExemptionCode" type="VARCHAR" />
         <field name="chapter4ExemptionCode" type="VARCHAR" />
@@ -378,12 +370,12 @@
         <field name="miscCropInsuranceProceeds" type="DECIMAL" />
         <field name="miscGrossProceedsAttorney" type="DECIMAL" />
         <field name="miscSection409ADeferral" type="DECIMAL" />
+        <field name="miscGoldenParachute" type="DECIMAL" />
         <field name="miscNonqualifiedDeferredCompensation" type="DECIMAL" />
         <field name="miscStateTaxWithheld" type="DECIMAL" />
         <field name="miscPayerStateNumber" type="VARCHAR" />
         <field name="miscStateIncome" type="DECIMAL" />
         <field name="necNonemployeeCompensation" type="DECIMAL" />
-        <field name="necGoldenParachute" type="DECIMAL" />
         <field name="necFedIncomeTaxWithheld" type="DECIMAL" />
         <field name="necStateTaxWithheld" type="DECIMAL" />
         <field name="necPayerStateNumber" type="VARCHAR" />
