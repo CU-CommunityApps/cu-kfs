@@ -1,4 +1,4 @@
-package edu.cornell.kfs.tax.dataaccess.impl;
+package edu.cornell.kfs.tax.util;
 
 import java.util.ArrayList;
 import java.util.List;

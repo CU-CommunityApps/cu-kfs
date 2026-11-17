@@ -49,6 +49,8 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorAddressRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorRow;
 import edu.cornell.kfs.tax.service.DocumentType1099BoxService;
 import edu.cornell.kfs.tax.service.PaymentReason1099BoxService;
+import edu.cornell.kfs.tax.util.ParsedVendorAddress;
+import edu.cornell.kfs.tax.util.ParsedVendorName;
 
 /**
  * Default TransactionRowProcessor implementation for handling 1099 tax processing.
