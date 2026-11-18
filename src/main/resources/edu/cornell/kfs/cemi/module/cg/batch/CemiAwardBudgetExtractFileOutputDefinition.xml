@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This is the main file for defining how the Award Budget data will map to the Award Budget Template spreadsheet/workbook.
+
+    Each "sheet" element should correspond to one of the sheets/tabs in the workbook.
+
+    There are two main types of "field" elements:
+
+    [1] POJO-derived value - Has the "STRING" type and uses the "key" attribute to specify the POJO property.
+    [2] Literal value - Has the "STATIC" type and uses the "value" attribute to specify the literal. Can be empty.
+
+    NOTE: This XML file doesn't keep track of POJO classes; it only needs to know POJO property names/paths.
+ -->
+<cemiOutputDefinition>
+
+    <sheet name="Budget Template" num-header-rows="5" start-column-index="1"
+           business-object-class="edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardBudgetFileBudgetTemplateTabRowBo">
+        <field name="Spreadsheet Key" type="STRING" key="spreadsheetKey"/>
+        <field name="Add Only" type="STRING" key="addOnly"/>
+        <field name="Plan Template" type="STRING" key="planTemplate"/>
+        <field name="Plan Template ID" type="STRING" key="planTemplateId"/>
+        <field name="Company" type="STRING" key="company"/>
+        <field name="Plan Structure" type="STRING" key="planStructure"/>
+        <field name="Is Inactive" type="STRING" key="isInactive"/>
+        <field name="Organization As Of Date Reference" type="STRING" key="organizationAsOfDateReference"/>
+        <field name="Top Plan Hierarchy" type="STRING" key="topPlanHierarchy"/>
+        <field name="Include All Organizations Under Top Plan Hierarchy Reference" type="STRING" key="includeAllOrganizationsUnderTopPlanHierarchyReference"/>
+        <field name="Organizations" type="STRING" key="organizations"/>
+        <field name="Roll Up Subordinate Reference" type="STRING" key="rollUpSubordinateReference"/>
+        <field name="Statistic Type" type="STRING" key="statisticType"/>
+        <field name="Entry Type" type="STRING" key="entryType"/>
+        <field name="Budget Source" type="STRING" key="budgetSource"/>
+        <field name="Budget Source ID" type="STRING" key="budgetSourceId"/>
+        <field name="Plan Name" type="STRING" key="planName"/>
+        <field name="Default Reporting Currency" type="STRING" key="defaultReportingCurrency"/>
+        <field name="Enable Multicurrency Reference" type="STRING" key="enableMulticurrencyReference"/>
+        <field name="Currency Rate Type" type="STRING" key="currencyRateType"/>
+        <field name="Currency Rate Type For Budget Spend" type="STRING" key="currencyRateTypeForBudgetSpend"/>
+        <field name="Default Balanced Amendment Reference" type="STRING" key="defaultBalancedAmendmentReference"/>
+        <field name="Amendment Increase Parent Disabled" type="STRING" key="amendmentIncreaseParentDisabled"/>
+        <field name="Enable For Allocations Reference" type="STRING" key="enableForAllocationsReference"/>
+        <field name="Validate Expense Account Amendments Reference" type="STRING" key="validateExpenseAccountAmendmentsReference"/>
+        <field name="Row ID" type="STRING" key="rowId"/>
+        <field name="Fiscal Year" type="STRING" key="fiscalYear"/>
+        <field name="Fiscal Schedule" type="STRING" key="fiscalSchedule"/>
+        <field name="From Year" type="STRING" key="fromYear"/>
+        <field name="Fiscal Schedule" type="STRING" key="fromFiscalSchedule"/>
+        <field name="From Summary Period" type="STRING" key="fromSummaryPeriod"/>
+        <field name="From Fiscal Posting Interval" type="STRING" key="fromFiscalPostingInterval"/>
+        <field name="Virtual Parent Project Budget Start Date Reference" type="STRING" key="virtualParentProjectBudgetStartDateReference"/>
+        <field name="To Year" type="STRING" key="toYear"/>
+        <field name="Fiscal Schedule" type="STRING" key="toFiscalSchedule"/>
+        <field name="To Summary Period" type="STRING" key="toSummaryPeriod"/>
+        <field name="To Fiscal Posting Interval" type="STRING" key="toFiscalPostingInterval"/>
+        <field name="Virtual Parent Project Budget End Date Reference" type="STRING" key="virtualParentProjectBudgetEndDateReference"/>
+        <field name="Linked Virtual Children Budgets" type="STRING" key="linkedVirtualChildrenBudgets"/>
+        <field name="Currency Rate Type For Budget" type="STRING" key="currencyRateTypeForBudget"/>
+        <field name="Project" type="STRING" key="project"/>
+        <field name="Plan Calculation Type" type="STRING" key="planCalculationType"/>
+        <field name="Assign Plan As" type="STRING" key="assignPlanAs"/>
+    </sheet>
+
+</cemiOutputDefinition>
