@@ -2,6 +2,7 @@ package edu.cornell.kfs.tax.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -13,9 +14,12 @@ public final class ParsedVendorName {
     public static final ParsedVendorName EMPTY = new ParsedVendorName();
 
     private static final Pattern SUFFIXES_PATTERN = Pattern.compile(
-            "(?i)^(JR\\.?)|(SR\\.?)|(P\\.?H\\.?D\\.)|(M\\.?D\\.?)|(P\\.?(L\\.?L\\.?)?C\\.?)|(?-i:([IVX]+))$");
+            "(?i)^([JS]R\\.?)|(P\\.?(?:H\\.?D\\.?|(?:L\\.?L\\.?)?C\\.?)|M\\.?D\\.?)|(?-i:([IVX]+))$");
 
     private static final Pattern MIDDLE_INITIAL_PATTERN = Pattern.compile("^(?i)[A-Z]\\.?$");
+
+    private static final int PROFESSIONAL_SUFFIX_GROUP = 2;
+    private static final int NO_MATCH_INDEX = -1;
 
     private final String firstName;
     private final String middleName;
@@ -89,8 +93,11 @@ public final class ParsedVendorName {
         int startIndex = 0;
         boolean stillFindingSuffixes = true;
         do {
-            if (SUFFIXES_PATTERN.matcher(fragments[startIndex]).matches()) {
-                builder.suffixes.add(fragments[startIndex]);
+            final Matcher suffixMatcher = SUFFIXES_PATTERN.matcher(fragments[startIndex]);
+            if (suffixMatcher.matches()) {
+                if (isGenerationalSuffix(suffixMatcher)) {
+                    builder.suffixes.add(fragments[startIndex]);
+                }
                 startIndex++;
             } else {
                 stillFindingSuffixes = false;
@@ -115,8 +122,11 @@ public final class ParsedVendorName {
         int endIndex = fragments.length;
         boolean stillFindingSuffixes = true;
         do {
-            if (SUFFIXES_PATTERN.matcher(fragments[endIndex - 1]).matches()) {
-                builder.suffixes.add(fragments[endIndex - 1]);
+            final Matcher suffixMatcher = SUFFIXES_PATTERN.matcher(fragments[endIndex - 1]);
+            if (suffixMatcher.matches()) {
+                if (isGenerationalSuffix(suffixMatcher)) {
+                    builder.suffixes.add(fragments[endIndex - 1]);
+                }
                 endIndex--;
             } else {
                 stillFindingSuffixes = false;
@@ -124,6 +134,10 @@ public final class ParsedVendorName {
         } while (stillFindingSuffixes && endIndex > startIndex + 1);
 
         return endIndex;
+    }
+
+    private static boolean isGenerationalSuffix(final Matcher suffixMatcher) {
+        return suffixMatcher.start(PROFESSIONAL_SUFFIX_GROUP) == NO_MATCH_INDEX;
     }
 
     public String getFirstName() {
