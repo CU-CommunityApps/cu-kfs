@@ -1,7 +1,6 @@
 package edu.cornell.kfs.cemi.module.cg.batch.factory;
 
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiImportBudgetFileImportBudgetHighVolumeTabRowBo;
-import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 
 public class CemiImportBudgetFileImportBudgetHighVolumeTabRowBoFactory {
 
@@ -10,16 +9,16 @@ public class CemiImportBudgetFileImportBudgetHighVolumeTabRowBoFactory {
                 new CemiImportBudgetFileImportBudgetHighVolumeTabRowBo();
 
         row.setHeaderKey("budget-header-key");
-        row.setBudget(CemiBaseConstants.EMPTY_STRING);
-        row.setImportMode(CemiBaseConstants.EMPTY_STRING);
-        row.setAutoComplete(CemiBaseConstants.EMPTY_STRING);
-        row.setComment(CemiBaseConstants.EMPTY_STRING);
-        row.setWorker(CemiBaseConstants.EMPTY_STRING);
-        row.setSubmit(CemiBaseConstants.EMPTY_STRING);
-        row.setBudgetStructure(CemiBaseConstants.EMPTY_STRING);
-        row.setBudgetName(CemiBaseConstants.EMPTY_STRING);
-        row.setBudgetMemo(CemiBaseConstants.EMPTY_STRING);
-        row.setBudgetPeriod(CemiBaseConstants.EMPTY_STRING);
+        row.setBudget("budget");
+        row.setImportMode("import-mode");
+        row.setAutoComplete("auto-complete");
+        row.setComment("comment");
+        row.setWorker("worker");
+        row.setSubmit("submit");
+        row.setBudgetStructure("budget-structure");
+        row.setBudgetName("budget-name");
+        row.setBudgetMemo("budget-memo");
+        row.setBudgetPeriod("budget-period");
 
         return row;
     }

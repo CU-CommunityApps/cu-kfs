@@ -1,7 +1,6 @@
 package edu.cornell.kfs.cemi.module.cg.batch.factory;
 
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiImportBudgetFileBudgetLinesDataTabRowBo;
-import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 
 public class CemiImportBudgetFileBudgetLinesDataTabRowBoFactory {
 
@@ -10,23 +9,23 @@ public class CemiImportBudgetFileBudgetLinesDataTabRowBoFactory {
                 new CemiImportBudgetFileBudgetLinesDataTabRowBo();
 
         row.setHeaderKey("budget-lines-header-key");
-        row.setLineKey(CemiBaseConstants.EMPTY_STRING);
-        row.setLineOrder(CemiBaseConstants.EMPTY_STRING);
-        row.setCompany(CemiBaseConstants.EMPTY_STRING);
-        row.setYear(CemiBaseConstants.EMPTY_STRING);
-        row.setFiscalTimeInterval(CemiBaseConstants.EMPTY_STRING);
-        row.setLedgerAccountOrLedgerAccountSummary(CemiBaseConstants.EMPTY_STRING);
-        row.setAccountSet(CemiBaseConstants.EMPTY_STRING);
-        row.setBookCode(CemiBaseConstants.EMPTY_STRING);
-        row.setBudgetCurrency(CemiBaseConstants.EMPTY_STRING);
-        row.setBudgetDebitAmount(CemiBaseConstants.EMPTY_STRING);
-        row.setBudgetCreditAmount(CemiBaseConstants.EMPTY_STRING);
-        row.setQuantity(CemiBaseConstants.EMPTY_STRING);
-        row.setUnitOfTime(CemiBaseConstants.EMPTY_STRING);
-        row.setMemo(CemiBaseConstants.EMPTY_STRING);
-        row.setGrantId(CemiBaseConstants.EMPTY_STRING);
-        row.setObjectClassId(CemiBaseConstants.EMPTY_STRING);
-        row.setExternalSupplierInvoiceSource(CemiBaseConstants.EMPTY_STRING);
+        row.setLineKey("line-key");
+        row.setLineOrder("line-order");
+        row.setCompany("company");
+        row.setYear("year");
+        row.setFiscalTimeInterval("fiscal-time-interval");
+        row.setLedgerAccountOrLedgerAccountSummary("ledger-account-or-acct-sum");
+        row.setAccountSet("account-set");
+        row.setBookCode("book-code");
+        row.setBudgetCurrency("budget-currency");
+        row.setBudgetDebitAmount("budget-debit-amount");
+        row.setBudgetCreditAmount("budget-credit-amount");
+        row.setQuantity("quantity");
+        row.setUnitOfTime("unit-of-time");
+        row.setMemo("memo");
+        row.setGrantId("grant-id");
+        row.setObjectClassId("object-class-id");
+        row.setExternalSupplierInvoiceSource("external-supplier-invoice-source");
 
         return row;
     }

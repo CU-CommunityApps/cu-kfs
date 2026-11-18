@@ -13,9 +13,9 @@ public class CreateCemiImportBudgetExtractStep extends AbstractStep {
     @Override
     public boolean execute(final String jobName, final LocalDateTime jobRunDate) throws InterruptedException {
         //Phase1: Obtain the dataset
-        cemiImportBudgetExtractService.logSystemParameterValues();
-        cemiImportBudgetExtractService.resetState();
-        cemiImportBudgetExtractService.captureInScopeBusinessObjectKeysToProcessingTable();
+        cemiImportBudgetExtractService.logSystemParameterValues(); //logs outbound folder and masking setting
+        cemiImportBudgetExtractService.resetState(); //does nothing YET (no existing state to reset)
+        cemiImportBudgetExtractService.captureInScopeBusinessObjectKeysToProcessingTable(); //will eventually get the keys needed to query KFS data
         //Phase 2: Loop through result set to create all the csv files
         cemiImportBudgetExtractService.generateIntermediateExtractData(jobRunDate);
         //Phase 3: Create single multi-tabbed file.
