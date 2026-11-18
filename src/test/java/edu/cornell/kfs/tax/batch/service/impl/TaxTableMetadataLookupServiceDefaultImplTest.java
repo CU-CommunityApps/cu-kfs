@@ -92,7 +92,13 @@ public class TaxTableMetadataLookupServiceDefaultImplTest {
                                 alias = "VNDR_FRGN_IND"),
                         @TaxFieldFixture(key = "vendorGIIN", column = "VEN1.VNDR_GIIN", alias = "VNDR_GIIN"),
                         @TaxFieldFixture(key = "vendorChapter4StatusCode", column = "VEN1.VNDR_CHAP_4_STAT_CD",
-                                alias = "VNDR_CHAP_4_STAT_CD")
+                                alias = "VNDR_CHAP_4_STAT_CD"),
+                        @TaxFieldFixture(key = "vendorCorpCitizenCode", column = "VEN1.VNDR_CORP_CTZN_CNTRY_CD",
+                                alias = "VNDR_CORP_CTZN_CNTRY_CD"),
+                        @TaxFieldFixture(key = "vendorForeignTaxId", column = "VEN1.VNDR_FOREIGN_TAX_ID",
+                                alias = "VNDR_FOREIGN_TAX_ID"),
+                        @TaxFieldFixture(key = "vendorDOB", column = "VEN1.VNDR_DOB_DT",
+                                alias = "VNDR_DOB_DT")
                 }
         )
         VENDOR_METADATA;

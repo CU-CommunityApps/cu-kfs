@@ -80,7 +80,7 @@ public class TaxFileGenerationServiceSprintaxImplTest {
     private static final String TEST_CASE_BASE_DIRECTORY = "classpath:edu/cornell/kfs/tax/batch/sprintax-file-test/";
 
     private static final Pattern PARTIALLY_MASKED_TAX_ID_OR_GIIN_PATTERN = Pattern.compile(
-            "([x~0-9]xx-?[x0-9]x-?[x0-9]{4})|(x{6}\\.x{5}\\.x{2}\\.\\w{3})");
+            "([x~0-9]xx-?[x0-9]x-?[x0-9]{4,6})|(x{6}\\.x{5}\\.x{2}\\.\\w{3})");
 
     @RegisterExtension
     static TestSpringContextExtension springContextExtension = TestSpringContextExtension.forClassPathSpringXmlFile(
@@ -390,6 +390,10 @@ public class TaxFileGenerationServiceSprintaxImplTest {
         for (final TransactionDetail transactionDetail : transactionDetails) {
             final String decryptedTaxNumber = testDataHelperDao.decrypt(transactionDetail.getVendorTaxNumber());
             transactionDetail.setVendorTaxNumber(decryptedTaxNumber);
+            if (StringUtils.isNotBlank(transactionDetail.getVendorForeignTaxId())) {
+                final String decryptedForeignTaxId = testDataHelperDao.decrypt(transactionDetail.getVendorForeignTaxId());
+                transactionDetail.setVendorForeignTaxId(decryptedForeignTaxId);
+            }
         }
     }
 

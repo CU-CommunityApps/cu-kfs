@@ -1,5 +1,7 @@
 package edu.cornell.kfs.tax.batch.dto;
 
+import java.sql.Date;
+
 public abstract class TaxPayeeBase {
 
     private String payeeId;
@@ -17,6 +19,9 @@ public abstract class TaxPayeeBase {
     private String vendorEmailAddress;
     private String vendorChapter4StatusCode;
     private String vendorGIIN;
+    private String vendorCorpCitizenCode;
+    private String vendorForeignTaxId;
+    private Date vendorDOB;
     private String vendorLine1Address;
     private String vendorLine2Address;
     private String vendorCityName;
@@ -147,6 +152,30 @@ public abstract class TaxPayeeBase {
 
     public void setVendorGIIN(final String vendorGIIN) {
         this.vendorGIIN = vendorGIIN;
+    }
+
+    public String getVendorCorpCitizenCode() {
+        return vendorCorpCitizenCode;
+    }
+
+    public void setVendorCorpCitizenCode(final String vendorCorpCitizenCode) {
+        this.vendorCorpCitizenCode = vendorCorpCitizenCode;
+    }
+
+    public String getVendorForeignTaxId() {
+        return vendorForeignTaxId;
+    }
+
+    public void setVendorForeignTaxId(final String vendorForeignTaxId) {
+        this.vendorForeignTaxId = vendorForeignTaxId;
+    }
+
+    public Date getVendorDOB() {
+        return vendorDOB;
+    }
+
+    public void setVendorDOB(final Date vendorDOB) {
+        this.vendorDOB = vendorDOB;
     }
 
     public String getVendorLine1Address() {
