@@ -1,10 +1,13 @@
 package edu.cornell.kfs.tax.batch.service.impl;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -405,6 +408,9 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         updatedRow.setVendorEmailAddress(currentPayee.getNonPlaceholderVendorEmailAddress());
         updatedRow.setVendorChapter4StatusCode(currentPayee.getVendorChapter4StatusCode());
         updatedRow.setVendorGIIN(currentPayee.getVendorGIIN());
+        updatedRow.setVendorCorpCitizenCode(currentPayee.getVendorCorpCitizenCode());
+        updatedRow.setVendorForeignTaxId(currentPayee.getVendorForeignTaxId());
+        updatedRow.setVendorDOB(currentPayee.getVendorDOB());
         updatedRow.setVendorLine1Address(currentPayee.getVendorLine1Address());
         updatedRow.setVendorLine2Address(currentPayee.getVendorLine2Address());
         updatedRow.setVendorCityName(currentPayee.getVendorCityName());
@@ -438,14 +444,13 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
     private void prepareForPrintingDemographicRow(final SprintaxPayee currentPayee, final SprintaxHelper helper) {
         final String formattedTaxId = formatTaxIdForFile(currentPayee.getVendorTaxNumber());
         if (shouldTreatTaxIdAsITIN(currentPayee.getVendorTaxNumber())) {
-            LOG.debug("prepareForPrintingBiographicRow, Biographic row for payee {} has an ITIN tax ID",
+            LOG.debug("prepareForPrintingDemographicRow, Demographic row for payee {} has an ITIN tax ID",
                     currentPayee.getPayeeId());
-            currentPayee.setFormattedITINValue(formattedTaxId);
         } else {
-            LOG.debug("prepareForPrintingBiographicRow, Biographic row for payee {} has an SSN tax ID",
+            LOG.debug("prepareForPrintingDemographicRow, Demographic row for payee {} does not have an ITIN tax ID",
                     currentPayee.getPayeeId());
-            currentPayee.setFormattedSSNValue(formattedTaxId);
         }
+        currentPayee.setFormattedTaxNumber(formattedTaxId);
 
         final boolean isMissingUSAddress = StringUtils.containsIgnoreCase(
                 currentPayee.getVendorLine1Address(), CUTaxConstants.VENDOR_NOT_FOUND_MESSAGE);
@@ -464,6 +469,12 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         final String chapter3StatusCode = getChapter3StatusCodeByVendorOwnershipCode(
                 currentPayee.getVendorOwnershipCode());
         currentPayee.setChapter3StatusCode(chapter3StatusCode);
+
+        final Date vendorDOB = currentPayee.getVendorDOB();
+        if (vendorDOB != null) {
+            final String formattedDOB = helper.dateFormatterMMDDYYYY.format(vendorDOB.toLocalDate());
+            currentPayee.setFormattedDOB(formattedDOB);
+        }
     }
 
     private boolean shouldTreatTaxIdAsITIN(final String taxId) {
@@ -630,6 +641,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         private final Map<String, String> transactionOverrides;
         private final TaxStatistics statistics;
         private final List<TransactionDetail> pendingBatchUpdates;
+        private final DateTimeFormatter dateFormatterMMDDYYYY;
 
         private SprintaxHelper(final TaxBatchConfig config, final TaxDtoRowMapper<TransactionDetail> rowMapper,
                 final TaxFileRowWriterImpl demographicFileWriter, final TaxFileRowWriterImpl paymentsFileWriter,
@@ -641,6 +653,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
             this.transactionOverrides = transactionOverrides;
             this.statistics = TaxUtils.generateBaseStatisticsFor1042S();
             this.pendingBatchUpdates = new ArrayList<>(MAX_BATCH_UPDATE_SIZE);
+            this.dateFormatterMMDDYYYY = DateTimeFormatter.ofPattern(CUTaxConstants.DEFAULT_DATE_FORMAT, Locale.US);
         }
 
         @Override

@@ -122,6 +122,9 @@ public class TestTransactionDetailCsvInputFileType extends CsvBatchInputFileType
         detail.setPaymentStatusCode(converter.getString(TransactionDetailField.paymentStatusCode));
         detail.setDisbursementTypeCode(converter.getString(TransactionDetailField.disbursementTypeCode));
         detail.setLedgerDocumentTypeCode(converter.getString(TransactionDetailField.ledgerDocumentTypeCode));
+        detail.setVendorCorpCitizenCode(converter.getString(TransactionDetailField.vendorCorpCitizenCode));
+        detail.setVendorForeignTaxId(converter.getString(TransactionDetailField.vendorForeignTaxId));
+        detail.setVendorDOB(converter.getSqlDate(TransactionDetailField.vendorDOB));
 
         return detail;
     }

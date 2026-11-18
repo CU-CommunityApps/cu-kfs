@@ -75,6 +75,9 @@ public class TaxTableMetadataLookupServiceDefaultImpl
             Map.entry(VendorField.vendorForeignIndicator, "VNDR_FRGN_IND"),
             Map.entry(VendorField.vendorGIIN, "VNDR_GIIN"),
             Map.entry(VendorField.vendorChapter4StatusCode, "VNDR_CHAP_4_STAT_CD"),
+            Map.entry(VendorField.vendorCorpCitizenCode, "VNDR_CORP_CTZN_CNTRY_CD"),
+            Map.entry(VendorField.vendorForeignTaxId, "VNDR_FOREIGN_TAX_ID"),
+            Map.entry(VendorField.vendorDOB, "VNDR_DOB_DT"),
 
             Map.entry(TransactionDetailField.transactionDetailId, "IRS_1099_1042S_DETAIL_ID"),
             Map.entry(TransactionDetailField.reportYear, "REPORT_YEAR"),
@@ -132,7 +135,10 @@ public class TaxTableMetadataLookupServiceDefaultImpl
             Map.entry(TransactionDetailField.disbursementNbr, "DISB_NBR"),
             Map.entry(TransactionDetailField.paymentStatusCode, "PMT_STAT_CD"),
             Map.entry(TransactionDetailField.disbursementTypeCode, "DISB_TYP_CD"),
-            Map.entry(TransactionDetailField.ledgerDocumentTypeCode, "LEDGER_DOC_TYP_CD")
+            Map.entry(TransactionDetailField.ledgerDocumentTypeCode, "LEDGER_DOC_TYP_CD"),
+            Map.entry(TransactionDetailField.vendorCorpCitizenCode, "VNDR_CORP_CTZN_CNTRY_CD"),
+            Map.entry(TransactionDetailField.vendorForeignTaxId, "VNDR_FOREIGN_TAX_ID"),
+            Map.entry(TransactionDetailField.vendorDOB, "VNDR_DOB_DT")
     );
 
     @Override

@@ -15,12 +15,12 @@ public class SprintaxPayee extends TaxPayeeBase {
     private String rowId;
     private String placeholderEmailAddress;
     private String paymentAddressLine1;
-    private String formattedSSNValue;
-    private String formattedITINValue;
+    private String formattedTaxNumber;
     private String chapter3StatusCode;
     private String chapter4ExemptionCode;
     private String payerEIN;
     private String stateCode;
+    private String formattedDOB;
     private Date endDate;
     private boolean demographicRowWritten;
 
@@ -60,20 +60,12 @@ public class SprintaxPayee extends TaxPayeeBase {
         this.paymentAddressLine1 = paymentAddressLine1;
     }
 
-    public String getFormattedSSNValue() {
-        return formattedSSNValue;
+    public String getFormattedTaxNumber() {
+        return formattedTaxNumber;
     }
 
-    public void setFormattedSSNValue(final String formattedSSNValue) {
-        this.formattedSSNValue = formattedSSNValue;
-    }
-
-    public String getFormattedITINValue() {
-        return formattedITINValue;
-    }
-
-    public void setFormattedITINValue(final String formattedITINValue) {
-        this.formattedITINValue = formattedITINValue;
+    public void setFormattedTaxNumber(final String formattedTaxNumber) {
+        this.formattedTaxNumber = formattedTaxNumber;
     }
 
     public String getChapter3StatusCode() {
@@ -106,6 +98,14 @@ public class SprintaxPayee extends TaxPayeeBase {
 
     public void setStateCode(final String stateCode) {
         this.stateCode = stateCode;
+    }
+
+    public String getFormattedDOB() {
+        return formattedDOB;
+    }
+
+    public void setFormattedDOB(final String formattedDOB) {
+        this.formattedDOB = formattedDOB;
     }
 
     public Date getEndDate() {
@@ -164,8 +164,7 @@ public class SprintaxPayee extends TaxPayeeBase {
         vendorLastName,
         vendorEmailAddress,
         payeeId,
-        formattedSSNValue,
-        formattedITINValue,
+        formattedTaxNumber,
         vendorLine1Address,
         vendorLine2Address,
         vendorCityName,
@@ -183,6 +182,9 @@ public class SprintaxPayee extends TaxPayeeBase {
         vendorChapter4StatusCode,
         vendorGIIN,
         payerEIN,
+        vendorCorpCitizenCode,
+        vendorForeignTaxId,
+        formattedDOB,
         payment_uniqueFormId("payment.uniqueFormId"),
         payment_incomeCodeForOutput("payment.incomeCodeForOutput"),
         payment_grossAmount("payment.grossAmount"),
