@@ -1,0 +1,53 @@
+<descriptor-repository version="1.0">
+
+    <!-- Award Budget Extract -->
+    <class-descriptor class="edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiAwardBudgetFileBudgetTemplateTabRowBo" table="CU_CEMI_EXTR_AWD_BUDG_TAB_BUDG_TMPL_T" schema="CEMI">
+        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="proposalNumberUsedForDataRow" column="CGPRPSL_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="spreadsheetKey" column="WKDY_SPRDSHT_KEY_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="addOnly" column="ADD_ONLY" jdbc-type="VARCHAR" />
+        <field-descriptor name="planTemplate" column="PLAN_TMPL" jdbc-type="VARCHAR" />
+        <field-descriptor name="planTemplateId" column="PLAN_TMPL_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="company" column="CMPNY" jdbc-type="VARCHAR" />
+        <field-descriptor name="planStructure" column="PLAN_STRCT" jdbc-type="VARCHAR" />
+        <field-descriptor name="isInactive" column="IS_INACTV" jdbc-type="VARCHAR" />
+        <field-descriptor name="organizationAsOfDateReference" column="ORG_AS_OF_DT_REF" jdbc-type="VARCHAR" />
+        <field-descriptor name="topPlanHierarchy" column="TOP_PLAN_HRCHY" jdbc-type="VARCHAR" />
+        <field-descriptor name="includeAllOrganizationsUnderTopPlanHierarchyReference" column="INCL_ALL_ORGS_UNDR_TOP_PLAN_REF" jdbc-type="VARCHAR" />
+        <field-descriptor name="organizations" column="ORGS" jdbc-type="VARCHAR" />
+        <field-descriptor name="rollUpSubordinateReference" column="ROLL_UP_SUBRD_REF" jdbc-type="VARCHAR" />
+        <field-descriptor name="statisticType" column="STAT_TYP" jdbc-type="VARCHAR" />
+        <field-descriptor name="entryType" column="ENTRY_TYP" jdbc-type="VARCHAR" />
+        <field-descriptor name="budgetSource" column="BUDG_SRC" jdbc-type="VARCHAR" />
+        <field-descriptor name="budgetSourceId" column="BUDG_SRC_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="planName" column="PLAN_NM" jdbc-type="VARCHAR" />
+        <field-descriptor name="defaultReportingCurrency" column="DFLT_RPT_CRNCY" jdbc-type="VARCHAR" />
+        <field-descriptor name="enableMulticurrencyReference" column="ENBL_MLTCRNCY_REF" jdbc-type="VARCHAR" />
+        <field-descriptor name="currencyRateType" column="CRNCY_RT_TYP" jdbc-type="VARCHAR" />
+        <field-descriptor name="currencyRateTypeForBudgetSpend" column="CRNCY_RT_TYP_BUDG_SPND" jdbc-type="VARCHAR" />
+        <field-descriptor name="defaultBalancedAmendmentReference" column="DFLT_BAL_AMND_REF" jdbc-type="VARCHAR" />
+        <field-descriptor name="amendmentIncreaseParentDisabled" column="AMND_INCR_PRNT_DSBL" jdbc-type="VARCHAR" />
+        <field-descriptor name="enableForAllocationsReference" column="ENBL_ALLOC_REF" jdbc-type="VARCHAR" />
+        <field-descriptor name="validateExpenseAccountAmendmentsReference" column="VLD_EXP_ACCT_AMND_REF" jdbc-type="VARCHAR" />
+        <field-descriptor name="rowId" column="ROW_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="fiscalYear" column="FSCL_YR" jdbc-type="VARCHAR" />
+        <field-descriptor name="fiscalSchedule" column="FSCL_SCHD" jdbc-type="VARCHAR" />
+        <field-descriptor name="fromYear" column="FROM_YR" jdbc-type="VARCHAR" />
+        <field-descriptor name="fromFiscalSchedule" column="FROM_FSCL_SCHD" jdbc-type="VARCHAR" />
+        <field-descriptor name="fromSummaryPeriod" column="FROM_SMRY_PRD" jdbc-type="VARCHAR" />
+        <field-descriptor name="fromFiscalPostingInterval" column="FROM_FSCL_PST_INTRVL" jdbc-type="VARCHAR" />
+        <field-descriptor name="virtualParentProjectBudgetStartDateReference" column="VRTL_PRNT_PROJ_BUDG_STRT_DT_REF" jdbc-type="VARCHAR" />
+        <field-descriptor name="toYear" column="TO_YR" jdbc-type="VARCHAR" />
+        <field-descriptor name="toFiscalSchedule" column="TO_FSCL_SCHD" jdbc-type="VARCHAR" />
+        <field-descriptor name="toSummaryPeriod" column="TO_SMRY_PRD" jdbc-type="VARCHAR" />
+        <field-descriptor name="toFiscalPostingInterval" column="TO_FSCL_PST_INTRVL" jdbc-type="VARCHAR" />
+        <field-descriptor name="virtualParentProjectBudgetEndDateReference" column="VRTL_PRNT_PROJ_BUDG_END_DT_REF" jdbc-type="VARCHAR" />
+        <field-descriptor name="linkedVirtualChildrenBudgets" column="LNKD_VRTL_CHLD_BUDG" jdbc-type="VARCHAR" />
+        <field-descriptor name="currencyRateTypeForBudget" column="CRNCY_RT_TYP_BUDG" jdbc-type="VARCHAR" />
+        <field-descriptor name="project" column="PROJ" jdbc-type="VARCHAR" />
+        <field-descriptor name="planCalculationType" column="PLAN_CALC_TYP" jdbc-type="VARCHAR" />
+        <field-descriptor name="assignPlanAs" column="ASGN_PLAN_AS" jdbc-type="VARCHAR" />
+    </class-descriptor>
+
+</descriptor-repository>
