@@ -687,13 +687,15 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
     String[] getFilePathsForWriters(Transaction1099Summary summary, LocalDateTime processingStartDate) {
         String[] filePaths = super.getFilePathsForWriters(summary, processingStartDate);
         DateTimeFormatter tempFormat = buildDateFormatForFileSuffixes();
+        String fileExtension = shouldWriteCsvContent()
+                ? CUKFSConstants.FileExtensions.CSV : CUTaxConstants.TAX_OUTPUT_FILE_SUFFIX;
         // Output file for 1099 tab records.
         filePaths[0] = new StringBuilder(MED_BUILDER_SIZE).append(getReportsDirectory()).append('/')
                 .append(CUTaxConstants.TAX_1099_MISC_OUTPUT_FILE_PREFIX).append(summary.reportYear)
-                .append(tempFormat.format(processingStartDate)).append(CUTaxConstants.TAX_OUTPUT_FILE_SUFFIX).toString();
+                .append(tempFormat.format(processingStartDate)).append(fileExtension).toString();
         filePaths[1] = new StringBuilder(MED_BUILDER_SIZE).append(getReportsDirectory()).append('/')
                 .append(CUTaxConstants.TAX_1099_NEC_OUTPUT_FILE_PREFIX).append(summary.reportYear)
-                .append(tempFormat.format(processingStartDate)).append(CUTaxConstants.TAX_OUTPUT_FILE_SUFFIX).toString();
+                .append(tempFormat.format(processingStartDate)).append(fileExtension).toString();
         return filePaths;
     }
 

@@ -72,6 +72,12 @@ public class ParsedVendorAddressTest {
         SINGLE_LINE_WITH_APARTMENT_SHORTHAND,
 
         @ParsedVendorAddressFixture(
+                rawLine1Address = "321 Main St  Apt 55", rawLine2Address = "",
+                expectedLine1 = "321 Main St", expectedLine2 = "", expectedApartment = "Apt 55"
+        )
+        SINGLE_LINE_WITH_APARTMENT_SHORTHAND_AND_EXTRA_SEPARATOR_WHITESPACE,
+
+        @ParsedVendorAddressFixture(
                 rawLine1Address = "321 Main St Apt #55", rawLine2Address = "",
                 expectedLine1 = "321 Main St", expectedLine2 = "", expectedApartment = "Apt #55"
         )

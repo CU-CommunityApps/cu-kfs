@@ -17,7 +17,6 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
-import org.kuali.kfs.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.api.parameter.EvaluationOperator;
 import org.kuali.kfs.coreservice.impl.parameter.Parameter;
@@ -126,7 +125,7 @@ abstract class TransactionDetailSummary {
         
         // Setup constants obtained from config params.
         this.taxEIN = ConfigContext.getCurrentContextConfig().getProperty(CUTaxKeyConstants.TAX_OUTPUT_EIN);
-        this.scrubbedOutput = GlobalResourceLoader.getContext().getEnvironment().getProperty(CUTaxKeyConstants.TAX_OUTPUT_SCRUBBED, Boolean.class, false);
+        this.scrubbedOutput = Boolean.parseBoolean(ConfigContext.getCurrentContextConfig().getProperty(CUTaxKeyConstants.TAX_OUTPUT_SCRUBBED));
         
         // Setup constants for Foreign Draft and Wire Transfer codes so that we don't need to keep calling the enum values.
         this.foreignDraftCode = KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT;

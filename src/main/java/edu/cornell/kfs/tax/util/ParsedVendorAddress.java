@@ -11,7 +11,7 @@ public final class ParsedVendorAddress {
     public static final ParsedVendorAddress EMPTY = new ParsedVendorAddress();
 
     private static final Pattern APARTMENT_PATTERN = Pattern.compile(
-            "^(?i)(.*?)(,?\\s?)(AP(?:ARTMENTS?|T)|S(?:UI)?TE|UNIT|B(?:UI)?LD(?:IN)?G|R(?:OO)?M)(,?\\.?#? #? ?)(\\S+?)\\s*$");
+            "^(?i)(.*?)(,?\\s*)(AP(?:ARTMENTS?|T)|S(?:UI)?TE|UNIT|B(?:UI)?LD(?:IN)?G|R(?:OO)?M)(,?\\.?#? #? ?)(\\S+?)\\s*$");
 
     private static final String SAVE_ALL_BUT_NUMBER_AND_SEPARATOR = "$1$2$3";
     private static final String SAVE_ONLY_APARTMENT_PORTION = "$3$4$5";

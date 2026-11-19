@@ -254,7 +254,7 @@
         The definition pertaining to second pass transaction detail rows.
         =================================================================
      -->
-    <row id="DETAIL" numAutoAssignedFieldsForInsert="1">
+    <row id="DETAIL" numAutoAssignedFieldsForInsert="1" explicitFieldsOnly="true">
         <objectClasses>
             <objectClass name="edu.cornell.kfs.tax.businessobject.TransactionDetail" />
         </objectClasses>
@@ -341,6 +341,7 @@
         <field name="vendorForeignCountryName" type="VARCHAR" />
         <field name="vendorForeignCountryIndicator" type="VARCHAR" />
         <field name="vendorAnyAddressLine1" type="VARCHAR" />
+        <field name="vendorAnyAddressLine2" type="VARCHAR" />
         <field name="vendorApartmentNumber" type="VARCHAR" />
         <field name="vendorZipCodeNumOnly" type="VARCHAR" />
         <field name="ssn" type="VARCHAR" />
