@@ -16,22 +16,15 @@ public class CemiImportBudgetExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase
 
     @Override
     public Stream<Award> getAwardsForCemiImportBudgetExtractAsCloseableStream() {
-        final String proposalNumberCondition;
+        //final String proposalNumberCondition;
 
-        if (shouldUseLessDataDuringCemiDevelopment()) {
-            proposalNumberCondition = "(A0.CGPRPSL_NBR) IN ("
-                    + "SELECT CGPRPSL_NBR FROM CEMI.CU_CEMI_IMPORT_BUDGET_EXTR_AWD_T"
-                    + " WHERE CGPRPSL_NBR IN ('136110', '136135', '138545'))";
-        } else {
-            proposalNumberCondition = "(A0.CGPRPSL_NBR) IN ("
-                    + "SELECT CGPRPSL_NBR FROM CEMI.CU_CEMI_IMPORT_BUDGET_EXTR_AWD_T)";
-        }
+        //populate proposal number condition with the list of proposal numbers that are in scope for the extract
 
         final Criteria criteria = new Criteria();
-        criteria.addSql(proposalNumberCondition);
+        //criteria.addSql(proposalNumberCondition);
 
         final QueryByCriteria query = new QueryByCriteria(Award.class, criteria);
-        query.addOrderByAscending(KFSPropertyConstants.PROPOSAL_NUMBER);
+        //query.addOrderByAscending(KFSPropertyConstants.PROPOSAL_NUMBER);
 
         return CuOjbUtils.buildCloseableStreamForQueryResults(
                 Award.class,
