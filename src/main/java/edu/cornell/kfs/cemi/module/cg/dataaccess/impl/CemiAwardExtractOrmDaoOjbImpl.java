@@ -37,7 +37,8 @@ public class CemiAwardExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase impleme
                         // Range of proposal numbers for medium sized data set
 //                        + " WHERE CGPRPSL_NBR <= 139300 OR CGPRPSL_NBR >= 193300)";
                         // Single value for specific data item troubleshooting
-                          + " WHERE CGPRPSL_NBR IN ('136110', '136135', '138545', '178160', '179424'))";
+                          + " WHERE CGPRPSL_NBR IN ('136110', '136135', '138545', '178160', '179424',"
+                          + " '139272', '144697', '145264', '146646', '147009'))";
                         // Smaller specific set of proposal numbers for targeted local troubleshooting
 //                        + " WHERE CGPRPSL_NBR IN ('15366', '193325', '193412', '193472', '37608', '39769', '40108',"
 //                        + " '40914', '42734', '43224', '44647', '45865', '45971', '47057', '47824', '48719', '49294',"

@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.businessobject.Award;
@@ -18,6 +20,7 @@ import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
 public class CemiAwardLineDataBoFactory {
+    private static final Logger LOG = LogManager.getLogger();
     
     private Award award;
     private AwardExtendedAttribute awardExtendedAttribute;
@@ -148,8 +151,7 @@ public class CemiAwardLineDataBoFactory {
 //FIXME Program renamed to Function for unit test build with no mapping
         final String awardLineDataFunctionString = CemiAwardConstants.DEFAULT_FUNCTION;
 
-//FIXME needed logic is acct control acct then set Y/N constant
-        final String awardLineDataPrimaryGrantString = CemiBaseConstants.EMPTY_STRING;
+        final String awardLineDataPrimaryGrantString = determineWhetherAccountIsPrimaryGrant(accountSubAccountAttributes, useSubAccount);
         
 //FIXME very complicated GL amount summation
         final String awardLineDataAmountString = CemiBaseConstants.EMPTY_STRING;
@@ -273,5 +275,38 @@ public class CemiAwardLineDataBoFactory {
     
     private String determineCostCenter(String awardOrgCode) {
         return StringUtils.isNotBlank(awardOrgCode) ? awardOrgCode : CemiBaseConstants.EMPTY_STRING;
+    }
+    
+    private String determineWhetherAccountIsPrimaryGrant(
+            CemiAwardLegacyAccountSubAccountDataBo accountSubAccountAttributes, boolean useSubAccount) {
+        if (useSubAccount) {
+LOG.info("determineWhetherAccountIsPrimaryGrant==> in if useSubAccount={}=", useSubAccount);
+            return determineWhetherThisAwardLineAccountIsControlAccount(
+                    accountSubAccountAttributes.getChartOfAccountsCode(),
+                    accountSubAccountAttributes.getSubAccountNumber(),
+                    accountSubAccountAttributes.getAccountContractControlFinCoaCode(),
+                    accountSubAccountAttributes.getAccountContractControlAccountNumber());
+        }
+LOG.info("determineWhetherAccountIsPrimaryGrant==> outside if useSubAccount={}=", useSubAccount);
+        return determineWhetherThisAwardLineAccountIsControlAccount(
+                accountSubAccountAttributes.getChartOfAccountsCode(),
+                accountSubAccountAttributes.getAccountNumber(),
+                accountSubAccountAttributes.getAccountContractControlFinCoaCode(),
+                accountSubAccountAttributes.getAccountContractControlAccountNumber());
+    }
+    
+    private String determineWhetherThisAwardLineAccountIsControlAccount(String awardDataLineChartOfAccountsCode,
+            String awardDataLineAccountSubAccountNumber, String contractControlAccountChartOfAccountsCode,
+            String contractControlAccountChartOfAccountsNumber) {
+        if (StringUtils.isNotBlank(awardDataLineChartOfAccountsCode)
+                & StringUtils.isNotBlank(awardDataLineAccountSubAccountNumber)
+                & StringUtils.isNotBlank(contractControlAccountChartOfAccountsCode)
+                & StringUtils.isNotBlank(contractControlAccountChartOfAccountsNumber)) {
+            if (awardDataLineChartOfAccountsCode.equalsIgnoreCase(contractControlAccountChartOfAccountsCode)
+                    & awardDataLineAccountSubAccountNumber.equalsIgnoreCase(contractControlAccountChartOfAccountsNumber)) {
+                return CemiBaseConstants.YES;
+            }
+        }
+        return CemiAwardConstants.NO;
     }
 }

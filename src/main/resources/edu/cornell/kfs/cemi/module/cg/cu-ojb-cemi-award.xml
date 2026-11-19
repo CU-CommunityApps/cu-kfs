@@ -17,6 +17,8 @@
         <field-descriptor name="accountTypeCode" column="ACCT_ACCT_TYP_CD" jdbc-type="VARCHAR" />
         <field-descriptor name="accountCgCfdaNumber" column="ACCT_CG_CFDA_NBR" jdbc-type="VARCHAR" />
         <field-descriptor name="accountAccountClosedIndicator" column="ACCT_ACCT_CLOSED_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="accountContractControlFinCoaCode" column="ACCT_CONTR_CTRL_FCOA_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="accountContractControlAccountNumber" column="ACCT_CONTR_CTRLACCT_NBR" jdbc-type="VARCHAR"/>
         <field-descriptor name="accountPurchaseOrderNumber" column="PO_NBR" jdbc-type="VARCHAR" />
         <field-descriptor name="subAccountNumber" column="SUB_ACCT_NBR" jdbc-type="VARCHAR" />
         <field-descriptor name="subAccountName" column="SUB_ACCT_NM" jdbc-type="VARCHAR" />

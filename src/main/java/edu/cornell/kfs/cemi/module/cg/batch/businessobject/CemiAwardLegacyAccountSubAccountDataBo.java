@@ -19,6 +19,8 @@ public class CemiAwardLegacyAccountSubAccountDataBo extends PersistableBusinessO
     private String accountTypeCode;
     private String accountCgCfdaNumber;
     private boolean accountAccountClosedIndicator;
+    private String accountContractControlFinCoaCode;
+    private String accountContractControlAccountNumber;
     private String accountPurchaseOrderNumber;
     
     // sub-account attributes
@@ -33,7 +35,8 @@ public class CemiAwardLegacyAccountSubAccountDataBo extends PersistableBusinessO
             String accountNumber, String projectDirectorId, boolean awdAccountActive, boolean finalBilledIndicator,
             Date currentLastBilledDate, Date previousLastBilledDate, String accountSubFundGroupCode,
             Integer accountCgAccountResponsibilityId, String accountTypeCode, String accountCgCfdaNumber,
-            boolean accountAccountClosedIndicator, String accountPurchaseOrderNumber, String subAccountNumber,
+            boolean accountAccountClosedIndicator, String accountContractControlFinCoaCode,
+            String accountContractControlAccountNumber, String accountPurchaseOrderNumber, String subAccountNumber,
             String subAccountName, boolean subAccountActive) {
         this.proposalNumber = proposalNumber;
         this.chartOfAccountsCode = chartOfAccountsCode; 
@@ -48,6 +51,8 @@ public class CemiAwardLegacyAccountSubAccountDataBo extends PersistableBusinessO
         this.accountTypeCode = accountTypeCode;
         this.accountCgCfdaNumber = accountCgCfdaNumber;
         this.accountAccountClosedIndicator = accountAccountClosedIndicator;
+        this.accountContractControlFinCoaCode = accountContractControlFinCoaCode;
+        this.accountContractControlAccountNumber = accountContractControlAccountNumber;
         this.accountPurchaseOrderNumber = accountPurchaseOrderNumber;
         this.subAccountNumber = subAccountNumber;
         this.subAccountName = subAccountName;
@@ -156,6 +161,22 @@ public class CemiAwardLegacyAccountSubAccountDataBo extends PersistableBusinessO
 
     public void setAccountAccountClosedIndicator(boolean accountAccountClosedIndicator) {
         this.accountAccountClosedIndicator = accountAccountClosedIndicator;
+    }
+
+    public String getAccountContractControlFinCoaCode() {
+        return accountContractControlFinCoaCode;
+    }
+
+    public void setAccountContractControlFinCoaCode(String accountContractControlFinCoaCode) {
+        this.accountContractControlFinCoaCode = accountContractControlFinCoaCode;
+    }
+
+    public String getAccountContractControlAccountNumber() {
+        return accountContractControlAccountNumber;
+    }
+
+    public void setAccountContractControlAccountNumber(String accountContractControlAccountNumber) {
+        this.accountContractControlAccountNumber = accountContractControlAccountNumber;
     }
 
     public String getAccountPurchaseOrderNumber() {
