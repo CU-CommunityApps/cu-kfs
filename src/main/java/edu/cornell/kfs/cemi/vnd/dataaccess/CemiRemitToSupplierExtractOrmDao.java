@@ -4,7 +4,7 @@ import java.util.stream.Stream;
 
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
 
-public interface CemiRemitToSupplierOrmDao {
+public interface CemiRemitToSupplierExtractOrmDao {
 
     Stream<CemiSupplierFileAddressesTabRowBo> getAddressesForCemiRemitToSupplierExtractAsCloseableStream();
 

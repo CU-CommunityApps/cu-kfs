@@ -2,7 +2,7 @@ package edu.cornell.kfs.cemi.vnd.batch.businessobject;
 
 import edu.cornell.kfs.cemi.sys.batch.businessobject.CemiIndexedBusinessObjectBase;
 
-public class CemiRemitToSupplierBo extends CemiIndexedBusinessObjectBase {
+public class CemiRemitToSupplierFileRemitToSupplierTabRowBo extends CemiIndexedBusinessObjectBase {
 
     private static final long serialVersionUID = 189635335599203418L;
 

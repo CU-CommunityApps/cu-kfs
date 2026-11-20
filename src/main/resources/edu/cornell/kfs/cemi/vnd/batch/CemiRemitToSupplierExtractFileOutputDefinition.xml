@@ -2,7 +2,7 @@
 <cemiOutputDefinition>
 
     <sheet name="Remit_To_Supplier" num-header-rows="6" start-column-index="1"
-           business-object-class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierBo">
+           business-object-class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierFileRemitToSupplierTabRowBo">
         <field name="Supplier" type="STRING" key="supplierId"/>
         <field name="Supplier_Connection_ID" type="STRING" key="supplierConnectionId"/>
         <field name="Supplier_Connection_Name" type="STRING" key="supplierConnectionName"/>

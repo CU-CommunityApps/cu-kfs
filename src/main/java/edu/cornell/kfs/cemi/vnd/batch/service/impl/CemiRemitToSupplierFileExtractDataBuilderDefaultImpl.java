@@ -23,32 +23,33 @@ import org.kuali.kfs.vnd.VendorConstants.AddressTypes;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
-import edu.cornell.kfs.cemi.sys.CemiBaseConstants;
 import edu.cornell.kfs.cemi.sys.CemiBasePropertyConstants;
 import edu.cornell.kfs.cemi.sys.batch.service.impl.CemiOrmDataBuilderBase;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants;
 import edu.cornell.kfs.cemi.vnd.CemiSupplierConstants.SupplierExtractSheets;
 import edu.cornell.kfs.cemi.vnd.CemiVendorPropertyConstants;
-import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierBo;
+import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierFileRemitToSupplierTabRowBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileAddressesTabRowBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileBankAccountsTabRowBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileEmailsTabRowBo;
 import edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiSupplierFileSupplierTabRowBo;
-import edu.cornell.kfs.cemi.vnd.batch.service.CemiRemitToSupplierDataBuilder;
+import edu.cornell.kfs.cemi.vnd.batch.service.CemiRemitToSupplierFileExtractDataBuilder;
+import edu.cornell.kfs.cemi.vnd.batch.service.impl.factory.CemiRemitToSupplierFileRemitToSupplierTabRowBoFactory;
 import edu.cornell.kfs.cemi.vnd.util.CemiVendorUtils;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
-public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilderBase
-        implements CemiRemitToSupplierDataBuilder {
+public class CemiRemitToSupplierFileExtractDataBuilderDefaultImpl extends CemiOrmDataBuilderBase
+        implements CemiRemitToSupplierFileExtractDataBuilder {
 
     private static final Logger LOG = LogManager.getLogger();
 
     private final String supplierJobRunDate;
+    @SuppressWarnings("unused")
     private final boolean maskSensitiveData;
 
-    public CemiRemitToSupplierDataBuilderDefaultImpl(final BusinessObjectService businessObjectService,
+    public CemiRemitToSupplierFileExtractDataBuilderDefaultImpl(final BusinessObjectService businessObjectService,
             final String jobRunDate, final String supplierJobRunDate, final boolean maskSensitiveData) {
-        super(businessObjectService, jobRunDate, CemiRemitToSupplierBo.class);
+        super(businessObjectService, jobRunDate, CemiRemitToSupplierFileRemitToSupplierTabRowBo.class);
         this.supplierJobRunDate = supplierJobRunDate;
         this.maskSensitiveData = maskSensitiveData;
     }
@@ -58,22 +59,24 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
      * all such addresses BEFORE returning an address associated with a different supplier.
      */
     @Override
-    public void writeRemitToSupplierDataToIntermediateStorage(final Iterator<CemiSupplierFileAddressesTabRowBo> addresses) {
+    public void writeRemitToSupplierFileRemitToSupplierTabExtractDataToIntermediateStorage(
+            final Iterator<CemiSupplierFileAddressesTabRowBo> addresses) {
         int supplierAddressCount = 0;
+        int remitToSupplierRowCount = 0;
         CemiSupplierFileSupplierTabRowBo currentSupplier = new CemiSupplierFileSupplierTabRowBo();
         List<CemiSupplierFileAddressesTabRowBo> currentSupplierAddresses = new ArrayList<>();
-        String currentSettlementBankAccountId = CemiBaseConstants.EMPTY_STRING;
+        Optional<String> currentSettlementBankAccountId = Optional.empty();
         currentSupplier.setSupplierId(CUKFSConstants.NULL);
 
         for (final CemiSupplierFileAddressesTabRowBo address : IteratorUtils.asIterable(addresses)) {
             supplierAddressCount++;
             if (supplierAddressCount % 1000 == 0) {
-                LOG.info("writeRemitToSupplierDataToIntermediateStorage, Processing {} supplier addresses and counting...",
-                        supplierAddressCount);
+                LOG.info("writeRemitToSupplierFileRemitToSupplierTabExtractDataToIntermediateStorage, "
+                        + "Processing {} supplier addresses and counting...", supplierAddressCount);
             }
             final String supplierId = address.getSupplierId();
             if (!Strings.CS.equals(supplierId, currentSupplier.getSupplierId())) {
-                createAndStoreRemitToSupplierRows(currentSupplier, currentSupplierAddresses,
+                remitToSupplierRowCount += createAndStoreRemitToSupplierRows(currentSupplier, currentSupplierAddresses,
                         currentSettlementBankAccountId);
                 currentSupplier = getSupplier(supplierId);
                 currentSupplierAddresses = new ArrayList<>();
@@ -82,9 +85,11 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
             currentSupplierAddresses.add(address);
         }
 
-        createAndStoreRemitToSupplierRows(currentSupplier, currentSupplierAddresses, currentSettlementBankAccountId);
-        LOG.info("writeRemitToSupplierDataToIntermediateStorage, Finished processing {} supplier addresses",
-                supplierAddressCount);
+        remitToSupplierRowCount += createAndStoreRemitToSupplierRows(currentSupplier, currentSupplierAddresses,
+                currentSettlementBankAccountId);
+        LOG.info("writeRemitToSupplierFileRemitToSupplierTabExtractDataToIntermediateStorage, "
+                + "Finished generating {} Remit To Supplier rows from {} supplier addresses",
+                remitToSupplierRowCount, supplierAddressCount);
     }
 
     private CemiSupplierFileSupplierTabRowBo getSupplier(final String supplierId) {
@@ -98,7 +103,7 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
         return results.iterator().next();
     }
 
-    private String getFirstSettlementBankAccountIdForSupplier(final String supplierId) {
+    private Optional<String> getFirstSettlementBankAccountIdForSupplier(final String supplierId) {
         final Map<String, Object> criteria = Map.ofEntries(
                 Map.entry(CemiVendorPropertyConstants.SUPPLIER_ID, supplierId),
                 Map.entry(CemiBasePropertyConstants.JOB_RUN_DATE_STRING, supplierJobRunDate)
@@ -107,25 +112,27 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
                 CemiSupplierFileBankAccountsTabRowBo.class, criteria);
         if (!results.isEmpty()) {
             final CemiSupplierFileBankAccountsTabRowBo supplierBankAccounts = results.iterator().next();
-            return supplierBankAccounts.getSettlementBankAccountId1();
+            return Optional.ofNullable(supplierBankAccounts.getSettlementBankAccountId1())
+                    .filter(StringUtils::isNotBlank);
         } else {
-            return CemiBaseConstants.EMPTY_STRING;
+            return Optional.empty();
         }
     }
 
     @SuppressWarnings("deprecation")
-    private void createAndStoreRemitToSupplierRows(final CemiSupplierFileSupplierTabRowBo supplier,
-            final List<CemiSupplierFileAddressesTabRowBo> supplierAddresses, final String settlementBankAccountId) {
+    private int createAndStoreRemitToSupplierRows(final CemiSupplierFileSupplierTabRowBo supplier,
+            final List<CemiSupplierFileAddressesTabRowBo> supplierAddresses,
+            final Optional<String> settlementBankAccountId) {
         if (supplierAddresses.isEmpty()) {
-            return;
+            return 0;
         } else if (StringUtils.equals(supplier.getDefaultPaymentType(), CemiSupplierConstants.PAYMENT_TYPE_WIRE_MANUAL)) {
             LOG.info("createAndStoreRemitToSupplierRows, Supplier {} has a default payment type of {}, which is not "
                     + "a valid payment type for Remit To Supplier data. Will not generate any Remit To Supplier rows "
                     + "for this Supplier.",
                     supplier.getSupplierId(), CemiSupplierConstants.PAYMENT_TYPE_WIRE_MANUAL);
-            return;
+            return 0;
         } else if (StringUtils.equals(supplier.getDefaultPaymentType(), CemiSupplierConstants.PAYMENT_TYPE_ACH_MANUAL)
-                && StringUtils.isBlank(settlementBankAccountId)) {
+                && settlementBankAccountId.isEmpty()) {
             LOG.error("createAndStoreRemitToSupplierRows, Supplier {} does not specify any settlement bank accounts "
                     + "in its {} tab data, even though it specifies {} as the default payment type. The settlement "
                     + "bank account data will be left blank on the corresponding Remit To Supplier file row(s), but "
@@ -139,21 +146,18 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
 
         int remitIndexForSupplier = 1;
         for (final CemiSupplierFileAddressesTabRowBo supplierAddress : supplierAddresses) {
-            final String emailAddress = getEmailAddress(supplierAddress, kfsVendorAddresses, supplierEmailsTab);
+            final Optional<String> emailAddress = getEmailAddress(supplierAddress, kfsVendorAddresses, supplierEmailsTab);
             final boolean defaultConnection = (remitIndexForSupplier == 1);
-            final CemiRemitToSupplierBo remitToSupplierRow = new CemiRemitToSupplierBoFactory()
-                    .withSupplierAddress(supplierAddress)
-                    .withSupplier(supplier)
-                    .withOptionalSettlementBankAccountId(settlementBankAccountId)
-                    .withOptionalEmailAddress(emailAddress)
-                    .withRemitIndex(remitIndexForSupplier)
-                    .withDefaultConnectionFlag(defaultConnection)
-                    .withMaskingFlag(maskSensitiveData)
-                    .createCemiRemitToSupplierBo();
+            final CemiRemitToSupplierFileRemitToSupplierTabRowBo remitToSupplierRow
+                    = CemiRemitToSupplierFileRemitToSupplierTabRowBoFactory.createTabRowBoFrom(
+                            supplierAddress, supplier, settlementBankAccountId, emailAddress,
+                            remitIndexForSupplier, defaultConnection);
 
             storeSheetRow(remitToSupplierRow);
             remitIndexForSupplier++;
         }
+
+        return remitIndexForSupplier - 1;
     }
 
     private Map<String, List<VendorAddress>> getKfsVendorRemitAddressesWithEmails(
@@ -235,11 +239,11 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
     }
 
     @SuppressWarnings("deprecation")
-    private String getEmailAddress(final CemiSupplierFileAddressesTabRowBo supplierAddress,
+    private Optional<String> getEmailAddress(final CemiSupplierFileAddressesTabRowBo supplierAddress,
             final Map<String, List<VendorAddress>> groupedVendorAddresses,
             final Optional<CemiSupplierFileEmailsTabRowBo> supplierEmailsTabWrapper) {
         if (supplierEmailsTabWrapper.isEmpty()) {
-            return CemiBaseConstants.EMPTY_STRING;
+            return Optional.empty();
         }
 
         final CemiSupplierFileEmailsTabRowBo supplierEmailsTab = supplierEmailsTabWrapper.get();
@@ -247,7 +251,7 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
         final List<VendorAddress> addressGroup = groupedVendorAddresses.get(addressKey);
         if (addressGroup == null) {
             LOG.debug("getEmailAddress, No email-bearing KFS Vendor Addresses found for Supplier Address: {}", addressKey);
-            return CemiBaseConstants.EMPTY_STRING;
+            return Optional.empty();
         }
 
         final CharSequence[] supplierEmails = getSupplierEmails(supplierEmailsTab);
@@ -255,8 +259,7 @@ public class CemiRemitToSupplierDataBuilderDefaultImpl extends CemiOrmDataBuilde
         return addressGroup.stream()
                 .map(VendorAddress::getVendorAddressEmailAddress)
                 .filter(emailAddress -> StringUtils.equalsAnyIgnoreCase(emailAddress, supplierEmails))
-                .findFirst()
-                .orElse(KFSConstants.EMPTY_STRING);
+                .findFirst();
     }
 
     /*
