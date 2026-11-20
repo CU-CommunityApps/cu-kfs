@@ -25,6 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxFieldSource;
 
@@ -68,6 +69,10 @@ import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxFieldSource;
  */
 abstract class TransactionRowProcessor<T extends TransactionDetailSummary> {
 	private static final Logger LOG = LogManager.getLogger(TransactionRowProcessor.class);
+
+    private static final char COMMA_CHAR = ',';
+    private static final char DOUBLE_QUOTE_CHAR = '"';
+    private static final String ESCAPED_DOUBLE_QUOTE_FOR_CSV = "\"\"";
 
     // Constants pertaining to constructing the tax ID in NNN-NN-NNNN format.
     private static final int TAXID_SRC_CHUNK1_2_SPLIT = 3;
@@ -434,6 +439,12 @@ abstract class TransactionRowProcessor<T extends TransactionDetailSummary> {
         outputHelpers[bufferIndex] = new OutputHelper(bufferLength, pieces, useExactLength, addSeparatorChar, separator);
     }
 
+    final boolean shouldWriteCsvContent() {
+        return Arrays.stream(outputHelpers)
+                .filter(helper -> helper != null)
+                .anyMatch(helper -> helper.addSeparatorChar && helper.separator == COMMA_CHAR);
+    }
+
 
 
     // ========================================================================================
@@ -714,6 +725,8 @@ abstract class TransactionRowProcessor<T extends TransactionDetailSummary> {
         OutputHelper helper = outputHelpers[bufferIndex];
         String tempValue;
         int tempLen;
+        boolean valueNeedsCsvEscaping;
+        int lengthAdjustment;
         
         final String defaultStringIfBlank = helper.useExactLengths ? KRADConstants.BLANK_SPACE : KFSConstants.EMPTY_STRING;
         
@@ -730,20 +743,44 @@ abstract class TransactionRowProcessor<T extends TransactionDetailSummary> {
                 // Otherwise, prepare to append the value.
                 tempValue = StringUtils.defaultIfBlank(piece.getValue(), defaultStringIfBlank);
                 tempLen = tempValue.length();
+                valueNeedsCsvEscaping = (helper.addSeparatorChar && helper.separator == COMMA_CHAR
+                        && StringUtils.containsAny(tempValue, KFSConstants.COMMA, CUKFSConstants.DOUBLE_QUOTE));
+                lengthAdjustment = 0;
+
+                if (valueNeedsCsvEscaping) {
+                    appendDoubleQuote(helper);
+                }
+
                 if (tempLen <= piece.len) {
                     // If not too long, use the whole value and right-pad with spaces as needed.
-                    tempValue.getChars(0, tempLen, helper.outputBuffer, helper.position);
+                    if (valueNeedsCsvEscaping) {
+                        lengthAdjustment = StringUtils.countMatches(tempValue, DOUBLE_QUOTE_CHAR);
+                        tempValue = tempValue.replace(CUKFSConstants.DOUBLE_QUOTE, ESCAPED_DOUBLE_QUOTE_FOR_CSV);
+                    }
+                    tempValue.getChars(0, tempLen + lengthAdjustment, helper.outputBuffer, helper.position);
                     if (helper.useExactLengths && tempLen < piece.len) {
+                        if (valueNeedsCsvEscaping) {
+                            throw new IllegalStateException("Cannot combine auto-right-padding with CSV output");
+                        }
                         Arrays.fill(helper.outputBuffer, helper.position + tempLen, helper.position + piece.len, ' ');
                         helper.position += piece.len;
                     } else {
-                        helper.position += tempLen;
+                        helper.position += tempLen + lengthAdjustment;
                     }
                 } else {
                     // If the value is too long, then truncate it and notify the piece. 
-                    tempValue.getChars(0, piece.len, helper.outputBuffer, helper.position);
+                    if (valueNeedsCsvEscaping) {
+                        tempValue = tempValue.substring(0, piece.len);
+                        lengthAdjustment = StringUtils.countMatches(tempValue, DOUBLE_QUOTE_CHAR);
+                        tempValue = tempValue.replace(CUKFSConstants.DOUBLE_QUOTE, ESCAPED_DOUBLE_QUOTE_FOR_CSV);
+                    }
+                    tempValue.getChars(0, piece.len + lengthAdjustment, helper.outputBuffer, helper.position);
                     piece.notifyOfTruncatedValue();
-                    helper.position += piece.len;
+                    helper.position += piece.len + lengthAdjustment;
+                }
+
+                if (valueNeedsCsvEscaping) {
+                    appendDoubleQuote(helper);
                 }
             }
             
@@ -754,6 +791,11 @@ abstract class TransactionRowProcessor<T extends TransactionDetailSummary> {
             }
         }
             
+    }
+
+    private void appendDoubleQuote(final OutputHelper helper) {
+        helper.outputBuffer[helper.position] = DOUBLE_QUOTE_CHAR;
+        helper.position++;
     }
 
     /**

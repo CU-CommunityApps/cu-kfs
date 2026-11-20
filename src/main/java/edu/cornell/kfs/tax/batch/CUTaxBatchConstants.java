@@ -93,6 +93,7 @@ public final class CUTaxBatchConstants {
         // Fields from PUR_VNDR_HDR_T (VendorHeader)
         public static final String VENDOR_HEADER_GENERATED_ID = "vendorHeaderGeneratedIdentifier";
         public static final String VENDOR_TAX_NUMBER = "vendorTaxNumber";
+        public static final String VENDOR_TAX_TYPE_CODE = "vendorTaxTypeCode";
         public static final String VENDOR_TYPE_CODE = "vendorTypeCode";
         public static final String VENDOR_OWNERSHIP_CODE = "vendorOwnershipCode";
         public static final String VENDOR_OWNERSHIP_CATEGORY_CODE = "vendorOwnershipCategoryCode";
@@ -470,6 +471,10 @@ public final class CUTaxBatchConstants {
         // These fields are derived from other object fields or from parameters. A few refer to DB-backed fields that have been modified in some way.
         public static final String VENDOR_LAST_NAME = "vendorLastName";
         public static final String VENDOR_FIRST_NAME = "vendorFirstName";
+        public static final String VENDOR_MIDDLE_NAME = "vendorMiddleName";
+        public static final String VENDOR_SUFFIX = "vendorSuffix";
+        public static final String VENDOR_BUSINESS_NAME_1 = "vendorBusinessName1";
+        public static final String VENDOR_BUSINESS_NAME_2 = "vendorBusinessName2";
         public static final String VENDOR_EMAIL_ADDRESS = CUTaxBatchConstants.VENDOR_EMAIL_ADDRESS;
         public static final String VENDOR_US_ADDRESS_LINE_1 = "vendorUSAddressLine1";
         public static final String VENDOR_FOREIGN_ADDRESS_LINE_1 = "vendorForeignAddressLine1";
@@ -481,9 +486,13 @@ public final class CUTaxBatchConstants {
         public static final String VENDOR_FOREIGN_COUNTRY_NAME = "vendorForeignCountryName";
         public static final String VENDOR_FOREIGN_COUNTRY_INDICATOR = "vendorForeignCountryIndicator";
         public static final String VENDOR_ANY_ADDRESS_LINE_1 = "vendorAnyAddressLine1";
+        public static final String VENDOR_ANY_ADDRESS_LINE_2 = "vendorAnyAddressLine2";
+        public static final String VENDOR_APARTMENT_NUMBER = "vendorApartmentNumber";
         public static final String VENDOR_ZIP_CODE_NUM_ONLY = "vendorZipCodeNumOnly";
         public static final String SSN = "ssn";
         public static final String ITIN = "itin";
+        public static final String TAX_ID_TYPE_1099 = "taxIdType1099";
+        public static final String TAX_ID_1099 = "taxId1099";
         public static final String CHAPTER3_STATUS_CODE = "chapter3StatusCode";
         public static final String CHAPTER3_EXEMPTION_CODE = "chapter3ExemptionCode";
         public static final String CHAPTER4_EXEMPTION_CODE = "chapter4ExemptionCode";
@@ -507,12 +516,12 @@ public final class CUTaxBatchConstants {
         public static final String MISC_CROP_INSURANCE_PROCEEDS = "miscCropInsuranceProceeds";
         public static final String MISC_GROSS_PROCEEDS_ATTORNEY = "miscGrossProceedsAttorney";
         public static final String MISC_SECTION_409A_DEFERRAL = "miscSection409ADeferral";
-        public static final String MISC_GOLDEN_PARACHUTE = "miscGoldenParachute";
         public static final String MISC_NONQUALIFIED_DEFERRED_COMPENSATION = "miscNonqualifiedDeferredCompensation";
         public static final String MISC_STATE_TAX_WITHHELD = "miscStateTaxWithheld";
         public static final String MISC_PAYER_STATE_NUMBER = "miscPayerStateNumber";
         public static final String MISC_STATE_INCOME = "miscStateIncome";
         public static final String NEC_NONEMPLOYEE_COMPENSATION = "necNonemployeeCompensation";
+        public static final String NEC_GOLDEN_PARACHUTE = "necGoldenParachute";
         public static final String NEC_FED_INCOME_TAX_WITHHELD = "necFedIncomeTaxWithheld";
         public static final String NEC_STATE_TAX_WITHHELD = "necStateTaxWithheld";
         public static final String NEC_PAYER_STATE_NUMBER = "necPayerStateNumber";
@@ -561,6 +570,12 @@ public final class CUTaxBatchConstants {
         public String toString() {
             return stringValue;
         }
+    }
+
+    public static final class Tax1099RecipientIdTypes {
+        public static final String EIN = "1";
+        public static final String SSN_ITIN_ATIN = "2";
+        public static final String UNKNOWN = "3";
     }
 
 
