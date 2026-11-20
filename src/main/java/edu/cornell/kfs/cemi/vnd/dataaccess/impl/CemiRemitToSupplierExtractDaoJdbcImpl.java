@@ -2,12 +2,13 @@ package edu.cornell.kfs.cemi.vnd.dataaccess.impl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import edu.cornell.kfs.cemi.vnd.dataaccess.CemiRemitToSupplierDao;
+import edu.cornell.kfs.cemi.vnd.dataaccess.CemiRemitToSupplierExtractDao;
 import edu.cornell.kfs.sys.util.CuSqlChunk;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
 import edu.cornell.kfs.sys.util.CuSqlQueryPlatformAwareDaoBaseJdbc;
 
-public class CemiRemitToSupplierDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc implements CemiRemitToSupplierDao {
+public class CemiRemitToSupplierExtractDaoJdbcImpl extends CuSqlQueryPlatformAwareDaoBaseJdbc
+        implements CemiRemitToSupplierExtractDao {
 
     private static final Logger LOG = LogManager.getLogger();
 

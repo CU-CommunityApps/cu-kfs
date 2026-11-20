@@ -1,0 +1,26 @@
+<descriptor-repository version="1.0">
+
+    <class-descriptor class="edu.cornell.kfs.cemi.vnd.batch.businessobject.CemiRemitToSupplierFileRemitToSupplierTabRowBo"
+                      table="CU_CEMI_EXTR_RMT_TO_SUPP_TAB_RMT_TO_SUPP_T"
+                      schema="CEMI">
+        <field-descriptor name="jobRunDateString" column="EXTR_FILE_RUNDATE" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="jobRunRowIndex" column="JOB_RUN_ROW_INDEX" jdbc-type="BIGINT" primarykey="true" index="true"/>
+        <field-descriptor name="supplierId" column="SUPPLIER_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierConnectionId" column="SUPPLIER_CONNECTION_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="supplierConnectionName" column="SUPPLIER_CONNECTION_NAME" jdbc-type="VARCHAR"/>
+        <field-descriptor name="defaultPaymentType" column="DEFAULT_PAYMENT_TYPE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedPaymentType1" column="ACCEPTED_PAYMENT_TYPE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedPaymentType2" column="ACCEPTED_PAYMENT_TYPE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="acceptedPaymentType3" column="ACCEPTED_PAYMENT_TYPE_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="settlementBankAccount" column="SETTLEMENT_BANK_ACCOUNT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="remitToAddressId" column="REMIT_TO_ADDRESS_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="remitToEmailAddress" column="REMIT_TO_EMAIL_ADDRESS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="payeeAlternateName" column="PAYEE_ALTERNATE_NAME" jdbc-type="VARCHAR"/>
+        <field-descriptor name="alternateNameUsage" column="ALTERNATE_NAME_USAGE" jdbc-type="VARCHAR"/>
+        <field-descriptor name="paymentMemo" column="PAYMENT_MEMO" jdbc-type="VARCHAR"/>
+        <field-descriptor name="isDefault" column="IS_DEFAULT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="defaultPaymentTerms" column="DEFAULT_PAYMENT_TERMS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="alwaysSeparatePayments" column="ALWAYS_SEPARATE_PAYMENTS" jdbc-type="VARCHAR"/>
+    </class-descriptor>
+
+</descriptor-repository>

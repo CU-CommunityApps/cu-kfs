@@ -27,10 +27,9 @@ public class CreateCemiRemitToSupplierExtractStep extends AbstractStep {
         try {
             cemiRemitToSupplierExtractService.logSystemParameterValues();
             cemiRemitToSupplierExtractService.resetState();
-            cemiRemitToSupplierExtractService.initializeExtractDateSettings();
-            cemiRemitToSupplierExtractService.populateListOfInScopeAddresses();
-            cemiRemitToSupplierExtractService.generateIntermediateRemitToSupplierExtractData(jobRunDate);
-            cemiRemitToSupplierExtractService.generateRemitToSupplierExtractFile(jobRunDate);
+            cemiRemitToSupplierExtractService.captureInScopeBusinessObjectKeysToProcessingTable();
+            cemiRemitToSupplierExtractService.generateIntermediateExtractData(jobRunDate);
+            cemiRemitToSupplierExtractService.generateDataConversionExtractFile(jobRunDate);
             LOG.info("execute, CEMI Remit To Supplier Extract Step completed successfully");
             return true;
         } catch (final Exception e) {

@@ -1,6 +1,6 @@
 package edu.cornell.kfs.cemi.vnd.dataaccess;
 
-public interface CemiRemitToSupplierDao {
+public interface CemiRemitToSupplierExtractDao {
     
     void clearExistingListOfExtractableRemitAddressIds();
     
