@@ -10,7 +10,10 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
+import java.util.Iterator;
+import java.util.stream.Stream;
+
+import org.kuali.kfs.module.cg.businessobject.Award;
 
 import edu.cornell.kfs.cemi.module.cg.CemiImportBudgetConstants;
 import edu.cornell.kfs.cemi.module.cg.batch.CreateCemiImportBudgetExtractStep;
@@ -55,15 +58,21 @@ public class CemiImportBudgetExtractServiceImpl extends CemiDataExtractServiceBa
     public void generateIntermediateExtractData(final LocalDateTime jobRunDate) {
         LOG.info("generateIntermediateExtractData, Generating data rows for {} spreadsheet and placing in "
                 + "intermediate storage...", CemiImportBudgetConstants.IMPORT_BUDGET_EXTRACT_PLAIN_FILENAME);
-        final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
-        final CemiImportBudgetFileExtractDataBuilderDefaultImpl dataBuilder =
-                new CemiImportBudgetFileExtractDataBuilderDefaultImpl(businessObjectService, jobRunDateString,
-                        dateTimeService, cemiImportBudgetExtractOrmDao, cemiImportBudgetExtractDao,
-                        shouldMaskCemiSensitiveData());
-        dataBuilder.writeImportBudgetFileImportBudgetHighVolumeTabExtractDataToIntermediateStorage(
-                Collections.emptyIterator());
-        dataBuilder.writeImportBudgetFileBudgetLinesDataTabExtractDataToIntermediateStorage(
-                Collections.emptyIterator());
+        try (
+                final Stream<Award> awards =
+                        cemiImportBudgetExtractOrmDao.getAwardsForCemiImportBudgetExtractAsCloseableStream();
+        ) {
+            final String jobRunDateString = CemiUtils.generateBatchJobRunDateAsString(jobRunDate);
+            final CemiImportBudgetFileExtractDataBuilderDefaultImpl dataBuilder =
+                    new CemiImportBudgetFileExtractDataBuilderDefaultImpl(businessObjectService, jobRunDateString,
+                            dateTimeService, cemiImportBudgetExtractOrmDao, cemiImportBudgetExtractDao,
+                            shouldMaskCemiSensitiveData());
+            final Iterator<Award> legacyObjectIterator = awards.iterator();
+            dataBuilder.writeImportBudgetFileImportBudgetHighVolumeTabExtractDataToIntermediateStorage(
+                    legacyObjectIterator);
+            dataBuilder.writeImportBudgetFileBudgetLinesDataTabExtractDataToIntermediateStorage(
+                    legacyObjectIterator);
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
