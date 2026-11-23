@@ -18,37 +18,92 @@ public class CemiImportBudgetFileImportBudgetHighVolumeTabRowBo extends CemiInde
     private String budgetMemo;
     private String budgetPeriod;
 
-    public String getHeaderKey() { return headerKey; }
-    public void setHeaderKey(final String headerKey) { this.headerKey = headerKey; }
+    public String getHeaderKey() {
+        return headerKey;
+    }
 
-    public String getBudget() { return budget; }
-    public void setBudget(final String budget) { this.budget = budget; }
+    public void setHeaderKey(String headerKey) {
+        this.headerKey = headerKey;
+    }
 
-    public String getImportMode() { return importMode; }
-    public void setImportMode(final String importMode) { this.importMode = importMode; }
+    public String getBudget() {
+        return budget;
+    }
 
-    public String getAutoComplete() { return autoComplete; }
-    public void setAutoComplete(final String autoComplete) { this.autoComplete = autoComplete; }
+    public void setBudget(String budget) {
+        this.budget = budget;
+    }
 
-    public String getComment() { return comment; }
-    public void setComment(final String comment) { this.comment = comment; }
+    public String getImportMode() {
+        return importMode;
+    }
 
-    public String getWorker() { return worker; }
-    public void setWorker(final String worker) { this.worker = worker; }
+    public void setImportMode(String importMode) {
+        this.importMode = importMode;
+    }
 
-    public String getSubmit() { return submit; }
-    public void setSubmit(final String submit) { this.submit = submit; }
+    public String getAutoComplete() {
+        return autoComplete;
+    }
 
-    public String getBudgetStructure() { return budgetStructure; }
-    public void setBudgetStructure(final String budgetStructure) { this.budgetStructure = budgetStructure; }
+    public void setAutoComplete(String autoComplete) {
+        this.autoComplete = autoComplete;
+    }
 
-    public String getBudgetName() { return budgetName; }
-    public void setBudgetName(final String budgetName) { this.budgetName = budgetName; }
+    public String getComment() {
+        return comment;
+    }
 
-    public String getBudgetMemo() { return budgetMemo; }
-    public void setBudgetMemo(final String budgetMemo) { this.budgetMemo = budgetMemo; }
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
-    public String getBudgetPeriod() { return budgetPeriod; }
-    public void setBudgetPeriod(final String budgetPeriod) { this.budgetPeriod = budgetPeriod; }
+    public String getWorker() {
+        return worker;
+    }
+
+    public void setWorker(String worker) {
+        this.worker = worker;
+    }
+
+    public String getSubmit() {
+        return submit;
+    }
+
+    public void setSubmit(String submit) {
+        this.submit = submit;
+    }
+
+    public String getBudgetStructure() {
+        return budgetStructure;
+    }
+
+    public void setBudgetStructure(String budgetStructure) {
+        this.budgetStructure = budgetStructure;
+    }
+
+    public String getBudgetName() {
+        return budgetName;
+    }
+
+    public void setBudgetName(String budgetName) {
+        this.budgetName = budgetName;
+    }
+
+    public String getBudgetMemo() {
+        return budgetMemo;
+    }
+
+    public void setBudgetMemo(String budgetMemo) {
+        this.budgetMemo = budgetMemo;
+    }
+
+    public String getBudgetPeriod() {
+        return budgetPeriod;
+    }
+
+    public void setBudgetPeriod(String budgetPeriod) {
+        this.budgetPeriod = budgetPeriod;
+    }
 
 }

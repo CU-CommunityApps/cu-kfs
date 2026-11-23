@@ -1,8 +1,24 @@
 package edu.cornell.kfs.cemi.module.cg.batch.factory;
 
+import org.apache.commons.lang3.Validate;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+
 import edu.cornell.kfs.cemi.module.cg.batch.businessobject.CemiImportBudgetFileBudgetLinesDataTabRowBo;
 
 public class CemiImportBudgetFileBudgetLinesDataTabRowBoFactory {
+
+    private String jobRunDateString;
+    private DateTimeService dateTimeService;
+    private boolean maskSensitiveData = true;
+
+    public CemiImportBudgetFileBudgetLinesDataTabRowBoFactory(final String jobRunDateString,
+            final DateTimeService dateTimeService, final boolean maskSensitiveData) {
+        Validate.validState(jobRunDateString != null, "jobRunDateString cannot be null for CemiImportBudgetFileBudgetLinesDataTabRowBoFactory.");
+        Validate.validState(dateTimeService != null, "dateTimeService cannot be null for CemiImportBudgetFileBudgetLinesDataTabRowBoFactory.");
+        this.jobRunDateString = jobRunDateString;
+        this.dateTimeService = dateTimeService;
+        this.maskSensitiveData = maskSensitiveData;
+    }
 
     public CemiImportBudgetFileBudgetLinesDataTabRowBo createCemiImportBudgetFileBudgetLinesDataTabRowBo() {
         final CemiImportBudgetFileBudgetLinesDataTabRowBo row =

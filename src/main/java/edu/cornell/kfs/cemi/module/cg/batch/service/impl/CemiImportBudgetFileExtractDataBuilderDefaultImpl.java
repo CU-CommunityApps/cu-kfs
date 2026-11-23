@@ -50,12 +50,13 @@ public class CemiImportBudgetFileExtractDataBuilderDefaultImpl extends CemiOrmDa
             final Iterator<Award> legacyObjects) {
         createAndStoreImportBudgetFileImportBudgetHighVolumeTabShellRow();
         LOG.info("writeImportBudgetFileImportBudgetHighVolumeTabExtractDataToIntermediateStorage,"
-                + " Finished writing shell constant row to table.");
+                + " Finished writing data row to table.");
     }
 
     protected void createAndStoreImportBudgetFileImportBudgetHighVolumeTabShellRow() {
         final CemiImportBudgetFileImportBudgetHighVolumeTabRowBoFactory factory =
-                new CemiImportBudgetFileImportBudgetHighVolumeTabRowBoFactory();
+                new CemiImportBudgetFileImportBudgetHighVolumeTabRowBoFactory(
+                        jobRunDateString, dateTimeService, maskSensitiveData);
         final CemiImportBudgetFileImportBudgetHighVolumeTabRowBo row =
                 factory.createCemiImportBudgetFileImportBudgetHighVolumeTabRowBo();
         storeSheetRow(row);
@@ -66,12 +67,13 @@ public class CemiImportBudgetFileExtractDataBuilderDefaultImpl extends CemiOrmDa
             final Iterator<Award> legacyObjects) {
         createAndStoreImportBudgetFileBudgetLinesDataTabShellRow();
         LOG.info("writeImportBudgetFileBudgetLinesDataTabExtractDataToIntermediateStorage,"
-                + " Finished writing shell constant row to table.");
+                + " Finished writing data row to table.");
     }
 
     protected void createAndStoreImportBudgetFileBudgetLinesDataTabShellRow() {
         final CemiImportBudgetFileBudgetLinesDataTabRowBoFactory factory =
-                new CemiImportBudgetFileBudgetLinesDataTabRowBoFactory();
+                new CemiImportBudgetFileBudgetLinesDataTabRowBoFactory(
+                        jobRunDateString, dateTimeService, maskSensitiveData);
         final CemiImportBudgetFileBudgetLinesDataTabRowBo row =
                 factory.createCemiImportBudgetFileBudgetLinesDataTabRowBo();
         storeSheetRow(row);

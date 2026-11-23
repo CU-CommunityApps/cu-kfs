@@ -25,58 +25,148 @@ public class CemiImportBudgetFileBudgetLinesDataTabRowBo extends CemiIndexedBusi
     private String objectClassId;
     private String externalSupplierInvoiceSource;
 
-    public String getHeaderKey() { return headerKey; }
-    public void setHeaderKey(final String headerKey) { this.headerKey = headerKey; }
+    public String getHeaderKey() {
+        return headerKey;
+    }
 
-    public String getLineKey() { return lineKey; }
-    public void setLineKey(final String lineKey) { this.lineKey = lineKey; }
+    public void setHeaderKey(String headerKey) {
+        this.headerKey = headerKey;
+    }
 
-    public String getLineOrder() { return lineOrder; }
-    public void setLineOrder(final String lineOrder) { this.lineOrder = lineOrder; }
+    public String getLineKey() {
+        return lineKey;
+    }
 
-    public String getCompany() { return company; }
-    public void setCompany(final String company) { this.company = company; }
+    public void setLineKey(String lineKey) {
+        this.lineKey = lineKey;
+    }
 
-    public String getYear() { return year; }
-    public void setYear(final String year) { this.year = year; }
+    public String getLineOrder() {
+        return lineOrder;
+    }
 
-    public String getFiscalTimeInterval() { return fiscalTimeInterval; }
-    public void setFiscalTimeInterval(final String fiscalTimeInterval) { this.fiscalTimeInterval = fiscalTimeInterval; }
+    public void setLineOrder(String lineOrder) {
+        this.lineOrder = lineOrder;
+    }
 
-    public String getLedgerAccountOrLedgerAccountSummary() { return ledgerAccountOrLedgerAccountSummary; }
-    public void setLedgerAccountOrLedgerAccountSummary(final String ledgerAccountOrLedgerAccountSummary) { this.ledgerAccountOrLedgerAccountSummary = ledgerAccountOrLedgerAccountSummary; }
+    public String getCompany() {
+        return company;
+    }
 
-    public String getAccountSet() { return accountSet; }
-    public void setAccountSet(final String accountSet) { this.accountSet = accountSet; }
+    public void setCompany(String company) {
+        this.company = company;
+    }
 
-    public String getBookCode() { return bookCode; }
-    public void setBookCode(final String bookCode) { this.bookCode = bookCode; }
+    public String getYear() {
+        return year;
+    }
 
-    public String getBudgetCurrency() { return budgetCurrency; }
-    public void setBudgetCurrency(final String budgetCurrency) { this.budgetCurrency = budgetCurrency; }
+    public void setYear(String year) {
+        this.year = year;
+    }
 
-    public String getBudgetDebitAmount() { return budgetDebitAmount; }
-    public void setBudgetDebitAmount(final String budgetDebitAmount) { this.budgetDebitAmount = budgetDebitAmount; }
+    public String getFiscalTimeInterval() {
+        return fiscalTimeInterval;
+    }
 
-    public String getBudgetCreditAmount() { return budgetCreditAmount; }
-    public void setBudgetCreditAmount(final String budgetCreditAmount) { this.budgetCreditAmount = budgetCreditAmount; }
+    public void setFiscalTimeInterval(String fiscalTimeInterval) {
+        this.fiscalTimeInterval = fiscalTimeInterval;
+    }
 
-    public String getQuantity() { return quantity; }
-    public void setQuantity(final String quantity) { this.quantity = quantity; }
+    public String getLedgerAccountOrLedgerAccountSummary() {
+        return ledgerAccountOrLedgerAccountSummary;
+    }
 
-    public String getUnitOfTime() { return unitOfTime; }
-    public void setUnitOfTime(final String unitOfTime) { this.unitOfTime = unitOfTime; }
+    public void setLedgerAccountOrLedgerAccountSummary(String ledgerAccountOrLedgerAccountSummary) {
+        this.ledgerAccountOrLedgerAccountSummary = ledgerAccountOrLedgerAccountSummary;
+    }
 
-    public String getMemo() { return memo; }
-    public void setMemo(final String memo) { this.memo = memo; }
+    public String getAccountSet() {
+        return accountSet;
+    }
 
-    public String getGrantId() { return grantId; }
-    public void setGrantId(final String grantId) { this.grantId = grantId; }
+    public void setAccountSet(String accountSet) {
+        this.accountSet = accountSet;
+    }
 
-    public String getObjectClassId() { return objectClassId; }
-    public void setObjectClassId(final String objectClassId) { this.objectClassId = objectClassId; }
+    public String getBookCode() {
+        return bookCode;
+    }
 
-    public String getExternalSupplierInvoiceSource() { return externalSupplierInvoiceSource; }
-    public void setExternalSupplierInvoiceSource(final String externalSupplierInvoiceSource) { this.externalSupplierInvoiceSource = externalSupplierInvoiceSource; }
+    public void setBookCode(String bookCode) {
+        this.bookCode = bookCode;
+    }
+
+    public String getBudgetCurrency() {
+        return budgetCurrency;
+    }
+
+    public void setBudgetCurrency(String budgetCurrency) {
+        this.budgetCurrency = budgetCurrency;
+    }
+
+    public String getBudgetDebitAmount() {
+        return budgetDebitAmount;
+    }
+
+    public void setBudgetDebitAmount(String budgetDebitAmount) {
+        this.budgetDebitAmount = budgetDebitAmount;
+    }
+
+    public String getBudgetCreditAmount() {
+        return budgetCreditAmount;
+    }
+
+    public void setBudgetCreditAmount(String budgetCreditAmount) {
+        this.budgetCreditAmount = budgetCreditAmount;
+    }
+
+    public String getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(String quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getUnitOfTime() {
+        return unitOfTime;
+    }
+
+    public void setUnitOfTime(String unitOfTime) {
+        this.unitOfTime = unitOfTime;
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
+
+    public String getGrantId() {
+        return grantId;
+    }
+
+    public void setGrantId(String grantId) {
+        this.grantId = grantId;
+    }
+
+    public String getObjectClassId() {
+        return objectClassId;
+    }
+
+    public void setObjectClassId(String objectClassId) {
+        this.objectClassId = objectClassId;
+    }
+
+    public String getExternalSupplierInvoiceSource() {
+        return externalSupplierInvoiceSource;
+    }
+
+    public void setExternalSupplierInvoiceSource(String externalSupplierInvoiceSource) {
+        this.externalSupplierInvoiceSource = externalSupplierInvoiceSource;
+    }
 
 }
