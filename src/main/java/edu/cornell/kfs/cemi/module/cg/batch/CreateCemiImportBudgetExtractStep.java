@@ -16,7 +16,7 @@ public class CreateCemiImportBudgetExtractStep extends AbstractStep {
         cemiImportBudgetExtractService.logSystemParameterValues(); //logs outbound folder and masking setting
         cemiImportBudgetExtractService.resetState(); //does nothing YET (no existing state to reset)
         cemiImportBudgetExtractService.captureInScopeBusinessObjectKeysToProcessingTable(); //will eventually get the keys needed to query KFS data
-        //Phase 2: Saves data to the intermediate tables
+        //Phase 2: Loops through result set and saves data to the intermediate tables
         cemiImportBudgetExtractService.generateIntermediateExtractData(jobRunDate);
         //Phase 3: Create single multi-tabbed file.
         cemiImportBudgetExtractService.generateDataConversionExtractFile(jobRunDate);
