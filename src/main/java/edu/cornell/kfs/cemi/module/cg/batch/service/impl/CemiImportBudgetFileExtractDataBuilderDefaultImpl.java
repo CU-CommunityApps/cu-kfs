@@ -50,7 +50,7 @@ public class CemiImportBudgetFileExtractDataBuilderDefaultImpl extends CemiOrmDa
             final Iterator<Award> legacyObjects) {
         createAndStoreImportBudgetFileImportBudgetHighVolumeTabShellRow();
         LOG.info("writeImportBudgetFileImportBudgetHighVolumeTabExtractDataToIntermediateStorage,"
-                + " Finished writing data row to table.");
+                + " Finished writing shell constant row to table.");
     }
 
     protected void createAndStoreImportBudgetFileImportBudgetHighVolumeTabShellRow() {
@@ -67,7 +67,7 @@ public class CemiImportBudgetFileExtractDataBuilderDefaultImpl extends CemiOrmDa
             final Iterator<Award> legacyObjects) {
         createAndStoreImportBudgetFileBudgetLinesDataTabShellRow();
         LOG.info("writeImportBudgetFileBudgetLinesDataTabExtractDataToIntermediateStorage,"
-                + " Finished writing data row to table.");
+                + " Finished writing shell constant row to table.");
     }
 
     protected void createAndStoreImportBudgetFileBudgetLinesDataTabShellRow() {
