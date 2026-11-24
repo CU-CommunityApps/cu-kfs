@@ -25,6 +25,7 @@
             <list merge= "true">
                 <value>edu/cornell/kfs/cemi/module/cg/cu-ojb-cemi-award.xml</value>
                 <value>edu/cornell/kfs/cemi/module/cg/cu-ojb-cemi-award-schedule.xml</value>
+                <value>edu/cornell/kfs/cemi/module/cg/cu-ojb-cemi-award-budget.xml</value>
                 <value>edu/cornell/kfs/cemi/module/cg/cu-ojb-cemi-sponsor.xml</value>
                 <value>edu/cornell/kfs/cemi/module/purap/cu-ojb-cemi-purchase-order.xml</value>
                 <value>edu/cornell/kfs/cemi/vnd/cu-ojb-cemi-vnd.xml</value>
@@ -38,6 +39,7 @@
             <list merge="true">
                  <value>createCemiAwardExtractJob</value>
                  <value>createCemiAwardScheduleExtractJob</value>
+                 <value>createCemiAwardBudgetExtractJob</value>
                  <value>createCemiPaymentElectionExtractJob</value>
                  <value>createCemiSupplierExtractJob</value>
                  <value>createCemiRemitToSupplierExtractJob</value>
@@ -57,6 +59,7 @@
             <value>${staging.directory}/cemi/legacy/novelution/award</value>
             <value>${staging.directory}/cemi/legacy/workday/employee</value>
             <value>${staging.directory}/cemi/module/cg/cemiAwardScheduleExtract</value>
+            <value>${staging.directory}/cemi/module/cg/cemiAwardBudgetExtract</value>
             <value>${staging.directory}/cemi/module/cg/cemiAwardExtract</value>
             <value>${staging.directory}/cemi/module/cg/cemiSponsorExtract</value>
             <value>${staging.directory}/cemi/module/purap/cemiPurchaseOrderExtract</value>
@@ -181,6 +184,50 @@
           class="edu.cornell.kfs.cemi.module.cg.batch.CreateCemiAwardScheduleExtractStep"
           parent="step"
           p:cemiAwardScheduleExtractService-ref="cemiAwardScheduleExtractService"/>
+
+
+    <!-- Award Budget -->
+
+    <bean id="createCemiAwardBudgetExtractJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createCemiAwardBudgetExtractStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cemiAwardBudgetExtractDao" parent="cemiAwardBudgetExtractDao-parentBean"/>
+    <bean id="cemiAwardBudgetExtractDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cg.dataaccess.impl.CemiAwardBudgetExtractDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:dataSource-ref="cemiDataSource"/>
+
+    <bean id="cemiAwardBudgetExtractOrmDao" parent="cemiAwardBudgetExtractOrmDao-parentBean"/>
+    <bean id="cemiAwardBudgetExtractOrmDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cg.dataaccess.impl.CemiAwardBudgetExtractOrmDaoOjbImpl"
+          parent="platformAwareDao"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="cemiAwardBudgetExtractService" parent="cemiAwardBudgetExtractService-parentBean"/>
+    <bean id="cemiAwardBudgetExtractService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.cemi.module.cg.batch.service.impl.CemiAwardBudgetExtractServiceImpl"
+          c:environment-ref="environment"
+          p:dataFileCreationDirectory="${staging.directory}/cemi/module/cg/cemiAwardBudgetExtract"
+          p:dataFileOutboundDirectory="${staging.directory}/cemi/conversions/outbound"
+          p:cemiFileAppenderService-ref="cemiFileAppenderService"
+          p:cemiOutputDefinitionFileType-ref="cemiOutputDefinitionFileType"
+          p:parameterService-ref="parameterService"
+          p:cemiAwardBudgetExtractOrmDao-ref="cemiAwardBudgetExtractOrmDao"
+          p:cemiAwardBudgetExtractDao-ref="cemiAwardBudgetExtractDao"
+          p:businessObjectService-ref="businessObjectService"/>
+
+    <bean id="createCemiAwardBudgetExtractStep"
+          class="edu.cornell.kfs.cemi.module.cg.batch.CreateCemiAwardBudgetExtractStep"
+          parent="step"
+          p:cemiAwardBudgetExtractService-ref="cemiAwardBudgetExtractService"/>
 
 
     <!-- Payment Election -->
