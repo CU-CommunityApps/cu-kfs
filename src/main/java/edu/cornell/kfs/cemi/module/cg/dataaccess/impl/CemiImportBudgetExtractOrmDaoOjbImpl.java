@@ -33,17 +33,19 @@ public class CemiImportBudgetExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase
         //final String proposalNumberCondition;
 
         //populate proposal number condition with the list of proposal numbers that are in scope for the extract
-        // TODO restore scope filter, local env data restriction
+        // TODO restore scope filter, local env data restriction, using shouldUseLessDataDuringCemiDevelopment()
 
-        final Criteria criteria = new Criteria();
+        //final Criteria criteria = new Criteria();
         //criteria.addSql(proposalNumberCondition);
 
-        final QueryByCriteria query = new QueryByCriteria(Award.class, criteria);
+        //final QueryByCriteria query = new QueryByCriteria(Award.class, criteria);
         //query.addOrderByAscending(KFSPropertyConstants.PROPOSAL_NUMBER);
 
-        return CuOjbUtils.buildCloseableStreamForQueryResults(
-                Award.class,
-                () -> getPersistenceBrokerTemplate().getIteratorByQuery(query));
+        //return CuOjbUtils.buildCloseableStreamForQueryResults(
+        //        Award.class,
+        //        () -> getPersistenceBrokerTemplate().getIteratorByQuery(query));
+
+        return Stream.empty();
     }
 
 }
