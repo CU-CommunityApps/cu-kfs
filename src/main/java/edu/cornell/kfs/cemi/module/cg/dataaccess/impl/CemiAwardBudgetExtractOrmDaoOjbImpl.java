@@ -16,14 +16,15 @@ public class CemiAwardBudgetExtractOrmDaoOjbImpl extends CemiOrmDaoOjbImplBase i
     @Override
     public Stream<Award> getAwardsForCemiAwardBudgetExtractAsCloseableStream() {
 //TODO FIXME scope restriction to in-scope Awards will be added in the data scope iteration of this extract.
-        final Criteria criteria = new Criteria();
-
-        final QueryByCriteria query = new QueryByCriteria(Award.class, criteria);
-        query.addOrderByAscending(KFSPropertyConstants.PROPOSAL_NUMBER);
-
-        return CuOjbUtils.buildCloseableStreamForQueryResults(
-                Award.class,
-                () -> getPersistenceBrokerTemplate().getIteratorByQuery(query));
+//        final Criteria criteria = new Criteria();
+//
+//        final QueryByCriteria query = new QueryByCriteria(Award.class, criteria);
+//        query.addOrderByAscending(KFSPropertyConstants.PROPOSAL_NUMBER);
+//
+//        return CuOjbUtils.buildCloseableStreamForQueryResults(
+//                Award.class,
+//                () -> getPersistenceBrokerTemplate().getIteratorByQuery(query));
+        return Stream.empty();
     }
 
 }

@@ -28,10 +28,9 @@ public class CemiAwardBudgetFileExtractDataBuilderDefaultImpl extends CemiOrmDat
 
     @Override
     public void writeAwardBudgetFileBudgetTemplateTabExtractDataToIntermediateStorage(final Iterator<Award> awards) {
-//TODO FIXME replace shell constant row with per Award row creation in the base data iteration of this extract.
         createAndStoreBudgetTemplateTabShellRow();
-        LOG.info("writeAwardBudgetFileBudgetTemplateTabExtractDataToIntermediateStorage, Finished writing "
-                + "shell constant row to table.");
+        LOG.info("writeAwardBudgetFileBudgetTemplateTabExtractDataToIntermediateStorage, Finished writing the "
+                + "Budget Template tab data row for the shell job.");
     }
 
     private void createAndStoreBudgetTemplateTabShellRow() {
